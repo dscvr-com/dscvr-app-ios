@@ -1,0 +1,8 @@
+github "Alamofire/Alamofire" "1.2.3"
+github "thii/FontAwesome.swift" "0.4.1"
+github "smileyborg/PureLayout" "v2.0.6"
+github "ReactiveCocoa/ReactiveCocoa" "v2.5"
+github "SwiftyJSON/SwiftyJSON" "2.2.0"
+github "TTTAttributedLabel/TTTAttributedLabel" "1.13.4"
+github "realm/realm-cocoa" "v0.93.2"
+github "jcavar/refresher" "0.1.2"

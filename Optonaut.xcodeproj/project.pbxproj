@@ -1,0 +1,580 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8F281F811B3AAA550038F1A8 /* FontAwesome.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F801B3AAA550038F1A8 /* FontAwesome.framework */; };
+		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
+		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
+		8F7738161B380F5D001F642B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* User.swift */; };
+		8F7738221B380FC1001F642B /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738181B380FC1001F642B /* ActivityViewController.swift */; };
+		8F7738231B380FC1001F642B /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738191B380FC1001F642B /* CameraViewController.swift */; };
+		8F7738241B380FC1001F642B /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F77381A1B380FC1001F642B /* DetailsViewController.swift */; };
+		8F7738271B380FC1001F642B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F77381D1B380FC1001F642B /* LoginViewController.swift */; };
+		8F77382A1B380FC1001F642B /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738201B380FC1001F642B /* SearchViewController.swift */; };
+		8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738211B380FC1001F642B /* TabBarViewController.swift */; };
+		8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738311B3816C7001F642B /* PureLayout_iOS.framework */; };
+		8F7738361B3816C7001F642B /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738321B3816C7001F642B /* Realm.framework */; };
+		8F7738371B3816C7001F642B /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738331B3816C7001F642B /* RealmSwift.framework */; };
+		8F7738381B3816C7001F642B /* TTTAttributedLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738341B3816C7001F642B /* TTTAttributedLabel.framework */; };
+		8F77383A1B381770001F642B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F7738391B381770001F642B /* Assets.xcassets */; };
+		8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9A4FF41B39DF85009C4548 /* Refresher.framework */; };
+		8F9A4FF81B39E992009C4548 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF71B39E992009C4548 /* ProfileViewController.swift */; };
+		8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */; };
+		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
+		8FA55BEC1B386E8C00BBA4A2 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */; };
+		8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */; };
+		8FA55BF21B387DD800BBA4A2 /* OptographTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* OptographTableViewController.swift */; };
+		8FA55BF31B387DD800BBA4A2 /* OptographTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BF01B387DD800BBA4A2 /* OptographTableViewCell.swift */; };
+		8FA55BF51B395FE700BBA4A2 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BF41B395FE700BBA4A2 /* Api.swift */; };
+		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
+		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
+		8FCCA0541B3806680091F1B1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0521B3806680091F1B1 /* Utils.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8FCCA0411B3806040091F1B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FCCA0231B3806040091F1B1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FCCA02A1B3806040091F1B1;
+			remoteInfo = Optonaut;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		8F281F801B3AAA550038F1A8 /* FontAwesome.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FontAwesome.framework; path = Carthage/Build/iOS/FontAwesome.framework; sourceTree = "<group>"; };
+		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
+		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
+		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
+		8F7738141B380F5D001F642B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		8F7738181B380FC1001F642B /* ActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
+		8F7738191B380FC1001F642B /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		8F77381A1B380FC1001F642B /* DetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
+		8F77381D1B380FC1001F642B /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		8F7738201B380FC1001F642B /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		8F7738211B380FC1001F642B /* TabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
+		8F7738311B3816C7001F642B /* PureLayout_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout_iOS.framework; path = Carthage/Build/iOS/PureLayout_iOS.framework; sourceTree = "<group>"; };
+		8F7738321B3816C7001F642B /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
+		8F7738331B3816C7001F642B /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		8F7738341B3816C7001F642B /* TTTAttributedLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TTTAttributedLabel.framework; path = Carthage/Build/iOS/TTTAttributedLabel.framework; sourceTree = "<group>"; };
+		8F7738391B381770001F642B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8F9A4FF41B39DF85009C4548 /* Refresher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Refresher.framework; path = Carthage/Build/iOS/Refresher.framework; sourceTree = "<group>"; };
+		8F9A4FF71B39E992009C4548 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNavViewController.swift; sourceTree = "<group>"; };
+		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
+		8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
+		8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
+		8FA55BEF1B387DD800BBA4A2 /* OptographTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewController.swift; sourceTree = "<group>"; };
+		8FA55BF01B387DD800BBA4A2 /* OptographTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCell.swift; sourceTree = "<group>"; };
+		8FA55BF41B395FE700BBA4A2 /* Api.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		8FCCA02B1B3806040091F1B1 /* Optonaut.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Optonaut.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FCCA02F1B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptonautTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FCCA0451B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8FCCA0461B3806040091F1B1 /* OptonautTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptonautTests.swift; sourceTree = "<group>"; };
+		8FCCA0511B3806680091F1B1 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8FCCA0521B3806680091F1B1 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8FCCA0281B3806040091F1B1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
+				8F281F811B3AAA550038F1A8 /* FontAwesome.framework in Frameworks */,
+				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
+				8FA55BEC1B386E8C00BBA4A2 /* SwiftyJSON.framework in Frameworks */,
+				8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */,
+				8F7738361B3816C7001F642B /* Realm.framework in Frameworks */,
+				8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */,
+				8F7738371B3816C7001F642B /* RealmSwift.framework in Frameworks */,
+				8F7738381B3816C7001F642B /* TTTAttributedLabel.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8FCCA03D1B3806040091F1B1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8F7738121B380F5D001F642B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8F7738131B380F5D001F642B /* Optograph.swift */,
+				8F7738141B380F5D001F642B /* User.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8F7738171B380FC1001F642B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8F7738211B380FC1001F642B /* TabBarViewController.swift */,
+				8FA55BED1B387DD800BBA4A2 /* Feed */,
+				8F9A4FF61B39E992009C4548 /* Profile */,
+				8F7738181B380FC1001F642B /* ActivityViewController.swift */,
+				8F7738191B380FC1001F642B /* CameraViewController.swift */,
+				8F77381A1B380FC1001F642B /* DetailsViewController.swift */,
+				8F77381D1B380FC1001F642B /* LoginViewController.swift */,
+				8F7738201B380FC1001F642B /* SearchViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8F9A4FF61B39E992009C4548 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				8F9A4FF71B39E992009C4548 /* ProfileViewController.swift */,
+				8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		8FA55BED1B387DD800BBA4A2 /* Feed */ = {
+			isa = PBXGroup;
+			children = (
+				8FA55BEF1B387DD800BBA4A2 /* OptographTableViewController.swift */,
+				8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */,
+				8FA55BF01B387DD800BBA4A2 /* OptographTableViewCell.swift */,
+			);
+			path = Feed;
+			sourceTree = "<group>";
+		};
+		8FCCA0221B3806040091F1B1 = {
+			isa = PBXGroup;
+			children = (
+				8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */,
+				8F281F801B3AAA550038F1A8 /* FontAwesome.framework */,
+				8F9A4FF41B39DF85009C4548 /* Refresher.framework */,
+				8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */,
+				8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */,
+				8F7738311B3816C7001F642B /* PureLayout_iOS.framework */,
+				8F7738321B3816C7001F642B /* Realm.framework */,
+				8F7738331B3816C7001F642B /* RealmSwift.framework */,
+				8F7738341B3816C7001F642B /* TTTAttributedLabel.framework */,
+				8FCCA02D1B3806040091F1B1 /* Optonaut */,
+				8FCCA0431B3806040091F1B1 /* OptonautTests */,
+				8FCCA02C1B3806040091F1B1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8FCCA02C1B3806040091F1B1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8FCCA02B1B3806040091F1B1 /* Optonaut.app */,
+				8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8FCCA02D1B3806040091F1B1 /* Optonaut */ = {
+			isa = PBXGroup;
+			children = (
+				8FCCA0511B3806680091F1B1 /* AppDelegate.swift */,
+				8FA55BF41B395FE700BBA4A2 /* Api.swift */,
+				8FCCA0521B3806680091F1B1 /* Utils.swift */,
+				8F7738121B380F5D001F642B /* Models */,
+				8F7738171B380FC1001F642B /* Views */,
+				8F7738391B381770001F642B /* Assets.xcassets */,
+				8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */,
+				8FCCA02E1B3806040091F1B1 /* Supporting Files */,
+			);
+			path = Optonaut;
+			sourceTree = "<group>";
+		};
+		8FCCA02E1B3806040091F1B1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8FCCA02F1B3806040091F1B1 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8FCCA0431B3806040091F1B1 /* OptonautTests */ = {
+			isa = PBXGroup;
+			children = (
+				8FCCA0461B3806040091F1B1 /* OptonautTests.swift */,
+				8FCCA0441B3806040091F1B1 /* Supporting Files */,
+			);
+			path = OptonautTests;
+			sourceTree = "<group>";
+		};
+		8FCCA0441B3806040091F1B1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8FCCA0451B3806040091F1B1 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8FCCA02A1B3806040091F1B1 /* Optonaut */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "Optonaut" */;
+			buildPhases = (
+				8FCCA0271B3806040091F1B1 /* Sources */,
+				8FCCA0281B3806040091F1B1 /* Frameworks */,
+				8FCCA0291B3806040091F1B1 /* Resources */,
+				8F7738061B38098B001F642B /* Carthage */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Optonaut;
+			productName = Optonaut;
+			productReference = 8FCCA02B1B3806040091F1B1 /* Optonaut.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8FCCA03F1B3806040091F1B1 /* OptonautTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8FCCA04D1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "OptonautTests" */;
+			buildPhases = (
+				8FCCA03C1B3806040091F1B1 /* Sources */,
+				8FCCA03D1B3806040091F1B1 /* Frameworks */,
+				8FCCA03E1B3806040091F1B1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8FCCA0421B3806040091F1B1 /* PBXTargetDependency */,
+			);
+			name = OptonautTests;
+			productName = OptonautTests;
+			productReference = 8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8FCCA0231B3806040091F1B1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = Optonaut;
+				TargetAttributes = {
+					8FCCA02A1B3806040091F1B1 = {
+						CreatedOnToolsVersion = 6.3.2;
+					};
+					8FCCA03F1B3806040091F1B1 = {
+						CreatedOnToolsVersion = 6.3.2;
+						TestTargetID = 8FCCA02A1B3806040091F1B1;
+					};
+				};
+			};
+			buildConfigurationList = 8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "Optonaut" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8FCCA0221B3806040091F1B1;
+			productRefGroup = 8FCCA02C1B3806040091F1B1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8FCCA02A1B3806040091F1B1 /* Optonaut */,
+				8FCCA03F1B3806040091F1B1 /* OptonautTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8FCCA0291B3806040091F1B1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F77383A1B381770001F642B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8FCCA03E1B3806040091F1B1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8F7738061B38098B001F642B /* Carthage */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/PureLayout_iOS.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/TTTAttributedLabel.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Refresher.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/FontAwesome.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ReactiveCocoa.framework",
+			);
+			name = Carthage;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8FCCA0271B3806040091F1B1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
+				8F7738221B380FC1001F642B /* ActivityViewController.swift in Sources */,
+				8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */,
+				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
+				8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */,
+				8F7738241B380FC1001F642B /* DetailsViewController.swift in Sources */,
+				8F7738161B380F5D001F642B /* User.swift in Sources */,
+				8FA55BF21B387DD800BBA4A2 /* OptographTableViewController.swift in Sources */,
+				8F9A4FF81B39E992009C4548 /* ProfileViewController.swift in Sources */,
+				8F7738231B380FC1001F642B /* CameraViewController.swift in Sources */,
+				8FCCA0541B3806680091F1B1 /* Utils.swift in Sources */,
+				8F77382A1B380FC1001F642B /* SearchViewController.swift in Sources */,
+				8FA55BF31B387DD800BBA4A2 /* OptographTableViewCell.swift in Sources */,
+				8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */,
+				8FA55BF51B395FE700BBA4A2 /* Api.swift in Sources */,
+				8F7738271B380FC1001F642B /* LoginViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8FCCA03C1B3806040091F1B1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8FCCA0421B3806040091F1B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8FCCA02A1B3806040091F1B1 /* Optonaut */;
+			targetProxy = 8FCCA0411B3806040091F1B1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		8FCCA0481B3806040091F1B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8FCCA0491B3806040091F1B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8FCCA04B1B3806040091F1B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
+				INFOPLIST_FILE = Optonaut/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8FCCA04C1B3806040091F1B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = Optonaut/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
+			};
+			name = Release;
+		};
+		8FCCA04E1B3806040091F1B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = OptonautTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Optonaut.app/Optonaut";
+			};
+			name = Debug;
+		};
+		8FCCA04F1B3806040091F1B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = OptonautTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Optonaut.app/Optonaut";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "Optonaut" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FCCA0481B3806040091F1B1 /* Debug */,
+				8FCCA0491B3806040091F1B1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "Optonaut" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FCCA04B1B3806040091F1B1 /* Debug */,
+				8FCCA04C1B3806040091F1B1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8FCCA04D1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "OptonautTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FCCA04E1B3806040091F1B1 /* Debug */,
+				8FCCA04F1B3806040091F1B1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8FCCA0231B3806040091F1B1 /* Project object */;
+}
