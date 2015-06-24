@@ -8,11 +8,9 @@
 
 import UIKit
 import PureLayout_iOS
+import ReactiveCocoa
 
 class LoginViewController: UIViewController {
-    
-    var showInviteRequest = false
-    var didSetupContraints = false
     
     // subviews
     var logoView = UIImageView()
@@ -23,6 +21,8 @@ class LoginViewController: UIViewController {
     var inviteInputView = UITextField()
     var inviteSubmitButtonView = UILabel()
     var abortButtonView = UILabel()
+    
+    var viewModel = LoginViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,70 +88,67 @@ class LoginViewController: UIViewController {
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
-        updateView()
+        viewModel.loginEmail <~ emailInputView.rac_text
+        viewModel.inviteEmail <~ inviteInputView.rac_text
+        viewModel.loginPassword <~ passwordInputView.rac_text
+        
+        emailInputView.rac_textColor <~ viewModel.loginEmailValid.producer |> map { $0 ? .blackColor() : .redColor() }
+        inviteInputView.rac_textColor <~ viewModel.inviteEmailValid.producer |> map { $0 ? .blackColor() : .redColor() }
+        passwordInputView.rac_textColor <~ viewModel.loginPasswordValid.producer |> map { $0 ? .blackColor() : .redColor() }
+        
+        loginSubmitButtonView.rac_enabled <~ viewModel.loginAllowed
+        loginSubmitButtonView.rac_userInteractionEnabled <~ viewModel.loginAllowed
+        inviteSubmitButtonView.rac_enabled <~ viewModel.inviteEmailValid
+        inviteSubmitButtonView.rac_userInteractionEnabled <~ viewModel.inviteEmailValid
+        
+        
+        emailInputView.rac_hidden <~ viewModel.inviteFormVisible
+        passwordInputView.rac_hidden <~ viewModel.inviteFormVisible
+        loginSubmitButtonView.rac_hidden <~ viewModel.inviteFormVisible
+        showInviteButtonView.rac_hidden <~ viewModel.inviteFormVisible
+        abortButtonView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
+        inviteSubmitButtonView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
+        inviteInputView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
+        
         view.setNeedsUpdateConstraints()
     }
     
     override func updateViewConstraints() {
-        if !didSetupContraints {
-            logoView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.3)
-            logoView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withMultiplier: 0.3)
-            logoView.autoAlignAxisToSuperviewAxis(.Vertical)
-            logoView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 80)
-            
-            emailInputView.autoSetDimension(.Height, toSize: 60)
-            emailInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: logoView, withOffset: 60)
-            emailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
-            emailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-            
-            passwordInputView.autoSetDimension(.Height, toSize: 60)
-            passwordInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailInputView, withOffset: 5)
-            passwordInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
-            passwordInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-            
-            loginSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
-            loginSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordInputView, withOffset: 5)
-            loginSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-            
-            showInviteButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -20)
-            showInviteButtonView.autoAlignAxisToSuperviewAxis(.Vertical)
-            
-            inviteInputView.autoSetDimension(.Height, toSize: 60)
-            inviteInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: logoView, withOffset: 60)
-            inviteInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
-            inviteInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-            
-            inviteSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
-            inviteSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: inviteInputView, withOffset: 5)
-            inviteSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-            
-            abortButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
-            abortButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-            
-            didSetupContraints = true
-        }
+        logoView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.3)
+        logoView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withMultiplier: 0.3)
+        logoView.autoAlignAxisToSuperviewAxis(.Vertical)
+        logoView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 80)
+        
+        emailInputView.autoSetDimension(.Height, toSize: 60)
+        emailInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: logoView, withOffset: 60)
+        emailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
+        emailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
+        
+        passwordInputView.autoSetDimension(.Height, toSize: 60)
+        passwordInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailInputView, withOffset: 5)
+        passwordInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
+        passwordInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
+        
+        loginSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
+        loginSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordInputView, withOffset: 5)
+        loginSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
+        
+        showInviteButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -20)
+        showInviteButtonView.autoAlignAxisToSuperviewAxis(.Vertical)
+        
+        inviteInputView.autoSetDimension(.Height, toSize: 60)
+        inviteInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: logoView, withOffset: 60)
+        inviteInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
+        inviteInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
+        
+        inviteSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
+        inviteSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: inviteInputView, withOffset: 5)
+        inviteSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
+        
+        abortButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
+        abortButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
         
         super.updateViewConstraints()
-    }
-    
-    func updateView() {
-        if showInviteRequest {
-            emailInputView.hidden = true
-            passwordInputView.hidden = true
-            loginSubmitButtonView.hidden = true
-            showInviteButtonView.hidden = true
-            abortButtonView.hidden = false
-            inviteInputView.hidden = false
-            inviteSubmitButtonView.hidden = false
-        } else {
-            abortButtonView.hidden = true
-            inviteInputView.hidden = true
-            inviteSubmitButtonView.hidden = true
-            emailInputView.hidden = false
-            passwordInputView.hidden = false
-            loginSubmitButtonView.hidden = false
-            showInviteButtonView.hidden = false
-        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -168,14 +165,13 @@ class LoginViewController: UIViewController {
     }
     
     func toggleRequest() {
-        showInviteRequest = !showInviteRequest
-        updateView()
+        viewModel.inviteFormVisible.put(!viewModel.inviteFormVisible.value)
     }
     
     func submitLogin() {
         let parameters = [
-            "email": emailInputView.text,
-            "password": passwordInputView.text,
+            "email": viewModel.loginEmail.value,
+            "password": viewModel.loginPassword.value,
         ]
         Api().post("users/login", authorized: false, parameters: parameters,
             success: { json in
@@ -195,7 +191,7 @@ class LoginViewController: UIViewController {
     
     func submitRequest() {
         let parameters = [
-            "email": emailInputView.text,
+            "email": viewModel.inviteEmail.value,
         ]
         Api().post("users/request-invite", authorized: false, parameters: parameters,
             success: { json in

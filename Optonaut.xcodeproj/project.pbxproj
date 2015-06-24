@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		8F281F811B3AAA550038F1A8 /* FontAwesome.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F801B3AAA550038F1A8 /* FontAwesome.framework */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
+		8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CE1B3AFBDC007E073C /* Api.swift */; };
+		8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CF1B3AFBDC007E073C /* Utils.swift */; };
+		8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */; };
+		8F5FD9D61B3AFE41007E073C /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9D51B3AFE41007E073C /* LoginViewModel.swift */; };
+		8F5FD9D91B3B0080007E073C /* Box.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9D71B3B0080007E073C /* Box.framework */; };
+		8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9D81B3B0080007E073C /* Result.framework */; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* User.swift */; };
 		8F7738221B380FC1001F642B /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738181B380FC1001F642B /* ActivityViewController.swift */; };
@@ -30,10 +36,8 @@
 		8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */; };
 		8FA55BF21B387DD800BBA4A2 /* OptographTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* OptographTableViewController.swift */; };
 		8FA55BF31B387DD800BBA4A2 /* OptographTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BF01B387DD800BBA4A2 /* OptographTableViewCell.swift */; };
-		8FA55BF51B395FE700BBA4A2 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BF41B395FE700BBA4A2 /* Api.swift */; };
 		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
 		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
-		8FCCA0541B3806680091F1B1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0521B3806680091F1B1 /* Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +53,12 @@
 /* Begin PBXFileReference section */
 		8F281F801B3AAA550038F1A8 /* FontAwesome.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FontAwesome.framework; path = Carthage/Build/iOS/FontAwesome.framework; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
+		8F5FD9CE1B3AFBDC007E073C /* Api.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		8F5FD9CF1B3AFBDC007E073C /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
+		8F5FD9D51B3AFE41007E073C /* LoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		8F5FD9D71B3B0080007E073C /* Box.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Box.framework; path = Carthage/Build/iOS/Box.framework; sourceTree = "<group>"; };
+		8F5FD9D81B3B0080007E073C /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
 		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F7738141B380F5D001F642B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -71,14 +81,12 @@
 		8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
 		8FA55BEF1B387DD800BBA4A2 /* OptographTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewController.swift; sourceTree = "<group>"; };
 		8FA55BF01B387DD800BBA4A2 /* OptographTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCell.swift; sourceTree = "<group>"; };
-		8FA55BF41B395FE700BBA4A2 /* Api.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		8FCCA02B1B3806040091F1B1 /* Optonaut.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Optonaut.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCCA02F1B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptonautTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCCA0451B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FCCA0461B3806040091F1B1 /* OptonautTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptonautTests.swift; sourceTree = "<group>"; };
 		8FCCA0511B3806680091F1B1 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8FCCA0521B3806680091F1B1 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +95,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
+				8F5FD9D91B3B0080007E073C /* Box.framework in Frameworks */,
+				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8F281F811B3AAA550038F1A8 /* FontAwesome.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
 				8FA55BEC1B386E8C00BBA4A2 /* SwiftyJSON.framework in Frameworks */,
@@ -108,6 +118,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F5FD9CD1B3AFBDC007E073C /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				8F5FD9CE1B3AFBDC007E073C /* Api.swift */,
+				8F5FD9CF1B3AFBDC007E073C /* Utils.swift */,
+				8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		8F5FD9D01B3AFBDC007E073C /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				8F5FD9D51B3AFE41007E073C /* LoginViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		8F7738121B380F5D001F642B /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -154,6 +182,8 @@
 		8FCCA0221B3806040091F1B1 = {
 			isa = PBXGroup;
 			children = (
+				8F5FD9D71B3B0080007E073C /* Box.framework */,
+				8F5FD9D81B3B0080007E073C /* Result.framework */,
 				8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */,
 				8F281F801B3AAA550038F1A8 /* FontAwesome.framework */,
 				8F9A4FF41B39DF85009C4548 /* Refresher.framework */,
@@ -182,9 +212,9 @@
 			isa = PBXGroup;
 			children = (
 				8FCCA0511B3806680091F1B1 /* AppDelegate.swift */,
-				8FA55BF41B395FE700BBA4A2 /* Api.swift */,
-				8FCCA0521B3806680091F1B1 /* Utils.swift */,
+				8F5FD9CD1B3AFBDC007E073C /* Utils */,
 				8F7738121B380F5D001F642B /* Models */,
+				8F5FD9D01B3AFBDC007E073C /* ViewModels */,
 				8F7738171B380FC1001F642B /* Views */,
 				8F7738391B381770001F642B /* Assets.xcassets */,
 				8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */,
@@ -329,6 +359,8 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Refresher.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/FontAwesome.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ReactiveCocoa.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Box.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -345,20 +377,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
+				8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */,
 				8F7738221B380FC1001F642B /* ActivityViewController.swift in Sources */,
 				8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */,
+				8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */,
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
 				8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */,
 				8F7738241B380FC1001F642B /* DetailsViewController.swift in Sources */,
+				8F5FD9D61B3AFE41007E073C /* LoginViewModel.swift in Sources */,
+				8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */,
 				8F7738161B380F5D001F642B /* User.swift in Sources */,
 				8FA55BF21B387DD800BBA4A2 /* OptographTableViewController.swift in Sources */,
 				8F9A4FF81B39E992009C4548 /* ProfileViewController.swift in Sources */,
 				8F7738231B380FC1001F642B /* CameraViewController.swift in Sources */,
-				8FCCA0541B3806680091F1B1 /* Utils.swift in Sources */,
 				8F77382A1B380FC1001F642B /* SearchViewController.swift in Sources */,
 				8FA55BF31B387DD800BBA4A2 /* OptographTableViewCell.swift in Sources */,
 				8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */,
-				8FA55BF51B395FE700BBA4A2 /* Api.swift in Sources */,
 				8F7738271B380FC1001F642B /* LoginViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

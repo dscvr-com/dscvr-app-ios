@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import FontAwesome
+//import ReactiveCocoa
 
 func baseColor() -> UIColor {
     return UIColor(red: 239.0 / 255, green: 72.0 / 255, blue: 54.0 / 255, alpha: 1)
@@ -43,3 +44,33 @@ func durationSince(date: NSDate) -> String {
     default: return "\(Int(differenceInSeconds / oneWeekMark))w"
     }
 }
+
+func isValidEmail(testStr:String) -> Bool {
+    // println("validate calendar: \(testStr)")
+    let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+    
+    let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+    return emailTest.evaluateWithObject(testStr)
+}
+
+//// a struct that replaces the RAC macro
+//struct RAC  {
+//    var target : NSObject!
+//    var keyPath : String!
+//    var nilValue : AnyObject!
+//    
+//    init(_ target: NSObject!, _ keyPath: String, nilValue: AnyObject? = nil) {
+//        self.target = target
+//        self.keyPath = keyPath
+//        self.nilValue = nilValue
+//    }
+//    
+//    func assignSignal(signal : RACSignal) {
+//        signal.setKeyPath(self.keyPath, onObject: self.target, nilValue: self.nilValue)
+//    }
+//}
+//
+//infix operator ~> { associativity left precedence 160 }
+//func ~> (signal: RACSignal, rac: RAC) {
+//    rac.assignSignal(signal)
+//}

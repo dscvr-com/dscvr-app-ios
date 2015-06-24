@@ -76,10 +76,9 @@ class ProfileViewController: UIViewController {
     }
     
     func logout() {
-        println(optographsView.frame)
-//        NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
-//        NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
-//        self.presentViewController(LoginViewController(), animated: false, completion: nil)
+        NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
+        NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
+        presentViewController(LoginViewController(), animated: false, completion: nil)
     }
     
     func updateView() {
