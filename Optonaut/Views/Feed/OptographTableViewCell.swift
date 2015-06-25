@@ -125,27 +125,27 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
         }
         
         if likedBefore {
-            Api().delete("optographs/\(data.id)/like", authorized: true,
-                success: { _ in () },
-                fail: { error in
-                    println(error)
-                    Realm().write {
-                        self.data.likedByUser = likedBefore
-                        self.applyData()
-                    }
-                }
-            )
+//            Api().delete("optographs/\(data.id)/like", authorized: true,
+//                success: { _ in () },
+//                fail: { error in
+//                    println(error)
+//                    Realm().write {
+//                        self.data.likedByUser = likedBefore
+//                        self.applyData()
+//                    }
+//                }
+//            )
         } else {
-            Api().post("optographs/\(data.id)/like", authorized: true, parameters: nil,
-                success: { _ in () },
-                fail: { error in
-                    println(error)
-                    Realm().write {
-                        self.data.likedByUser = likedBefore
-                        self.applyData()
-                    }
-                }
-            )
+//            Api().post("optographs/\(data.id)/like", authorized: true, parameters: nil,
+//                success: { _ in () },
+//                fail: { error in
+//                    println(error)
+//                    Realm().write {
+//                        self.data.likedByUser = likedBefore
+//                        self.applyData()
+//                    }
+//                }
+//            )
         }
     }
     

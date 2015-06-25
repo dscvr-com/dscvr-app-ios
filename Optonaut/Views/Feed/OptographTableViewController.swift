@@ -91,43 +91,43 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     func fetchData() {
-        Api().get(source, authorized: true,
-            success: { jsonArray in
-                let realm = Realm()
-                let dateFormatter = NSDateFormatter()
-                dateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
-                
-                realm.write {
-                    for (index, optographJson): (String, JSON) in jsonArray! {
-                        let user = User()
-                        user.id = optographJson["user"]["id"].intValue
-                        user.email = optographJson["user"]["email"].stringValue
-                        user.userName = optographJson["user"]["user_name"].stringValue
-                        realm.add(user, update: true)
-                        
-                        let optograph = Optograph()
-                        optograph.id = optographJson["id"].intValue
-                        optograph.text = optographJson["text"].stringValue
-                        optograph.numberOfLikes = optographJson["number_of_likes"].intValue
-                        optograph.likedByUser = optographJson["liked_by_user"].boolValue
-                        optograph.createdAt = dateFormatter.dateFromString(optographJson["created_at"].stringValue)!
-                        optograph.user = user
-                        realm.add(optograph, update: true)
-                    }
-                    
-                    NSOperationQueue.mainQueue().addOperationWithBlock {
-                        self.tableView.reloadData()
-                        self.tableView.stopPullToRefresh()
-                    }
-                }
-            },
-            fail: { error in
-                println(error)
-                NSOperationQueue.mainQueue().addOperationWithBlock {
-                    self.tableView.stopPullToRefresh()
-                }
-            }
-        )
+//        Api().get(source, authorized: true,
+//            success: { jsonArray in
+//                let realm = Realm()
+//                let dateFormatter = NSDateFormatter()
+//                dateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
+//                
+//                realm.write {
+//                    for (index, optographJson): (String, JSON) in jsonArray! {
+//                        let user = User()
+//                        user.id = optographJson["user"]["id"].intValue
+//                        user.email = optographJson["user"]["email"].stringValue
+//                        user.userName = optographJson["user"]["user_name"].stringValue
+//                        realm.add(user, update: true)
+//                        
+//                        let optograph = Optograph()
+//                        optograph.id = optographJson["id"].intValue
+//                        optograph.text = optographJson["text"].stringValue
+//                        optograph.numberOfLikes = optographJson["number_of_likes"].intValue
+//                        optograph.likedByUser = optographJson["liked_by_user"].boolValue
+//                        optograph.createdAt = dateFormatter.dateFromString(optographJson["created_at"].stringValue)!
+//                        optograph.user = user
+//                        realm.add(optograph, update: true)
+//                    }
+//                    
+//                    NSOperationQueue.mainQueue().addOperationWithBlock {
+//                        self.tableView.reloadData()
+//                        self.tableView.stopPullToRefresh()
+//                    }
+//                }
+//            },
+//            fail: { error in
+//                println(error)
+//                NSOperationQueue.mainQueue().addOperationWithBlock {
+//                    self.tableView.stopPullToRefresh()
+//                }
+//            }
+//        )
     }
     
 }

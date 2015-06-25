@@ -76,9 +76,17 @@ class ProfileViewController: UIViewController {
     }
     
     func logout() {
-        NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
-        presentViewController(LoginViewController(), animated: false, completion: nil)
+        let refreshAlert = UIAlertController(title: "You're about to log out...", message: "Really? Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        refreshAlert.addAction(UIAlertAction(title: "Sign out", style: .Default, handler: { (action: UIAlertAction!) in
+            NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
+            NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
+            self.presentViewController(LoginViewController(), animated: false, completion: nil)
+        }))
+        
+        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { _ in return }))
+        
+        presentViewController(refreshAlert, animated: true, completion: nil)
     }
     
     func updateView() {
@@ -92,26 +100,26 @@ class ProfileViewController: UIViewController {
     }
     
     func fetchData() {
-        Api().get("users/\(userId)", authorized: true,
-            success: { json in
-                let realm = Realm()
-                
-                realm.write {
-                    self.user.id = json!["id"].intValue
-                    self.user.email = json!["email"].stringValue
-                    self.user.userName = json!["user_name"].stringValue
-                    self.user.numberOfFollowers = json!["number_of_followers"].intValue
-                    self.user.numberOfFollowings = json!["number_of_followings"].intValue
-                    self.user.numberOfOptographs = json!["number_of_optographs"].intValue
-                    realm.add(self.user, update: true)
-                    
-                    self.updateView()
-                }
-            },
-            fail: { error in
-                println(error)
-            }
-        )
+//        Api().get("users/\(userId)", authorized: true,
+//            success: { json in
+//                let realm = Realm()
+//                
+//                realm.write {
+//                    self.user.id = json!["id"].intValue
+//                    self.user.email = json!["email"].stringValue
+//                    self.user.userName = json!["user_name"].stringValue
+//                    self.user.numberOfFollowers = json!["number_of_followers"].intValue
+//                    self.user.numberOfFollowings = json!["number_of_followings"].intValue
+//                    self.user.numberOfOptographs = json!["number_of_optographs"].intValue
+//                    realm.add(self.user, update: true)
+//                    
+//                    self.updateView()
+//                }
+//            },
+//            fail: { error in
+//                println(error)
+//            }
+//        )
     }
     
 }

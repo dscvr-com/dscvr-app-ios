@@ -39,6 +39,16 @@ func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: T
     }
 }
 
+extension UIButton {
+    public var rac_enabled: MutableProperty<Bool> {
+        return lazyMutableProperty(self, &AssociationKey.enabled, { self.enabled = $0 }, { self.enabled  })
+    }
+    
+    public var rac_userInteractionEnabled: MutableProperty<Bool> {
+        return lazyMutableProperty(self, &AssociationKey.userInteractionEnabled, { self.userInteractionEnabled = $0 }, { self.userInteractionEnabled })
+    }
+}
+
 extension UIView {
     public var rac_alpha: MutableProperty<CGFloat> {
         return lazyMutableProperty(self, &AssociationKey.alpha, { self.alpha = $0 }, { self.alpha  })
