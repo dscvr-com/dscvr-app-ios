@@ -7,12 +7,11 @@
 //
 
 import UIKit
-import RealmSwift
+import ReactiveCocoa
 
 class ProfileViewController: UIViewController {
     
-    var userId = 0
-    var user = Realm().objects(User).first ?? User()
+    var viewModel: ProfileViewModel
     
     // subviews
     let numberOfFollowersView = UILabel()
@@ -21,43 +20,44 @@ class ProfileViewController: UIViewController {
     var optographsView: UIView!
     
     required init(userId: Int) {
+        viewModel = ProfileViewModel(id: userId)
         super.init(nibName: nil, bundle: nil)
-        self.userId = userId
     }
     
     required init(coder aDecoder: NSCoder) {
+        viewModel = ProfileViewModel(id: 0)
         super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        updateView()
-        
         let attributes = [NSFontAttributeName: UIFont.fontAwesomeOfSize(20)] as Dictionary!
-        let cameraButton = UIBarButtonItem()
-        cameraButton.setTitleTextAttributes(attributes, forState: .Normal)
-        cameraButton.title = String.fontAwesomeIconWithName(.SignOut)
-        cameraButton.target = self
-        cameraButton.action = "logout"
-        navigationItem.setRightBarButtonItem(cameraButton, animated: false)
+        let signoutButton = UIBarButtonItem()
+        signoutButton.setTitleTextAttributes(attributes, forState: .Normal)
+        signoutButton.title = String.fontAwesomeIconWithName(.SignOut)
+        signoutButton.target = self
+        signoutButton.action = "logout"
+        navigationItem.setRightBarButtonItem(signoutButton, animated: false)
+        navigationItem.rac_title <~ viewModel.userName.producer |> map { "@\($0)" }
         
         let optographTableViewController = OptographTableViewController(source: "optographs", navController: navigationController)
         optographsView = optographTableViewController.view
-        
         view.addSubview(optographsView)
-        view.addSubview(numberOfFollowersView)
-        view.addSubview(numberOfFollowingsView)
-        view.addSubview(numberOfOptographsView)
         
-        fetchData()
+        numberOfFollowersView.rac_text <~ viewModel.numberOfFollowers.producer |> map { "Follower: \($0)" }
+        view.addSubview(numberOfFollowersView)
+        
+        numberOfFollowingsView.rac_text <~ viewModel.numberOfFollowings.producer |> map { "Following: \($0)" }
+        view.addSubview(numberOfFollowingsView)
+        
+        numberOfOptographsView.rac_text <~ viewModel.numberOfOptographs.producer |> map { "Optographs: \($0)" }
+        view.addSubview(numberOfOptographsView)
         
         view.setNeedsUpdateConstraints()
     }
     
     override func updateViewConstraints() {
-        
         numberOfFollowersView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
         numberOfFollowersView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
         
@@ -87,39 +87,6 @@ class ProfileViewController: UIViewController {
         refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { _ in return }))
         
         presentViewController(refreshAlert, animated: true, completion: nil)
-    }
-    
-    func updateView() {
-        if user.id == 0 { return }
-        
-        navigationItem.title = "@\(user.userName)"
-        
-        numberOfFollowersView.text = "Follower: \(user.numberOfFollowers)"
-        numberOfFollowingsView.text = "Following: \(user.numberOfFollowings)"
-        numberOfOptographsView.text = "Optographs: \(user.numberOfOptographs)"
-    }
-    
-    func fetchData() {
-//        Api().get("users/\(userId)", authorized: true,
-//            success: { json in
-//                let realm = Realm()
-//                
-//                realm.write {
-//                    self.user.id = json!["id"].intValue
-//                    self.user.email = json!["email"].stringValue
-//                    self.user.userName = json!["user_name"].stringValue
-//                    self.user.numberOfFollowers = json!["number_of_followers"].intValue
-//                    self.user.numberOfFollowings = json!["number_of_followings"].intValue
-//                    self.user.numberOfOptographs = json!["number_of_optographs"].intValue
-//                    realm.add(self.user, update: true)
-//                    
-//                    self.updateView()
-//                }
-//            },
-//            fail: { error in
-//                println(error)
-//            }
-//        )
     }
     
 }

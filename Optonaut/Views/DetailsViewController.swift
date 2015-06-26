@@ -10,11 +10,11 @@ import UIKit
 
 class DetailsViewController: UIViewController {
     
-    var data: Optograph!
+    var viewModel: OptographViewModel!
     
-    required init(data: Optograph) {
+    required init(viewModel: OptographViewModel) {
         super.init(nibName: nil, bundle: nil)
-        self.data = data
+        self.viewModel = viewModel
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -28,8 +28,11 @@ class DetailsViewController: UIViewController {
         
         navigationItem.title = "Details"
         
+        
+//        previewImageView.rac_image <~ viewModel.imageUrl.producer |> map { name in UIImage(named: name) }
+        
         let title = UILabel(frame: view.frame)
-        title.text = "TODO: Details: \(data.text)"
+        title.text = "TODO: Details: \(viewModel.imageUrl.value)"
         
         view.addSubview(title)
     }

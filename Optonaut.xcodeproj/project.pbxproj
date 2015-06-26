@@ -15,8 +15,9 @@
 		8F5FD9D61B3AFE41007E073C /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9D51B3AFE41007E073C /* LoginViewModel.swift */; };
 		8F5FD9D91B3B0080007E073C /* Box.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9D71B3B0080007E073C /* Box.framework */; };
 		8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9D81B3B0080007E073C /* Result.framework */; };
-		8F5FD9DC1B3B360E007E073C /* OptographCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9DB1B3B360E007E073C /* OptographCellViewModel.swift */; };
-		8F5FD9DE1B3BFF44007E073C /* RACAlamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9DD1B3BFF44007E073C /* RACAlamofire.swift */; };
+		8F5FD9DC1B3B360E007E073C /* OptographViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9DB1B3B360E007E073C /* OptographViewModel.swift */; };
+		8F5FD9E01B3C5578007E073C /* OptographsTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9DF1B3C5578007E073C /* OptographsTableViewModel.swift */; };
+		8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9E11B3D4309007E073C /* ProfileViewModel.swift */; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* User.swift */; };
 		8F7738221B380FC1001F642B /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738181B380FC1001F642B /* ActivityViewController.swift */; };
@@ -61,8 +62,9 @@
 		8F5FD9D51B3AFE41007E073C /* LoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		8F5FD9D71B3B0080007E073C /* Box.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Box.framework; path = Carthage/Build/iOS/Box.framework; sourceTree = "<group>"; };
 		8F5FD9D81B3B0080007E073C /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
-		8F5FD9DB1B3B360E007E073C /* OptographCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographCellViewModel.swift; sourceTree = "<group>"; };
-		8F5FD9DD1B3BFF44007E073C /* RACAlamofire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RACAlamofire.swift; sourceTree = "<group>"; };
+		8F5FD9DB1B3B360E007E073C /* OptographViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographViewModel.swift; sourceTree = "<group>"; };
+		8F5FD9DF1B3C5578007E073C /* OptographsTableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographsTableViewModel.swift; sourceTree = "<group>"; };
+		8F5FD9E11B3D4309007E073C /* ProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F7738141B380F5D001F642B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -126,7 +128,6 @@
 			isa = PBXGroup;
 			children = (
 				8F5FD9CE1B3AFBDC007E073C /* Api.swift */,
-				8F5FD9DD1B3BFF44007E073C /* RACAlamofire.swift */,
 				8F5FD9CF1B3AFBDC007E073C /* Utils.swift */,
 				8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */,
 			);
@@ -137,7 +138,9 @@
 			isa = PBXGroup;
 			children = (
 				8F5FD9D51B3AFE41007E073C /* LoginViewModel.swift */,
-				8F5FD9DB1B3B360E007E073C /* OptographCellViewModel.swift */,
+				8F5FD9E11B3D4309007E073C /* ProfileViewModel.swift */,
+				8F5FD9DF1B3C5578007E073C /* OptographsTableViewModel.swift */,
+				8F5FD9DB1B3B360E007E073C /* OptographViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -382,12 +385,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F5FD9E01B3C5578007E073C /* OptographsTableViewModel.swift in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */,
 				8F7738221B380FC1001F642B /* ActivityViewController.swift in Sources */,
-				8F5FD9DE1B3BFF44007E073C /* RACAlamofire.swift in Sources */,
 				8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */,
 				8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */,
+				8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */,
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
 				8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */,
 				8F7738241B380FC1001F642B /* DetailsViewController.swift in Sources */,
@@ -399,7 +403,7 @@
 				8F7738231B380FC1001F642B /* CameraViewController.swift in Sources */,
 				8F77382A1B380FC1001F642B /* SearchViewController.swift in Sources */,
 				8FA55BF31B387DD800BBA4A2 /* OptographTableViewCell.swift in Sources */,
-				8F5FD9DC1B3B360E007E073C /* OptographCellViewModel.swift in Sources */,
+				8F5FD9DC1B3B360E007E073C /* OptographViewModel.swift in Sources */,
 				8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */,
 				8F7738271B380FC1001F642B /* LoginViewController.swift in Sources */,
 			);

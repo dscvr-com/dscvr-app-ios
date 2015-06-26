@@ -11,13 +11,15 @@ import UIKit
 import TTTAttributedLabel
 import RealmSwift
 import FontAwesome
+import ReactiveCocoa
 
 class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
     
-    var data: Optograph!
+    var viewModel: OptographViewModel!
     
+    // subviews
     let previewImageView = UIImageView()
-    let likeButtonView = UILabel()
+    let likeButtonView = UIButton()
     let numberOfLikesView = UILabel()
     let dateView = UILabel()
     let textView = TTTAttributedLabel(forAutoLayout: ())
@@ -27,24 +29,21 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
         
         previewImageView.userInteractionEnabled = true
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showDetails"))
+        contentView.addSubview(previewImageView)
         
-        likeButtonView.font = UIFont.fontAwesomeOfSize(20)
-        likeButtonView.text = String.fontAwesomeIconWithName(FontAwesome.Heart)
-        likeButtonView.userInteractionEnabled = true
-        likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleLike"))
+        likeButtonView.titleLabel?.font = UIFont.fontAwesomeOfSize(20)
+        likeButtonView.setTitle(String.fontAwesomeIconWithName(FontAwesome.Heart), forState: .Normal)
+        contentView.addSubview(likeButtonView)
         
         numberOfLikesView.font = UIFont.boldSystemFontOfSize(16)
         numberOfLikesView.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        contentView.addSubview(numberOfLikesView)
         
         dateView.font = UIFont.systemFontOfSize(16)
         dateView.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        contentView.addSubview(dateView)
         
         textView.numberOfLines = 0
-        
-        contentView.addSubview(previewImageView)
-        contentView.addSubview(likeButtonView)
-        contentView.addSubview(numberOfLikesView)
-        contentView.addSubview(dateView)
         contentView.addSubview(textView)
         
         contentView.setNeedsUpdateConstraints()
@@ -55,11 +54,11 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
         previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: contentView)
         
-        likeButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 15)
+        likeButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 10)
         likeButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 15)
         
         numberOfLikesView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
-        numberOfLikesView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 45)
+        numberOfLikesView.autoPinEdge(.Left, toEdge: .Right, ofView: likeButtonView, withOffset: 5)
         
         dateView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
         dateView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15)
@@ -75,17 +74,25 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
         super.init(coder: aDecoder)
     }
     
-    func applyData() {
-        previewImageView.image = UIImage(named: "\(data.id)")
-        numberOfLikesView.text = String(data.numberOfLikes)
-        dateView.text = durationSince(data.createdAt)
+    func bindViewModel(optograph: Optograph) {
+        viewModel = OptographViewModel(optograph: optograph)
         
-        likeButtonView.textColor = data.likedByUser ? baseColor() : .grayColor()
+        previewImageView.rac_image <~ viewModel.imageUrl.producer |> map { name in UIImage(named: name) }
+        numberOfLikesView.rac_text <~ viewModel.numberOfLikes.producer |> map { num in "\(num)" }
+        dateView.rac_text <~ viewModel.timeSinceCreated
         
-        let description = "\(data.user!.userName) \(data.text)"
+        likeButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.viewModel.toggleLike()
+            return RACSignal.empty()
+        })
         
+        viewModel.liked.producer
+            |> map { $0 ? baseColor() : .grayColor() }
+            |> start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
+        
+        let description = "\(optograph.user!.userName) \(optograph.text)"
         textView.setText(description) { (text: NSMutableAttributedString!) -> NSMutableAttributedString! in
-            let range = NSMakeRange(0, count(self.data.user!.userName))
+            let range = NSMakeRange(0, count(optograph.user!.userName))
             let boldFont = UIFont.boldSystemFontOfSize(17)
             let font = CTFontCreateWithName(boldFont.fontName, boldFont.pointSize, nil)
             
@@ -94,59 +101,17 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
             
             return text
         }
-        
-        
-        textView.userInteractionEnabled = true
-        textView.delegate = self
-        
-    }
-    
-    override func setSelected(selected: Bool, animated: Bool) {
-//        super.setSelected(selected, animated: animated)
     }
     
     func showDetails() {
         let tableView = superview?.superview as! UITableView
         let tableViewController = tableView.dataSource as! OptographTableViewController
-        let detailsViewController = DetailsViewController(data: data)
+        let detailsViewController = DetailsViewController(viewModel: viewModel)
         tableViewController.navController?.pushViewController(detailsViewController, animated: true)
     }
     
-    override func setHighlighted(highlighted: Bool, animated: Bool) {
-        
-    }
+    override func setSelected(selected: Bool, animated: Bool) {}
     
-    func toggleLike() {
-        let likedBefore = data.likedByUser
-        Realm().write {
-            self.data.likedByUser = !likedBefore
-            self.data.numberOfLikes += likedBefore ? -1 : 1
-            self.applyData()
-        }
-        
-        if likedBefore {
-//            Api().delete("optographs/\(data.id)/like", authorized: true,
-//                success: { _ in () },
-//                fail: { error in
-//                    println(error)
-//                    Realm().write {
-//                        self.data.likedByUser = likedBefore
-//                        self.applyData()
-//                    }
-//                }
-//            )
-        } else {
-//            Api().post("optographs/\(data.id)/like", authorized: true, parameters: nil,
-//                success: { _ in () },
-//                fail: { error in
-//                    println(error)
-//                    Realm().write {
-//                        self.data.likedByUser = likedBefore
-//                        self.applyData()
-//                    }
-//                }
-//            )
-        }
-    }
+    override func setHighlighted(highlighted: Bool, animated: Bool) {}
     
 }

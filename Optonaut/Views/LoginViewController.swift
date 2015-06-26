@@ -9,6 +9,7 @@
 import UIKit
 import PureLayout_iOS
 import ReactiveCocoa
+import FontAwesome
 
 class LoginViewController: UIViewController {
     
@@ -22,7 +23,7 @@ class LoginViewController: UIViewController {
     var inviteSubmitButtonView = UIButton()
     var inviteAbortButtonView = UILabel()
     
-    var viewModel = LoginViewModel()
+    let viewModel = LoginViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,11 +55,10 @@ class LoginViewController: UIViewController {
         loginSubmitButtonView.backgroundColor = .whiteColor()
         loginSubmitButtonView.setTitle("Login", forState: .Normal)
         loginSubmitButtonView.setTitleColor(baseColor(), forState: .Normal)
-        loginSubmitButtonView.setTitleColor(UIColor.grayColor(), forState: .Disabled)
         loginSubmitButtonView.layer.cornerRadius = 5
         loginSubmitButtonView.layer.masksToBounds = true
         loginSubmitButtonView.rac_hidden <~ viewModel.inviteFormVisible
-        loginSubmitButtonView.rac_enabled <~ viewModel.loginAllowed
+        loginSubmitButtonView.rac_alpha <~ viewModel.loginAllowed.producer |> map { $0 ? CGFloat(1) : CGFloat(0.5) }
         loginSubmitButtonView.rac_userInteractionEnabled <~ viewModel.loginAllowed
         loginSubmitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.login()
@@ -84,8 +84,8 @@ class LoginViewController: UIViewController {
         view.addSubview(loginShowInviteButtonView)
         
         inviteAbortButtonView.textColor = UIColor.whiteColor()
-        inviteAbortButtonView.text = "x"
-        inviteAbortButtonView.font = UIFont.boldSystemFontOfSize(30)
+        inviteAbortButtonView.font = UIFont.fontAwesomeOfSize(40)
+        inviteAbortButtonView.text = String.fontAwesomeIconWithName(FontAwesome.Times)
         inviteAbortButtonView.userInteractionEnabled = true
         inviteAbortButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleRequest"))
         inviteAbortButtonView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
@@ -104,11 +104,10 @@ class LoginViewController: UIViewController {
         inviteSubmitButtonView.backgroundColor = .whiteColor()
         inviteSubmitButtonView.setTitle("Request Invite", forState: .Normal)
         inviteSubmitButtonView.setTitleColor(baseColor(), forState: .Normal)
-        inviteSubmitButtonView.setTitleColor(UIColor.grayColor(), forState: .Disabled)
         inviteSubmitButtonView.userInteractionEnabled = true
         inviteSubmitButtonView.layer.cornerRadius = 5
         inviteSubmitButtonView.layer.masksToBounds = true
-        inviteSubmitButtonView.rac_enabled <~ viewModel.inviteEmailValid
+        inviteSubmitButtonView.rac_alpha <~ viewModel.inviteEmailValid.producer |> map { $0 ? CGFloat(1) : CGFloat(0.5) }
         inviteSubmitButtonView.rac_userInteractionEnabled <~ viewModel.inviteEmailValid
         inviteSubmitButtonView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
         inviteSubmitButtonView.rac_command = RACCommand(signalBlock: { _ in

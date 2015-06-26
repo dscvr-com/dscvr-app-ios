@@ -16,6 +16,8 @@ struct AssociationKey {
     static var enabled: UInt8 = 4
     static var textColor: UInt8 = 5
     static var userInteractionEnabled: UInt8 = 6
+    static var image: UInt8 = 7
+    static var title: UInt8 = 8
 }
 
 // lazily creates a gettable associated property via the given factory
@@ -39,9 +41,15 @@ func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: T
     }
 }
 
+extension UIImageView {
+    public var rac_image: MutableProperty<UIImage?> {
+        return lazyMutableProperty(self, &AssociationKey.image, { self.image = $0 }, { self.image })
+    }
+}
+
 extension UIButton {
     public var rac_enabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, &AssociationKey.enabled, { self.enabled = $0 }, { self.enabled  })
+        return lazyMutableProperty(self, &AssociationKey.enabled, { self.enabled = $0 }, { self.enabled })
     }
     
     public var rac_userInteractionEnabled: MutableProperty<Bool> {
@@ -51,11 +59,17 @@ extension UIButton {
 
 extension UIView {
     public var rac_alpha: MutableProperty<CGFloat> {
-        return lazyMutableProperty(self, &AssociationKey.alpha, { self.alpha = $0 }, { self.alpha  })
+        return lazyMutableProperty(self, &AssociationKey.alpha, { self.alpha = $0 }, { self.alpha })
     }
     
     public var rac_hidden: MutableProperty<Bool> {
-        return lazyMutableProperty(self, &AssociationKey.hidden, { self.hidden = $0 }, { self.hidden  })
+        return lazyMutableProperty(self, &AssociationKey.hidden, { self.hidden = $0 }, { self.hidden })
+    }
+}
+
+extension UINavigationItem {
+    public var rac_title: MutableProperty<String> {
+        return lazyMutableProperty(self, &AssociationKey.title, { self.title = $0 }, { self.title ?? "" })
     }
 }
 
@@ -65,11 +79,15 @@ extension UILabel {
     }
     
     public var rac_enabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, &AssociationKey.enabled, { self.enabled = $0 }, { self.enabled  })
+        return lazyMutableProperty(self, &AssociationKey.enabled, { self.enabled = $0 }, { self.enabled })
     }
     
     public var rac_userInteractionEnabled: MutableProperty<Bool> {
         return lazyMutableProperty(self, &AssociationKey.userInteractionEnabled, { self.userInteractionEnabled = $0 }, { self.userInteractionEnabled })
+    }
+    
+    public var rac_textColor: MutableProperty<UIColor> {
+        return lazyMutableProperty(self, &AssociationKey.textColor, { self.textColor = $0 }, { self.textColor })
     }
 }
 
@@ -90,7 +108,7 @@ extension UITextField {
     }
     
     public var rac_textColor: MutableProperty<UIColor> {
-        return lazyMutableProperty(self, &AssociationKey.textColor, { self.textColor = $0 }, { self.textColor  })
+        return lazyMutableProperty(self, &AssociationKey.textColor, { self.textColor = $0 }, { self.textColor })
     }
     
     func changed() {
