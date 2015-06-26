@@ -15,13 +15,13 @@ class OptographsTableViewModel {
     let results = MutableProperty<[Optograph]>([])
     let resultsLoading = MutableProperty<Bool>(false)
     
-    init() {
+    init(source: String) {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
         
         resultsLoading.producer
             |> filter { $0 }
-            |> map { _ in Api().get("optographs", authorized: true) }
+            |> map { _ in Api().get(source, authorized: true) }
             |> start(
                 next: { signal in
                     signal
@@ -45,6 +45,8 @@ class OptographsTableViewModel {
                                     
                                     optographs.append(optograph)
                                 }
+                                
+                                optographs.sort{ $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                                 
                                 self.results.put(optographs)
                                 self.resultsLoading.put(false)

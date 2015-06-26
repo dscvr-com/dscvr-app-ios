@@ -20,14 +20,16 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
     let navBarView = UINavigationBar()
     var navController: UINavigationController?
     
-    let viewModel = OptographsTableViewModel()
+    var viewModel: OptographsTableViewModel
     
     required init(source: String, navController: UINavigationController?) {
+        viewModel = OptographsTableViewModel(source: source)
         super.init(nibName: nil, bundle: nil)
         self.navController = navController
     }
     
     required init(coder aDecoder: NSCoder) {
+        viewModel = OptographsTableViewModel(source: "")
         super.init(coder: aDecoder)
     }
     

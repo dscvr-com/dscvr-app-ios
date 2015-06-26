@@ -2,8 +2,8 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "little_world_2.jpg",
-      "scale" : "1x"
+      "scale" : "1x",
+      "filename" : "placeholder.jpg"
     },
     {
       "idiom" : "universal",

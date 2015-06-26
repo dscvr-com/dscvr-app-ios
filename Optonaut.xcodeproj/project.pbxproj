@@ -18,10 +18,11 @@
 		8F5FD9DC1B3B360E007E073C /* OptographViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9DB1B3B360E007E073C /* OptographViewModel.swift */; };
 		8F5FD9E01B3C5578007E073C /* OptographsTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9DF1B3C5578007E073C /* OptographsTableViewModel.swift */; };
 		8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9E11B3D4309007E073C /* ProfileViewModel.swift */; };
+		8F5FD9E71B3D579C007E073C /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9E61B3D579C007E073C /* CameraViewController.swift */; };
+		8F5FD9E91B3D60E5007E073C /* WebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9E81B3D60E5007E073C /* WebImage.framework */; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* User.swift */; };
 		8F7738221B380FC1001F642B /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738181B380FC1001F642B /* ActivityViewController.swift */; };
-		8F7738231B380FC1001F642B /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738191B380FC1001F642B /* CameraViewController.swift */; };
 		8F7738241B380FC1001F642B /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F77381A1B380FC1001F642B /* DetailsViewController.swift */; };
 		8F7738271B380FC1001F642B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F77381D1B380FC1001F642B /* LoginViewController.swift */; };
 		8F77382A1B380FC1001F642B /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738201B380FC1001F642B /* SearchViewController.swift */; };
@@ -65,11 +66,12 @@
 		8F5FD9DB1B3B360E007E073C /* OptographViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographViewModel.swift; sourceTree = "<group>"; };
 		8F5FD9DF1B3C5578007E073C /* OptographsTableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographsTableViewModel.swift; sourceTree = "<group>"; };
 		8F5FD9E11B3D4309007E073C /* ProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		8F5FD9E61B3D579C007E073C /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		8F5FD9E81B3D60E5007E073C /* WebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebImage.framework; path = Carthage/Build/iOS/WebImage.framework; sourceTree = "<group>"; };
 		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F7738141B380F5D001F642B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8F7738181B380FC1001F642B /* ActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
-		8F7738191B380FC1001F642B /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		8F77381A1B380FC1001F642B /* DetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 		8F77381D1B380FC1001F642B /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		8F7738201B380FC1001F642B /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
+				8F5FD9E91B3D60E5007E073C /* WebImage.framework in Frameworks */,
 				8F5FD9D91B3B0080007E073C /* Box.framework in Frameworks */,
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8F281F811B3AAA550038F1A8 /* FontAwesome.framework in Frameworks */,
@@ -145,6 +148,14 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		8F5FD9E51B3D579C007E073C /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				8F5FD9E61B3D579C007E073C /* CameraViewController.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
 		8F7738121B380F5D001F642B /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -158,13 +169,13 @@
 			isa = PBXGroup;
 			children = (
 				8F7738211B380FC1001F642B /* TabBarViewController.swift */,
-				8FA55BED1B387DD800BBA4A2 /* Feed */,
-				8F9A4FF61B39E992009C4548 /* Profile */,
 				8F7738181B380FC1001F642B /* ActivityViewController.swift */,
-				8F7738191B380FC1001F642B /* CameraViewController.swift */,
 				8F77381A1B380FC1001F642B /* DetailsViewController.swift */,
 				8F77381D1B380FC1001F642B /* LoginViewController.swift */,
 				8F7738201B380FC1001F642B /* SearchViewController.swift */,
+				8F5FD9E51B3D579C007E073C /* Camera */,
+				8FA55BED1B387DD800BBA4A2 /* Feed */,
+				8F9A4FF61B39E992009C4548 /* Profile */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -191,6 +202,7 @@
 		8FCCA0221B3806040091F1B1 = {
 			isa = PBXGroup;
 			children = (
+				8F5FD9E81B3D60E5007E073C /* WebImage.framework */,
 				8F5FD9D71B3B0080007E073C /* Box.framework */,
 				8F5FD9D81B3B0080007E073C /* Result.framework */,
 				8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */,
@@ -370,6 +382,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ReactiveCocoa.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Box.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/WebImage.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -396,11 +409,11 @@
 				8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */,
 				8F7738241B380FC1001F642B /* DetailsViewController.swift in Sources */,
 				8F5FD9D61B3AFE41007E073C /* LoginViewModel.swift in Sources */,
+				8F5FD9E71B3D579C007E073C /* CameraViewController.swift in Sources */,
 				8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */,
 				8F7738161B380F5D001F642B /* User.swift in Sources */,
 				8FA55BF21B387DD800BBA4A2 /* OptographTableViewController.swift in Sources */,
 				8F9A4FF81B39E992009C4548 /* ProfileViewController.swift in Sources */,
-				8F7738231B380FC1001F642B /* CameraViewController.swift in Sources */,
 				8F77382A1B380FC1001F642B /* SearchViewController.swift in Sources */,
 				8FA55BF31B387DD800BBA4A2 /* OptographTableViewCell.swift in Sources */,
 				8F5FD9DC1B3B360E007E073C /* OptographViewModel.swift in Sources */,

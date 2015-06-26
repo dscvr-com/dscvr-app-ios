@@ -41,7 +41,7 @@ class ProfileViewController: UIViewController {
         navigationItem.setRightBarButtonItem(signoutButton, animated: false)
         navigationItem.rac_title <~ viewModel.userName.producer |> map { "@\($0)" }
         
-        let optographTableViewController = OptographTableViewController(source: "optographs", navController: navigationController)
+        let optographTableViewController = OptographTableViewController(source: "users/\(viewModel.id.value)/optographs", navController: navigationController)
         optographsView = optographTableViewController.view
         view.addSubview(optographsView)
         

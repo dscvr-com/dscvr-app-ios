@@ -9,9 +9,9 @@
 import Foundation
 import UIKit
 import TTTAttributedLabel
-import RealmSwift
 import FontAwesome
 import ReactiveCocoa
+import WebImage
 
 class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
     
@@ -55,7 +55,7 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
         previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: contentView)
         
         likeButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 10)
-        likeButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 15)
+        likeButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 12)
         
         numberOfLikesView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
         numberOfLikesView.autoPinEdge(.Left, toEdge: .Right, ofView: likeButtonView, withOffset: 5)
@@ -77,7 +77,9 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
     func bindViewModel(optograph: Optograph) {
         viewModel = OptographViewModel(optograph: optograph)
         
-        previewImageView.rac_image <~ viewModel.imageUrl.producer |> map { name in UIImage(named: name) }
+        if let imageUrl = NSURL(string: viewModel.imageUrl.value) {
+            previewImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "placeholder"))
+        }
         numberOfLikesView.rac_text <~ viewModel.numberOfLikes.producer |> map { num in "\(num)" }
         dateView.rac_text <~ viewModel.timeSinceCreated
         
@@ -90,9 +92,10 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
             |> map { $0 ? baseColor() : .grayColor() }
             |> start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
         
-        let description = "\(optograph.user!.userName) \(optograph.text)"
+        let description = "\(viewModel.userName.value) \(viewModel.text.value)"
+        textView.numberOfLines = 0
         textView.setText(description) { (text: NSMutableAttributedString!) -> NSMutableAttributedString! in
-            let range = NSMakeRange(0, count(optograph.user!.userName))
+            let range = NSMakeRange(0, count(self.viewModel.userName.value))
             let boldFont = UIFont.boldSystemFontOfSize(17)
             let font = CTFontCreateWithName(boldFont.fontName, boldFont.pointSize, nil)
             
