@@ -43,26 +43,28 @@ class LoginViewModel {
             })
     }
     
-    func login() -> Signal<Void, NSError> {
+    func login() -> SignalProducer<Void, NSError> {
         let parameters = [ "email": self.loginEmail.value, "password": self.loginPassword.value ]
-        let signal = Api().post("users/login", authorized: false, parameters: parameters)
+        let apiProducer = Api().post("users/login", authorized: false, parameters: parameters)
+        
+        return SignalProducer { sink, disposable in
+            apiProducer
+                |> start(next: { json in
+                    NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
+                    NSUserDefaults.standardUserDefaults().setObject(json["token"].stringValue, forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
+                    NSUserDefaults.standardUserDefaults().setInteger(json["id"].intValue, forKey: UserDefaultsKeys.USER_ID.rawValue)
+                    sendCompleted(sink)
+                })
             
-        signal
-            |> observe(next: { json in
-                NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
-                NSUserDefaults.standardUserDefaults().setObject(json["token"].stringValue, forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
-                NSUserDefaults.standardUserDefaults().setInteger(json["id"].intValue, forKey: UserDefaultsKeys.USER_ID.rawValue)
-            })
-            
-        return signal
-            |> map { _ in return }
+            disposable.addDisposable {}
+        }
     }
     
-    func requestInvite() -> Signal<Void, NSError> {
+    func requestInvite() -> SignalProducer<Void, NSError> {
         let parameters = [ "email": self.inviteEmail.value ]
-        let signal = Api().post("users/request-invite", authorized: false, parameters: parameters)
+        let producer = Api().post("users/request-invite", authorized: false, parameters: parameters)
             
-        return signal
+        return producer
             |> map { _ in return }
     }
     

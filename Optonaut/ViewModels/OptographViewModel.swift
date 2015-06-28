@@ -39,13 +39,13 @@ class OptographViewModel {
         
         if likedBefore {
             Api().delete("optographs/\(id.value)/like", authorized: true)
-                |> observe(error: { _ in
+                |> start(error: { _ in
                     self.numberOfLikes.put(numberOfLikesBefore)
                     self.liked.put(likedBefore)
                 })
         } else {
             Api().post("optographs/\(id.value)/like", authorized: true, parameters: nil)
-                |> observe(error: { _ in
+                |> start(error: { _ in
                     self.numberOfLikes.put(numberOfLikesBefore)
                     self.liked.put(likedBefore)
                 })

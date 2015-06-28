@@ -11,17 +11,21 @@ import PureLayout_iOS
 import ReactiveCocoa
 import FontAwesome
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
     
     // subviews
     var logoView = UIImageView()
-    var loginEmailInputView = UITextField()
-    var loginPasswordInputView = UITextField()
-    var loginSubmitButtonView = UIButton()
-    var loginShowInviteButtonView = UILabel()
-    var inviteEmailInputView = UITextField()
-    var inviteSubmitButtonView = UIButton()
-    var inviteAbortButtonView = UILabel()
+    let formView = UIView()
+    let loginEmailInputView = UITextField()
+    let loginPasswordInputView = UITextField()
+    let loginSubmitButtonView = UIButton()
+    let loginShowInviteButtonView = UILabel()
+    let inviteEmailInputView = UITextField()
+    let inviteSubmitButtonView = UIButton()
+    let inviteAbortButtonView = UILabel()
+    
+    var formViewBottomConstraint: NSLayoutConstraint?
+    var didSetConstraints = false
     
     let viewModel = LoginViewModel()
     
@@ -34,23 +38,29 @@ class LoginViewController: UIViewController {
         logoView.contentMode = .ScaleAspectFit
         view.addSubview(logoView)
         
+        view.addSubview(formView)
+        
         loginEmailInputView.attributedPlaceholder = NSAttributedString(string:"Email", attributes:[NSForegroundColorAttributeName: UIColor.grayColor()])
         loginEmailInputView.borderStyle = .RoundedRect
         loginEmailInputView.autocorrectionType = .No
         loginEmailInputView.autocapitalizationType = .None
         loginEmailInputView.keyboardType = .EmailAddress
+        loginEmailInputView.returnKeyType = .Next
+        loginEmailInputView.delegate = self
         loginEmailInputView.rac_textColor <~ viewModel.loginEmailValid.producer |> map { $0 ? .blackColor() : .redColor() }
         loginEmailInputView.rac_hidden <~ viewModel.inviteFormVisible
         viewModel.loginEmail <~ loginEmailInputView.rac_text
-        view.addSubview(loginEmailInputView)
+        formView.addSubview(loginEmailInputView)
         
         loginPasswordInputView.attributedPlaceholder = NSAttributedString(string:"Password", attributes:[NSForegroundColorAttributeName: UIColor.grayColor()])
         loginPasswordInputView.borderStyle = .RoundedRect
         loginPasswordInputView.secureTextEntry = true
+        loginPasswordInputView.returnKeyType = .Go
+        loginPasswordInputView.delegate = self
         loginPasswordInputView.rac_textColor <~ viewModel.loginPasswordValid.producer |> map { $0 ? .blackColor() : .redColor() }
         loginPasswordInputView.rac_hidden <~ viewModel.inviteFormVisible
         viewModel.loginPassword <~ loginPasswordInputView.rac_text
-        view.addSubview(loginPasswordInputView)
+        formView.addSubview(loginPasswordInputView)
         
         loginSubmitButtonView.backgroundColor = .whiteColor()
         loginSubmitButtonView.setTitle("Login", forState: .Normal)
@@ -62,7 +72,7 @@ class LoginViewController: UIViewController {
         loginSubmitButtonView.rac_userInteractionEnabled <~ viewModel.loginAllowed
         loginSubmitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.login()
-                |> observe(
+                |> start(
                     error: { _ in 
                         let alert = UIAlertController(title: "Login failed", message: "The entered user data was wrong. Come on...", preferredStyle: .Alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
@@ -73,7 +83,7 @@ class LoginViewController: UIViewController {
                 })
             return RACSignal.empty()
         })
-        view.addSubview(loginSubmitButtonView)
+        formView.addSubview(loginSubmitButtonView)
         
         loginShowInviteButtonView.textAlignment = .Center
         loginShowInviteButtonView.textColor = .whiteColor()
@@ -99,7 +109,7 @@ class LoginViewController: UIViewController {
         inviteEmailInputView.rac_textColor <~ viewModel.inviteEmailValid.producer |> map { $0 ? .blackColor() : .redColor() }
         inviteEmailInputView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
         viewModel.inviteEmail <~ inviteEmailInputView.rac_text
-        view.addSubview(inviteEmailInputView)
+        formView.addSubview(inviteEmailInputView)
         
         inviteSubmitButtonView.backgroundColor = .whiteColor()
         inviteSubmitButtonView.setTitle("Request Invite", forState: .Normal)
@@ -112,7 +122,7 @@ class LoginViewController: UIViewController {
         inviteSubmitButtonView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
         inviteSubmitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.requestInvite()
-                |> observe(
+                |> start(
                     error: { _ in
                         println("Invite request went wrong...")
                     },
@@ -126,47 +136,69 @@ class LoginViewController: UIViewController {
                 })
             return RACSignal.empty()
         })
-        view.addSubview(inviteSubmitButtonView)
+        formView.addSubview(inviteSubmitButtonView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
         view.setNeedsUpdateConstraints()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
     override func updateViewConstraints() {
-        logoView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.3)
-        logoView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withMultiplier: 0.3)
-        logoView.autoAlignAxisToSuperviewAxis(.Vertical)
-        logoView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 80)
-        
-        loginEmailInputView.autoSetDimension(.Height, toSize: 60)
-        loginEmailInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: logoView, withOffset: 60)
-        loginEmailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
-        loginEmailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-        
-        loginPasswordInputView.autoSetDimension(.Height, toSize: 60)
-        loginPasswordInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: loginEmailInputView, withOffset: 5)
-        loginPasswordInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
-        loginPasswordInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-        
-        loginSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
-        loginSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: loginPasswordInputView, withOffset: 5)
-        loginSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-        
-        loginShowInviteButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -20)
-        loginShowInviteButtonView.autoAlignAxisToSuperviewAxis(.Vertical)
-        
-        inviteEmailInputView.autoSetDimension(.Height, toSize: 60)
-        inviteEmailInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: logoView, withOffset: 60)
-        inviteEmailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
-        inviteEmailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-        
-        inviteSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
-        inviteSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: inviteEmailInputView, withOffset: 5)
-        inviteSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
-        
-        inviteAbortButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 30)
-        inviteAbortButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -30)
+        if !didSetConstraints {
+            logoView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.2)
+            logoView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withMultiplier: 0.2)
+            logoView.autoAlignAxisToSuperviewAxis(.Vertical)
+            logoView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -40)
+            
+            formViewBottomConstraint = formView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -view.bounds.height / 2 + 190 / 2)
+            formView.autoPinEdge(.Left, toEdge: .Left, ofView: view)
+            formView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
+            formView.autoSetDimension(.Height, toSize: 190)
+    //        formView.autoAlignAxis(ALAxis.Horizontal, toSameAxisOfView: view)
+            
+            loginEmailInputView.autoSetDimension(.Height, toSize: 60)
+            loginEmailInputView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
+            loginEmailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView, withOffset: 20)
+            loginEmailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
+            
+            loginPasswordInputView.autoSetDimension(.Height, toSize: 60)
+            loginPasswordInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: loginEmailInputView, withOffset: 5)
+            loginPasswordInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView, withOffset: 20)
+            loginPasswordInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
+            
+            loginSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
+            loginSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: loginPasswordInputView, withOffset: 5)
+            loginSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
+            
+            loginShowInviteButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -20)
+            loginShowInviteButtonView.autoAlignAxisToSuperviewAxis(.Vertical)
+            
+            inviteEmailInputView.autoSetDimension(.Height, toSize: 60)
+            inviteEmailInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: logoView, withOffset: 60)
+            inviteEmailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView, withOffset: 20)
+            inviteEmailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
+            
+            inviteSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
+            inviteSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: inviteEmailInputView, withOffset: 5)
+            inviteSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
+            
+            inviteAbortButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 30)
+            inviteAbortButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -30)
+            
+            didSetConstraints = true
+        }
         
         super.updateViewConstraints()
     }
@@ -180,12 +212,52 @@ class LoginViewController: UIViewController {
         return .LightContent
     }
     
+    func keyboardWillShowNotification(notification: NSNotification) {
+        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: true)
+    }
+    
+    func keyboardWillHideNotification(notification: NSNotification) {
+        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: false)
+    }
+    
+    func updateBottomLayoutConstraintWithNotification(notification: NSNotification, keyboardVisible: Bool) {
+        let userInfo = notification.userInfo!
+        
+        let animationDuration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
+        let keyboardEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let convertedKeyboardEndFrame = view.convertRect(keyboardEndFrame, fromView: view.window)
+        let rawAnimationCurve = (notification.userInfo![UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).unsignedIntValue << 16
+        let animationCurve = UIViewAnimationOptions.init(UInt(rawAnimationCurve))
+        let keyboardHeight = CGRectGetMaxY(view.bounds) - CGRectGetMinY(convertedKeyboardEndFrame)
+        let bottomOffset = keyboardVisible ? -keyboardHeight - 20 : -view.bounds.height / 2 + 190 / 2
+        
+        formViewBottomConstraint?.constant = bottomOffset
+        
+        UIView.animateWithDuration(animationDuration, delay: 0.0, options: .BeginFromCurrentState | animationCurve, animations: {
+            self.logoView.alpha = keyboardVisible ? 0 : 1
+            self.view.layoutIfNeeded()
+            }, completion: nil)
+    }
+    
     func dismissKeyboard() {
         view.endEditing(true)
     }
     
     func toggleRequest() {
         viewModel.inviteFormVisible.put(!viewModel.inviteFormVisible.value)
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        if textField == loginEmailInputView {
+            loginPasswordInputView.becomeFirstResponder()
+        }
+        
+        if textField == loginPasswordInputView {
+            view.endEditing(true)
+            loginSubmitButtonView.sendActionsForControlEvents(.TouchUpInside)
+        }
+        
+        return true
     }
     
 }

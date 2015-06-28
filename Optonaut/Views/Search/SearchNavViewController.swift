@@ -6,14 +6,17 @@
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
+import Foundation
+
 import UIKit
 import FontAwesome
+import ReactiveCocoa
 
-class FeedNavViewController: UINavigationController {
+class SearchNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, FontAwesome.List)
+        styleTabBarItem(tabBarItem, FontAwesome.Search)
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -28,26 +31,19 @@ class FeedNavViewController: UINavigationController {
         navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         navigationBar.tintColor = .whiteColor()
         
-        let optographTableViewController = OptographTableViewController(source: "optographs", navController: self)
-        optographTableViewController.navigationItem.title = "Feed"
-        
-        let attributes = [NSFontAttributeName: UIFont.fontAwesomeOfSize(20)] as Dictionary!
-        let cameraButton = UIBarButtonItem()
-        cameraButton.setTitleTextAttributes(attributes, forState: .Normal)
-        cameraButton.title = String.fontAwesomeIconWithName(.Camera)
-        cameraButton.target = self
-        cameraButton.action = "showCamera"
-        optographTableViewController.navigationItem.setRightBarButtonItem(cameraButton, animated: false)
+        let optographTableViewController = SearchTableViewController(navController: self)
         
         pushViewController(optographTableViewController, animated: false)
-    }
-    
-    func showCamera() {
-        pushViewController(CameraViewController(), animated: false)
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return .LightContent
+    }
+    
+    func dismissKeyboard() {
+        view.endEditing(true)
     }
     
 }

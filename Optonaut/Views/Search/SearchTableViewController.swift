@@ -11,54 +11,47 @@ import PureLayout_iOS
 import RealmSwift
 import Alamofire
 import SwiftyJSON
-import Refresher
 
-class OptographTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+class SearchTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+    
     var items = [Optograph]()
     let tableView = UITableView()
+    let searchBar = UISearchBar()
     var navController: UINavigationController?
     
-    var viewModel: OptographsViewModel
+    let viewModel = SearchViewModel()
     
-    required init(source: String, navController: UINavigationController?) {
-        viewModel = OptographsViewModel(source: source)
+    required init(navController: UINavigationController?) {
         super.init(nibName: nil, bundle: nil)
         self.navController = navController
     }
     
     required init(coder aDecoder: NSCoder) {
-        viewModel = OptographsViewModel(source: "")
         super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.title = "Search"
+        
+        searchBar.delegate = self
+        searchBar.placeholder = "What are you looking for?"
+        
+        view.addSubview(searchBar)
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .None
         
-        
         tableView.registerClass(OptographTableViewCell.self, forCellReuseIdentifier: "cell")
-        
-        tableView.addPullToRefreshWithAction {
-            NSOperationQueue().addOperationWithBlock {
-                self.viewModel.resultsLoading.put(true)
-            }
-        }
         
         viewModel.results.producer.start(
             next: { results in
                 self.items = results
                 self.tableView.reloadData()
-                self.tableView.stopPullToRefresh()
-            },
-            error: { _ in
-                self.tableView.stopPullToRefresh()
-        })
-        
-        viewModel.resultsLoading.put(true)
+            }
+        )
         
         view.addSubview(tableView)
         
@@ -66,7 +59,12 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
     }
     
     override func updateViewConstraints() {
-        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
+        searchBar.autoPinEdge(.Top, toEdge: .Top, ofView: view)
+        searchBar.autoPinEdge(.Left, toEdge: .Left, ofView: view)
+        searchBar.autoPinEdge(.Right, toEdge: .Right, ofView: view)
+        searchBar.autoSetDimension(.Height, toSize: 44)
+        
+        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsets(top: 44, left: 0, bottom: 0, right: 0))
         
         super.updateViewConstraints()
     }
@@ -95,6 +93,15 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
         // Dispose of any resources that can be recreated.
     }
     
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        viewModel.searchText.put(searchText)
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        view.endEditing(true)
+    }
+    
 }
+
 
 

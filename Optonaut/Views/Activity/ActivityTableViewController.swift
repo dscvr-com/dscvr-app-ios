@@ -13,34 +13,22 @@ import Alamofire
 import SwiftyJSON
 import Refresher
 
-class OptographTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
-    var items = [Optograph]()
+class ActivityTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    var items = [Activity]()
     let tableView = UITableView()
-    var navController: UINavigationController?
     
-    var viewModel: OptographsViewModel
-    
-    required init(source: String, navController: UINavigationController?) {
-        viewModel = OptographsViewModel(source: source)
-        super.init(nibName: nil, bundle: nil)
-        self.navController = navController
-    }
-    
-    required init(coder aDecoder: NSCoder) {
-        viewModel = OptographsViewModel(source: "")
-        super.init(coder: aDecoder)
-    }
+    var viewModel = ActivitiesViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.title = "Notifications"
+        
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.separatorStyle = .None
         
-        
-        tableView.registerClass(OptographTableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         tableView.addPullToRefreshWithAction {
             NSOperationQueue().addOperationWithBlock {
@@ -75,17 +63,17 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
         return items.count
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let textString = (items[indexPath.row].text + items[indexPath.row].user!.userName) as NSString
-        let textBounds = textString.sizeWithAttributes([NSFontAttributeName: UIFont.systemFontOfSize(17)])
-        let numberOfLines = ceil(textBounds.width / (view.frame.width - 30))
-        return view.frame.width + 70 + numberOfLines * 28
-    }
-    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! OptographTableViewCell
-        cell.navController = navController
-        cell.bindViewModel(items[indexPath.row])
+        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! UITableViewCell
+        
+        let activity = items[indexPath.row]
+        var text = ""
+        switch activity.activityType {
+        case .Like: text = "\(activity.creator?.userName) likes your Optograph with ID \(activity.optograph?.id) (\(durationSince(activity.createdAt)))"
+        case .Follow: text = "\(activity.creator?.userName) follows you now (\(durationSince(activity.createdAt)))"
+        default: ()
+        }
+        cell.textLabel?.text = text
         
         return cell
     }
@@ -96,5 +84,6 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
     }
     
 }
+
 
 

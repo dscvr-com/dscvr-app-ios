@@ -15,6 +15,7 @@ import WebImage
 
 class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
     
+    var navController: UINavigationController?
     var viewModel: OptographViewModel!
     
     // subviews
@@ -107,10 +108,8 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
     }
     
     func showDetails() {
-        let tableView = superview?.superview as! UITableView
-        let tableViewController = tableView.dataSource as! OptographTableViewController
         let detailsViewController = DetailsViewController(viewModel: viewModel)
-        tableViewController.navController?.pushViewController(detailsViewController, animated: true)
+        navController?.pushViewController(detailsViewController, animated: true)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

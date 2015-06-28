@@ -23,7 +23,7 @@ class ProfileViewModel {
         self.id.put(id)
     
         Api().get("users/\(self.id.value)", authorized: true)
-            |> observe(
+            |> start(
                 next: { json in
                     self.email.put(json["email"].stringValue)
                     self.userName.put(json["user_name"].stringValue)

@@ -15,13 +15,13 @@ class TabBarViewController: UITabBarController {
         super.viewDidLoad()
         
         let feedVC = FeedNavViewController()
-        let searchVC = SearchViewController()
-        let activityVC = ActivityViewController()
+        let searchVC = SearchNavViewController()
+        let activityVC = ActivityNavViewController()
         let profileVC = ProfileNavViewController()
         
         viewControllers = [feedVC, searchVC, activityVC, profileVC]
         
-        selectedIndex = 3
+//        selectedIndex = 1
         
         tabBar.barTintColor = baseColor()
         tabBar.translucent = false
