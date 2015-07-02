@@ -47,6 +47,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         loginEmailInputView.keyboardType = .EmailAddress
         loginEmailInputView.returnKeyType = .Next
         loginEmailInputView.delegate = self
+        loginEmailInputView.rac_alpha <~ viewModel.pending.producer |> map { $0 ? CGFloat(0.5) : CGFloat(1) }
         loginEmailInputView.rac_textColor <~ viewModel.loginEmailValid.producer |> map { $0 ? .blackColor() : .redColor() }
         loginEmailInputView.rac_hidden <~ viewModel.inviteFormVisible
         viewModel.loginEmail <~ loginEmailInputView.rac_text
@@ -57,6 +58,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         loginPasswordInputView.secureTextEntry = true
         loginPasswordInputView.returnKeyType = .Go
         loginPasswordInputView.delegate = self
+        loginPasswordInputView.rac_alpha <~ viewModel.pending.producer |> map { $0 ? CGFloat(0.5) : CGFloat(1) }
         loginPasswordInputView.rac_textColor <~ viewModel.loginPasswordValid.producer |> map { $0 ? .blackColor() : .redColor() }
         loginPasswordInputView.rac_hidden <~ viewModel.inviteFormVisible
         viewModel.loginPassword <~ loginPasswordInputView.rac_text

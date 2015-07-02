@@ -16,6 +16,7 @@ class User: Object {
     dynamic var numberOfFollowers = 0
     dynamic var numberOfFollowings = 0
     dynamic var numberOfOptographs = 0
+    dynamic var isFollowing = false
     
     let optographs = List<Optograph>()
     

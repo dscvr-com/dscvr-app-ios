@@ -16,7 +16,7 @@ class ActivitiesViewModel {
     let resultsLoading = MutableProperty<Bool>(false)
     
     init() {
-        let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSON, NSError> = flatMap(.Latest) { _ in Api().get("activities", authorized: true) }
+        let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSON, NSError> = flatMap(.Latest) { _ in Api.get("activities", authorized: true) }
         
         resultsLoading.producer
             |> mapError { _ in NSError() }

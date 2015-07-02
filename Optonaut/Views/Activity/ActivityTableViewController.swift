@@ -69,8 +69,8 @@ class ActivityTableViewController: UIViewController, UITableViewDelegate, UITabl
         let activity = items[indexPath.row]
         var text = ""
         switch activity.activityType {
-        case .Like: text = "\(activity.creator?.userName) likes your Optograph with ID \(activity.optograph?.id) (\(durationSince(activity.createdAt)))"
-        case .Follow: text = "\(activity.creator?.userName) follows you now (\(durationSince(activity.createdAt)))"
+        case .Like: text = "\(activity.creator!.userName) likes your Optograph with ID \(activity.optograph!.id) (\(durationSince(activity.createdAt)))"
+        case .Follow: text = "\(activity.creator!.userName) follows you now (\(durationSince(activity.createdAt)))"
         default: ()
         }
         cell.textLabel?.text = text

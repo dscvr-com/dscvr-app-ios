@@ -31,9 +31,9 @@ class SearchNavViewController: UINavigationController {
         navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         navigationBar.tintColor = .whiteColor()
         
-        let optographTableViewController = SearchTableViewController(navController: self)
+        let searchViewController = SearchTableViewController(initialKeyword: "", navController: self)
         
-        pushViewController(optographTableViewController, animated: false)
+        pushViewController(searchViewController, animated: false)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
     }

@@ -18,23 +18,44 @@ class ProfileViewModel {
     let numberOfFollowers = MutableProperty<Int>(0)
     let numberOfFollowings = MutableProperty<Int>(0)
     let numberOfOptographs = MutableProperty<Int>(0)
+    let isFollowing = MutableProperty<Bool>(false)
     
     init(id: Int) {
         self.id.put(id)
     
-        Api().get("users/\(self.id.value)", authorized: true)
+        Api.get("users/\(self.id.value)", authorized: true)
             |> start(
                 next: { json in
-                    self.email.put(json["email"].stringValue)
-                    self.userName.put(json["user_name"].stringValue)
-                    self.numberOfFollowers.put(json["number_of_followers"].intValue)
-                    self.numberOfFollowings.put(json["number_of_followings"].intValue)
-                    self.numberOfOptographs.put(json["number_of_optographs"].intValue)
+                    let user = mapProfileUserFromJson(json)
+                    self.email.put(user.email)
+                    self.userName.put(user.userName)
+                    self.numberOfFollowers.put(user.numberOfFollowers)
+                    self.numberOfFollowings.put(user.numberOfFollowings)
+                    self.numberOfOptographs.put(user.numberOfOptographs)
+                    self.isFollowing.put(user.isFollowing)
                 },
                 error: { error in
                     println(error)
                 }
         )
+    }
+    
+    func toggleFollow() {
+        let followedBefore = isFollowing.value
+        
+        isFollowing.put(!followedBefore)
+        
+        if followedBefore {
+            Api.delete("users/\(id.value)/follow", authorized: true)
+                |> start(error: { _ in
+                    self.isFollowing.put(followedBefore)
+                })
+        } else {
+            Api.post("users/\(id.value)/follow", authorized: true, parameters: nil)
+                |> start(error: { _ in
+                    self.isFollowing.put(followedBefore)
+                })
+        }
     }
     
 }

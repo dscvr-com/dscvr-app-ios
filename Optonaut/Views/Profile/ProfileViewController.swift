@@ -16,7 +16,8 @@ class ProfileViewController: UIViewController {
     // subviews
     let numberOfFollowersView = UILabel()
     let numberOfFollowingsView = UILabel()
-    let numberOfOptographsView = UILabel()
+//    let numberOfOptographsView = UILabel()
+    let followButtonView = UIButton()
     var optographsView: UIView!
     
     required init(userId: Int) {
@@ -32,61 +33,63 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let attributes = [NSFontAttributeName: UIFont.fontAwesomeOfSize(20)] as Dictionary!
-        let signoutButton = UIBarButtonItem()
-        signoutButton.setTitleTextAttributes(attributes, forState: .Normal)
-        signoutButton.title = String.fontAwesomeIconWithName(.SignOut)
-        signoutButton.target = self
-        signoutButton.action = "logout"
-        navigationItem.setRightBarButtonItem(signoutButton, animated: false)
+        view.backgroundColor = .whiteColor()
+        
         navigationItem.rac_title <~ viewModel.userName.producer |> map { "@\($0)" }
         
         let optographTableViewController = OptographTableViewController(source: "users/\(viewModel.id.value)/optographs", navController: navigationController)
         optographsView = optographTableViewController.view
         view.addSubview(optographsView)
         
+        followButtonView.backgroundColor = baseColor()
+        followButtonView.layer.cornerRadius = 5
+        followButtonView.layer.masksToBounds = true
+        viewModel.isFollowing.producer |>
+            start(next: { isFollowing in
+                let title = isFollowing ? "Unfollow" : "Follow"
+                self.followButtonView.setTitle(title, forState: .Normal)
+            })
+        followButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.viewModel.toggleFollow()
+            return RACSignal.empty()
+        })
+        view.addSubview(followButtonView)
+        
+        numberOfFollowersView.font = .systemFontOfSize(14)
         numberOfFollowersView.rac_text <~ viewModel.numberOfFollowers.producer |> map { "Follower: \($0)" }
         view.addSubview(numberOfFollowersView)
         
+        numberOfFollowingsView.font = .systemFontOfSize(14)
         numberOfFollowingsView.rac_text <~ viewModel.numberOfFollowings.producer |> map { "Following: \($0)" }
         view.addSubview(numberOfFollowingsView)
         
-        numberOfOptographsView.rac_text <~ viewModel.numberOfOptographs.producer |> map { "Optographs: \($0)" }
-        view.addSubview(numberOfOptographsView)
+//        numberOfOptographsView.font = .systemFontOfSize(14)
+//        numberOfOptographsView.rac_text <~ viewModel.numberOfOptographs.producer |> map { "Optographs: \($0)" }
+//        view.addSubview(numberOfOptographsView)
         
         view.setNeedsUpdateConstraints()
     }
     
     override func updateViewConstraints() {
-        numberOfFollowersView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
-        numberOfFollowersView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
+        followButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 10)
+        followButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 10)
+        followButtonView.autoSetDimension(.Width, toSize: 150)
         
-        numberOfFollowingsView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
-        numberOfFollowingsView.autoPinEdge(.Right, toEdge: .Left, ofView: numberOfFollowersView, withOffset: -20)
+        numberOfFollowersView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 10)
+        numberOfFollowersView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -10)
         
-        numberOfOptographsView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
-        numberOfOptographsView.autoPinEdge(.Right, toEdge: .Left, ofView: numberOfFollowingsView, withOffset: -20)
+        numberOfFollowingsView.autoPinEdge(.Top, toEdge: .Bottom, ofView: numberOfFollowersView, withOffset: 1)
+        numberOfFollowingsView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -10)
         
-        optographsView.autoPinEdge(.Top, toEdge: .Bottom, ofView: numberOfOptographsView, withOffset: 20)
+//        numberOfOptographsView.autoPinEdge(.Top, toEdge: .Bottom, ofView: numberOfFollowingsView, withOffset: 5)
+//        numberOfOptographsView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -10)
+        
+        optographsView.autoPinEdge(.Top, toEdge: .Bottom, ofView: numberOfFollowingsView, withOffset: 10)
         optographsView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view)
         optographsView.autoPinEdge(.Left, toEdge: .Left, ofView: view)
         optographsView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
         
         super.updateViewConstraints()
-    }
-    
-    func logout() {
-        let refreshAlert = UIAlertController(title: "You're about to log out...", message: "Really? Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
-        
-        refreshAlert.addAction(UIAlertAction(title: "Sign out", style: .Default, handler: { (action: UIAlertAction!) in
-            NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
-            NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
-            self.presentViewController(LoginViewController(), animated: false, completion: nil)
-        }))
-        
-        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { _ in return }))
-        
-        presentViewController(refreshAlert, animated: true, completion: nil)
     }
     
 }

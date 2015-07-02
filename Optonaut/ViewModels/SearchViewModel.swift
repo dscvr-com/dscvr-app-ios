@@ -16,7 +16,10 @@ class SearchViewModel {
     let searchText = MutableProperty<String>("")
     
     init() {
-        let keywordToJson: SignalProducer<String, NSError>  -> SignalProducer<JSON, NSError> = flatMap(.Latest) { keyword in Api().get("optographs/search?keyword=\(keyword)", authorized: true) }
+        let keywordToJson: SignalProducer<String, NSError>  -> SignalProducer<JSON, NSError> = flatMap(.Latest) { keyword in
+            let escapedKeyword = keyword.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
+            return Api.get("optographs/search?keyword=\(escapedKeyword!)", authorized: true)
+        }
         
         searchText.producer
             |> mapError { _ in NSError() }

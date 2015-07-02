@@ -46,7 +46,7 @@ class CameraViewController: UIViewController {
                     "longitude": 34,
                 ]
             ]
-            Api().post("optographs", authorized: true, parameters: parameters as? [String : AnyObject])
+            Api.post("optographs", authorized: true, parameters: parameters as? [String : AnyObject]).start()
         }))
         
         self.presentViewController(alert, animated: true, completion: nil)

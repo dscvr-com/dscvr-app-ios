@@ -11,6 +11,7 @@ import TTTAttributedLabel
 import FontAwesome
 import ReactiveCocoa
 import WebImage
+import CoreMotion
 
 class DetailsViewController: UIViewController {
     
@@ -22,6 +23,8 @@ class DetailsViewController: UIViewController {
     let numberOfLikesView = UILabel()
     let dateView = UILabel()
     let textView = TTTAttributedLabel(forAutoLayout: ())
+    
+    let motionManager = CMMotionManager()
     
     required init(viewModel: OptographViewModel) {
         self.viewModel = viewModel
@@ -43,6 +46,8 @@ class DetailsViewController: UIViewController {
         if let imageUrl = NSURL(string: viewModel.imageUrl.value) {
             previewImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "placeholder"))
         }
+//        previewImageView.userInteractionEnabled = true
+//        previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushViewer"))
         view.addSubview(previewImageView)
         
         likeButtonView.titleLabel?.font = UIFont.fontAwesomeOfSize(20)
@@ -80,7 +85,27 @@ class DetailsViewController: UIViewController {
         }
         view.addSubview(textView)
         
+        motionManager.accelerometerUpdateInterval = 0.3
+        
         view.setNeedsUpdateConstraints()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue(), withHandler: { accelerometerData, error in
+            if accelerometerData.acceleration.x >= 0.75 {
+                self.motionManager.stopAccelerometerUpdates()
+                self.navigationController?.pushViewController(SphereViewController(), animated: false)
+            } else if accelerometerData.acceleration.x <= -0.75 {
+                self.motionManager.stopAccelerometerUpdates()
+                self.navigationController?.pushViewController(SphereViewController(), animated: false)
+            }
+        })
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.motionManager.stopAccelerometerUpdates()
     }
     
     override func updateViewConstraints() {
@@ -102,6 +127,10 @@ class DetailsViewController: UIViewController {
         textView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -15)
         
         super.updateViewConstraints()
+    }
+    
+    func pushViewer() {
+        navigationController?.pushViewController(SphereViewController(), animated: true)
     }
     
 }

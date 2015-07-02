@@ -21,9 +21,10 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     
     let viewModel = SearchViewModel()
     
-    required init(navController: UINavigationController?) {
+    required init(initialKeyword: String, navController: UINavigationController?) {
         super.init(nibName: nil, bundle: nil)
         self.navController = navController
+        searchBar.text = initialKeyword
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -53,9 +54,18 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
             }
         )
         
+        viewModel.searchText.put(searchBar.text)
+        
         view.addSubview(tableView)
         
         view.setNeedsUpdateConstraints()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // TODO: focus doesn't work on first load
+        searchBar.becomeFirstResponder()
     }
     
     override func updateViewConstraints() {

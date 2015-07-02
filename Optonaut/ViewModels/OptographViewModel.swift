@@ -18,6 +18,7 @@ class OptographViewModel {
     let timeSinceCreated = MutableProperty<String>("")
     let imageUrl = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
+    let userId = MutableProperty<Int>(0)
     let text = MutableProperty<String>("")
     
     init(optograph: Optograph) {
@@ -27,7 +28,8 @@ class OptographViewModel {
         timeSinceCreated.put(durationSince(optograph.createdAt))
         imageUrl.put("http://beem-parts.s3.amazonaws.com/thumbs/little_world_\(optograph.id % 10).jpg")
         userName.put("\(optograph.user!.userName)")
-        text.put("\(optograph.text)")
+        userId.put(optograph.user!.id)
+        text.put("@\(optograph.user!.userName) \(optograph.text)")
     }
     
     func toggleLike() {
@@ -38,13 +40,13 @@ class OptographViewModel {
         liked.put(!likedBefore)
         
         if likedBefore {
-            Api().delete("optographs/\(id.value)/like", authorized: true)
+            Api.delete("optographs/\(id.value)/like", authorized: true)
                 |> start(error: { _ in
                     self.numberOfLikes.put(numberOfLikesBefore)
                     self.liked.put(likedBefore)
                 })
         } else {
-            Api().post("optographs/\(id.value)/like", authorized: true, parameters: nil)
+            Api.post("optographs/\(id.value)/like", authorized: true, parameters: nil)
                 |> start(error: { _ in
                     self.numberOfLikes.put(numberOfLikesBefore)
                     self.liked.put(likedBefore)

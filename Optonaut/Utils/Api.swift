@@ -12,22 +12,22 @@ import SwiftyJSON
 import ReactiveCocoa
 
 class Api {
-    let host = "192.168.173.104"
-    let port = 3000
+    static let host = "beta.api.optonaut.com"
+    static let port = 80
     
-    func get(endpoint: String, authorized: Bool) -> SignalProducer<JSON, NSError> {
+    static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSON, NSError> {
         return request(endpoint, method: "GET", authorized: authorized, parameters: nil)
     }
     
-    func post(endpoint: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSON, NSError> {
+    static func post(endpoint: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSON, NSError> {
         return request(endpoint, method: "POST", authorized: authorized, parameters: parameters)
     }
     
-    func delete(endpoint: String, authorized: Bool) -> SignalProducer<JSON, NSError> {
+    static func delete(endpoint: String, authorized: Bool) -> SignalProducer<JSON, NSError> {
         return request(endpoint, method: "DELETE", authorized: authorized, parameters: nil)
     }
     
-    private func request(endpoint: String, method: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSON, NSError> {
+    private static func request(endpoint: String, method: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSON, NSError> {
         return SignalProducer { sink, disposable in
             let URL = NSURL(string: "http://\(self.host):\(self.port)/\(endpoint)")!
             let mutableURLRequest = NSMutableURLRequest(URL: URL)

@@ -8,12 +8,11 @@
 
 import Foundation
 import UIKit
-import TTTAttributedLabel
 import FontAwesome
 import ReactiveCocoa
 import WebImage
 
-class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
+class OptographTableViewCell: UITableViewCell {
     
     var navController: UINavigationController?
     var viewModel: OptographViewModel!
@@ -23,7 +22,8 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
     let likeButtonView = UIButton()
     let numberOfLikesView = UILabel()
     let dateView = UILabel()
-    let textView = TTTAttributedLabel(forAutoLayout: ())
+    let shareButtonView = UIButton()
+    let textView = KILabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -36,15 +36,24 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
         likeButtonView.setTitle(String.fontAwesomeIconWithName(FontAwesome.Heart), forState: .Normal)
         contentView.addSubview(likeButtonView)
         
+        let gray = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        
         numberOfLikesView.font = UIFont.boldSystemFontOfSize(16)
-        numberOfLikesView.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        numberOfLikesView.textColor = gray
         contentView.addSubview(numberOfLikesView)
         
         dateView.font = UIFont.systemFontOfSize(16)
-        dateView.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        dateView.textColor = gray
         contentView.addSubview(dateView)
         
+        shareButtonView.titleLabel?.font = UIFont.fontAwesomeOfSize(20)
+        shareButtonView.setTitle(String.fontAwesomeIconWithName(FontAwesome.ShareAlt), forState: .Normal)
+        shareButtonView.setTitleColor(gray, forState: .Normal)
+        contentView.addSubview(shareButtonView)
+        
         textView.numberOfLines = 0
+        textView.tintColor = baseColor()
+        textView.userInteractionEnabled = true
         contentView.addSubview(textView)
         
         contentView.setNeedsUpdateConstraints()
@@ -63,6 +72,9 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
         
         dateView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
         dateView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15)
+        
+        shareButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 10)
+        shareButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: dateView, withOffset: -5)
         
         textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 46)
         textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 15)
@@ -93,17 +105,14 @@ class OptographTableViewCell: UITableViewCell, TTTAttributedLabelDelegate {
             |> map { $0 ? baseColor() : .grayColor() }
             |> start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
         
-        let description = "\(viewModel.userName.value) \(viewModel.text.value)"
-        textView.numberOfLines = 0
-        textView.setText(description) { (text: NSMutableAttributedString!) -> NSMutableAttributedString! in
-            let range = NSMakeRange(0, count(self.viewModel.userName.value))
-            let boldFont = UIFont.boldSystemFontOfSize(17)
-            let font = CTFontCreateWithName(boldFont.fontName, boldFont.pointSize, nil)
-            
-            text.addAttribute(NSFontAttributeName, value: font, range: range)
-            text.addAttribute(kCTForegroundColorAttributeName as String, value: baseColor(), range: range)
-            
-            return text
+        textView.rac_text <~ viewModel.text
+        textView.userHandleLinkTapHandler = { label, handle, range in
+            let profileViewController = ProfileViewController(userId: self.viewModel.userId.value)
+            self.navController?.pushViewController(profileViewController, animated: true)
+        }
+        textView.hashtagLinkTapHandler = { label, hashtag, range in
+            let searchViewController = SearchTableViewController(initialKeyword: hashtag, navController: self.navController)
+            self.navController?.pushViewController(searchViewController, animated: true)
         }
     }
     

@@ -19,6 +19,7 @@ class LoginViewModel {
     let inviteEmail = MutableProperty<String>("")
     let inviteEmailValid = MutableProperty<Bool>(false)
     let inviteFormVisible = MutableProperty<Bool>(false)
+    let pending = MutableProperty<Bool>(false)
     
     init() {
         
@@ -44,17 +45,25 @@ class LoginViewModel {
     }
     
     func login() -> SignalProducer<Void, NSError> {
-        let parameters = [ "email": self.loginEmail.value, "password": self.loginPassword.value ]
-        let apiProducer = Api().post("users/login", authorized: false, parameters: parameters)
-        
         return SignalProducer { sink, disposable in
-            apiProducer
-                |> start(next: { json in
-                    NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
-                    NSUserDefaults.standardUserDefaults().setObject(json["token"].stringValue, forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
-                    NSUserDefaults.standardUserDefaults().setInteger(json["id"].intValue, forKey: UserDefaultsKeys.USER_ID.rawValue)
-                    sendCompleted(sink)
-                })
+            self.pending.put(true)
+            
+            let parameters = [ "email": self.loginEmail.value, "password": self.loginPassword.value ]
+            
+            Api.post("users/login", authorized: false, parameters: parameters)
+                |> start(
+                    next: { json in
+                        NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
+                        NSUserDefaults.standardUserDefaults().setObject(json["token"].stringValue, forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
+                        NSUserDefaults.standardUserDefaults().setInteger(json["id"].intValue, forKey: UserDefaultsKeys.USER_ID.rawValue)
+                        self.pending.put(false)
+                        sendCompleted(sink)
+                    },
+                    error: { error in
+                        self.pending.put(false)
+                        sendError(sink, error)
+                    }
+            )
             
             disposable.addDisposable {}
         }
@@ -62,7 +71,7 @@ class LoginViewModel {
     
     func requestInvite() -> SignalProducer<Void, NSError> {
         let parameters = [ "email": self.inviteEmail.value ]
-        let producer = Api().post("users/request-invite", authorized: false, parameters: parameters)
+        let producer = Api.post("users/request-invite", authorized: false, parameters: parameters)
             
         return producer
             |> map { _ in return }

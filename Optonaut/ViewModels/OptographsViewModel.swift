@@ -16,7 +16,7 @@ class OptographsViewModel {
     let resultsLoading = MutableProperty<Bool>(false)
     
     init(source: String) {
-        let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSON, NSError> = flatMap(.Latest) { _ in Api().get(source, authorized: true) }
+        let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSON, NSError> = flatMap(.Latest) { _ in Api.get(source, authorized: true) }
         
         resultsLoading.producer
             |> mapError { _ in NSError() }
