@@ -12,7 +12,7 @@ import RealmSwift
 import Alamofire
 import SwiftyJSON
 
-class SearchTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class SearchTableViewController: UIViewController {
     
     var items = [Optograph]()
     let tableView = UITableView()
@@ -79,29 +79,15 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         super.updateViewConstraints()
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
-    }
-    
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let textString = (items[indexPath.row].text + items[indexPath.row].user!.userName) as NSString
-        let textBounds = textString.sizeWithAttributes([NSFontAttributeName: UIFont.systemFontOfSize(17)])
-        let numberOfLines = ceil(textBounds.width / (view.frame.width - 30))
-        return view.frame.width + 70 + numberOfLines * 28
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! OptographTableViewCell
-        cell.navController = navController
-        cell.bindViewModel(items[indexPath.row])
-        
-        return cell
-    }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+}
+
+// MARK: - UISearchBarDelegate
+extension SearchTableViewController: UISearchBarDelegate {
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         viewModel.searchText.put(searchText)
@@ -114,4 +100,32 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
 }
 
 
+// MARK: - UITableViewDelegate
+extension SearchTableViewController: UITableViewDelegate {
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        let textString = (items[indexPath.row].text + items[indexPath.row].user!.userName) as NSString
+        let textBounds = textString.sizeWithAttributes([NSFontAttributeName: UIFont.systemFontOfSize(17)])
+        let numberOfLines = ceil(textBounds.width / (view.frame.width - 30))
+        return view.frame.width + 70 + numberOfLines * 28
+    }
+    
+}
+
+// MARK: - UITableViewDataSource
+extension SearchTableViewController: UITableViewDataSource {
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! OptographTableViewCell
+        cell.navController = navController
+        cell.bindViewModel(items[indexPath.row])
+        
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return items.count
+    }
+    
+}
 

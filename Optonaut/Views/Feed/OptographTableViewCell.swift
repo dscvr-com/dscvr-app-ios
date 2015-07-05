@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-import FontAwesome
 import ReactiveCocoa
 import WebImage
 
@@ -32,8 +31,8 @@ class OptographTableViewCell: UITableViewCell {
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showDetails"))
         contentView.addSubview(previewImageView)
         
-        likeButtonView.titleLabel?.font = UIFont.fontAwesomeOfSize(20)
-        likeButtonView.setTitle(String.fontAwesomeIconWithName(FontAwesome.Heart), forState: .Normal)
+        likeButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
+        likeButtonView.setTitle(String.icomoonWithName(.Heart), forState: .Normal)
         contentView.addSubview(likeButtonView)
         
         let gray = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
@@ -46,8 +45,8 @@ class OptographTableViewCell: UITableViewCell {
         dateView.textColor = gray
         contentView.addSubview(dateView)
         
-        shareButtonView.titleLabel?.font = UIFont.fontAwesomeOfSize(20)
-        shareButtonView.setTitle(String.fontAwesomeIconWithName(FontAwesome.ShareAlt), forState: .Normal)
+        shareButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
+        shareButtonView.setTitle(String.icomoonWithName(.Cross), forState: .Normal)
         shareButtonView.setTitleColor(gray, forState: .Normal)
         contentView.addSubview(shareButtonView)
         

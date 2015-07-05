@@ -28,17 +28,17 @@ class TabBarViewController: UITabBarController {
         
         let tabBarItemAppearance = UITabBarItem.appearance()
         let normalAttribues = [
-            NSFontAttributeName: UIFont.fontAwesomeOfSize(25),
+            NSFontAttributeName: UIFont.icomoonOfSize(22),
             NSForegroundColorAttributeName: UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)
         ]
         let selectedAttribues = [
-            NSFontAttributeName: UIFont.fontAwesomeOfSize(25),
+            NSFontAttributeName: UIFont.icomoonOfSize(22),
             NSForegroundColorAttributeName: UIColor.whiteColor()
         ]
         
         tabBarItemAppearance.setTitleTextAttributes(normalAttribues, forState: .Normal)
         tabBarItemAppearance.setTitleTextAttributes(selectedAttribues, forState: .Selected)
-        tabBarItemAppearance.setTitlePositionAdjustment(UIOffsetMake(0, -10))
+        tabBarItemAppearance.setTitlePositionAdjustment(UIOffsetMake(0, -12))
         
     }
     

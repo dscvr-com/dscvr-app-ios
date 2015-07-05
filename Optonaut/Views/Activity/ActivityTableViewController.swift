@@ -13,7 +13,7 @@ import Alamofire
 import SwiftyJSON
 import Refresher
 
-class ActivityTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ActivityTableViewController: UIViewController {
     
     var items = [Activity]()
     let tableView = UITableView()
@@ -59,9 +59,25 @@ class ActivityTableViewController: UIViewController, UITableViewDelegate, UITabl
         super.updateViewConstraints()
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
+    
+}
+
+
+// MARK: - UITableViewDelegate
+extension ActivityTableViewController: UITableViewDelegate {
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return 60
+    }
+    
+}
+
+// MARK: - UITableViewDataSource
+extension ActivityTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! UITableViewCell
@@ -78,12 +94,8 @@ class ActivityTableViewController: UIViewController, UITableViewDelegate, UITabl
         return cell
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return items.count
     }
     
 }
-
-
-

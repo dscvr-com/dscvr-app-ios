@@ -9,14 +9,13 @@
 import Foundation
 
 import UIKit
-import FontAwesome
 import ReactiveCocoa
 
 class SearchNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, FontAwesome.Search)
+        styleTabBarItem(tabBarItem, .Compass)
     }
     
     required init(coder aDecoder: NSCoder) {

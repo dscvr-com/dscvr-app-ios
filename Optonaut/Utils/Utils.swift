@@ -8,14 +8,13 @@
 
 import Foundation
 import UIKit
-import FontAwesome
 
 func baseColor() -> UIColor {
     return UIColor(red: 239.0 / 255, green: 72.0 / 255, blue: 54.0 / 255, alpha: 1)
 }
 
-func styleTabBarItem(tabBarItem: UITabBarItem, icon: FontAwesome) {
-    tabBarItem.title = String.fontAwesomeIconWithName(icon)
+func styleTabBarItem(tabBarItem: UITabBarItem, icon: Icomoon) {
+    tabBarItem.title = String.icomoonWithName(icon)
 }
 
 func durationSince(date: NSDate) -> String {

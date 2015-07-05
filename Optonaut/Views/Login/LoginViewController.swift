@@ -9,9 +9,8 @@
 import UIKit
 import PureLayout_iOS
 import ReactiveCocoa
-import FontAwesome
 
-class LoginViewController: UIViewController, UITextFieldDelegate {
+class LoginViewController: UIViewController {
     
     // subviews
     var logoView = UIImageView()
@@ -96,8 +95,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(loginShowInviteButtonView)
         
         inviteAbortButtonView.textColor = UIColor.whiteColor()
-        inviteAbortButtonView.font = UIFont.fontAwesomeOfSize(40)
-        inviteAbortButtonView.text = String.fontAwesomeIconWithName(FontAwesome.Times)
+        inviteAbortButtonView.font = UIFont.icomoonOfSize(40)
+        inviteAbortButtonView.text = String.icomoonWithName(Icomoon.Cross)
         inviteAbortButtonView.userInteractionEnabled = true
         inviteAbortButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleRequest"))
         inviteAbortButtonView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
@@ -249,6 +248,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         viewModel.inviteFormVisible.put(!viewModel.inviteFormVisible.value)
     }
     
+}
+
+// MARK: - UITextFieldDelegate
+extension LoginViewController: UITextFieldDelegate {
+    
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if textField == loginEmailInputView {
             loginPasswordInputView.becomeFirstResponder()
@@ -263,4 +267,3 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
 }
-

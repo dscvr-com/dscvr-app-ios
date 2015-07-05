@@ -13,7 +13,7 @@ import Alamofire
 import SwiftyJSON
 import Refresher
 
-class OptographTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class OptographTableViewController: UIViewController {
 
     var items = [Optograph]()
     let tableView = UITableView()
@@ -38,7 +38,6 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .None
-        
         
         tableView.registerClass(OptographTableViewCell.self, forCellReuseIdentifier: "cell")
         
@@ -71,9 +70,15 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
         super.updateViewConstraints()
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
+    
+}
+
+// MARK: - UITableViewDelegate
+extension OptographTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         let textString = (items[indexPath.row].text + items[indexPath.row].user!.userName) as NSString
@@ -81,6 +86,11 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
         let numberOfLines = ceil(textBounds.width / (view.frame.width - 30))
         return view.frame.width + 70 + numberOfLines * 28
     }
+    
+}
+
+// MARK: - UITableViewDataSource
+extension OptographTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! OptographTableViewCell
@@ -90,11 +100,8 @@ class OptographTableViewController: UIViewController, UITableViewDelegate, UITab
         return cell
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return items.count
     }
     
 }
-
-

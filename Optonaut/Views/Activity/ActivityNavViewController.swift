@@ -9,14 +9,13 @@
 import Foundation
 
 import UIKit
-import FontAwesome
 import ReactiveCocoa
 
 class ActivityNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, FontAwesome.Heartbeat)
+        styleTabBarItem(tabBarItem, .Bell)
     }
     
     required init(coder aDecoder: NSCoder) {

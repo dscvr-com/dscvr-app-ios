@@ -5,7 +5,7 @@ import SwiftyJSON
 import CoreMotion
 import CoreGraphics
 
-class SphereViewController: UIViewController, SCNSceneRendererDelegate {
+class SphereViewController: UIViewController  {
     
     let motionManager = CMMotionManager()
     let focalLength: Float = -1.0
@@ -151,18 +151,10 @@ class SphereViewController: UIViewController, SCNSceneRendererDelegate {
         return true
     }
     
-//    func prepareMatrix(var rMatrixValues: Array<Float>, offset: GLKMatrix4) -> SCNMatrix4 {
-//        let alignMatrix = GLKMatrix4MakeScale(1, -1, 1)
-//        let rMatrix = GLKMatrix4MakeWithArrayAndTranspose(&rMatrixValues)
-//        var glkMatrix = GLKMatrix4Identity
-//        glkMatrix = GLKMatrix4Multiply(glkMatrix, alignMatrix)
-//        glkMatrix = GLKMatrix4Multiply(glkMatrix, rMatrix)
-//        glkMatrix = GLKMatrix4Multiply(glkMatrix, alignMatrix)
-//        glkMatrix = GLKMatrix4Multiply(glkMatrix, offset)
-//        glkMatrix = GLKMatrix4Translate(glkMatrix, 0, 0, focalLength)
-//        
-//        return SCNMatrix4FromGLKMatrix4(glkMatrix)
-//    }
+}
+
+// MARK: - SCNSceneRendererDelegate
+extension SphereViewController: SCNSceneRendererDelegate {
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         if let motion = motionManager.deviceMotion {

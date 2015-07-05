@@ -7,13 +7,12 @@
 //
 
 import UIKit
-import FontAwesome
 
 class ProfileNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, FontAwesome.User)
+        styleTabBarItem(tabBarItem, .User)
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -31,10 +30,10 @@ class ProfileNavViewController: UINavigationController {
         let userId = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.USER_ID.rawValue);
         let profileVC = ProfileViewController(userId: userId)
         
-        let attributes = [NSFontAttributeName: UIFont.fontAwesomeOfSize(20)] as Dictionary!
+        let attributes = [NSFontAttributeName: UIFont.icomoonOfSize(20)] as Dictionary!
         let signoutButton = UIBarButtonItem()
         signoutButton.setTitleTextAttributes(attributes, forState: .Normal)
-        signoutButton.title = String.fontAwesomeIconWithName(.SignOut)
+        signoutButton.title = String.icomoonWithName(.Cross)
         signoutButton.target = self
         signoutButton.action = "logout"
         profileVC.navigationItem.setRightBarButtonItem(signoutButton, animated: false)

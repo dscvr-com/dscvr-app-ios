@@ -8,7 +8,6 @@
 
 import UIKit
 import TTTAttributedLabel
-import FontAwesome
 import ReactiveCocoa
 import WebImage
 import CoreMotion
@@ -50,8 +49,8 @@ class DetailsViewController: UIViewController {
 //        previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushViewer"))
         view.addSubview(previewImageView)
         
-        likeButtonView.titleLabel?.font = UIFont.fontAwesomeOfSize(20)
-        likeButtonView.setTitle(String.fontAwesomeIconWithName(FontAwesome.Heart), forState: .Normal)
+        likeButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
+        likeButtonView.setTitle(String.icomoonWithName(.Heart), forState: .Normal)
         likeButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.toggleLike()
             return RACSignal.empty()

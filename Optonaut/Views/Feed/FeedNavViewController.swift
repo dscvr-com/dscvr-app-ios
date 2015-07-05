@@ -7,13 +7,12 @@
 //
 
 import UIKit
-import FontAwesome
 
 class FeedNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, FontAwesome.List)
+        styleTabBarItem(tabBarItem, .Infinity)
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -31,10 +30,10 @@ class FeedNavViewController: UINavigationController {
         let optographTableViewController = OptographTableViewController(source: "optographs", navController: self)
         optographTableViewController.navigationItem.title = "Feed"
         
-        let attributes = [NSFontAttributeName: UIFont.fontAwesomeOfSize(20)] as Dictionary!
+        let attributes = [NSFontAttributeName: UIFont.icomoonOfSize(20)] as Dictionary!
         let cameraButton = UIBarButtonItem()
         cameraButton.setTitleTextAttributes(attributes, forState: .Normal)
-        cameraButton.title = String.fontAwesomeIconWithName(.Camera)
+        cameraButton.title = String.icomoonWithName(.Camera)
         cameraButton.target = self
         cameraButton.action = "showCamera"
         optographTableViewController.navigationItem.setRightBarButtonItem(cameraButton, animated: false)
