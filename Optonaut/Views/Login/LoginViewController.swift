@@ -32,7 +32,6 @@ class LoginViewController: UIViewController {
         
         view.backgroundColor = baseColor()
         
-
         logoView.text = String.icomoonWithName(.LogoText)
         logoView.textColor = .whiteColor()
         logoView.font = UIFont.icomoonOfSize(60)
@@ -45,6 +44,7 @@ class LoginViewController: UIViewController {
             NSForegroundColorAttributeName: UIColor.whiteColor().alpha(0.8),
         ]
         
+        // TODO implement feedback for wrong formatted data
         emailOrUserNameInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
         emailOrUserNameInputView.attributedPlaceholder = NSAttributedString(string:"Email or username", attributes: placeholderAttributes)
         emailOrUserNameInputView.font = .robotoOfSize(15, withType: .Regular)
@@ -57,7 +57,7 @@ class LoginViewController: UIViewController {
         emailOrUserNameInputView.keyboardType = .EmailAddress
         emailOrUserNameInputView.returnKeyType = .Next
         emailOrUserNameInputView.delegate = self
-        viewModel.loginEmailOrUserName <~ emailOrUserNameInputView.rac_text
+        viewModel.emailOrUserName <~ emailOrUserNameInputView.rac_text
         formView.addSubview(emailOrUserNameInputView)
         
         passwordInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
@@ -70,9 +70,7 @@ class LoginViewController: UIViewController {
         passwordInputView.secureTextEntry = true
         passwordInputView.returnKeyType = .Go
         passwordInputView.delegate = self
-//        passwordInputView.rac_alpha <~ viewModel.pending.producer |> map { $0 ? CGFloat(0.5) : CGFloat(1) }
-//        passwordInputView.rac_textColor <~ viewModel.loginPasswordValid.producer |> map { $0 ? .blackColor() : .redColor() }
-        viewModel.loginPassword <~ passwordInputView.rac_text
+        viewModel.password <~ passwordInputView.rac_text
         formView.addSubview(passwordInputView)
         
         submitButtonView.backgroundColor = UIColor(0xb5362c)
@@ -81,8 +79,7 @@ class LoginViewController: UIViewController {
         submitButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
         submitButtonView.layer.cornerRadius = 5
         submitButtonView.layer.masksToBounds = true
-//        submitButtonView.rac_alpha <~ viewModel.loginAllowed.producer |> map { $0 ? CGFloat(1) : CGFloat(0.5) }
-        submitButtonView.rac_userInteractionEnabled <~ viewModel.loginAllowed
+        submitButtonView.rac_userInteractionEnabled <~ viewModel.allowed
         submitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.login()
                 |> start(
@@ -98,19 +95,18 @@ class LoginViewController: UIViewController {
         })
         formView.addSubview(submitButtonView)
         
-        forgotPasswordView.textAlignment = .Center
-        forgotPasswordView.textColor = .whiteColor()
-        forgotPasswordView.text = "Forgot your password?"
-        forgotPasswordView.font = .robotoOfSize(13, withType: .Regular)
-        forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleRequest"))
-        forgotPasswordView.userInteractionEnabled = true
-        view.addSubview(forgotPasswordView)
+        // TODO implement forgot password
+//        forgotPasswordView.textColor = .whiteColor()
+//        forgotPasswordView.text = "Forgot your password?"
+//        forgotPasswordView.font = .robotoOfSize(13, withType: .Regular)
+//        forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showForgotPasswordViewController"))
+//        forgotPasswordView.userInteractionEnabled = true
+//        view.addSubview(forgotPasswordView)
         
-        showInviteView.textAlignment = .Center
         showInviteView.textColor = .whiteColor()
-        showInviteView.text = "Request Beta Invite"
+        showInviteView.text = "Request Invite"
         showInviteView.font = .robotoOfSize(15, withType: .Regular)
-        showInviteView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleRequest"))
+        showInviteView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showRequestInviteViewController"))
         showInviteView.userInteractionEnabled = true
         view.addSubview(showInviteView)
         
@@ -125,12 +121,14 @@ class LoginViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
@@ -144,7 +142,7 @@ class LoginViewController: UIViewController {
             formViewBottomConstraint = formView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: formBottomOffset)
             formView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
             formView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-            formView.autoSetDimension(.Height, toSize: 170)
+            formView.autoSetDimension(.Height, toSize: 158)
             
             emailOrUserNameInputView.autoSetDimension(.Height, toSize: 45)
             emailOrUserNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
@@ -161,8 +159,8 @@ class LoginViewController: UIViewController {
             submitButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
             submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            forgotPasswordView.autoPinEdge(.Top, toEdge: .Bottom, ofView: formView, withOffset: 23)
-            forgotPasswordView.autoAlignAxisToSuperviewAxis(.Vertical)
+//            forgotPasswordView.autoPinEdge(.Top, toEdge: .Bottom, ofView: formView, withOffset: 23)
+//            forgotPasswordView.autoAlignAxisToSuperviewAxis(.Vertical)
             
             showInviteView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -28)
             showInviteView.autoAlignAxisToSuperviewAxis(.Vertical)
@@ -175,6 +173,11 @@ class LoginViewController: UIViewController {
         super.updateViewConstraints()
     }
     
+    // needed for vertically centering (respecting keyboard visiblity)
+    private func formBottomOffsetForKeyboardHeight(keyboardHeight: CGFloat, keyboardVisible: Bool) -> CGFloat {
+        return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2 + 158 / 2
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -184,6 +187,14 @@ class LoginViewController: UIViewController {
         return .LightContent
     }
     
+    func showRequestInviteViewController() {
+        presentViewController(RequestInviteViewController(), animated: false, completion: nil)
+    }
+    
+    func showForgotPasswordViewController() {
+    }
+    
+    // MARK: - keyboard stuff
     func keyboardWillShowNotification(notification: NSNotification) {
         updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: true)
     }
@@ -213,15 +224,6 @@ class LoginViewController: UIViewController {
     
     func dismissKeyboard() {
         view.endEditing(true)
-    }
-    
-    func toggleRequest() {
-        viewModel.inviteFormVisible.put(!viewModel.inviteFormVisible.value)
-    }
-    
-    // needed for vertically centering (respecting keyboard visiblity)
-    private func formBottomOffsetForKeyboardHeight(keyboardHeight: CGFloat, keyboardVisible: Bool) -> CGFloat {
-        return keyboardVisible ? -keyboardHeight - 20 : -view.bounds.height / 2 + 190 / 2
     }
     
 }

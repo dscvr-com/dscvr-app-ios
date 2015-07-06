@@ -13,29 +13,35 @@ import ReactiveCocoa
 class RequestInviteViewController: UIViewController {
     
     // subviews
-    var logoView = UIImageView()
+    let titleView = UILabel()
+    let descriptionView = UILabel()
     let formView = UIView()
-    let loginEmailOrUserNameInputView = UITextField()
-    let loginPasswordInputView = UITextField()
-    let loginSubmitButtonView = UIButton()
-    let loginShowInviteButtonView = UILabel()
-    let inviteEmailInputView = UITextField()
-    let inviteSubmitButtonView = UIButton()
-    let inviteAbortButtonView = UILabel()
+    let emailInputView = UITextField()
+    let submitButtonView = UIButton()
+    let cancelButtonView = UIButton()
+    let loadingView = UIView()
     
     var formViewBottomConstraint: NSLayoutConstraint?
     var didSetConstraints = false
     
-    let viewModel = LoginViewModel()
+    let viewModel = RequestInviteViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = baseColor()
         
-        logoView.image = UIImage(named: "logo_white")
-        logoView.contentMode = .ScaleAspectFit
-        view.addSubview(logoView)
+        titleView.text = "Be one of the first"
+        titleView.textColor = .whiteColor()
+        titleView.font = .robotoOfSize(18, withType: .Medium)
+        view.addSubview(titleView)
+        
+        descriptionView.text = "Optonaut is still early stage in development and currently restricted to a limited number of users. In order to get early access please request an invite by providing your email address. We will invite you as soon possible."
+        descriptionView.textColor = .whiteColor()
+        descriptionView.font = .robotoOfSize(15, withType: .Light)
+        descriptionView.textAlignment = .Center
+        descriptionView.numberOfLines = 0
+        view.addSubview(descriptionView)
         
         view.addSubview(formView)
         
@@ -44,112 +50,65 @@ class RequestInviteViewController: UIViewController {
             NSForegroundColorAttributeName: UIColor.whiteColor().alpha(0.8),
         ]
         
-        loginEmailOrUserNameInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
-        loginEmailOrUserNameInputView.attributedPlaceholder = NSAttributedString(string:"Email or username", attributes: placeholderAttributes)
-        loginEmailOrUserNameInputView.font = .robotoOfSize(15, withType: .Regular)
-        loginEmailOrUserNameInputView.textColor = .whiteColor()
-        loginEmailOrUserNameInputView.textAlignment = .Center
-        loginEmailOrUserNameInputView.layer.cornerRadius = 5
-        loginEmailOrUserNameInputView.clipsToBounds = true
-        loginEmailOrUserNameInputView.autocorrectionType = .No
-        loginEmailOrUserNameInputView.autocapitalizationType = .None
-        loginEmailOrUserNameInputView.keyboardType = .EmailAddress
-        loginEmailOrUserNameInputView.returnKeyType = .Next
-        loginEmailOrUserNameInputView.delegate = self
-        viewModel.loginEmailOrUserName <~ loginEmailOrUserNameInputView.rac_text
-        formView.addSubview(loginEmailOrUserNameInputView)
+        // TODO implement feedback for wrong formatted data
+        emailInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
+        emailInputView.attributedPlaceholder = NSAttributedString(string:"Email", attributes: placeholderAttributes)
+        emailInputView.font = .robotoOfSize(15, withType: .Regular)
+        emailInputView.textColor = .whiteColor()
+        emailInputView.textAlignment = .Center
+        emailInputView.layer.cornerRadius = 5
+        emailInputView.clipsToBounds = true
+        emailInputView.autocorrectionType = .No
+        emailInputView.autocapitalizationType = .None
+        emailInputView.keyboardType = .EmailAddress
+        emailInputView.returnKeyType = .Go
+        emailInputView.delegate = self
+        viewModel.email <~ emailInputView.rac_text
+        formView.addSubview(emailInputView)
         
-        loginPasswordInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
-        loginPasswordInputView.attributedPlaceholder = NSAttributedString(string:"Password", attributes: placeholderAttributes)
-        loginPasswordInputView.font = .robotoOfSize(15, withType: .Regular)
-        loginPasswordInputView.textColor = .whiteColor()
-        loginPasswordInputView.textAlignment = .Center
-        loginPasswordInputView.layer.cornerRadius = 5
-        loginPasswordInputView.clipsToBounds = true
-        loginPasswordInputView.secureTextEntry = true
-        loginPasswordInputView.returnKeyType = .Go
-        loginPasswordInputView.delegate = self
-        //        loginPasswordInputView.rac_alpha <~ viewModel.pending.producer |> map { $0 ? CGFloat(0.5) : CGFloat(1) }
-        //        loginPasswordInputView.rac_textColor <~ viewModel.loginPasswordValid.producer |> map { $0 ? .blackColor() : .redColor() }
-        //        loginPasswordInputView.rac_hidden <~ viewModel.inviteFormVisible
-        viewModel.loginPassword <~ loginPasswordInputView.rac_text
-        formView.addSubview(loginPasswordInputView)
-        
-        loginSubmitButtonView.backgroundColor = .whiteColor()
-        loginSubmitButtonView.setTitle("Login", forState: .Normal)
-        loginSubmitButtonView.setTitleColor(baseColor(), forState: .Normal)
-        loginSubmitButtonView.layer.cornerRadius = 5
-        loginSubmitButtonView.layer.masksToBounds = true
-        loginSubmitButtonView.rac_hidden <~ viewModel.inviteFormVisible
-        loginSubmitButtonView.rac_alpha <~ viewModel.loginAllowed.producer |> map { $0 ? CGFloat(1) : CGFloat(0.5) }
-        loginSubmitButtonView.rac_userInteractionEnabled <~ viewModel.loginAllowed
-        loginSubmitButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.login()
-                |> start(
-                    error: { _ in
-                        let alert = UIAlertController(title: "Login failed", message: "The entered user data was wrong. Come on...", preferredStyle: .Alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-                        self.presentViewController(alert, animated: true, completion: nil)
-                    },
-                    completed: {
-                        self.presentViewController(TabBarViewController(), animated: false, completion: nil)
-                })
-            return RACSignal.empty()
-        })
-        formView.addSubview(loginSubmitButtonView)
-        
-        loginShowInviteButtonView.textAlignment = .Center
-        loginShowInviteButtonView.textColor = .whiteColor()
-        loginShowInviteButtonView.text = "Request Invite"
-        loginShowInviteButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleRequest"))
-        loginShowInviteButtonView.userInteractionEnabled = true
-        loginShowInviteButtonView.rac_hidden <~ viewModel.inviteFormVisible
-        view.addSubview(loginShowInviteButtonView)
-        
-        inviteAbortButtonView.textColor = UIColor.whiteColor()
-        inviteAbortButtonView.font = UIFont.icomoonOfSize(40)
-        inviteAbortButtonView.text = String.icomoonWithName(Icomoon.Cross)
-        inviteAbortButtonView.userInteractionEnabled = true
-        inviteAbortButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleRequest"))
-        inviteAbortButtonView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
-        view.addSubview(inviteAbortButtonView)
-        
-        inviteEmailInputView.attributedPlaceholder = NSAttributedString(string:"Email", attributes:[NSForegroundColorAttributeName: UIColor.grayColor()])
-        inviteEmailInputView.borderStyle = .RoundedRect
-        inviteEmailInputView.autocorrectionType = .No
-        inviteEmailInputView.autocapitalizationType = .None
-        inviteEmailInputView.keyboardType = .EmailAddress
-        inviteEmailInputView.rac_textColor <~ viewModel.inviteEmailValid.producer |> map { $0 ? .blackColor() : .redColor() }
-        inviteEmailInputView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
-        viewModel.inviteEmail <~ inviteEmailInputView.rac_text
-        formView.addSubview(inviteEmailInputView)
-        
-        inviteSubmitButtonView.backgroundColor = .whiteColor()
-        inviteSubmitButtonView.setTitle("Request Invite", forState: .Normal)
-        inviteSubmitButtonView.setTitleColor(baseColor(), forState: .Normal)
-        inviteSubmitButtonView.userInteractionEnabled = true
-        inviteSubmitButtonView.layer.cornerRadius = 5
-        inviteSubmitButtonView.layer.masksToBounds = true
-        inviteSubmitButtonView.rac_alpha <~ viewModel.inviteEmailValid.producer |> map { $0 ? CGFloat(1) : CGFloat(0.5) }
-        inviteSubmitButtonView.rac_userInteractionEnabled <~ viewModel.inviteEmailValid
-        inviteSubmitButtonView.rac_hidden <~ viewModel.inviteFormVisible.producer |> map { !$0 }
-        inviteSubmitButtonView.rac_command = RACCommand(signalBlock: { _ in
+        submitButtonView.backgroundColor = UIColor(0xb5362c)
+        submitButtonView.setTitle("Send Request", forState: .Normal)
+        submitButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        submitButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
+        submitButtonView.layer.cornerRadius = 5
+        submitButtonView.layer.masksToBounds = true
+        submitButtonView.rac_userInteractionEnabled <~ viewModel.emailValid
+        submitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.requestInvite()
                 |> start(
                     error: { _ in
-                        println("Invite request went wrong...")
+                    let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Maybe you've already requested an invite?", preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+                        self.presentViewController(alert, animated: true, completion: nil)
                     },
                     completed: {
-                        let alert = UIAlertController(title: "Request successful", message: "We heard you and will give you access to Optonaut as soon as possible.", preferredStyle: .Alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in
-                            self.inviteEmailInputView.text = ""
-                            self.viewModel.inviteFormVisible.put(false)
-                        }))
-                        self.presentViewController(alert, animated: true, completion: nil)
-                })
+                        self.emailInputView.userInteractionEnabled = false
+                        self.emailInputView.alpha = 0.5
+                        self.submitButtonView.userInteractionEnabled = false
+                        self.submitButtonView.alpha = 0.5
+                        self.titleView.text = "Congratulations"
+                        self.descriptionView.text = "Thanks for your request. We'll be in touch soon. In order to stay up to date you can follow us on Facebook or Twitter. Cheers!"
+                    }
+            )
             return RACSignal.empty()
         })
-        formView.addSubview(inviteSubmitButtonView)
+        formView.addSubview(submitButtonView)
+        
+        cancelButtonView.backgroundColor = UIColor(0xb5362c)
+        cancelButtonView.setTitle("Cancel", forState: .Normal)
+        cancelButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        cancelButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
+        cancelButtonView.layer.cornerRadius = 5
+        cancelButtonView.layer.masksToBounds = true
+        cancelButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.presentViewController(LoginViewController(), animated: false, completion: nil)
+            return RACSignal.empty()
+        })
+        formView.addSubview(cancelButtonView)
+        
+        loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
+        loadingView.rac_hidden <~ viewModel.pending.producer |> map { !$0 }
+        view.addSubview(loadingView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
@@ -158,62 +117,60 @@ class RequestInviteViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func updateViewConstraints() {
         if !didSetConstraints {
-            logoView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.2)
-            logoView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withMultiplier: 0.2)
-            logoView.autoAlignAxisToSuperviewAxis(.Vertical)
-            logoView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -40)
             
-            formViewBottomConstraint = formView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -view.bounds.height / 2 + 190 / 2)
-            formView.autoPinEdge(.Left, toEdge: .Left, ofView: view)
-            formView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
-            formView.autoSetDimension(.Height, toSize: 190)
-            //        formView.autoAlignAxis(ALAxis.Horizontal, toSameAxisOfView: view)
+            titleView.autoPinEdge(.Bottom, toEdge: .Top, ofView: descriptionView, withOffset: -15)
+            titleView.autoAlignAxisToSuperviewAxis(.Vertical)
             
-            loginEmailOrUserNameInputView.autoSetDimension(.Height, toSize: 60)
-            loginEmailOrUserNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
-            loginEmailOrUserNameInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView, withOffset: 20)
-            loginEmailOrUserNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
+            descriptionView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -36)
+            descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+            descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
             
-            loginPasswordInputView.autoSetDimension(.Height, toSize: 60)
-            loginPasswordInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: loginEmailOrUserNameInputView, withOffset: 5)
-            loginPasswordInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView, withOffset: 20)
-            loginPasswordInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
+            let formBottomOffset = formBottomOffsetForKeyboardHeight(0, keyboardVisible: false)
+            formViewBottomConstraint = formView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: formBottomOffset)
+            formView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+            formView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+            formView.autoSetDimension(.Height, toSize: 158)
             
-            loginSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
-            loginSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: loginPasswordInputView, withOffset: 5)
-            loginSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
+            emailInputView.autoSetDimension(.Height, toSize: 45)
+            emailInputView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
+            emailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
+            emailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            loginShowInviteButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -20)
-            loginShowInviteButtonView.autoAlignAxisToSuperviewAxis(.Vertical)
+            submitButtonView.autoSetDimension(.Height, toSize: 45)
+            submitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailInputView, withOffset: 16)
+            submitButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
+            submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            inviteEmailInputView.autoSetDimension(.Height, toSize: 60)
-            inviteEmailInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: logoView, withOffset: 60)
-            inviteEmailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView, withOffset: 20)
-            inviteEmailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
+            cancelButtonView.autoSetDimension(.Height, toSize: 45)
+            cancelButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: submitButtonView, withOffset: 7)
+            cancelButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
+            cancelButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            inviteSubmitButtonView.autoSetDimensionsToSize(CGSize(width: 150, height: 60))
-            inviteSubmitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: inviteEmailInputView, withOffset: 5)
-            inviteSubmitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView, withOffset: -20)
-            
-            inviteAbortButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 30)
-            inviteAbortButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -30)
+            loadingView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
             
             didSetConstraints = true
         }
         
         super.updateViewConstraints()
+    }
+    
+    // needed for vertically centering (respecting keyboard visiblity)
+    private func formBottomOffsetForKeyboardHeight(keyboardHeight: CGFloat, keyboardVisible: Bool) -> CGFloat {
+        return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 3 + 158 / 2
     }
     
     override func didReceiveMemoryWarning() {
@@ -225,6 +182,7 @@ class RequestInviteViewController: UIViewController {
         return .LightContent
     }
     
+    // MARK: - keyboard stuff
     func keyboardWillShowNotification(notification: NSNotification) {
         updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: true)
     }
@@ -242,22 +200,18 @@ class RequestInviteViewController: UIViewController {
         let rawAnimationCurve = (notification.userInfo![UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).unsignedIntValue << 16
         let animationCurve = UIViewAnimationOptions.init(UInt(rawAnimationCurve))
         let keyboardHeight = CGRectGetMaxY(view.bounds) - CGRectGetMinY(convertedKeyboardEndFrame)
-        let bottomOffset = keyboardVisible ? -keyboardHeight - 20 : -view.bounds.height / 2 + 190 / 2
         
-        formViewBottomConstraint?.constant = bottomOffset
+        formViewBottomConstraint?.constant = formBottomOffsetForKeyboardHeight(keyboardHeight, keyboardVisible: keyboardVisible)
         
-        UIView.animateWithDuration(animationDuration, delay: 0.0, options: .BeginFromCurrentState | animationCurve, animations: {
-            self.logoView.alpha = keyboardVisible ? 0 : 1
-            self.view.layoutIfNeeded()
-            }, completion: nil)
+        UIView.animateWithDuration(animationDuration, delay: 0, options: .BeginFromCurrentState | animationCurve,
+            animations: {
+                self.view.layoutIfNeeded()
+            },
+            completion: nil)
     }
     
     func dismissKeyboard() {
         view.endEditing(true)
-    }
-    
-    func toggleRequest() {
-        viewModel.inviteFormVisible.put(!viewModel.inviteFormVisible.value)
     }
     
 }
@@ -266,13 +220,10 @@ class RequestInviteViewController: UIViewController {
 extension RequestInviteViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
-        if textField == loginEmailOrUserNameInputView {
-            loginPasswordInputView.becomeFirstResponder()
-        }
         
-        if textField == loginPasswordInputView {
+        if textField == emailInputView {
             view.endEditing(true)
-            loginSubmitButtonView.sendActionsForControlEvents(.TouchUpInside)
+            submitButtonView.sendActionsForControlEvents(.TouchUpInside)
         }
         
         return true

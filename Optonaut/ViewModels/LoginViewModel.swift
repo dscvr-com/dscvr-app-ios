@@ -11,40 +11,32 @@ import ReactiveCocoa
 
 class LoginViewModel {
     
-    let loginEmailOrUserName = MutableProperty<String>("")
-    let loginEmailOrUserNameValid = MutableProperty<Bool>(false)
-    let loginPassword = MutableProperty<String>("")
-    let loginPasswordValid = MutableProperty<Bool>(false)
-    let loginAllowed = MutableProperty<Bool>(false)
-    let inviteEmail = MutableProperty<String>("")
-    let inviteEmailValid = MutableProperty<Bool>(false)
-    let inviteFormVisible = MutableProperty<Bool>(false)
+    let emailOrUserName = MutableProperty<String>("")
+    let emailOrUserNameValid = MutableProperty<Bool>(false)
+    let password = MutableProperty<String>("")
+    let passwordValid = MutableProperty<Bool>(false)
+    let allowed = MutableProperty<Bool>(false)
     let pending = MutableProperty<Bool>(false)
     
     init() {
         
-        loginEmailOrUserName.producer
+        emailOrUserName.producer
             |> start(next: { str in
                 if str.rangeOfString("@") != nil {
-                    self.loginEmailOrUserNameValid.put(isValidEmail(str))
+                    self.emailOrUserNameValid.put(isValidEmail(str))
                 } else {
-                    self.loginEmailOrUserNameValid.put(count(str) > 2)
+                    self.emailOrUserNameValid.put(count(str) > 2)
                 }
             })
         
-        inviteEmail.producer
+        password.producer
             |> start(next: { str in
-                self.inviteEmailValid.put(isValidEmail(str))
+                self.passwordValid.put(count(str) > 4)
             })
         
-        loginPassword.producer
-            |> start(next: { str in
-                self.loginPasswordValid.put(count(str) > 4)
-            })
-        
-        combineLatest([loginEmailOrUserNameValid.producer, loginPasswordValid.producer])
+        combineLatest([emailOrUserNameValid.producer, passwordValid.producer])
             |> start(next: { bools in
-                self.loginAllowed.put(bools.reduce(true) { $0 && $1 })
+                self.allowed.put(bools.reduce(true) { $0 && $1 })
             })
     }
     
@@ -52,12 +44,12 @@ class LoginViewModel {
         return SignalProducer { sink, disposable in
             self.pending.put(true)
             
-            var parameters = [ "email": "", "user_name": "", "password": self.loginPassword.value ]
+            var parameters = [ "email": "", "user_name": "", "password": self.password.value ]
             
-            if self.loginEmailOrUserName.value.rangeOfString("@") != nil {
-                parameters["email"] = self.loginEmailOrUserName.value
+            if self.emailOrUserName.value.rangeOfString("@") != nil {
+                parameters["email"] = self.emailOrUserName.value
             } else {
-                parameters["user_name"] = self.loginEmailOrUserName.value
+                parameters["user_name"] = self.emailOrUserName.value
             }
             
             Api.post("users/login", authorized: false, parameters: parameters)
@@ -77,14 +69,6 @@ class LoginViewModel {
             
             disposable.addDisposable {}
         }
-    }
-    
-    func requestInvite() -> SignalProducer<Void, NSError> {
-        let parameters = [ "email": self.inviteEmail.value ]
-        let producer = Api.post("users/request-invite", authorized: false, parameters: parameters)
-            
-        return producer
-            |> map { _ in return }
     }
     
 }
