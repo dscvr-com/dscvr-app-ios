@@ -16,6 +16,7 @@ class Optograph: Object {
     dynamic var user: User?
     dynamic var createdAt = NSDate()
     dynamic var likedByUser = false
+    dynamic var location = ""
     
     override static func primaryKey() -> String? {
         return "id"

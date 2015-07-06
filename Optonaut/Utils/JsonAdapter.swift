@@ -16,10 +16,12 @@ func mapOptographFromJson(optographJson: JSON) -> Optograph {
     let user = User()
     user.id = optographJson["user"]["id"].intValue
     user.email = optographJson["user"]["email"].stringValue
+    user.name = optographJson["user"]["name"].stringValue
     user.userName = optographJson["user"]["user_name"].stringValue
     
     let optograph = Optograph()
     optograph.id = optographJson["id"].intValue
+    optograph.location = optographJson["location"]["description"].stringValue
     optograph.text = optographJson["text"].stringValue
     optograph.numberOfLikes = optographJson["number_of_likes"].intValue
     optograph.likedByUser = optographJson["liked_by_user"].boolValue

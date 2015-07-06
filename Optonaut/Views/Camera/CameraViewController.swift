@@ -32,8 +32,8 @@ class CameraViewController: UIViewController {
             let parameters = [
                 "text": textField.text,
                 "location": [
-                    "latitude": 12,
-                    "longitude": 34,
+                    "latitude": 51.5072,
+                    "longitude": -0.126236,
                 ]
             ]
             Api.post("optographs", authorized: true, parameters: parameters as? [String : AnyObject]).start()

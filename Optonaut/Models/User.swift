@@ -12,6 +12,7 @@ import RealmSwift
 class User: Object {
     dynamic var id = 0
     dynamic var email = ""
+    dynamic var name = ""
     dynamic var userName = ""
     dynamic var numberOfFollowers = 0
     dynamic var numberOfFollowings = 0

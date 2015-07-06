@@ -29,11 +29,11 @@ class OptographViewModel {
         timeSinceCreated.put(RoundedDuration(date: optograph.createdAt).longDescription())
         imageUrl.put("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(optograph.id % 3).jpg")
         avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg")
-        user.put("Alex Placeholder")
+        user.put(optograph.user!.name)
         userName.put("@\(optograph.user!.userName)")
         userId.put(optograph.user!.id)
-        text.put("\(optograph.text)")
-        location.put("London Bridge, UK")
+        text.put(optograph.text)
+        location.put(optograph.location)
     }
     
     func toggleLike() {
