@@ -54,7 +54,7 @@ class ActivityTableViewController: UIViewController {
     }
     
     override func updateViewConstraints() {
-        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
+        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
     }
@@ -83,10 +83,11 @@ extension ActivityTableViewController: UITableViewDataSource {
         let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! UITableViewCell
         
         let activity = items[indexPath.row]
+        let duration = RoundedDuration(date: activity.createdAt).shortDescription()
         var text = ""
         switch activity.activityType {
-        case .Like: text = "\(activity.creator!.userName) likes your Optograph with ID \(activity.optograph!.id) (\(durationSince(activity.createdAt)))"
-        case .Follow: text = "\(activity.creator!.userName) follows you now (\(durationSince(activity.createdAt)))"
+        case .Like: text = "\(activity.creator!.userName) likes your Optograph with ID \(activity.optograph!.id) (\(duration)))"
+        case .Follow: text = "\(activity.creator!.userName) follows you now (\(duration))"
         default: ()
         }
         cell.textLabel?.text = text

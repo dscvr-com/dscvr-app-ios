@@ -42,10 +42,30 @@ public extension UIFont {
     }
 }
 
+public extension UIImage {
+    public static func icomoonWithName(name: Icomoon, textColor: UIColor, size: CGSize) -> UIImage {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        paragraph.alignment = .Center
+        let attributedString = NSAttributedString(string: String.icomoonWithName(name) as String, attributes: [NSFontAttributeName: UIFont.icomoonOfSize(24.0), NSForegroundColorAttributeName: textColor, NSParagraphStyleAttributeName:paragraph])
+        let size = sizeOfAttributeString(attributedString, size.width)
+        UIGraphicsBeginImageContextWithOptions(size, false , 0.0)
+        attributedString.drawInRect(CGRectMake(0, 0, size.width, size.height))
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    }
+}
+
 public extension String {
     public static func icomoonWithName(name: Icomoon) -> String {
         return name.rawValue.substringToIndex(advance(name.rawValue.startIndex, 1))
     }
+}
+
+private func sizeOfAttributeString(str: NSAttributedString, maxWidth: CGFloat) -> CGSize {
+    let size = str.boundingRectWithSize(CGSizeMake(maxWidth, 1000), options:(NSStringDrawingOptions.UsesLineFragmentOrigin), context:nil).size
+    return size
 }
 
 public enum Icomoon: String {
@@ -60,5 +80,10 @@ public enum Icomoon: String {
     case User = "\u{e608}"
     case ResizeFullScreen = "\u{e609}"
     case Cross = "\u{e60a}"
+    case Cog = "\u{e60b}"
+    case LogOut = "\u{e60c}"
+    case ShareAlternitive = "\u{e60d}"
+    case LogoText = "\u{e60e}"
+    case Logo = "\u{e60f}"
     case Bell = "\u{f0a2}"
 }

@@ -14,32 +14,34 @@ class TabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // set view controllers
         let feedVC = FeedNavViewController()
         let searchVC = SearchNavViewController()
         let activityVC = ActivityNavViewController()
         let profileVC = ProfileNavViewController()
-        
         viewControllers = [feedVC, searchVC, activityVC, profileVC]
         
-//        selectedIndex = 1
-        
+        // set bar color
         tabBar.barTintColor = baseColor()
         tabBar.translucent = false
         
+        // set font for bar items
         let tabBarItemAppearance = UITabBarItem.appearance()
-        let normalAttribues = [
+        let attribues = [
             NSFontAttributeName: UIFont.icomoonOfSize(22),
-            NSForegroundColorAttributeName: UIColor(red: 1, green: 1, blue: 1, alpha: 0.3)
+            NSForegroundColorAttributeName: UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         ]
-        let selectedAttribues = [
-            NSFontAttributeName: UIFont.icomoonOfSize(22),
-            NSForegroundColorAttributeName: UIColor.whiteColor()
-        ]
-        
-        tabBarItemAppearance.setTitleTextAttributes(normalAttribues, forState: .Normal)
-        tabBarItemAppearance.setTitleTextAttributes(selectedAttribues, forState: .Selected)
+        tabBarItemAppearance.setTitleTextAttributes(attribues, forState: .Normal)
         tabBarItemAppearance.setTitlePositionAdjustment(UIOffsetMake(0, -12))
         
+        // set darker red as selected background color
+        let numberOfItems = CGFloat(tabBar.items!.count)
+        let tabBarItemSize = CGSize(width: tabBar.frame.width / numberOfItems, height: tabBar.frame.height)
+        tabBar.selectionIndicatorImage = UIImage.imageWithColor(UIColor(0xc93c2f), size: tabBarItemSize).resizableImageWithCapInsets(UIEdgeInsetsZero)
+        
+        // remove default border
+        tabBar.frame.size.width = self.view.frame.width + 4
+        tabBar.frame.origin.x = -2
     }
     
 }

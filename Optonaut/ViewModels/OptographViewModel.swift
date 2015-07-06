@@ -13,42 +13,42 @@ import ReactiveCocoa
 class OptographViewModel {
     
     let id = MutableProperty<Int>(0)
-    let numberOfLikes = MutableProperty<Int>(0)
     let liked = MutableProperty<Bool>(false)
     let timeSinceCreated = MutableProperty<String>("")
     let imageUrl = MutableProperty<String>("")
+    let avatarUrl = MutableProperty<String>("")
+    let user = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let userId = MutableProperty<Int>(0)
     let text = MutableProperty<String>("")
+    let location = MutableProperty<String>("")
     
     init(optograph: Optograph) {
         id.put(optograph.id)
-        numberOfLikes.put(optograph.numberOfLikes)
         liked.put(optograph.likedByUser)
-        timeSinceCreated.put(durationSince(optograph.createdAt))
-        imageUrl.put("http://beem-parts.s3.amazonaws.com/thumbs/little_world_\(optograph.id % 10).jpg")
-        userName.put("\(optograph.user!.userName)")
+        timeSinceCreated.put(RoundedDuration(date: optograph.createdAt).longDescription())
+        imageUrl.put("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(optograph.id % 3).jpg")
+        avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg")
+        user.put("Alex Placeholder")
+        userName.put("@\(optograph.user!.userName)")
         userId.put(optograph.user!.id)
-        text.put("@\(optograph.user!.userName) \(optograph.text)")
+        text.put("\(optograph.text)")
+        location.put("London Bridge, UK")
     }
     
     func toggleLike() {
         let likedBefore = liked.value
-        let numberOfLikesBefore = numberOfLikes.value
         
-        numberOfLikes.put(numberOfLikesBefore + (likedBefore ? -1 : 1))
         liked.put(!likedBefore)
         
         if likedBefore {
             Api.delete("optographs/\(id.value)/like", authorized: true)
                 |> start(error: { _ in
-                    self.numberOfLikes.put(numberOfLikesBefore)
                     self.liked.put(likedBefore)
                 })
         } else {
             Api.post("optographs/\(id.value)/like", authorized: true, parameters: nil)
                 |> start(error: { _ in
-                    self.numberOfLikes.put(numberOfLikesBefore)
                     self.liked.put(likedBefore)
                 })
         }

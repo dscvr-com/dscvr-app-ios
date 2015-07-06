@@ -11,73 +11,131 @@ import UIKit
 import ReactiveCocoa
 import WebImage
 
+class InsetLabel: UILabel {
+    
+    var edgeInsets: UIEdgeInsets = UIEdgeInsetsZero
+    
+    override func textRectForBounds(bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        var rect = edgeInsets.apply(bounds)
+        rect = super.textRectForBounds(rect, limitedToNumberOfLines: numberOfLines)
+        return edgeInsets.inverse.apply(rect)
+    }
+    
+    override func drawTextInRect(rect: CGRect) {
+        super.drawTextInRect(edgeInsets.apply(rect))
+    }
+    
+}
+
+extension UIEdgeInsets {
+    var inverse : UIEdgeInsets {
+        return UIEdgeInsets(top: -top, left: -left, bottom: -bottom, right: -right)
+    }
+    func apply(rect: CGRect) -> CGRect {
+        return UIEdgeInsetsInsetRect(rect, self)
+    }
+}
+
 class OptographTableViewCell: UITableViewCell {
     
     var navController: UINavigationController?
     var viewModel: OptographViewModel!
     
     // subviews
-    let previewImageView = UIImageView()
-    let likeButtonView = UIButton()
-    let numberOfLikesView = UILabel()
+    let avatarImageView = UIImageView()
+    let nameView = UILabel()
+    let userNameView = UILabel()
     let dateView = UILabel()
-    let shareButtonView = UIButton()
+    let likeButtonView = UIButton()
+    let previewImageView = UIImageView()
+    let locationWrapperView = UIView()
+    let locationView = InsetLabel()
     let textView = KILabel()
+    let lineView = UIView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        avatarImageView.layer.cornerRadius = 15
+        avatarImageView.clipsToBounds = true
+        contentView.addSubview(avatarImageView)
+        
+        nameView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        nameView.textColor = UIColor(0x4d4d4d)
+        contentView.addSubview(nameView)
+        
+        userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
+        userNameView.textColor = UIColor(0xb3b3b3)
+        contentView.addSubview(userNameView)
+        
+        dateView.font = UIFont.robotoOfSize(12, withType: .Light)
+        dateView.textColor = UIColor(0xb3b3b3)
+        contentView.addSubview(dateView)
+        
+        likeButtonView.titleLabel?.font = UIFont.icomoonOfSize(24)
+        likeButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
+        contentView.addSubview(likeButtonView)
         
         previewImageView.userInteractionEnabled = true
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showDetails"))
         contentView.addSubview(previewImageView)
         
-        likeButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
-        likeButtonView.setTitle(String.icomoonWithName(.Heart), forState: .Normal)
-        contentView.addSubview(likeButtonView)
+//        locationWrapperView.backgroundColor = UIColor(0x0).alpha(0.4)
+//        contentView.addSubview(locationWrapperView)
         
-        let gray = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
-        
-        numberOfLikesView.font = UIFont.boldSystemFontOfSize(16)
-        numberOfLikesView.textColor = gray
-        contentView.addSubview(numberOfLikesView)
-        
-        dateView.font = UIFont.systemFontOfSize(16)
-        dateView.textColor = gray
-        contentView.addSubview(dateView)
-        
-        shareButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
-        shareButtonView.setTitle(String.icomoonWithName(.Cross), forState: .Normal)
-        shareButtonView.setTitleColor(gray, forState: .Normal)
-        contentView.addSubview(shareButtonView)
+        locationView.font = UIFont.robotoOfSize(12, withType: .Regular)
+        locationView.textColor = .whiteColor()
+        locationView.backgroundColor = UIColor(0x0).alpha(0.4)
+        locationView.edgeInsets = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
+        contentView.addSubview(locationView)
         
         textView.numberOfLines = 0
         textView.tintColor = baseColor()
         textView.userInteractionEnabled = true
+        textView.font = UIFont.robotoOfSize(13, withType: .Light)
+        textView.textColor = UIColor(0x4d4d4d)
         contentView.addSubview(textView)
+        
+        lineView.backgroundColor = UIColor(0xe5e5e5)
+        contentView.addSubview(lineView)
         
         contentView.setNeedsUpdateConstraints()
     }
     
     override func updateConstraints() {
-        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView)
+        avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 15)
+        avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+        avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+        
+        nameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
+        nameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        
+        userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 0)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 4)
+        
+        dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
+        dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        
+        likeButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 12)
+        likeButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15) // 4pt extra for heart border
+        
+        previewImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 14)
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
-        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: contentView)
+        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: contentView, withMultiplier: 0.45)
         
-        likeButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 10)
-        likeButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 12)
+        locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
+        locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
+//        locationView.autoMatchDimension(.Width, toDimension: .Width, ofView: locationView, withOffset: 20)
+//        locationView.autoMatchDimension(.Height, toDimension: .Height, ofView: locationView, withOffset: 20)
         
-        numberOfLikesView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
-        numberOfLikesView.autoPinEdge(.Left, toEdge: .Right, ofView: likeButtonView, withOffset: 5)
+        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
+        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         
-        dateView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
-        dateView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15)
-        
-        shareButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 10)
-        shareButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: dateView, withOffset: -5)
-        
-        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 46)
-        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 15)
-        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15)
+        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textView, withOffset: 14)
+        lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+        lineView.autoSetDimension(.Height, toSize: 1)
         
         super.updateConstraints()
     }
@@ -92,7 +150,15 @@ class OptographTableViewCell: UITableViewCell {
         if let imageUrl = NSURL(string: viewModel.imageUrl.value) {
             previewImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "placeholder"))
         }
-        numberOfLikesView.rac_text <~ viewModel.numberOfLikes.producer |> map { num in "\(num)" }
+        
+        if let avatarUrl = NSURL(string: viewModel.avatarUrl.value) {
+            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "placeholder"))
+        }
+        
+        nameView.rac_text <~ viewModel.user
+        userNameView.rac_text <~ viewModel.userName
+        locationView.rac_text <~ viewModel.location
+        
         dateView.rac_text <~ viewModel.timeSinceCreated
         
         likeButtonView.rac_command = RACCommand(signalBlock: { _ in
@@ -101,7 +167,7 @@ class OptographTableViewCell: UITableViewCell {
         })
         
         viewModel.liked.producer
-            |> map { $0 ? baseColor() : .grayColor() }
+            |> map { $0 ? baseColor() : UIColor(0xe6e6e6) }
             |> start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
         
         textView.rac_text <~ viewModel.text

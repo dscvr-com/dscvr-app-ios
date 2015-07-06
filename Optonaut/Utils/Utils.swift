@@ -10,26 +10,60 @@ import Foundation
 import UIKit
 
 func baseColor() -> UIColor {
-    return UIColor(red: 239.0 / 255, green: 72.0 / 255, blue: 54.0 / 255, alpha: 1)
+    return UIColor(0xef4836)
 }
 
 func styleTabBarItem(tabBarItem: UITabBarItem, icon: Icomoon) {
     tabBarItem.title = String.icomoonWithName(icon)
 }
-
-func durationSince(date: NSDate) -> String {
-    let oneMinuteMark: NSTimeInterval = 60
-    let oneHourMark: NSTimeInterval = oneMinuteMark * 60
-    let oneDayMark: NSTimeInterval = oneHourMark * 24
-    let oneWeekMark: NSTimeInterval = oneDayMark * 7
-    let differenceInSeconds = -date.timeIntervalSinceNow
     
-    switch differenceInSeconds {
-    case 0...oneMinuteMark: return "\(Int(differenceInSeconds))s"
-    case oneMinuteMark...oneHourMark: return "\(Int(differenceInSeconds / oneMinuteMark))m"
-    case oneHourMark...oneDayMark: return "\(Int(differenceInSeconds / oneHourMark))h"
-    case oneDayMark...oneWeekMark: return "\(Int(differenceInSeconds / oneDayMark))d"
-    default: return "\(Int(differenceInSeconds / oneWeekMark))w"
+enum RoundedDurationType: String {
+    case Seconds = "seconds"
+    case Minutes = "minutes"
+    case Hours = "hours"
+    case Days = "days"
+    case Weeks = "weeks"
+}
+
+struct RoundedDuration {
+    
+    var type: RoundedDurationType
+    var value: Int
+    
+    init(date: NSDate) {
+        let oneMinuteMark: NSTimeInterval = 60
+        let oneHourMark: NSTimeInterval = oneMinuteMark * 60
+        let oneDayMark: NSTimeInterval = oneHourMark * 24
+        let oneWeekMark: NSTimeInterval = oneDayMark * 7
+        let differenceInSeconds = -date.timeIntervalSinceNow
+    
+        switch differenceInSeconds {
+        case 0...oneMinuteMark:
+            type = .Seconds
+            value = Int(differenceInSeconds)
+        case oneMinuteMark...oneHourMark:
+            type = .Minutes
+            value = Int(differenceInSeconds / oneMinuteMark)
+        case oneHourMark...oneDayMark:
+            type = .Hours
+            value = Int(differenceInSeconds / oneHourMark)
+        case oneDayMark...oneWeekMark:
+            type = .Days
+            value = Int(differenceInSeconds / oneDayMark)
+        default:
+            type = .Weeks
+            value = Int(differenceInSeconds / oneWeekMark)
+        }
+    }
+    
+    func shortDescription() -> String {
+        return "\(value)\(Array(type.rawValue)[0])"
+    }
+    
+    func longDescription() -> String {
+        let typeRaw = type.rawValue
+        let typeString = value == 1 ? typeRaw.substringToIndex(advance(typeRaw.endIndex, -1)) : typeRaw
+        return "\(value) \(typeString) ago"
     }
 }
 

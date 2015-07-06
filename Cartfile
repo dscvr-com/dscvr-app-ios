@@ -6,3 +6,4 @@ github "Alamofire/Alamofire" >= 1.2
 github "jcavar/refresher"
 github "ReactiveCocoa/ReactiveCocoa" "v3.0-beta.8"
 github "rs/SDWebImage" "master"
+github "andreamazz/AMScrollingNavbar" >= 1.5

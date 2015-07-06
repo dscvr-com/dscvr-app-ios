@@ -62,7 +62,7 @@ class DetailsViewController: UIViewController {
         
         numberOfLikesView.font = UIFont.boldSystemFontOfSize(16)
         numberOfLikesView.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
-        numberOfLikesView.rac_text <~ viewModel.numberOfLikes.producer |> map { num in "\(num)" }
+//        numberOfLikesView.rac_text <~ viewModel.numberOfLikes.producer |> map { num in "\(num)" }
         view.addSubview(numberOfLikesView)
         
         dateView.font = UIFont.systemFontOfSize(16)
