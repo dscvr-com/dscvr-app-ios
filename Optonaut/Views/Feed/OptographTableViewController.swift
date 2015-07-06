@@ -104,6 +104,8 @@ class OptographTableViewController: UIViewController {
         statusBarBackgroundView.backgroundColor = baseColor()
         navController?.view.addSubview(statusBarBackgroundView)
         
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .Plain, target: nil, action: nil)
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .None
@@ -143,12 +145,12 @@ class OptographTableViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        statusBarBackgroundView.hidden = true
         navController?.setNavigationBarHidden(false, animated: animated)
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        statusBarBackgroundView.hidden = true
         navController?.hidesBarsOnSwipe = false
     }
     

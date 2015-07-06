@@ -40,13 +40,11 @@ class DetailsViewController: UIViewController {
         
         view.backgroundColor = .whiteColor()
         
-        navigationItem.title = "Details"
+        navigationItem.title = ""
         
-        if let imageUrl = NSURL(string: viewModel.imageUrl.value) {
-            previewImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "placeholder"))
+        if let detailsUrl = NSURL(string: viewModel.detailsUrl.value) {
+            previewImageView.sd_setImageWithURL(detailsUrl, placeholderImage: UIImage(named: "placeholder"))
         }
-//        previewImageView.userInteractionEnabled = true
-//        previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushViewer"))
         view.addSubview(previewImageView)
         
         likeButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
@@ -89,8 +87,26 @@ class DetailsViewController: UIViewController {
         view.setNeedsUpdateConstraints()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.presentTransparentNavigationBar()
+        
+//        navigationController?.navigationBar.translucent = true
+//        navigationController?.navigationBar.barTintColor = UIColor.clearColor()
+//        navigationController?.navigationBar.backgroundColor = UIColor.clearColor()
+//        navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: .Default)
+    }
+    
+//    override func viewDidDisappear(animated: Bool) {
+//        super.viewDidDisappear(animated)
+//        
+//        navigationController?.hideTransparentNavigationBar()
+//    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
         motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue(), withHandler: { accelerometerData, error in
             if accelerometerData.acceleration.x >= 0.75 {
                 self.motionManager.stopAccelerometerUpdates()
@@ -102,15 +118,22 @@ class DetailsViewController: UIViewController {
         })
     }
     
+    override func willMoveToParentViewController(parent: UIViewController?) {
+        if parent == nil {
+            navigationController?.hideTransparentNavigationBar()
+        }
+    }
+    
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        
         self.motionManager.stopAccelerometerUpdates()
     }
     
     override func updateViewConstraints() {
-        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
+        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: -44)
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view)
+        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.84)
         
         likeButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 10)
         likeButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 15)

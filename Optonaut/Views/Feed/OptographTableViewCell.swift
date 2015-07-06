@@ -48,7 +48,6 @@ class OptographTableViewCell: UITableViewCell {
     let dateView = UILabel()
     let likeButtonView = UIButton()
     let previewImageView = UIImageView()
-    let locationWrapperView = UIView()
     let locationView = InsetLabel()
     let textView = KILabel()
     let lineView = UIView()
@@ -79,9 +78,6 @@ class OptographTableViewCell: UITableViewCell {
         previewImageView.userInteractionEnabled = true
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showDetails"))
         contentView.addSubview(previewImageView)
-        
-//        locationWrapperView.backgroundColor = UIColor(0x0).alpha(0.4)
-//        contentView.addSubview(locationWrapperView)
         
         locationView.font = UIFont.robotoOfSize(12, withType: .Regular)
         locationView.textColor = .whiteColor()
@@ -125,8 +121,6 @@ class OptographTableViewCell: UITableViewCell {
         
         locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
         locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
-//        locationView.autoMatchDimension(.Width, toDimension: .Width, ofView: locationView, withOffset: 20)
-//        locationView.autoMatchDimension(.Height, toDimension: .Height, ofView: locationView, withOffset: 20)
         
         textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
         textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
@@ -147,8 +141,8 @@ class OptographTableViewCell: UITableViewCell {
     func bindViewModel(optograph: Optograph) {
         viewModel = OptographViewModel(optograph: optograph)
         
-        if let imageUrl = NSURL(string: viewModel.imageUrl.value) {
-            previewImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "placeholder"))
+        if let previewUrl = NSURL(string: viewModel.previewUrl.value) {
+            previewImageView.sd_setImageWithURL(previewUrl, placeholderImage: UIImage(named: "placeholder"))
         }
         
         if let avatarUrl = NSURL(string: viewModel.avatarUrl.value) {

@@ -31,6 +31,9 @@ class FeedNavViewController: UINavigationController {
         navigationBar.tintColor = .whiteColor()
         navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
         
+        
+        navigationBar.setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
+        
         let optographTableViewController = OptographTableViewController(source: "optographs", navController: self)
         optographTableViewController.navigationItem.title = String.icomoonWithName(.LogoText)
         
@@ -65,4 +68,17 @@ class FeedNavViewController: UINavigationController {
         return false
     }
     
+}
+
+extension UINavigationController {
+    
+    public func presentTransparentNavigationBar() {
+        navigationBar.translucent = true
+        navigationBar.shadowImage = UIImage()
+    }
+    
+    public func hideTransparentNavigationBar() {
+        navigationBar.translucent = false
+        navigationBar.shadowImage = UINavigationBar.appearance().shadowImage
+    }
 }
