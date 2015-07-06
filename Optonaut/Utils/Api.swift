@@ -12,8 +12,10 @@ import SwiftyJSON
 import ReactiveCocoa
 
 class Api {
-    static let host = "beta.api.optonaut.com"
-    static let port = 80
+//    static let host = "beta.api.optonaut.com"
+//    static let port = 80
+    static let host = "192.168.2.105"
+    static let port = 3000
     
     static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSON, NSError> {
         return request(endpoint, method: "GET", authorized: authorized, parameters: nil)
@@ -44,16 +46,20 @@ class Api {
             }
             
             if authorized {
-                let token = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.USER_TOKEN.rawValue) as! String
+                let token = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.UserToken.rawValue) as! String
                 mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
             
             let request = Alamofire.request(mutableURLRequest)
                 .validate()
-                .responseJSON { (_, _, data, error) in
-                    if error != nil {
-                        println(error!)
-                        sendError(sink, error!)
+                .responseJSON { (_, response, data, error) in
+                    if let error = error {
+                        // TODO remove login hack
+                        if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
+                            NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
+                        }
+                        println(error)
+                        sendError(sink, error)
                     } else {
                         if data != nil {
                             sendNext(sink, JSON(data!))

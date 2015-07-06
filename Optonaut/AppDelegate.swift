@@ -20,9 +20,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         if let window = window {
+            
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: "onNotificationLogout", name: NotificationKeys.Logout.rawValue, object: nil)
+            
             window.backgroundColor = UIColor.whiteColor()
             
-            let userIsLoggedIn = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue);
+            let userIsLoggedIn = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.UserIsLoggedIn.rawValue);
             if userIsLoggedIn {
                 window.rootViewController = TabBarViewController()
             } else {
@@ -30,7 +33,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             window.makeKeyAndVisible()
         }
+        
         return true
+    }
+    
+    func onNotificationLogout() {
+        NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.UserToken.rawValue)
+        NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.UserIsLoggedIn.rawValue)
+        
+        if let window = window {
+            window.rootViewController = LoginViewController()
+        }
     }
 
     func applicationWillResignActive(application: UIApplication) {

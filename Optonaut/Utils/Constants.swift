@@ -9,7 +9,11 @@
 import Foundation
 
 enum UserDefaultsKeys: String {
-    case USER_IS_LOGGED_IN = "user_is_logged_in"
-    case USER_TOKEN = "user_token"
-    case USER_ID = "user_id"
+    case UserIsLoggedIn = "user_is_logged_in"
+    case UserToken = "user_token"
+    case UserId = "user_id"
+}
+
+enum NotificationKeys: String {
+    case Logout = "logout"
 }

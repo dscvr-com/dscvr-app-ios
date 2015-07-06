@@ -27,7 +27,7 @@ class ProfileNavViewController: UINavigationController {
         navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         navigationBar.tintColor = .whiteColor()
         
-        let userId = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.USER_ID.rawValue);
+        let userId = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.UserId.rawValue);
         let profileVC = ProfileViewController(userId: userId)
         
         let attributes = [NSFontAttributeName: UIFont.icomoonOfSize(20)] as Dictionary!
@@ -49,9 +49,7 @@ class ProfileNavViewController: UINavigationController {
         let refreshAlert = UIAlertController(title: "You're about to log out...", message: "Really? Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
         
         refreshAlert.addAction(UIAlertAction(title: "Sign out", style: .Default, handler: { (action: UIAlertAction!) in
-            NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.USER_TOKEN.rawValue)
-            NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.USER_IS_LOGGED_IN.rawValue)
-            self.presentViewController(LoginViewController(), animated: false, completion: nil)
+            NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
         }))
         
         refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { _ in return }))
