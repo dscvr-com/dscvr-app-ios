@@ -120,7 +120,7 @@ class ProfileViewController: UIViewController {
         followingCountView.textColor = .blackColor()
         view.addSubview(followingCountView)
         
-        let optographTableViewController = OptographTableViewController(source: "users/\(viewModel.id.value)/optographs", navController: navigationController)
+        let optographTableViewController = OptographTableViewController(source: "users/\(viewModel.id.value)/optographs", navController: navigationController, fullscreen: false)
         optographsView = optographTableViewController.view
         view.addSubview(optographsView)
         

@@ -35,6 +35,9 @@ class DetailsViewController: UIViewController {
     
     let motionManager = CMMotionManager()
     
+    var originalNavigationBarTranslucent: Bool!
+    var originalNavigationBarShadowImage: UIImage!
+    
     required init(viewModel: OptographViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -178,7 +181,11 @@ class DetailsViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationController?.presentTransparentNavigationBar()
+        originalNavigationBarTranslucent = navigationController?.navigationBar.translucent
+        originalNavigationBarShadowImage = navigationController?.navigationBar.shadowImage
+        
+        navigationController?.navigationBar.translucent = true
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -197,7 +204,8 @@ class DetailsViewController: UIViewController {
     
     override func willMoveToParentViewController(parent: UIViewController?) {
         if parent == nil {
-            navigationController?.hideTransparentNavigationBar()
+            navigationController?.navigationBar.translucent = originalNavigationBarTranslucent
+            navigationController?.navigationBar.shadowImage = originalNavigationBarShadowImage
         }
     }
     

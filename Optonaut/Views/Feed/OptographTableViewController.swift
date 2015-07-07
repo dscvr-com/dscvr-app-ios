@@ -8,7 +8,6 @@
 
 import UIKit
 import PureLayout_iOS
-import RealmSwift
 import Alamofire
 import SwiftyJSON
 import Refresher
@@ -18,14 +17,16 @@ class OptographTableViewController: UIViewController {
     var items = [Optograph]()
     let tableView = UITableView()
     var navController: UINavigationController?
+    var fullscreen = false
     let statusBarBackgroundView = UIView()
     
     var viewModel: OptographsViewModel
     
-    required init(source: String, navController: UINavigationController?) {
+    required init(source: String, navController: UINavigationController?, fullscreen: Bool) {
         viewModel = OptographsViewModel(source: source)
         super.init(nibName: nil, bundle: nil)
         self.navController = navController
+        self.fullscreen = fullscreen
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -37,6 +38,7 @@ class OptographTableViewController: UIViewController {
         super.viewDidLoad()
         
         statusBarBackgroundView.backgroundColor = baseColor()
+        statusBarBackgroundView.hidden = !fullscreen
         navController?.view.addSubview(statusBarBackgroundView)
         
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .Plain, target: nil, action: nil)
@@ -80,7 +82,7 @@ class OptographTableViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        statusBarBackgroundView.hidden = true
+        statusBarBackgroundView.hidden = !fullscreen
         navController?.setNavigationBarHidden(false, animated: animated)
     }
     

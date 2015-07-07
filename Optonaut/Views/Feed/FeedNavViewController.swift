@@ -34,7 +34,7 @@ class FeedNavViewController: UINavigationController {
         
         navigationBar.setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
         
-        let optographTableViewController = OptographTableViewController(source: "optographs", navController: self)
+        let optographTableViewController = OptographTableViewController(source: "optographs", navController: self, fullscreen: true)
         optographTableViewController.navigationItem.title = String.icomoonWithName(.LogoText)
         
         let cameraButton = UIBarButtonItem()
@@ -68,17 +68,4 @@ class FeedNavViewController: UINavigationController {
         return false
     }
     
-}
-
-extension UINavigationController {
-    
-    public func presentTransparentNavigationBar() {
-        navigationBar.translucent = true
-        navigationBar.shadowImage = UIImage()
-    }
-    
-    public func hideTransparentNavigationBar() {
-        navigationBar.translucent = false
-        navigationBar.shadowImage = UINavigationBar.appearance().shadowImage
-    }
 }
