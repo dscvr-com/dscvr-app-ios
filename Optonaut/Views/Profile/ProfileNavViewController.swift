@@ -22,21 +22,25 @@ class ProfileNavViewController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationBar.translucent = false
-        navigationBar.barTintColor = baseColor()
-        navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
-        navigationBar.tintColor = .whiteColor()
+        navigationBar.translucent = true
+//        navigationBar.barTintColor = baseColor()
+//        navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+//        navigationBar.tintColor = .whiteColor()
+        
+        navigationBar.setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
+        navigationBar.shadowImage = UIImage()
         
         let userId = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.UserId.rawValue);
         let profileVC = ProfileViewController(userId: userId)
         
-        let attributes = [NSFontAttributeName: UIFont.icomoonOfSize(20)] as Dictionary!
-        let signoutButton = UIBarButtonItem()
-        signoutButton.setTitleTextAttributes(attributes, forState: .Normal)
-        signoutButton.title = String.icomoonWithName(.Cross)
-        signoutButton.target = self
-        signoutButton.action = "logout"
-        profileVC.navigationItem.setRightBarButtonItem(signoutButton, animated: false)
+//        let signoutButton = UIBarButtonItem()
+//        let attributes = [NSFontAttributeName: UIFont.icomoonOfSize(20)]
+//        signoutButton.setTitleTextAttributes(attributes, forState: .Normal)
+//        signoutButton.title = String.icomoonWithName(.LogOut)
+//        signoutButton.tintColor = .whiteColor()
+//        signoutButton.target = self
+//        signoutButton.action = "logout"
+//        profileVC.navigationItem.setRightBarButtonItem(signoutButton, animated: false)
         
         pushViewController(profileVC, animated: false)
     }

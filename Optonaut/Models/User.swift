@@ -14,6 +14,7 @@ class User: Object {
     dynamic var email = ""
     dynamic var name = ""
     dynamic var userName = ""
+    dynamic var bio = ""
     dynamic var numberOfFollowers = 0
     dynamic var numberOfFollowings = 0
     dynamic var numberOfOptographs = 0

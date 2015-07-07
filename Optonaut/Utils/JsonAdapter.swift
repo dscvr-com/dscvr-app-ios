@@ -34,7 +34,9 @@ func mapOptographFromJson(optographJson: JSON) -> Optograph {
 func mapProfileUserFromJson(userJson: JSON) -> User {
     let user = User()
     user.email = userJson["email"].stringValue
+    user.name = userJson["name"].stringValue
     user.userName = userJson["user_name"].stringValue
+    user.bio = userJson["bio"].stringValue
     user.numberOfFollowers = userJson["number_of_followers"].intValue
     user.numberOfFollowings = userJson["number_of_followings"].intValue
     user.numberOfOptographs = userJson["number_of_optographs"].intValue

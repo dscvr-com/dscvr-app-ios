@@ -208,7 +208,7 @@ class DetailsViewController: UIViewController {
     }
     
     override func updateViewConstraints() {
-        detailsImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: -44)
+        detailsImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
         detailsImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
         detailsImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.84)
         
@@ -225,7 +225,7 @@ class DetailsViewController: UIViewController {
         nameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
         nameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
-        userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 0)
+        userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
         userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 4)
         
         dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)

@@ -13,12 +13,15 @@ import ReactiveCocoa
 class ProfileViewModel {
     
     let id = MutableProperty<Int>(0)
+    let name = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
+    let bio = MutableProperty<String>("")
     let email = MutableProperty<String>("")
     let numberOfFollowers = MutableProperty<Int>(0)
     let numberOfFollowings = MutableProperty<Int>(0)
     let numberOfOptographs = MutableProperty<Int>(0)
     let isFollowing = MutableProperty<Bool>(false)
+    let avatarUrl = MutableProperty<String>("")
     
     init(id: Int) {
         self.id.put(id)
@@ -28,11 +31,14 @@ class ProfileViewModel {
                 next: { json in
                     let user = mapProfileUserFromJson(json)
                     self.email.put(user.email)
+                    self.name.put(user.name)
                     self.userName.put(user.userName)
+                    self.bio.put(user.bio)
                     self.numberOfFollowers.put(user.numberOfFollowers)
                     self.numberOfFollowings.put(user.numberOfFollowings)
                     self.numberOfOptographs.put(user.numberOfOptographs)
                     self.isFollowing.put(user.isFollowing)
+                    self.avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(id % 4).jpg")
                 },
                 error: { error in
                     println(error)

@@ -21,6 +21,8 @@ class TabBarViewController: UITabBarController {
         let profileVC = ProfileNavViewController()
         viewControllers = [feedVC, searchVC, activityVC, profileVC]
         
+        selectedIndex = 3
+        
         // set bar color
         tabBar.barTintColor = baseColor()
         tabBar.translucent = false
