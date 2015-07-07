@@ -99,6 +99,18 @@ class DetailsViewController: UIViewController {
         shareButtonView.setTitle(String.icomoonWithName(.Share), forState: .Normal)
         shareButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
         shareButtonView.rac_command = RACCommand(signalBlock: { _ in
+            // TODO adjust sharing feature
+            let textToShare = "Check out this Optograph of \(self.viewModel.user.value)."
+            
+            if let myWebsite = NSURL(string: "http://www.optonaut.com")
+            {
+                let objectsToShare = [textToShare, myWebsite]
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                
+                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
+                
+                self.presentViewController(activityVC, animated: true, completion: nil)
+            }
             return RACSignal.empty()
         })
         view.addSubview(shareButtonView)
