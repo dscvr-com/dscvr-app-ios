@@ -129,3 +129,12 @@ extension UIImage {
     }
     
 }
+
+extension UIEdgeInsets {
+    var inverse : UIEdgeInsets {
+        return UIEdgeInsets(top: -top, left: -left, bottom: -bottom, right: -right)
+    }
+    func apply(rect: CGRect) -> CGRect {
+        return UIEdgeInsetsInsetRect(rect, self)
+    }
+}

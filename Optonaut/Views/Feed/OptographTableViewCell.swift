@@ -11,31 +11,6 @@ import UIKit
 import ReactiveCocoa
 import WebImage
 
-class InsetLabel: UILabel {
-    
-    var edgeInsets: UIEdgeInsets = UIEdgeInsetsZero
-    
-    override func textRectForBounds(bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
-        var rect = edgeInsets.apply(bounds)
-        rect = super.textRectForBounds(rect, limitedToNumberOfLines: numberOfLines)
-        return edgeInsets.inverse.apply(rect)
-    }
-    
-    override func drawTextInRect(rect: CGRect) {
-        super.drawTextInRect(edgeInsets.apply(rect))
-    }
-    
-}
-
-extension UIEdgeInsets {
-    var inverse : UIEdgeInsets {
-        return UIEdgeInsets(top: -top, left: -left, bottom: -bottom, right: -right)
-    }
-    func apply(rect: CGRect) -> CGRect {
-        return UIEdgeInsetsInsetRect(rect, self)
-    }
-}
-
 class OptographTableViewCell: UITableViewCell {
     
     var navController: UINavigationController?

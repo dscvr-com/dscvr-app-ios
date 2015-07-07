@@ -82,8 +82,10 @@ public enum Icomoon: String {
     case Cross = "\u{e60a}"
     case Cog = "\u{e60b}"
     case LogOut = "\u{e60c}"
-    case ShareAlternitive = "\u{e60d}"
+    case Share = "\u{e60d}"
     case LogoText = "\u{e60e}"
     case Logo = "\u{e60f}"
+    case Eye = "\u{e610}"
     case Bell = "\u{f0a2}"
+    case CommentOutlined = "\u{f0e5}"
 }

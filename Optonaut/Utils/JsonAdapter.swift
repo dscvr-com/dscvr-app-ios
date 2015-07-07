@@ -23,7 +23,7 @@ func mapOptographFromJson(optographJson: JSON) -> Optograph {
     optograph.id = optographJson["id"].intValue
     optograph.location = optographJson["location"]["description"].stringValue
     optograph.text = optographJson["text"].stringValue
-    optograph.numberOfLikes = optographJson["number_of_likes"].intValue
+    optograph.likeCount = optographJson["like_count"].intValue
     optograph.likedByUser = optographJson["liked_by_user"].boolValue
     optograph.createdAt = dateFormatter.dateFromString(optographJson["created_at"].stringValue)!
     optograph.user = user
@@ -67,7 +67,7 @@ func mapActivityFromJson(activityJson: JSON) -> Activity {
         let optograph = Optograph()
         optograph.id = activityJson["optograph"]["id"].intValue
         optograph.text = activityJson["optograph"]["text"].stringValue
-        optograph.numberOfLikes = activityJson["optograph"]["number_of_likes"].intValue
+        optograph.likeCount = activityJson["optograph"]["like_count"].intValue
         optograph.likedByUser = activityJson["optograph"]["liked_by_user"].boolValue
         optograph.createdAt = dateFormatter.dateFromString(activityJson["optograph"]["created_at"].stringValue)!
         
