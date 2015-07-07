@@ -32,14 +32,20 @@ class OptographTableViewCell: UITableViewCell {
         
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
+        avatarImageView.userInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(avatarImageView)
         
         nameView.font = UIFont.robotoOfSize(15, withType: .Medium)
         nameView.textColor = UIColor(0x4d4d4d)
+        nameView.userInteractionEnabled = true
+        nameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(nameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = UIColor(0xb3b3b3)
+        userNameView.userInteractionEnabled = true
+        userNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(userNameView)
         
         dateView.font = UIFont.robotoOfSize(12, withType: .Light)
@@ -51,7 +57,7 @@ class OptographTableViewCell: UITableViewCell {
         contentView.addSubview(likeButtonView)
         
         previewImageView.userInteractionEnabled = true
-        previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showDetails"))
+        previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
         contentView.addSubview(previewImageView)
         
         locationView.font = UIFont.robotoOfSize(12, withType: .Regular)
@@ -150,9 +156,14 @@ class OptographTableViewCell: UITableViewCell {
         }
     }
     
-    func showDetails() {
+    func pushDetails() {
         let detailsViewController = DetailsViewController(viewModel: viewModel)
         navController?.pushViewController(detailsViewController, animated: true)
+    }
+    
+    func pushProfile() {
+        let profileViewController = ProfileViewController(userId: viewModel.userId.value)
+        navController?.pushViewController(profileViewController, animated: true)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

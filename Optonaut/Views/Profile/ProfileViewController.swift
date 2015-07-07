@@ -21,6 +21,8 @@ class ProfileViewController: UIViewController {
     let userNameView = UILabel()
     let bioView = UILabel()
     let followButtonView = UIButton()
+    let logoutButtonView = UIButton()
+    let editProfileButtonView = UIButton()
     let followersHeadingView = UILabel()
     let followersCountView = UILabel()
     let verticalLineView = UIView()
@@ -28,8 +30,11 @@ class ProfileViewController: UIViewController {
     let followingCountView = UILabel()
     var optographsView: UIView!
     
+    var isMe = false
+    
     required init(userId: Int) {
         viewModel = ProfileViewModel(id: userId)
+        isMe = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.UserId.rawValue) == userId
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -95,7 +100,37 @@ class ProfileViewController: UIViewController {
             self.viewModel.toggleFollow()
             return RACSignal.empty()
         })
+        followButtonView.hidden = isMe
         view.addSubview(followButtonView)
+        
+        logoutButtonView.backgroundColor = .whiteColor()
+        logoutButtonView.layer.borderWidth = 1
+        logoutButtonView.layer.borderColor = baseColor().CGColor
+        logoutButtonView.layer.cornerRadius = 5
+        logoutButtonView.layer.masksToBounds = true
+        logoutButtonView.setTitle(String.icomoonWithName(.LogOut), forState: .Normal)
+        logoutButtonView.setTitleColor(baseColor(), forState: .Normal)
+        logoutButtonView.titleLabel?.font = .icomoonOfSize(16)
+        logoutButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.logout()
+            return RACSignal.empty()
+        })
+        logoutButtonView.hidden = !isMe
+        view.addSubview(logoutButtonView)
+        
+        editProfileButtonView.backgroundColor = .whiteColor()
+        editProfileButtonView.layer.borderWidth = 1
+        editProfileButtonView.layer.borderColor = baseColor().CGColor
+        editProfileButtonView.layer.cornerRadius = 5
+        editProfileButtonView.layer.masksToBounds = true
+        editProfileButtonView.setTitle("Edit profile", forState: .Normal)
+        editProfileButtonView.setTitleColor(baseColor(), forState: .Normal)
+        editProfileButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
+        editProfileButtonView.rac_command = RACCommand(signalBlock: { _ in
+            return RACSignal.empty()
+        })
+        editProfileButtonView.hidden = !isMe
+        view.addSubview(editProfileButtonView)
         
         followersHeadingView.text = "Followers"
         followersHeadingView.font = .robotoOfSize(11, withType: .Regular)
@@ -140,7 +175,7 @@ class ProfileViewController: UIViewController {
         nameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 17)
         nameView.autoAlignAxisToSuperviewAxis(.Vertical)
         
-        userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: nameView, withOffset: -3)
+        userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: nameView, withOffset: -2)
         userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 5)
         
         bioView.autoPinEdge(.Top, toEdge: .Bottom, ofView: nameView, withOffset: 5)
@@ -150,6 +185,14 @@ class ProfileViewController: UIViewController {
         followButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
         followButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         followButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
+        
+        logoutButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+        logoutButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        logoutButtonView.autoSetDimensionsToSize(CGSize(width: 40, height: 31))
+        
+        editProfileButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+        editProfileButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: logoutButtonView, withOffset: -3)
+        editProfileButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
         
         followersHeadingView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
         followersHeadingView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
@@ -172,6 +215,18 @@ class ProfileViewController: UIViewController {
         optographsView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Top)
         
         super.updateViewConstraints()
+    }
+    
+    func logout() {
+        let refreshAlert = UIAlertController(title: "You're about to log out...", message: "Really? Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        refreshAlert.addAction(UIAlertAction(title: "Sign out", style: .Default, handler: { (action: UIAlertAction!) in
+            NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
+        }))
+        
+        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { _ in return }))
+        
+        presentViewController(refreshAlert, animated: true, completion: nil)
     }
     
 }
