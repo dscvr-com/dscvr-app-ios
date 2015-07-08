@@ -171,7 +171,7 @@ class DetailsViewController: UIViewController {
             self.navigationController?.pushViewController(profileViewController, animated: true)
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in
-            let hashtagTableViewController = HashtagTableViewController(navController: self.navigationController)
+            let hashtagTableViewController = HashtagTableViewController()
             self.navigationController?.pushViewController(hashtagTableViewController, animated: true)
         }
         view.addSubview(textView)

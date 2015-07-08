@@ -155,8 +155,9 @@ class ProfileViewController: UIViewController {
         followingCountView.textColor = .blackColor()
         view.addSubview(followingCountView)
         
-        let feedTableViewController = FeedTableViewController(source: "users/\(viewModel.id.value)/optographs", navController: navigationController, fullscreen: false)
-        optographsView = feedTableViewController.view
+        let optographTableViewController = ProfileOptographTableViewController(userId: viewModel.id.value)
+        addChildViewController(optographTableViewController)
+        optographsView = optographTableViewController.view
         view.addSubview(optographsView)
         
         view.setNeedsUpdateConstraints()
@@ -177,7 +178,7 @@ class ProfileViewController: UIViewController {
         
         userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: nameView, withOffset: -2)
         userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 5)
-        
+
         bioView.autoPinEdge(.Top, toEdge: .Bottom, ofView: nameView, withOffset: 5)
         bioView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         bioView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)

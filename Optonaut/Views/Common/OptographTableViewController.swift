@@ -16,16 +16,6 @@ class OptographTableViewController: UIViewController {
     
     var items = [Optograph]()
     let tableView = UITableView()
-    var navController: UINavigationController?
-    
-    required init(navController: UINavigationController?) {
-        super.init(nibName: nil, bundle: nil)
-        self.navController = navController
-    }
-    
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,7 +52,7 @@ extension OptographTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! OptographTableViewCell
-        cell.navController = navController
+        cell.navigationController = navigationController
         cell.bindViewModel(items[indexPath.row])
         
         return cell

@@ -13,7 +13,7 @@ import WebImage
 
 class OptographTableViewCell: UITableViewCell {
     
-    var navController: UINavigationController?
+    var navigationController: UINavigationController?
     var viewModel: OptographViewModel!
     
     // subviews
@@ -148,22 +148,22 @@ class OptographTableViewCell: UITableViewCell {
         textView.rac_text <~ viewModel.text
         textView.userHandleLinkTapHandler = { label, handle, range in
             let profileViewController = ProfileViewController(userId: self.viewModel.userId.value)
-            self.navController?.pushViewController(profileViewController, animated: true)
+            self.navigationController?.pushViewController(profileViewController, animated: true)
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in
-            let hashtagTableViewController = HashtagTableViewController(navController: self.navController)
-            self.navController?.pushViewController(hashtagTableViewController, animated: true)
+            let hashtagTableViewController = HashtagTableViewController()
+            self.navigationController?.pushViewController(hashtagTableViewController, animated: true)
         }
     }
     
     func pushDetails() {
         let detailsViewController = DetailsViewController(viewModel: viewModel)
-        navController?.pushViewController(detailsViewController, animated: true)
+        navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
     func pushProfile() {
         let profileViewController = ProfileViewController(userId: viewModel.userId.value)
-        navController?.pushViewController(profileViewController, animated: true)
+        navigationController?.pushViewController(profileViewController, animated: true)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

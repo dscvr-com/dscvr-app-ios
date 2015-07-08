@@ -31,7 +31,7 @@ class ExploreNavViewController: UINavigationController {
         navigationBar.tintColor = .whiteColor()
         navigationBar.setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
         
-        let exploreViewController = FeedTableViewController(source: "optographs", navController: self, fullscreen: true)
+        let exploreViewController = FeedTableViewController(source: "optographs", fullscreen: true)
         
         exploreViewController.navigationItem.title = "Explore"
         

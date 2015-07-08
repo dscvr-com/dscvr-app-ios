@@ -8,21 +8,15 @@
 
 import UIKit
 import PureLayout_iOS
-import Alamofire
-import SwiftyJSON
 import Refresher
 
-class FeedTableViewController: OptographTableViewController {
-
-    var fullscreen = false
-    let statusBarBackgroundView = UIView()
+class ProfileOptographTableViewController: OptographTableViewController {
     
     var viewModel: OptographsViewModel
     
-    required init(source: String, fullscreen: Bool) {
-        viewModel = OptographsViewModel(source: source)
+    required init(userId: Int) {
+        viewModel = OptographsViewModel(source: "users/\(userId)/optographs")
         super.init(nibName: nil, bundle: nil)
-        self.fullscreen = fullscreen
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -32,10 +26,6 @@ class FeedTableViewController: OptographTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        statusBarBackgroundView.backgroundColor = baseColor()
-        statusBarBackgroundView.hidden = !fullscreen
-        navigationController?.view.addSubview(statusBarBackgroundView)
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
@@ -60,28 +50,8 @@ class FeedTableViewController: OptographTableViewController {
         view.setNeedsUpdateConstraints()
     }
     
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        statusBarBackgroundView.hidden = !fullscreen
-        navigationController?.hidesBarsOnSwipe = true
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        statusBarBackgroundView.hidden = true
-        navigationController?.hidesBarsOnSwipe = false
-        navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
-    
-//    override func viewDidDisappear(animated: Bool) {
-//        super.viewDidDisappear(animated)
-//    }
-    
     override func updateViewConstraints() {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
-        
-        statusBarBackgroundView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Bottom)
-        statusBarBackgroundView.autoSetDimension(.Height, toSize: 22)
         
         super.updateViewConstraints()
     }

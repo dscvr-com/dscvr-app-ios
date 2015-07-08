@@ -27,7 +27,7 @@ class ProfileNavViewController: UINavigationController {
         navigationBar.shadowImage = UIImage()
         navigationBar.tintColor = .whiteColor() // needed for back button on details
         
-        let userId = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.UserId.rawValue);
+        let userId = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.UserId.rawValue)
         let profileVC = ProfileViewController(userId: userId)
         
         pushViewController(profileVC, animated: false)

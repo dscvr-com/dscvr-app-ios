@@ -32,7 +32,7 @@ class FeedNavViewController: UINavigationController {
         navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
         navigationBar.setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
         
-        let feedTableViewController = FeedTableViewController(source: "optographs/feed", navController: self, fullscreen: true)
+        let feedTableViewController = FeedTableViewController(source: "optographs/feed", fullscreen: true)
         feedTableViewController.navigationItem.title = String.icomoonWithName(.LogoText)
         
         let cameraButton = UIBarButtonItem()
@@ -56,7 +56,7 @@ class FeedNavViewController: UINavigationController {
     }
     
     func showSearch() {
-        pushViewController(SearchTableViewController(navController: self), animated: false)
+        pushViewController(SearchTableViewController(), animated: false)
     }
     
     override func prefersStatusBarHidden() -> Bool {
