@@ -9,7 +9,7 @@
 import UIKit
 import ReactiveCocoa
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: UIViewController, TransparentNavbar {
     
     var viewModel: ProfileViewModel
     
@@ -155,7 +155,7 @@ class ProfileViewController: UIViewController {
         followingCountView.textColor = .blackColor()
         view.addSubview(followingCountView)
         
-        let optographTableViewController = ProfileOptographTableViewController(userId: viewModel.id.value)
+        let optographTableViewController = ProfileTableViewController(userId: viewModel.id.value)
         addChildViewController(optographTableViewController)
         optographsView = optographTableViewController.view
         view.addSubview(optographsView)
@@ -216,6 +216,12 @@ class ProfileViewController: UIViewController {
         optographsView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Top)
         
         super.updateViewConstraints()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        updateNavbarAppear()
     }
     
     func logout() {

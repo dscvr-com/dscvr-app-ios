@@ -18,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 //        try! NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath)
         
+        setupAppearanceDefaults()
+        
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         if let window = window {
             

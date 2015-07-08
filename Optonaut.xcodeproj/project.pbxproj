@@ -36,7 +36,9 @@
 		8F4C6E581B4A73BE007508ED /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C6E571B4A73BE007508ED /* Fonts.swift */; };
 		8F500CFA1B4D5D6E002B9878 /* OptographTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CF91B4D5D6E002B9878 /* OptographTableViewCell.swift */; };
 		8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFB1B4D5F97002B9878 /* NavbarProtocols.swift */; };
-		8F500CFE1B4D6D70002B9878 /* ProfileOptographTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFD1B4D6D70002B9878 /* ProfileOptographTableViewController.swift */; };
+		8F500CFE1B4D6D70002B9878 /* ProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFD1B4D6D70002B9878 /* ProfileTableViewController.swift */; };
+		8F500D001B4D8028002B9878 /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFF1B4D8028002B9878 /* Appearance.swift */; };
+		8F500D021B4D8471002B9878 /* ExploreTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500D011B4D8471002B9878 /* ExploreTableViewController.swift */; };
 		8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CE1B3AFBDC007E073C /* Api.swift */; };
 		8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CF1B3AFBDC007E073C /* Utils.swift */; };
 		8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */; };
@@ -54,7 +56,6 @@
 		8F5FD9FB1B3DB853007E073C /* ActivityTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9FA1B3DB853007E073C /* ActivityTableViewController.swift */; };
 		8F5FD9FD1B3DB909007E073C /* ActivitiesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9FC1B3DB909007E073C /* ActivitiesViewModel.swift */; };
 		8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA001B3EECB0007E073C /* Activity.swift */; };
-		8F5FDA051B40325D007E073C /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA041B40325D007E073C /* KILabel.m */; };
 		8F5FDA071B412D83007E073C /* JsonAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA061B412D83007E073C /* JsonAdapter.swift */; };
 		8F5FDA091B412DB2007E073C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA081B412DB2007E073C /* Constants.swift */; };
 		8F5FDA0B1B433DAB007E073C /* SphereViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA0A1B433DAB007E073C /* SphereViewController.swift */; };
@@ -75,6 +76,7 @@
 		8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */; };
 		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
 		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
+		8FFCE4B91B4DBF1900832C88 /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4B81B4DBF1900832C88 /* KILabel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,7 +119,9 @@
 		8F4C6E571B4A73BE007508ED /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		8F500CF91B4D5D6E002B9878 /* OptographTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCell.swift; sourceTree = "<group>"; };
 		8F500CFB1B4D5F97002B9878 /* NavbarProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavbarProtocols.swift; sourceTree = "<group>"; };
-		8F500CFD1B4D6D70002B9878 /* ProfileOptographTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileOptographTableViewController.swift; sourceTree = "<group>"; };
+		8F500CFD1B4D6D70002B9878 /* ProfileTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTableViewController.swift; sourceTree = "<group>"; };
+		8F500CFF1B4D8028002B9878 /* Appearance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
+		8F500D011B4D8471002B9878 /* ExploreTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreTableViewController.swift; sourceTree = "<group>"; };
 		8F5FD9CE1B3AFBDC007E073C /* Api.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		8F5FD9CF1B3AFBDC007E073C /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
@@ -135,8 +139,6 @@
 		8F5FD9FA1B3DB853007E073C /* ActivityTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityTableViewController.swift; sourceTree = "<group>"; };
 		8F5FD9FC1B3DB909007E073C /* ActivitiesViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivitiesViewModel.swift; sourceTree = "<group>"; };
 		8F5FDA001B3EECB0007E073C /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
-		8F5FDA031B40325D007E073C /* KILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabel.h; sourceTree = "<group>"; };
-		8F5FDA041B40325D007E073C /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabel.m; sourceTree = "<group>"; };
 		8F5FDA061B412D83007E073C /* JsonAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonAdapter.swift; sourceTree = "<group>"; };
 		8F5FDA081B412DB2007E073C /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8F5FDA0A1B433DAB007E073C /* SphereViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SphereViewController.swift; sourceTree = "<group>"; };
@@ -162,6 +164,8 @@
 		8FCCA0451B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FCCA0461B3806040091F1B1 /* OptonautTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptonautTests.swift; sourceTree = "<group>"; };
 		8FCCA0511B3806680091F1B1 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8FFCE4B71B4DBF1900832C88 /* KILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabel.h; sourceTree = "<group>"; };
+		8FFCE4B81B4DBF1900832C88 /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				8F464B011B4C727200A66FA5 /* ExploreNavViewController.swift */,
+				8F500D011B4D8471002B9878 /* ExploreTableViewController.swift */,
 			);
 			path = Explore;
 			sourceTree = "<group>";
@@ -269,6 +274,7 @@
 				8F5FDA081B412DB2007E073C /* Constants.swift */,
 				8F5FD9CF1B3AFBDC007E073C /* Utils.swift */,
 				8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */,
+				8F500CFF1B4D8028002B9878 /* Appearance.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -322,15 +328,6 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
-		8F5FDA021B4031FA007E073C /* Vendor */ = {
-			isa = PBXGroup;
-			children = (
-				8F5FDA031B40325D007E073C /* KILabel.h */,
-				8F5FDA041B40325D007E073C /* KILabel.m */,
-			);
-			name = Vendor;
-			sourceTree = "<group>";
-		};
 		8F7738121B380F5D001F642B /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -361,9 +358,9 @@
 		8F9A4FF61B39E992009C4548 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				8F9A4FF71B39E992009C4548 /* ProfileViewController.swift */,
-				8F500CFD1B4D6D70002B9878 /* ProfileOptographTableViewController.swift */,
 				8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */,
+				8F9A4FF71B39E992009C4548 /* ProfileViewController.swift */,
+				8F500CFD1B4D6D70002B9878 /* ProfileTableViewController.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -371,8 +368,8 @@
 		8FA55BED1B387DD800BBA4A2 /* Feed */ = {
 			isa = PBXGroup;
 			children = (
-				8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */,
 				8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */,
+				8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */,
 				8F464AFE1B4C62DE00A66FA5 /* SearchTableViewController.swift */,
 			);
 			path = Feed;
@@ -415,8 +412,8 @@
 				8F5FD9D01B3AFBDC007E073C /* ViewModels */,
 				8F7738171B380FC1001F642B /* Views */,
 				8F7738391B381770001F642B /* Assets.xcassets */,
+				8FFCE4B61B4DBF1900832C88 /* Vendor */,
 				8F488ED51B4416A100599B61 /* Resources */,
-				8F5FDA021B4031FA007E073C /* Vendor */,
 				8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */,
 				8FCCA02E1B3806040091F1B1 /* Supporting Files */,
 			);
@@ -446,6 +443,15 @@
 				8FCCA0451B3806040091F1B1 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8FFCE4B61B4DBF1900832C88 /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				8FFCE4B71B4DBF1900832C88 /* KILabel.h */,
+				8FFCE4B81B4DBF1900832C88 /* KILabel.m */,
+			);
+			path = Vendor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -607,15 +613,16 @@
 				8F464B021B4C727200A66FA5 /* ExploreNavViewController.swift in Sources */,
 				8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */,
 				8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */,
-				8F5FDA051B40325D007E073C /* KILabel.m in Sources */,
+				8F500D021B4D8471002B9878 /* ExploreTableViewController.swift in Sources */,
 				8F4C6E1C1B4961A4007508ED /* HexColor.swift in Sources */,
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
-				8F500CFE1B4D6D70002B9878 /* ProfileOptographTableViewController.swift in Sources */,
+				8F500CFE1B4D6D70002B9878 /* ProfileTableViewController.swift in Sources */,
 				8F464AF61B4ACE4E00A66FA5 /* RequestInviteViewController.swift in Sources */,
 				8F5FDA071B412D83007E073C /* JsonAdapter.swift in Sources */,
 				8F464B071B4C7A9000A66FA5 /* HashtagTableViewController.swift in Sources */,
 				8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */,
 				8F5FD9FD1B3DB909007E073C /* ActivitiesViewModel.swift in Sources */,
+				8F500D001B4D8028002B9878 /* Appearance.swift in Sources */,
 				8F4C6E581B4A73BE007508ED /* Fonts.swift in Sources */,
 				8F5FD9F91B3DB7B3007E073C /* LoginViewController.swift in Sources */,
 				8F464AF81B4ADAF300A66FA5 /* RequestInviteViewModel.swift in Sources */,
@@ -631,6 +638,7 @@
 				8F9A4FF81B39E992009C4548 /* ProfileViewController.swift in Sources */,
 				8F5FD9DC1B3B360E007E073C /* OptographViewModel.swift in Sources */,
 				8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */,
+				8FFCE4B91B4DBF1900832C88 /* KILabel.m in Sources */,
 				8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

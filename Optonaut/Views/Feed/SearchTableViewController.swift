@@ -10,7 +10,7 @@ import UIKit
 import PureLayout_iOS
 import Alamofire
 
-class SearchTableViewController: OptographTableViewController {
+class SearchTableViewController: OptographTableViewController, RedNavbar {
     
     let searchBar = UISearchBar()
     let viewModel = SearchViewModel()
@@ -38,7 +38,14 @@ class SearchTableViewController: OptographTableViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        updateNavbarAppear()
         searchBar.becomeFirstResponder()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        updateNavbarDisappear()
     }
     
     override func updateViewConstraints() {

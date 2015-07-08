@@ -8,34 +8,29 @@
 
 import UIKit
 import PureLayout_iOS
-import Alamofire
-import SwiftyJSON
 import Refresher
 
-class FeedTableViewController: OptographTableViewController {
-
-    var fullscreen = false
-    let statusBarBackgroundView = UIView()
+class FeedTableViewController: OptographTableViewController, RedNavbar {
     
-    var viewModel: OptographsViewModel
-    
-    required init(source: String, fullscreen: Bool) {
-        viewModel = OptographsViewModel(source: source)
-        super.init(nibName: nil, bundle: nil)
-        self.fullscreen = fullscreen
-    }
-    
-    required init(coder aDecoder: NSCoder) {
-        viewModel = OptographsViewModel(source: "")
-        super.init(coder: aDecoder)
-    }
+    let viewModel = OptographsViewModel(source: "optographs/feed")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        statusBarBackgroundView.backgroundColor = baseColor()
-        statusBarBackgroundView.hidden = !fullscreen
-        navigationController?.view.addSubview(statusBarBackgroundView)
+        navigationItem.title = String.icomoonWithName(.LogoText)
+        
+        let cameraButton = UIBarButtonItem()
+        cameraButton.image = UIImage.icomoonWithName(.Camera, textColor: .whiteColor(), size: CGSize(width: 21, height: 17))
+        cameraButton.target = self
+        cameraButton.action = "pushCamera"
+        navigationItem.setRightBarButtonItem(cameraButton, animated: false)
+        
+        let searchButton = UIBarButtonItem()
+        searchButton.title = String.icomoonWithName(.MagnifyingGlass)
+        searchButton.image = UIImage.icomoonWithName(.MagnifyingGlass, textColor: .whiteColor(), size: CGSize(width: 21, height: 17))
+        searchButton.target = self
+        searchButton.action = "pushSearch"
+        navigationItem.setLeftBarButtonItem(searchButton, animated: false)
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
@@ -60,30 +55,36 @@ class FeedTableViewController: OptographTableViewController {
         view.setNeedsUpdateConstraints()
     }
     
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        statusBarBackgroundView.hidden = !fullscreen
-        navigationController?.hidesBarsOnSwipe = true
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        updateNavbarAppear()
+        
+        navigationController?.navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
+        navigationController?.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.icomoonOfSize(50),
+            NSForegroundColorAttributeName: UIColor.whiteColor(),
+        ]
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        statusBarBackgroundView.hidden = true
-        navigationController?.hidesBarsOnSwipe = false
-        navigationController?.setNavigationBarHidden(false, animated: animated)
+        
+        updateNavbarDisappear()
     }
-    
-//    override func viewDidDisappear(animated: Bool) {
-//        super.viewDidDisappear(animated)
-//    }
     
     override func updateViewConstraints() {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
-        statusBarBackgroundView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Bottom)
-        statusBarBackgroundView.autoSetDimension(.Height, toSize: 22)
-        
         super.updateViewConstraints()
+    }
+    
+    func pushCamera() {
+        navigationController?.pushViewController(CameraViewController(), animated: false)
+    }
+    
+    func pushSearch() {
+        navigationController?.pushViewController(SearchTableViewController(), animated: false)
     }
     
 }

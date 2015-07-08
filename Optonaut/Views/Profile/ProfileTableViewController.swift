@@ -10,27 +10,30 @@ import UIKit
 import PureLayout_iOS
 import Refresher
 
-class HashtagTableViewController: OptographTableViewController, RedNavbar {
+class ProfileTableViewController: OptographTableViewController {
     
-    let viewModel = SearchViewModel()
-    var hashtag: String
+    var viewModel: OptographsViewModel
     
-    required init(hashtag: String) {
-        self.hashtag = hashtag
+    required init(userId: Int) {
+        viewModel = OptographsViewModel(source: "users/\(userId)/optographs")
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init(coder aDecoder: NSCoder) {
-        self.hashtag = ""
+        viewModel = OptographsViewModel(source: "")
         super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = hashtag
+        let refreshAction = {
+            NSOperationQueue().addOperationWithBlock {
+                self.viewModel.resultsLoading.put(true)
+            }
+        }
         
-        viewModel.searchText.put(hashtag)
+        tableView.addPullToRefreshWithAction(refreshAction, withAnimator: RefreshAnimator())
         
         viewModel.results.producer.start(
             next: { results in
@@ -42,19 +45,9 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar {
                 self.tableView.stopPullToRefresh()
         })
         
+        viewModel.resultsLoading.put(true)
+        
         view.setNeedsUpdateConstraints()
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        updateNavbarAppear()
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        updateNavbarDisappear()
     }
     
     override func updateViewConstraints() {

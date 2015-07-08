@@ -11,11 +11,11 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 
-class ExploreNavViewController: UINavigationController {
+class ExploreNavViewController: UINavigationController, RedNavbar {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, icon: .Compass)
+        setTabBarIcon(tabBarItem, icon: .Compass)
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -31,11 +31,7 @@ class ExploreNavViewController: UINavigationController {
         navigationBar.tintColor = .whiteColor()
         navigationBar.setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
         
-        let exploreViewController = FeedTableViewController(source: "optographs", fullscreen: true)
-        
-        exploreViewController.navigationItem.title = "Explore"
-        
-        pushViewController(exploreViewController, animated: false)
+        pushViewController(ExploreTableViewController(), animated: false)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
     }

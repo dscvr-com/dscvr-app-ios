@@ -151,8 +151,7 @@ class OptographTableViewCell: UITableViewCell {
             self.navigationController?.pushViewController(profileViewController, animated: true)
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in
-            let hashtagTableViewController = HashtagTableViewController()
-            self.navigationController?.pushViewController(hashtagTableViewController, animated: true)
+            self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
     }
     

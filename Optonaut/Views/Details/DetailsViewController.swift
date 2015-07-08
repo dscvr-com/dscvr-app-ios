@@ -11,7 +11,7 @@ import ReactiveCocoa
 import WebImage
 import CoreMotion
 
-class DetailsViewController: UIViewController {
+class DetailsViewController: UIViewController, TransparentNavbar {
     
     var viewModel: OptographViewModel
     
@@ -34,9 +34,6 @@ class DetailsViewController: UIViewController {
     let lineView = UIView()
     
     let motionManager = CMMotionManager()
-    
-    var originalNavigationBarTranslucent: Bool!
-    var originalNavigationBarShadowImage: UIImage!
     
     required init(viewModel: OptographViewModel) {
         self.viewModel = viewModel
@@ -171,8 +168,7 @@ class DetailsViewController: UIViewController {
             self.navigationController?.pushViewController(profileViewController, animated: true)
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in
-            let hashtagTableViewController = HashtagTableViewController()
-            self.navigationController?.pushViewController(hashtagTableViewController, animated: true)
+            self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
         view.addSubview(textView)
         
@@ -187,11 +183,7 @@ class DetailsViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        originalNavigationBarTranslucent = navigationController?.navigationBar.translucent
-        originalNavigationBarShadowImage = navigationController?.navigationBar.shadowImage
-        
-        navigationController?.navigationBar.translucent = true
-        navigationController?.navigationBar.shadowImage = UIImage()
+        updateNavbarAppear()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -206,13 +198,6 @@ class DetailsViewController: UIViewController {
                 self.navigationController?.pushViewController(SphereViewController(), animated: false)
             }
         })
-    }
-    
-    override func willMoveToParentViewController(parent: UIViewController?) {
-        if parent == nil {
-            navigationController?.navigationBar.translucent = originalNavigationBarTranslucent
-            navigationController?.navigationBar.shadowImage = originalNavigationBarShadowImage
-        }
     }
     
     override func viewDidDisappear(animated: Bool) {

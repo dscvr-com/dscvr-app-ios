@@ -10,22 +10,14 @@ import UIKit
 import PureLayout_iOS
 import Refresher
 
-class ProfileOptographTableViewController: OptographTableViewController {
+class ExploreTableViewController: OptographTableViewController, RedNavbar {
     
-    var viewModel: OptographsViewModel
-    
-    required init(userId: Int) {
-        viewModel = OptographsViewModel(source: "users/\(userId)/optographs")
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init(coder aDecoder: NSCoder) {
-        viewModel = OptographsViewModel(source: "")
-        super.init(coder: aDecoder)
-    }
+    let viewModel = OptographsViewModel(source: "optographs")
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationItem.title = "Explore"
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
@@ -48,6 +40,18 @@ class ProfileOptographTableViewController: OptographTableViewController {
         viewModel.resultsLoading.put(true)
         
         view.setNeedsUpdateConstraints()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        updateNavbarAppear()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        updateNavbarDisappear()
     }
     
     override func updateViewConstraints() {

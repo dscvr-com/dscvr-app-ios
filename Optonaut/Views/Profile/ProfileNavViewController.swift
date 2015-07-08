@@ -12,7 +12,7 @@ class ProfileNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, icon: .User)
+        setTabBarIcon(tabBarItem, icon: .User)
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -22,15 +22,9 @@ class ProfileNavViewController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationBar.translucent = true
-        navigationBar.setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
-        navigationBar.shadowImage = UIImage()
-        navigationBar.tintColor = .whiteColor() // needed for back button on details
-        
         let userId = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.UserId.rawValue)
-        let profileVC = ProfileViewController(userId: userId)
         
-        pushViewController(profileVC, animated: false)
+        pushViewController(ProfileViewController(userId: userId), animated: false)
     }
     
 }

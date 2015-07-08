@@ -11,11 +11,11 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 
-class ActivityNavViewController: UINavigationController {
+class ActivityNavViewController: UINavigationController, RedNavbar {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, icon: .Bell)
+        setTabBarIcon(tabBarItem, icon: .Bell)
     }
     
     required init(coder aDecoder: NSCoder) {
