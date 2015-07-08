@@ -33,9 +33,5 @@ class ProfileNavViewController: UINavigationController {
         pushViewController(profileVC, animated: false)
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
-    }
-    
 }
 

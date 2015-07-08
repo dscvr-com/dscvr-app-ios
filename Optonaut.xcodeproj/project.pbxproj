@@ -34,6 +34,8 @@
 		8F4C6E4C1B4A70CD007508ED /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E391B4A70CD007508ED /* Roboto-Medium.ttf */; };
 		8F4C6E4E1B4A70CD007508ED /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E3B1B4A70CD007508ED /* Roboto-Regular.ttf */; };
 		8F4C6E581B4A73BE007508ED /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C6E571B4A73BE007508ED /* Fonts.swift */; };
+		8F500CFA1B4D5D6E002B9878 /* OptographTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CF91B4D5D6E002B9878 /* OptographTableViewCell.swift */; };
+		8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFB1B4D5F97002B9878 /* NavbarProtocols.swift */; };
 		8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CE1B3AFBDC007E073C /* Api.swift */; };
 		8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CF1B3AFBDC007E073C /* Utils.swift */; };
 		8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */; };
@@ -70,7 +72,6 @@
 		8FA55BEC1B386E8C00BBA4A2 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */; };
 		8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */; };
 		8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */; };
-		8FA55BF31B387DD800BBA4A2 /* OptographTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BF01B387DD800BBA4A2 /* OptographTableViewCell.swift */; };
 		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
 		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
@@ -113,6 +114,8 @@
 		8F4C6E391B4A70CD007508ED /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		8F4C6E3B1B4A70CD007508ED /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		8F4C6E571B4A73BE007508ED /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
+		8F500CF91B4D5D6E002B9878 /* OptographTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCell.swift; sourceTree = "<group>"; };
+		8F500CFB1B4D5F97002B9878 /* NavbarProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavbarProtocols.swift; sourceTree = "<group>"; };
 		8F5FD9CE1B3AFBDC007E073C /* Api.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		8F5FD9CF1B3AFBDC007E073C /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
@@ -151,7 +154,6 @@
 		8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
 		8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
-		8FA55BF01B387DD800BBA4A2 /* OptographTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCell.swift; sourceTree = "<group>"; };
 		8FCCA02B1B3806040091F1B1 /* Optonaut.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Optonaut.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCCA02F1B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptonautTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -193,6 +195,8 @@
 			children = (
 				8F464AFA1B4BC38000A66FA5 /* RefreshAnimator.swift */,
 				8F464B031B4C767300A66FA5 /* OptographTableViewController.swift */,
+				8F500CF91B4D5D6E002B9878 /* OptographTableViewCell.swift */,
+				8F500CFB1B4D5F97002B9878 /* NavbarProtocols.swift */,
 				8F464AFC1B4BC4BB00A66FA5 /* InsetLabel.swift */,
 			);
 			path = Common;
@@ -365,7 +369,6 @@
 			isa = PBXGroup;
 			children = (
 				8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */,
-				8FA55BF01B387DD800BBA4A2 /* OptographTableViewCell.swift */,
 				8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */,
 				8F464AFE1B4C62DE00A66FA5 /* SearchTableViewController.swift */,
 			);
@@ -586,6 +589,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F5FD9FB1B3DB853007E073C /* ActivityTableViewController.swift in Sources */,
+				8F500CFA1B4D5D6E002B9878 /* OptographTableViewCell.swift in Sources */,
 				8F5FDA0B1B433DAB007E073C /* SphereViewController.swift in Sources */,
 				8F4C6E1A1B4717DF007508ED /* Icomoon.swift in Sources */,
 				8F5FD9E01B3C5578007E073C /* OptographsViewModel.swift in Sources */,
@@ -599,6 +603,7 @@
 				8F464AFD1B4BC4BB00A66FA5 /* InsetLabel.swift in Sources */,
 				8F464B021B4C727200A66FA5 /* ExploreNavViewController.swift in Sources */,
 				8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */,
+				8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */,
 				8F5FDA051B40325D007E073C /* KILabel.m in Sources */,
 				8F4C6E1C1B4961A4007508ED /* HexColor.swift in Sources */,
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
@@ -620,7 +625,6 @@
 				8F464AFB1B4BC38000A66FA5 /* RefreshAnimator.swift in Sources */,
 				8F464AFF1B4C62DE00A66FA5 /* SearchTableViewController.swift in Sources */,
 				8F9A4FF81B39E992009C4548 /* ProfileViewController.swift in Sources */,
-				8FA55BF31B387DD800BBA4A2 /* OptographTableViewCell.swift in Sources */,
 				8F5FD9DC1B3B360E007E073C /* OptographViewModel.swift in Sources */,
 				8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */,
 				8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */,

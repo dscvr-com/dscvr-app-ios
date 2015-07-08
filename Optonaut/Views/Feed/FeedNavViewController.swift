@@ -59,10 +59,6 @@ class FeedNavViewController: UINavigationController {
         pushViewController(SearchTableViewController(navController: self), animated: false)
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
-    }
-    
     override func prefersStatusBarHidden() -> Bool {
         return false
     }

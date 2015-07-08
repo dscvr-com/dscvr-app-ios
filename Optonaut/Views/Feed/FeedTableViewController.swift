@@ -74,13 +74,13 @@ class FeedTableViewController: OptographTableViewController {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         statusBarBackgroundView.hidden = true
+        navController?.hidesBarsOnSwipe = false
         navController?.setNavigationBarHidden(false, animated: animated)
     }
     
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        navController?.hidesBarsOnSwipe = false
-    }
+//    override func viewDidDisappear(animated: Bool) {
+//        super.viewDidDisappear(animated)
+//    }
     
     override func updateViewConstraints() {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
@@ -89,15 +89,6 @@ class FeedTableViewController: OptographTableViewController {
         statusBarBackgroundView.autoSetDimension(.Height, toSize: 22)
         
         super.updateViewConstraints()
-    }
-    
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
 }

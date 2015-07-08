@@ -183,10 +183,6 @@ class LoginViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
-    }
-    
     func showRequestInviteViewController() {
         presentViewController(RequestInviteViewController(), animated: false, completion: nil)
     }

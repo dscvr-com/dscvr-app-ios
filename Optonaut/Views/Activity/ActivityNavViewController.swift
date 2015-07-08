@@ -41,8 +41,4 @@ class ActivityNavViewController: UINavigationController {
         super.updateViewConstraints()
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
-    }
-    
 }

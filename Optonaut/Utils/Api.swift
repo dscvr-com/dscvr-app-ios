@@ -39,7 +39,6 @@ class Api {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters!, options: [])
                 mutableURLRequest.HTTPBody = Optional(json)
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                print(json)
             }
             
             if authorized {

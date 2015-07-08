@@ -40,10 +40,6 @@ class ExploreNavViewController: UINavigationController {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
-    }
-    
     func dismissKeyboard() {
         view.endEditing(true)
     }
