@@ -12,7 +12,7 @@ class ProfileNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, .User)
+        styleTabBarItem(tabBarItem, icon: .User)
     }
     
     required init(coder aDecoder: NSCoder) {

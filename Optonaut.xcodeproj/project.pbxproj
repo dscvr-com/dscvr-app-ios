@@ -38,7 +38,6 @@
 		8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CF1B3AFBDC007E073C /* Utils.swift */; };
 		8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */; };
 		8F5FD9D61B3AFE41007E073C /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9D51B3AFE41007E073C /* LoginViewModel.swift */; };
-		8F5FD9D91B3B0080007E073C /* Box.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9D71B3B0080007E073C /* Box.framework */; };
 		8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9D81B3B0080007E073C /* Result.framework */; };
 		8F5FD9DC1B3B360E007E073C /* OptographViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9DB1B3B360E007E073C /* OptographViewModel.swift */; };
 		8F5FD9E01B3C5578007E073C /* OptographsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9DF1B3C5578007E073C /* OptographsViewModel.swift */; };
@@ -118,7 +117,6 @@
 		8F5FD9CF1B3AFBDC007E073C /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
 		8F5FD9D51B3AFE41007E073C /* LoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
-		8F5FD9D71B3B0080007E073C /* Box.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Box.framework; path = Carthage/Build/iOS/Box.framework; sourceTree = "<group>"; };
 		8F5FD9D81B3B0080007E073C /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
 		8F5FD9DB1B3B360E007E073C /* OptographViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographViewModel.swift; sourceTree = "<group>"; };
 		8F5FD9DF1B3C5578007E073C /* OptographsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographsViewModel.swift; sourceTree = "<group>"; };
@@ -169,7 +167,6 @@
 			files = (
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
 				8F5FD9E91B3D60E5007E073C /* WebImage.framework in Frameworks */,
-				8F5FD9D91B3B0080007E073C /* Box.framework in Frameworks */,
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
 				8FA55BEC1B386E8C00BBA4A2 /* SwiftyJSON.framework in Frameworks */,
@@ -379,7 +376,6 @@
 			isa = PBXGroup;
 			children = (
 				8F5FD9E81B3D60E5007E073C /* WebImage.framework */,
-				8F5FD9D71B3B0080007E073C /* Box.framework */,
 				8F5FD9D81B3B0080007E073C /* Result.framework */,
 				8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */,
 				8F9A4FF41B39DF85009C4548 /* Refresher.framework */,
@@ -492,7 +488,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Optonaut;
 				TargetAttributes = {
 					8FCCA02A1B3806040091F1B1 = {
@@ -572,7 +568,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Refresher.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ReactiveCocoa.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Box.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WebImage.framework",
 			);
@@ -672,6 +667,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -754,6 +750,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
@@ -779,6 +776,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
@@ -799,6 +797,7 @@
 				);
 				INFOPLIST_FILE = OptonautTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Optonaut.app/Optonaut";
 			};
@@ -814,6 +813,7 @@
 				);
 				INFOPLIST_FILE = OptonautTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Optonaut.app/Optonaut";
 			};

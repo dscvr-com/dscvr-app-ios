@@ -25,13 +25,13 @@ class LoginViewModel {
                 if str.rangeOfString("@") != nil {
                     self.emailOrUserNameValid.put(isValidEmail(str))
                 } else {
-                    self.emailOrUserNameValid.put(count(str) > 2)
+                    self.emailOrUserNameValid.put(str.characters.count > 2)
                 }
             })
         
         password.producer
             |> start(next: { str in
-                self.passwordValid.put(count(str) > 4)
+                self.passwordValid.put(str.characters.count > 4)
             })
         
         combineLatest([emailOrUserNameValid.producer, passwordValid.producer])
@@ -44,7 +44,7 @@ class LoginViewModel {
         return SignalProducer { sink, disposable in
             self.pending.put(true)
             
-            var parameters = [ "email": "", "user_name": "", "password": self.password.value ]
+            var parameters = ["email": "", "user_name": "", "password": self.password.value]
             
             if self.emailOrUserName.value.rangeOfString("@") != nil {
                 parameters["email"] = self.emailOrUserName.value

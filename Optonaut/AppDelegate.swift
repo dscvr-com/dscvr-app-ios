@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath, error: nil)
+//        try NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath)
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         if let window = window {

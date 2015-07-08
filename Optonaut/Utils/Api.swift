@@ -36,13 +36,10 @@ class Api {
             mutableURLRequest.HTTPMethod = method
             
             if parameters != nil {
-                var JSONSerializationError: NSError? = nil
-                mutableURLRequest.HTTPBody = NSJSONSerialization.dataWithJSONObject(parameters!, options: nil, error: &JSONSerializationError)
+                let json = try! NSJSONSerialization.dataWithJSONObject(parameters!, options: [])
+                mutableURLRequest.HTTPBody = Optional(json)
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                
-                if JSONSerializationError != nil {
-                    sendError(sink, JSONSerializationError!)
-                }
+                print(json)
             }
             
             if authorized {
@@ -50,7 +47,7 @@ class Api {
                 mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
             
-            let request = Alamofire.request(mutableURLRequest)
+            Alamofire.request(mutableURLRequest)
                 .validate()
                 .responseJSON { (_, response, data, error) in
                     if let error = error {
@@ -58,7 +55,7 @@ class Api {
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
                         }
-                        println(error)
+                        print(error)
                         sendError(sink, error)
                     } else {
                         if data != nil {

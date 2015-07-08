@@ -57,7 +57,7 @@ struct RoundedDuration {
     }
     
     func shortDescription() -> String {
-        return "\(value)\(Array(type.rawValue)[0])"
+        return "\(value)\(Array(type.rawValue.characters)[0])"
     }
     
     func longDescription() -> String {

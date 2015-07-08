@@ -15,7 +15,7 @@ class ActivityNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, .Bell)
+        styleTabBarItem(tabBarItem, icon: .Bell)
     }
     
     required init(coder aDecoder: NSCoder) {

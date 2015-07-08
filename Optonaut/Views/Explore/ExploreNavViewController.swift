@@ -15,7 +15,7 @@ class ExploreNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, .Compass)
+        styleTabBarItem(tabBarItem, icon: .Compass)
     }
     
     required init(coder aDecoder: NSCoder) {

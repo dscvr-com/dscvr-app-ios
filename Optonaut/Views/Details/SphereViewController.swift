@@ -91,7 +91,7 @@ class SphereViewController: UIViewController  {
         leftScnView.delegate = self
         
         if enableDistortion {
-            leftScnView.technique = createDistortionTechnique("displacement_left")
+//            leftScnView.technique = createDistortionTechnique("displacement_left")
         }
         view.addSubview(leftScnView)
         
@@ -103,7 +103,7 @@ class SphereViewController: UIViewController  {
         rightScnView.delegate = self
         
         if enableDistortion {
-            rightScnView.technique = createDistortionTechnique("displacement_right")
+//            rightScnView.technique = createDistortionTechnique("displacement_right")
         }
         
         view.addSubview(rightScnView)
@@ -112,21 +112,21 @@ class SphereViewController: UIViewController  {
         motionManager.startDeviceMotionUpdates()
         
         motionManager.gyroUpdateInterval = 0.3
-        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue(), withHandler: { accelerometerData, error in
-            if abs(accelerometerData.acceleration.y) >= 0.75 {
+        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
+            if abs(accelerometerData!.acceleration.y) >= 0.75 {
                 self.motionManager.stopAccelerometerUpdates()
                 self.navigationController?.popViewControllerAnimated(false)
             }
         })
     }
     
-    func createDistortionTechnique(name: String) -> SCNTechnique {
-        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
-        let json = NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers, error: nil) as! NSDictionary
-        let technique = SCNTechnique(dictionary: json as [NSObject : AnyObject])
-        
-        return technique!
-    }
+//    func createDistortionTechnique(name: String) -> SCNTechnique {
+//        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
+//        let json = NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! NSDictionary
+//        let technique = SCNTechnique(dictionary: json as [NSObject : AnyObject])
+//        
+//        return technique!
+//    }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)

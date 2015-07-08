@@ -49,7 +49,7 @@ extension OptographTableViewController: UITableViewDelegate {
         let attributes = [NSFontAttributeName: UIFont.robotoOfSize(13, withType: .Light)]
         let textAS = NSAttributedString(string: items[indexPath.row].text, attributes: attributes)
         let tmpSize = CGSize(width: view.frame.width - 38, height: 100000)
-        let textRect = textAS.boundingRectWithSize(tmpSize, options: .UsesFontLeading | .UsesLineFragmentOrigin, context: nil)
+        let textRect = textAS.boundingRectWithSize(tmpSize, options: [.UsesFontLeading, .UsesLineFragmentOrigin], context: nil)
         let imageHeight = view.frame.width * 0.45
         let restHeight = CGFloat(100) // includes avatar, name, bottom line and spacing
         return imageHeight + restHeight + textRect.height

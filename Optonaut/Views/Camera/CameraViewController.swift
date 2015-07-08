@@ -21,16 +21,16 @@ class CameraViewController: UIViewController {
     }
     
     func tmpAdd() {
-        var alert = UIAlertController(title: "Add Optograph", message: "This is just temporary", preferredStyle: .Alert)
+        let alert = UIAlertController(title: "Add Optograph", message: "This is just temporary", preferredStyle: .Alert)
         
         alert.addTextFieldWithConfigurationHandler { textField in
             textField.text = "Some default text."
         }
         
         alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
-            let textField = alert.textFields![0] as! UITextField
+            let textField = alert.textFields![0] as UITextField
             let parameters = [
-                "text": textField.text,
+                "text": textField.text!,
                 "location": [
                     "latitude": 51.5072,
                     "longitude": -0.126236,

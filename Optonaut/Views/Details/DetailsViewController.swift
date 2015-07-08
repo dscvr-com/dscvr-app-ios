@@ -197,11 +197,11 @@ class DetailsViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue(), withHandler: { accelerometerData, error in
-            if accelerometerData.acceleration.x >= 0.75 {
+        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
+            if accelerometerData!.acceleration.x >= 0.75 {
                 self.motionManager.stopAccelerometerUpdates()
                 self.navigationController?.pushViewController(SphereViewController(), animated: false)
-            } else if accelerometerData.acceleration.x <= -0.75 {
+            } else if accelerometerData!.acceleration.x <= -0.75 {
                 self.motionManager.stopAccelerometerUpdates()
                 self.navigationController?.pushViewController(SphereViewController(), animated: false)
             }

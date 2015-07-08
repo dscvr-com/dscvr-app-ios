@@ -32,8 +32,6 @@ class SearchTableViewController: OptographTableViewController {
             }
         )
         
-        viewModel.searchText.put(searchBar.text)
-        
         view.setNeedsUpdateConstraints()
     }
     

@@ -32,7 +32,7 @@ class TabBarViewController: UITabBarController {
             NSForegroundColorAttributeName: UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         ]
         tabBarItemAppearance.setTitleTextAttributes(attribues, forState: .Normal)
-        tabBarItemAppearance.setTitlePositionAdjustment(UIOffsetMake(0, -12))
+        tabBarItemAppearance.titlePositionAdjustment = UIOffsetMake(0, -12)
         
         // set darker red as selected background color
         let numberOfItems = CGFloat(tabBar.items!.count)

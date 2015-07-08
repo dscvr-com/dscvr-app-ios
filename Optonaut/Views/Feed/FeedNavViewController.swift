@@ -12,7 +12,7 @@ class FeedNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        styleTabBarItem(tabBarItem, .Infinity)
+        styleTabBarItem(tabBarItem, icon: .Infinity)
     }
     
     required init(coder aDecoder: NSCoder) {

@@ -22,14 +22,14 @@ class SearchViewModel {
         }
         
         searchText.producer
-            |> mapError { _ in NSError() }
-            |> filter { count($0) > 2 }
+            |> mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
+            |> filter { $0.characters.count > 2 }
             |> throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
             |> keywordToJson
             |> start(
                 next: { jsonArray in
                     var optographs = jsonArray.arrayValue.map(mapOptographFromJson)
-                    optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
+                    optographs = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
                     self.results.put(optographs)
                 }

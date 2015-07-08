@@ -41,7 +41,7 @@ class ProfileViewModel {
                     self.avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(id % 4).jpg")
                 },
                 error: { error in
-                    println(error)
+                    print(error)
                 }
         )
     }

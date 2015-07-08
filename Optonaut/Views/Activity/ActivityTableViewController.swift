@@ -30,11 +30,13 @@ class ActivityTableViewController: UIViewController {
         
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
-        tableView.addPullToRefreshWithAction {
+        let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
                 self.viewModel.resultsLoading.put(true)
             }
         }
+        
+        tableView.addPullToRefreshWithAction(refreshAction, withAnimator: RefreshAnimator())
         
         viewModel.results.producer.start(
             next: { results in
@@ -80,7 +82,7 @@ extension ActivityTableViewController: UITableViewDelegate {
 extension ActivityTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! UITableViewCell
+        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell")!
         
         let activity = items[indexPath.row]
         let duration = RoundedDuration(date: activity.createdAt).shortDescription()

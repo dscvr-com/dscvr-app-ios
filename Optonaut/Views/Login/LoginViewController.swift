@@ -210,12 +210,12 @@ class LoginViewController: UIViewController {
         let keyboardEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
         let convertedKeyboardEndFrame = view.convertRect(keyboardEndFrame, fromView: view.window)
         let rawAnimationCurve = (notification.userInfo![UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).unsignedIntValue << 16
-        let animationCurve = UIViewAnimationOptions.init(UInt(rawAnimationCurve))
+        let animationCurve = UIViewAnimationOptions.init(rawValue: UInt(rawAnimationCurve))
         let keyboardHeight = CGRectGetMaxY(view.bounds) - CGRectGetMinY(convertedKeyboardEndFrame)
         
         formViewBottomConstraint?.constant = formBottomOffsetForKeyboardHeight(keyboardHeight, keyboardVisible: keyboardVisible)
         
-        UIView.animateWithDuration(animationDuration, delay: 0, options: .BeginFromCurrentState | animationCurve,
+        UIView.animateWithDuration(animationDuration, delay: 0, options: [.BeginFromCurrentState, animationCurve],
             animations: {
                 self.view.layoutIfNeeded()
             },

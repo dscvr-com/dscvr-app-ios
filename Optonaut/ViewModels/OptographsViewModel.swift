@@ -19,15 +19,15 @@ class OptographsViewModel {
         let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSON, NSError> = flatMap(.Latest) { _ in Api.get(source, authorized: true) }
         
         resultsLoading.producer
-            |> mapError { _ in NSError() }
+            |> mapError { _ in NSError(domain: "", code: 0, userInfo: nil) }
             |> filter { $0 }
             |> callApi
             |> start(
                 next: { jsonArray in
-                    var optographs = jsonArray.arrayValue.map(mapOptographFromJson)
-                    optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
+                    let optographs = jsonArray.arrayValue.map(mapOptographFromJson)
+                    let sortedOptographs = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
-                    self.results.put(optographs)
+                    self.results.put(sortedOptographs)
                     self.resultsLoading.put(false)
                 },
                 error: { _ in

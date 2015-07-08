@@ -19,13 +19,13 @@ class ActivitiesViewModel {
         let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSON, NSError> = flatMap(.Latest) { _ in Api.get("activities", authorized: true) }
         
         resultsLoading.producer
-            |> mapError { _ in NSError() }
+            |> mapError { _ in NSError(domain: "", code: 0, userInfo: nil) }
             |> filter { $0 }
             |> callApi
             |> start(
                 next: { jsonArray in
                     var activities = jsonArray.arrayValue.map(mapActivityFromJson)
-                    activities.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
+                    activities = activities.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
                     self.results.put(activities)
                     self.resultsLoading.put(false)
