@@ -30,27 +30,25 @@ class FeedNavViewController: UINavigationController {
         ]
         navigationBar.tintColor = .whiteColor()
         navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
-        
-        
         navigationBar.setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
         
-        let optographTableViewController = OptographTableViewController(source: "optographs", navController: self, fullscreen: true)
-        optographTableViewController.navigationItem.title = String.icomoonWithName(.LogoText)
+        let feedTableViewController = FeedTableViewController(source: "optographs/feed", navController: self, fullscreen: true)
+        feedTableViewController.navigationItem.title = String.icomoonWithName(.LogoText)
         
         let cameraButton = UIBarButtonItem()
         cameraButton.image = UIImage.icomoonWithName(.Camera, textColor: .whiteColor(), size: CGSize(width: 21, height: 17))
         cameraButton.target = self
         cameraButton.action = "showCamera"
-        optographTableViewController.navigationItem.setRightBarButtonItem(cameraButton, animated: false)
+        feedTableViewController.navigationItem.setRightBarButtonItem(cameraButton, animated: false)
         
         let searchButton = UIBarButtonItem()
         searchButton.title = String.icomoonWithName(.MagnifyingGlass)
         searchButton.image = UIImage.icomoonWithName(.MagnifyingGlass, textColor: .whiteColor(), size: CGSize(width: 21, height: 17))
         searchButton.target = self
         searchButton.action = "showSearch"
-        optographTableViewController.navigationItem.setLeftBarButtonItem(searchButton, animated: false)
+        feedTableViewController.navigationItem.setLeftBarButtonItem(searchButton, animated: false)
         
-        pushViewController(optographTableViewController, animated: false)
+        pushViewController(feedTableViewController, animated: false)
     }
     
     func showCamera() {
@@ -58,6 +56,7 @@ class FeedNavViewController: UINavigationController {
     }
     
     func showSearch() {
+        pushViewController(SearchTableViewController(navController: self), animated: false)
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {

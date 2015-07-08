@@ -11,7 +11,7 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 
-class SearchNavViewController: UINavigationController {
+class ExploreNavViewController: UINavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
@@ -29,10 +29,13 @@ class SearchNavViewController: UINavigationController {
         navigationBar.barTintColor = baseColor()
         navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         navigationBar.tintColor = .whiteColor()
+        navigationBar.setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
         
-        let searchViewController = SearchTableViewController(initialKeyword: "", navController: self)
+        let exploreViewController = FeedTableViewController(source: "optographs", navController: self, fullscreen: true)
         
-        pushViewController(searchViewController, animated: false)
+        exploreViewController.navigationItem.title = "Explore"
+        
+        pushViewController(exploreViewController, animated: false)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
     }

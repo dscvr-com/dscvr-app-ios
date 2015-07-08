@@ -16,12 +16,10 @@ class TabBarViewController: UITabBarController {
         
         // set view controllers
         let feedVC = FeedNavViewController()
-        let searchVC = SearchNavViewController()
+        let exploreVC = ExploreNavViewController()
         let activityVC = ActivityNavViewController()
         let profileVC = ProfileNavViewController()
-        viewControllers = [feedVC, searchVC, activityVC, profileVC]
-        
-        selectedIndex = 3
+        viewControllers = [feedVC, exploreVC, activityVC, profileVC]
         
         // set bar color
         tabBar.barTintColor = baseColor()

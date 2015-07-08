@@ -81,16 +81,22 @@ class DetailsViewController: UIViewController {
         }
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
+        avatarImageView.userInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         view.addSubview(avatarImageView)
         
         nameView.font = UIFont.robotoOfSize(15, withType: .Medium)
         nameView.textColor = UIColor(0x4d4d4d)
         nameView.rac_text <~ viewModel.user
+        nameView.userInteractionEnabled = true
+        nameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         view.addSubview(nameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = UIColor(0xb3b3b3)
         userNameView.rac_text <~ viewModel.userName
+        userNameView.userInteractionEnabled = true
+        userNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         view.addSubview(userNameView)
         
         dateView.font = UIFont.robotoOfSize(12, withType: .Light)
@@ -165,8 +171,8 @@ class DetailsViewController: UIViewController {
             self.navigationController?.pushViewController(profileViewController, animated: true)
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in
-            let searchViewController = SearchTableViewController(initialKeyword: hashtag, navController: self.navigationController)
-            self.navigationController?.pushViewController(searchViewController, animated: true)
+            let hashtagTableViewController = HashtagTableViewController(navController: self.navigationController)
+            self.navigationController?.pushViewController(hashtagTableViewController, animated: true)
         }
         view.addSubview(textView)
         
@@ -274,6 +280,11 @@ class DetailsViewController: UIViewController {
     
     func pushViewer() {
         navigationController?.pushViewController(SphereViewController(), animated: false)
+    }
+    
+    func pushProfile() {
+        let profileViewController = ProfileViewController(userId: viewModel.userId.value)
+        navigationController?.pushViewController(profileViewController, animated: true)
     }
     
 }
