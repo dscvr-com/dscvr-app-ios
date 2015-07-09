@@ -16,7 +16,7 @@ class RefreshAnimator: PullToRefreshViewAnimator {
     
     init() {
         layerLoader.lineWidth = 4
-        layerLoader.strokeColor = baseColor().CGColor
+        layerLoader.strokeColor = BaseColor.CGColor
         layerLoader.strokeEnd = 0
         
         layerSeparator.lineWidth = 1

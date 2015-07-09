@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SwiftyJSON
+import ObjectMapper
 
 class OptographsViewModel {
     
@@ -24,10 +25,10 @@ class OptographsViewModel {
             |> callApi
             |> start(
                 next: { jsonArray in
-                    let optographs = jsonArray.arrayValue.map(mapOptographFromJson)
-                    let sortedOptographs = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
+                    var optographs = Mapper<Optograph>().mapArray(jsonArray.rawValue)!
+                    optographs = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
-                    self.results.put(sortedOptographs)
+                    self.results.put(optographs)
                     self.resultsLoading.put(false)
                 },
                 error: { _ in

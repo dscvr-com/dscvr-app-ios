@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SwiftyJSON
+import ObjectMapper
 
 class ActivitiesViewModel {
     
@@ -24,7 +25,7 @@ class ActivitiesViewModel {
             |> callApi
             |> start(
                 next: { jsonArray in
-                    var activities = jsonArray.arrayValue.map(mapActivityFromJson)
+                    var activities = Mapper<Activity>().mapArray(jsonArray.rawValue)!
                     activities = activities.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
                     self.results.put(activities)

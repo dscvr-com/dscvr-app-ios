@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import ObjectMapper
 
 enum ActivityType: String {
     case Like = "like"
@@ -18,6 +19,7 @@ enum ActivityType: String {
 class Activity: Object {
     dynamic var id = 0
     dynamic var creator: User?
+    dynamic var receiver: User?
     dynamic var optograph: Optograph?
     dynamic var createdAt = NSDate()
     var activityType: ActivityType = .Nil
@@ -25,4 +27,39 @@ class Activity: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
+    
+    required init?(_ map: Map) {
+        super.init()
+        mapping(map)
+    }
+
+    required init() {
+        super.init()
+    }
+}
+
+extension Activity: Mappable {
+    
+    func mapping(map: Map) {
+        let typeTransform = TransformOf<ActivityType, String>(
+            fromJSON: { (value: String?) -> ActivityType? in
+                switch value! {
+                case "like": return .Like
+                case "follow": return .Follow
+                default: return .Nil
+                }
+            },
+            toJSON: { (value: ActivityType?) -> String? in
+                return value!.rawValue
+            }
+        )
+        
+        id              <- map["id"]
+        creator         <- map["creator"]
+        receiver        <- map["receiver"]
+        optograph       <- map["optograph"]
+        createdAt       <- (map["created_at"], NSDateTransform())
+        activityType    <- (map["type"], typeTransform)
+    }
+    
 }

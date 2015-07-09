@@ -13,7 +13,7 @@ import Alamofire
 import SwiftyJSON
 import Refresher
 
-class ActivityTableViewController: UIViewController {
+class ActivityTableViewController: UIViewController, RedNavbar {
     
     var items = [Activity]()
     let tableView = UITableView()
@@ -23,12 +23,13 @@ class ActivityTableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Notifications"
+        navigationItem.title = "Activity"
         
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.separatorStyle = .None
         
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(ActivityTableViewCell.self, forCellReuseIdentifier: "cell")
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
@@ -61,9 +62,10 @@ class ActivityTableViewController: UIViewController {
         super.updateViewConstraints()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        updateNavbarAppear()
     }
     
 }
@@ -82,17 +84,10 @@ extension ActivityTableViewController: UITableViewDelegate {
 extension ActivityTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell")!
-        
+        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell")! as! ActivityTableViewCell
         let activity = items[indexPath.row]
-        let duration = RoundedDuration(date: activity.createdAt).shortDescription()
-        var text = ""
-        switch activity.activityType {
-        case .Like: text = "\(activity.creator!.userName) likes your Optograph with ID \(activity.optograph!.id) (\(duration)))"
-        case .Follow: text = "\(activity.creator!.userName) follows you now (\(duration))"
-        default: ()
-        }
-        cell.textLabel?.text = text
+        cell.bindViewModel(activity)
+        cell.navigationController = navigationController
         
         return cell
     }

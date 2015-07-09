@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import ObjectMapper
 
 class User: Object {
     dynamic var id = 0
@@ -25,4 +26,37 @@ class User: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
+    
+    required init?(_ map: Map) {
+        super.init()
+        mapping(map)
+    }
+
+    required init() {
+        super.init()
+    }
+}
+
+extension User: Mappable {
+    
+    func mapping(map: Map) {
+        id                  <- map["id"]
+        email               <- map["email"]
+        name                <- map["name"]
+        userName            <- map["user_name"]
+        bio                 <- map["bio"]
+        numberOfFollowers   <- map["number_of_followers"]
+        numberOfFollowings  <- map["number_of_followings"]
+        numberOfFollowings  <- map["number_of_followings"]
+        isFollowing         <- map["is_following"]
+        
+        var arr = [Optograph]()
+        arr <- map["optographs"]
+        
+        optographs.removeAll()
+        for optograph in arr {
+            optographs.append(optograph)
+        }
+    }
+    
 }

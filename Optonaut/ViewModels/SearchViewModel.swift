@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SwiftyJSON
+import ObjectMapper
 
 class SearchViewModel {
     
@@ -28,7 +29,7 @@ class SearchViewModel {
             |> keywordToJson
             |> start(
                 next: { jsonArray in
-                    var optographs = jsonArray.arrayValue.map(mapOptographFromJson)
+                    var optographs = Mapper<Optograph>().mapArray(jsonArray.rawValue)!
                     optographs = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
                     self.results.put(optographs)

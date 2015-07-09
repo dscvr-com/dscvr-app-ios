@@ -48,12 +48,6 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         updateNavbarAppear()
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        updateNavbarDisappear()
-    }
-    
     override func updateViewConstraints() {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         

@@ -59,6 +59,7 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         super.viewWillAppear(animated)
         
         updateNavbarAppear()
+        navigationController?.hidesBarsOnSwipe = true
         
         navigationController?.navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
         navigationController?.navigationBar.titleTextAttributes = [
@@ -70,7 +71,8 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        updateNavbarDisappear()
+        navigationController?.hidesBarsOnSwipe = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
     override func updateViewConstraints() {

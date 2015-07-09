@@ -23,25 +23,18 @@ extension TransparentNavbar where Self: UIViewController {
 
 protocol RedNavbar {
     func updateNavbarAppear()
-    func updateNavbarDisappear()
 }
 
 extension RedNavbar where Self: UIViewController {
 
     func updateNavbarAppear() {
-        navigationController?.hidesBarsOnSwipe = true
         navigationController?.navigationBar.translucent = false
-        navigationController?.navigationBar.barTintColor = baseColor()
+        navigationController?.navigationBar.barTintColor = BaseColor
         navigationController?.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
             NSForegroundColorAttributeName: UIColor.whiteColor(),
         ]
-    }
-    
-    func updateNavbarDisappear() {
-        navigationController?.hidesBarsOnSwipe = false
-        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
 }

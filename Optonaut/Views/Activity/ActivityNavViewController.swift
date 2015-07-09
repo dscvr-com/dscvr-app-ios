@@ -26,7 +26,7 @@ class ActivityNavViewController: UINavigationController, RedNavbar {
         super.viewDidLoad()
         
         navigationBar.translucent = false
-        navigationBar.barTintColor = baseColor()
+        navigationBar.barTintColor = BaseColor
         navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         navigationBar.tintColor = .whiteColor()
         

@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import ObjectMapper
 
 class Optograph: Object {
     dynamic var id = 0
@@ -23,4 +24,29 @@ class Optograph: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
+    
+    required init?(_ map: Map) {
+        super.init()
+        mapping(map)
+    }
+
+    required init() {
+        super.init()
+    }
+}
+
+extension Optograph: Mappable {
+    
+    func mapping(map: Map) {
+        id              <- map["id"]
+        text            <- map["text"]
+        user            <- map["user"]
+        createdAt       <- (map["created_at"], NSDateTransform())
+        likedByUser     <- map["liked_by_user"]
+        likeCount       <- map["like_count"]
+        commentCount    <- map["comment_count"]
+        viewCount       <- map["view_count"]
+        location        <- map["location.description"]
+    }
+    
 }

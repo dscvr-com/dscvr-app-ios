@@ -22,7 +22,7 @@ class TabBarViewController: UITabBarController {
         viewControllers = [feedVC, exploreVC, activityVC, profileVC]
         
         // set bar color
-        tabBar.barTintColor = baseColor()
+        tabBar.barTintColor = BaseColor
         tabBar.translucent = false
         
         // set font for bar items

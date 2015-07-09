@@ -57,8 +57,8 @@ class Api {
                         print(error)
                         sendError(sink, error)
                     } else {
-                        if data != nil {
-                            sendNext(sink, JSON(data!))
+                        if let data = data {
+                            sendNext(sink, JSON(data))
                         }
                         sendCompleted(sink)
                     }

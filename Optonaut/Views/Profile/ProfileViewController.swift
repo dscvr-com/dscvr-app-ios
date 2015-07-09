@@ -86,10 +86,10 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         
         followButtonView.backgroundColor = .whiteColor()
         followButtonView.layer.borderWidth = 1
-        followButtonView.layer.borderColor = baseColor().CGColor
+        followButtonView.layer.borderColor = BaseColor.CGColor
         followButtonView.layer.cornerRadius = 5
         followButtonView.layer.masksToBounds = true
-        followButtonView.setTitleColor(baseColor(), forState: .Normal)
+        followButtonView.setTitleColor(BaseColor, forState: .Normal)
         followButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
         viewModel.isFollowing.producer |>
             start(next: { isFollowing in
@@ -105,11 +105,11 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         
         logoutButtonView.backgroundColor = .whiteColor()
         logoutButtonView.layer.borderWidth = 1
-        logoutButtonView.layer.borderColor = baseColor().CGColor
+        logoutButtonView.layer.borderColor = BaseColor.CGColor
         logoutButtonView.layer.cornerRadius = 5
         logoutButtonView.layer.masksToBounds = true
         logoutButtonView.setTitle(String.icomoonWithName(.LogOut), forState: .Normal)
-        logoutButtonView.setTitleColor(baseColor(), forState: .Normal)
+        logoutButtonView.setTitleColor(BaseColor, forState: .Normal)
         logoutButtonView.titleLabel?.font = .icomoonOfSize(16)
         logoutButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.logout()
@@ -120,11 +120,11 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         
         editProfileButtonView.backgroundColor = .whiteColor()
         editProfileButtonView.layer.borderWidth = 1
-        editProfileButtonView.layer.borderColor = baseColor().CGColor
+        editProfileButtonView.layer.borderColor = BaseColor.CGColor
         editProfileButtonView.layer.cornerRadius = 5
         editProfileButtonView.layer.masksToBounds = true
         editProfileButtonView.setTitle("Edit profile", forState: .Normal)
-        editProfileButtonView.setTitleColor(baseColor(), forState: .Normal)
+        editProfileButtonView.setTitleColor(BaseColor, forState: .Normal)
         editProfileButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
         editProfileButtonView.rac_command = RACCommand(signalBlock: { _ in
             return RACSignal.empty()

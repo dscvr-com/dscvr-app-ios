@@ -128,7 +128,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
             return RACSignal.empty()
         })
         viewModel.liked.producer
-            |> map { $0 ? baseColor() : UIColor(0xe6e6e6) }
+            |> map { $0 ? BaseColor : UIColor(0xe6e6e6) }
             |> start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
         view.addSubview(likeButtonView)
         
@@ -158,7 +158,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         view.addSubview(viewCountView)
         
         textView.numberOfLines = 0
-        textView.tintColor = baseColor()
+        textView.tintColor = BaseColor
         textView.userInteractionEnabled = true
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
         textView.textColor = UIColor(0x4d4d4d)

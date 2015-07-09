@@ -42,12 +42,6 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
         searchBar.becomeFirstResponder()
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        updateNavbarDisappear()
-    }
-    
     override func updateViewConstraints() {
         searchBar.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Bottom)
         searchBar.autoSetDimension(.Height, toSize: 44)

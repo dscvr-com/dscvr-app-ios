@@ -9,9 +9,7 @@
 import Foundation
 import UIKit
 
-func baseColor() -> UIColor {
-    return UIColor(0xef4836)
-}
+let BaseColor = UIColor(0xef4836)
 
 func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icomoon) {
     tabBarItem.title = String.icomoonWithName(icon)
