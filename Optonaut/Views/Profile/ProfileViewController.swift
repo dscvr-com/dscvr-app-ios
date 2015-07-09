@@ -123,7 +123,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         editProfileButtonView.layer.borderColor = BaseColor.CGColor
         editProfileButtonView.layer.cornerRadius = 5
         editProfileButtonView.layer.masksToBounds = true
-        editProfileButtonView.setTitle("Edit profile", forState: .Normal)
+        editProfileButtonView.setTitle("Edit", forState: .Normal)
         editProfileButtonView.setTitleColor(BaseColor, forState: .Normal)
         editProfileButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
         editProfileButtonView.rac_command = RACCommand(signalBlock: { _ in
@@ -193,7 +193,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         
         editProfileButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
         editProfileButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: logoutButtonView, withOffset: -3)
-        editProfileButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
+        editProfileButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 31))
         
         followersHeadingView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
         followersHeadingView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
