@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveCocoa
-import SwiftyJSON
 import ObjectMapper
 
 class SearchViewModel {
@@ -17,7 +16,7 @@ class SearchViewModel {
     let searchText = MutableProperty<String>("")
     
     init() {
-        let keywordToJson: SignalProducer<String, NSError>  -> SignalProducer<JSON, NSError> = flatMap(.Latest) { keyword in
+        let keywordToJson: SignalProducer<String, NSError>  -> SignalProducer<JSONResponse, NSError> = flatMap(.Latest) { keyword in
             let escapedKeyword = keyword.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
             return Api.get("optographs/search?keyword=\(escapedKeyword!)", authorized: true)
         }
@@ -28,8 +27,8 @@ class SearchViewModel {
             |> throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
             |> keywordToJson
             |> start(
-                next: { jsonArray in
-                    var optographs = Mapper<Optograph>().mapArray(jsonArray.rawValue)!
+                next: { json in
+                    var optographs = Mapper<Optograph>().mapArray(json)!
                     optographs = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
                     self.results.put(optographs)

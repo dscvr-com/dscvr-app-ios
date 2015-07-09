@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 import WebImage
+import ObjectMapper
 
 class OptographTableViewCell: UITableViewCell {
     
@@ -150,7 +151,8 @@ class OptographTableViewCell: UITableViewCell {
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
             Api.get("users/user-name/\(userName)", authorized: true)
                 |> start(next: { json in
-                    self.navigationController?.pushViewController(ProfileViewController(userId: json["id"].intValue), animated: true)
+                    let user = Mapper<User>().map(json)!
+                    self.navigationController?.pushViewController(ProfileViewController(userId: user.id), animated: true)
                 })
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in

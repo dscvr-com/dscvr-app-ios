@@ -9,7 +9,6 @@
 import UIKit
 import PureLayout_iOS
 import Alamofire
-import SwiftyJSON
 import Refresher
 
 class OptographTableViewController: UIViewController {

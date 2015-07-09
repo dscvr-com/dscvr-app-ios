@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactiveCocoa
+import ObjectMapper
 
 class LoginViewModel {
     
@@ -55,9 +56,10 @@ class LoginViewModel {
             Api.post("users/login", authorized: false, parameters: parameters)
                 |> start(
                     next: { json in
+                        let loginData = Mapper<LoginMappable>().map(json)!
                         NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.UserIsLoggedIn.rawValue)
-                        NSUserDefaults.standardUserDefaults().setObject(json["token"].stringValue, forKey: UserDefaultsKeys.UserToken.rawValue)
-                        NSUserDefaults.standardUserDefaults().setInteger(json["id"].intValue, forKey: UserDefaultsKeys.UserId.rawValue)
+                        NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: UserDefaultsKeys.UserToken.rawValue)
+                        NSUserDefaults.standardUserDefaults().setInteger(loginData.id, forKey: UserDefaultsKeys.UserId.rawValue)
                         self.pending.put(false)
                         sendCompleted(sink)
                     },
@@ -71,4 +73,18 @@ class LoginViewModel {
         }
     }
     
+}
+
+private class LoginMappable: Mappable {
+    var token = ""
+    var id = 0
+    
+    required init?(_ map: Map) {
+        mapping(map)
+    }
+    
+    func mapping(map: Map) {
+        token   <- map["token"]
+        id      <- map["id"]
+    }
 }

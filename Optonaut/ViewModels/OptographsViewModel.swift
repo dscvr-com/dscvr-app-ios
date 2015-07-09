@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveCocoa
-import SwiftyJSON
 import ObjectMapper
 
 class OptographsViewModel {
@@ -17,15 +16,15 @@ class OptographsViewModel {
     let resultsLoading = MutableProperty<Bool>(false)
     
     init(source: String) {
-        let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSON, NSError> = flatMap(.Latest) { _ in Api.get(source, authorized: true) }
+        let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSONResponse, NSError> = flatMap(.Latest) { _ in Api.get(source, authorized: true) }
         
         resultsLoading.producer
             |> mapError { _ in NSError(domain: "", code: 0, userInfo: nil) }
             |> filter { $0 }
             |> callApi
             |> start(
-                next: { jsonArray in
-                    var optographs = Mapper<Optograph>().mapArray(jsonArray.rawValue)!
+                next: { json in
+                    var optographs = Mapper<Optograph>().mapArray(json)!
                     optographs = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
                     self.results.put(optographs)

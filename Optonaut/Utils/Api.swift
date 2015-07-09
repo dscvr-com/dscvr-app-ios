@@ -8,8 +8,9 @@
 
 import Foundation
 import Alamofire
-import SwiftyJSON
 import ReactiveCocoa
+
+typealias JSONResponse = AnyObject
 
 class Api {
 //    static let host = "beta.api.optonaut.com"
@@ -17,19 +18,19 @@ class Api {
     static let host = "192.168.2.105"
     static let port = 3000
     
-    static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSON, NSError> {
+    static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {
         return request(endpoint, method: "GET", authorized: authorized, parameters: nil)
     }
     
-    static func post(endpoint: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSON, NSError> {
+    static func post(endpoint: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSONResponse, NSError> {
         return request(endpoint, method: "POST", authorized: authorized, parameters: parameters)
     }
     
-    static func delete(endpoint: String, authorized: Bool) -> SignalProducer<JSON, NSError> {
+    static func delete(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {
         return request(endpoint, method: "DELETE", authorized: authorized, parameters: nil)
     }
     
-    private static func request(endpoint: String, method: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSON, NSError> {
+    private static func request(endpoint: String, method: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSONResponse, NSError> {
         return SignalProducer { sink, disposable in
             let URL = NSURL(string: "http://\(self.host):\(self.port)/\(endpoint)")!
             let mutableURLRequest = NSMutableURLRequest(URL: URL)
@@ -58,7 +59,7 @@ class Api {
                         sendError(sink, error)
                     } else {
                         if let data = data {
-                            sendNext(sink, JSON(data))
+                            sendNext(sink, data)
                         }
                         sendCompleted(sink)
                     }

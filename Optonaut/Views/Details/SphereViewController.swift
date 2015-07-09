@@ -1,7 +1,6 @@
 import UIKit
 import QuartzCore
 import SceneKit
-import SwiftyJSON
 import CoreMotion
 import CoreGraphics
 

@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveCocoa
-import SwiftyJSON
 import ObjectMapper
 
 class ActivitiesViewModel {
@@ -17,15 +16,15 @@ class ActivitiesViewModel {
     let resultsLoading = MutableProperty<Bool>(false)
     
     init() {
-        let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSON, NSError> = flatMap(.Latest) { _ in Api.get("activities", authorized: true) }
+        let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSONResponse, NSError> = flatMap(.Latest) { _ in Api.get("activities", authorized: true) }
         
         resultsLoading.producer
             |> mapError { _ in NSError(domain: "", code: 0, userInfo: nil) }
             |> filter { $0 }
             |> callApi
             |> start(
-                next: { jsonArray in
-                    var activities = Mapper<Activity>().mapArray(jsonArray.rawValue)!
+                next: { json in
+                    var activities = Mapper<Activity>().mapArray(json)!
                     activities = activities.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
                     self.results.put(activities)

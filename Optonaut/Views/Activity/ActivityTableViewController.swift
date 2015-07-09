@@ -10,7 +10,6 @@ import UIKit
 import PureLayout_iOS
 import RealmSwift
 import Alamofire
-import SwiftyJSON
 import Refresher
 
 class ActivityTableViewController: UIViewController, RedNavbar {

@@ -29,7 +29,7 @@ class ProfileViewModel {
     
         Api.get("users/\(id)", authorized: true)
             |> start(next: { json in
-                let user = Mapper<User>().map(json.rawValue)!
+                let user = Mapper<User>().map(json)!
                 self.email.put(user.email)
                 self.name.put(user.name)
                 self.userName.put(user.userName)

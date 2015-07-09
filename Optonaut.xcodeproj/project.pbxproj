@@ -72,7 +72,6 @@
 		8F9A4FF81B39E992009C4548 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF71B39E992009C4548 /* ProfileViewController.swift */; };
 		8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
-		8FA55BEC1B386E8C00BBA4A2 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */; };
 		8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */; };
 		8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */; };
 		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
@@ -184,7 +183,6 @@
 				8F5FD9E91B3D60E5007E073C /* WebImage.framework in Frameworks */,
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
-				8FA55BEC1B386E8C00BBA4A2 /* SwiftyJSON.framework in Frameworks */,
 				8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */,
 				8F7738361B3816C7001F642B /* Realm.framework in Frameworks */,
 				8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */,
@@ -587,7 +585,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/PureLayout_iOS.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/TTTAttributedLabel.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/SwiftyJSON.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Refresher.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ReactiveCocoa.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
