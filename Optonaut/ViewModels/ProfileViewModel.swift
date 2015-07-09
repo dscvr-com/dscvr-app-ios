@@ -9,7 +9,6 @@
 
 import Foundation
 import ReactiveCocoa
-import SwiftyJSON
 
 class ProfileViewModel {
     
@@ -25,13 +24,21 @@ class ProfileViewModel {
     let avatarUrl = MutableProperty<String>("")
     
     init(id: Int) {
-        Api.get("users/\(id)", authorized: true)
-            |> start(next: setJsonData)
-    }
+        self.id.put(id)
     
-    init(userName: String) {
-        Api.get("users/user-name/\(userName)", authorized: true)
-            |> start(next: setJsonData)
+        Api.get("users/\(id)", authorized: true)
+            |> start(next: { json in
+                let user = mapProfileUserFromJson(json)
+                self.email.put(user.email)
+                self.name.put(user.name)
+                self.userName.put(user.userName)
+                self.bio.put(user.bio)
+                self.numberOfFollowers.put(user.numberOfFollowers)
+                self.numberOfFollowings.put(user.numberOfFollowings)
+                self.numberOfOptographs.put(user.numberOfOptographs)
+                self.isFollowing.put(user.isFollowing)
+                self.avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(id % 4).jpg")
+            })
     }
     
     func toggleFollow() {
@@ -50,20 +57,6 @@ class ProfileViewModel {
                     self.isFollowing.put(followedBefore)
                 })
         }
-    }
-    
-    private func setJsonData(json: JSON) {
-        let user = mapProfileUserFromJson(json)
-        self.id.put(user.id)
-        self.email.put(user.email)
-        self.name.put(user.name)
-        self.userName.put(user.userName)
-        self.bio.put(user.bio)
-        self.numberOfFollowers.put(user.numberOfFollowers)
-        self.numberOfFollowings.put(user.numberOfFollowings)
-        self.numberOfOptographs.put(user.numberOfOptographs)
-        self.isFollowing.put(user.isFollowing)
-        self.avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(user.id % 4).jpg")
     }
     
 }

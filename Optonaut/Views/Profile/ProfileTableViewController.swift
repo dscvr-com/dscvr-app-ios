@@ -27,22 +27,9 @@ class ProfileTableViewController: OptographTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let refreshAction = {
-            NSOperationQueue().addOperationWithBlock {
-                self.viewModel.resultsLoading.put(true)
-            }
-        }
-        
-        tableView.addPullToRefreshWithAction(refreshAction, withAnimator: RefreshAnimator())
-        
-        viewModel.results.producer.start(
-            next: { results in
-                self.items = results
-                self.tableView.reloadData()
-                self.tableView.stopPullToRefresh()
-            },
-            error: { _ in
-                self.tableView.stopPullToRefresh()
+        viewModel.results.producer.start(next: { results in
+            self.items = results
+            self.tableView.reloadData()
         })
         
         viewModel.resultsLoading.put(true)

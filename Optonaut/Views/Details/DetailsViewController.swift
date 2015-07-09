@@ -53,7 +53,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         navigationItem.title = ""
         
         if let detailsUrl = NSURL(string: viewModel.detailsUrl.value) {
-            detailsImageView.sd_setImageWithURL(detailsUrl, placeholderImage: UIImage(named: "placeholder"))
+            detailsImageView.sd_setImageWithURL(detailsUrl, placeholderImage: UIImage(named: "optograph-details-placeholder"))
         }
         view.addSubview(detailsImageView)
         
@@ -74,7 +74,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         view.addSubview(maximizeButtonView)
         
         if let avatarUrl = NSURL(string: viewModel.avatarUrl.value) {
-            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "placeholder"))
+            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
         }
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
@@ -165,7 +165,10 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         textView.rac_text <~ viewModel.text
         textView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
-            self.navigationController?.pushViewController(ProfileViewController(userName: userName), animated: true)
+            Api.get("users/user-name/\(userName)", authorized: true)
+                |> start(next: { json in
+                    self.navigationController?.pushViewController(ProfileViewController(userId: json["id"].intValue), animated: true)
+                })
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)

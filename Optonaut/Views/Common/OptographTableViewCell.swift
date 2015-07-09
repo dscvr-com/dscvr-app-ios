@@ -123,11 +123,11 @@ class OptographTableViewCell: UITableViewCell {
         viewModel = OptographViewModel(optograph: optograph)
         
         if let previewUrl = NSURL(string: viewModel.previewUrl.value) {
-            previewImageView.sd_setImageWithURL(previewUrl, placeholderImage: UIImage(named: "placeholder"))
+            previewImageView.sd_setImageWithURL(previewUrl, placeholderImage: UIImage(named: "optograph-placeholder"))
         }
         
         if let avatarUrl = NSURL(string: viewModel.avatarUrl.value) {
-            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "placeholder"))
+            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
         }
         
         nameView.rac_text <~ viewModel.user
@@ -148,7 +148,10 @@ class OptographTableViewCell: UITableViewCell {
         textView.rac_text <~ viewModel.text
         textView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
-            self.navigationController?.pushViewController(ProfileViewController(userName: userName), animated: true)
+            Api.get("users/user-name/\(userName)", authorized: true)
+                |> start(next: { json in
+                    self.navigationController?.pushViewController(ProfileViewController(userId: json["id"].intValue), animated: true)
+                })
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)

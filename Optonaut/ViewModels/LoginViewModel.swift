@@ -58,7 +58,6 @@ class LoginViewModel {
                         NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.UserIsLoggedIn.rawValue)
                         NSUserDefaults.standardUserDefaults().setObject(json["token"].stringValue, forKey: UserDefaultsKeys.UserToken.rawValue)
                         NSUserDefaults.standardUserDefaults().setInteger(json["id"].intValue, forKey: UserDefaultsKeys.UserId.rawValue)
-                        NSUserDefaults.standardUserDefaults().setObject(json["user_name"].stringValue, forKey: UserDefaultsKeys.UserName.rawValue)
                         self.pending.put(false)
                         sendCompleted(sink)
                     },

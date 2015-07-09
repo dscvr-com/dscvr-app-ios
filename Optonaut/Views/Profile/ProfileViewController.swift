@@ -38,12 +38,6 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init(userName: String) {
-        viewModel = ProfileViewModel(userName: userName)
-        isMe = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.UserName.rawValue) as! String == userName
-        super.init(nibName: nil, bundle: nil)
-    }
-    
     required init(coder aDecoder: NSCoder) {
         viewModel = ProfileViewModel(id: 0)
         super.init(coder: aDecoder)
@@ -68,8 +62,8 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         viewModel.avatarUrl.producer
             |> start(next: { url in
                 if let avatarUrl = NSURL(string: url) {
-                    self.avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "placeholder"))
-                    self.avatarBackgroundImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "placeholder"))
+                    self.avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
+                    self.avatarBackgroundImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
                 }
             })
         
