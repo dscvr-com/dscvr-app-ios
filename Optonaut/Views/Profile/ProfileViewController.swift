@@ -38,6 +38,12 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         super.init(nibName: nil, bundle: nil)
     }
     
+    required init(userName: String) {
+        viewModel = ProfileViewModel(userName: userName)
+        isMe = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.UserName.rawValue) as! String == userName
+        super.init(nibName: nil, bundle: nil)
+    }
+    
     required init(coder aDecoder: NSCoder) {
         viewModel = ProfileViewModel(id: 0)
         super.init(coder: aDecoder)

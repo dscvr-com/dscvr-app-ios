@@ -164,8 +164,8 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         textView.textColor = UIColor(0x4d4d4d)
         textView.rac_text <~ viewModel.text
         textView.userHandleLinkTapHandler = { label, handle, range in
-            let profileViewController = ProfileViewController(userId: self.viewModel.userId.value)
-            self.navigationController?.pushViewController(profileViewController, animated: true)
+            let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
+            self.navigationController?.pushViewController(ProfileViewController(userName: userName), animated: true)
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
