@@ -107,8 +107,8 @@ class ActivityTableViewCell: UITableViewCell {
     }
     
     func pushDetails() {
-        let optographViewModel = OptographViewModel(optograph: viewModel.optograph.value!)
-        let detailsViewController = DetailsViewController(viewModel: optographViewModel)
+        let optograph = viewModel.optograph.value!
+        let detailsViewController = DetailsViewController(optographId: optograph.id)
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
     

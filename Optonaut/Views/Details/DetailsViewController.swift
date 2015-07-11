@@ -14,7 +14,7 @@ import ObjectMapper
 
 class DetailsViewController: UIViewController, TransparentNavbar {
     
-    var viewModel: OptographViewModel
+    var viewModel: DetailsViewModel
     
     // subviews
     let detailsImageView = UIImageView()
@@ -36,13 +36,13 @@ class DetailsViewController: UIViewController, TransparentNavbar {
     
     let motionManager = CMMotionManager()
     
-    required init(viewModel: OptographViewModel) {
-        self.viewModel = viewModel
+    required init(optographId: Int) {
+        self.viewModel = DetailsViewModel(optographId: optographId)
         super.init(nibName: nil, bundle: nil)
     }
     
     required init(coder aDecoder: NSCoder) {
-        viewModel = OptographViewModel(optograph: Optograph())
+        viewModel = DetailsViewModel(optographId: 0)
         super.init(coder: aDecoder)
     }
     
@@ -53,9 +53,12 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         
         navigationItem.title = ""
         
-        if let detailsUrl = NSURL(string: viewModel.detailsUrl.value) {
-            detailsImageView.sd_setImageWithURL(detailsUrl, placeholderImage: UIImage(named: "optograph-details-placeholder"))
-        }
+        viewModel.detailsUrl.producer
+            |> start(next: { url in
+                if let detailsUrl = NSURL(string: url) {
+                    self.detailsImageView.sd_setImageWithURL(detailsUrl, placeholderImage: UIImage(named: "optograph-details-placeholder"))
+                }
+            })
         view.addSubview(detailsImageView)
         
         locationView.font = UIFont.robotoOfSize(12, withType: .Regular)
@@ -74,9 +77,12 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         })
         view.addSubview(maximizeButtonView)
         
-        if let avatarUrl = NSURL(string: viewModel.avatarUrl.value) {
-            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
-        }
+        viewModel.avatarUrl.producer
+            |> start(next: { url in
+                if let avatarUrl = NSURL(string: url) {
+                    self.avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
+                }
+            })
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
