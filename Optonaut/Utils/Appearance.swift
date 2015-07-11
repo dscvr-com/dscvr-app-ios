@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 func setupAppearanceDefaults() {
+    UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
     UINavigationBar.appearance().tintColor = .whiteColor()
     UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
 }

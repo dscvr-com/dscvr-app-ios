@@ -10,7 +10,6 @@ class SphereViewController: UIViewController  {
     let focalLength: Float = -1.0
     var leftCameraNode: SCNNode!
     var rightCameraNode: SCNNode!
-    var dummy: SCNNode!
     var leftScnView: SCNView!
     var rightScnView: SCNView!
     var leftScene: SCNScene!
@@ -60,8 +59,6 @@ class SphereViewController: UIViewController  {
         rightCameraNode.camera = camera
         rightCameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         rightScene.rootNode.addChildNode(rightCameraNode)
-        
-        dummy = SCNNode()
         
         
         let leftSphereGeometry = SCNSphere(radius: 5.0)
@@ -134,20 +131,18 @@ class SphereViewController: UIViewController  {
         navigationController?.setNavigationBarHidden(true, animated: false)
         originalBrightness = UIScreen.mainScreen().brightness
         UIScreen.mainScreen().brightness = 1
+        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
     }
     
     override func viewWillDisappear(animated: Bool) {
         tabBarController?.tabBar.hidden = false
         navigationController?.setNavigationBarHidden(false, animated: false)
         UIScreen.mainScreen().brightness = originalBrightness
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         motionManager.stopAccelerometerUpdates()
         motionManager.stopDeviceMotionUpdates()
         
         super.viewWillDisappear(animated)
-    }
-    
-    override func prefersStatusBarHidden() -> Bool {
-        return true
     }
     
 }
@@ -156,19 +151,22 @@ class SphereViewController: UIViewController  {
 extension SphereViewController: SCNSceneRendererDelegate {
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
-        if let motion = motionManager.deviceMotion {
-            let x = -Float(motion.attitude.roll) - Float(M_PI_2)
-            let y = Float(motion.attitude.yaw)
-            let z = -Float(motion.attitude.pitch)
-            dummy.transform = SCNMatrix4Identity
-            dummy.eulerAngles.x = x
-            dummy.eulerAngles.y = y
-            dummy.eulerAngles.z = z
-            
-            var trans = dummy.transform
-            trans = SCNMatrix4Mult(m, trans)
-            leftCameraNode.transform = trans
-            rightCameraNode.transform = trans
+        NSOperationQueue.mainQueue().addOperationWithBlock {
+            if let motion = self.motionManager.deviceMotion {
+                let dummy = SCNNode()
+                let x = -Float(motion.attitude.roll) - Float(M_PI_2)
+                let y = Float(motion.attitude.yaw)
+                let z = -Float(motion.attitude.pitch)
+                dummy.transform = SCNMatrix4Identity
+                dummy.eulerAngles.x = x
+                dummy.eulerAngles.y = y
+                dummy.eulerAngles.z = z
+                
+                var trans = dummy.transform
+                trans = SCNMatrix4Mult(self.m, trans)
+                self.leftCameraNode.transform = trans
+                self.rightCameraNode.transform = trans
+            }
         }
     }
     
