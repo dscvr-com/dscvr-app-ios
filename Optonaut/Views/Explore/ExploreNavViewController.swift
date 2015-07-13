@@ -18,7 +18,7 @@ class ExploreNavViewController: UINavigationController, RedNavbar {
         setTabBarIcon(tabBarItem, icon: .Compass)
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     

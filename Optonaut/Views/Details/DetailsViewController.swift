@@ -41,7 +41,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         viewModel = DetailsViewModel(optographId: 0)
         super.init(coder: aDecoder)
     }

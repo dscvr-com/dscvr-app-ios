@@ -15,7 +15,7 @@ class FeedNavViewController: UINavigationController {
         setTabBarIcon(tabBarItem, icon: .Infinity)
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     

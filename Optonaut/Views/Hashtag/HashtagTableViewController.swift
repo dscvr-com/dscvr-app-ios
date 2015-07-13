@@ -20,7 +20,7 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar {
         super.init(nibName: nil, bundle: nil)
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         self.hashtag = ""
         super.init(coder: aDecoder)
     }

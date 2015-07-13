@@ -15,7 +15,7 @@ typealias JSONResponse = AnyObject
 class Api {
 //    static let host = "beta.api.optonaut.com"
 //    static let port = 80
-    static let host = "192.168.1.41"
+    static let host = "192.168.2.181"
     static let port = 3000
     
     static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {

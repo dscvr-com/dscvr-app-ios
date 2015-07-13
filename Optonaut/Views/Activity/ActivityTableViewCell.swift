@@ -68,7 +68,7 @@ class ActivityTableViewCell: UITableViewCell {
         super.updateConstraints()
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     

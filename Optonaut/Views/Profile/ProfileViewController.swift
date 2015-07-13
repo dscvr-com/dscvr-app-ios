@@ -38,7 +38,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         viewModel = ProfileViewModel(id: 0)
         super.init(coder: aDecoder)
     }

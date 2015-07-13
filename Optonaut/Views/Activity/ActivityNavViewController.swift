@@ -18,7 +18,7 @@ class ActivityNavViewController: UINavigationController, RedNavbar {
         setTabBarIcon(tabBarItem, icon: .Bell)
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     

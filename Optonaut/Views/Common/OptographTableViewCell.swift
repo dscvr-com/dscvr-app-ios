@@ -79,6 +79,10 @@ class OptographTableViewCell: UITableViewCell {
         
         contentView.setNeedsUpdateConstraints()
     }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func updateConstraints() {
         avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 15)
@@ -114,10 +118,6 @@ class OptographTableViewCell: UITableViewCell {
         lineView.autoSetDimension(.Height, toSize: 1)
         
         super.updateConstraints()
-    }
-    
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
     }
     
     func bindViewModel(optograph: Optograph) {
