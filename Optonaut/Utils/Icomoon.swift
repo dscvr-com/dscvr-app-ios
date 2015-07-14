@@ -86,6 +86,11 @@ public enum Icomoon: String {
     case LogoText = "\u{e60e}"
     case Logo = "\u{e60f}"
     case Eye = "\u{e610}"
+    case Email = "\u{e611}"
+    case InfoWithCircle = "\u{e612}"
+    case Lock = "\u{e613}"
+    case PaperPlane = "\u{e614}"
+    case VCard = "\u{e615}"
     case Bell = "\u{f0a2}"
     case CommentOutlined = "\u{f0e5}"
 }

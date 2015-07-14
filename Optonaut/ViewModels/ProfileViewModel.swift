@@ -17,7 +17,6 @@ class ProfileViewModel {
     let name = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let bio = MutableProperty<String>("")
-    let email = MutableProperty<String>("")
     let numberOfFollowers = MutableProperty<Int>(0)
     let numberOfFollowings = MutableProperty<Int>(0)
     let numberOfOptographs = MutableProperty<Int>(0)
@@ -30,7 +29,6 @@ class ProfileViewModel {
         Api.get("users/\(id)", authorized: true)
             |> start(next: { json in
                 let user = Mapper<User>().map(json)!
-                self.email.put(user.email)
                 self.name.put(user.name)
                 self.userName.put(user.userName)
                 self.bio.put(user.bio)

@@ -26,6 +26,10 @@ class Api {
         return request(endpoint, method: "POST", authorized: authorized, parameters: parameters)
     }
     
+    static func put(endpoint: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSONResponse, NSError> {
+        return request(endpoint, method: "PUT", authorized: authorized, parameters: parameters)
+    }
+    
     static func delete(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {
         return request(endpoint, method: "DELETE", authorized: authorized, parameters: nil)
     }

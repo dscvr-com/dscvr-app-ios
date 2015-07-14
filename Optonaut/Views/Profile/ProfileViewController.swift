@@ -127,6 +127,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         editProfileButtonView.setTitleColor(BaseColor, forState: .Normal)
         editProfileButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
         editProfileButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.editProfile()
             return RACSignal.empty()
         })
         editProfileButtonView.hidden = !isMe
@@ -224,14 +225,19 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         updateNavbarAppear()
     }
     
+    func editProfile() {
+//        presentViewController(EditProfileViewController(userId: viewModel.id.value), animated: false, completion: nil)
+        navigationController?.pushViewController(EditProfileViewController(userId: viewModel.id.value), animated: false)
+    }
+    
     func logout() {
         let refreshAlert = UIAlertController(title: "You're about to log out...", message: "Really? Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
         
-        refreshAlert.addAction(UIAlertAction(title: "Sign out", style: .Default, handler: { (action: UIAlertAction!) in
+        refreshAlert.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { (action: UIAlertAction!) in
             NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
         }))
         
-        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { _ in return }))
+        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
         
         presentViewController(refreshAlert, animated: true, completion: nil)
     }

@@ -115,13 +115,30 @@ extension UITextField {
         }
     }
     
-    public var rac_textColor: MutableProperty<UIColor?> {
-        return lazyMutableProperty(self, key: &AssociationKey.textColor, setter: { self.textColor = $0 }, getter: { self.textColor })
-    }
-    
     func changed() {
         rac_text.value = self.text!
     }
+    
+    public var rac_textColor: MutableProperty<UIColor?> {
+        return lazyMutableProperty(self, key: &AssociationKey.textColor, setter: { self.textColor = $0 }, getter: { self.textColor })
+    }
+}
+
+extension UITextView: UITextViewDelegate {
+    
+    public var rac_text: MutableProperty<String> {
+        return lazyAssociatedProperty(self, key: &AssociationKey.text) {
+            
+            let property = MutableProperty<String>(self.text ?? "")
+            property.producer
+                .start(next: {
+                    newValue in
+                    self.text = newValue
+                })
+            return property
+        }
+    }
+    
 }
 
 extension UIImage {
