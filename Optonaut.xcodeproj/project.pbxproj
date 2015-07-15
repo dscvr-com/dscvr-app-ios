@@ -41,6 +41,7 @@
 		8F500CFE1B4D6D70002B9878 /* ProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFD1B4D6D70002B9878 /* ProfileTableViewController.swift */; };
 		8F500D001B4D8028002B9878 /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFF1B4D8028002B9878 /* Appearance.swift */; };
 		8F500D021B4D8471002B9878 /* ExploreTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500D011B4D8471002B9878 /* ExploreTableViewController.swift */; };
+		8F5B26931B56AE0D00E0B955 /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5B26921B56AE0D00E0B955 /* CameraViewModel.swift */; };
 		8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CE1B3AFBDC007E073C /* Api.swift */; };
 		8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CF1B3AFBDC007E073C /* Utils.swift */; };
 		8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */; };
@@ -72,6 +73,8 @@
 		8F9A4FF81B39E992009C4548 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF71B39E992009C4548 /* ProfileViewController.swift */; };
 		8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */; };
 		8FA2E7AE1B55366D00407181 /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E7AD1B55366D00407181 /* EditProfileViewModel.swift */; };
+		8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA2E7B11B55576500407181 /* opencv2.framework */; };
+		8FA2E7B71B55588400407181 /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E7B61B55588400407181 /* OpenCVWrapper.mm */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
 		8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */; };
 		8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */; };
@@ -130,6 +133,7 @@
 		8F500CFD1B4D6D70002B9878 /* ProfileTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTableViewController.swift; sourceTree = "<group>"; };
 		8F500CFF1B4D8028002B9878 /* Appearance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
 		8F500D011B4D8471002B9878 /* ExploreTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreTableViewController.swift; sourceTree = "<group>"; };
+		8F5B26921B56AE0D00E0B955 /* CameraViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		8F5FD9CE1B3AFBDC007E073C /* Api.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		8F5FD9CF1B3AFBDC007E073C /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
@@ -162,6 +166,9 @@
 		8F9A4FF71B39E992009C4548 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNavViewController.swift; sourceTree = "<group>"; };
 		8FA2E7AD1B55366D00407181 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
+		8FA2E7B11B55576500407181 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Carthage/Build/iOS/opencv2.framework; sourceTree = "<group>"; };
+		8FA2E7B61B55588400407181 /* OpenCVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
+		8FA2E7B81B5558A800407181 /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
@@ -186,6 +193,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */,
 				8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */,
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
 				8F5FD9E91B3D60E5007E073C /* WebImage.framework in Frameworks */,
@@ -280,6 +288,8 @@
 		8F5FD9CD1B3AFBDC007E073C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8FA2E7B61B55588400407181 /* OpenCVWrapper.mm */,
+				8FA2E7B81B5558A800407181 /* OpenCVWrapper.h */,
 				8F5FD9CE1B3AFBDC007E073C /* Api.swift */,
 				8F4C6E191B4717DF007508ED /* Icomoon.swift */,
 				8F4C6E571B4A73BE007508ED /* Fonts.swift */,
@@ -296,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				8F5FD9D51B3AFE41007E073C /* LoginViewModel.swift */,
+				8F5B26921B56AE0D00E0B955 /* CameraViewModel.swift */,
 				8F464AF71B4ADAF300A66FA5 /* RequestInviteViewModel.swift */,
 				8F5FD9EF1B3DB724007E073C /* SearchViewModel.swift */,
 				8F5FD9FC1B3DB909007E073C /* ActivitiesViewModel.swift */,
@@ -376,9 +387,9 @@
 			isa = PBXGroup;
 			children = (
 				8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */,
-				8FBA5CAB1B54266B00F0F489 /* EditProfileViewController.swift */,
 				8F9A4FF71B39E992009C4548 /* ProfileViewController.swift */,
 				8F500CFD1B4D6D70002B9878 /* ProfileTableViewController.swift */,
+				8FBA5CAB1B54266B00F0F489 /* EditProfileViewController.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -396,6 +407,7 @@
 		8FCCA0221B3806040091F1B1 = {
 			isa = PBXGroup;
 			children = (
+				8FA2E7B11B55576500407181 /* opencv2.framework */,
 				8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */,
 				8F5FD9E81B3D60E5007E073C /* WebImage.framework */,
 				8F5FD9D81B3B0080007E073C /* Result.framework */,
@@ -649,10 +661,12 @@
 				8F5FD9F91B3DB7B3007E073C /* LoginViewController.swift in Sources */,
 				8F464AF81B4ADAF300A66FA5 /* RequestInviteViewModel.swift in Sources */,
 				8F5FD9D61B3AFE41007E073C /* LoginViewModel.swift in Sources */,
+				8F5B26931B56AE0D00E0B955 /* CameraViewModel.swift in Sources */,
 				8F5FD9F81B3DB7B3007E073C /* DetailsViewController.swift in Sources */,
 				8F5FD9E71B3D579C007E073C /* CameraViewController.swift in Sources */,
 				8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */,
 				8FEAB9791B51182B00F9FE64 /* DetailsViewModel.swift in Sources */,
+				8FA2E7B71B55588400407181 /* OpenCVWrapper.mm in Sources */,
 				8F5FD9F01B3DB724007E073C /* SearchViewModel.swift in Sources */,
 				8FFCE4BD1B4EAA2300832C88 /* ActivityViewModel.swift in Sources */,
 				8F7738161B380F5D001F642B /* User.swift in Sources */,

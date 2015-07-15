@@ -3,3 +3,4 @@
 //
 
 #import "KILabel.h"
+#import "OpenCVWrapper.h"
