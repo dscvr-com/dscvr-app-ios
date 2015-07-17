@@ -3,4 +3,4 @@
 //
 
 #import "KILabel.h"
-#import "OpenCVWrapper.h"
+#import "Stitcher.h"
