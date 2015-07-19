@@ -12,6 +12,7 @@ enum UserDefaultsKeys: String {
     case UserIsLoggedIn = "user_is_logged_in"
     case UserToken = "user_token"
     case UserId = "user_id"
+    case DebugEnabled = "debug_enabled"
 }
 
 enum NotificationKeys: String {

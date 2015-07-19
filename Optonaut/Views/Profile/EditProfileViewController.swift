@@ -26,6 +26,9 @@ class EditProfileViewController: UIViewController, RedNavbar {
     let emailInputView = BottomLineTextField()
     let passwordIconView = UILabel()
     let passwordButtonView = UIButton()
+    let debugIconView = UILabel()
+    let debugLabelView = UILabel()
+    let debugSwitchView = UISwitch()
     
     required init(userId: Int) {
         viewModel = EditProfileViewModel(id: userId)
@@ -131,7 +134,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         view.addSubview(passwordIconView)
         
         passwordButtonView.titleEdgeInsets = UIEdgeInsetsZero
-        passwordButtonView.titleLabel?.font = UIFont.robotoOfSize(15, withType: .Medium)
+        passwordButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
         passwordButtonView.contentHorizontalAlignment = .Left
         passwordButtonView.setTitleColor(UIColor(0x4d4d4d), forState: .Normal)
         passwordButtonView.setTitle("Change password", forState: .Normal)
@@ -140,6 +143,20 @@ class EditProfileViewController: UIViewController, RedNavbar {
             return RACSignal.empty()
         })
         view.addSubview(passwordButtonView)
+        
+        debugIconView.font = .icomoonOfSize(20)
+        debugIconView.text = .icomoonWithName(.Cog)
+        debugIconView.textColor = UIColor(0xe5e5e5)
+        view.addSubview(debugIconView)
+        
+        debugLabelView.text = "Debugging"
+        debugLabelView.textColor = UIColor(0x4d4d4d)
+        debugLabelView.font = .robotoOfSize(15, withType: .Regular)
+        view.addSubview(debugLabelView)
+        
+        debugSwitchView.on = viewModel.debugEnabled.value
+        debugSwitchView.addTarget(self, action: "toggleDebug", forControlEvents: .ValueChanged)
+        view.addSubview(debugSwitchView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
@@ -197,6 +214,17 @@ class EditProfileViewController: UIViewController, RedNavbar {
         passwordButtonView.autoPinEdge(.Left, toEdge: .Right, ofView: passwordIconView, withOffset: 15)
         passwordButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: nameInputView)
         
+        debugIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordButtonView, withOffset: 30)
+        debugIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        debugIconView.autoSetDimension(.Width, toSize: 20)
+        
+        debugLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -1)
+        debugLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: debugIconView, withOffset: 15)
+        debugLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: nameInputView)
+        
+        debugSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -4)
+        debugSwitchView.autoPinEdge(.Left, toEdge: .Right, ofView: debugLabelView, withOffset: 15)
+        
         super.updateViewConstraints()
     }
     
@@ -212,10 +240,14 @@ class EditProfileViewController: UIViewController, RedNavbar {
         navigationController?.interactivePopGestureRecognizer?.enabled = false
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewWillDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
         navigationController?.interactivePopGestureRecognizer?.enabled = true
+    }
+    
+    func toggleDebug() {
+        viewModel.toggleDebug()
     }
     
     func cancel() {

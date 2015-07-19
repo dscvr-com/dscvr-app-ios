@@ -21,7 +21,7 @@ class SearchViewModel {
             .filter { $0.characters.count > 2 }
             .throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
             .map(escape)
-            .flatMap(.Latest) { keyword in Api.get(keyword, authorized: true) }
+            .flatMap(.Latest) { keyword in Api.get("optographs/search?keyword=\(keyword)", authorized: true) }
             .start(next: { json in
                 let optographs = Mapper<Optograph>()
                     .mapArray(json)!

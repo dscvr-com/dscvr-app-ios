@@ -25,7 +25,7 @@ class CameraViewController: UIViewController {
     var videoDeviceInput: AVCaptureDeviceInput!
     var videoDeviceOutput: AVCaptureVideoDataOutput!
     
-    let debugHelper = CameraDebugHelper()
+    var debugHelper: CameraDebugHelper?
     
     // subviews
     let closeButtonView = UIButton()
@@ -33,6 +33,10 @@ class CameraViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if viewModel.debugEnabled.value {
+            debugHelper = CameraDebugHelper()
+        }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -107,7 +111,7 @@ class CameraViewController: UIViewController {
         
         motionManager.stopDeviceMotionUpdates()
         session.stopRunning()
-        debugHelper.cleanup()
+        debugHelper?.cleanup()
     }
     
     override func updateViewConstraints() {
@@ -184,7 +188,7 @@ class CameraViewController: UIViewController {
             
 //            let rotationMatrix = Array(UnsafeBufferPointer(start: resultExtrinsicsPointer, count: 16))
             
-//            debugHelper.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics)
+            debugHelper?.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics)
         }
     }
 }

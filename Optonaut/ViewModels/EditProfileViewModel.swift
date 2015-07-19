@@ -18,9 +18,12 @@ class EditProfileViewModel {
     let bio = MutableProperty<String>("")
     let email = MutableProperty<String>("")
     let avatarUrl = MutableProperty<String>("")
+    let debugEnabled = MutableProperty<Bool>(false)
     
     init(id: Int) {
         self.id.put(id)
+        
+        debugEnabled.put(NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue))
         
         Api.get("users/\(id)", authorized: true)
             .start(next: { json in
@@ -55,6 +58,11 @@ class EditProfileViewModel {
             .start(error: { error in
                 print(error)
             })
+    }
+    
+    func toggleDebug() {
+        debugEnabled.put(!debugEnabled.value)
+        NSUserDefaults.standardUserDefaults().setBool(debugEnabled.value, forKey: UserDefaultsKeys.DebugEnabled.rawValue)
     }
     
 }
