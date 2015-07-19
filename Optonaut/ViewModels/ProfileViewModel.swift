@@ -27,7 +27,7 @@ class ProfileViewModel {
         self.id.put(id)
     
         Api.get("users/\(id)", authorized: true)
-            |> start(next: { json in
+            .start(next: { json in
                 let user = Mapper<User>().map(json)!
                 self.name.put(user.name)
                 self.userName.put(user.userName)
@@ -47,12 +47,12 @@ class ProfileViewModel {
         
         if followedBefore {
             Api.delete("users/\(id.value)/follow", authorized: true)
-                |> start(error: { _ in
+                .start(error: { _ in
                     self.isFollowing.put(followedBefore)
                 })
         } else {
             Api.post("users/\(id.value)/follow", authorized: true, parameters: nil)
-                |> start(error: { _ in
+                .start(error: { _ in
                     self.isFollowing.put(followedBefore)
                 })
         }

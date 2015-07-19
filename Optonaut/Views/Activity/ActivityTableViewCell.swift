@@ -79,26 +79,18 @@ class ActivityTableViewCell: UITableViewCell {
             avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
         }
         
-        if let optographUrl = viewModel.optographUrl.value, imageUrl = NSURL(string: optographUrl) {
+        if let imageUrl = NSURL(string: viewModel.optographUrl.value) {
             optographImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "optograph-placeholder"))
         }
         
-        viewModel.activityType.producer
-            |> start(next: { type in
-        
-                var text = ""
+        textView.rac_text <~ viewModel.activityType.producer
+            .map { type in
                 switch type {
-                case .Like: text = "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) liked your Optograph"
-                case .Follow: text = "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) followed you"
-                default: ()
+                case .Like: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) liked your Optograph"
+                case .Follow: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) followed you"
+                default: return ""
                 }
-                
-                self.textView.text = text
-            })
-        
-//        dateView.rac_text <~ viewModel.timeSinceCreated
-        
-//        textView.rac_text <~ viewModel.text
+            }
     }
     
     func pushProfile() {
@@ -107,7 +99,7 @@ class ActivityTableViewCell: UITableViewCell {
     }
     
     func pushDetails() {
-        let optograph = viewModel.optograph.value!
+        let optograph = viewModel.optograph.value
         let detailsViewController = DetailsViewController(optographId: optograph.id)
         navigationController?.pushViewController(detailsViewController, animated: true)
     }

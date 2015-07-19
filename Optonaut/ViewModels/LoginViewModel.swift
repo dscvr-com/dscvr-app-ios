@@ -22,7 +22,7 @@ class LoginViewModel {
     init() {
         
         emailOrUserName.producer
-            |> start(next: { str in
+            .start(next: { str in
                 if str.rangeOfString("@") != nil {
                     self.emailOrUserNameValid.put(isValidEmail(str))
                 } else {
@@ -31,12 +31,12 @@ class LoginViewModel {
             })
         
         password.producer
-            |> start(next: { str in
+            .start(next: { str in
                 self.passwordValid.put(str.characters.count > 4)
             })
         
         combineLatest([emailOrUserNameValid.producer, passwordValid.producer])
-            |> start(next: { bools in
+            .start(next: { bools in
                 self.allowed.put(bools.reduce(true) { $0 && $1 })
             })
     }
@@ -54,7 +54,7 @@ class LoginViewModel {
             }
             
             Api.post("users/login", authorized: false, parameters: parameters)
-                |> start(
+                .start(
                     next: { json in
                         let loginData = Mapper<LoginMappable>().map(json)!
                         NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.UserIsLoggedIn.rawValue)

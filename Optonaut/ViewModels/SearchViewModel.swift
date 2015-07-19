@@ -16,25 +16,24 @@ class SearchViewModel {
     let searchText = MutableProperty<String>("")
     
     init() {
-        let keywordToJson: SignalProducer<String, NSError>  -> SignalProducer<JSONResponse, NSError> = flatMap(.Latest) { keyword in
-            let escapedKeyword = keyword.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
-            return Api.get("optographs/search?keyword=\(escapedKeyword!)", authorized: true)
-        }
-        
         searchText.producer
-            |> mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
-            |> filter { $0.characters.count > 2 }
-            |> throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
-            |> keywordToJson
-            |> start(
-                next: { json in
-                    var optographs = Mapper<Optograph>().mapArray(json)!
-                    optographs = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
-                    
-                    self.results.put(optographs)
-                }
-        )
+            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
+            .filter { $0.characters.count > 2 }
+            .throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
+            .map(escape)
+            .flatMap(.Latest) { keyword in Api.get(keyword, authorized: true) }
+            .start(next: { json in
+                let optographs = Mapper<Optograph>()
+                    .mapArray(json)!
+                    .sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
+                
+                self.results.put(optographs)
+            })
         
+    }
+    
+    private func escape(str: String) -> String {
+        return str.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLHostAllowedCharacterSet())!
     }
     
 }

@@ -17,7 +17,7 @@ class RequestInviteViewModel {
     
     init() {
         email.producer
-            |> start(next: { str in
+            .start(next: { str in
                 self.emailValid.put(isValidEmail(str))
             })
     }
@@ -28,7 +28,7 @@ class RequestInviteViewModel {
             
             let parameters = ["email": self.email.value]
             Api.post("users/request-invite", authorized: false, parameters: parameters)
-                |> start(
+                .start(
                     next: { json in
                         self.pending.put(false)
                         sendCompleted(sink)

@@ -60,7 +60,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         view.addSubview(avatarImageView)
         
         viewModel.avatarUrl.producer
-            |> start(next: { url in
+            .start(next: { url in
                 if let avatarUrl = NSURL(string: url) {
                     self.avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
                     self.avatarBackgroundImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
@@ -74,7 +74,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = .whiteColor()
-        userNameView.rac_text <~ viewModel.userName.producer |> map { "@\($0)" }
+        userNameView.rac_text <~ viewModel.userName.producer .map { "@\($0)" }
         view.addSubview(userNameView)
         
         bioView.numberOfLines = 2
@@ -91,8 +91,8 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         followButtonView.layer.masksToBounds = true
         followButtonView.setTitleColor(BaseColor, forState: .Normal)
         followButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
-        viewModel.isFollowing.producer |>
-            start(next: { isFollowing in
+        viewModel.isFollowing.producer
+            .start(next: { isFollowing in
                 let title = isFollowing ? "Unfollow" : "Follow"
                 self.followButtonView.setTitle(title, forState: .Normal)
             })
@@ -138,7 +138,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         followersHeadingView.textColor = .blackColor()
         view.addSubview(followersHeadingView)
         
-        followersCountView.rac_text <~ viewModel.numberOfFollowers.producer |> map { "\($0)" }
+        followersCountView.rac_text <~ viewModel.numberOfFollowers.producer .map { "\($0)" }
         followersCountView.font = .robotoOfSize(13, withType: .Medium)
         followersCountView.textColor = .blackColor()
         view.addSubview(followersCountView)
@@ -151,7 +151,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         followingHeadingView.textColor = .blackColor()
         view.addSubview(followingHeadingView)
         
-        followingCountView.rac_text <~ viewModel.numberOfFollowings.producer |> map { "\($0)" }
+        followingCountView.rac_text <~ viewModel.numberOfFollowings.producer .map { "\($0)" }
         followingCountView.font = .robotoOfSize(13, withType: .Medium)
         followingCountView.textColor = .blackColor()
         view.addSubview(followingCountView)

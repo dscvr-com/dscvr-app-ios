@@ -29,7 +29,7 @@ class DetailsViewModel {
     
     init(optographId: Int) {
         Api.get("optographs/\(optographId)", authorized: true)
-            |> start(next: { json in
+            .start(next: { json in
                 let optograph = Mapper<Optograph>().map(json)!
                 self.id.put(optograph.id)
                 self.liked.put(optograph.likedByUser)
@@ -54,13 +54,13 @@ class DetailsViewModel {
         
         if likedBefore {
             Api.delete("optographs/\(id.value)/like", authorized: true)
-                |> start(error: { _ in
+                .start(error: { _ in
                     self.likeCount.put(likeCountBefore)
                     self.liked.put(likedBefore)
                 })
         } else {
             Api.post("optographs/\(id.value)/like", authorized: true, parameters: nil)
-                |> start(error: { _ in
+                .start(error: { _ in
                     self.likeCount.put(likeCountBefore)
                     self.liked.put(likedBefore)
                 })

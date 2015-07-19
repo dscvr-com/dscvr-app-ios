@@ -12,25 +12,22 @@ import ReactiveCocoa
 
 class ActivityViewModel {
     
-    let activityType = MutableProperty<ActivityType>(.Nil)
-    let creatorAvatarUrl = MutableProperty<String>("")
-    let creatorId = MutableProperty<Int>(0)
-    let creatorUserName = MutableProperty<String>("")
-    let timeSinceCreated = MutableProperty<String>("")
-    let optographUrl = MutableProperty<String?>(nil)
-    let optograph = MutableProperty<Optograph?>(nil)
+    let activityType: ConstantProperty<ActivityType>
+    let creatorAvatarUrl: ConstantProperty<String>
+    let creatorId: ConstantProperty<Int>
+    let creatorUserName: ConstantProperty<String>
+    let timeSinceCreated: ConstantProperty<String>
+    let optographUrl: ConstantProperty<String>
+    let optograph: ConstantProperty<Optograph>
     
     init(activity: Activity) {
-        activityType.put(activity.activityType)
-        creatorAvatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(activity.creator!.id % 4).jpg")
-        creatorId.put(activity.creator!.id)
-        creatorUserName.put(activity.creator!.userName)
-        timeSinceCreated.put(RoundedDuration(date: activity.createdAt).shortDescription())
-        
-        if let optograph = activity.optograph {
-            optographUrl.put("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(optograph.id % 3).jpg")
-            self.optograph.put(optograph)
-        }
+        activityType = ConstantProperty(activity.activityType)
+        creatorAvatarUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/avatars/\(activity.creator!.id % 4).jpg")
+        creatorId = ConstantProperty(activity.creator!.id)
+        creatorUserName = ConstantProperty(activity.creator!.userName)
+        timeSinceCreated = ConstantProperty(RoundedDuration(date: activity.createdAt).shortDescription())
+        optographUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(activity.optograph!.id % 3).jpg")
+        optograph = ConstantProperty(activity.optograph!)
     }
     
 }

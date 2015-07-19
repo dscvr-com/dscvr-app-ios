@@ -16,16 +16,15 @@ class OptographsViewModel {
     let resultsLoading = MutableProperty<Bool>(false)
     
     init(source: String) {
-        let callApi: SignalProducer<Bool, NSError> -> SignalProducer<JSONResponse, NSError> = flatMap(.Latest) { _ in Api.get(source, authorized: true) }
-        
         resultsLoading.producer
-            |> mapError { _ in NSError(domain: "", code: 0, userInfo: nil) }
-            |> filter { $0 }
-            |> callApi
-            |> start(
+            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil) }
+            .filter { $0 }
+            .flatMap(.Latest) { _ in Api.get(source, authorized: true) }
+            .start(
                 next: { json in
-                    var optographs = Mapper<Optograph>().mapArray(json)!
-                    optographs = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
+                    let optographs = Mapper<Optograph>()
+                        .mapArray(json)!
+                        .sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
                     self.results.put(optographs)
                     self.resultsLoading.put(false)

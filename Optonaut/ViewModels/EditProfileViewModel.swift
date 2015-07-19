@@ -23,7 +23,7 @@ class EditProfileViewModel {
         self.id.put(id)
         
         Api.get("users/\(id)", authorized: true)
-            |> start(next: { json in
+            .start(next: { json in
                 let user = Mapper<User>().map(json)!
                 self.email.put(user.email)
                 self.name.put(user.name)
@@ -52,7 +52,7 @@ class EditProfileViewModel {
         let parameters = ["old": oldPassword, "new": newPassword]
         
         Api.post("users/change-password", authorized: true, parameters: parameters)
-            |> start(error: { error in
+            .start(error: { error in
                 print(error)
             })
     }

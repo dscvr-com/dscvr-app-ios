@@ -54,7 +54,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         navigationItem.title = ""
         
         viewModel.detailsUrl.producer
-            |> start(next: { url in
+            .start(next: { url in
                 if let detailsUrl = NSURL(string: url) {
                     self.detailsImageView.sd_setImageWithURL(detailsUrl, placeholderImage: UIImage(named: "optograph-details-placeholder"))
                 }
@@ -78,7 +78,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         view.addSubview(maximizeButtonView)
         
         viewModel.avatarUrl.producer
-            |> start(next: { url in
+            .start(next: { url in
                 if let avatarUrl = NSURL(string: url) {
                     self.avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
                 }
@@ -135,13 +135,13 @@ class DetailsViewController: UIViewController, TransparentNavbar {
             return RACSignal.empty()
         })
         viewModel.liked.producer
-            |> map { $0 ? BaseColor : UIColor(0xe6e6e6) }
-            |> start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
+            .map { $0 ? BaseColor : UIColor(0xe6e6e6) }
+            .start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
         view.addSubview(likeButtonView)
         
         likeCountView.font = UIFont.robotoOfSize(12, withType: .Light)
         likeCountView.textColor = UIColor(0xb3b3b3)
-        likeCountView.rac_text <~ viewModel.likeCount.producer |> map { "\($0) likes" }
+        likeCountView.rac_text <~ viewModel.likeCount.producer .map { "\($0) likes" }
         view.addSubview(likeCountView)
         
         commentIconView.font = UIFont.icomoonOfSize(20)
@@ -151,7 +151,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         
         commentCountView.font = UIFont.robotoOfSize(12, withType: .Light)
         commentCountView.textColor = UIColor(0xb3b3b3)
-        commentCountView.rac_text <~ viewModel.commentCount.producer |> map { "\($0) comments" }
+        commentCountView.rac_text <~ viewModel.commentCount.producer .map { "\($0) comments" }
         view.addSubview(commentCountView)
         
         viewIconView.font = UIFont.icomoonOfSize(20)
@@ -161,7 +161,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         
         viewCountView.font = UIFont.robotoOfSize(12, withType: .Light)
         viewCountView.textColor = UIColor(0xb3b3b3)
-        viewCountView.rac_text <~ viewModel.viewCount.producer |> map { "\($0) views" }
+        viewCountView.rac_text <~ viewModel.viewCount.producer .map { "\($0) views" }
         view.addSubview(viewCountView)
         
         textView.numberOfLines = 0
@@ -173,7 +173,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         textView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
             Api.get("users/user-name/\(userName)", authorized: true)
-                |> start(next: { json in
+                .start(next: { json in
                     let user = Mapper<User>().map(json)!
                     self.navigationController?.pushViewController(ProfileViewController(userId: user.id), animated: true)
                 })

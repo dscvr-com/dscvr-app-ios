@@ -143,14 +143,14 @@ class OptographTableViewCell: UITableViewCell {
         })
         
         viewModel.liked.producer
-            |> map { $0 ? BaseColor : UIColor(0xe6e6e6) }
-            |> start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
+            .map { $0 ? BaseColor : UIColor(0xe6e6e6) }
+            .start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
         
         textView.rac_text <~ viewModel.text
         textView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
             Api.get("users/user-name/\(userName)", authorized: true)
-                |> start(next: { json in
+                .start(next: { json in
                     let user = Mapper<User>().map(json)!
                     self.navigationController?.pushViewController(ProfileViewController(userId: user.id), animated: true)
                 })

@@ -1,6 +1,5 @@
 github "smileyborg/PureLayout"
 github "TTTAttributedLabel/TTTAttributedLabel"
-github "realm/realm-cocoa" "swift-2.0"
 github "Alamofire/Alamofire" "swift-2.0"
 github "schickling/refresher" "master"
 github "ReactiveCocoa/ReactiveCocoa" "swift2"

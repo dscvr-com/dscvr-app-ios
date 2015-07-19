@@ -75,7 +75,7 @@ class RequestInviteViewController: UIViewController {
         submitButtonView.rac_userInteractionEnabled <~ viewModel.emailValid
         submitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.requestInvite()
-                |> start(
+                .start(
                     error: { _ in
                     let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Maybe you've already requested an invite?", preferredStyle: .Alert)
                     alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
@@ -107,7 +107,7 @@ class RequestInviteViewController: UIViewController {
         formView.addSubview(cancelButtonView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
-        loadingView.rac_hidden <~ viewModel.pending.producer |> map { !$0 }
+        loadingView.rac_hidden <~ viewModel.pending.producer .map { !$0 }
         view.addSubview(loadingView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
