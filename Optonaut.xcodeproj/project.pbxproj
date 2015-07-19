@@ -11,6 +11,7 @@
 		8F17CF711B4F15B100A10DA3 /* NSDateTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */; };
 		8F17CF731B4F1C5C00A10DA3 /* HexColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F17CF721B4F1C5C00A10DA3 /* HexColor.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
+		8F366DD21B59342E00C0012E /* CameraDebugHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */; };
 		8F464AF61B4ACE4E00A66FA5 /* RequestInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F464AF51B4ACE4E00A66FA5 /* RequestInviteViewController.swift */; };
 		8F464AF81B4ADAF300A66FA5 /* RequestInviteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F464AF71B4ADAF300A66FA5 /* RequestInviteViewModel.swift */; };
 		8F464AFB1B4BC38000A66FA5 /* RefreshAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F464AFA1B4BC38000A66FA5 /* RefreshAnimator.swift */; };
@@ -112,6 +113,8 @@
 		8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateTransform.swift; sourceTree = "<group>"; };
 		8F17CF721B4F1C5C00A10DA3 /* HexColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HexColor.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
+		8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraDebugHelper.swift; sourceTree = "<group>"; };
+		8F366DD31B59451000C0012E /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
 		8F464AF51B4ACE4E00A66FA5 /* RequestInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestInviteViewController.swift; sourceTree = "<group>"; };
 		8F464AF71B4ADAF300A66FA5 /* RequestInviteViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestInviteViewModel.swift; sourceTree = "<group>"; };
 		8F464AFA1B4BC38000A66FA5 /* RefreshAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshAnimator.swift; sourceTree = "<group>"; };
@@ -246,6 +249,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F366DD01B59321C00C0012E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8F366DD31B59451000C0012E /* ZipArchive.framework */,
+				8FD7F87D1B592708001680AA /* AWSCore.framework */,
+				8FD7F85A1B591452001680AA /* AWSS3.framework */,
+				8FA2E7B11B55576500407181 /* opencv2.framework */,
+				8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */,
+				8F5FD9E81B3D60E5007E073C /* WebImage.framework */,
+				8F5FD9D81B3B0080007E073C /* Result.framework */,
+				8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */,
+				8F9A4FF41B39DF85009C4548 /* Refresher.framework */,
+				8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */,
+				8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */,
+				8F7738311B3816C7001F642B /* PureLayout_iOS.framework */,
+				8F7738321B3816C7001F642B /* Realm.framework */,
+				8F7738331B3816C7001F642B /* RealmSwift.framework */,
+				8F7738341B3816C7001F642B /* TTTAttributedLabel.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8F464AF91B4BC37200A66FA5 /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -325,6 +350,7 @@
 				8F5FDA081B412DB2007E073C /* Constants.swift */,
 				8F5FD9CF1B3AFBDC007E073C /* Utils.swift */,
 				8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */,
+				8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */,
 				8F500CFF1B4D8028002B9878 /* Appearance.swift */,
 				8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */,
 			);
@@ -436,22 +462,9 @@
 		8FCCA0221B3806040091F1B1 = {
 			isa = PBXGroup;
 			children = (
-				8FD7F87D1B592708001680AA /* AWSCore.framework */,
-				8FD7F85A1B591452001680AA /* AWSS3.framework */,
-				8FA2E7B11B55576500407181 /* opencv2.framework */,
-				8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */,
-				8F5FD9E81B3D60E5007E073C /* WebImage.framework */,
-				8F5FD9D81B3B0080007E073C /* Result.framework */,
-				8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */,
-				8F9A4FF41B39DF85009C4548 /* Refresher.framework */,
-				8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */,
-				8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */,
-				8F7738311B3816C7001F642B /* PureLayout_iOS.framework */,
-				8F7738321B3816C7001F642B /* Realm.framework */,
-				8F7738331B3816C7001F642B /* RealmSwift.framework */,
-				8F7738341B3816C7001F642B /* TTTAttributedLabel.framework */,
 				8FCCA02D1B3806040091F1B1 /* Optonaut */,
 				8FCCA0431B3806040091F1B1 /* OptonautTests */,
+				8F366DD01B59321C00C0012E /* Frameworks */,
 				8FCCA02C1B3806040091F1B1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -704,6 +717,7 @@
 			files = (
 				8F5FD9FB1B3DB853007E073C /* ActivityTableViewController.swift in Sources */,
 				8F500CFA1B4D5D6E002B9878 /* OptographTableViewCell.swift in Sources */,
+				8F366DD21B59342E00C0012E /* CameraDebugHelper.swift in Sources */,
 				8FBA5CAC1B54266B00F0F489 /* EditProfileViewController.swift in Sources */,
 				8F5FDA0B1B433DAB007E073C /* SphereViewController.swift in Sources */,
 				8FD7F8781B5924D5001680AA /* quat.cpp in Sources */,

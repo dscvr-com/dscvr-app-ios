@@ -25,10 +25,7 @@ class CameraViewController: UIViewController {
     var videoDeviceInput: AVCaptureDeviceInput!
     var videoDeviceOutput: AVCaptureVideoDataOutput!
     
-    // debug
-    let writeToDisk = false
-    let timestamp = NSDate().timeIntervalSince1970
-    var count = 0
+    let debugHelper = CameraDebugHelper()
     
     // subviews
     let closeButtonView = UIButton()
@@ -40,7 +37,7 @@ class CameraViewController: UIViewController {
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         session = AVCaptureSession()
-        session.sessionPreset = AVCaptureSessionPresetHigh
+        session.sessionPreset = AVCaptureSessionPreset640x480
         
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         
@@ -76,13 +73,13 @@ class CameraViewController: UIViewController {
         
         viewModel.instruction.put("Select")
         
-        dispatch_async(sessionQueue, {
+        dispatch_async(sessionQueue) {
             self.authorizeCamera()
             self.session.beginConfiguration()
             self.addVideoInput()
             self.addVideoOutput()
             self.session.commitConfiguration()
-        })
+        }
         
         view.setNeedsUpdateConstraints()
     }
@@ -96,9 +93,9 @@ class CameraViewController: UIViewController {
         
         motionManager.startDeviceMotionUpdates()
         
-        dispatch_async(sessionQueue, {
+        dispatch_async(sessionQueue) {
             self.session.startRunning()
-        })
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -110,6 +107,7 @@ class CameraViewController: UIViewController {
         
         motionManager.stopDeviceMotionUpdates()
         session.stopRunning()
+        debugHelper.cleanup()
     }
     
     override func updateViewConstraints() {
@@ -127,13 +125,13 @@ class CameraViewController: UIViewController {
     private func authorizeCamera() {
         AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: { granted in
             if !granted {
-                dispatch_async(dispatch_get_main_queue(), {
+                dispatch_async(dispatch_get_main_queue()) {
                     UIAlertView(
                         title: "Could not use camera!",
                         message: "This application does not have permission to use camera. Please update your privacy settings.",
                         delegate: self,
                         cancelButtonTitle: "OK").show()
-                })
+                }
             }
         });
     }
@@ -148,13 +146,9 @@ class CameraViewController: UIViewController {
     }
     
     private func addVideoOutput() {
-        
         videoDeviceOutput = AVCaptureVideoDataOutput()
-        
         videoDeviceOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
-        
         videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
-        
         videoDeviceOutput.setSampleBufferDelegate(self, queue: sessionQueue)
         
         if session.canAddOutput(videoDeviceOutput) {
@@ -180,38 +174,22 @@ class CameraViewController: UIViewController {
             let extrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
             extrinsicsPointer.initializeFrom(extrinsics)
             
-            let intrinsics = [4.854369, 0, 3,
-                              0, 4.854369, 2.4,
-                              0, 0, 1]
+            let intrinsics = IPhone6Intrinsics
             let intrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
             intrinsicsPointer.initializeFrom(intrinsics)
             
-            let newExtrinsicsPointer = UnsafeMutablePointer<Double>.alloc(16)
+            let resultExtrinsicsPointer = UnsafeMutablePointer<Double>.alloc(16)
             
-            Stitcher.Push(extrinsicsPointer, intrinsicsPointer, baseAddress, Int32(width), Int32(height), newExtrinsicsPointer, Int32(0))
+            Stitcher.push(extrinsicsPointer, intrinsicsPointer, baseAddress, Int32(width), Int32(height), resultExtrinsicsPointer)
             
-            let rotationMatrix = Array(UnsafeBufferPointer(start: newExtrinsicsPointer, count: 16))
-            print(rotationMatrix)
-        
+//            let rotationMatrix = Array(UnsafeBufferPointer(start: resultExtrinsicsPointer, count: 16))
             
-            // DEBUG BEGIN
-            if self.writeToDisk {
-                let dir = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, .AllDomainsMask, true)[0]
-                let path = dir.stringByAppendingPathComponent("\(self.timestamp)/")
-                try! NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
-                
-                let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-                let imgData = NSData(bytes: baseAddress, length: height * bytesPerRow)
-                imgData.writeToFile(path.stringByAppendingPathComponent("\(self.count).bin"), atomically: false)
-                try! " ".join(extrinsics.map { "\($0)" }).writeToFile(path.stringByAppendingPathComponent("\(self.count).ext"), atomically: false, encoding: NSUTF8StringEncoding)
-                try! " ".join(intrinsics.map { "\($0)" }).writeToFile(path.stringByAppendingPathComponent("\(self.count).int"), atomically: false, encoding: NSUTF8StringEncoding)
-                self.count++
-            }
-            // DEBUG END
+//            debugHelper.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics)
         }
     }
 }
 
+// MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         processSampleBuffer(sampleBuffer)

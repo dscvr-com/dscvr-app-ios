@@ -4,3 +4,5 @@
 
 #import "KILabel.h"
 #import "Stitcher.h"
+#import <AWSCore/AWSCore.h>
+#import <AWSS3/AWSS3.h>

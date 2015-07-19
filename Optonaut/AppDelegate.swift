@@ -20,6 +20,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupAppearanceDefaults()
         
+        let credProvider = AWSStaticCredentialsProvider(accessKey: "AKIAJ6AYCIIVD6E4FDLQ", secretKey: "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")
+        let configuration = AWSServiceConfiguration(region: .EUWest1, credentialsProvider: credProvider)
+        AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = configuration
+        
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         if let window = window {
             

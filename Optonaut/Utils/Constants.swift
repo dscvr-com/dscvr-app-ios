@@ -17,3 +17,7 @@ enum UserDefaultsKeys: String {
 enum NotificationKeys: String {
     case Logout = "logout"
 }
+
+let IPhone6Intrinsics = [4.854369, 0, 3,
+                         0, 4.854369, 2.4,
+                         0, 0, 1]
