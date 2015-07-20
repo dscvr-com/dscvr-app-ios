@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import Device
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
