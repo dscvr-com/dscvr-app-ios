@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum UserDefaultsKeys: String {
     case UserIsLoggedIn = "user_is_logged_in"
@@ -22,3 +23,7 @@ enum NotificationKeys: String {
 let IPhone6Intrinsics = [4.854369, 0, 3,
                          0, 4.854369, 2.4,
                          0, 0, 1]
+
+let CameraIntrinsics: [Double] = {
+    return IPhone6Intrinsics
+}()

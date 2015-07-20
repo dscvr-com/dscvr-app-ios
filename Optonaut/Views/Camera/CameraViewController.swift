@@ -25,6 +25,11 @@ class CameraViewController: UIViewController {
     var videoDeviceInput: AVCaptureDeviceInput!
     var videoDeviceOutput: AVCaptureVideoDataOutput!
     
+    let intrinsics = CameraIntrinsics
+    let intrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
+    let extrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
+    let resultExtrinsicsPointer = UnsafeMutablePointer<Double>.alloc(16)
+    
     var debugHelper: CameraDebugHelper?
     
     // subviews
@@ -37,6 +42,8 @@ class CameraViewController: UIViewController {
         if viewModel.debugEnabled.value {
             debugHelper = CameraDebugHelper()
         }
+            
+        intrinsicsPointer.initializeFrom(intrinsics)
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -165,28 +172,22 @@ class CameraViewController: UIViewController {
         
         if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
             
-            CVPixelBufferLockBaseAddress(pixelBuffer, .allZeros)
+            CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
             let width = CVPixelBufferGetWidth(pixelBuffer)
             let height = CVPixelBufferGetHeight(pixelBuffer)
-            CVPixelBufferUnlockBaseAddress(pixelBuffer, .allZeros)
+            CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
             let r = motion.attitude.rotationMatrix
             let extrinsics = [r.m11, r.m12, r.m13,
                               r.m21, r.m22, r.m23,
                               r.m31, r.m32, r.m33]
-            let extrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
             extrinsicsPointer.initializeFrom(extrinsics)
-            
-            let intrinsics = IPhone6Intrinsics
-            let intrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
-            intrinsicsPointer.initializeFrom(intrinsics)
-            
-            let resultExtrinsicsPointer = UnsafeMutablePointer<Double>.alloc(16)
             
             Stitcher.push(extrinsicsPointer, intrinsicsPointer, baseAddress, Int32(width), Int32(height), resultExtrinsicsPointer)
             
 //            let rotationMatrix = Array(UnsafeBufferPointer(start: resultExtrinsicsPointer, count: 16))
+            
             
             debugHelper?.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics)
         }
