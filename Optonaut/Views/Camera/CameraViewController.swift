@@ -102,7 +102,8 @@ class CameraViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         
-        motionManager.startDeviceMotionUpdates()
+//        motionManager.startDeviceMotionUpdates()
+        motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
         
         dispatch_async(sessionQueue) {
             self.session.startRunning()

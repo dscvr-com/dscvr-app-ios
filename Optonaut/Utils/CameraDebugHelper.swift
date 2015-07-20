@@ -47,7 +47,7 @@ class CameraDebugHelper {
         let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
         CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
         
-        let bitmapContext = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), CGImageAlphaInfo.NoneSkipLast.rawValue)
+        let bitmapContext = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue)
         let cgImage = CGBitmapContextCreateImage(bitmapContext)!
         
         dispatch_async(queue, {

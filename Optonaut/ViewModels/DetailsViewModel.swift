@@ -67,4 +67,8 @@ class DetailsViewModel {
         }
     }
     
+    func increaseViewCount() {
+        Api.post("optographs/\(id.value)/views", authorized: true, parameters: nil).start()
+    }
+    
 }

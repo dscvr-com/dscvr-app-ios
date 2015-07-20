@@ -207,7 +207,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
                 if abs(x) > abs(y) + 0.5 {
                     self.motionManager.stopAccelerometerUpdates()
                     let orientation: UIInterfaceOrientation = x > 0 ? .LandscapeLeft : .LandscapeRight
-                    self.navigationController?.pushViewController(ViewerViewController(orientation: orientation), animated: false)
+                    self.pushViewer(orientation)
                 }
             }
         })
@@ -276,8 +276,9 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         super.updateViewConstraints()
     }
     
-    func pushViewer() {
-        navigationController?.pushViewController(ViewerViewController(orientation: .LandscapeLeft), animated: false)
+    func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
+        navigationController?.pushViewController(ViewerViewController(orientation: orientation), animated: false)
+        viewModel.increaseViewCount()
     }
     
     func pushProfile() {
