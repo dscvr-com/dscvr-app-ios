@@ -113,6 +113,7 @@ class SphereViewController: UIViewController  {
         originalBrightness = UIScreen.mainScreen().brightness
         UIScreen.mainScreen().brightness = 1
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
+        UIApplication.sharedApplication().idleTimerDisabled = true
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -120,6 +121,8 @@ class SphereViewController: UIViewController  {
         navigationController?.setNavigationBarHidden(false, animated: false)
         UIScreen.mainScreen().brightness = originalBrightness
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
+        UIApplication.sharedApplication().idleTimerDisabled = false
+        
         motionManager.stopAccelerometerUpdates()
         motionManager.stopDeviceMotionUpdates()
         
