@@ -4,10 +4,11 @@ import SceneKit
 import CoreMotion
 import CoreGraphics
 
-class SphereViewController: UIViewController  {
+class ViewerViewController: UIViewController  {
+    
+    let orientation: UIInterfaceOrientation
     
     let motionManager = CMMotionManager()
-    let focalLength: Float = -1.0
     var leftCameraNode: SCNNode!
     var rightCameraNode: SCNNode!
     var leftScnView: SCNView!
@@ -17,6 +18,16 @@ class SphereViewController: UIViewController  {
     
     var originalBrightness: CGFloat!
     var enableDistortion = false
+    
+    required init(orientation: UIInterfaceOrientation) {
+        self.orientation = orientation
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        orientation = .Unknown
+        super.init(coder: aDecoder)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,13 +99,20 @@ class SphereViewController: UIViewController  {
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         motionManager.startDeviceMotionUpdates()
         
-//        motionManager.gyroUpdateInterval = 0.3
-//        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
-//            if abs(accelerometerData!.acceleration.y) >= 0.75 {
-//                self.motionManager.stopAccelerometerUpdates()
-//                self.navigationController?.popViewControllerAnimated(false)
-//            }
-//        })
+        var popActivated = false // needed when viewer was opened without rotation
+        motionManager.accelerometerUpdateInterval = 0.3
+        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
+            if let accelerometerData = accelerometerData {
+                let x = accelerometerData.acceleration.x
+                let y = accelerometerData.acceleration.y
+                if !popActivated && abs(x) > abs(y) + 0.5 {
+                    popActivated = true
+                }
+                if popActivated && abs(y) > abs(x) + 0.5 {
+                    self.navigationController?.popViewControllerAnimated(false)
+                }
+            }
+        })
     }
     
 //    func createDistortionTechnique(name: String) -> SCNTechnique {
@@ -132,7 +150,7 @@ class SphereViewController: UIViewController  {
 }
 
 // MARK: - SCNSceneRendererDelegate
-extension SphereViewController: SCNSceneRendererDelegate {
+extension ViewerViewController: SCNSceneRendererDelegate {
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         if let motion = self.motionManager.deviceMotion {

@@ -201,12 +201,14 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         super.viewDidAppear(animated)
         
         motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
-            if accelerometerData!.acceleration.x >= 0.75 {
-                self.motionManager.stopAccelerometerUpdates()
-                self.navigationController?.pushViewController(SphereViewController(), animated: false)
-            } else if accelerometerData!.acceleration.x <= -0.75 {
-                self.motionManager.stopAccelerometerUpdates()
-                self.navigationController?.pushViewController(SphereViewController(), animated: false)
+            if let accelerometerData = accelerometerData {
+                let x = accelerometerData.acceleration.x
+                let y = accelerometerData.acceleration.y
+                if abs(x) > abs(y) + 0.5 {
+                    self.motionManager.stopAccelerometerUpdates()
+                    let orientation: UIInterfaceOrientation = x > 0 ? .LandscapeLeft : .LandscapeRight
+                    self.navigationController?.pushViewController(ViewerViewController(orientation: orientation), animated: false)
+                }
             }
         })
     }
@@ -275,7 +277,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
     }
     
     func pushViewer() {
-        navigationController?.pushViewController(SphereViewController(), animated: false)
+        navigationController?.pushViewController(ViewerViewController(orientation: .LandscapeLeft), animated: false)
     }
     
     func pushProfile() {

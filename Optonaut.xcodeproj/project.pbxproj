@@ -61,7 +61,7 @@
 		8F5FD9FD1B3DB909007E073C /* ActivitiesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9FC1B3DB909007E073C /* ActivitiesViewModel.swift */; };
 		8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA001B3EECB0007E073C /* Activity.swift */; };
 		8F5FDA091B412DB2007E073C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA081B412DB2007E073C /* Constants.swift */; };
-		8F5FDA0B1B433DAB007E073C /* SphereViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA0A1B433DAB007E073C /* SphereViewController.swift */; };
+		8F5FDA0B1B433DAB007E073C /* ViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA0A1B433DAB007E073C /* ViewerViewController.swift */; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* User.swift */; };
 		8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738211B380FC1001F642B /* TabBarViewController.swift */; };
@@ -165,7 +165,7 @@
 		8F5FD9FC1B3DB909007E073C /* ActivitiesViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivitiesViewModel.swift; sourceTree = "<group>"; };
 		8F5FDA001B3EECB0007E073C /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		8F5FDA081B412DB2007E073C /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		8F5FDA0A1B433DAB007E073C /* SphereViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SphereViewController.swift; sourceTree = "<group>"; };
+		8F5FDA0A1B433DAB007E073C /* ViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewerViewController.swift; sourceTree = "<group>"; };
 		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F7738141B380F5D001F642B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -401,7 +401,7 @@
 			isa = PBXGroup;
 			children = (
 				8F5FD9F41B3DB7B3007E073C /* DetailsViewController.swift */,
-				8F5FDA0A1B433DAB007E073C /* SphereViewController.swift */,
+				8F5FDA0A1B433DAB007E073C /* ViewerViewController.swift */,
 			);
 			path = Details;
 			sourceTree = "<group>";
@@ -724,7 +724,7 @@
 				8F500CFA1B4D5D6E002B9878 /* OptographTableViewCell.swift in Sources */,
 				8F366DD21B59342E00C0012E /* CameraDebugHelper.swift in Sources */,
 				8FBA5CAC1B54266B00F0F489 /* EditProfileViewController.swift in Sources */,
-				8F5FDA0B1B433DAB007E073C /* SphereViewController.swift in Sources */,
+				8F5FDA0B1B433DAB007E073C /* ViewerViewController.swift in Sources */,
 				8FD7F8781B5924D5001680AA /* quat.cpp in Sources */,
 				8F4C6E1A1B4717DF007508ED /* Icomoon.swift in Sources */,
 				8F5FD9E01B3C5578007E073C /* OptographsViewModel.swift in Sources */,
