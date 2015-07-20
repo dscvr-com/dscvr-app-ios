@@ -1,5 +1,5 @@
 github "Alamofire/Alamofire" "fd71afb3a0af2042b9f05a6b9f29317ad4903703"
-github "okmr-d/DOFavoriteButton" "0.0.2"
+github "schickling/Device.swift" "0.1.0"
 github "Hearst-DD/ObjectMapper" "6d971eb9ca11bd3e433ba7dcc5498351a2887577"
 github "smileyborg/PureLayout" "v2.0.6"
 github "antitypical/Result" "0.5"

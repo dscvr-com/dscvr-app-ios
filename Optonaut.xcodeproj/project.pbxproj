@@ -81,6 +81,7 @@
 		8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */; };
 		8FBA5CAC1B54266B00F0F489 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FBA5CAB1B54266B00F0F489 /* EditProfileViewController.swift */; };
 		8FBA5CAE1B54556000F0F489 /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FBA5CAD1B54556000F0F489 /* BottomLineTextField.swift */; };
+		8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FBDE8B11B5D186800C78486 /* Device.framework */; };
 		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
 		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
 		8FD7F85B1B591452001680AA /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD7F85A1B591452001680AA /* AWSS3.framework */; };
@@ -187,6 +188,7 @@
 		8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
 		8FBA5CAB1B54266B00F0F489 /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		8FBA5CAD1B54556000F0F489 /* BottomLineTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
+		8FBDE8B11B5D186800C78486 /* Device.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Device.framework; path = Carthage/Build/iOS/Device.framework; sourceTree = "<group>"; };
 		8FCCA02B1B3806040091F1B1 /* Optonaut.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Optonaut.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCCA02F1B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptonautTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -225,6 +227,7 @@
 			files = (
 				8FD7F87E1B592708001680AA /* AWSCore.framework in Frameworks */,
 				8FD7F85B1B591452001680AA /* AWSS3.framework in Frameworks */,
+				8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */,
 				8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */,
 				8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */,
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
@@ -252,6 +255,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FBDE8B11B5D186800C78486 /* Device.framework */,
 				8F366DD31B59451000C0012E /* ZipArchive.framework */,
 				8FD7F87D1B592708001680AA /* AWSCore.framework */,
 				8FD7F85A1B591452001680AA /* AWSS3.framework */,
@@ -581,7 +585,7 @@
 				8FCCA0271B3806040091F1B1 /* Sources */,
 				8FCCA0281B3806040091F1B1 /* Frameworks */,
 				8FCCA0291B3806040091F1B1 /* Resources */,
-				8F7738061B38098B001F642B /* Dependencies */,
+				8F7738061B38098B001F642B /* Carthage */,
 			);
 			buildRules = (
 			);
@@ -684,7 +688,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8F7738061B38098B001F642B /* Dependencies */ = {
+		8F7738061B38098B001F642B /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -700,8 +704,9 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WebImage.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Device.framework",
 			);
-			name = Dependencies;
+			name = Carthage;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;

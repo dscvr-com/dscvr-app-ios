@@ -18,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 //        try! NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath)
         
+        print(UIDevice.currentDevice().description)
+        
         setupAppearanceDefaults()
         
         if NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.DebugEnabled.rawValue) == nil {

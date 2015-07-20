@@ -5,3 +5,4 @@ github "schickling/refresher" "master"
 github "ReactiveCocoa/ReactiveCocoa" "swift2"
 github "rs/SDWebImage" "master"
 github "Hearst-DD/ObjectMapper" "swift-2.0"
+github "schickling/Device.swift" >= 0.1.0
