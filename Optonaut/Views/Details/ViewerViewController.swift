@@ -9,12 +9,9 @@ class ViewerViewController: UIViewController  {
     let orientation: UIInterfaceOrientation
     
     let motionManager = CMMotionManager()
-    var leftCameraNode: SCNNode!
-    var rightCameraNode: SCNNode!
-    var leftScnView: SCNView!
-    var rightScnView: SCNView!
-    var leftScene: SCNScene!
-    var rightScene: SCNScene!
+    
+    let leftCameraNode = SCNNode()
+    let rightCameraNode = SCNNode()
     
     var originalBrightness: CGFloat!
     var enableDistortion = false
@@ -32,22 +29,19 @@ class ViewerViewController: UIViewController  {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        leftScene = SCNScene()
-        rightScene = SCNScene()
+        let leftScene = SCNScene()
+        let rightScene = SCNScene()
         
         let camera = SCNCamera()
         camera.zNear = 0.01
         camera.zFar = 10000
-        
         camera.xFov = 65
         camera.yFov = 65 * Double(view.bounds.width / 2 / view.bounds.height)
         
-        leftCameraNode = SCNNode()
         leftCameraNode.camera = camera
         leftCameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         leftScene.rootNode.addChildNode(leftCameraNode)
         
-        rightCameraNode = SCNNode()
         rightCameraNode.camera = camera
         rightCameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         rightScene.rootNode.addChildNode(rightCameraNode)
@@ -67,7 +61,7 @@ class ViewerViewController: UIViewController  {
         let width = view.bounds.width
         let height = view.bounds.height
         
-        leftScnView = SCNView()
+        let leftScnView = SCNView()
         leftScnView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         leftScnView.frame = CGRect(x: 0, y: 0, width: width, height: height / 2)
         
@@ -81,7 +75,7 @@ class ViewerViewController: UIViewController  {
         }
         view.addSubview(leftScnView)
         
-        rightScnView = SCNView()
+        let rightScnView = SCNView()
         rightScnView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         rightScnView.frame = CGRect(x: 0, y: height / 2, width: width, height: height / 2)
         

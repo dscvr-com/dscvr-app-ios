@@ -20,12 +20,14 @@ class CameraViewController: UIViewController {
     
     let motionManager = CMMotionManager()
     
+    // camera
     var session: AVCaptureSession!
     var sessionQueue: dispatch_queue_t!
     var videoDeviceInput: AVCaptureDeviceInput!
     var videoDeviceOutput: AVCaptureVideoDataOutput!
-    var frameCount = 0
     
+    // stitcher pointer and variables
+    var frameCount = 0
     let intrinsics = CameraIntrinsics
     let intrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
     let extrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
@@ -36,6 +38,10 @@ class CameraViewController: UIViewController {
     // subviews
     let closeButtonView = UIButton()
     let instructionView = UILabel()
+    
+    // sphere
+    let cameraNode = SCNNode()
+    let sphereGeometry = SCNSphere(radius: 5.0)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,18 +55,18 @@ class CameraViewController: UIViewController {
         
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         
+        // layer for preview
+        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer.frame = view.bounds
+        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        view.layer.addSublayer(previewLayer)
+        
 //        let blurEffect = UIBlurEffect(style: .Dark)
 //        let blurView = UIVisualEffectView(effect: blurEffect)
 //        blurView.frame = view.bounds
 //        view.addSubview(blurView)
 //        view.clipsToBounds = true
 //        view.contentMode = UIViewContentMode.ScaleAspectFill
-        
-        // layer for preview
-        let previewLayer = AVCaptureVideoPreviewLayer(session: self.session)
-        previewLayer.frame = self.view.bounds
-        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        self.view.layer.addSublayer(previewLayer)
         
         closeButtonView.setTitle(String.icomoonWithName(.Cross), forState: .Normal)
         closeButtonView.setTitleColor(.whiteColor(), forState: .Normal)
@@ -78,6 +84,8 @@ class CameraViewController: UIViewController {
         instructionView.rac_text <~ viewModel.instruction
         instructionView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         view.addSubview(instructionView)
+        
+//        setupScene()
         
         viewModel.instruction.put("Select")
         
@@ -138,6 +146,34 @@ class CameraViewController: UIViewController {
         super.updateViewConstraints()
     }
     
+    private func setupScene() {
+        let camera = SCNCamera()
+        camera.zNear = 0.01
+        camera.zFar = 10000
+        camera.xFov = 65
+        camera.yFov = 65 * Double(view.bounds.height / view.bounds.width)
+        
+        cameraNode.camera = camera
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
+        
+        let scene = SCNScene()
+        scene.rootNode.addChildNode(cameraNode)
+        
+        sphereGeometry.firstMaterial?.doubleSided = true
+        let sphereNode = SCNNode(geometry: sphereGeometry)
+        scene.rootNode.addChildNode(sphereNode)
+        
+        let scnView = SCNView()
+        scnView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+        scnView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
+        scnView.backgroundColor = .clearColor()
+        scnView.scene = scene
+        scnView.playing = true
+        scnView.delegate = self
+        
+        view.addSubview(scnView)
+    }
+    
     private func authorizeCamera() {
         AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: { granted in
             if !granted {
@@ -194,7 +230,6 @@ class CameraViewController: UIViewController {
             
 //            let rotationMatrix = Array(UnsafeBufferPointer(start: resultExtrinsicsPointer, count: 16))
             
-            
             debugHelper?.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
         }
     }
@@ -206,4 +241,20 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
         processSampleBuffer(sampleBuffer)
         frameCount++
     }
+}
+
+// MARK: - SCNSceneRendererDelegate
+extension CameraViewController: SCNSceneRendererDelegate {
+    
+    func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
+        if let motion = self.motionManager.deviceMotion {
+            let x = -Float(motion.attitude.roll) - Float(M_PI_2)
+            let y = Float(motion.attitude.yaw)
+            let z = -Float(motion.attitude.pitch)
+            let eulerAngles = SCNVector3(x: x, y: y, z: z)
+            
+            self.cameraNode.eulerAngles = eulerAngles
+        }
+    }
+    
 }
