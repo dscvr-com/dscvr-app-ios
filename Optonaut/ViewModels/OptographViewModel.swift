@@ -24,7 +24,7 @@ class OptographViewModel {
     let liked = MutableProperty<Bool>(false)
     let likeCount = MutableProperty<Int>(0)
     let commentCount = MutableProperty<Int>(0)
-    let viewCount = MutableProperty<Int>(0)
+    let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
     
     init(optograph: Optograph) {

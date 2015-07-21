@@ -30,7 +30,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
     let commentIconView = UILabel()
     let commentCountView = UILabel()
     let viewIconView = UILabel()
-    let viewCountView = UILabel()
+    let viewsCountView = UILabel()
     let textView = KILabel()
     let lineView = UIView()
     
@@ -159,10 +159,10 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         viewIconView.textColor = UIColor(0xe6e6e6)
         view.addSubview(viewIconView)
         
-        viewCountView.font = UIFont.robotoOfSize(12, withType: .Light)
-        viewCountView.textColor = UIColor(0xb3b3b3)
-        viewCountView.rac_text <~ viewModel.viewCount.producer .map { "\($0) views" }
-        view.addSubview(viewCountView)
+        viewsCountView.font = UIFont.robotoOfSize(12, withType: .Light)
+        viewsCountView.textColor = UIColor(0xb3b3b3)
+        viewsCountView.rac_text <~ viewModel.viewsCount.producer .map { "\($0) views" }
+        view.addSubview(viewsCountView)
         
         textView.numberOfLines = 0
         textView.tintColor = BaseColor
@@ -261,8 +261,8 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         viewIconView.autoPinEdge(.Top, toEdge: .Top, ofView: likeButtonView, withOffset: 7)
         viewIconView.autoPinEdge(.Left, toEdge: .Right, ofView: commentCountView, withOffset: 19)
 
-        viewCountView.autoPinEdge(.Top, toEdge: .Top, ofView: likeCountView)
-        viewCountView.autoPinEdge(.Left, toEdge: .Right, ofView: viewIconView, withOffset: 7)
+        viewsCountView.autoPinEdge(.Top, toEdge: .Top, ofView: likeCountView)
+        viewsCountView.autoPinEdge(.Left, toEdge: .Right, ofView: viewIconView, withOffset: 7)
         
         textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: likeButtonView, withOffset: 12)
         textView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 15)
@@ -278,7 +278,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
     
     func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
         navigationController?.pushViewController(ViewerViewController(orientation: orientation), animated: false)
-        viewModel.increaseViewCount()
+        viewModel.increaseViewsCount()
     }
     
     func pushProfile() {

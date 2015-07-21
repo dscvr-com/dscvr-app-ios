@@ -17,7 +17,7 @@ class DetailsViewModel {
     let liked = MutableProperty<Bool>(false)
     let likeCount = MutableProperty<Int>(0)
     let commentCount = MutableProperty<Int>(0)
-    let viewCount = MutableProperty<Int>(0)
+    let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
     let detailsUrl = MutableProperty<String>("")
     let avatarUrl = MutableProperty<String>("")
@@ -34,6 +34,7 @@ class DetailsViewModel {
                 self.id.put(optograph.id)
                 self.liked.put(optograph.likedByUser)
                 self.likeCount.put(optograph.likeCount)
+                self.viewsCount.put(optograph.viewsCount)
                 self.timeSinceCreated.put(RoundedDuration(date: optograph.createdAt).longDescription())
                 self.detailsUrl.put("http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id % 3).jpg")
                 self.avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg")
@@ -67,8 +68,9 @@ class DetailsViewModel {
         }
     }
     
-    func increaseViewCount() {
+    func increaseViewsCount() {
         Api.post("optographs/\(id.value)/views", authorized: true, parameters: nil).start()
+        viewsCount.put(viewsCount.value + 1)
     }
     
 }

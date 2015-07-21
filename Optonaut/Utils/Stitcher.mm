@@ -6,7 +6,7 @@
 @implementation Stitcher : NSObject
 
 + (void)push:(double [])extrinsics :(double [])intrinsics :(void *)image :(int)width :(int)height :(double [])newExtrinsics {
-    optonaut::Push(extrinsics, intrinsics, (unsigned char *) image, width, height, newExtrinsics, 0);
+    optonaut::wrapper::Push(extrinsics, intrinsics, (unsigned char *) image, width, height, newExtrinsics, 0);
 }
 
 @end

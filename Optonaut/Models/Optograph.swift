@@ -18,7 +18,7 @@ class Optograph: Object {
     dynamic var likedByUser = false
     dynamic var likeCount = 0
     dynamic var commentCount = 0
-    dynamic var viewCount = 0
+    dynamic var viewsCount = 0
     dynamic var location = ""
     
     override static func primaryKey() -> String? {
@@ -45,7 +45,7 @@ extension Optograph: Mappable {
         likedByUser     <- map["liked_by_user"]
         likeCount       <- map["like_count"]
         commentCount    <- map["comment_count"]
-        viewCount       <- map["view_count"]
+        viewsCount      <- map["views_count"]
         location        <- map["location.description"]
     }
     
