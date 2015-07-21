@@ -14,13 +14,11 @@ import MobileCoreServices
 class CameraDebugHelper {
     
     var timestamp: NSTimeInterval
-    var count: Int
     var path: String
     var queue: dispatch_queue_t!
     
     init() {
         timestamp = NSDate().timeIntervalSince1970
-        count = 0
         
         let dir = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, .AllDomainsMask, true)[0]
         path = dir.stringByAppendingPathComponent("\(timestamp)/")
@@ -39,7 +37,7 @@ class CameraDebugHelper {
         }
     }
     
-    func push(pixelBuffer: CVPixelBufferRef, intrinsics: [Double], extrinsics: [Double]) {
+    func push(pixelBuffer: CVPixelBufferRef, intrinsics: [Double], extrinsics: [Double], frameCount: Int) {
         CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
         let width = CVPixelBufferGetWidth(pixelBuffer)
         let height = CVPixelBufferGetHeight(pixelBuffer)
@@ -51,35 +49,34 @@ class CameraDebugHelper {
         let cgImage = CGBitmapContextCreateImage(bitmapContext)!
         
         dispatch_async(queue, {
-            self.saveFilesToDiskAndUploadToS3(cgImage, intrinsics: intrinsics, extrinsics: extrinsics)
-            self.count++
+            self.saveFilesToDiskAndUploadToS3(cgImage, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
         })
     }
     
-    private func saveFilesToDiskAndUploadToS3(cgImage: CGImage, intrinsics: [Double], extrinsics: [Double]) {
+    private func saveFilesToDiskAndUploadToS3(cgImage: CGImage, intrinsics: [Double], extrinsics: [Double], frameCount: Int) {
         // json data file
         let data = [
-            "id": count,
+            "id": frameCount,
             "intrinsics": intrinsics,
             "extrinsics": extrinsics,
         ]
         let json = try! NSJSONSerialization.dataWithJSONObject(data, options: .PrettyPrinted)
-        let dataFileName = "\(count).json"
+        let dataFileName = "\(frameCount).json"
         let dataFile = path.stringByAppendingPathComponent(dataFileName)
         json.writeToFile(dataFile, atomically: false)
         
-        self.uploadToS3(dataFileName)
+        uploadToS3(dataFileName)
         
         // image file
-        let imageFileName = "\(self.count).jpg"
-        let imageFile = self.path.stringByAppendingPathComponent(imageFileName)
+        let imageFileName = "\(frameCount).jpg"
+        let imageFile = path.stringByAppendingPathComponent(imageFileName)
         
         let url = NSURL(fileURLWithPath: imageFile) as CFURL
         let dest = CGImageDestinationCreateWithURL(url, kUTTypeJPEG, 1, nil)!
         CGImageDestinationAddImage(dest, cgImage, nil)
         CGImageDestinationFinalize(dest)
         
-        self.uploadToS3(imageFileName)
+        uploadToS3(imageFileName)
     }
     
     private func uploadToS3(fileName: String) {

@@ -24,6 +24,7 @@ class CameraViewController: UIViewController {
     var sessionQueue: dispatch_queue_t!
     var videoDeviceInput: AVCaptureDeviceInput!
     var videoDeviceOutput: AVCaptureVideoDataOutput!
+    var frameCount = 0
     
     let intrinsics = CameraIntrinsics
     let intrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
@@ -39,10 +40,6 @@ class CameraViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if viewModel.debugEnabled.value {
-            debugHelper = CameraDebugHelper()
-        }
-            
         intrinsicsPointer.initializeFrom(intrinsics)
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
@@ -102,6 +99,12 @@ class CameraViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         
+        if viewModel.debugEnabled.value {
+            debugHelper = CameraDebugHelper()
+        }
+        
+        frameCount = 0
+        
 //        motionManager.startDeviceMotionUpdates()
         motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
         
@@ -117,9 +120,10 @@ class CameraViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
+        debugHelper?.cleanup()
+        
         motionManager.stopDeviceMotionUpdates()
         session.stopRunning()
-        debugHelper?.cleanup()
     }
     
     override func updateViewConstraints() {
@@ -186,12 +190,12 @@ class CameraViewController: UIViewController {
                               0,     0,     0,     1]
             extrinsicsPointer.initializeFrom(extrinsics)
             
-            Stitcher.push(extrinsicsPointer, intrinsicsPointer, baseAddress, Int32(width), Int32(height), resultExtrinsicsPointer)
+            Stitcher.push(extrinsicsPointer, intrinsicsPointer, baseAddress, Int32(width), Int32(height), resultExtrinsicsPointer, Int32(frameCount))
             
 //            let rotationMatrix = Array(UnsafeBufferPointer(start: resultExtrinsicsPointer, count: 16))
             
             
-            debugHelper?.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics)
+            debugHelper?.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
         }
     }
 }
@@ -200,5 +204,6 @@ class CameraViewController: UIViewController {
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         processSampleBuffer(sampleBuffer)
+        frameCount++
     }
 }

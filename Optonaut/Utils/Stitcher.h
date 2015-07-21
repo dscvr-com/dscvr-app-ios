@@ -2,6 +2,6 @@
 
 @interface Stitcher : NSObject
 
-+ (void)push:(double [])extrinsics :(double [])intrinsics :(void *)image :(int)width :(int)height :(double [])newExtrinsics;
++ (void)push:(double [])extrinsics :(double [])intrinsics :(void *)image :(int)width :(int)height :(double [])newExtrinsics :(int)frameCount;
 
 @end
