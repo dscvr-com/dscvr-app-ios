@@ -51,14 +51,15 @@ class CameraDebugHelper {
         let cgImage = CGBitmapContextCreateImage(bitmapContext)!
         
         dispatch_async(queue, {
-            self.saveFilesToDisk(cgImage, intrinsics: intrinsics, extrinsics: extrinsics)
+            self.saveFilesToDiskAndUploadToS3(cgImage, intrinsics: intrinsics, extrinsics: extrinsics)
             self.count++
         })
     }
     
-    private func saveFilesToDisk(cgImage: CGImage, intrinsics: [Double], extrinsics: [Double]) {
+    private func saveFilesToDiskAndUploadToS3(cgImage: CGImage, intrinsics: [Double], extrinsics: [Double]) {
         // json data file
         let data = [
+            "id": count,
             "intrinsics": intrinsics,
             "extrinsics": extrinsics,
         ]
