@@ -27,7 +27,7 @@ class SearchViewModel {
                     .mapArray(json)!
                     .sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                 
-                self.results.put(optographs)
+                self.results.value = optographs
             })
         
     }

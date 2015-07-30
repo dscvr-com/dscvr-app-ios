@@ -87,7 +87,7 @@ class CameraViewController: UIViewController {
         
 //        setupScene()
         
-        viewModel.instruction.put("Select")
+        viewModel.instruction.value = "Select"
         
         dispatch_async(sessionQueue) {
             self.authorizeCamera()

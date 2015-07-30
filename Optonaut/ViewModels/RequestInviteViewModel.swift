@@ -18,23 +18,23 @@ class RequestInviteViewModel {
     init() {
         email.producer
             .start(next: { str in
-                self.emailValid.put(isValidEmail(str))
+                self.emailValid.value = isValidEmail(str)
             })
     }
     
     func requestInvite() -> SignalProducer<Void, NSError> {
         return SignalProducer { sink, disposable in
-            self.pending.put(true)
+            self.pending.value = true
             
             let parameters = ["email": self.email.value]
             Api.post("users/request-invite", authorized: false, parameters: parameters)
                 .start(
                     next: { json in
-                        self.pending.put(false)
+                        self.pending.value = false
                         sendCompleted(sink)
                     },
                     error: { error in
-                        self.pending.put(false)
+                        self.pending.value = false
                         sendError(sink, error)
                     }
             )

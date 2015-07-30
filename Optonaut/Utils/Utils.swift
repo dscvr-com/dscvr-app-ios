@@ -70,3 +70,20 @@ func isValidEmail(testStr: String) -> Bool {
     let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
     return emailTest.evaluateWithObject(testStr)
 }
+
+func identity<T>(el: T) -> T {
+    return el
+}
+
+extension Array {
+    
+    func subArray(end: Int) -> Array {
+        if self.isEmpty {
+            return self
+        }
+        
+        let endIndex = min(self.count, end)
+        return Array(self[0..<endIndex])
+    }
+    
+}

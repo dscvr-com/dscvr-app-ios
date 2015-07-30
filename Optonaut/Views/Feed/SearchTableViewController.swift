@@ -62,7 +62,7 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
 extension SearchTableViewController: UISearchBarDelegate {
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        viewModel.searchText.put(searchText)
+        viewModel.searchText.value = searchText
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {

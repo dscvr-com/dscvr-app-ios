@@ -21,18 +21,18 @@ class EditProfileViewModel {
     let debugEnabled = MutableProperty<Bool>(false)
     
     init(id: Int) {
-        self.id.put(id)
+        self.id.value = id
         
-        debugEnabled.put(NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue))
+        debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue)
         
         Api.get("users/\(id)", authorized: true)
             .start(next: { json in
                 let user = Mapper<User>().map(json)!
-                self.email.put(user.email)
-                self.name.put(user.name)
-                self.userName.put(user.userName)
-                self.bio.put(user.bio)
-                self.avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(id % 4).jpg")
+                self.email.value = user.email
+                self.name.value = user.name
+                self.userName.value = user.userName
+                self.bio.value = user.bio
+                self.avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(id % 4).jpg"
             })
     }
     
@@ -61,7 +61,7 @@ class EditProfileViewModel {
     }
     
     func toggleDebug() {
-        debugEnabled.put(!debugEnabled.value)
+        debugEnabled.value = !debugEnabled.value
         NSUserDefaults.standardUserDefaults().setBool(debugEnabled.value, forKey: UserDefaultsKeys.DebugEnabled.rawValue)
     }
     

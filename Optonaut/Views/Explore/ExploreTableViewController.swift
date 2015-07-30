@@ -21,7 +21,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
-                self.viewModel.resultsLoading.put(true)
+                self.viewModel.resultsLoading.value = true
             }
         }
         
@@ -37,7 +37,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
                 self.tableView.stopPullToRefresh()
         })
         
-        viewModel.resultsLoading.put(true)
+        viewModel.resultsLoading.value = true
         
         view.setNeedsUpdateConstraints()
     }

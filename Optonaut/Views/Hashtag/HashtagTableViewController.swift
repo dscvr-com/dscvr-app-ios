@@ -30,7 +30,7 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar {
         
         navigationItem.title = hashtag
         
-        viewModel.searchText.put(hashtag)
+        viewModel.searchText.value = hashtag
         
         viewModel.results.producer.start(
             next: { results in

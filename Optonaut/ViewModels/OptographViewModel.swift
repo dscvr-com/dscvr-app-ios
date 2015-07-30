@@ -37,29 +37,29 @@ class OptographViewModel {
         text = ConstantProperty(optograph.text)
         location = ConstantProperty(optograph.location)
         
-        liked.put(optograph.likedByUser)
-        likeCount.put(optograph.likeCount)
-        timeSinceCreated.put(RoundedDuration(date: optograph.createdAt).longDescription())
+        liked.value = optograph.likedByUser
+        likeCount.value = optograph.likeCount
+        timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
     }
     
     func toggleLike() {
         let likedBefore = liked.value
         let likeCountBefore = likeCount.value
         
-        likeCount.put(likeCountBefore + (likedBefore ? -1 : 1))
-        liked.put(!likedBefore)
+        likeCount.value = likeCountBefore + (likedBefore ? -1 : 1)
+        liked.value = !likedBefore
         
         if likedBefore {
             Api.delete("optographs/\(id.value)/like", authorized: true)
                 .start(error: { _ in
-                    self.likeCount.put(likeCountBefore)
-                    self.liked.put(likedBefore)
+                    self.likeCount.value = likeCountBefore
+                    self.liked.value = likedBefore
                 })
         } else {
             Api.post("optographs/\(id.value)/like", authorized: true, parameters: nil)
                 .start(error: { _ in
-                    self.likeCount.put(likeCountBefore)
-                    self.liked.put(likedBefore)
+                    self.likeCount.value = likeCountBefore
+                    self.liked.value = likedBefore
                 })
         }
     }

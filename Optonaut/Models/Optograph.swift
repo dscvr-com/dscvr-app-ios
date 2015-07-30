@@ -24,18 +24,13 @@ class Optograph: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
-    
-    required init?(_ map: Map) {
-        super.init()
-        mapping(map)
-    }
-
-    required init() {
-        super.init()
-    }
 }
 
 extension Optograph: Mappable {
+    
+    static func newInstance() -> Mappable {
+        return Optograph()
+    }
     
     func mapping(map: Map) {
         id              <- map["id"]

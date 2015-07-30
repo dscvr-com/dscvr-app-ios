@@ -26,15 +26,6 @@ class User: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
-    
-    required init?(_ map: Map) {
-        super.init()
-        mapping(map)
-    }
-
-    required init() {
-        super.init()
-    }
 }
 
 extension User: Mappable {
@@ -57,6 +48,10 @@ extension User: Mappable {
         for optograph in arr {
             optographs.append(optograph)
         }
+    }
+    
+    static func newInstance() -> Mappable {
+        return User()
     }
     
 }

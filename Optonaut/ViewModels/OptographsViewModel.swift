@@ -26,11 +26,11 @@ class OptographsViewModel {
                         .mapArray(json)!
                         .sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
                     
-                    self.results.put(optographs)
-                    self.resultsLoading.put(false)
+                    self.results.value = optographs
+                    self.resultsLoading.value = false
                 },
                 error: { _ in
-                    self.resultsLoading.put(false)
+                    self.resultsLoading.value = false
                 }
         )
         

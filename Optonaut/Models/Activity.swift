@@ -27,18 +27,13 @@ class Activity: Object {
     override static func primaryKey() -> String? {
         return "id"
     }
-    
-    required init?(_ map: Map) {
-        super.init()
-        mapping(map)
-    }
-
-    required init() {
-        super.init()
-    }
 }
 
 extension Activity: Mappable {
+    
+    static func newInstance() -> Mappable {
+        return Activity()
+    }
     
     func mapping(map: Map) {
         let typeTransform = TransformOf<ActivityType, String>(

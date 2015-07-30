@@ -12,7 +12,7 @@ import Refresher
 
 class FeedTableViewController: OptographTableViewController, RedNavbar {
     
-    let viewModel = OptographsViewModel(source: "optographs/feed")
+    let viewModel = FeedViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +34,7 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
-                self.viewModel.resultsLoading.put(true)
+                self.viewModel.resultsLoading.value = true
             }
         }
         
@@ -50,7 +50,9 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
                 self.tableView.stopPullToRefresh()
         })
         
-        viewModel.resultsLoading.put(true)
+        viewModel.resultsLoading.value = true
+        
+        addNotificationCircle()
         
         view.setNeedsUpdateConstraints()
     }
@@ -79,6 +81,21 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
+    }
+    
+    func addNotificationCircle() {
+        
+        // TODO: simplify
+        let tabBar = tabBarController!.tabBar
+        let numberOfItems = CGFloat(tabBar.items!.count)
+        let tabBarItemSize = CGSize(width: tabBar.frame.width / numberOfItems, height: tabBar.frame.height)
+        
+        let circle = CALayer()
+        circle.frame = CGRect(x: tabBarItemSize.width / 2 + 13, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 12, width: 6, height: 6)
+        circle.backgroundColor = UIColor.whiteColor().CGColor
+        circle.cornerRadius = 3
+        tabBarController!.view.layer.addSublayer(circle)
+        
     }
     
     func pushCamera() {

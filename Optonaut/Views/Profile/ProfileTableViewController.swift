@@ -32,7 +32,7 @@ class ProfileTableViewController: OptographTableViewController {
             self.tableView.reloadData()
         })
         
-        viewModel.resultsLoading.put(true)
+        viewModel.resultsLoading.value = true
         
         view.setNeedsUpdateConstraints()
     }

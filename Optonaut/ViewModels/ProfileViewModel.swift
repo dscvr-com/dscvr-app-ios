@@ -24,36 +24,36 @@ class ProfileViewModel {
     let avatarUrl = MutableProperty<String>("")
     
     init(id: Int) {
-        self.id.put(id)
+        self.id.value = id
     
         Api.get("users/\(id)", authorized: true)
             .start(next: { json in
                 let user = Mapper<User>().map(json)!
-                self.name.put(user.name)
-                self.userName.put(user.userName)
-                self.bio.put(user.bio)
-                self.numberOfFollowers.put(user.numberOfFollowers)
-                self.numberOfFollowings.put(user.numberOfFollowings)
-                self.numberOfOptographs.put(user.numberOfOptographs)
-                self.isFollowing.put(user.isFollowing)
-                self.avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(id % 4).jpg")
+                self.name.value = user.name
+                self.userName.value = user.userName
+                self.bio.value = user.bio
+                self.numberOfFollowers.value = user.numberOfFollowers
+                self.numberOfFollowings.value = user.numberOfFollowings
+                self.numberOfOptographs.value = user.numberOfOptographs
+                self.isFollowing.value = user.isFollowing
+                self.avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(id % 4).jpg"
             })
     }
     
     func toggleFollow() {
         let followedBefore = isFollowing.value
         
-        isFollowing.put(!followedBefore)
+        isFollowing.value = !followedBefore
         
         if followedBefore {
             Api.delete("users/\(id.value)/follow", authorized: true)
                 .start(error: { _ in
-                    self.isFollowing.put(followedBefore)
+                    self.isFollowing.value = followedBefore
                 })
         } else {
             Api.post("users/\(id.value)/follow", authorized: true, parameters: nil)
                 .start(error: { _ in
-                    self.isFollowing.put(followedBefore)
+                    self.isFollowing.value = followedBefore
                 })
         }
     }

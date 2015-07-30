@@ -51,7 +51,7 @@ class Api {
                 mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
             
-            Alamofire.request(mutableURLRequest)
+            let request = Alamofire.request(mutableURLRequest)
                 .validate()
                 .responseJSON { (_, response, data, error) in
                     if let error = error {
@@ -69,7 +69,9 @@ class Api {
                     }
             }
             
-            disposable.addDisposable {}
+            disposable.addDisposable {
+                request.cancel()
+            }
         }
         
     }

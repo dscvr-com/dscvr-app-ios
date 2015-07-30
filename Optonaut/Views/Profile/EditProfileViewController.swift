@@ -83,7 +83,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         nameInputView.textColor = UIColor(0x4d4d4d)
         nameInputView.autocorrectionType = .No
         nameInputView.rac_text <~ viewModel.name
-        nameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.name.put($0 as! String) })
+        nameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.name.value = $0 as! String })
         view.addSubview(nameInputView)
         
         userNameIconView.font = .icomoonOfSize(20)
@@ -96,7 +96,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         userNameInputView.autocorrectionType = .No
         userNameInputView.autocapitalizationType = .None
         userNameInputView.rac_text <~ viewModel.userName
-        userNameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.userName.put($0 as! String) })
+        userNameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.userName.value = $0 as! String })
         
         view.addSubview(userNameInputView)
         
@@ -108,7 +108,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         bioInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
         bioInputView.textColor = UIColor(0x4d4d4d)
         bioInputView.rac_text <~ viewModel.bio
-        bioInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.bio.put($0 as! String) })
+        bioInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.bio.value = $0 as! String })
         bioInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         bioInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         view.addSubview(bioInputView)
@@ -125,7 +125,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         emailInputView.textColor = UIColor(0x4d4d4d)
         emailInputView.keyboardType = .EmailAddress
         emailInputView.rac_text <~ viewModel.email
-        emailInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.email.put($0 as! String) })
+        emailInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.email.value = $0 as! String })
         view.addSubview(emailInputView)
         
         passwordIconView.font = .icomoonOfSize(20)

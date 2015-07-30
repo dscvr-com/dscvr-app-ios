@@ -24,26 +24,26 @@ class LoginViewModel {
         emailOrUserName.producer
             .start(next: { str in
                 if str.rangeOfString("@") != nil {
-                    self.emailOrUserNameValid.put(isValidEmail(str))
+                    self.emailOrUserNameValid.value = isValidEmail(str)
                 } else {
-                    self.emailOrUserNameValid.put(str.characters.count > 2)
+                    self.emailOrUserNameValid.value = str.characters.count > 2
                 }
             })
         
         password.producer
             .start(next: { str in
-                self.passwordValid.put(str.characters.count > 4)
+                self.passwordValid.value = str.characters.count > 4
             })
         
         combineLatest([emailOrUserNameValid.producer, passwordValid.producer])
             .start(next: { bools in
-                self.allowed.put(bools.reduce(true) { $0 && $1 })
+                self.allowed.value = bools.reduce(true) { $0 && $1 }
             })
     }
     
     func login() -> SignalProducer<Void, NSError> {
         return SignalProducer { sink, disposable in
-            self.pending.put(true)
+            self.pending.value = true
             
             var parameters = ["email": "", "user_name": "", "password": self.password.value]
             
@@ -60,11 +60,11 @@ class LoginViewModel {
                         NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.UserIsLoggedIn.rawValue)
                         NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: UserDefaultsKeys.UserToken.rawValue)
                         NSUserDefaults.standardUserDefaults().setInteger(loginData.id, forKey: UserDefaultsKeys.UserId.rawValue)
-                        self.pending.put(false)
+                        self.pending.value = false
                         sendCompleted(sink)
                     },
                     error: { error in
-                        self.pending.put(false)
+                        self.pending.value = false
                         sendError(sink, error)
                     }
             )
@@ -79,8 +79,8 @@ private class LoginMappable: Mappable {
     var token = ""
     var id = 0
     
-    required init?(_ map: Map) {
-        mapping(map)
+    private static func newInstance() -> Mappable {
+        return LoginMappable()
     }
     
     func mapping(map: Map) {

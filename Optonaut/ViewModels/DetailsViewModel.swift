@@ -31,18 +31,18 @@ class DetailsViewModel {
         Api.get("optographs/\(optographId)", authorized: true)
             .start(next: { json in
                 let optograph = Mapper<Optograph>().map(json)!
-                self.id.put(optograph.id)
-                self.liked.put(optograph.likedByUser)
-                self.likeCount.put(optograph.likeCount)
-                self.viewsCount.put(optograph.viewsCount)
-                self.timeSinceCreated.put(RoundedDuration(date: optograph.createdAt).longDescription())
-                self.detailsUrl.put("http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id % 3).jpg")
-                self.avatarUrl.put("http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg")
-                self.user.put(optograph.user!.name)
-                self.userName.put("@\(optograph.user!.userName)")
-                self.userId.put(optograph.user!.id)
-                self.text.put(optograph.text)
-                self.location.put(optograph.location)
+                self.id.value = optograph.id
+                self.liked.value = optograph.likedByUser
+                self.likeCount.value = optograph.likeCount
+                self.viewsCount.value = optograph.viewsCount
+                self.timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
+                self.detailsUrl.value = "http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id % 3).jpg"
+                self.avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg"
+                self.user.value = optograph.user!.name
+                self.userName.value = "@\(optograph.user!.userName)"
+                self.userId.value = optograph.user!.id
+                self.text.value = optograph.text
+                self.location.value = optograph.location
             })
     }
     
@@ -50,27 +50,27 @@ class DetailsViewModel {
         let likedBefore = liked.value
         let likeCountBefore = likeCount.value
         
-        likeCount.put(likeCountBefore + (likedBefore ? -1 : 1))
-        liked.put(!likedBefore)
+        likeCount.value = likeCountBefore + (likedBefore ? -1 : 1)
+        liked.value = !likedBefore
         
         if likedBefore {
             Api.delete("optographs/\(id.value)/like", authorized: true)
                 .start(error: { _ in
-                    self.likeCount.put(likeCountBefore)
-                    self.liked.put(likedBefore)
+                    self.likeCount.value = likeCountBefore
+                    self.liked.value = likedBefore
                 })
         } else {
             Api.post("optographs/\(id.value)/like", authorized: true, parameters: nil)
                 .start(error: { _ in
-                    self.likeCount.put(likeCountBefore)
-                    self.liked.put(likedBefore)
+                    self.likeCount.value = likeCountBefore
+                    self.liked.value = likedBefore
                 })
         }
     }
     
     func increaseViewsCount() {
         Api.post("optographs/\(id.value)/views", authorized: true, parameters: nil).start()
-        viewsCount.put(viewsCount.value + 1)
+        viewsCount.value = viewsCount.value + 1
     }
     
 }

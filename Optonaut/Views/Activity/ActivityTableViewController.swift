@@ -32,7 +32,7 @@ class ActivityTableViewController: UIViewController, RedNavbar {
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
-                self.viewModel.resultsLoading.put(true)
+                self.viewModel.resultsLoading.value = true
             }
         }
         
@@ -48,7 +48,7 @@ class ActivityTableViewController: UIViewController, RedNavbar {
                 self.tableView.stopPullToRefresh()
         })
         
-        viewModel.resultsLoading.put(true)
+        viewModel.resultsLoading.value = true
         
         view.addSubview(tableView)
         
