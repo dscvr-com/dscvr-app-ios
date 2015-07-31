@@ -45,3 +45,15 @@ extension Optograph: Mappable {
     }
     
 }
+
+// needed to merge two arrays via a Set
+extension Optograph: Hashable {
+    override var hashValue: Int {
+        get {
+            return id.hashValue
+        }
+    }
+}
+func ==(lhs: Optograph, rhs: Optograph) -> Bool {
+    return lhs.hashValue == rhs.hashValue
+}

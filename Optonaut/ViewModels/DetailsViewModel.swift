@@ -10,8 +10,11 @@
 import Foundation
 import ReactiveCocoa
 import ObjectMapper
+import RealmSwift
 
 class DetailsViewModel {
+    
+    let realm = try! Realm()
     
     let id = MutableProperty<Int>(0)
     let liked = MutableProperty<Bool>(false)
@@ -27,23 +30,39 @@ class DetailsViewModel {
     let text = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     
+    var optograph = Optograph()
+    
     init(optographId: Int) {
+        
+        if let optograph = realm.objects(Optograph).filter("id = \(optographId)").first {
+            self.optograph = optograph
+            update()
+        }
+        
         Api.get("optographs/\(optographId)", authorized: true)
             .start(next: { json in
-                let optograph = Mapper<Optograph>().map(json)!
-                self.id.value = optograph.id
-                self.liked.value = optograph.likedByUser
-                self.likeCount.value = optograph.likeCount
-                self.viewsCount.value = optograph.viewsCount
-                self.timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
-                self.detailsUrl.value = "http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id % 3).jpg"
-                self.avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg"
-                self.user.value = optograph.user!.name
-                self.userName.value = "@\(optograph.user!.userName)"
-                self.userId.value = optograph.user!.id
-                self.text.value = optograph.text
-                self.location.value = optograph.location
+                self.optograph = Mapper<Optograph>().map(json)!
+                self.update()
+                
+                self.realm.write {
+                    self.realm.add(self.optograph, update: true)
+                }
             })
+    }
+    
+    private func update() {
+        id.value = optograph.id
+        liked.value = optograph.likedByUser
+        likeCount.value = optograph.likeCount
+        viewsCount.value = optograph.viewsCount
+        timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
+        detailsUrl.value = "http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id % 3).jpg"
+        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg"
+        user.value = optograph.user!.name
+        userName.value = "@\(optograph.user!.userName)"
+        userId.value = optograph.user!.id
+        text.value = optograph.text
+        location.value = optograph.location
     }
     
     func toggleLike() {
@@ -53,24 +72,36 @@ class DetailsViewModel {
         likeCount.value = likeCountBefore + (likedBefore ? -1 : 1)
         liked.value = !likedBefore
         
-        if likedBefore {
-            Api.delete("optographs/\(id.value)/like", authorized: true)
-                .start(error: { _ in
+        SignalProducer<Bool, NoError>(value: likedBefore)
+            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
+            .flatMap(.Latest) { likedBefore in
+                likedBefore
+                    ? Api.delete("optographs/\(self.id.value)/like", authorized: true)
+                    : Api.post("optographs/\(self.id.value)/like", authorized: true, parameters: nil)
+            }
+            .start(
+                completed: {
+                    self.realm.write {
+                        self.optograph.likedByUser = self.liked.value
+                        self.optograph.likeCount = self.likeCount.value
+                    }
+                },
+                error: { _ in
                     self.likeCount.value = likeCountBefore
                     self.liked.value = likedBefore
-                })
-        } else {
-            Api.post("optographs/\(id.value)/like", authorized: true, parameters: nil)
-                .start(error: { _ in
-                    self.likeCount.value = likeCountBefore
-                    self.liked.value = likedBefore
-                })
-        }
+                }
+            )
     }
     
     func increaseViewsCount() {
-        Api.post("optographs/\(id.value)/views", authorized: true, parameters: nil).start()
-        viewsCount.value = viewsCount.value + 1
+        Api.post("optographs/\(id.value)/views", authorized: true, parameters: nil)
+            .start(completed: {
+                self.viewsCount.value = self.viewsCount.value + 1
+                
+                self.realm.write {
+                    self.optograph.viewsCount = self.viewsCount.value
+                }
+            })
     }
     
 }

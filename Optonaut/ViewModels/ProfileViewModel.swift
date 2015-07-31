@@ -10,8 +10,11 @@
 import Foundation
 import ReactiveCocoa
 import ObjectMapper
+import RealmSwift
 
 class ProfileViewModel {
+    
+    let realm = try! Realm()
     
     let id = MutableProperty<Int>(0)
     let name = MutableProperty<String>("")
@@ -24,19 +27,17 @@ class ProfileViewModel {
     let avatarUrl = MutableProperty<String>("")
     
     init(id: Int) {
+        // TODO check if really needed here
         self.id.value = id
+        
+        if let user = realm.objects(User).filter("id = \(id)").first {
+            setUser(user)
+        }
     
         Api.get("users/\(id)", authorized: true)
             .start(next: { json in
                 let user = Mapper<User>().map(json)!
-                self.name.value = user.name
-                self.userName.value = user.userName
-                self.bio.value = user.bio
-                self.numberOfFollowers.value = user.numberOfFollowers
-                self.numberOfFollowings.value = user.numberOfFollowings
-                self.numberOfOptographs.value = user.numberOfOptographs
-                self.isFollowing.value = user.isFollowing
-                self.avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(id % 4).jpg"
+                self.setUser(user)
             })
     }
     
@@ -56,6 +57,17 @@ class ProfileViewModel {
                     self.isFollowing.value = followedBefore
                 })
         }
+    }
+    
+    private func setUser(user: User) {
+        name.value = user.name
+        userName.value = user.userName
+        bio.value = user.bio
+        numberOfFollowers.value = user.numberOfFollowers
+        numberOfFollowings.value = user.numberOfFollowings
+        numberOfOptographs.value = user.numberOfOptographs
+        isFollowing.value = user.isFollowing
+        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(user.id % 4).jpg"
     }
     
 }

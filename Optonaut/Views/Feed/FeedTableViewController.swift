@@ -34,23 +34,24 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
-                self.viewModel.resultsLoading.value = true
+                self.viewModel.refreshNotificationSignal.notify()
             }
         }
         
         tableView.addPullToRefreshWithAction(refreshAction, withAnimator: RefreshAnimator())
         
-        viewModel.results.producer.start(
-            next: { results in
-                self.items = results
-                self.tableView.reloadData()
-                self.tableView.stopPullToRefresh()
-            },
-            error: { _ in
-                self.tableView.stopPullToRefresh()
-        })
-        
-        viewModel.resultsLoading.value = true
+        viewModel.results.producer
+            .start(
+                next: { results in
+                    self.items = results
+                    self.tableView.reloadData()
+                    self.tableView.stopPullToRefresh()
+                },
+                error: { _ in
+                    self.tableView.stopPullToRefresh()
+                }, completed: {
+                    
+            })
         
         addNotificationCircle()
         
@@ -70,11 +71,19 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         ]
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        tabBarController?.delegate = self
+    }
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
         navigationController?.hidesBarsOnSwipe = false
         navigationController?.setNavigationBarHidden(false, animated: true)
+        
+        tabBarController?.delegate = nil
     }
     
     override func updateViewConstraints() {
@@ -94,8 +103,24 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         circle.frame = CGRect(x: tabBarItemSize.width / 2 + 13, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 12, width: 6, height: 6)
         circle.backgroundColor = UIColor.whiteColor().CGColor
         circle.cornerRadius = 3
+        circle.hidden = true
         tabBarController!.view.layer.addSublayer(circle)
         
+        viewModel.newResultsAvailable.producer
+            .start(next: { newAvailable in
+                circle.hidden = !newAvailable
+            })
+        
+    }
+    
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        if indexPath.row == viewModel.results.value.count - 1 {
+            viewModel.loadMoreNotificationSignal.notify()
+        }
+    }
+    
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        viewModel.newResultsAvailable.value = false
     }
     
     func pushCamera() {
@@ -104,6 +129,17 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     
     func pushSearch() {
         navigationController?.pushViewController(SearchTableViewController(), animated: false)
+    }
+    
+}
+
+extension FeedTableViewController: UITabBarControllerDelegate {
+    
+    func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
+        if viewController == navigationController {
+            tableView.setContentOffset(CGPointZero, animated: true)
+            navigationController?.setNavigationBarHidden(false, animated: true)
+        }
     }
     
 }

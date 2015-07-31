@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import ReactiveCocoa
 
 let BaseColor = UIColor(0xef4836)
 
@@ -84,6 +85,20 @@ extension Array {
         
         let endIndex = min(self.count, end)
         return Array(self[0..<endIndex])
+    }
+    
+}
+
+class NotificationSignal {
+    
+    private let (signal, sink) = Signal<Void, NoError>.pipe()
+    
+    func notify() {
+        sendNext(sink, ())
+    }
+    
+    func subscribe(fn: () -> Void) {
+        signal.observe(next: fn)
     }
     
 }

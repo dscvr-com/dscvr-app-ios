@@ -9,8 +9,11 @@
 
 import Foundation
 import ReactiveCocoa
+import RealmSwift
 
 class OptographViewModel {
+    
+    let realm = try! Realm()
     
     let id: ConstantProperty<Int>
     let previewUrl: ConstantProperty<String>
@@ -27,7 +30,11 @@ class OptographViewModel {
     let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
     
+    let optograph: Optograph
+    
     init(optograph: Optograph) {
+        self.optograph = optograph
+        
         id = ConstantProperty(optograph.id)
         previewUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(optograph.id % 3).jpg")
         avatarUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg")
@@ -49,19 +56,25 @@ class OptographViewModel {
         likeCount.value = likeCountBefore + (likedBefore ? -1 : 1)
         liked.value = !likedBefore
         
-        if likedBefore {
-            Api.delete("optographs/\(id.value)/like", authorized: true)
-                .start(error: { _ in
+        (SignalProducer(value: likedBefore) as SignalProducer<Bool, NoError>)
+            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
+            .flatMap(.Latest) { likedBefore in
+                likedBefore
+                    ? Api.delete("optographs/\(self.id.value)/like", authorized: true)
+                    : Api.post("optographs/\(self.id.value)/like", authorized: true, parameters: nil)
+            }
+            .start(
+                completed: {
+                    self.realm.write {
+                        self.optograph.likedByUser = self.liked.value
+                        self.optograph.likeCount = self.likeCount.value
+                    }
+                },
+                error: { _ in
                     self.likeCount.value = likeCountBefore
                     self.liked.value = likedBefore
-                })
-        } else {
-            Api.post("optographs/\(id.value)/like", authorized: true, parameters: nil)
-                .start(error: { _ in
-                    self.likeCount.value = likeCountBefore
-                    self.liked.value = likedBefore
-                })
-        }
+                }
+            )
     }
     
 }

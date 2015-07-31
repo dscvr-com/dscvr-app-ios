@@ -15,7 +15,7 @@ typealias JSONResponse = AnyObject
 class Api {
 //    static let host = "beta.api.optonaut.com"
 //    static let port = 80
-    static let host = "192.168.2.110"
+    static let host = "192.168.2.104"
     static let port = 3000
     
     static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {
@@ -58,6 +58,9 @@ class Api {
                         // TODO remove login hack
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
+                        }
+                        if let data = data {
+                            print(data)
                         }
                         print(error)
                         sendError(sink, error)
