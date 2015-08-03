@@ -86,6 +86,17 @@ extension Array {
         let endIndex = min(self.count, end)
         return Array(self[0..<endIndex])
     }
+
+    func toDictionary<K, V>(transformer: (element: Array.Element) -> (key: K, value: V)?) -> Dictionary<K, V> {
+        return self.reduce([:]) {
+            (var dict, e) in
+            if let (key, value) = transformer(element: e)
+            {
+                dict[key] = value
+            }
+            return dict
+        }
+    }
     
 }
 
@@ -101,4 +112,18 @@ class NotificationSignal {
         signal.observe(next: fn)
     }
     
+}
+
+
+func mergeModels<T: Model>(models: [T], otherModels: [T]) -> [T] {
+    if let firstModel = models.first, firstOtherModel = otherModels.first {
+        let modelsAreNewer = firstModel.createdAt.compare(firstOtherModel.createdAt) == .OrderedDescending
+        let newerModels = modelsAreNewer ? models : otherModels
+        let olderModels = modelsAreNewer ? otherModels : models
+        let oldestNewModel = newerModels.last!
+        
+        return newerModels + olderModels.filter { oldestNewModel.createdAt.compare($0.createdAt) == .OrderedDescending }
+    } else {
+        return models + otherModels
+    }
 }

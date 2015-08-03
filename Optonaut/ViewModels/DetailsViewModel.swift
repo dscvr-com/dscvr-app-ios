@@ -34,7 +34,7 @@ class DetailsViewModel {
     
     init(optographId: Int) {
         
-        if let optograph = realm.objects(Optograph).filter("id = \(optographId)").first {
+        if let optograph = realm.objectForPrimaryKey(Optograph.self, key: optographId) {
             self.optograph = optograph
             update()
         }

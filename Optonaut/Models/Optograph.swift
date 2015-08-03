@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 import ObjectMapper
 
-class Optograph: Object {
+class Optograph: Object, Model {
     dynamic var id = 0
     dynamic var text = ""
     dynamic var user: User?
@@ -44,16 +44,4 @@ extension Optograph: Mappable {
         location        <- map["location.description"]
     }
     
-}
-
-// needed to merge two arrays via a Set
-extension Optograph: Hashable {
-    override var hashValue: Int {
-        get {
-            return id.hashValue
-        }
-    }
-}
-func ==(lhs: Optograph, rhs: Optograph) -> Bool {
-    return lhs.hashValue == rhs.hashValue
 }

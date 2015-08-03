@@ -17,7 +17,7 @@ class ActivityTableViewController: UIViewController, RedNavbar {
     var items = [Activity]()
     let tableView = UITableView()
     
-    var viewModel = ActivitiesViewModel()
+    let viewModel = ActivitiesViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +32,7 @@ class ActivityTableViewController: UIViewController, RedNavbar {
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
-                self.viewModel.resultsLoading.value = true
+                self.viewModel.refreshNotificationSignal.notify()
             }
         }
         
@@ -47,8 +47,6 @@ class ActivityTableViewController: UIViewController, RedNavbar {
             error: { _ in
                 self.tableView.stopPullToRefresh()
         })
-        
-        viewModel.resultsLoading.value = true
         
         view.addSubview(tableView)
         
@@ -77,6 +75,18 @@ extension ActivityTableViewController: UITableViewDelegate {
         return 60
     }
     
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+//        viewModel.unreadCount.value = 0
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        let visibleCells = tableView.visibleCells as! [ActivityTableViewCell]
+        
+        for cell in visibleCells where !cell.viewModel.readByUser.value {
+            cell.viewModel.read()
+        }
+    }
+    
 }
 
 // MARK: - UITableViewDataSource
@@ -93,6 +103,17 @@ extension ActivityTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
+    }
+    
+}
+
+// MARK: - LoadMore
+extension ActivityTableViewController: LoadMore {
+    
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        checkRow(indexPath) {
+            self.viewModel.loadMoreNotificationSignal.notify()
+        }
     }
     
 }

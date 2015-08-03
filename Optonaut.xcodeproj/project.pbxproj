@@ -37,11 +37,13 @@
 		8F4C6E4C1B4A70CD007508ED /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E391B4A70CD007508ED /* Roboto-Medium.ttf */; };
 		8F4C6E4E1B4A70CD007508ED /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E3B1B4A70CD007508ED /* Roboto-Regular.ttf */; };
 		8F4C6E581B4A73BE007508ED /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C6E571B4A73BE007508ED /* Fonts.swift */; };
+		8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
 		8F500CFA1B4D5D6E002B9878 /* OptographTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CF91B4D5D6E002B9878 /* OptographTableViewCell.swift */; };
 		8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFB1B4D5F97002B9878 /* NavbarProtocols.swift */; };
 		8F500CFE1B4D6D70002B9878 /* ProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFD1B4D6D70002B9878 /* ProfileTableViewController.swift */; };
 		8F500D001B4D8028002B9878 /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500CFF1B4D8028002B9878 /* Appearance.swift */; };
 		8F500D021B4D8471002B9878 /* ExploreTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F500D011B4D8471002B9878 /* ExploreTableViewController.swift */; };
+		8F53ED0E1B6F6A1D00D99F41 /* LoadMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F53ED0D1B6F6A1D00D99F41 /* LoadMore.swift */; };
 		8F5B26931B56AE0D00E0B955 /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5B26921B56AE0D00E0B955 /* CameraViewModel.swift */; };
 		8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CE1B3AFBDC007E073C /* Api.swift */; };
 		8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FD9CF1B3AFBDC007E073C /* Utils.swift */; };
@@ -94,6 +96,7 @@
 		8FD7F87A1B5924D5001680AA /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7F86D1B5924D5001680AA /* support.cpp */; };
 		8FD7F87C1B5924D5001680AA /* wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7F8711B5924D5001680AA /* wrapper.cpp */; };
 		8FD7F87E1B592708001680AA /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD7F87D1B592708001680AA /* AWSCore.framework */; };
+		8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */; };
 		8FEAB9791B51182B00F9FE64 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEAB9781B51182B00F9FE64 /* DetailsViewModel.swift */; };
 		8FFCE4B91B4DBF1900832C88 /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4B81B4DBF1900832C88 /* KILabel.m */; };
 		8FFCE4BB1B4EA9AC00832C88 /* ActivityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4BA1B4EA9AC00832C88 /* ActivityTableViewCell.swift */; };
@@ -142,11 +145,13 @@
 		8F4C6E391B4A70CD007508ED /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		8F4C6E3B1B4A70CD007508ED /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		8F4C6E571B4A73BE007508ED /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
+		8F4CE79F1B6CEEC700BD8A71 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		8F500CF91B4D5D6E002B9878 /* OptographTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCell.swift; sourceTree = "<group>"; };
 		8F500CFB1B4D5F97002B9878 /* NavbarProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavbarProtocols.swift; sourceTree = "<group>"; };
 		8F500CFD1B4D6D70002B9878 /* ProfileTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTableViewController.swift; sourceTree = "<group>"; };
 		8F500CFF1B4D8028002B9878 /* Appearance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
 		8F500D011B4D8471002B9878 /* ExploreTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreTableViewController.swift; sourceTree = "<group>"; };
+		8F53ED0D1B6F6A1D00D99F41 /* LoadMore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadMore.swift; sourceTree = "<group>"; };
 		8F5B26921B56AE0D00E0B955 /* CameraViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		8F5FD9CE1B3AFBDC007E073C /* Api.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		8F5FD9CF1B3AFBDC007E073C /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -215,6 +220,7 @@
 		8FD7F8711B5924D5001680AA /* wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wrapper.cpp; sourceTree = "<group>"; };
 		8FD7F8721B5924D5001680AA /* wrapper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = wrapper.hpp; sourceTree = "<group>"; };
 		8FD7F87D1B592708001680AA /* AWSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCore.framework; path = Carthage/Build/iOS/AWSCore.framework; sourceTree = "<group>"; };
+		8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
 		8FEAB9781B51182B00F9FE64 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		8FFCE4B71B4DBF1900832C88 /* KILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabel.h; sourceTree = "<group>"; };
 		8FFCE4B81B4DBF1900832C88 /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabel.m; sourceTree = "<group>"; };
@@ -338,6 +344,7 @@
 			isa = PBXGroup;
 			children = (
 				8F4C6E311B4A70CD007508ED /* icomoon.ttf */,
+				8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */,
 				8F4C6E371B4A70CD007508ED /* Roboto-Light.ttf */,
 				8F4C6E391B4A70CD007508ED /* Roboto-Medium.ttf */,
 				8F4C6E3B1B4A70CD007508ED /* Roboto-Regular.ttf */,
@@ -354,6 +361,7 @@
 				8F4C6E191B4717DF007508ED /* Icomoon.swift */,
 				8F4C6E571B4A73BE007508ED /* Fonts.swift */,
 				8F5FDA081B412DB2007E073C /* Constants.swift */,
+				8F53ED0D1B6F6A1D00D99F41 /* LoadMore.swift */,
 				8F5FD9CF1B3AFBDC007E073C /* Utils.swift */,
 				8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */,
 				8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */,
@@ -423,6 +431,7 @@
 			children = (
 				8F7738131B380F5D001F642B /* Optograph.swift */,
 				8F7738141B380F5D001F642B /* User.swift */,
+				8F4CE79F1B6CEEC700BD8A71 /* Model.swift */,
 				8F5FDA001B3EECB0007E073C /* Activity.swift */,
 			);
 			path = Models;
@@ -661,6 +670,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */,
 				8F488EE81B44180D00599B61 /* LUT_XG.png in Resources */,
 				8FD7F8731B5924D5001680AA /* CMakeLists.txt in Resources */,
 				8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */,
@@ -738,8 +748,10 @@
 				8F5FD9F71B3DB7B3007E073C /* ActivityNavViewController.swift in Sources */,
 				8F5FDA091B412DB2007E073C /* Constants.swift in Sources */,
 				8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */,
+				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
 				8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */,
 				8F464AFD1B4BC4BB00A66FA5 /* InsetLabel.swift in Sources */,
+				8F53ED0E1B6F6A1D00D99F41 /* LoadMore.swift in Sources */,
 				8F464B021B4C727200A66FA5 /* ExploreNavViewController.swift in Sources */,
 				8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */,
 				8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */,

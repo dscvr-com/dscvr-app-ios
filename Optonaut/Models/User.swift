@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 import ObjectMapper
 
-class User: Object {
+class User: Object, Model {
     dynamic var id = 0
     dynamic var email = ""
     dynamic var name = ""
@@ -20,6 +20,7 @@ class User: Object {
     dynamic var numberOfFollowings = 0
     dynamic var numberOfOptographs = 0
     dynamic var isFollowing = false
+    dynamic var createdAt = NSDate()
     
     let optographs = List<Optograph>()
     
@@ -40,6 +41,7 @@ extension User: Mappable {
         numberOfFollowings  <- map["number_of_followings"]
         numberOfFollowings  <- map["number_of_followings"]
         isFollowing         <- map["is_following"]
+        createdAt           <- (map["created_at"], NSDateTransform())
         
         var arr = [Optograph]()
         arr <- map["optographs"]

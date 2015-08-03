@@ -53,8 +53,6 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
                     
             })
         
-        addNotificationCircle()
-        
         view.setNeedsUpdateConstraints()
     }
     
@@ -92,33 +90,6 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         super.updateViewConstraints()
     }
     
-    func addNotificationCircle() {
-        
-        // TODO: simplify
-        let tabBar = tabBarController!.tabBar
-        let numberOfItems = CGFloat(tabBar.items!.count)
-        let tabBarItemSize = CGSize(width: tabBar.frame.width / numberOfItems, height: tabBar.frame.height)
-        
-        let circle = CALayer()
-        circle.frame = CGRect(x: tabBarItemSize.width / 2 + 13, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 12, width: 6, height: 6)
-        circle.backgroundColor = UIColor.whiteColor().CGColor
-        circle.cornerRadius = 3
-        circle.hidden = true
-        tabBarController!.view.layer.addSublayer(circle)
-        
-        viewModel.newResultsAvailable.producer
-            .start(next: { newAvailable in
-                circle.hidden = !newAvailable
-            })
-        
-    }
-    
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.row == viewModel.results.value.count - 1 {
-            viewModel.loadMoreNotificationSignal.notify()
-        }
-    }
-    
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         viewModel.newResultsAvailable.value = false
     }
@@ -133,12 +104,24 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     
 }
 
+// MARK: - UITabBarControllerDelegate
 extension FeedTableViewController: UITabBarControllerDelegate {
     
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
         if viewController == navigationController {
             tableView.setContentOffset(CGPointZero, animated: true)
             navigationController?.setNavigationBarHidden(false, animated: true)
+        }
+    }
+    
+}
+
+// MARK: - LoadMore
+extension FeedTableViewController: LoadMore {
+    
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        checkRow(indexPath) {
+            self.viewModel.loadMoreNotificationSignal.notify()
         }
     }
     

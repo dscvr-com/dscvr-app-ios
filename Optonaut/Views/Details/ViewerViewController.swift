@@ -47,13 +47,13 @@ class ViewerViewController: UIViewController  {
         rightScene.rootNode.addChildNode(rightCameraNode)
         
         let leftSphereGeometry = SCNSphere(radius: 5.0)
-        leftSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "left_large")
+        leftSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "left")
         leftSphereGeometry.firstMaterial?.doubleSided = true
         let leftSphereNode = SCNNode(geometry: leftSphereGeometry)
         leftScene.rootNode.addChildNode(leftSphereNode)
         
         let rightSphereGeometry = SCNSphere(radius: 5.0)
-        rightSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "right_large")
+        rightSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "right")
         rightSphereGeometry.firstMaterial?.doubleSided = true
         let rightSphereNode = SCNNode(geometry: rightSphereGeometry)
         rightScene.rootNode.addChildNode(rightSphereNode)

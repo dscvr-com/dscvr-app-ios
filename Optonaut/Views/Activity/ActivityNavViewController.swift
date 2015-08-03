@@ -13,6 +13,8 @@ import ReactiveCocoa
 
 class ActivityNavViewController: UINavigationController, RedNavbar {
     
+    let activityTableViewController = ActivityTableViewController()
+    
     required init() {
         super.init(nibName: nil, bundle: nil)
         setTabBarIcon(tabBarItem, icon: .Bell)
@@ -30,8 +32,6 @@ class ActivityNavViewController: UINavigationController, RedNavbar {
         navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         navigationBar.tintColor = .whiteColor()
         
-        let activityTableViewController = ActivityTableViewController()
-        
         pushViewController(activityTableViewController, animated: false)
         
         view.setNeedsUpdateConstraints()
@@ -39,6 +39,38 @@ class ActivityNavViewController: UINavigationController, RedNavbar {
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
+    }
+    
+    func initNotificationIndicator() {
+        // TODO: simplify
+        let tabBar = tabBarController!.tabBar
+        let numberOfItems = CGFloat(tabBar.items!.count)
+        let tabBarItemSize = CGSize(width: tabBar.frame.width / numberOfItems, height: tabBar.frame.height)
+        
+        let circle = CALayer()
+        circle.frame = CGRect(x: tabBarItemSize.width * 5/2 + 9, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 17, width: 15, height: 15)
+        circle.backgroundColor = UIColor.whiteColor().CGColor
+        circle.cornerRadius = 7.5
+        circle.opacity = 0.6
+        circle.hidden = true
+        tabBarController!.view.layer.addSublayer(circle)
+        
+        let number = UILabel()
+        number.frame = CGRect(x: tabBarItemSize.width * 5/2 + 9, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 17, width: 15, height: 15)
+        number.textAlignment = .Center
+        number.text = "5"
+        number.textColor = BaseColor
+        number.font = UIFont.robotoOfSize(9, withType: .Black)
+        number.hidden = true
+        tabBarController!.view.addSubview(number)
+        
+        activityTableViewController.viewModel.unreadCount.producer
+            .start(next: { count in
+                let hidden = count <= 0
+                circle.hidden = hidden
+                number.hidden = hidden
+                number.text = "\(count)"
+            })
     }
     
 }

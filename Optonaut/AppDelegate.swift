@@ -17,9 +17,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-//        try! NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath)
-        
         setupAppearanceDefaults()
+        
+        do {
+            try NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath)
+        } catch let err {
+            print(err)
+        }
         
         if NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.DebugEnabled.rawValue) == nil {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.DebugEnabled.rawValue)

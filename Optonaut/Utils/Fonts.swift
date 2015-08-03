@@ -31,8 +31,9 @@ public enum FontType: String {
     case Regular = "Regular"
     case Medium = "Medium"
     case Light = "Light"
+    case Black = "Black"
     
-    static let allValues = [Regular, Medium, Light]
+    static let allValues = [Regular, Medium, Light, Black]
 }
 
 public extension UIFont {

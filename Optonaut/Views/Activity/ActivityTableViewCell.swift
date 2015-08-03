@@ -79,9 +79,13 @@ class ActivityTableViewCell: UITableViewCell {
             avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
         }
         
-        if let imageUrl = NSURL(string: viewModel.optographUrl.value) {
+        if let url = viewModel.optographUrl.value, imageUrl = NSURL(string: url) {
             optographImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "optograph-placeholder"))
         }
+        
+        viewModel.readByUser.producer
+            .map { $0 ? UIColor.clearColor() : BaseColor.alpha(0.1) }
+            .start(next: { self.backgroundColor = $0 })
         
         textView.rac_text <~ viewModel.activityType.producer
             .map { type in
@@ -99,9 +103,10 @@ class ActivityTableViewCell: UITableViewCell {
     }
     
     func pushDetails() {
-        let optograph = viewModel.optograph.value
-        let detailsViewController = DetailsViewController(optographId: optograph.id)
-        navigationController?.pushViewController(detailsViewController, animated: true)
+        if let id = viewModel.optographId.value {
+            let detailsViewController = DetailsViewController(optographId: id)
+            navigationController?.pushViewController(detailsViewController, animated: true)
+        }
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

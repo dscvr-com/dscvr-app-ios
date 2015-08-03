@@ -30,7 +30,7 @@ class ProfileViewModel {
         // TODO check if really needed here
         self.id.value = id
         
-        if let user = realm.objects(User).filter("id = \(id)").first {
+        if let user = realm.objectForPrimaryKey(User.self, key: id) {
             setUser(user)
         }
     

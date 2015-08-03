@@ -16,12 +16,13 @@ enum ActivityType: String {
     case Nil = ""
 }
 
-class Activity: Object {
+class Activity: Object, Model {
     dynamic var id = 0
     dynamic var creator: User?
     dynamic var receiver: User?
     dynamic var optograph: Optograph?
     dynamic var createdAt = NSDate()
+    dynamic var readByUser = false
     var activityType: ActivityType = .Nil
     
     override static func primaryKey() -> String? {
@@ -54,6 +55,7 @@ extension Activity: Mappable {
         receiver        <- map["receiver"]
         optograph       <- map["optograph"]
         createdAt       <- (map["created_at"], NSDateTransform())
+        readByUser      <- map["read_by_user"]
         activityType    <- (map["type"], typeTransform)
     }
     

@@ -32,9 +32,8 @@ class FeedViewModel: NSObject {
             Api.get("optographs/feed", authorized: true)
                 .map { Mapper<Optograph>().mapArray($0)! }
                 .on(next: { optographs in
-                    if !optographs.isEmpty && !self.results.value.isEmpty {
-                        self.newResultsAvailable.value = optographs[0] != self.results.value[0]
-                        print(self.newResultsAvailable.value)
+                    if let firstNew = optographs.first, firstOld = self.results.value.first {
+                        self.newResultsAvailable.value = firstNew.id != firstOld.id
                     }
                 })
                 .start(next: self.processApi)
@@ -54,20 +53,12 @@ class FeedViewModel: NSObject {
         refreshNotificationSignal.notify()
     }
     
-    private func processApi(newOptographs: [Optograph]) {
-        
+    private func processApi(optographs: [Optograph]) {
         realm.write {
-            self.realm.add(newOptographs, update: true)
+            self.realm.add(optographs, update: true)
         }
         
-        let optographs = Array(Set(results.value + newOptographs))
-            .sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
-        
-        print(optographs.count)
-        print(optographs.map { $0.id })
-        print("_____")
-        
-        results.value = optographs
+        results.value = mergeModels(results.value, otherModels: optographs)
     }
     
 }
