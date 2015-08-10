@@ -217,7 +217,6 @@ class CameraViewController: UIViewController {
             let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
             let width = CVPixelBufferGetWidth(pixelBuffer)
             let height = CVPixelBufferGetHeight(pixelBuffer)
-            CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
             let r = motion.attitude.rotationMatrix
             let extrinsics = [r.m11, r.m12, r.m13, 0,
@@ -227,6 +226,7 @@ class CameraViewController: UIViewController {
             extrinsicsPointer.initializeFrom(extrinsics)
             
             Stitcher.push(extrinsicsPointer, intrinsicsPointer, baseAddress, Int32(width), Int32(height), resultExtrinsicsPointer, Int32(frameCount))
+            CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
 //            let rotationMatrix = Array(UnsafeBufferPointer(start: resultExtrinsicsPointer, count: 16))
             

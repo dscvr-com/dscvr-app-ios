@@ -19,9 +19,11 @@ class EditProfileViewController: UIViewController, RedNavbar {
     let fullNameInputView = BottomLineTextField()
     let userNameIconView = UILabel()
     let userNameInputView = BottomLineTextField()
+//    let userNameTakenView = UILabel() // TODO
     let descriptionIconView = UILabel()
     let descriptionInputView = UITextView()
     let lineView = UIView()
+    let privateHeaderView = UILabel()
     let emailIconView = UILabel()
     let emailInputView = BottomLineTextField()
     let passwordIconView = UILabel()
@@ -106,6 +108,11 @@ class EditProfileViewController: UIViewController, RedNavbar {
         lineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(lineView)
         
+        privateHeaderView.text = "PRIVATE INFORMATION"
+        privateHeaderView.textColor = UIColor(0xcfcfcf)
+        privateHeaderView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        view.addSubview(privateHeaderView)
+        
         emailIconView.font = .icomoonOfSize(20)
         emailIconView.text = .icomoonWithName(.PaperPlane)
         emailIconView.textColor = UIColor(0xe5e5e5)
@@ -183,12 +190,17 @@ class EditProfileViewController: UIViewController, RedNavbar {
         descriptionInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         descriptionInputView.autoSetDimension(.Height, toSize: 80)
         
-        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionInputView, withOffset: 10)
-        lineView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-        lineView.autoSetDimension(.Height, toSize: 1)
+//        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionInputView, withOffset: 10)
+//        lineView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+//        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+//        lineView.autoSetDimension(.Height, toSize: 1)
         
-        emailIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: lineView, withOffset: 30)
+        privateHeaderView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionInputView, withOffset: 10)
+        privateHeaderView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+//        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+//        lineView.autoSetDimension(.Height, toSize: 1)
+        
+        emailIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: privateHeaderView, withOffset: 30)
         emailIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         emailIconView.autoSetDimension(.Width, toSize: 20)
 
