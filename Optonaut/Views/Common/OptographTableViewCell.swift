@@ -19,13 +19,13 @@ class OptographTableViewCell: UITableViewCell {
     
     // subviews
     let avatarImageView = UIImageView()
-    let nameView = UILabel()
+    let fullNameView = UILabel()
     let userNameView = UILabel()
     let dateView = UILabel()
-    let likeButtonView = UIButton()
+    let starButtonView = UIButton()
     let previewImageView = UIImageView()
     let locationView = InsetLabel()
-    let textView = KILabel()
+    let descriptionView = KILabel()
     let lineView = UIView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -37,11 +37,11 @@ class OptographTableViewCell: UITableViewCell {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(avatarImageView)
         
-        nameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        nameView.textColor = UIColor(0x4d4d4d)
-        nameView.userInteractionEnabled = true
-        nameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(nameView)
+        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        fullNameView.textColor = UIColor(0x4d4d4d)
+        fullNameView.userInteractionEnabled = true
+        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        contentView.addSubview(fullNameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = UIColor(0xb3b3b3)
@@ -53,9 +53,9 @@ class OptographTableViewCell: UITableViewCell {
         dateView.textColor = UIColor(0xb3b3b3)
         contentView.addSubview(dateView)
         
-        likeButtonView.titleLabel?.font = UIFont.icomoonOfSize(24)
-        likeButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
-        contentView.addSubview(likeButtonView)
+        starButtonView.titleLabel?.font = UIFont.icomoonOfSize(24)
+        starButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
+        contentView.addSubview(starButtonView)
         
         previewImageView.userInteractionEnabled = true
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
@@ -67,12 +67,12 @@ class OptographTableViewCell: UITableViewCell {
         locationView.edgeInsets = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
         contentView.addSubview(locationView)
         
-        textView.numberOfLines = 0
-        textView.tintColor = BaseColor
-        textView.userInteractionEnabled = true
-        textView.font = UIFont.robotoOfSize(13, withType: .Light)
-        textView.textColor = UIColor(0x4d4d4d)
-        contentView.addSubview(textView)
+        descriptionView.numberOfLines = 0
+        descriptionView.tintColor = BaseColor
+        descriptionView.userInteractionEnabled = true
+        descriptionView.font = UIFont.robotoOfSize(13, withType: .Light)
+        descriptionView.textColor = UIColor(0x4d4d4d)
+        contentView.addSubview(descriptionView)
         
         lineView.backgroundColor = UIColor(0xe5e5e5)
         contentView.addSubview(lineView)
@@ -89,17 +89,17 @@ class OptographTableViewCell: UITableViewCell {
         avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
         
-        nameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
-        nameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
+        fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
         userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 4)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 4)
         
         dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
         dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
-        likeButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 12)
-        likeButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15) // 4pt extra for heart border
+        starButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 12)
+        starButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15) // 4pt extra for heart border
         
         previewImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 14)
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
@@ -108,11 +108,11 @@ class OptographTableViewCell: UITableViewCell {
         locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
         locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
         
-        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
-        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+        descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
+        descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+        descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         
-        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textView, withOffset: 14)
+        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionView, withOffset: 14)
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
         lineView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         lineView.autoSetDimension(.Height, toSize: 1)
@@ -131,31 +131,31 @@ class OptographTableViewCell: UITableViewCell {
             avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
         }
         
-        nameView.rac_text <~ viewModel.user
+        fullNameView.rac_text <~ viewModel.fullName
         userNameView.rac_text <~ viewModel.userName
         locationView.rac_text <~ viewModel.location
         
         dateView.rac_text <~ viewModel.timeSinceCreated
         
-        likeButtonView.rac_command = RACCommand(signalBlock: { _ in
+        starButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.toggleLike()
             return RACSignal.empty()
         })
         
-        viewModel.liked.producer
+        viewModel.isStarred.producer
             .map { $0 ? BaseColor : UIColor(0xe6e6e6) }
-            .start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
+            .start(next: { self.starButtonView.setTitleColor($0, forState: .Normal)})
         
-        textView.rac_text <~ viewModel.text
-        textView.userHandleLinkTapHandler = { label, handle, range in
+        descriptionView.rac_text <~ viewModel.description
+        descriptionView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
-            Api.get("users/user-name/\(userName)", authorized: true)
+            Api.get("persons/user-name/\(userName)", authorized: true)
                 .start(next: { json in
-                    let user = Mapper<User>().map(json)!
-                    self.navigationController?.pushViewController(ProfileViewController(userId: user.id), animated: true)
+                    let person = Mapper<Person>().map(json)!
+                    self.navigationController?.pushViewController(ProfileViewController(personId: person.id), animated: true)
                 })
         }
-        textView.hashtagLinkTapHandler = { label, hashtag, range in
+        descriptionView.hashtagLinkTapHandler = { label, hashtag, range in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
     }
@@ -166,7 +166,7 @@ class OptographTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        let profileViewController = ProfileViewController(userId: viewModel.userId.value)
+        let profileViewController = ProfileViewController(personId: viewModel.personId.value)
         navigationController?.pushViewController(profileViewController, animated: true)
     }
     

@@ -22,7 +22,7 @@ class ActivityViewModel {
     let timeSinceCreated: ConstantProperty<String>
     let optographUrl: ConstantProperty<String?>
     let optographId: ConstantProperty<Int?>
-    let readByUser: MutableProperty<Bool>
+    let isRead: MutableProperty<Bool>
     
     private let activity: Activity
     
@@ -36,16 +36,16 @@ class ActivityViewModel {
         timeSinceCreated = ConstantProperty(RoundedDuration(date: activity.createdAt).shortDescription())
         optographUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(activity.optograph!.id % 3).jpg")
         optographId = ConstantProperty(activity.optograph?.id)
-        readByUser = MutableProperty(activity.readByUser)
+        isRead = MutableProperty(activity.isRead)
     }
     
     func read() {
         Api.post("activities/\(activity.id)/read", authorized: true, parameters: nil)
             .start(completed: { _ in
-                self.readByUser.value = true
+                self.isRead.value = true
                 
                 self.realm.write {
-                    self.activity.readByUser = true
+                    self.activity.isRead = true
                 }
             })
     }

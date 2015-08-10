@@ -22,14 +22,10 @@ class SearchViewModel {
             .throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
             .map(escape)
             .flatMap(.Latest) { keyword in Api.get("optographs/search?keyword=\(keyword)", authorized: true) }
-            .start(next: { json in
-                let optographs = Mapper<Optograph>()
-                    .mapArray(json)!
-                    .sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
-                
-                self.results.value = optographs
+            .map { json in Mapper<Optograph>().mapArray(json)! }
+            .start(next: { optographs in
+                self.results.value = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
             })
-        
     }
     
     private func escape(str: String) -> String {

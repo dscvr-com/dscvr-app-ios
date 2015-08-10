@@ -12,12 +12,12 @@ import ObjectMapper
 
 class Optograph: Object, Model {
     dynamic var id = 0
-    dynamic var text = ""
-    dynamic var user: User?
+    dynamic var description_ = ""
+    dynamic var person: Person?
     dynamic var createdAt = NSDate()
-    dynamic var likedByUser = false
-    dynamic var likeCount = 0
-    dynamic var commentCount = 0
+    dynamic var isStarred = false
+    dynamic var starsCount = 0
+    dynamic var commentsCount = 0
     dynamic var viewsCount = 0
     dynamic var location = ""
     
@@ -34,12 +34,12 @@ extension Optograph: Mappable {
     
     func mapping(map: Map) {
         id              <- map["id"]
-        text            <- map["text"]
-        user            <- map["user"]
+        description_    <- map["description"]
+        person          <- map["person"]
         createdAt       <- (map["created_at"], NSDateTransform())
-        likedByUser     <- map["liked_by_user"]
-        likeCount       <- map["like_count"]
-        commentCount    <- map["comment_count"]
+        isStarred       <- map["is_starred"]
+        starsCount      <- map["stars_count"]
+        commentsCount   <- map["comments_count"]
         viewsCount      <- map["views_count"]
         location        <- map["location.description"]
     }

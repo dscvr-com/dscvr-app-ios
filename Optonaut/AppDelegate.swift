@@ -20,13 +20,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupAppearanceDefaults()
         
         do {
-            try NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath)
+//            try NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath)
+            print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         } catch let err {
             print(err)
         }
         
-        if NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.DebugEnabled.rawValue) == nil {
-            NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.DebugEnabled.rawValue)
+        if NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.DebugEnabled.rawValue) == nil {
+            NSUserDefaults.standardUserDefaults().setBool(false, forKey: PersonDefaultsKeys.DebugEnabled.rawValue)
         }
         
         let credProvider = AWSStaticCredentialsProvider(accessKey: "AKIAJ6AYCIIVD6E4FDLQ", secretKey: "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")
@@ -40,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             window.backgroundColor = UIColor.whiteColor()
             
-            let userIsLoggedIn = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.UserIsLoggedIn.rawValue);
+            let userIsLoggedIn = NSUserDefaults.standardUserDefaults().boolForKey(PersonDefaultsKeys.PersonIsLoggedIn.rawValue);
             if userIsLoggedIn {
                 window.rootViewController = TabBarViewController()
             } else {
@@ -53,8 +54,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func onNotificationLogout() {
-        NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.UserToken.rawValue)
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.UserIsLoggedIn.rawValue)
+        NSUserDefaults.standardUserDefaults().setObject("", forKey: PersonDefaultsKeys.PersonToken.rawValue)
+        NSUserDefaults.standardUserDefaults().setBool(false, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
         
         if let window = window {
             window.rootViewController = LoginViewController()

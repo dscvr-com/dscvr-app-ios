@@ -10,16 +10,15 @@ import Foundation
 import RealmSwift
 import ObjectMapper
 
-class User: Object, Model {
+class Person: Object, Model {
     dynamic var id = 0
     dynamic var email = ""
-    dynamic var name = ""
+    dynamic var fullName = ""
     dynamic var userName = ""
-    dynamic var bio = ""
-    dynamic var numberOfFollowers = 0
-    dynamic var numberOfFollowings = 0
-    dynamic var numberOfOptographs = 0
-    dynamic var isFollowing = false
+    dynamic var description_ = ""
+    dynamic var followersCount = 0
+    dynamic var followedCount = 0
+    dynamic var isFollowed = false
     dynamic var createdAt = NSDate()
     
     let optographs = List<Optograph>()
@@ -29,18 +28,17 @@ class User: Object, Model {
     }
 }
 
-extension User: Mappable {
+extension Person: Mappable {
     
     func mapping(map: Map) {
         id                  <- map["id"]
         email               <- map["email"]
-        name                <- map["name"]
+        fullName            <- map["full_name"]
         userName            <- map["user_name"]
-        bio                 <- map["bio"]
-        numberOfFollowers   <- map["number_of_followers"]
-        numberOfFollowings  <- map["number_of_followings"]
-        numberOfFollowings  <- map["number_of_followings"]
-        isFollowing         <- map["is_following"]
+        description_        <- map["description"]
+        followersCount      <- map["followers_count"]
+        followedCount       <- map["followed_count"]
+        isFollowed          <- map["is_followed"]
         createdAt           <- (map["created_at"], NSDateTransform())
         
         var arr = [Optograph]()
@@ -53,7 +51,7 @@ extension User: Mappable {
     }
     
     static func newInstance() -> Mappable {
-        return User()
+        return Person()
     }
     
 }

@@ -13,48 +13,45 @@ import ObjectMapper
 class EditProfileViewModel {
     
     let id = MutableProperty<Int>(0)
-    let name = MutableProperty<String>("")
+    let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
-    let bio = MutableProperty<String>("")
+    let description = MutableProperty<String>("")
     let email = MutableProperty<String>("")
     let avatarUrl = MutableProperty<String>("")
     let debugEnabled = MutableProperty<Bool>(false)
     
-    init(id: Int) {
-        self.id.value = id
+    init() {
+        id.value = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
+        debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(PersonDefaultsKeys.DebugEnabled.rawValue)
         
-        debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue)
-        
-        Api.get("users/\(id)", authorized: true)
+        Api.get("persons/\(id.value)", authorized: true)
             .start(next: { json in
-                let user = Mapper<User>().map(json)!
-                self.email.value = user.email
-                self.name.value = user.name
-                self.userName.value = user.userName
-                self.bio.value = user.bio
-                self.avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(id % 4).jpg"
+                let person = Mapper<Person>().map(json)!
+                self.email.value = person.email
+                self.fullName.value = person.fullName
+                self.userName.value = person.userName
+                self.description.value = person.description_
+                self.avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(self.id.value % 4).jpg"
             })
     }
     
     func updateData() -> SignalProducer<JSONResponse, NSError> {
         let parameters = [
-            "name": name.value,
-            "user_name": userName.value,
-            "email": email.value,
-            "bio": bio.value,
+            "full_name": fullName.value,
+            "description": description.value,
         ]
         
-        return Api.put("users", authorized: true, parameters: parameters)
+        return Api.put("persons/me", authorized: true, parameters: parameters)
     }
     
     func updateAvatar() {
         
     }
     
-    func updatePassword(oldPassword: String, newPassword: String) {
-        let parameters = ["old": oldPassword, "new": newPassword]
+    func updatePassword(currentPassword: String, newPassword: String) {
+        let parameters = ["current": currentPassword, "new": newPassword]
         
-        Api.post("users/change-password", authorized: true, parameters: parameters)
+        Api.post("persons/me/change-password", authorized: true, parameters: parameters)
             .start(error: { error in
                 print(error)
             })
@@ -62,7 +59,7 @@ class EditProfileViewModel {
     
     func toggleDebug() {
         debugEnabled.value = !debugEnabled.value
-        NSUserDefaults.standardUserDefaults().setBool(debugEnabled.value, forKey: UserDefaultsKeys.DebugEnabled.rawValue)
+        NSUserDefaults.standardUserDefaults().setBool(debugEnabled.value, forKey: PersonDefaultsKeys.DebugEnabled.rawValue)
     }
     
 }

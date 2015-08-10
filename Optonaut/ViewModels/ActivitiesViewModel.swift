@@ -54,7 +54,7 @@ class ActivitiesViewModel: NSObject {
         }
         
         results.value = mergeModels(results.value, otherModels: activities)
-        unreadCount.value = results.value.reduce(0) { (acc, activity) in acc + (activity.readByUser ? 0 : 1) }
+        unreadCount.value = results.value.reduce(0) { (acc, activity) in acc + (activity.isRead ? 0 : 1) }
     }
     
 }

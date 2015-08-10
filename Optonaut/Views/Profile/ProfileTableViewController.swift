@@ -15,7 +15,7 @@ class ProfileTableViewController: OptographTableViewController {
     var viewModel: OptographsViewModel
     
     required init(userId: Int) {
-        viewModel = OptographsViewModel(source: "users/\(userId)/optographs")
+        viewModel = OptographsViewModel(source: "persons/\(userId)/optographs")
         super.init(nibName: nil, bundle: nil)
     }
     

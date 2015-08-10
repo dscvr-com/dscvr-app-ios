@@ -17,57 +17,55 @@ class ProfileViewModel {
     let realm = try! Realm()
     
     let id = MutableProperty<Int>(0)
-    let name = MutableProperty<String>("")
+    let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
-    let bio = MutableProperty<String>("")
-    let numberOfFollowers = MutableProperty<Int>(0)
-    let numberOfFollowings = MutableProperty<Int>(0)
-    let numberOfOptographs = MutableProperty<Int>(0)
-    let isFollowing = MutableProperty<Bool>(false)
+    let description = MutableProperty<String>("")
+    let followersCount = MutableProperty<Int>(0)
+    let followedCount = MutableProperty<Int>(0)
+    let isFollowed = MutableProperty<Bool>(false)
     let avatarUrl = MutableProperty<String>("")
     
     init(id: Int) {
         // TODO check if really needed here
         self.id.value = id
         
-        if let user = realm.objectForPrimaryKey(User.self, key: id) {
-            setUser(user)
+        if let person = realm.objectForPrimaryKey(Person.self, key: id) {
+            setPerson(person)
         }
     
-        Api.get("users/\(id)", authorized: true)
+        Api.get("persons/\(id)", authorized: true)
             .start(next: { json in
-                let user = Mapper<User>().map(json)!
-                self.setUser(user)
+                let person = Mapper<Person>().map(json)!
+                self.setPerson(person)
             })
     }
     
     func toggleFollow() {
-        let followedBefore = isFollowing.value
+        let followedBefore = isFollowed.value
         
-        isFollowing.value = !followedBefore
+        isFollowed.value = !followedBefore
         
         if followedBefore {
-            Api.delete("users/\(id.value)/follow", authorized: true)
+            Api.delete("persons/\(id.value)/follow", authorized: true)
                 .start(error: { _ in
-                    self.isFollowing.value = followedBefore
+                    self.isFollowed.value = followedBefore
                 })
         } else {
-            Api.post("users/\(id.value)/follow", authorized: true, parameters: nil)
+            Api.post("persons/\(id.value)/follow", authorized: true, parameters: nil)
                 .start(error: { _ in
-                    self.isFollowing.value = followedBefore
+                    self.isFollowed.value = followedBefore
                 })
         }
     }
     
-    private func setUser(user: User) {
-        name.value = user.name
-        userName.value = user.userName
-        bio.value = user.bio
-        numberOfFollowers.value = user.numberOfFollowers
-        numberOfFollowings.value = user.numberOfFollowings
-        numberOfOptographs.value = user.numberOfOptographs
-        isFollowing.value = user.isFollowing
-        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(user.id % 4).jpg"
+    private func setPerson(person: Person) {
+        fullName.value = person.fullName
+        userName.value = person.userName
+        description.value = person.description_
+        followersCount.value = person.followersCount
+        followedCount.value = person.followedCount
+        isFollowed.value = person.isFollowed
+        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(person.id % 4).jpg"
     }
     
 }

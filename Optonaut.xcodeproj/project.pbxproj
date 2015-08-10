@@ -65,7 +65,7 @@
 		8F5FDA091B412DB2007E073C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA081B412DB2007E073C /* Constants.swift */; };
 		8F5FDA0B1B433DAB007E073C /* ViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA0A1B433DAB007E073C /* ViewerViewController.swift */; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
-		8F7738161B380F5D001F642B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* User.swift */; };
+		8F7738161B380F5D001F642B /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* Person.swift */; };
 		8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738211B380FC1001F642B /* TabBarViewController.swift */; };
 		8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738311B3816C7001F642B /* PureLayout_iOS.framework */; };
 		8F7738361B3816C7001F642B /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738321B3816C7001F642B /* Realm.framework */; };
@@ -88,19 +88,18 @@
 		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
 		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
 		8FD7F85B1B591452001680AA /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD7F85A1B591452001680AA /* AWSS3.framework */; };
-		8FD7F8731B5924D5001680AA /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8FD7F85E1B5924D5001680AA /* CMakeLists.txt */; };
-		8FD7F8741B5924D5001680AA /* core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7F85F1B5924D5001680AA /* core.cpp */; };
-		8FD7F8771B5924D5001680AA /* monoStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7F8661B5924D5001680AA /* monoStitcher.cpp */; };
-		8FD7F8781B5924D5001680AA /* quat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7F8681B5924D5001680AA /* quat.cpp */; };
-		8FD7F8791B5924D5001680AA /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7F86A1B5924D5001680AA /* simpleSphereStitcher.cpp */; };
-		8FD7F87A1B5924D5001680AA /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7F86D1B5924D5001680AA /* support.cpp */; };
-		8FD7F87C1B5924D5001680AA /* wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD7F8711B5924D5001680AA /* wrapper.cpp */; };
 		8FD7F87E1B592708001680AA /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD7F87D1B592708001680AA /* AWSCore.framework */; };
 		8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */; };
 		8FEAB9791B51182B00F9FE64 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEAB9781B51182B00F9FE64 /* DetailsViewModel.swift */; };
 		8FFCE4B91B4DBF1900832C88 /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4B81B4DBF1900832C88 /* KILabel.m */; };
 		8FFCE4BB1B4EA9AC00832C88 /* ActivityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4BA1B4EA9AC00832C88 /* ActivityTableViewCell.swift */; };
 		8FFCE4BD1B4EAA2300832C88 /* ActivityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4BC1B4EAA2300832C88 /* ActivityViewModel.swift */; };
+		8FFFD4BC1B78B5210043E43A /* core.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFFD4891B78B5200043E43A /* core.cpp */; };
+		8FFFD4BD1B78B5210043E43A /* monoStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFFD4AE1B78B5200043E43A /* monoStitcher.cpp */; };
+		8FFFD4BE1B78B5210043E43A /* quat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFFD4B01B78B5200043E43A /* quat.cpp */; };
+		8FFFD4BF1B78B5210043E43A /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFFD4B31B78B5200043E43A /* simpleSphereStitcher.cpp */; };
+		8FFFD4C01B78B5210043E43A /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFFD4B61B78B5210043E43A /* support.cpp */; };
+		8FFFD4C11B78B5210043E43A /* wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFFD4BA1B78B5210043E43A /* wrapper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -174,7 +173,7 @@
 		8F5FDA0A1B433DAB007E073C /* ViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewerViewController.swift; sourceTree = "<group>"; };
 		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
-		8F7738141B380F5D001F642B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		8F7738141B380F5D001F642B /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		8F7738211B380FC1001F642B /* TabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		8F7738311B3816C7001F642B /* PureLayout_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout_iOS.framework; path = Carthage/Build/iOS/PureLayout_iOS.framework; sourceTree = "<group>"; };
 		8F7738321B3816C7001F642B /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
@@ -203,22 +202,6 @@
 		8FCCA0461B3806040091F1B1 /* OptonautTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptonautTests.swift; sourceTree = "<group>"; };
 		8FCCA0511B3806680091F1B1 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8FD7F85A1B591452001680AA /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSS3.framework; path = Carthage/Build/iOS/AWSS3.framework; sourceTree = "<group>"; };
-		8FD7F85D1B5924D5001680AA /* alignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = alignment.hpp; sourceTree = "<group>"; };
-		8FD7F85E1B5924D5001680AA /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		8FD7F85F1B5924D5001680AA /* core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = core.cpp; sourceTree = "<group>"; };
-		8FD7F8601B5924D5001680AA /* core.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = core.hpp; sourceTree = "<group>"; };
-		8FD7F8661B5924D5001680AA /* monoStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = monoStitcher.cpp; sourceTree = "<group>"; };
-		8FD7F8671B5924D5001680AA /* monoStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = monoStitcher.hpp; sourceTree = "<group>"; };
-		8FD7F8681B5924D5001680AA /* quat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = quat.cpp; sourceTree = "<group>"; };
-		8FD7F8691B5924D5001680AA /* quat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = quat.hpp; sourceTree = "<group>"; };
-		8FD7F86A1B5924D5001680AA /* simpleSphereStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simpleSphereStitcher.cpp; sourceTree = "<group>"; };
-		8FD7F86B1B5924D5001680AA /* simpleSphereStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simpleSphereStitcher.hpp; sourceTree = "<group>"; };
-		8FD7F86C1B5924D5001680AA /* streamAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = streamAligner.hpp; sourceTree = "<group>"; };
-		8FD7F86D1B5924D5001680AA /* support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = support.cpp; sourceTree = "<group>"; };
-		8FD7F86E1B5924D5001680AA /* support.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = support.hpp; sourceTree = "<group>"; };
-		8FD7F8701B5924D5001680AA /* visualAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualAligner.hpp; sourceTree = "<group>"; };
-		8FD7F8711B5924D5001680AA /* wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wrapper.cpp; sourceTree = "<group>"; };
-		8FD7F8721B5924D5001680AA /* wrapper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = wrapper.hpp; sourceTree = "<group>"; };
 		8FD7F87D1B592708001680AA /* AWSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCore.framework; path = Carthage/Build/iOS/AWSCore.framework; sourceTree = "<group>"; };
 		8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
 		8FEAB9781B51182B00F9FE64 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
@@ -226,6 +209,52 @@
 		8FFCE4B81B4DBF1900832C88 /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabel.m; sourceTree = "<group>"; };
 		8FFCE4BA1B4EA9AC00832C88 /* ActivityTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityTableViewCell.swift; sourceTree = "<group>"; };
 		8FFCE4BC1B4EAA2300832C88 /* ActivityViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityViewModel.swift; sourceTree = "<group>"; };
+		8FFFD4881B78B5200043E43A /* alignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = alignment.hpp; sourceTree = "<group>"; };
+		8FFFD4891B78B5200043E43A /* core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = core.cpp; sourceTree = "<group>"; };
+		8FFFD48A1B78B5200043E43A /* core.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = core.hpp; sourceTree = "<group>"; };
+		8FFFD48D1B78B5200043E43A /* allocators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allocators.h; sourceTree = "<group>"; };
+		8FFFD48E1B78B5200043E43A /* document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = document.h; sourceTree = "<group>"; };
+		8FFFD48F1B78B5200043E43A /* encodedstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = encodedstream.h; sourceTree = "<group>"; };
+		8FFFD4901B78B5200043E43A /* encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = encodings.h; sourceTree = "<group>"; };
+		8FFFD4921B78B5200043E43A /* en.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = en.h; sourceTree = "<group>"; };
+		8FFFD4931B78B5200043E43A /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
+		8FFFD4941B78B5200043E43A /* filereadstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filereadstream.h; sourceTree = "<group>"; };
+		8FFFD4951B78B5200043E43A /* filewritestream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filewritestream.h; sourceTree = "<group>"; };
+		8FFFD4971B78B5200043E43A /* biginteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = biginteger.h; sourceTree = "<group>"; };
+		8FFFD4981B78B5200043E43A /* diyfp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = diyfp.h; sourceTree = "<group>"; };
+		8FFFD4991B78B5200043E43A /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; };
+		8FFFD49A1B78B5200043E43A /* ieee754.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ieee754.h; sourceTree = "<group>"; };
+		8FFFD49B1B78B5200043E43A /* itoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itoa.h; sourceTree = "<group>"; };
+		8FFFD49C1B78B5200043E43A /* meta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = meta.h; sourceTree = "<group>"; };
+		8FFFD49D1B78B5200043E43A /* pow10.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pow10.h; sourceTree = "<group>"; };
+		8FFFD49E1B78B5200043E43A /* stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
+		8FFFD49F1B78B5200043E43A /* strfunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strfunc.h; sourceTree = "<group>"; };
+		8FFFD4A01B78B5200043E43A /* strtod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strtod.h; sourceTree = "<group>"; };
+		8FFFD4A11B78B5200043E43A /* swap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swap.h; sourceTree = "<group>"; };
+		8FFFD4A21B78B5200043E43A /* memorybuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memorybuffer.h; sourceTree = "<group>"; };
+		8FFFD4A31B78B5200043E43A /* memorystream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memorystream.h; sourceTree = "<group>"; };
+		8FFFD4A51B78B5200043E43A /* inttypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inttypes.h; sourceTree = "<group>"; };
+		8FFFD4A61B78B5200043E43A /* stdint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdint.h; sourceTree = "<group>"; };
+		8FFFD4A71B78B5200043E43A /* pointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pointer.h; sourceTree = "<group>"; };
+		8FFFD4A81B78B5200043E43A /* prettywriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = prettywriter.h; sourceTree = "<group>"; };
+		8FFFD4A91B78B5200043E43A /* rapidjson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rapidjson.h; sourceTree = "<group>"; };
+		8FFFD4AA1B78B5200043E43A /* reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
+		8FFFD4AB1B78B5200043E43A /* stringbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringbuffer.h; sourceTree = "<group>"; };
+		8FFFD4AC1B78B5200043E43A /* writer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = writer.h; sourceTree = "<group>"; };
+		8FFFD4AE1B78B5200043E43A /* monoStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = monoStitcher.cpp; sourceTree = "<group>"; };
+		8FFFD4AF1B78B5200043E43A /* monoStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = monoStitcher.hpp; sourceTree = "<group>"; };
+		8FFFD4B01B78B5200043E43A /* quat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = quat.cpp; sourceTree = "<group>"; };
+		8FFFD4B11B78B5200043E43A /* quat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = quat.hpp; sourceTree = "<group>"; };
+		8FFFD4B21B78B5200043E43A /* simpleSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simpleSeamer.hpp; sourceTree = "<group>"; };
+		8FFFD4B31B78B5200043E43A /* simpleSphereStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simpleSphereStitcher.cpp; sourceTree = "<group>"; };
+		8FFFD4B41B78B5200043E43A /* simpleSphereStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simpleSphereStitcher.hpp; sourceTree = "<group>"; };
+		8FFFD4B51B78B5210043E43A /* streamAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = streamAligner.hpp; sourceTree = "<group>"; };
+		8FFFD4B61B78B5210043E43A /* support.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = support.cpp; sourceTree = "<group>"; };
+		8FFFD4B71B78B5210043E43A /* support.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = support.hpp; sourceTree = "<group>"; };
+		8FFFD4B81B78B5210043E43A /* thresholdSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = thresholdSeamer.hpp; sourceTree = "<group>"; };
+		8FFFD4B91B78B5210043E43A /* visualAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualAligner.hpp; sourceTree = "<group>"; };
+		8FFFD4BA1B78B5210043E43A /* wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wrapper.cpp; sourceTree = "<group>"; };
+		8FFFD4BB1B78B5210043E43A /* wrapper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = wrapper.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -430,7 +459,7 @@
 			isa = PBXGroup;
 			children = (
 				8F7738131B380F5D001F642B /* Optograph.swift */,
-				8F7738141B380F5D001F642B /* User.swift */,
+				8F7738141B380F5D001F642B /* Person.swift */,
 				8F4CE79F1B6CEEC700BD8A71 /* Model.swift */,
 				8F5FDA001B3EECB0007E073C /* Activity.swift */,
 			);
@@ -539,42 +568,28 @@
 		8FD7F85C1B5924D5001680AA /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
-				8FD7F85D1B5924D5001680AA /* alignment.hpp */,
-				8FD7F85E1B5924D5001680AA /* CMakeLists.txt */,
-				8FD7F85F1B5924D5001680AA /* core.cpp */,
-				8FD7F8601B5924D5001680AA /* core.hpp */,
-				8FD7F8641B5924D5001680AA /* lib */,
-				8FD7F8661B5924D5001680AA /* monoStitcher.cpp */,
-				8FD7F8671B5924D5001680AA /* monoStitcher.hpp */,
-				8FD7F8681B5924D5001680AA /* quat.cpp */,
-				8FD7F8691B5924D5001680AA /* quat.hpp */,
-				8FD7F86A1B5924D5001680AA /* simpleSphereStitcher.cpp */,
-				8FD7F86B1B5924D5001680AA /* simpleSphereStitcher.hpp */,
-				8FD7F86C1B5924D5001680AA /* streamAligner.hpp */,
-				8FD7F86D1B5924D5001680AA /* support.cpp */,
-				8FD7F86E1B5924D5001680AA /* support.hpp */,
-				8FD7F8701B5924D5001680AA /* visualAligner.hpp */,
-				8FD7F8711B5924D5001680AA /* wrapper.cpp */,
-				8FD7F8721B5924D5001680AA /* wrapper.hpp */,
+				8FFFD4881B78B5200043E43A /* alignment.hpp */,
+				8FFFD4891B78B5200043E43A /* core.cpp */,
+				8FFFD48A1B78B5200043E43A /* core.hpp */,
+				8FFFD48B1B78B5200043E43A /* lib */,
+				8FFFD4AE1B78B5200043E43A /* monoStitcher.cpp */,
+				8FFFD4AF1B78B5200043E43A /* monoStitcher.hpp */,
+				8FFFD4B01B78B5200043E43A /* quat.cpp */,
+				8FFFD4B11B78B5200043E43A /* quat.hpp */,
+				8FFFD4B21B78B5200043E43A /* simpleSeamer.hpp */,
+				8FFFD4B31B78B5200043E43A /* simpleSphereStitcher.cpp */,
+				8FFFD4B41B78B5200043E43A /* simpleSphereStitcher.hpp */,
+				8FFFD4B51B78B5210043E43A /* streamAligner.hpp */,
+				8FFFD4B61B78B5210043E43A /* support.cpp */,
+				8FFFD4B71B78B5210043E43A /* support.hpp */,
+				8FFFD4B81B78B5210043E43A /* thresholdSeamer.hpp */,
+				8FFFD4B91B78B5210043E43A /* visualAligner.hpp */,
+				8FFFD4BA1B78B5210043E43A /* wrapper.cpp */,
+				8FFFD4BB1B78B5210043E43A /* wrapper.hpp */,
 			);
 			name = Stitcher;
 			path = stitcher/src;
 			sourceTree = SOURCE_ROOT;
-		};
-		8FD7F8641B5924D5001680AA /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				8FD7F8651B5924D5001680AA /* tinyxml2 */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
-		8FD7F8651B5924D5001680AA /* tinyxml2 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = tinyxml2;
-			sourceTree = "<group>";
 		};
 		8FFCE4B61B4DBF1900832C88 /* Vendor */ = {
 			isa = PBXGroup;
@@ -585,6 +600,82 @@
 				8FFCE4B81B4DBF1900832C88 /* KILabel.m */,
 			);
 			path = Vendor;
+			sourceTree = "<group>";
+		};
+		8FFFD48B1B78B5200043E43A /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				8FFFD48C1B78B5200043E43A /* rapidjson */,
+				8FFFD4AD1B78B5200043E43A /* tinyxml2 */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		8FFFD48C1B78B5200043E43A /* rapidjson */ = {
+			isa = PBXGroup;
+			children = (
+				8FFFD48D1B78B5200043E43A /* allocators.h */,
+				8FFFD48E1B78B5200043E43A /* document.h */,
+				8FFFD48F1B78B5200043E43A /* encodedstream.h */,
+				8FFFD4901B78B5200043E43A /* encodings.h */,
+				8FFFD4911B78B5200043E43A /* error */,
+				8FFFD4941B78B5200043E43A /* filereadstream.h */,
+				8FFFD4951B78B5200043E43A /* filewritestream.h */,
+				8FFFD4961B78B5200043E43A /* internal */,
+				8FFFD4A21B78B5200043E43A /* memorybuffer.h */,
+				8FFFD4A31B78B5200043E43A /* memorystream.h */,
+				8FFFD4A41B78B5200043E43A /* msinttypes */,
+				8FFFD4A71B78B5200043E43A /* pointer.h */,
+				8FFFD4A81B78B5200043E43A /* prettywriter.h */,
+				8FFFD4A91B78B5200043E43A /* rapidjson.h */,
+				8FFFD4AA1B78B5200043E43A /* reader.h */,
+				8FFFD4AB1B78B5200043E43A /* stringbuffer.h */,
+				8FFFD4AC1B78B5200043E43A /* writer.h */,
+			);
+			path = rapidjson;
+			sourceTree = "<group>";
+		};
+		8FFFD4911B78B5200043E43A /* error */ = {
+			isa = PBXGroup;
+			children = (
+				8FFFD4921B78B5200043E43A /* en.h */,
+				8FFFD4931B78B5200043E43A /* error.h */,
+			);
+			path = error;
+			sourceTree = "<group>";
+		};
+		8FFFD4961B78B5200043E43A /* internal */ = {
+			isa = PBXGroup;
+			children = (
+				8FFFD4971B78B5200043E43A /* biginteger.h */,
+				8FFFD4981B78B5200043E43A /* diyfp.h */,
+				8FFFD4991B78B5200043E43A /* dtoa.h */,
+				8FFFD49A1B78B5200043E43A /* ieee754.h */,
+				8FFFD49B1B78B5200043E43A /* itoa.h */,
+				8FFFD49C1B78B5200043E43A /* meta.h */,
+				8FFFD49D1B78B5200043E43A /* pow10.h */,
+				8FFFD49E1B78B5200043E43A /* stack.h */,
+				8FFFD49F1B78B5200043E43A /* strfunc.h */,
+				8FFFD4A01B78B5200043E43A /* strtod.h */,
+				8FFFD4A11B78B5200043E43A /* swap.h */,
+			);
+			path = internal;
+			sourceTree = "<group>";
+		};
+		8FFFD4A41B78B5200043E43A /* msinttypes */ = {
+			isa = PBXGroup;
+			children = (
+				8FFFD4A51B78B5200043E43A /* inttypes.h */,
+				8FFFD4A61B78B5200043E43A /* stdint.h */,
+			);
+			path = msinttypes;
+			sourceTree = "<group>";
+		};
+		8FFFD4AD1B78B5200043E43A /* tinyxml2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = tinyxml2;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -672,7 +763,6 @@
 			files = (
 				8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */,
 				8F488EE81B44180D00599B61 /* LUT_XG.png in Resources */,
-				8FD7F8731B5924D5001680AA /* CMakeLists.txt in Resources */,
 				8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */,
 				8F488EDC1B4416A100599B61 /* displacement_left.vsh in Resources */,
 				8F488EE71B44180D00599B61 /* LUT_XB.png in Resources */,
@@ -734,14 +824,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F5FD9FB1B3DB853007E073C /* ActivityTableViewController.swift in Sources */,
+				8FFFD4BF1B78B5210043E43A /* simpleSphereStitcher.cpp in Sources */,
 				8F500CFA1B4D5D6E002B9878 /* OptographTableViewCell.swift in Sources */,
 				8F366DD21B59342E00C0012E /* CameraDebugHelper.swift in Sources */,
 				8FBA5CAC1B54266B00F0F489 /* EditProfileViewController.swift in Sources */,
 				8F5FDA0B1B433DAB007E073C /* ViewerViewController.swift in Sources */,
-				8FD7F8781B5924D5001680AA /* quat.cpp in Sources */,
 				8F4C6E1A1B4717DF007508ED /* Icomoon.swift in Sources */,
 				8F5FD9E01B3C5578007E073C /* OptographsViewModel.swift in Sources */,
 				8F17CF731B4F1C5C00A10DA3 /* HexColor.swift in Sources */,
+				8FFFD4BE1B78B5210043E43A /* quat.cpp in Sources */,
 				8F464B041B4C767300A66FA5 /* OptographTableViewController.swift in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */,
@@ -751,6 +842,7 @@
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
 				8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */,
 				8F464AFD1B4BC4BB00A66FA5 /* InsetLabel.swift in Sources */,
+				8FFFD4BD1B78B5210043E43A /* monoStitcher.cpp in Sources */,
 				8F53ED0E1B6F6A1D00D99F41 /* LoadMore.swift in Sources */,
 				8F464B021B4C727200A66FA5 /* ExploreNavViewController.swift in Sources */,
 				8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */,
@@ -762,13 +854,13 @@
 				8F464B071B4C7A9000A66FA5 /* HashtagTableViewController.swift in Sources */,
 				8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */,
 				8F5FD9FD1B3DB909007E073C /* ActivitiesViewModel.swift in Sources */,
-				8FD7F87C1B5924D5001680AA /* wrapper.cpp in Sources */,
 				8F500D001B4D8028002B9878 /* Appearance.swift in Sources */,
 				8FBA5CAE1B54556000F0F489 /* BottomLineTextField.swift in Sources */,
 				8FFCE4BB1B4EA9AC00832C88 /* ActivityTableViewCell.swift in Sources */,
 				8F4C6E581B4A73BE007508ED /* Fonts.swift in Sources */,
 				8F5FD9F91B3DB7B3007E073C /* LoginViewController.swift in Sources */,
 				8F464AF81B4ADAF300A66FA5 /* RequestInviteViewModel.swift in Sources */,
+				8FFFD4BC1B78B5210043E43A /* core.cpp in Sources */,
 				8F5FD9D61B3AFE41007E073C /* LoginViewModel.swift in Sources */,
 				8F5B26931B56AE0D00E0B955 /* CameraViewModel.swift in Sources */,
 				8F5FD9F81B3DB7B3007E073C /* DetailsViewController.swift in Sources */,
@@ -776,16 +868,15 @@
 				8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */,
 				8FEAB9791B51182B00F9FE64 /* DetailsViewModel.swift in Sources */,
 				8FA2E7B71B55588400407181 /* Stitcher.mm in Sources */,
+				8FFFD4C01B78B5210043E43A /* support.cpp in Sources */,
 				8F5FD9F01B3DB724007E073C /* SearchViewModel.swift in Sources */,
 				8FFCE4BD1B4EAA2300832C88 /* ActivityViewModel.swift in Sources */,
 				8FBDE8B41B60FE9E00C78486 /* FeedViewModel.swift in Sources */,
-				8FD7F87A1B5924D5001680AA /* support.cpp in Sources */,
-				8F7738161B380F5D001F642B /* User.swift in Sources */,
+				8F7738161B380F5D001F642B /* Person.swift in Sources */,
 				8FA2E7AE1B55366D00407181 /* EditProfileViewModel.swift in Sources */,
-				8FD7F8741B5924D5001680AA /* core.cpp in Sources */,
+				8FFFD4C11B78B5210043E43A /* wrapper.cpp in Sources */,
 				8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */,
 				8F464AFB1B4BC38000A66FA5 /* RefreshAnimator.swift in Sources */,
-				8FD7F8791B5924D5001680AA /* simpleSphereStitcher.cpp in Sources */,
 				8F464AFF1B4C62DE00A66FA5 /* SearchTableViewController.swift in Sources */,
 				8F9A4FF81B39E992009C4548 /* ProfileViewController.swift in Sources */,
 				8F17CF711B4F15B100A10DA3 /* NSDateTransform.swift in Sources */,
@@ -793,7 +884,6 @@
 				8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */,
 				8FFCE4B91B4DBF1900832C88 /* KILabel.m in Sources */,
 				8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */,
-				8FD7F8771B5924D5001680AA /* monoStitcher.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

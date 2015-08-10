@@ -11,18 +11,18 @@ import RealmSwift
 import ObjectMapper
 
 enum ActivityType: String {
-    case Like = "like"
+    case Like = "star"
     case Follow = "follow"
     case Nil = ""
 }
 
 class Activity: Object, Model {
     dynamic var id = 0
-    dynamic var creator: User?
-    dynamic var receiver: User?
+    dynamic var creator: Person?
+    dynamic var receiver: Person?
     dynamic var optograph: Optograph?
     dynamic var createdAt = NSDate()
-    dynamic var readByUser = false
+    dynamic var isRead = false
     var activityType: ActivityType = .Nil
     
     override static func primaryKey() -> String? {
@@ -37,26 +37,26 @@ extension Activity: Mappable {
     }
     
     func mapping(map: Map) {
-        let typeTransform = TransformOf<ActivityType, String>(
-            fromJSON: { (value: String?) -> ActivityType? in
-                switch value! {
-                case "like": return .Like
-                case "follow": return .Follow
-                default: return .Nil
-                }
-            },
-            toJSON: { (value: ActivityType?) -> String? in
-                return value!.rawValue
-            }
-        )
+//        let typeTransform = TransformOf<ActivityType, String>(
+//            fromJSON: { (value: String?) -> ActivityType? in
+//                switch value! {
+//                case "star": return .Like
+//                case "follow": return .Follow
+//                default: return .Nil
+//                }
+//            },
+//            toJSON: { (value: ActivityType?) -> String? in
+//                return value!.rawValue
+//            }
+//        )
         
         id              <- map["id"]
         creator         <- map["creator"]
         receiver        <- map["receiver"]
         optograph       <- map["optograph"]
         createdAt       <- (map["created_at"], NSDateTransform())
-        readByUser      <- map["read_by_user"]
-        activityType    <- (map["type"], typeTransform)
+        isRead          <- map["is_read"]
+//        activityType    <- (map["type"], typeTransform)
     }
     
 }

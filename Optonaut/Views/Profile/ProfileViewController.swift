@@ -17,24 +17,24 @@ class ProfileViewController: UIViewController, TransparentNavbar {
     let avatarBackgroundImageView = UIImageView()
     var avatarBackgroundBlurView: UIVisualEffectView!
     let avatarImageView = UIImageView()
-    let nameView = UILabel()
+    let fullNameView = UILabel()
     let userNameView = UILabel()
-    let bioView = UILabel()
+    let descriptionView = UILabel()
     let followButtonView = UIButton()
     let logoutButtonView = UIButton()
     let editProfileButtonView = UIButton()
     let followersHeadingView = UILabel()
     let followersCountView = UILabel()
     let verticalLineView = UIView()
-    let followingHeadingView = UILabel()
-    let followingCountView = UILabel()
+    let followedHeadingView = UILabel()
+    let followedCountView = UILabel()
     var optographsView: UIView!
     
     var isMe = false
     
-    required init(userId: Int) {
-        viewModel = ProfileViewModel(id: userId)
-        isMe = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.UserId.rawValue) == userId
+    required init(personId: Int) {
+        viewModel = ProfileViewModel(id: personId)
+        isMe = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue) == personId
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -67,22 +67,22 @@ class ProfileViewController: UIViewController, TransparentNavbar {
                 }
             })
         
-        nameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        nameView.textColor = .whiteColor()
-        nameView.rac_text <~ viewModel.name
-        view.addSubview(nameView)
+        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        fullNameView.textColor = .whiteColor()
+        fullNameView.rac_text <~ viewModel.fullName
+        view.addSubview(fullNameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = .whiteColor()
         userNameView.rac_text <~ viewModel.userName.producer .map { "@\($0)" }
         view.addSubview(userNameView)
         
-        bioView.numberOfLines = 2
-        bioView.textAlignment = .Center
-        bioView.font = UIFont.robotoOfSize(13, withType: .Light)
-        bioView.textColor = .whiteColor()
-        bioView.rac_text <~ viewModel.bio
-        view.addSubview(bioView)
+        descriptionView.numberOfLines = 2
+        descriptionView.textAlignment = .Center
+        descriptionView.font = UIFont.robotoOfSize(13, withType: .Light)
+        descriptionView.textColor = .whiteColor()
+        descriptionView.rac_text <~ viewModel.description
+        view.addSubview(descriptionView)
         
         followButtonView.backgroundColor = .whiteColor()
         followButtonView.layer.borderWidth = 1
@@ -91,9 +91,9 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         followButtonView.layer.masksToBounds = true
         followButtonView.setTitleColor(BaseColor, forState: .Normal)
         followButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
-        viewModel.isFollowing.producer
-            .start(next: { isFollowing in
-                let title = isFollowing ? "Unfollow" : "Follow"
+        viewModel.isFollowed.producer
+            .start(next: { isFollowed in
+                let title = isFollowed ? "Unfollow" : "Follow"
                 self.followButtonView.setTitle(title, forState: .Normal)
             })
         followButtonView.rac_command = RACCommand(signalBlock: { _ in
@@ -138,7 +138,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         followersHeadingView.textColor = .blackColor()
         view.addSubview(followersHeadingView)
         
-        followersCountView.rac_text <~ viewModel.numberOfFollowers.producer .map { "\($0)" }
+        followersCountView.rac_text <~ viewModel.followersCount.producer .map { "\($0)" }
         followersCountView.font = .robotoOfSize(13, withType: .Medium)
         followersCountView.textColor = .blackColor()
         view.addSubview(followersCountView)
@@ -146,15 +146,15 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         verticalLineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(verticalLineView)
         
-        followingHeadingView.text = "Following"
-        followingHeadingView.font = .robotoOfSize(11, withType: .Regular)
-        followingHeadingView.textColor = .blackColor()
-        view.addSubview(followingHeadingView)
+        followedHeadingView.text = "Following"
+        followedHeadingView.font = .robotoOfSize(11, withType: .Regular)
+        followedHeadingView.textColor = .blackColor()
+        view.addSubview(followedHeadingView)
         
-        followingCountView.rac_text <~ viewModel.numberOfFollowings.producer .map { "\($0)" }
-        followingCountView.font = .robotoOfSize(13, withType: .Medium)
-        followingCountView.textColor = .blackColor()
-        view.addSubview(followingCountView)
+        followedCountView.rac_text <~ viewModel.followedCount.producer .map { "\($0)" }
+        followedCountView.font = .robotoOfSize(13, withType: .Medium)
+        followedCountView.textColor = .blackColor()
+        view.addSubview(followedCountView)
         
         let optographTableViewController = ProfileTableViewController(userId: viewModel.id.value)
         addChildViewController(optographTableViewController)
@@ -174,15 +174,15 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         avatarImageView.autoAlignAxisToSuperviewAxis(.Vertical)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 84, height: 84))
         
-        nameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 17)
-        nameView.autoAlignAxisToSuperviewAxis(.Vertical)
+        fullNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 17)
+        fullNameView.autoAlignAxisToSuperviewAxis(.Vertical)
         
-        userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: nameView, withOffset: -2)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 5)
+        userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: fullNameView, withOffset: -2)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 5)
 
-        bioView.autoPinEdge(.Top, toEdge: .Bottom, ofView: nameView, withOffset: 5)
-        bioView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        bioView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 5)
+        descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
         followButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
         followButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
@@ -207,11 +207,11 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         verticalLineView.autoPinEdge(.Left, toEdge: .Right, ofView: followersHeadingView, withOffset: 12)
         verticalLineView.autoSetDimension(.Width, toSize: 1)
         
-        followingHeadingView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
-        followingHeadingView.autoPinEdge(.Left, toEdge: .Right, ofView: verticalLineView, withOffset: 12)
+        followedHeadingView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
+        followedHeadingView.autoPinEdge(.Left, toEdge: .Right, ofView: verticalLineView, withOffset: 12)
         
-        followingCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
-        followingCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followingHeadingView)
+        followedCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
+        followedCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followedHeadingView)
         
         optographsView.autoPinEdge(.Top, toEdge: .Bottom, ofView: followButtonView, withOffset: 20)
         optographsView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Top)
@@ -226,8 +226,7 @@ class ProfileViewController: UIViewController, TransparentNavbar {
     }
     
     func editProfile() {
-//        presentViewController(EditProfileViewController(userId: viewModel.id.value), animated: false, completion: nil)
-        navigationController?.pushViewController(EditProfileViewController(userId: viewModel.id.value), animated: false)
+        navigationController?.pushViewController(EditProfileViewController(), animated: false)
     }
     
     func logout() {

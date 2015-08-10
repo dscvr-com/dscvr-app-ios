@@ -25,13 +25,13 @@ class DetailsViewController: UIViewController, TransparentNavbar {
     let userNameView = UILabel()
     let dateView = UILabel()
     let shareButtonView = UIButton()
-    let likeButtonView = UIButton()
-    let likeCountView = UILabel()
+    let starButtonView = UIButton()
+    let starCountView = UILabel()
     let commentIconView = UILabel()
     let commentCountView = UILabel()
     let viewIconView = UILabel()
     let viewsCountView = UILabel()
-    let textView = KILabel()
+    let descriptionView = KILabel()
     let lineView = UIView()
     
     let motionManager = CMMotionManager()
@@ -91,7 +91,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         
         nameView.font = UIFont.robotoOfSize(15, withType: .Medium)
         nameView.textColor = UIColor(0x4d4d4d)
-        nameView.rac_text <~ viewModel.user
+        nameView.rac_text <~ viewModel.fullName
         nameView.userInteractionEnabled = true
         nameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         view.addSubview(nameView)
@@ -113,7 +113,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         shareButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
         shareButtonView.rac_command = RACCommand(signalBlock: { _ in
             // TODO adjust sharing feature
-            let textToShare = "Check out this Optograph of \(self.viewModel.user.value)."
+            let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value)."
             
             if let myWebsite = NSURL(string: "http://www.optonaut.com")
             {
@@ -128,21 +128,21 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         })
         view.addSubview(shareButtonView)
         
-        likeButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
-        likeButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
-        likeButtonView.rac_command = RACCommand(signalBlock: { _ in
+        starButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
+        starButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
+        starButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.toggleLike()
             return RACSignal.empty()
         })
-        viewModel.liked.producer
+        viewModel.isStarred.producer
             .map { $0 ? BaseColor : UIColor(0xe6e6e6) }
-            .start(next: { self.likeButtonView.setTitleColor($0, forState: .Normal)})
-        view.addSubview(likeButtonView)
+            .start(next: { self.starButtonView.setTitleColor($0, forState: .Normal)})
+        view.addSubview(starButtonView)
         
-        likeCountView.font = UIFont.robotoOfSize(12, withType: .Light)
-        likeCountView.textColor = UIColor(0xb3b3b3)
-        likeCountView.rac_text <~ viewModel.likeCount.producer .map { "\($0) likes" }
-        view.addSubview(likeCountView)
+        starCountView.font = UIFont.robotoOfSize(12, withType: .Light)
+        starCountView.textColor = UIColor(0xb3b3b3)
+        starCountView.rac_text <~ viewModel.starsCount.producer .map { "\($0) stars" }
+        view.addSubview(starCountView)
         
         commentIconView.font = UIFont.icomoonOfSize(20)
         commentIconView.text = String.icomoonWithName(.CommentOutlined)
@@ -151,7 +151,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         
         commentCountView.font = UIFont.robotoOfSize(12, withType: .Light)
         commentCountView.textColor = UIColor(0xb3b3b3)
-        commentCountView.rac_text <~ viewModel.commentCount.producer .map { "\($0) comments" }
+        commentCountView.rac_text <~ viewModel.commentsCount.producer .map { "\($0) comments" }
         view.addSubview(commentCountView)
         
         viewIconView.font = UIFont.icomoonOfSize(20)
@@ -164,24 +164,24 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         viewsCountView.rac_text <~ viewModel.viewsCount.producer .map { "\($0) views" }
         view.addSubview(viewsCountView)
         
-        textView.numberOfLines = 0
-        textView.tintColor = BaseColor
-        textView.userInteractionEnabled = true
-        textView.font = UIFont.robotoOfSize(13, withType: .Light)
-        textView.textColor = UIColor(0x4d4d4d)
-        textView.rac_text <~ viewModel.text
-        textView.userHandleLinkTapHandler = { label, handle, range in
+        descriptionView.numberOfLines = 0
+        descriptionView.tintColor = BaseColor
+        descriptionView.userInteractionEnabled = true
+        descriptionView.font = UIFont.robotoOfSize(13, withType: .Light)
+        descriptionView.textColor = UIColor(0x4d4d4d)
+        descriptionView.rac_text <~ viewModel.description
+        descriptionView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
-            Api.get("users/user-name/\(userName)", authorized: true)
+            Api.get("persons/user-name/\(userName)", authorized: true)
                 .start(next: { json in
-                    let user = Mapper<User>().map(json)!
-                    self.navigationController?.pushViewController(ProfileViewController(userId: user.id), animated: true)
+                    let person = Mapper<Person>().map(json)!
+                    self.navigationController?.pushViewController(ProfileViewController(personId: person.id), animated: true)
                 })
         }
-        textView.hashtagLinkTapHandler = { label, hashtag, range in
+        descriptionView.hashtagLinkTapHandler = { label, hashtag, range in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
-        view.addSubview(textView)
+        view.addSubview(descriptionView)
         
         lineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(lineView)
@@ -246,29 +246,29 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         shareButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView, withOffset: 12)
         shareButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
-        likeButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 12)
-        likeButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        starButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 12)
+        starButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         
-        likeCountView.autoPinEdge(.Top, toEdge: .Top, ofView: likeButtonView, withOffset: 8)
-        likeCountView.autoPinEdge(.Left, toEdge: .Right, ofView: likeButtonView, withOffset: 5)
+        starCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starButtonView, withOffset: 8)
+        starCountView.autoPinEdge(.Left, toEdge: .Right, ofView: starButtonView, withOffset: 5)
         
-        commentIconView.autoPinEdge(.Top, toEdge: .Top, ofView: likeButtonView, withOffset: 4)
-        commentIconView.autoPinEdge(.Left, toEdge: .Right, ofView: likeCountView, withOffset: 19)
+        commentIconView.autoPinEdge(.Top, toEdge: .Top, ofView: starButtonView, withOffset: 4)
+        commentIconView.autoPinEdge(.Left, toEdge: .Right, ofView: starCountView, withOffset: 19)
 
-        commentCountView.autoPinEdge(.Top, toEdge: .Top, ofView: likeCountView)
+        commentCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starCountView)
         commentCountView.autoPinEdge(.Left, toEdge: .Right, ofView: commentIconView, withOffset: 7)
         
-        viewIconView.autoPinEdge(.Top, toEdge: .Top, ofView: likeButtonView, withOffset: 7)
+        viewIconView.autoPinEdge(.Top, toEdge: .Top, ofView: starButtonView, withOffset: 7)
         viewIconView.autoPinEdge(.Left, toEdge: .Right, ofView: commentCountView, withOffset: 19)
 
-        viewsCountView.autoPinEdge(.Top, toEdge: .Top, ofView: likeCountView)
+        viewsCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starCountView)
         viewsCountView.autoPinEdge(.Left, toEdge: .Right, ofView: viewIconView, withOffset: 7)
         
-        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: likeButtonView, withOffset: 12)
-        textView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 15)
-        textView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -15)
+        descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: starButtonView, withOffset: 12)
+        descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 15)
+        descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -15)
         
-        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textView, withOffset: 14)
+        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionView, withOffset: 14)
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         lineView.autoSetDimension(.Height, toSize: 1)
@@ -282,7 +282,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
     }
     
     func pushProfile() {
-        let profileViewController = ProfileViewController(userId: viewModel.userId.value)
+        let profileViewController = ProfileViewController(personId: viewModel.personId.value)
         navigationController?.pushViewController(profileViewController, animated: true)
     }
     

@@ -27,7 +27,7 @@ class RequestInviteViewModel {
             self.pending.value = true
             
             let parameters = ["email": self.email.value]
-            Api.post("users/request-invite", authorized: false, parameters: parameters)
+            Api.post("persons/request-invite", authorized: false, parameters: parameters)
                 .start(
                     next: { json in
                         self.pending.value = false

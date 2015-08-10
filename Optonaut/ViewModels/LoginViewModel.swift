@@ -53,13 +53,13 @@ class LoginViewModel {
                 parameters["user_name"] = self.emailOrUserName.value
             }
             
-            Api.post("users/login", authorized: false, parameters: parameters)
+            Api.post("persons/login", authorized: false, parameters: parameters)
                 .start(
                     next: { json in
                         let loginData = Mapper<LoginMappable>().map(json)!
-                        NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.UserIsLoggedIn.rawValue)
-                        NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: UserDefaultsKeys.UserToken.rawValue)
-                        NSUserDefaults.standardUserDefaults().setInteger(loginData.id, forKey: UserDefaultsKeys.UserId.rawValue)
+                        NSUserDefaults.standardUserDefaults().setBool(true, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
+                        NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: PersonDefaultsKeys.PersonToken.rawValue)
+                        NSUserDefaults.standardUserDefaults().setInteger(loginData.id, forKey: PersonDefaultsKeys.PersonId.rawValue)
                         self.pending.value = false
                         sendCompleted(sink)
                     },
@@ -75,7 +75,7 @@ class LoginViewModel {
     
 }
 
-private class LoginMappable: Mappable {
+private struct LoginMappable: Mappable {
     var token = ""
     var id = 0
     
@@ -83,7 +83,7 @@ private class LoginMappable: Mappable {
         return LoginMappable()
     }
     
-    func mapping(map: Map) {
+    mutating func mapping(map: Map) {
         token   <- map["token"]
         id      <- map["id"]
     }

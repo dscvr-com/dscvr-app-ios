@@ -33,10 +33,11 @@ class ViewerViewController: UIViewController  {
         let rightScene = SCNScene()
         
         let camera = SCNCamera()
+        let fov = 65 as Double
         camera.zNear = 0.01
         camera.zFar = 10000
-        camera.xFov = 65
-        camera.yFov = 65 * Double(view.bounds.width / 2 / view.bounds.height)
+        camera.xFov = fov
+        camera.yFov = fov * Double(view.bounds.width / 2 / view.bounds.height)
         
         leftCameraNode.camera = camera
         leftCameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
@@ -47,13 +48,13 @@ class ViewerViewController: UIViewController  {
         rightScene.rootNode.addChildNode(rightCameraNode)
         
         let leftSphereGeometry = SCNSphere(radius: 5.0)
-        leftSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "left")
+        leftSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "left_heights")
         leftSphereGeometry.firstMaterial?.doubleSided = true
         let leftSphereNode = SCNNode(geometry: leftSphereGeometry)
         leftScene.rootNode.addChildNode(leftSphereNode)
         
         let rightSphereGeometry = SCNSphere(radius: 5.0)
-        rightSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "right")
+        rightSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "right_heights")
         rightSphereGeometry.firstMaterial?.doubleSided = true
         let rightSphereNode = SCNNode(geometry: rightSphereGeometry)
         rightScene.rootNode.addChildNode(rightSphereNode)

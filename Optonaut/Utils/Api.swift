@@ -13,10 +13,11 @@ import ReactiveCocoa
 typealias JSONResponse = AnyObject
 
 class Api {
-//    static let host = "beta.api.optonaut.com"
-    static let host = "765d1013.ngrok.io"
+    static let host = "beta.api.optonaut.com"
+//    static let host = "f9f50ef6.ngrok.io"
     static let port = 80
-//    static let host = "192.168.2.104"
+//    static let host = "192.168.43.232"
+//    static let host = "localhost"
 //    static let port = 3000
     
     static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {
@@ -48,7 +49,7 @@ class Api {
             }
             
             if authorized {
-                let token = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.UserToken.rawValue) as! String
+                let token = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonToken.rawValue) as! String
                 mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
             

@@ -82,7 +82,7 @@ extension ActivityTableViewController: UITableViewDelegate {
     func scrollViewDidScroll(scrollView: UIScrollView) {
         let visibleCells = tableView.visibleCells as! [ActivityTableViewCell]
         
-        for cell in visibleCells where !cell.viewModel.readByUser.value {
+        for cell in visibleCells where !cell.viewModel.isRead.value {
             cell.viewModel.read()
         }
     }

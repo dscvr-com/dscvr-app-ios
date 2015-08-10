@@ -10,10 +10,10 @@ import Foundation
 import UIKit
 import Device
 
-enum UserDefaultsKeys: String {
-    case UserIsLoggedIn = "user_is_logged_in"
-    case UserToken = "user_token"
-    case UserId = "user_id"
+enum PersonDefaultsKeys: String {
+    case PersonIsLoggedIn = "person_is_logged_in"
+    case PersonToken = "person_token"
+    case PersonId = "person_id"
     case DebugEnabled = "debug_enabled"
 }
 

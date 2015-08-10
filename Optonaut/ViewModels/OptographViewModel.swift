@@ -18,14 +18,14 @@ class OptographViewModel {
     let id: ConstantProperty<Int>
     let previewUrl: ConstantProperty<String>
     let avatarUrl: ConstantProperty<String>
-    let user: ConstantProperty<String>
+    let fullName: ConstantProperty<String>
     let userName: ConstantProperty<String>
-    let userId: ConstantProperty<Int>
-    let text: ConstantProperty<String>
+    let personId: ConstantProperty<Int>
+    let description: ConstantProperty<String>
     let location: ConstantProperty<String>
     
-    let liked = MutableProperty<Bool>(false)
-    let likeCount = MutableProperty<Int>(0)
+    let isStarred = MutableProperty<Bool>(false)
+    let starsCount = MutableProperty<Int>(0)
     let commentCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
@@ -37,42 +37,42 @@ class OptographViewModel {
         
         id = ConstantProperty(optograph.id)
         previewUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(optograph.id % 3).jpg")
-        avatarUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg")
-        user = ConstantProperty(optograph.user!.name)
-        userName = ConstantProperty("@\(optograph.user!.userName)")
-        userId = ConstantProperty(optograph.user!.id)
-        text = ConstantProperty(optograph.text)
+        avatarUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/avatars/\(optograph.person!.id % 4).jpg")
+        fullName = ConstantProperty(optograph.person!.fullName)
+        userName = ConstantProperty("@\(optograph.person!.userName)")
+        personId = ConstantProperty(optograph.person!.id)
+        description = ConstantProperty(optograph.description_)
         location = ConstantProperty(optograph.location)
         
-        liked.value = optograph.likedByUser
-        likeCount.value = optograph.likeCount
+        isStarred.value = optograph.isStarred
+        starsCount.value = optograph.starsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
     }
     
     func toggleLike() {
-        let likedBefore = liked.value
-        let likeCountBefore = likeCount.value
+        let starredBefore = isStarred.value
+        let starsCountBefore = starsCount.value
         
-        likeCount.value = likeCountBefore + (likedBefore ? -1 : 1)
-        liked.value = !likedBefore
+        starsCount.value = starsCountBefore + (starredBefore ? -1 : 1)
+        isStarred.value = !starredBefore
         
-        (SignalProducer(value: likedBefore) as SignalProducer<Bool, NoError>)
+        (SignalProducer(value: starredBefore) as SignalProducer<Bool, NoError>)
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
-            .flatMap(.Latest) { likedBefore in
-                likedBefore
-                    ? Api.delete("optographs/\(self.id.value)/like", authorized: true)
-                    : Api.post("optographs/\(self.id.value)/like", authorized: true, parameters: nil)
+            .flatMap(.Latest) { starredBefore in
+                starredBefore
+                    ? Api.delete("optographs/\(self.id.value)/star", authorized: true)
+                    : Api.post("optographs/\(self.id.value)/star", authorized: true, parameters: nil)
             }
             .start(
                 completed: {
                     self.realm.write {
-                        self.optograph.likedByUser = self.liked.value
-                        self.optograph.likeCount = self.likeCount.value
+                        self.optograph.isStarred = self.isStarred.value
+                        self.optograph.starsCount = self.starsCount.value
                     }
                 },
                 error: { _ in
-                    self.likeCount.value = likeCountBefore
-                    self.liked.value = likedBefore
+                    self.starsCount.value = starsCountBefore
+                    self.isStarred.value = starredBefore
                 }
             )
     }

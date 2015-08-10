@@ -17,17 +17,17 @@ class DetailsViewModel {
     let realm = try! Realm()
     
     let id = MutableProperty<Int>(0)
-    let liked = MutableProperty<Bool>(false)
-    let likeCount = MutableProperty<Int>(0)
-    let commentCount = MutableProperty<Int>(0)
+    let isStarred = MutableProperty<Bool>(false)
+    let starsCount = MutableProperty<Int>(0)
+    let commentsCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
     let detailsUrl = MutableProperty<String>("")
     let avatarUrl = MutableProperty<String>("")
-    let user = MutableProperty<String>("")
+    let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
-    let userId = MutableProperty<Int>(0)
-    let text = MutableProperty<String>("")
+    let personId = MutableProperty<Int>(0)
+    let description = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     
     var optograph = Optograph()
@@ -52,43 +52,43 @@ class DetailsViewModel {
     
     private func update() {
         id.value = optograph.id
-        liked.value = optograph.likedByUser
-        likeCount.value = optograph.likeCount
+        isStarred.value = optograph.isStarred
+        starsCount.value = optograph.starsCount
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
         detailsUrl.value = "http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id % 3).jpg"
-        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(optograph.user!.id % 4).jpg"
-        user.value = optograph.user!.name
-        userName.value = "@\(optograph.user!.userName)"
-        userId.value = optograph.user!.id
-        text.value = optograph.text
+        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(optograph.person!.id % 4).jpg"
+        fullName.value = optograph.person!.fullName
+        userName.value = "@\(optograph.person!.userName)"
+        personId.value = optograph.person!.id
+        description.value = optograph.description_
         location.value = optograph.location
     }
     
     func toggleLike() {
-        let likedBefore = liked.value
-        let likeCountBefore = likeCount.value
+        let starredBefore = isStarred.value
+        let starsCountBefore = starsCount.value
         
-        likeCount.value = likeCountBefore + (likedBefore ? -1 : 1)
-        liked.value = !likedBefore
+        starsCount.value = starsCountBefore + (starredBefore ? -1 : 1)
+        isStarred.value = !starredBefore
         
-        SignalProducer<Bool, NoError>(value: likedBefore)
+        SignalProducer<Bool, NoError>(value: starredBefore)
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
-            .flatMap(.Latest) { likedBefore in
-                likedBefore
-                    ? Api.delete("optographs/\(self.id.value)/like", authorized: true)
-                    : Api.post("optographs/\(self.id.value)/like", authorized: true, parameters: nil)
+            .flatMap(.Latest) { starredBefore in
+                starredBefore
+                    ? Api.delete("optographs/\(self.id.value)/star", authorized: true)
+                    : Api.post("optographs/\(self.id.value)/star", authorized: true, parameters: nil)
             }
             .start(
                 completed: {
                     self.realm.write {
-                        self.optograph.likedByUser = self.liked.value
-                        self.optograph.likeCount = self.likeCount.value
+                        self.optograph.isStarred = self.isStarred.value
+                        self.optograph.starsCount = self.starsCount.value
                     }
                 },
                 error: { _ in
-                    self.likeCount.value = likeCountBefore
-                    self.liked.value = likedBefore
+                    self.starsCount.value = starsCountBefore
+                    self.isStarred.value = starredBefore
                 }
             )
     }

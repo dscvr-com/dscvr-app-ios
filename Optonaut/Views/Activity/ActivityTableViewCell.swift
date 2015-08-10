@@ -83,14 +83,14 @@ class ActivityTableViewCell: UITableViewCell {
             optographImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "optograph-placeholder"))
         }
         
-        viewModel.readByUser.producer
+        viewModel.isRead.producer
             .map { $0 ? UIColor.clearColor() : BaseColor.alpha(0.1) }
             .start(next: { self.backgroundColor = $0 })
         
         textView.rac_text <~ viewModel.activityType.producer
             .map { type in
                 switch type {
-                case .Like: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) liked your Optograph"
+                case .Like: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) stard your Optograph"
                 case .Follow: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) followed you"
                 default: return ""
                 }
@@ -98,7 +98,7 @@ class ActivityTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        let profileViewController = ProfileViewController(userId: viewModel.creatorId.value)
+        let profileViewController = ProfileViewController(personId: viewModel.creatorId.value)
         navigationController?.pushViewController(profileViewController, animated: true)
     }
     

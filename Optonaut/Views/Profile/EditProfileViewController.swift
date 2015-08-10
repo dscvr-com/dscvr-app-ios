@@ -11,16 +11,16 @@ import ReactiveCocoa
 
 class EditProfileViewController: UIViewController, RedNavbar {
     
-    var viewModel: EditProfileViewModel
+    let viewModel = EditProfileViewModel()
     
     // subviews
     let avatarImageView = UIImageView()
-    let nameIconView = UILabel()
-    let nameInputView = BottomLineTextField()
+    let fullNameIconView = UILabel()
+    let fullNameInputView = BottomLineTextField()
     let userNameIconView = UILabel()
     let userNameInputView = BottomLineTextField()
-    let bioIconView = UILabel()
-    let bioInputView = UITextView()
+    let descriptionIconView = UILabel()
+    let descriptionInputView = UITextView()
     let lineView = UIView()
     let emailIconView = UILabel()
     let emailInputView = BottomLineTextField()
@@ -29,16 +29,6 @@ class EditProfileViewController: UIViewController, RedNavbar {
     let debugIconView = UILabel()
     let debugLabelView = UILabel()
     let debugSwitchView = UISwitch()
-    
-    required init(userId: Int) {
-        viewModel = EditProfileViewModel(id: userId)
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        viewModel = EditProfileViewModel(id: 0)
-        super.init(coder: aDecoder)
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,17 +64,17 @@ class EditProfileViewController: UIViewController, RedNavbar {
                 }
             })
         
-        nameIconView.font = .icomoonOfSize(20)
-        nameIconView.text = .icomoonWithName(.VCard)
-        nameIconView.textColor = UIColor(0xe5e5e5)
-        view.addSubview(nameIconView)
+        fullNameIconView.font = .icomoonOfSize(20)
+        fullNameIconView.text = .icomoonWithName(.VCard)
+        fullNameIconView.textColor = UIColor(0xe5e5e5)
+        view.addSubview(fullNameIconView)
         
-        nameInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
-        nameInputView.textColor = UIColor(0x4d4d4d)
-        nameInputView.autocorrectionType = .No
-        nameInputView.rac_text <~ viewModel.name
-        nameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.name.value = $0 as! String })
-        view.addSubview(nameInputView)
+        fullNameInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
+        fullNameInputView.textColor = UIColor(0x4d4d4d)
+        fullNameInputView.autocorrectionType = .No
+        fullNameInputView.rac_text <~ viewModel.fullName
+        fullNameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.fullName.value = $0 as! String })
+        view.addSubview(fullNameInputView)
         
         userNameIconView.font = .icomoonOfSize(20)
         userNameIconView.text = .icomoonWithName(.Email)
@@ -100,18 +90,18 @@ class EditProfileViewController: UIViewController, RedNavbar {
         
         view.addSubview(userNameInputView)
         
-        bioIconView.font = .icomoonOfSize(20)
-        bioIconView.text = .icomoonWithName(.InfoWithCircle)
-        bioIconView.textColor = UIColor(0xe5e5e5)
-        view.addSubview(bioIconView)
+        descriptionIconView.font = .icomoonOfSize(20)
+        descriptionIconView.text = .icomoonWithName(.InfoWithCircle)
+        descriptionIconView.textColor = UIColor(0xe5e5e5)
+        view.addSubview(descriptionIconView)
         
-        bioInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
-        bioInputView.textColor = UIColor(0x4d4d4d)
-        bioInputView.rac_text <~ viewModel.bio
-        bioInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.bio.value = $0 as! String })
-        bioInputView.textContainer.lineFragmentPadding = 0 // remove left padding
-        bioInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
-        view.addSubview(bioInputView)
+        descriptionInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
+        descriptionInputView.textColor = UIColor(0x4d4d4d)
+        descriptionInputView.rac_text <~ viewModel.description
+        descriptionInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.description.value = $0 as! String })
+        descriptionInputView.textContainer.lineFragmentPadding = 0 // remove left padding
+        descriptionInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
+        view.addSubview(descriptionInputView)
         
         lineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(lineView)
@@ -168,32 +158,32 @@ class EditProfileViewController: UIViewController, RedNavbar {
         avatarImageView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 60, height: 60))
         
-        nameIconView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 5)
-        nameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        nameIconView.autoSetDimension(.Width, toSize: 20)
+        fullNameIconView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 5)
+        fullNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        fullNameIconView.autoSetDimension(.Width, toSize: 20)
         
-        nameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: nameIconView, withOffset: 0)
-        nameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: nameIconView, withOffset: 15)
-        nameInputView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -20)
+        fullNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: fullNameIconView, withOffset: 0)
+        fullNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameIconView, withOffset: 15)
+        fullNameInputView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -20)
         
-        userNameIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: nameInputView, withOffset: 30)
+        userNameIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameInputView, withOffset: 30)
         userNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         userNameIconView.autoSetDimension(.Width, toSize: 20)
         
         userNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: userNameIconView, withOffset: 0)
         userNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: userNameIconView, withOffset: 15)
-        userNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: nameInputView)
+        userNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
         
-        bioIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: userNameInputView, withOffset: 30)
-        bioIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        bioIconView.autoSetDimension(.Width, toSize: 20)
+        descriptionIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: userNameInputView, withOffset: 30)
+        descriptionIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        descriptionIconView.autoSetDimension(.Width, toSize: 20)
         
-        bioInputView.autoPinEdge(.Top, toEdge: .Top, ofView: bioIconView, withOffset: 0)
-        bioInputView.autoPinEdge(.Left, toEdge: .Right, ofView: bioIconView, withOffset: 15)
-        bioInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-        bioInputView.autoSetDimension(.Height, toSize: 80)
+        descriptionInputView.autoPinEdge(.Top, toEdge: .Top, ofView: descriptionIconView, withOffset: 0)
+        descriptionInputView.autoPinEdge(.Left, toEdge: .Right, ofView: descriptionIconView, withOffset: 15)
+        descriptionInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        descriptionInputView.autoSetDimension(.Height, toSize: 80)
         
-        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: bioInputView, withOffset: 10)
+        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionInputView, withOffset: 10)
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         lineView.autoSetDimension(.Height, toSize: 1)
@@ -204,7 +194,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
 
         emailInputView.autoPinEdge(.Top, toEdge: .Top, ofView: emailIconView, withOffset: 0)
         emailInputView.autoPinEdge(.Left, toEdge: .Right, ofView: emailIconView, withOffset: 15)
-        emailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: nameInputView)
+        emailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
         
         passwordIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailInputView, withOffset: 30)
         passwordIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
@@ -212,7 +202,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
 
         passwordButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: passwordIconView, withOffset: -4)
         passwordButtonView.autoPinEdge(.Left, toEdge: .Right, ofView: passwordIconView, withOffset: 15)
-        passwordButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: nameInputView)
+        passwordButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
         
         debugIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordButtonView, withOffset: 30)
         debugIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
@@ -220,7 +210,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         
         debugLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -1)
         debugLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: debugIconView, withOffset: 15)
-        debugLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: nameInputView)
+        debugLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
         
         debugSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -4)
         debugSwitchView.autoPinEdge(.Left, toEdge: .Right, ofView: debugLabelView, withOffset: 15)

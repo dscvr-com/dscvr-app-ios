@@ -48,9 +48,9 @@ class CameraDebugHelper {
         let bitmapContext = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue)
         let cgImage = CGBitmapContextCreateImage(bitmapContext)!
         
-        dispatch_async(queue, {
+//        dispatch_async(queue, {
             self.saveFilesToDiskAndUploadToS3(cgImage, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
-        })
+//        })
     }
     
     private func saveFilesToDiskAndUploadToS3(cgImage: CGImage, intrinsics: [Double], extrinsics: [Double], frameCount: Int) {
