@@ -51,19 +51,20 @@ class ViewerViewController: UIViewController  {
         leftSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "left_heights")
         leftSphereGeometry.firstMaterial?.doubleSided = true
         let leftSphereNode = SCNNode(geometry: leftSphereGeometry)
+        leftSphereNode.transform = SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0)
         leftScene.rootNode.addChildNode(leftSphereNode)
         
         let rightSphereGeometry = SCNSphere(radius: 5.0)
         rightSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "right_heights")
         rightSphereGeometry.firstMaterial?.doubleSided = true
         let rightSphereNode = SCNNode(geometry: rightSphereGeometry)
+        rightSphereNode.transform = SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0)
         rightScene.rootNode.addChildNode(rightSphereNode)
         
         let width = view.bounds.width
         let height = view.bounds.height
         
         let leftScnView = SCNView()
-        leftScnView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         leftScnView.frame = CGRect(x: 0, y: 0, width: width, height: height / 2)
         
         leftScnView.backgroundColor = .blackColor()
@@ -77,7 +78,6 @@ class ViewerViewController: UIViewController  {
         view.addSubview(leftScnView)
         
         let rightScnView = SCNView()
-        rightScnView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         rightScnView.frame = CGRect(x: 0, y: height / 2, width: width, height: height / 2)
         
         rightScnView.backgroundColor = .blackColor()
@@ -149,13 +149,15 @@ extension ViewerViewController: SCNSceneRendererDelegate {
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         if let motion = self.motionManager.deviceMotion {
-            let x = -Float(motion.attitude.roll) - Float(M_PI_2)
-            let y = Float(motion.attitude.yaw)
-            let z = -Float(motion.attitude.pitch)
-            let eulerAngles = SCNVector3(x: x, y: y, z: z)
+            let r = motion.attitude.rotationMatrix
             
-            self.leftCameraNode.eulerAngles = eulerAngles
-            self.rightCameraNode.eulerAngles = eulerAngles
+            let rGlk = GLKMatrix4Make(Float(r.m11), Float(r.m12), Float(r.m13), 0,
+                Float(r.m21), Float(r.m22), Float(r.m23), 0,
+                Float(r.m31), Float(r.m32), Float(r.m33), 0,
+                0,     0,     0,     1)
+            
+            self.leftCameraNode.transform = SCNMatrix4FromGLKMatrix4(rGlk)
+            self.rightCameraNode.transform = SCNMatrix4FromGLKMatrix4(rGlk)
         }
     }
     

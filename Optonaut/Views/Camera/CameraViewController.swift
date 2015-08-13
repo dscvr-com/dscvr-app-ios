@@ -165,7 +165,6 @@ class CameraViewController: UIViewController {
 //        scene.rootNode.addChildNode(sphereNode)
         
         let scnView = SCNView()
-        scnView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         scnView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
         scnView.backgroundColor = .clearColor()
         scnView.scene = scene
@@ -281,12 +280,15 @@ extension CameraViewController: SCNSceneRendererDelegate {
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         if let motion = self.motionManager.deviceMotion {
-            let x = -Float(motion.attitude.roll) - Float(M_PI_2)
-            let y = Float(motion.attitude.yaw)
-            let z = -Float(motion.attitude.pitch)
-            let eulerAngles = SCNVector3(x: x, y: y, z: z)
+            let r = motion.attitude.rotationMatrix
             
-            self.cameraNode.eulerAngles = eulerAngles
+            let rGlk = GLKMatrix4Make(Float(r.m11), Float(r.m12), Float(r.m13), 0,
+                Float(r.m21), Float(r.m22), Float(r.m23), 0,
+                Float(r.m31), Float(r.m32), Float(r.m33), 0,
+                0,     0,     0,     1)
+            
+            self.cameraNode.transform = SCNMatrix4FromGLKMatrix4(rGlk)
+        
         }
     }
     
