@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import HexColor
 
 class BottomLineTextField: UITextField {
     

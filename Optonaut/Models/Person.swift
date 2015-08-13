@@ -1,5 +1,5 @@
 //
-//  User.swift
+//  Person.swift
 //  Optonaut
 //
 //  Created by Johannes Schickling on 6/21/15.
@@ -26,6 +26,10 @@ class Person: Object, Model {
     override static func primaryKey() -> String? {
         return "id"
     }
+}
+
+func ==(lhs: Person, rhs: Person) -> Bool {
+    return lhs.hashValue == rhs.hashValue
 }
 
 extension Person: Mappable {

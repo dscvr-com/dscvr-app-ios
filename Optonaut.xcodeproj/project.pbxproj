@@ -9,9 +9,10 @@
 /* Begin PBXBuildFile section */
 		8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */; };
 		8F17CF711B4F15B100A10DA3 /* NSDateTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */; };
-		8F17CF731B4F1C5C00A10DA3 /* HexColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F17CF721B4F1C5C00A10DA3 /* HexColor.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F366DD21B59342E00C0012E /* CameraDebugHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */; };
+		8F3FB0661B7B466000016A8A /* CreateOptographViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3FB0651B7B466000016A8A /* CreateOptographViewController.swift */; };
+		8F3FB0681B7B474700016A8A /* CreateOptographViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3FB0671B7B474700016A8A /* CreateOptographViewModel.swift */; };
 		8F464AF61B4ACE4E00A66FA5 /* RequestInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F464AF51B4ACE4E00A66FA5 /* RequestInviteViewController.swift */; };
 		8F464AF81B4ADAF300A66FA5 /* RequestInviteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F464AF71B4ADAF300A66FA5 /* RequestInviteViewModel.swift */; };
 		8F464AFB1B4BC38000A66FA5 /* RefreshAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F464AFA1B4BC38000A66FA5 /* RefreshAnimator.swift */; };
@@ -81,6 +82,10 @@
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
 		8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */; };
 		8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */; };
+		8FA74CA51B7B88D800366203 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA74CA41B7B88D800366203 /* PlaceholderTextView.swift */; };
+		8FA74CA71B7B992800366203 /* KMPlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA74CA61B7B992800366203 /* KMPlaceholderTextView.swift */; };
+		8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */; };
+		8FB634801B79AF9F00B48158 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6347F1B79AF9F00B48158 /* Comment.swift */; };
 		8FBA5CAC1B54266B00F0F489 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FBA5CAB1B54266B00F0F489 /* EditProfileViewController.swift */; };
 		8FBA5CAE1B54556000F0F489 /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FBA5CAD1B54556000F0F489 /* BottomLineTextField.swift */; };
 		8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FBDE8B11B5D186800C78486 /* Device.framework */; };
@@ -115,10 +120,11 @@
 /* Begin PBXFileReference section */
 		8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectMapper.framework; path = Carthage/Build/iOS/ObjectMapper.framework; sourceTree = "<group>"; };
 		8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateTransform.swift; sourceTree = "<group>"; };
-		8F17CF721B4F1C5C00A10DA3 /* HexColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HexColor.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraDebugHelper.swift; sourceTree = "<group>"; };
 		8F366DD31B59451000C0012E /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
+		8F3FB0651B7B466000016A8A /* CreateOptographViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateOptographViewController.swift; sourceTree = "<group>"; };
+		8F3FB0671B7B474700016A8A /* CreateOptographViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateOptographViewModel.swift; sourceTree = "<group>"; };
 		8F464AF51B4ACE4E00A66FA5 /* RequestInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestInviteViewController.swift; sourceTree = "<group>"; };
 		8F464AF71B4ADAF300A66FA5 /* RequestInviteViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestInviteViewModel.swift; sourceTree = "<group>"; };
 		8F464AFA1B4BC38000A66FA5 /* RefreshAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshAnimator.swift; sourceTree = "<group>"; };
@@ -191,6 +197,10 @@
 		8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
 		8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
+		8FA74CA41B7B88D800366203 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
+		8FA74CA61B7B992800366203 /* KMPlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KMPlaceholderTextView.swift; sourceTree = "<group>"; };
+		8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HexColor.framework; path = Carthage/Build/iOS/HexColor.framework; sourceTree = "<group>"; };
+		8FB6347F1B79AF9F00B48158 /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		8FBA5CAB1B54266B00F0F489 /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		8FBA5CAD1B54556000F0F489 /* BottomLineTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		8FBDE8B11B5D186800C78486 /* Device.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Device.framework; path = Carthage/Build/iOS/Device.framework; sourceTree = "<group>"; };
@@ -267,6 +277,7 @@
 				8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */,
 				8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */,
 				8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */,
+				8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */,
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
 				8F5FD9E91B3D60E5007E073C /* WebImage.framework in Frameworks */,
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
@@ -292,6 +303,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */,
 				8FBDE8B11B5D186800C78486 /* Device.framework */,
 				8F366DD31B59451000C0012E /* ZipArchive.framework */,
 				8FD7F87D1B592708001680AA /* AWSCore.framework */,
@@ -317,6 +329,7 @@
 			children = (
 				8F464AFA1B4BC38000A66FA5 /* RefreshAnimator.swift */,
 				8F464B031B4C767300A66FA5 /* OptographTableViewController.swift */,
+				8FA74CA41B7B88D800366203 /* PlaceholderTextView.swift */,
 				8F500CF91B4D5D6E002B9878 /* OptographTableViewCell.swift */,
 				8F500CFB1B4D5F97002B9878 /* NavbarProtocols.swift */,
 				8F464AFC1B4BC4BB00A66FA5 /* InsetLabel.swift */,
@@ -409,6 +422,7 @@
 				8F5FD9EF1B3DB724007E073C /* SearchViewModel.swift */,
 				8F5FD9FC1B3DB909007E073C /* ActivitiesViewModel.swift */,
 				8FFCE4BC1B4EAA2300832C88 /* ActivityViewModel.swift */,
+				8F3FB0671B7B474700016A8A /* CreateOptographViewModel.swift */,
 				8FA2E7AD1B55366D00407181 /* EditProfileViewModel.swift */,
 				8F5FD9E11B3D4309007E073C /* ProfileViewModel.swift */,
 				8FEAB9781B51182B00F9FE64 /* DetailsViewModel.swift */,
@@ -423,6 +437,7 @@
 			isa = PBXGroup;
 			children = (
 				8F5FD9E61B3D579C007E073C /* CameraViewController.swift */,
+				8F3FB0651B7B466000016A8A /* CreateOptographViewController.swift */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -460,6 +475,7 @@
 			children = (
 				8F7738131B380F5D001F642B /* Optograph.swift */,
 				8F7738141B380F5D001F642B /* Person.swift */,
+				8FB6347F1B79AF9F00B48158 /* Comment.swift */,
 				8F4CE79F1B6CEEC700BD8A71 /* Model.swift */,
 				8F5FDA001B3EECB0007E073C /* Activity.swift */,
 			);
@@ -595,7 +611,7 @@
 			isa = PBXGroup;
 			children = (
 				8FD7F85C1B5924D5001680AA /* Stitcher */,
-				8F17CF721B4F1C5C00A10DA3 /* HexColor.swift */,
+				8FA74CA61B7B992800366203 /* KMPlaceholderTextView.swift */,
 				8FFCE4B71B4DBF1900832C88 /* KILabel.h */,
 				8FFCE4B81B4DBF1900832C88 /* KILabel.m */,
 			);
@@ -808,6 +824,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/WebImage.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Device.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/HexColor.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -831,11 +848,12 @@
 				8F5FDA0B1B433DAB007E073C /* ViewerViewController.swift in Sources */,
 				8F4C6E1A1B4717DF007508ED /* Icomoon.swift in Sources */,
 				8F5FD9E01B3C5578007E073C /* OptographsViewModel.swift in Sources */,
-				8F17CF731B4F1C5C00A10DA3 /* HexColor.swift in Sources */,
 				8FFFD4BE1B78B5210043E43A /* quat.cpp in Sources */,
 				8F464B041B4C767300A66FA5 /* OptographTableViewController.swift in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */,
+				8FA74CA71B7B992800366203 /* KMPlaceholderTextView.swift in Sources */,
+				8F3FB0681B7B474700016A8A /* CreateOptographViewModel.swift in Sources */,
 				8F5FD9F71B3DB7B3007E073C /* ActivityNavViewController.swift in Sources */,
 				8F5FDA091B412DB2007E073C /* Constants.swift in Sources */,
 				8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */,
@@ -846,12 +864,15 @@
 				8F53ED0E1B6F6A1D00D99F41 /* LoadMore.swift in Sources */,
 				8F464B021B4C727200A66FA5 /* ExploreNavViewController.swift in Sources */,
 				8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */,
+				8FA74CA51B7B88D800366203 /* PlaceholderTextView.swift in Sources */,
 				8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */,
 				8F500D021B4D8471002B9878 /* ExploreTableViewController.swift in Sources */,
+				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
 				8F500CFE1B4D6D70002B9878 /* ProfileTableViewController.swift in Sources */,
 				8F464AF61B4ACE4E00A66FA5 /* RequestInviteViewController.swift in Sources */,
 				8F464B071B4C7A9000A66FA5 /* HashtagTableViewController.swift in Sources */,
+				8F3FB0661B7B466000016A8A /* CreateOptographViewController.swift in Sources */,
 				8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */,
 				8F5FD9FD1B3DB909007E073C /* ActivitiesViewModel.swift in Sources */,
 				8F500D001B4D8028002B9878 /* Appearance.swift in Sources */,

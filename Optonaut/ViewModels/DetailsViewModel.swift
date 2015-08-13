@@ -40,12 +40,13 @@ class DetailsViewModel {
         }
         
         Api.get("optographs/\(optographId)", authorized: true)
-            .start(next: { json in
-                self.optograph = Mapper<Optograph>().map(json)!
+            .map { json in Mapper<Optograph>().map(json)! }
+            .start(next: { optograph in
+                self.optograph = optograph
                 self.update()
                 
                 self.realm.write {
-                    self.realm.add(self.optograph, update: true)
+                    self.realm.add(optograph, update: true)
                 }
             })
     }
@@ -54,6 +55,7 @@ class DetailsViewModel {
         id.value = optograph.id
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
+        commentsCount.value = optograph.commentsCount
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
         detailsUrl.value = "http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id % 3).jpg"

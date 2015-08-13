@@ -9,11 +9,18 @@
 import Foundation
 import RealmSwift
 
-protocol Model {
+protocol Model: Hashable {
+    var id: Int { get set }
     var createdAt: NSDate { get set }
 }
 
-extension Object {
+extension Model where Self: Object {
+    
+    var hashValue: Int {
+        get {
+            return id.hashValue
+        }
+    }
 
     func values(keys: [String]) -> [String: AnyObject] {
         return keys.toDictionary { ($0, self.valueForKeyPath($0)!) }

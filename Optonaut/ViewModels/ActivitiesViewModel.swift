@@ -49,11 +49,11 @@ class ActivitiesViewModel: NSObject {
     }
     
     private func processApi(activities: [Activity]) {
-        realm.write {
-            self.realm.add(activities, update: true)
-        }
+//        realm.write {
+//            self.realm.add(activities, update: true)
+//        }
         
-        results.value = mergeModels(results.value, otherModels: activities)
+        results.value = Array(Set(results.value + activities)).sort { $0.createdAt > $1.createdAt }
         unreadCount.value = results.value.reduce(0) { (acc, activity) in acc + (activity.isRead ? 0 : 1) }
     }
     

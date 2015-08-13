@@ -26,13 +26,13 @@ class LoginViewModel {
                 if str.rangeOfString("@") != nil {
                     self.emailOrUserNameValid.value = isValidEmail(str)
                 } else {
-                    self.emailOrUserNameValid.value = str.characters.count > 2
+                    self.emailOrUserNameValid.value = isValidUserName(str)
                 }
             })
         
         password.producer
             .start(next: { str in
-                self.passwordValid.value = str.characters.count > 4
+                self.passwordValid.value = isValidPassword(str)
             })
         
         combineLatest([emailOrUserNameValid.producer, passwordValid.producer])
@@ -54,9 +54,9 @@ class LoginViewModel {
             }
             
             Api.post("persons/login", authorized: false, parameters: parameters)
+                .map { json in Mapper<LoginMappable>().map(json)! }
                 .start(
-                    next: { json in
-                        let loginData = Mapper<LoginMappable>().map(json)!
+                    next: { loginData in
                         NSUserDefaults.standardUserDefaults().setBool(true, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
                         NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: PersonDefaultsKeys.PersonToken.rawValue)
                         NSUserDefaults.standardUserDefaults().setInteger(loginData.id, forKey: PersonDefaultsKeys.PersonId.rawValue)

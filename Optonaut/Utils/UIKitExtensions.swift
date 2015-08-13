@@ -18,6 +18,7 @@ struct AssociationKey {
     static var userInteractionEnabled: UInt8 = 6
     static var image: UInt8 = 7
     static var title: UInt8 = 8
+    static var placeholder: UInt8 = 9
 }
 
 enum objc_AssociationPolicy : UInt {
@@ -121,6 +122,10 @@ extension UITextField {
     
     public var rac_textColor: MutableProperty<UIColor?> {
         return lazyMutableProperty(self, key: &AssociationKey.textColor, setter: { self.textColor = $0 }, getter: { self.textColor })
+    }
+    
+    public var rac_placeholder: MutableProperty<String?> {
+        return lazyMutableProperty(self, key: &AssociationKey.placeholder, setter: { self.placeholder = $0 }, getter: { self.placeholder })
     }
 }
 

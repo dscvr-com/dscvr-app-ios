@@ -26,6 +26,10 @@ class Optograph: Object, Model {
     }
 }
 
+func ==(lhs: Optograph, rhs: Optograph) -> Bool {
+    return lhs.hashValue == rhs.hashValue
+}
+
 extension Optograph: Mappable {
     
     static func newInstance() -> Mappable {

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import ReactiveCocoa
+import HexColor
 
 let BaseColor = UIColor(0xef4836)
 
@@ -66,10 +67,20 @@ struct RoundedDuration {
     }
 }
 
-func isValidEmail(testStr: String) -> Bool {
+func isValidEmail(email: String) -> Bool {
     let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
     let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
-    return emailTest.evaluateWithObject(testStr)
+    return emailTest.evaluateWithObject(email)
+}
+
+func isValidPassword(password: String) -> Bool {
+    return password.characters.count >= 5
+}
+
+func isValidUserName(userName: String) -> Bool {
+    let userNameRegEx = "^[a-zA-Z0-9_]+$"
+    let userNameTest = NSPredicate(format:"SELF MATCHES %@", userNameRegEx)
+    return userNameTest.evaluateWithObject(userName)
 }
 
 func identity<T>(el: T) -> T {
@@ -98,6 +109,18 @@ extension Array {
         }
     }
     
+    func unique<T: Equatable>() -> [T] {
+        var result = [T]()
+        
+        for item in self {
+            if !result.contains(item as! T) {
+                result.append(item as! T)
+            }
+        }
+        
+        return result
+    }
+    
 }
 
 class NotificationSignal {
@@ -114,16 +137,24 @@ class NotificationSignal {
     
 }
 
+public func <(a: NSDate, b: NSDate) -> Bool {
+    return a.compare(b) == NSComparisonResult.OrderedAscending
+}
 
-func mergeModels<T: Model>(models: [T], otherModels: [T]) -> [T] {
-    if let firstModel = models.first, firstOtherModel = otherModels.first {
-        let modelsAreNewer = firstModel.createdAt.compare(firstOtherModel.createdAt) == .OrderedDescending
-        let newerModels = modelsAreNewer ? models : otherModels
-        let olderModels = modelsAreNewer ? otherModels : models
-        let oldestNewModel = newerModels.last!
-        
-        return newerModels + olderModels.filter { oldestNewModel.createdAt.compare($0.createdAt) == .OrderedDescending }
-    } else {
-        return models + otherModels
+public func >(a: NSDate, b: NSDate) -> Bool {
+    return a.compare(b) == NSComparisonResult.OrderedDescending
+}
+
+public func ==(a: NSDate, b: NSDate) -> Bool {
+    return a.compare(b) == NSComparisonResult.OrderedSame
+}
+
+extension NSDate: Comparable { }
+
+extension String {
+    func stringByAppendingPathComponent(path: String) -> String {
+        let nsSt = self as NSString
+        return nsSt.stringByAppendingPathComponent(path)
     }
 }
+

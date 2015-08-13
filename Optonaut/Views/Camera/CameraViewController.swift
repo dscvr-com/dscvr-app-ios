@@ -41,7 +41,8 @@ class CameraViewController: UIViewController {
     
     // sphere
     let cameraNode = SCNNode()
-    let sphereGeometry = SCNSphere(radius: 5.0)
+//    let sphereGeometry = SCNSphere(radius: 5.0)
+    let scene = SCNScene()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,9 +56,12 @@ class CameraViewController: UIViewController {
         
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         
+        setupScene()
+        
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer.frame = view.bounds
+//        previewLayer.frame = view.bounds
+        previewLayer.frame = CGRect(x: view.bounds.width / 4, y: view.bounds.height / 4, width: view.bounds.width / 2, height: view.bounds.height / 2)
         previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         view.layer.addSublayer(previewLayer)
         
@@ -84,8 +88,6 @@ class CameraViewController: UIViewController {
         instructionView.rac_text <~ viewModel.instruction
         instructionView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         view.addSubview(instructionView)
-        
-//        setupScene()
         
         viewModel.instruction.value = "Select"
         
@@ -156,12 +158,11 @@ class CameraViewController: UIViewController {
         cameraNode.camera = camera
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         
-        let scene = SCNScene()
         scene.rootNode.addChildNode(cameraNode)
         
-        sphereGeometry.firstMaterial?.doubleSided = true
-        let sphereNode = SCNNode(geometry: sphereGeometry)
-        scene.rootNode.addChildNode(sphereNode)
+//        sphereGeometry.firstMaterial?.doubleSided = true
+//        let sphereNode = SCNNode(geometry: sphereGeometry)
+//        scene.rootNode.addChildNode(sphereNode)
         
         let scnView = SCNView()
         scnView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
@@ -225,13 +226,45 @@ class CameraViewController: UIViewController {
                               0,     0,     0,     1]
             extrinsicsPointer.initializeFrom(extrinsics)
             
-            Stitcher.push(extrinsicsPointer, intrinsicsPointer, baseAddress, Int32(width), Int32(height), resultExtrinsicsPointer, Int32(frameCount))
+            let usePicture = Stitcher.push(extrinsicsPointer, intrinsicsPointer, baseAddress, Int32(width), Int32(height), resultExtrinsicsPointer, Int32(frameCount))
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
-//            let rotationMatrix = Array(UnsafeBufferPointer(start: resultExtrinsicsPointer, count: 16))
+            if usePicture {
+                
+                CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
+                let width = CVPixelBufferGetWidth(pixelBuffer)
+                let height = CVPixelBufferGetHeight(pixelBuffer)
+                let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
+                let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+                CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
+                
+                let bitmapContext = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue)
+                let cgImage = CGBitmapContextCreateImage(bitmapContext)!
+                
+                
+                let planeGeometry = SCNPlane(width: CGFloat(intrinsics[2]), height: CGFloat(intrinsics[5]))
+                planeGeometry.firstMaterial?.doubleSided = true
+                planeGeometry.firstMaterial?.diffuse.contents = cgImage
+                
+                let planeNode = SCNNode(geometry: planeGeometry)
+                
+                let r = Array(UnsafeBufferPointer(start: resultExtrinsicsPointer, count: 16)).map { Float($0) }
+                let R = GLKMatrix4Make(r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15])
+                
+                let T = GLKMatrix4MakeTranslation(0, 0, Float(intrinsics[0]))
+                
+                planeNode.transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Multiply(R, T))
+                
+                scene.rootNode.addChildNode(planeNode)
+            }
+            
             
             debugHelper?.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
         }
+    }
+    
+    func upload(leftImage: CGImage, rightImage: CGImage, origin: [Double]) {
+        
     }
 }
 

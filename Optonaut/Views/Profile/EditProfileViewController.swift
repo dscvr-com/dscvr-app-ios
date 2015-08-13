@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import HexColor
 
 class EditProfileViewController: UIViewController, RedNavbar {
     
@@ -19,18 +20,23 @@ class EditProfileViewController: UIViewController, RedNavbar {
     let fullNameInputView = BottomLineTextField()
     let userNameIconView = UILabel()
     let userNameInputView = BottomLineTextField()
-//    let userNameTakenView = UILabel() // TODO
+    let userNameTakenView = UILabel()
     let descriptionIconView = UILabel()
     let descriptionInputView = UITextView()
-    let lineView = UIView()
     let privateHeaderView = UILabel()
     let emailIconView = UILabel()
-    let emailInputView = BottomLineTextField()
+    let emailView = UILabel()
+    let emailButtonView = UIButton()
     let passwordIconView = UILabel()
+    let passwordView = UILabel()
     let passwordButtonView = UIButton()
+    let settingsHeaderView = UILabel()
     let debugIconView = UILabel()
     let debugLabelView = UILabel()
     let debugSwitchView = UISwitch()
+    let newsletterIconView = UILabel()
+    let newsletterLabelView = UILabel()
+    let newsletterSwitchView = UISwitch()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,6 +98,13 @@ class EditProfileViewController: UIViewController, RedNavbar {
         
         view.addSubview(userNameInputView)
         
+        userNameTakenView.text = "Username taken"
+        userNameTakenView.font = UIFont.robotoOfSize(13, withType: .Regular)
+        userNameTakenView.textColor = BaseColor
+        userNameTakenView.rac_hidden <~ viewModel.userNameTaken.producer.map { !$0 }
+        
+        view.addSubview(userNameTakenView)
+        
         descriptionIconView.font = .icomoonOfSize(20)
         descriptionIconView.text = .icomoonWithName(.InfoWithCircle)
         descriptionIconView.textColor = UIColor(0xe5e5e5)
@@ -105,9 +118,6 @@ class EditProfileViewController: UIViewController, RedNavbar {
         descriptionInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         view.addSubview(descriptionInputView)
         
-        lineView.backgroundColor = UIColor(0xe5e5e5)
-        view.addSubview(lineView)
-        
         privateHeaderView.text = "PRIVATE INFORMATION"
         privateHeaderView.textColor = UIColor(0xcfcfcf)
         privateHeaderView.font = UIFont.robotoOfSize(15, withType: .Medium)
@@ -118,28 +128,47 @@ class EditProfileViewController: UIViewController, RedNavbar {
         emailIconView.textColor = UIColor(0xe5e5e5)
         view.addSubview(emailIconView)
         
-        emailInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
-        emailInputView.textColor = UIColor(0x4d4d4d)
-        emailInputView.keyboardType = .EmailAddress
-        emailInputView.rac_text <~ viewModel.email
-        emailInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.email.value = $0 as! String })
-        view.addSubview(emailInputView)
+        emailView.font = UIFont.robotoOfSize(15, withType: .Regular)
+        emailView.textColor = UIColor(0xcfcfcf)
+        emailView.rac_text <~ viewModel.email
+        view.addSubview(emailView)
+        
+        emailButtonView.titleEdgeInsets = UIEdgeInsetsZero
+        emailButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
+        emailButtonView.contentHorizontalAlignment = .Left
+        emailButtonView.setTitleColor(UIColor(0x4d4d4d), forState: .Normal)
+        emailButtonView.setTitle("Change", forState: .Normal)
+        emailButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.showEmailAlert()
+            return RACSignal.empty()
+        })
+        view.addSubview(emailButtonView)
         
         passwordIconView.font = .icomoonOfSize(20)
         passwordIconView.text = .icomoonWithName(.Lock)
         passwordIconView.textColor = UIColor(0xe5e5e5)
         view.addSubview(passwordIconView)
         
+        passwordView.font = UIFont.robotoOfSize(15, withType: .Regular)
+        passwordView.textColor = UIColor(0xcfcfcf)
+        passwordView.text = "*********"
+        view.addSubview(passwordView)
+        
         passwordButtonView.titleEdgeInsets = UIEdgeInsetsZero
         passwordButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
         passwordButtonView.contentHorizontalAlignment = .Left
         passwordButtonView.setTitleColor(UIColor(0x4d4d4d), forState: .Normal)
-        passwordButtonView.setTitle("Change password", forState: .Normal)
+        passwordButtonView.setTitle("Change", forState: .Normal)
         passwordButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.showPasswordAlert()
             return RACSignal.empty()
         })
         view.addSubview(passwordButtonView)
+        
+        settingsHeaderView.text = "SETTINGS"
+        settingsHeaderView.textColor = UIColor(0xcfcfcf)
+        settingsHeaderView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        view.addSubview(settingsHeaderView)
         
         debugIconView.font = .icomoonOfSize(20)
         debugIconView.text = .icomoonWithName(.Cog)
@@ -155,6 +184,20 @@ class EditProfileViewController: UIViewController, RedNavbar {
         debugSwitchView.addTarget(self, action: "toggleDebug", forControlEvents: .ValueChanged)
         view.addSubview(debugSwitchView)
         
+        newsletterIconView.font = .icomoonOfSize(20)
+        newsletterIconView.text = .icomoonWithName(.Cog)
+        newsletterIconView.textColor = UIColor(0xe5e5e5)
+        view.addSubview(newsletterIconView)
+        
+        newsletterLabelView.text = "Newsletter"
+        newsletterLabelView.textColor = UIColor(0x4d4d4d)
+        newsletterLabelView.font = .robotoOfSize(15, withType: .Regular)
+        view.addSubview(newsletterLabelView)
+        
+        newsletterSwitchView.on = viewModel.debugEnabled.value
+        newsletterSwitchView.addTarget(self, action: "toggleDebug", forControlEvents: .ValueChanged)
+        view.addSubview(newsletterSwitchView)
+        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
         view.setNeedsUpdateConstraints()
@@ -169,7 +212,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         fullNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         fullNameIconView.autoSetDimension(.Width, toSize: 20)
         
-        fullNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: fullNameIconView, withOffset: 0)
+        fullNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: fullNameIconView)
         fullNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameIconView, withOffset: 15)
         fullNameInputView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -20)
         
@@ -177,46 +220,49 @@ class EditProfileViewController: UIViewController, RedNavbar {
         userNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         userNameIconView.autoSetDimension(.Width, toSize: 20)
         
-        userNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: userNameIconView, withOffset: 0)
+        userNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: userNameIconView)
         userNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: userNameIconView, withOffset: 15)
         userNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
+        
+        userNameTakenView.autoPinEdge(.Top, toEdge: .Top, ofView: userNameIconView, withOffset: 2)
+        userNameTakenView.autoPinEdge(.Right, toEdge: .Right, ofView: userNameInputView)
         
         descriptionIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: userNameInputView, withOffset: 30)
         descriptionIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         descriptionIconView.autoSetDimension(.Width, toSize: 20)
         
-        descriptionInputView.autoPinEdge(.Top, toEdge: .Top, ofView: descriptionIconView, withOffset: 0)
+        descriptionInputView.autoPinEdge(.Top, toEdge: .Top, ofView: descriptionIconView)
         descriptionInputView.autoPinEdge(.Left, toEdge: .Right, ofView: descriptionIconView, withOffset: 15)
         descriptionInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         descriptionInputView.autoSetDimension(.Height, toSize: 80)
         
-//        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionInputView, withOffset: 10)
-//        lineView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-//        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-//        lineView.autoSetDimension(.Height, toSize: 1)
-        
         privateHeaderView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionInputView, withOffset: 10)
         privateHeaderView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-//        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-//        lineView.autoSetDimension(.Height, toSize: 1)
         
         emailIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: privateHeaderView, withOffset: 30)
         emailIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         emailIconView.autoSetDimension(.Width, toSize: 20)
 
-        emailInputView.autoPinEdge(.Top, toEdge: .Top, ofView: emailIconView, withOffset: 0)
-        emailInputView.autoPinEdge(.Left, toEdge: .Right, ofView: emailIconView, withOffset: 15)
-        emailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
+        emailView.autoPinEdge(.Top, toEdge: .Top, ofView: emailIconView)
+        emailView.autoPinEdge(.Left, toEdge: .Right, ofView: emailIconView, withOffset: 15)
         
-        passwordIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailInputView, withOffset: 30)
+        emailButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: emailIconView, withOffset: -4)
+        emailButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        
+        passwordIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailView, withOffset: 30)
         passwordIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         passwordIconView.autoSetDimension(.Width, toSize: 20)
 
+        passwordView.autoPinEdge(.Top, toEdge: .Top, ofView: passwordIconView)
+        passwordView.autoPinEdge(.Left, toEdge: .Right, ofView: passwordIconView, withOffset: 15)
+
         passwordButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: passwordIconView, withOffset: -4)
-        passwordButtonView.autoPinEdge(.Left, toEdge: .Right, ofView: passwordIconView, withOffset: 15)
-        passwordButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
+        passwordButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
-        debugIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordButtonView, withOffset: 30)
+        settingsHeaderView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordButtonView, withOffset: 10)
+        settingsHeaderView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        
+        debugIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: settingsHeaderView, withOffset: 20)
         debugIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         debugIconView.autoSetDimension(.Width, toSize: 20)
         
@@ -225,7 +271,18 @@ class EditProfileViewController: UIViewController, RedNavbar {
         debugLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
         
         debugSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -4)
-        debugSwitchView.autoPinEdge(.Left, toEdge: .Right, ofView: debugLabelView, withOffset: 15)
+        debugSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        
+        newsletterIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: debugIconView, withOffset: 20)
+        newsletterIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        newsletterIconView.autoSetDimension(.Width, toSize: 20)
+
+        newsletterLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -1)
+        newsletterLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: newsletterIconView, withOffset: 15)
+        newsletterLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
+
+        newsletterSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -4)
+        newsletterSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
         super.updateViewConstraints()
     }
@@ -269,8 +326,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
     }
     
     func showPasswordAlert() {
-        let oldPasswordAlert = UIAlertController(title: "Old password", message: "Please enter old password", preferredStyle: .Alert)
-        let newPasswordAlert = UIAlertController(title: "New password", message: "Please enter a new password", preferredStyle: .Alert)
+        let oldPasswordAlert = UIAlertController(title: "Current Password", message: "Please enter your current password.", preferredStyle: .Alert)
+        let newPasswordAlert = UIAlertController(title: "New Password", message: "Please enter your new password. (At least 5 characters.)", preferredStyle: .Alert)
         
         oldPasswordAlert.addTextFieldWithConfigurationHandler { textField in
             textField.secureTextEntry = true
@@ -288,7 +345,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
             textField.text = ""
         }
         
-        newPasswordAlert.addAction(UIAlertAction(title: "Update", style: .Destructive, handler: { _ in
+        newPasswordAlert.addAction(UIAlertAction(title: "Change Password", style: .Destructive, handler: { _ in
             let oldPasswordtextField = oldPasswordAlert.textFields![0] as UITextField
             let newPasswordtextField = newPasswordAlert.textFields![0] as UITextField
             let oldPassword = oldPasswordtextField.text!
@@ -299,6 +356,25 @@ class EditProfileViewController: UIViewController, RedNavbar {
         newPasswordAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
         
         self.presentViewController(oldPasswordAlert, animated: true, completion: nil)
+    }
+    
+    func showEmailAlert() {
+        let alert = UIAlertController(title: "New Email Address", message: "Please enter your new email address. We will send you an email to reconfirm it.", preferredStyle: .Alert)
+        alert.addTextFieldWithConfigurationHandler { textField in
+            textField.text = ""
+            textField.keyboardType = .EmailAddress
+            textField.placeholder = self.viewModel.email.value
+        }
+        
+        alert.addAction(UIAlertAction(title: "Change Email", style: .Destructive, handler: { _ in
+            let textField = alert.textFields![0] as UITextField
+            let email = textField.text!
+            self.viewModel.updateEmail(email)
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     func dismissKeyboard() {

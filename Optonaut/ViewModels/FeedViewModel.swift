@@ -54,11 +54,11 @@ class FeedViewModel: NSObject {
     }
     
     private func processApi(optographs: [Optograph]) {
+        results.value = Array(Set(results.value + optographs)).sort { $0.createdAt > $1.createdAt }
+        
         realm.write {
             self.realm.add(optographs, update: true)
         }
-        
-        results.value = mergeModels(results.value, otherModels: optographs)
     }
     
 }

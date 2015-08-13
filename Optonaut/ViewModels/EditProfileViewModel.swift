@@ -9,10 +9,12 @@
 import Foundation
 import ReactiveCocoa
 import ObjectMapper
+import RealmSwift
 
 class EditProfileViewModel {
     
-    let id = MutableProperty<Int>(0)
+    let realm = try! Realm()
+    
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let userNameTaken = MutableProperty<Bool>(false)
@@ -22,30 +24,34 @@ class EditProfileViewModel {
     let debugEnabled = MutableProperty<Bool>(false)
     
     init() {
-        id.value = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
+        let id = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
         debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(PersonDefaultsKeys.DebugEnabled.rawValue)
         
-        Api.get("persons/\(id.value)", authorized: true)
-            .start(next: { json in
-                let person = Mapper<Person>().map(json)!
-                self.email.value = person.email
-                self.fullName.value = person.fullName
-                self.userName.value = person.userName
-                self.description.value = person.description_
-                self.avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(self.id.value % 4).jpg"
-            })
+        if let person = realm.objectForPrimaryKey(Person.self, key: id) {
+            setPerson(person)
+        }
+        
+        Api.get("persons/\(id)", authorized: true)
+            .map { json in Mapper<Person>().map(json)! }
+            .start(next: setPerson)
         
         userName.producer
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
-            .filter { $0.characters.count > 2 }
-            .throttle(1, onScheduler: QueueScheduler.mainQueueScheduler)
-            .map { userName in ["user_name": userName] }
-            .flatMap(.Latest) { parameters in Api.post("persons/check-user-name", authorized: true, parameters: parameters) }
-            .start(completed: {
-                self.userNameTaken.value = false
-                }, error: { _ in
-                self.userNameTaken.value = true
+            .on(next: { _ in self.userNameTaken.value = false })
+            .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
+            .start(next: { userName in
+                let parameters = ["user_name": userName]
+                Api.post("persons/check-user-name", authorized: true, parameters: parameters)
+                    .start(error: { _ in self.userNameTaken.value = true })
             })
+    }
+    
+    private func setPerson(person: Person) {
+        email.value = person.email
+        fullName.value = person.fullName
+        userName.value = person.userName
+        description.value = person.description_
+        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(person.id % 4).jpg"
     }
     
     func updateData() -> SignalProducer<JSONResponse, NSError> {
@@ -68,6 +74,17 @@ class EditProfileViewModel {
         Api.post("persons/me/change-password", authorized: true, parameters: parameters)
             .start(error: { error in
                 print(error)
+            })
+    }
+    
+    func updateEmail(email: String) {
+        let parameters = ["email": email]
+        
+        Api.post("persons/me/change-email", authorized: true, parameters: parameters)
+            .start(completed: {
+                self.email.value = email
+                }, error: { error in
+                    print(error)
             })
     }
     

@@ -30,6 +30,10 @@ class Activity: Object, Model {
     }
 }
 
+func ==(lhs: Activity, rhs: Activity) -> Bool {
+    return lhs.hashValue == rhs.hashValue
+}
+
 extension Activity: Mappable {
     
     static func newInstance() -> Mappable {

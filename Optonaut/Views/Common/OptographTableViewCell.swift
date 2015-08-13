@@ -11,6 +11,7 @@ import UIKit
 import ReactiveCocoa
 import WebImage
 import ObjectMapper
+import HexColor
 
 class OptographTableViewCell: UITableViewCell {
     
