@@ -22,6 +22,7 @@ class EditProfileViewModel {
     let email = MutableProperty<String>("")
     let avatarUrl = MutableProperty<String>("")
     let debugEnabled = MutableProperty<Bool>(false)
+    let wantsNewsletter = MutableProperty<Bool>(false)
     
     init() {
         let id = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
