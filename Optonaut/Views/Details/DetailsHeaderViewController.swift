@@ -12,7 +12,7 @@ import WebImage
 import CoreMotion
 import ObjectMapper
 
-class DetailsViewController: UIViewController, TransparentNavbar {
+class DetailsHeaderViewController: UIViewController {
     
     var viewModel: DetailsViewModel
     
@@ -42,14 +42,14 @@ class DetailsViewController: UIViewController, TransparentNavbar {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        viewModel = DetailsViewModel(optographId: 0)
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .whiteColor()
+//        view.backgroundColor = .whiteColor()
+        view.backgroundColor = UIColor.blueColor().alpha(0.5)
         
         navigationItem.title = ""
         
@@ -175,7 +175,7 @@ class DetailsViewController: UIViewController, TransparentNavbar {
             Api.get("persons/user-name/\(userName)", authorized: true)
                 .start(next: { json in
                     let person = Mapper<Person>().map(json)!
-                    self.navigationController?.pushViewController(ProfileViewController(personId: person.id), animated: true)
+                    self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
                 })
         }
         descriptionView.hashtagLinkTapHandler = { label, hashtag, range in
@@ -189,12 +189,6 @@ class DetailsViewController: UIViewController, TransparentNavbar {
         motionManager.accelerometerUpdateInterval = 0.3
         
         view.setNeedsUpdateConstraints()
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        updateNavbarAppear()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -282,8 +276,8 @@ class DetailsViewController: UIViewController, TransparentNavbar {
     }
     
     func pushProfile() {
-        let profileViewController = ProfileViewController(personId: viewModel.personId.value)
-        navigationController?.pushViewController(profileViewController, animated: true)
+        let profileTableViewController = ProfileTableViewController(personId: viewModel.personId.value)
+        navigationController?.pushViewController(profileTableViewController, animated: true)
     }
     
 }

@@ -10,18 +10,24 @@ import UIKit
 import PureLayout_iOS
 import Refresher
 
-class ProfileTableViewController: OptographTableViewController {
+class ProfileTableViewController: OptographTableViewController, TransparentNavbar {
     
-    var viewModel: OptographsViewModel
+    let viewModel: OptographsViewModel
     
-    required init(userId: Int) {
-        viewModel = OptographsViewModel(source: "persons/\(userId)/optographs")
+    let headerView: UIView
+    
+    var didSetConstraints = false
+    
+    required init(personId: Int) {
+        let profileheaderViewController = ProfileHeaderViewController(personId: personId)
+        headerView = profileheaderViewController.view
+        
+        viewModel = OptographsViewModel(source: "persons/\(personId)/optographs")
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
-        viewModel = OptographsViewModel(source: "")
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -34,13 +40,39 @@ class ProfileTableViewController: OptographTableViewController {
         
         viewModel.resultsLoading.value = true
         
+        headerView.frame = CGRect(x: 0, y: -64, width: view.frame.width, height: 280 - 64)
+        tableView.tableHeaderView = headerView
+        
         view.setNeedsUpdateConstraints()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        updateNavbarAppear()
+    }
+    
     override func updateViewConstraints() {
-        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
+        if !didSetConstraints {
+            tableView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
+            tableView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
+            tableView.autoMatchDimension(.Height, toDimension: .Height, ofView: view)
+            
+            headerView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
+            headerView.autoSetDimension(.Height, toSize: 280)
+            
+            didSetConstraints = true
+        }
         
         super.updateViewConstraints()
     }
+    
+//    func scrollViewDidScroll(scrollView: UIScrollView) {
+//        var rect = headerView.frame
+//        print(rect)
+//        rect.origin.y = tableView.contentOffset.y
+//        print(rect)
+//        headerView.frame = rect
+//    }
     
 }

@@ -69,7 +69,7 @@ class ActivityTableViewCell: UITableViewCell {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     func bindViewModel(activity: Activity) {
@@ -98,14 +98,14 @@ class ActivityTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        let profileViewController = ProfileViewController(personId: viewModel.creatorId.value)
-        navigationController?.pushViewController(profileViewController, animated: true)
+        let profileTableViewController = ProfileTableViewController(personId: viewModel.creatorId.value)
+        navigationController?.pushViewController(profileTableViewController, animated: true)
     }
     
     func pushDetails() {
         if let id = viewModel.optographId.value {
-            let detailsViewController = DetailsViewController(optographId: id)
-            navigationController?.pushViewController(detailsViewController, animated: true)
+            let detailsTableViewController = DetailsTableViewController(optographId: id)
+            navigationController?.pushViewController(detailsTableViewController, animated: true)
         }
     }
     

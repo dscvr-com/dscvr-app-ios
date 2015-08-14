@@ -21,6 +21,8 @@ class TabBarViewController: UITabBarController {
         let profileVC = ProfileNavViewController()
         viewControllers = [feedVC, exploreVC, activityVC, profileVC]
         
+//        selectedIndex = 3
+        
         feedVC.initNotificationIndicator()
         activityVC.initNotificationIndicator()
         

@@ -16,7 +16,7 @@ class ProfileNavViewController: UINavigationController {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -24,7 +24,7 @@ class ProfileNavViewController: UINavigationController {
         
         let userId = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
         
-        pushViewController(ProfileViewController(personId: userId), animated: false)
+        pushViewController(ProfileTableViewController(personId: userId), animated: false)
     }
     
 }

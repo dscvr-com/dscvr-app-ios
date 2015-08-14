@@ -22,8 +22,7 @@ class ViewerViewController: UIViewController  {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        orientation = .Unknown
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -151,13 +150,14 @@ extension ViewerViewController: SCNSceneRendererDelegate {
         if let motion = self.motionManager.deviceMotion {
             let r = motion.attitude.rotationMatrix
             
-            let rGlk = GLKMatrix4Make(Float(r.m11), Float(r.m12), Float(r.m13), 0,
+            let transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Make(
+                Float(r.m11), Float(r.m12), Float(r.m13), 0,
                 Float(r.m21), Float(r.m22), Float(r.m23), 0,
                 Float(r.m31), Float(r.m32), Float(r.m33), 0,
-                0,     0,     0,     1)
+                0,            0,            0,            1))
             
-            self.leftCameraNode.transform = SCNMatrix4FromGLKMatrix4(rGlk)
-            self.rightCameraNode.transform = SCNMatrix4FromGLKMatrix4(rGlk)
+            self.leftCameraNode.transform = transform
+            self.rightCameraNode.transform = transform
         }
     }
     

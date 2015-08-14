@@ -9,7 +9,7 @@
 import UIKit
 import ReactiveCocoa
 
-class ProfileViewController: UIViewController, TransparentNavbar {
+class ProfileHeaderViewController: UIViewController {
     
     var viewModel: ProfileViewModel
     
@@ -28,7 +28,8 @@ class ProfileViewController: UIViewController, TransparentNavbar {
     let verticalLineView = UIView()
     let followedHeadingView = UILabel()
     let followedCountView = UILabel()
-    var optographsView: UIView!
+    
+    var didSetConstraints = false
     
     var isMe = false
     
@@ -39,14 +40,14 @@ class ProfileViewController: UIViewController, TransparentNavbar {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        viewModel = ProfileViewModel(id: 0)
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .whiteColor()
+//        view.backgroundColor = .greenColor()
         
         let blurEffect = UIBlurEffect(style: .Dark)
         avatarBackgroundBlurView = UIVisualEffectView(effect: blurEffect)
@@ -156,73 +157,65 @@ class ProfileViewController: UIViewController, TransparentNavbar {
         followedCountView.textColor = .blackColor()
         view.addSubview(followedCountView)
         
-        let optographTableViewController = ProfileTableViewController(userId: viewModel.id.value)
-        addChildViewController(optographTableViewController)
-        optographsView = optographTableViewController.view
-        view.addSubview(optographsView)
-        
-        view.setNeedsUpdateConstraints()
+//        view.setNeedsUpdateConstraints()
     }
     
     override func updateViewConstraints() {
-        avatarBackgroundImageView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Bottom)
-        avatarBackgroundImageView.autoSetDimension(.Height, toSize: 213)
         
-        avatarBackgroundBlurView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
+        if !didSetConstraints {
         
-        avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 39)
-        avatarImageView.autoAlignAxisToSuperviewAxis(.Vertical)
-        avatarImageView.autoSetDimensionsToSize(CGSize(width: 84, height: 84))
-        
-        fullNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 17)
-        fullNameView.autoAlignAxisToSuperviewAxis(.Vertical)
-        
-        userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: fullNameView, withOffset: -2)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 5)
+            avatarBackgroundImageView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Bottom)
+            avatarBackgroundImageView.autoSetDimension(.Height, toSize: 213)
+            
+            avatarBackgroundBlurView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
 
-        descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 5)
-        descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+            avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 39)
+            avatarImageView.autoAlignAxisToSuperviewAxis(.Vertical)
+            avatarImageView.autoSetDimensionsToSize(CGSize(width: 84, height: 84))
+            
+            fullNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 17)
+            fullNameView.autoAlignAxisToSuperviewAxis(.Vertical)
+            
+            userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: fullNameView, withOffset: -2)
+            userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 5)
+            
+            descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 5)
+            descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+            descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
-        followButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        followButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-        followButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
-        
-        logoutButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        logoutButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-        logoutButtonView.autoSetDimensionsToSize(CGSize(width: 40, height: 31))
-        
-        editProfileButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        editProfileButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: logoutButtonView, withOffset: -3)
-        editProfileButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 31))
-        
-        followersHeadingView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        followersHeadingView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        
-        followersCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
-        followersCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followersHeadingView)
-        
-        verticalLineView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
-        verticalLineView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followersCountView)
-        verticalLineView.autoPinEdge(.Left, toEdge: .Right, ofView: followersHeadingView, withOffset: 12)
-        verticalLineView.autoSetDimension(.Width, toSize: 1)
-        
-        followedHeadingView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
-        followedHeadingView.autoPinEdge(.Left, toEdge: .Right, ofView: verticalLineView, withOffset: 12)
-        
-        followedCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
-        followedCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followedHeadingView)
-        
-        optographsView.autoPinEdge(.Top, toEdge: .Bottom, ofView: followButtonView, withOffset: 20)
-        optographsView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Top)
+            followButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+            followButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+            followButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
+            
+            logoutButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+            logoutButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+            logoutButtonView.autoSetDimensionsToSize(CGSize(width: 40, height: 31))
+            
+            editProfileButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+            editProfileButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: logoutButtonView, withOffset: -3)
+            editProfileButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 31))
+            
+            followersHeadingView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+            followersHeadingView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+            
+            followersCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
+            followersCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followersHeadingView)
+            
+            verticalLineView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
+            verticalLineView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followersCountView)
+            verticalLineView.autoPinEdge(.Left, toEdge: .Right, ofView: followersHeadingView, withOffset: 12)
+            verticalLineView.autoSetDimension(.Width, toSize: 1)
+            
+            followedHeadingView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
+            followedHeadingView.autoPinEdge(.Left, toEdge: .Right, ofView: verticalLineView, withOffset: 12)
+            
+            followedCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
+            followedCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followedHeadingView)
+            
+            didSetConstraints = true
+        }
         
         super.updateViewConstraints()
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        updateNavbarAppear()
     }
     
     func editProfile() {

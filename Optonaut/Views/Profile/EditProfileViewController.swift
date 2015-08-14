@@ -194,8 +194,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
         newsletterLabelView.font = .robotoOfSize(15, withType: .Regular)
         view.addSubview(newsletterLabelView)
         
-        newsletterSwitchView.on = viewModel.debugEnabled.value
-        newsletterSwitchView.addTarget(self, action: "toggleDebug", forControlEvents: .ValueChanged)
+        newsletterSwitchView.on = viewModel.wantsNewsletter.value
+        newsletterSwitchView.addTarget(self, action: "toggleNewsletter", forControlEvents: .ValueChanged)
         view.addSubview(newsletterSwitchView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
@@ -307,6 +307,10 @@ class EditProfileViewController: UIViewController, RedNavbar {
     
     func toggleDebug() {
         viewModel.toggleDebug()
+    }
+    
+    func toggleNewsletter() {
+        viewModel.toggleNewsletter()
     }
     
     func cancel() {

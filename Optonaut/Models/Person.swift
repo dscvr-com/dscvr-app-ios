@@ -20,6 +20,7 @@ class Person: Object, Model {
     dynamic var followedCount = 0
     dynamic var isFollowed = false
     dynamic var createdAt = NSDate()
+    dynamic var wantsNewsletter = false
     
     let optographs = List<Optograph>()
     
@@ -44,6 +45,7 @@ extension Person: Mappable {
         followedCount       <- map["followed_count"]
         isFollowed          <- map["is_followed"]
         createdAt           <- (map["created_at"], NSDateTransform())
+        wantsNewsletter     <- map["wants_newsletter"]
         
         var arr = [Optograph]()
         arr <- map["optographs"]

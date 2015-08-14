@@ -51,6 +51,7 @@ class EditProfileViewModel {
         email.value = person.email
         fullName.value = person.fullName
         userName.value = person.userName
+        wantsNewsletter.value = person.wantsNewsletter
         description.value = person.description_
         avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(person.id % 4).jpg"
     }
@@ -60,9 +61,10 @@ class EditProfileViewModel {
             "full_name": fullName.value,
             "user_name": userName.value,
             "description": description.value,
+            "wants_newsletter": wantsNewsletter.value,
         ]
         
-        return Api.put("persons/me", authorized: true, parameters: parameters)
+        return Api.put("persons/me", authorized: true, parameters: parameters as? [String : AnyObject])
     }
     
     func updateAvatar() {
@@ -92,6 +94,10 @@ class EditProfileViewModel {
     func toggleDebug() {
         debugEnabled.value = !debugEnabled.value
         NSUserDefaults.standardUserDefaults().setBool(debugEnabled.value, forKey: PersonDefaultsKeys.DebugEnabled.rawValue)
+    }
+    
+    func toggleNewsletter() {
+        wantsNewsletter.value = !wantsNewsletter.value
     }
     
 }

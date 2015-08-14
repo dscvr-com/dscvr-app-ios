@@ -153,7 +153,7 @@ class OptographTableViewCell: UITableViewCell {
             Api.get("persons/user-name/\(userName)", authorized: true)
                 .start(next: { json in
                     let person = Mapper<Person>().map(json)!
-                    self.navigationController?.pushViewController(ProfileViewController(personId: person.id), animated: true)
+                    self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
                 })
         }
         descriptionView.hashtagLinkTapHandler = { label, hashtag, range in
@@ -162,13 +162,13 @@ class OptographTableViewCell: UITableViewCell {
     }
     
     func pushDetails() {
-        let detailsViewController = DetailsViewController(optographId: viewModel.id.value)
-        navigationController?.pushViewController(detailsViewController, animated: true)
+        let detailsTableViewController = DetailsTableViewController(optographId: viewModel.id.value)
+        navigationController?.pushViewController(detailsTableViewController, animated: true)
     }
     
     func pushProfile() {
-        let profileViewController = ProfileViewController(personId: viewModel.personId.value)
-        navigationController?.pushViewController(profileViewController, animated: true)
+        let profileTableViewController = ProfileTableViewController(personId: viewModel.personId.value)
+        navigationController?.pushViewController(profileTableViewController, animated: true)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}
