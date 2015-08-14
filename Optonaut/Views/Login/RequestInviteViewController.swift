@@ -73,6 +73,7 @@ class RequestInviteViewController: UIViewController {
         submitButtonView.layer.cornerRadius = 5
         submitButtonView.layer.masksToBounds = true
         submitButtonView.rac_userInteractionEnabled <~ viewModel.emailValid
+        submitButtonView.rac_alpha <~ viewModel.emailValid.producer.map { $0 ? 1 : 0.5 }
         submitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.requestInvite()
                 .start(

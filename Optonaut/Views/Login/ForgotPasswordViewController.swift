@@ -10,32 +10,38 @@ import UIKit
 import PureLayout_iOS
 import ReactiveCocoa
 
-class LoginViewController: UIViewController {
+class ForgotPasswordViewController: UIViewController {
     
     // subviews
-    let logoView = UILabel()
+    let titleView = UILabel()
+    let descriptionView = UILabel()
     let formView = UIView()
-    let emailOrUserNameInputView = UITextField()
-    let passwordInputView = UITextField()
+    let emailInputView = UITextField()
     let submitButtonView = UIButton()
-    let forgotPasswordView = UILabel()
-    let showInviteView = UILabel()
+    let cancelButtonView = UIButton()
     let loadingView = UIView()
     
     var formViewBottomConstraint: NSLayoutConstraint?
     var didSetConstraints = false
     
-    let viewModel = LoginViewModel()
+    let viewModel = ForgotPasswordViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = BaseColor
         
-        logoView.text = String.icomoonWithName(.LogoText)
-        logoView.textColor = .whiteColor()
-        logoView.font = UIFont.icomoonOfSize(60)
-        view.addSubview(logoView)
+        titleView.text = "Forgot your password?"
+        titleView.textColor = .whiteColor()
+        titleView.font = .robotoOfSize(18, withType: .Medium)
+        view.addSubview(titleView)
+        
+        descriptionView.text = "Don't worry. Please enter your email address and we will send you an email with a link to reset your password."
+        descriptionView.textColor = .whiteColor()
+        descriptionView.font = .robotoOfSize(15, withType: .Light)
+        descriptionView.textAlignment = .Center
+        descriptionView.numberOfLines = 0
+        view.addSubview(descriptionView)
         
         view.addSubview(formView)
         
@@ -45,70 +51,61 @@ class LoginViewController: UIViewController {
         ]
         
         // TODO implement feedback for wrong formatted data
-        emailOrUserNameInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
-        emailOrUserNameInputView.attributedPlaceholder = NSAttributedString(string:"Email or username", attributes: placeholderAttributes)
-        emailOrUserNameInputView.font = .robotoOfSize(15, withType: .Regular)
-        emailOrUserNameInputView.textColor = .whiteColor()
-        emailOrUserNameInputView.textAlignment = .Center
-        emailOrUserNameInputView.layer.cornerRadius = 5
-        emailOrUserNameInputView.clipsToBounds = true
-        emailOrUserNameInputView.autocorrectionType = .No
-        emailOrUserNameInputView.autocapitalizationType = .None
-        emailOrUserNameInputView.keyboardType = .EmailAddress
-        emailOrUserNameInputView.returnKeyType = .Next
-        emailOrUserNameInputView.delegate = self
-        viewModel.emailOrUserName <~ emailOrUserNameInputView.rac_text
-        formView.addSubview(emailOrUserNameInputView)
-        
-        passwordInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
-        passwordInputView.attributedPlaceholder = NSAttributedString(string:"Password", attributes: placeholderAttributes)
-        passwordInputView.font = .robotoOfSize(15, withType: .Regular)
-        passwordInputView.textColor = .whiteColor()
-        passwordInputView.textAlignment = .Center
-        passwordInputView.layer.cornerRadius = 5
-        passwordInputView.clipsToBounds = true
-        passwordInputView.secureTextEntry = true
-        passwordInputView.returnKeyType = .Go
-        passwordInputView.delegate = self
-        viewModel.password <~ passwordInputView.rac_text
-        formView.addSubview(passwordInputView)
+        emailInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
+        emailInputView.attributedPlaceholder = NSAttributedString(string:"Email", attributes: placeholderAttributes)
+        emailInputView.font = .robotoOfSize(15, withType: .Regular)
+        emailInputView.textColor = .whiteColor()
+        emailInputView.textAlignment = .Center
+        emailInputView.layer.cornerRadius = 5
+        emailInputView.clipsToBounds = true
+        emailInputView.autocorrectionType = .No
+        emailInputView.autocapitalizationType = .None
+        emailInputView.keyboardType = .EmailAddress
+        emailInputView.returnKeyType = .Go
+        emailInputView.delegate = self
+        viewModel.email <~ emailInputView.rac_text
+        formView.addSubview(emailInputView)
         
         submitButtonView.backgroundColor = UIColor(0xb5362c)
-        submitButtonView.setTitle("Login", forState: .Normal)
+        submitButtonView.setTitle("Reset Password", forState: .Normal)
         submitButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         submitButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
         submitButtonView.layer.cornerRadius = 5
         submitButtonView.layer.masksToBounds = true
-        submitButtonView.rac_userInteractionEnabled <~ viewModel.allowed
-        submitButtonView.rac_alpha <~ viewModel.allowed.producer.map { $0 ? 1 : 0.5 }
+        submitButtonView.rac_userInteractionEnabled <~ viewModel.emailValid
+        submitButtonView.rac_alpha <~ viewModel.emailValid.producer.map { $0 ? 1 : 0.5 }
         submitButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.login()
+            self.viewModel.sendEmail()
                 .start(
-                    error: { _ in 
-                        let alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
+                    error: { _ in
+                        let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Please try again.", preferredStyle: .Alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
                         self.presentViewController(alert, animated: true, completion: nil)
-                    }, 
+                    },
                     completed: {
-                        self.presentViewController(TabBarViewController(), animated: false, completion: nil)
-                })
+                        self.emailInputView.userInteractionEnabled = false
+                        self.emailInputView.alpha = 0.5
+                        self.submitButtonView.userInteractionEnabled = false
+                        self.submitButtonView.alpha = 0.5
+                        self.titleView.text = "Check your inbox"
+                        self.descriptionView.text = "We sent you an email with a link to reset your password by choosing a new one."
+                    }
+            )
             return RACSignal.empty()
         })
         formView.addSubview(submitButtonView)
         
-        forgotPasswordView.textColor = .whiteColor()
-        forgotPasswordView.text = "Forgot your password?"
-        forgotPasswordView.font = .robotoOfSize(13, withType: .Regular)
-        forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showForgotPasswordViewController"))
-        forgotPasswordView.userInteractionEnabled = true
-        view.addSubview(forgotPasswordView)
-        
-        showInviteView.textColor = .whiteColor()
-        showInviteView.text = "Request Invite"
-        showInviteView.font = .robotoOfSize(15, withType: .Regular)
-        showInviteView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showRequestInviteViewController"))
-        showInviteView.userInteractionEnabled = true
-        view.addSubview(showInviteView)
+        cancelButtonView.backgroundColor = UIColor(0xb5362c)
+        cancelButtonView.setTitle("Cancel", forState: .Normal)
+        cancelButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        cancelButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
+        cancelButtonView.layer.cornerRadius = 5
+        cancelButtonView.layer.masksToBounds = true
+        cancelButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.presentViewController(LoginViewController(), animated: false, completion: nil)
+            return RACSignal.empty()
+        })
+        formView.addSubview(cancelButtonView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
         loadingView.rac_hidden <~ viewModel.pending.producer .map { !$0 }
@@ -135,8 +132,13 @@ class LoginViewController: UIViewController {
     
     override func updateViewConstraints() {
         if !didSetConstraints {
-            logoView.autoAlignAxisToSuperviewAxis(.Vertical)
-            logoView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -40)
+            
+            titleView.autoPinEdge(.Bottom, toEdge: .Top, ofView: descriptionView, withOffset: -15)
+            titleView.autoAlignAxisToSuperviewAxis(.Vertical)
+            
+            descriptionView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -36)
+            descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+            descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
             
             let formBottomOffset = formBottomOffsetForKeyboardHeight(0, keyboardVisible: false)
             formViewBottomConstraint = formView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: formBottomOffset)
@@ -144,26 +146,20 @@ class LoginViewController: UIViewController {
             formView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
             formView.autoSetDimension(.Height, toSize: 158)
             
-            emailOrUserNameInputView.autoSetDimension(.Height, toSize: 45)
-            emailOrUserNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
-            emailOrUserNameInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
-            emailOrUserNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
-            
-            passwordInputView.autoSetDimension(.Height, toSize: 45)
-            passwordInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailOrUserNameInputView, withOffset: 7)
-            passwordInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
-            passwordInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
+            emailInputView.autoSetDimension(.Height, toSize: 45)
+            emailInputView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
+            emailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
+            emailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
             submitButtonView.autoSetDimension(.Height, toSize: 45)
-            submitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordInputView, withOffset: 16)
+            submitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailInputView, withOffset: 16)
             submitButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
             submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            forgotPasswordView.autoPinEdge(.Top, toEdge: .Bottom, ofView: formView, withOffset: 23)
-            forgotPasswordView.autoAlignAxisToSuperviewAxis(.Vertical)
-            
-            showInviteView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -28)
-            showInviteView.autoAlignAxisToSuperviewAxis(.Vertical)
+            cancelButtonView.autoSetDimension(.Height, toSize: 45)
+            cancelButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: submitButtonView, withOffset: 7)
+            cancelButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
+            cancelButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
             loadingView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
             
@@ -175,20 +171,12 @@ class LoginViewController: UIViewController {
     
     // needed for vertically centering (respecting keyboard visiblity)
     private func formBottomOffsetForKeyboardHeight(keyboardHeight: CGFloat, keyboardVisible: Bool) -> CGFloat {
-        return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2 + 158 / 2
+        return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2.5 + 158 / 2
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    func showRequestInviteViewController() {
-        presentViewController(RequestInviteViewController(), animated: false, completion: nil)
-    }
-    
-    func showForgotPasswordViewController() {
-        presentViewController(ForgotPasswordViewController(), animated: false, completion: nil)
     }
     
     // MARK: - keyboard stuff
@@ -226,14 +214,11 @@ class LoginViewController: UIViewController {
 }
 
 // MARK: - UITextFieldDelegate
-extension LoginViewController: UITextFieldDelegate {
+extension ForgotPasswordViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
-        if textField == emailOrUserNameInputView {
-            passwordInputView.becomeFirstResponder()
-        }
         
-        if textField == passwordInputView {
+        if textField == emailInputView {
             view.endEditing(true)
             submitButtonView.sendActionsForControlEvents(.TouchUpInside)
         }

@@ -40,6 +40,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         
         viewModel.resultsLoading.value = true
         
+        headerView.autoresizingMask = .None
         headerView.frame = CGRect(x: 0, y: -64, width: view.frame.width, height: 280 - 64)
         tableView.tableHeaderView = headerView
         
