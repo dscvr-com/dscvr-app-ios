@@ -12,7 +12,7 @@ import Refresher
 
 class ExploreTableViewController: OptographTableViewController, RedNavbar {
     
-    let viewModel = OptographsViewModel(source: "optographs")
+    let viewModel = ExploreViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()

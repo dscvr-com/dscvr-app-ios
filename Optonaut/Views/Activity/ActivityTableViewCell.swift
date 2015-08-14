@@ -98,14 +98,13 @@ class ActivityTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        let profileTableViewController = ProfileTableViewController(personId: viewModel.creatorId.value)
-        navigationController?.pushViewController(profileTableViewController, animated: true)
+        let profileContainerViewController = ProfileContainerViewController(personId: viewModel.creatorId.value)
+        navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
     
     func pushDetails() {
         if let id = viewModel.optographId.value {
-            let detailsTableViewController = DetailsTableViewController(optographId: id)
-            navigationController?.pushViewController(detailsTableViewController, animated: true)
+            navigationController?.pushViewController(DetailsContainerViewController(optographId: id), animated: true)
         }
     }
     

@@ -14,15 +14,12 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     
     let viewModel: OptographsViewModel
     
-    let headerView: UIView
+    let blankHeaderView = UIView()
     
-    var didSetConstraints = false
+    var scrollCallback: ((CGFloat) -> ())?
     
     required init(personId: Int) {
-        let profileheaderViewController = ProfileHeaderViewController(personId: personId)
-        headerView = profileheaderViewController.view
-        
-        viewModel = OptographsViewModel(source: "persons/\(personId)/optographs")
+        viewModel = OptographsViewModel(personId: personId)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -40,11 +37,16 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         
         viewModel.resultsLoading.value = true
         
-        headerView.autoresizingMask = .None
-        headerView.frame = CGRect(x: 0, y: -64, width: view.frame.width, height: 280 - 64)
-        tableView.tableHeaderView = headerView
+        blankHeaderView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 280)
+        tableView.tableHeaderView = blankHeaderView
         
         view.setNeedsUpdateConstraints()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.contentInset = UIEdgeInsetsZero
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -54,26 +56,13 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     }
     
     override func updateViewConstraints() {
-        if !didSetConstraints {
-            tableView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
-            tableView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-            tableView.autoMatchDimension(.Height, toDimension: .Height, ofView: view)
-            
-            headerView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-            headerView.autoSetDimension(.Height, toSize: 280)
-            
-            didSetConstraints = true
-        }
+        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
     }
     
-//    func scrollViewDidScroll(scrollView: UIScrollView) {
-//        var rect = headerView.frame
-//        print(rect)
-//        rect.origin.y = tableView.contentOffset.y
-//        print(rect)
-//        headerView.frame = rect
-//    }
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        scrollCallback?(tableView.contentOffset.y)
+    }
     
 }

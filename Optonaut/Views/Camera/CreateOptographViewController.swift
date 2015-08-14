@@ -122,7 +122,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     func post() {
         viewModel.post()
             .start(next: { optograph in
-                self.navigationController!.pushViewController(DetailsTableViewController(optographId: optograph.id), animated: false)
+                self.navigationController!.pushViewController(DetailsContainerViewController(optographId: optograph.id), animated: false)
                 let viewControllersCount = self.navigationController!.viewControllers.count
                 self.navigationController!.viewControllers.removeAtIndex(viewControllersCount - 2)
             })

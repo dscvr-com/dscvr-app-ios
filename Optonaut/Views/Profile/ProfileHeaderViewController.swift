@@ -47,7 +47,6 @@ class ProfileHeaderViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .whiteColor()
-//        view.backgroundColor = .greenColor()
         
         let blurEffect = UIBlurEffect(style: .Dark)
         avatarBackgroundBlurView = UIVisualEffectView(effect: blurEffect)

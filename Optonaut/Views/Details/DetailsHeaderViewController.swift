@@ -175,7 +175,7 @@ class DetailsHeaderViewController: UIViewController {
             Api.get("persons/user-name/\(userName)", authorized: true)
                 .start(next: { json in
                     let person = Mapper<Person>().map(json)!
-                    self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
+                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
                 })
         }
         descriptionView.hashtagLinkTapHandler = { label, hashtag, range in
@@ -276,8 +276,8 @@ class DetailsHeaderViewController: UIViewController {
     }
     
     func pushProfile() {
-        let profileTableViewController = ProfileTableViewController(personId: viewModel.personId.value)
-        navigationController?.pushViewController(profileTableViewController, animated: true)
+        let profileContainerViewController = ProfileContainerViewController(personId: viewModel.personId.value)
+        navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
     
 }

@@ -24,7 +24,7 @@ class ProfileNavViewController: UINavigationController {
         
         let userId = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
         
-        pushViewController(ProfileTableViewController(personId: userId), animated: false)
+        pushViewController(ProfileContainerViewController(personId: userId), animated: false)
     }
     
 }

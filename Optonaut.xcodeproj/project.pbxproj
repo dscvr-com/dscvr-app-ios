@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		8F04CA121B7E0040000EE998 /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F04CA111B7E0040000EE998 /* ForgotPasswordViewController.swift */; };
 		8F04CA141B7E028C000EE998 /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F04CA131B7E028C000EE998 /* ForgotPasswordViewModel.swift */; };
+		8F04CA161B7E0EE6000EE998 /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F04CA151B7E0EE6000EE998 /* ExploreViewModel.swift */; };
+		8F04CA181B7E4CAF000EE998 /* ProfileContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F04CA171B7E4CAF000EE998 /* ProfileContainerViewController.swift */; };
+		8F04CA1A1B7E530A000EE998 /* DetailsContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F04CA191B7E530A000EE998 /* DetailsContainerViewController.swift */; };
 		8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */; };
 		8F17CF711B4F15B100A10DA3 /* NSDateTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
@@ -86,7 +89,7 @@
 		8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */; };
 		8FA74CA71B7B992800366203 /* KMPlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA74CA61B7B992800366203 /* KMPlaceholderTextView.swift */; };
 		8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */; };
-		8FB2D6D21B7CBB4F00BFB795 /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2D6D11B7CBB4F00BFB795 /* DetailsTableViewController.swift */; };
+		8FB2D6D21B7CBB4F00BFB795 /* CommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2D6D11B7CBB4F00BFB795 /* CommentTableViewController.swift */; };
 		8FB2D6D41B7CBB6500BFB795 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2D6D31B7CBB6500BFB795 /* CommentTableViewCell.swift */; };
 		8FB2D6D61B7CBBB000BFB795 /* CommentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2D6D51B7CBBB000BFB795 /* CommentsViewModel.swift */; };
 		8FB2D6D81B7CBD4000BFB795 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2D6D71B7CBD4000BFB795 /* CommentViewModel.swift */; };
@@ -125,6 +128,9 @@
 /* Begin PBXFileReference section */
 		8F04CA111B7E0040000EE998 /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		8F04CA131B7E028C000EE998 /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewModel.swift; sourceTree = "<group>"; };
+		8F04CA151B7E0EE6000EE998 /* ExploreViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreViewModel.swift; sourceTree = "<group>"; };
+		8F04CA171B7E4CAF000EE998 /* ProfileContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileContainerViewController.swift; sourceTree = "<group>"; };
+		8F04CA191B7E530A000EE998 /* DetailsContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsContainerViewController.swift; sourceTree = "<group>"; };
 		8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectMapper.framework; path = Carthage/Build/iOS/ObjectMapper.framework; sourceTree = "<group>"; };
 		8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateTransform.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
@@ -206,7 +212,7 @@
 		8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
 		8FA74CA61B7B992800366203 /* KMPlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KMPlaceholderTextView.swift; sourceTree = "<group>"; };
 		8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HexColor.framework; path = Carthage/Build/iOS/HexColor.framework; sourceTree = "<group>"; };
-		8FB2D6D11B7CBB4F00BFB795 /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
+		8FB2D6D11B7CBB4F00BFB795 /* CommentTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewController.swift; sourceTree = "<group>"; };
 		8FB2D6D31B7CBB6500BFB795 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
 		8FB2D6D51B7CBBB000BFB795 /* CommentsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsViewModel.swift; sourceTree = "<group>"; };
 		8FB2D6D71B7CBD4000BFB795 /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
@@ -437,6 +443,7 @@
 				8F04CA131B7E028C000EE998 /* ForgotPasswordViewModel.swift */,
 				8FEAB9781B51182B00F9FE64 /* DetailsViewModel.swift */,
 				8FB2D6D51B7CBBB000BFB795 /* CommentsViewModel.swift */,
+				8F04CA151B7E0EE6000EE998 /* ExploreViewModel.swift */,
 				8FB2D6D71B7CBD4000BFB795 /* CommentViewModel.swift */,
 				8F5FD9DF1B3C5578007E073C /* OptographsViewModel.swift */,
 				8FBDE8B31B60FE9E00C78486 /* FeedViewModel.swift */,
@@ -468,9 +475,10 @@
 			isa = PBXGroup;
 			children = (
 				8F5FD9F41B3DB7B3007E073C /* DetailsHeaderViewController.swift */,
-				8F5FDA0A1B433DAB007E073C /* ViewerViewController.swift */,
-				8FB2D6D11B7CBB4F00BFB795 /* DetailsTableViewController.swift */,
+				8F04CA191B7E530A000EE998 /* DetailsContainerViewController.swift */,
+				8FB2D6D11B7CBB4F00BFB795 /* CommentTableViewController.swift */,
 				8FB2D6D31B7CBB6500BFB795 /* CommentTableViewCell.swift */,
+				8F5FDA0A1B433DAB007E073C /* ViewerViewController.swift */,
 			);
 			path = Details;
 			sourceTree = "<group>";
@@ -518,6 +526,7 @@
 			isa = PBXGroup;
 			children = (
 				8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */,
+				8F04CA171B7E4CAF000EE998 /* ProfileContainerViewController.swift */,
 				8F9A4FF71B39E992009C4548 /* ProfileHeaderViewController.swift */,
 				8F500CFD1B4D6D70002B9878 /* ProfileTableViewController.swift */,
 				8FBA5CAB1B54266B00F0F489 /* EditProfileViewController.swift */,
@@ -867,16 +876,18 @@
 				8FFFD4BE1B78B5210043E43A /* quat.cpp in Sources */,
 				8F464B041B4C767300A66FA5 /* OptographTableViewController.swift in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
-				8FB2D6D21B7CBB4F00BFB795 /* DetailsTableViewController.swift in Sources */,
+				8FB2D6D21B7CBB4F00BFB795 /* CommentTableViewController.swift in Sources */,
 				8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */,
 				8FA74CA71B7B992800366203 /* KMPlaceholderTextView.swift in Sources */,
 				8F3FB0681B7B474700016A8A /* CreateOptographViewModel.swift in Sources */,
 				8F5FD9F71B3DB7B3007E073C /* ActivityNavViewController.swift in Sources */,
 				8FB2D6D61B7CBBB000BFB795 /* CommentsViewModel.swift in Sources */,
+				8F04CA181B7E4CAF000EE998 /* ProfileContainerViewController.swift in Sources */,
 				8F5FDA091B412DB2007E073C /* Constants.swift in Sources */,
 				8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
 				8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */,
+				8F04CA1A1B7E530A000EE998 /* DetailsContainerViewController.swift in Sources */,
 				8F464AFD1B4BC4BB00A66FA5 /* InsetLabel.swift in Sources */,
 				8FFFD4BD1B78B5210043E43A /* monoStitcher.cpp in Sources */,
 				8F53ED0E1B6F6A1D00D99F41 /* LoadMore.swift in Sources */,
@@ -891,6 +902,7 @@
 				8F464B071B4C7A9000A66FA5 /* HashtagTableViewController.swift in Sources */,
 				8F3FB0661B7B466000016A8A /* CreateOptographViewController.swift in Sources */,
 				8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */,
+				8F04CA161B7E0EE6000EE998 /* ExploreViewModel.swift in Sources */,
 				8F5FD9FD1B3DB909007E073C /* ActivitiesViewModel.swift in Sources */,
 				8F500D001B4D8028002B9878 /* Appearance.swift in Sources */,
 				8FBA5CAE1B54556000F0F489 /* BottomLineTextField.swift in Sources */,

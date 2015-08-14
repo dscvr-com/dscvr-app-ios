@@ -9,22 +9,17 @@
 import Foundation
 import UIKit
 import PureLayout_iOS
-import Refresher
 
-class DetailsTableViewController: UIViewController, TransparentNavbar {
+class CommentTableViewController: UIViewController, TransparentNavbar {
     
     let viewModel: CommentsViewModel
     
-    var comments = [Comment]()
+    var items = [Comment]()
     
-    // subviews
     let tableView = UITableView()
-    let headerView: UIView
+    let blankHeaderView = UIView()
     
     required init(optographId: Int) {
-        let detailsheaderViewController = DetailsHeaderViewController(optographId: optographId)
-        headerView = detailsheaderViewController.view
-        
         viewModel = CommentsViewModel(optographId: optographId)
         super.init(nibName: nil, bundle: nil)
     }
@@ -45,11 +40,10 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
         tableView.registerClass(CommentTableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
         
-        headerView.frame = CGRect(x: 0, y: -64, width: view.frame.width, height: 580 - 64)
-        tableView.tableHeaderView = headerView
+        blankHeaderView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 280)
+        tableView.tableHeaderView = blankHeaderView
         
-        viewModel.results.producer.start(next: { comments in
-            self.comments = comments
+        viewModel.results.producer.start(next: { _ in
             self.tableView.reloadData()
         })
         
@@ -67,16 +61,13 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
         tableView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
         tableView.autoMatchDimension(.Height, toDimension: .Height, ofView: view)
         
-        headerView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        headerView.autoSetDimension(.Height, toSize: 580)
-        
         super.updateViewConstraints()
     }
     
 }
 
 // MARK: - UITableViewDelegate
-extension DetailsTableViewController: UITableViewDelegate {
+extension CommentTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 //        let attributes = [NSFontAttributeName: UIFont.robotoOfSize(13, withType: .Light)]
@@ -92,18 +83,18 @@ extension DetailsTableViewController: UITableViewDelegate {
 }
 
 // MARK: - UITableViewDataSource
-extension DetailsTableViewController: UITableViewDataSource {
+extension CommentTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! CommentTableViewCell
         cell.navigationController = navigationController
-        cell.bindViewModel(comments[indexPath.row])
+        cell.bindViewModel(viewModel.results.value[indexPath.row])
         
         return cell
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return comments.count
+        return viewModel.results.value.count
     }
     
 }

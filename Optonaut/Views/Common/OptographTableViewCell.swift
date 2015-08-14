@@ -151,9 +151,9 @@ class OptographTableViewCell: UITableViewCell {
         descriptionView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
             Api.get("persons/user-name/\(userName)", authorized: true)
-                .start(next: { json in
-                    let person = Mapper<Person>().map(json)!
-                    self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
+                .map { json in Mapper<Person>().map(json)! }
+                .start(next: { person in
+                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
                 })
         }
         descriptionView.hashtagLinkTapHandler = { label, hashtag, range in
@@ -162,13 +162,11 @@ class OptographTableViewCell: UITableViewCell {
     }
     
     func pushDetails() {
-        let detailsTableViewController = DetailsTableViewController(optographId: viewModel.id.value)
-        navigationController?.pushViewController(detailsTableViewController, animated: true)
+        navigationController?.pushViewController(DetailsContainerViewController(optographId: viewModel.id.value), animated: true)
     }
     
     func pushProfile() {
-        let profileTableViewController = ProfileTableViewController(personId: viewModel.personId.value)
-        navigationController?.pushViewController(profileTableViewController, animated: true)
+        navigationController?.pushViewController(ProfileContainerViewController(personId: viewModel.personId.value), animated: true)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}
