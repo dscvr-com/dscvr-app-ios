@@ -19,12 +19,12 @@
 //This interface takes matrices in SCNSpace and also gives them back in SCNSpace.
 //It's that simple.
 
-+ (void)Push:(GLKMatrix4)extrinsics :(GLKMatrix3)intrinsics :(ImageBuffer*)image;
-+ (GLKMatrix4)GetCurrentRotation;
-+ (bool)IsPreviewImageValialble;
-+ (ImageBuffer*)GetPreviewImage;
-+ (void)FreeImageBuffer:(ImageBuffer*)toFree;
-+ (NSArray<SelectionPoint*>*)GetSelectionPoints;
-+ (void)DisableSelectionPoint:(SelectionPoint*)toDisable;
+- (void)Push:(GLKMatrix4)extrinsics :(ImageBuffer*)image;
+- (GLKMatrix4)GetCurrentRotation;
+- (bool)IsPreviewImageValialble;
+- (ImageBuffer*)GetPreviewImage;
+- (void)FreeImageBuffer:(ImageBuffer*)toFree;
+- (NSArray<SelectionPoint*>*)GetSelectionPoints;
+- (void)DisableSelectionPoint:(SelectionPoint*)toDisable;
 
 @end
