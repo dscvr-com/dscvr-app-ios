@@ -87,6 +87,15 @@ func identity<T>(el: T) -> T {
     return el
 }
 
+func calcTextHeight(text: String, withWidth width: CGFloat) -> CGFloat {
+    let attributes = [NSFontAttributeName: UIFont.robotoOfSize(13, withType: .Light)]
+    let textAS = NSAttributedString(string: text, attributes: attributes)
+    let tmpSize = CGSize(width: width, height: 100000)
+    let textRect = textAS.boundingRectWithSize(tmpSize, options: [.UsesFontLeading, .UsesLineFragmentOrigin], context: nil)
+    
+    return textRect.height
+}
+
 extension Array {
     
     func subArray(end: Int) -> Array {

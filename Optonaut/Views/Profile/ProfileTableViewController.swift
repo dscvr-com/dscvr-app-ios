@@ -12,9 +12,10 @@ import Refresher
 
 class ProfileTableViewController: OptographTableViewController, TransparentNavbar {
     
-    let viewModel: OptographsViewModel
+    private let viewModel: OptographsViewModel
     
-    let blankHeaderView = UIView()
+    // subviews
+    private let blankHeaderView = UIView()
     
     var scrollCallback: ((CGFloat) -> ())?
     
@@ -39,8 +40,6 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         
         blankHeaderView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 280)
         tableView.tableHeaderView = blankHeaderView
-        
-        view.setNeedsUpdateConstraints()
     }
     
     override func viewDidLayoutSubviews() {

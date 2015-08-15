@@ -35,13 +35,10 @@ class OptographTableViewController: UIViewController {
 extension OptographTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let attributes = [NSFontAttributeName: UIFont.robotoOfSize(13, withType: .Light)]
-        let textAS = NSAttributedString(string: items[indexPath.row].description_, attributes: attributes)
-        let tmpSize = CGSize(width: view.frame.width - 38, height: 100000)
-        let textRect = textAS.boundingRectWithSize(tmpSize, options: [.UsesFontLeading, .UsesLineFragmentOrigin], context: nil)
+        let textHeight = calcTextHeight(items[indexPath.row].description_, withWidth: view.frame.width - 38)
         let imageHeight = view.frame.width * 0.45
         let restHeight = CGFloat(100) // includes avatar, name, bottom line and spacing
-        return imageHeight + restHeight + textRect.height
+        return imageHeight + restHeight + textHeight
     }
     
 }

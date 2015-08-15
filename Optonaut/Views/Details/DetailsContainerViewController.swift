@@ -35,21 +35,35 @@ class DetailsContainerViewController: UIViewController {
         addChildViewController(tableViewController)
         addChildViewController(headerViewController)
         
+        tableViewController.scrollCallback = { offsetY in
+            var rect = self.headerView.frame
+            if offsetY < 0 {
+                rect.origin.y = 0
+            } else {
+                rect.origin.y = -offsetY
+            }
+            self.headerView.frame = rect
+        }
+        
         view.addSubview(tableView)
         view.addSubview(headerView)
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
         view.setNeedsUpdateConstraints()
     }
     
     override func updateViewConstraints() {
         headerView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
-        
-        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         headerView.autoPinEdge(.Left, toEdge: .Left, ofView: view)
         headerView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
-        headerView.autoSetDimension(.Height, toSize: 280)
+        headerView.autoSetDimension(.Height, toSize: 480)
         
         super.updateViewConstraints()
+    }
+    
+    func dismissKeyboard() {
+        view.endEditing(true)
     }
     
 }

@@ -9,8 +9,6 @@
 import Foundation
 import UIKit
 import ReactiveCocoa
-import WebImage
-import ObjectMapper
 import HexColor
 
 class CommentTableViewCell: UITableViewCell {
@@ -41,7 +39,6 @@ class CommentTableViewCell: UITableViewCell {
     }
     
     override func updateConstraints() {
-        
         textView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 16)
         textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
         textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)

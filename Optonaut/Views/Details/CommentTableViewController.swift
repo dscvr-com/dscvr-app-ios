@@ -12,12 +12,13 @@ import PureLayout_iOS
 
 class CommentTableViewController: UIViewController, TransparentNavbar {
     
-    let viewModel: CommentsViewModel
+    private let viewModel: CommentsViewModel
     
-    var items = [Comment]()
+    // subviews
+    private let tableView = UITableView()
+    private let blankHeaderView = UIView()
     
-    let tableView = UITableView()
-    let blankHeaderView = UIView()
+    var scrollCallback: ((CGFloat) -> ())?
     
     required init(optographId: Int) {
         viewModel = CommentsViewModel(optographId: optographId)
@@ -38,30 +39,72 @@ class CommentTableViewController: UIViewController, TransparentNavbar {
         tableView.separatorStyle = .None
         
         tableView.registerClass(CommentTableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
         view.addSubview(tableView)
         
-        blankHeaderView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 280)
+        blankHeaderView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 480)
         tableView.tableHeaderView = blankHeaderView
         
         viewModel.results.producer.start(next: { _ in
             self.tableView.reloadData()
         })
-        
-        view.setNeedsUpdateConstraints()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
+        
         updateNavbarAppear()
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    func keyboardWillShowNotification(notification: NSNotification) {
+        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: true)
+    }
+    
+    func keyboardWillHideNotification(notification: NSNotification) {
+        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: false)
+    }
+    
+    func updateBottomLayoutConstraintWithNotification(notification: NSNotification, keyboardVisible: Bool) {
+        let userInfo = notification.userInfo!
+        let keyboardEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let convertedKeyboardEndFrame = view.convertRect(keyboardEndFrame, fromView: view.window)
+        let keyboardHeight = keyboardVisible ? CGRectGetMaxY(view.bounds) - CGRectGetMinY(convertedKeyboardEndFrame) : 0
+        let rawAnimationCurve = (userInfo[UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).unsignedIntValue << 16
+        let animationCurve = UIViewAnimationOptions.init(rawValue: UInt(rawAnimationCurve))
+        let animationDuration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
+        
+        let indexPath = NSIndexPath(forRow: viewModel.results.value.count, inSection: 0)
+        
+        UIView.animateWithDuration(animationDuration,
+            delay: 0,
+            options: [.BeginFromCurrentState, animationCurve],
+            animations: {
+                self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+                self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: false)
+            },
+            completion: nil)
+    }
+    
     override func updateViewConstraints() {
-        tableView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
-        tableView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        tableView.autoMatchDimension(.Height, toDimension: .Height, ofView: view)
+        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.contentInset = UIEdgeInsetsZero
     }
     
 }
@@ -70,14 +113,11 @@ class CommentTableViewController: UIViewController, TransparentNavbar {
 extension CommentTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-//        let attributes = [NSFontAttributeName: UIFont.robotoOfSize(13, withType: .Light)]
-//        let textAS = NSAttributedString(string: items[indexPath.row].description_, attributes: attributes)
-//        let tmpSize = CGSize(width: view.frame.width - 38, height: 100000)
-//        let textRect = textAS.boundingRectWithSize(tmpSize, options: [.UsesFontLeading, .UsesLineFragmentOrigin], context: nil)
-//        let imageHeight = view.frame.width * 0.45
-//        let restHeight = CGFloat(100) // includes avatar, name, bottom line and spacing
-//        return imageHeight + restHeight + textRect.height
         return 50
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        scrollCallback?(tableView.contentOffset.y)
     }
     
 }
@@ -86,15 +126,31 @@ extension CommentTableViewController: UITableViewDelegate {
 extension CommentTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! CommentTableViewCell
-        cell.navigationController = navigationController
-        cell.bindViewModel(viewModel.results.value[indexPath.row])
-        
-        return cell
+        if indexPath.row < viewModel.results.value.count {
+            let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! CommentTableViewCell
+            cell.navigationController = navigationController
+            cell.bindViewModel(viewModel.results.value[indexPath.row])
+            return cell
+        } else {
+            let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
+            cell.textInputView.delegate = self
+            return cell
+        }
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.results.value.count
+        return viewModel.results.value.count + 1
+    }
+    
+}
+
+extension CommentTableViewController: UITextViewDelegate {
+    
+    func textViewDidBeginEditing(textView: UITextView) {
+//        let keyboardEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+//        let convertedKeyboardEndFrame = view.convertRect(keyboardEndFrame, fromView: view.window)
+//        let keyboardHeight = CGRectGetMaxY(view.bounds) - CGRectGetMinY(convertedKeyboardEndFrame)
+        
     }
     
 }

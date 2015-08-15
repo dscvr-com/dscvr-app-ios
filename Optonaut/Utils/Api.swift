@@ -16,8 +16,8 @@ class Api {
 //    static let host = "beta.api.optonaut.com"
 //    static let host = "b7535ff5.ngrok.io"
 //    static let port = 80
-//    static let host = "192.168.43.232"
-    static let host = "localhost"
+    static let host = "192.168.2.102"
+//    static let host = "localhost"
     static let port = 3000
     
     static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {

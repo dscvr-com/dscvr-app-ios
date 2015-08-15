@@ -202,17 +202,18 @@ class LoginViewController: UIViewController {
     
     func updateBottomLayoutConstraintWithNotification(notification: NSNotification, keyboardVisible: Bool) {
         let userInfo = notification.userInfo!
-        
-        let animationDuration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
         let keyboardEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
         let convertedKeyboardEndFrame = view.convertRect(keyboardEndFrame, fromView: view.window)
-        let rawAnimationCurve = (notification.userInfo![UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).unsignedIntValue << 16
-        let animationCurve = UIViewAnimationOptions.init(rawValue: UInt(rawAnimationCurve))
         let keyboardHeight = CGRectGetMaxY(view.bounds) - CGRectGetMinY(convertedKeyboardEndFrame)
+        let rawAnimationCurve = (userInfo[UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).unsignedIntValue << 16
+        let animationCurve = UIViewAnimationOptions.init(rawValue: UInt(rawAnimationCurve))
+        let animationDuration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
         
         formViewBottomConstraint?.constant = formBottomOffsetForKeyboardHeight(keyboardHeight, keyboardVisible: keyboardVisible)
         
-        UIView.animateWithDuration(animationDuration, delay: 0, options: [.BeginFromCurrentState, animationCurve],
+        UIView.animateWithDuration(animationDuration,
+            delay: 0,
+            options: [.BeginFromCurrentState, animationCurve],
             animations: {
                 self.view.layoutIfNeeded()
             },

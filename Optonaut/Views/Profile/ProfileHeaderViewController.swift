@@ -11,7 +11,9 @@ import ReactiveCocoa
 
 class ProfileHeaderViewController: UIViewController {
     
-    var viewModel: ProfileViewModel
+    let viewModel: ProfileViewModel
+    
+    let isMe: Bool
     
     // subviews
     let avatarBackgroundImageView = UIImageView()
@@ -28,10 +30,6 @@ class ProfileHeaderViewController: UIViewController {
     let verticalLineView = UIView()
     let followedHeadingView = UILabel()
     let followedCountView = UILabel()
-    
-    var didSetConstraints = false
-    
-    var isMe = false
     
     required init(personId: Int) {
         viewModel = ProfileViewModel(id: personId)
@@ -155,73 +153,65 @@ class ProfileHeaderViewController: UIViewController {
         followedCountView.font = .robotoOfSize(13, withType: .Medium)
         followedCountView.textColor = .blackColor()
         view.addSubview(followedCountView)
-        
-//        view.setNeedsUpdateConstraints()
     }
     
     override func updateViewConstraints() {
+        avatarBackgroundImageView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Bottom)
+        avatarBackgroundImageView.autoSetDimension(.Height, toSize: 213)
         
-        if !didSetConstraints {
+        avatarBackgroundBlurView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
-            avatarBackgroundImageView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Bottom)
-            avatarBackgroundImageView.autoSetDimension(.Height, toSize: 213)
-            
-            avatarBackgroundBlurView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
-
-            avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 39)
-            avatarImageView.autoAlignAxisToSuperviewAxis(.Vertical)
-            avatarImageView.autoSetDimensionsToSize(CGSize(width: 84, height: 84))
-            
-            fullNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 17)
-            fullNameView.autoAlignAxisToSuperviewAxis(.Vertical)
-            
-            userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: fullNameView, withOffset: -2)
-            userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 5)
-            
-            descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 5)
-            descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-            descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 39)
+        avatarImageView.autoAlignAxisToSuperviewAxis(.Vertical)
+        avatarImageView.autoSetDimensionsToSize(CGSize(width: 84, height: 84))
         
-            followButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-            followButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-            followButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
-            
-            logoutButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-            logoutButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-            logoutButtonView.autoSetDimensionsToSize(CGSize(width: 40, height: 31))
-            
-            editProfileButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-            editProfileButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: logoutButtonView, withOffset: -3)
-            editProfileButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 31))
-            
-            followersHeadingView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-            followersHeadingView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-            
-            followersCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
-            followersCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followersHeadingView)
-            
-            verticalLineView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
-            verticalLineView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followersCountView)
-            verticalLineView.autoPinEdge(.Left, toEdge: .Right, ofView: followersHeadingView, withOffset: 12)
-            verticalLineView.autoSetDimension(.Width, toSize: 1)
-            
-            followedHeadingView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
-            followedHeadingView.autoPinEdge(.Left, toEdge: .Right, ofView: verticalLineView, withOffset: 12)
-            
-            followedCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
-            followedCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followedHeadingView)
-            
-            didSetConstraints = true
-        }
+        fullNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 17)
+        fullNameView.autoAlignAxisToSuperviewAxis(.Vertical)
+        
+        userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: fullNameView, withOffset: -2)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 5)
+        
+        descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 5)
+        descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        
+        followButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+        followButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        followButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
+        
+        logoutButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+        logoutButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        logoutButtonView.autoSetDimensionsToSize(CGSize(width: 40, height: 31))
+        
+        editProfileButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+        editProfileButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: logoutButtonView, withOffset: -3)
+        editProfileButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 31))
+        
+        followersHeadingView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+        followersHeadingView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        
+        followersCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
+        followersCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followersHeadingView)
+        
+        verticalLineView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
+        verticalLineView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followersCountView)
+        verticalLineView.autoPinEdge(.Left, toEdge: .Right, ofView: followersHeadingView, withOffset: 12)
+        verticalLineView.autoSetDimension(.Width, toSize: 1)
+        
+        followedHeadingView.autoPinEdge(.Top, toEdge: .Top, ofView: followersHeadingView)
+        followedHeadingView.autoPinEdge(.Left, toEdge: .Right, ofView: verticalLineView, withOffset: 12)
+        
+        followedCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
+        followedCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followedHeadingView)
         
         super.updateViewConstraints()
     }
     
-    func editProfile() {
+    private func editProfile() {
         navigationController?.pushViewController(EditProfileViewController(), animated: false)
     }
     
-    func logout() {
+    private func logout() {
         let refreshAlert = UIAlertController(title: "You're about to log out...", message: "Really? Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
         
         refreshAlert.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { (action: UIAlertAction!) in

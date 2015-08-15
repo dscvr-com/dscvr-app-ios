@@ -10,10 +10,10 @@ import Foundation
 
 class ProfileContainerViewController: UIViewController {
     
-    let tableViewController: ProfileTableViewController
-    let tableView: UIView
-    let headerViewController: ProfileHeaderViewController
-    let headerView: UIView
+    private let tableViewController: ProfileTableViewController
+    private let tableView: UIView
+    private let headerViewController: ProfileHeaderViewController
+    private let headerView: UIView
     
     required init(personId: Int) {
         tableViewController = ProfileTableViewController(personId: personId)
@@ -59,8 +59,6 @@ class ProfileContainerViewController: UIViewController {
         headerView.autoPinEdge(.Left, toEdge: .Left, ofView: view)
         headerView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
         headerView.autoSetDimension(.Height, toSize: 280)
-        
-//        let height = headerView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height
         
         super.updateViewConstraints()
     }
