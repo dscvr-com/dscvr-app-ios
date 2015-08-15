@@ -7,23 +7,35 @@
 //
 
 import Foundation
+import ReactiveCocoa
 
 class NewCommentTableViewCell: UITableViewCell {
     
-    let viewModel = NewCommentViewModel()
+    var viewModel: NewCommentViewModel!
     
     // subviews
     let textInputView = KMPlaceholderTextView()
+    let sendButtonView = UIButton()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        contentView.backgroundColor = UIColor.greenColor().alpha(0.5)
         
         textInputView.font = UIFont.robotoOfSize(13, withType: .Light)
         textInputView.textColor = UIColor(0x4d4d4d)
         textInputView.placeholder = "Write a comment"
         contentView.addSubview(textInputView)
+        
+        sendButtonView.setTitle("Send", forState: .Normal)
+        sendButtonView.setTitleColor(BaseColor, forState: .Normal)
+        sendButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
+        sendButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.viewModel.postComment()
+                .start(completed: {
+                    self.contentView.endEditing(true)
+                })
+            return RACSignal.empty()
+        })
+        contentView.addSubview(sendButtonView)
         
         contentView.setNeedsUpdateConstraints()
     }
@@ -33,12 +45,25 @@ class NewCommentTableViewCell: UITableViewCell {
     }
     
     override func updateConstraints() {
-        textInputView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 16)
-        textInputView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        textInputView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        textInputView.autoSetDimension(.Height, toSize: 30)
+        sendButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
+        sendButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -9)
+        
+        textInputView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
+        textInputView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 9)
+        textInputView.autoPinEdge(.Right, toEdge: .Left, ofView: sendButtonView, withOffset: -10)
+        textInputView.autoSetDimension(.Height, toSize: 32)
         
         super.updateConstraints()
+    }
+    
+    func bindViewModel(optographId: Int) {
+        viewModel = NewCommentViewModel(optographId: optographId)
+        
+        textInputView.rac_text <~ viewModel.text
+        textInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.text.value = $0 as! String })
+        
+        sendButtonView.rac_userInteractionEnabled <~ viewModel.isValid
+        sendButtonView.rac_alpha <~ viewModel.isValid.producer.map { $0 ? 1 : 0.5 }
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

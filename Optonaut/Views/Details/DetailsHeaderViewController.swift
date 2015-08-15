@@ -21,7 +21,7 @@ class DetailsHeaderViewController: UIViewController {
     let locationView = InsetLabel()
     let maximizeButtonView = UIButton()
     let avatarImageView = UIImageView()
-    let nameView = UILabel()
+    let fullNameView = UILabel()
     let userNameView = UILabel()
     let dateView = UILabel()
     let shareButtonView = UIButton()
@@ -48,8 +48,8 @@ class DetailsHeaderViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        view.backgroundColor = .whiteColor()
-        view.backgroundColor = UIColor.blueColor().alpha(0.5)
+        view.backgroundColor = .whiteColor()
+//        view.backgroundColor = UIColor.blueColor().alpha(0.5)
         
         navigationItem.title = ""
         
@@ -89,12 +89,12 @@ class DetailsHeaderViewController: UIViewController {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         view.addSubview(avatarImageView)
         
-        nameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        nameView.textColor = UIColor(0x4d4d4d)
-        nameView.rac_text <~ viewModel.fullName
-        nameView.userInteractionEnabled = true
-        nameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        view.addSubview(nameView)
+        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        fullNameView.textColor = UIColor(0x4d4d4d)
+        fullNameView.rac_text <~ viewModel.fullName
+        fullNameView.userInteractionEnabled = true
+        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        view.addSubview(fullNameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = UIColor(0xb3b3b3)
@@ -228,11 +228,11 @@ class DetailsHeaderViewController: UIViewController {
         avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: detailsImageView, withOffset: 19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
         
-        nameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
-        nameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
+        fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
         userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 4)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 4)
         
         dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
         dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)

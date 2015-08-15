@@ -113,7 +113,11 @@ class CommentTableViewController: UIViewController, TransparentNavbar {
 extension CommentTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 50
+        if indexPath.row < viewModel.results.value.count {
+            return 60
+        } else {
+            return 52
+        }
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -133,24 +137,13 @@ extension CommentTableViewController: UITableViewDataSource {
             return cell
         } else {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
-            cell.textInputView.delegate = self
+            cell.bindViewModel(viewModel.optographId.value)
             return cell
         }
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.results.value.count + 1
-    }
-    
-}
-
-extension CommentTableViewController: UITextViewDelegate {
-    
-    func textViewDidBeginEditing(textView: UITextView) {
-//        let keyboardEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-//        let convertedKeyboardEndFrame = view.convertRect(keyboardEndFrame, fromView: view.window)
-//        let keyboardHeight = CGRectGetMaxY(view.bounds) - CGRectGetMinY(convertedKeyboardEndFrame)
-        
     }
     
 }
