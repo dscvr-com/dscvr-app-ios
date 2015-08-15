@@ -13,12 +13,12 @@ import ReactiveCocoa
 typealias JSONResponse = AnyObject
 
 class Api {
-//    static let host = "beta.api.optonaut.com"
+    static let host = "beta.api.optonaut.com"
 //    static let host = "b7535ff5.ngrok.io"
-//    static let port = 80
+    static let port = 80
 //    static let host = "192.168.2.102"
-    static let host = "localhost"
-    static let port = 3000
+//    static let host = "localhost"
+//    static let port = 3000
     
     static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {
         return request(endpoint, method: .GET, authorized: authorized, parameters: nil)
