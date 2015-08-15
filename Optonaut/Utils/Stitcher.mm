@@ -26,15 +26,15 @@ void GLK4ToCVMat(GLKMatrix4 m, cv::Mat &output) {
     output = cv::Mat(4, 4, CV_64F, data);
 }
 
-void ImageBufferToCVMat(ImageBuffer* image, cv::Mat &output) {
+void ImageBufferToCVMat(ImageBuffer image, cv::Mat &output) {
     cv::cvtColor(Mat(image.width, image.height, CV_8UC4), output, COLOR_RGBA2RGB);
 }
 
-ImageBuffer* CVMatToImageBuffer(const cv::Mat &input) {
+ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
     Mat converted(input.rows, input.cols, CV_8UC4);
     cv::cvtColor(input, converted, COLOR_RGB2BGRA);
     
-    ImageBuffer* output;
+    ImageBuffer output;
     output.width = input.cols;
     output.height = input.rows;
     output.data = malloc(output.width * output.height * 4);
@@ -57,7 +57,7 @@ ImageBuffer* CVMatToImageBuffer(const cv::Mat &input) {
     return self;
 }
 
-- (void)Push:(GLKMatrix4)extrinsics :(ImageBuffer*)image {
+- (void)Push:(GLKMatrix4)extrinsics :(ImageBuffer)image {
     optonaut::ImageP oImage(new optonaut::Image());
     ImageBufferToCVMat(image, oImage->img);
     oImage->intrinsics = intrinsics;
@@ -73,32 +73,32 @@ ImageBuffer* CVMatToImageBuffer(const cv::Mat &input) {
 - (bool)IsPreviewImageValialble {
     return pipe->IsPreviewImageAvailable();
 }
-- (ImageBuffer*)GetPreviewImage {
+- (ImageBuffer)GetPreviewImage {
     return CVMatToImageBuffer(pipe->GetPreviewImage()->img);
 }
-- (void)FreeImageBuffer:(ImageBuffer*)toFree {
+- (void)FreeImageBuffer:(ImageBuffer)toFree {
     free(toFree.data);
 }
-- (NSArray<SelectionPoint*>*)GetSelectionPoints {
+- (NSArray<NSValue*>*)GetSelectionPoints {
     vector<optonaut::SelectionPoint> points = pipe->GetSelectionPoints();
     
     NSMutableArray *outPoints = [NSMutableArray array];
     
     for(auto point : points) {
-        SelectionPoint* newPoint;
+        SelectionPoint newPoint;
         newPoint.id = point.id;
         newPoint.localId = point.localId;
         newPoint.ringId = point.ringId;
         newPoint.extrinsics = CVMatToGLK4(point.extrinsics);
         
-        [outPoints addObject:newPoint];
+        [outPoints addObject:[NSValue valueWithBytes:&newPoint objCType:@encode(struct SelectionPoint)]];
     }
     
-    NSArray* immutableOutPoints = [NSArray arrayWithArray:outPoints];
+    NSArray *immutableOutPoints = [NSArray arrayWithArray:outPoints];
     
     return immutableOutPoints;
 }
-- (void)DisableSelectionPoint:(SelectionPoint*)toDisable {
+- (void)DisableSelectionPoint:(SelectionPoint)toDisable {
     optonaut::SelectionPoint p;
     p.id = toDisable.id;
     p.ringId = toDisable.ringId;
