@@ -19,7 +19,7 @@ class ProfileViewModel {
     let id = MutableProperty<Int>(0)
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
-    let description = MutableProperty<String>("")
+    let text = MutableProperty<String>("")
     let followersCount = MutableProperty<Int>(0)
     let followedCount = MutableProperty<Int>(0)
     let isFollowed = MutableProperty<Bool>(false)
@@ -61,7 +61,7 @@ class ProfileViewModel {
     private func setPerson(person: Person) {
         fullName.value = person.fullName
         userName.value = person.userName
-        description.value = person.description_
+        text.value = person.text
         followersCount.value = person.followersCount
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed

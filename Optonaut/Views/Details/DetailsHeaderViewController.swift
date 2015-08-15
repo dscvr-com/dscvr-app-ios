@@ -31,7 +31,7 @@ class DetailsHeaderViewController: UIViewController {
     let commentCountView = UILabel()
     let viewIconView = UILabel()
     let viewsCountView = UILabel()
-    let descriptionView = KILabel()
+    let textView = KILabel()
     let lineView = UIView()
     
     let motionManager = CMMotionManager()
@@ -164,13 +164,13 @@ class DetailsHeaderViewController: UIViewController {
         viewsCountView.rac_text <~ viewModel.viewsCount.producer .map { "\($0) views" }
         view.addSubview(viewsCountView)
         
-        descriptionView.numberOfLines = 0
-        descriptionView.tintColor = BaseColor
-        descriptionView.userInteractionEnabled = true
-        descriptionView.font = UIFont.robotoOfSize(13, withType: .Light)
-        descriptionView.textColor = UIColor(0x4d4d4d)
-        descriptionView.rac_text <~ viewModel.description
-        descriptionView.userHandleLinkTapHandler = { label, handle, range in
+        textView.numberOfLines = 0
+        textView.tintColor = BaseColor
+        textView.userInteractionEnabled = true
+        textView.font = UIFont.robotoOfSize(13, withType: .Light)
+        textView.textColor = UIColor(0x4d4d4d)
+        textView.rac_text <~ viewModel.text
+        textView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
             Api.get("persons/user-name/\(userName)", authorized: true)
                 .start(next: { json in
@@ -178,10 +178,10 @@ class DetailsHeaderViewController: UIViewController {
                     self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
                 })
         }
-        descriptionView.hashtagLinkTapHandler = { label, hashtag, range in
+        textView.hashtagLinkTapHandler = { label, hashtag, range in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
-        view.addSubview(descriptionView)
+        view.addSubview(textView)
         
         lineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(lineView)
@@ -258,11 +258,11 @@ class DetailsHeaderViewController: UIViewController {
         viewsCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starCountView)
         viewsCountView.autoPinEdge(.Left, toEdge: .Right, ofView: viewIconView, withOffset: 7)
         
-        descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: starButtonView, withOffset: 12)
-        descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 15)
-        descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -15)
+        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: starButtonView, withOffset: 12)
+        textView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 15)
+        textView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -15)
         
-        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionView, withOffset: 14)
+        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textView, withOffset: 14)
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         lineView.autoSetDimension(.Height, toSize: 1)

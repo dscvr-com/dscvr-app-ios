@@ -15,7 +15,7 @@ class Person: Object, Model {
     dynamic var email = ""
     dynamic var fullName = ""
     dynamic var userName = ""
-    dynamic var description_ = ""
+    dynamic var text = ""
     dynamic var followersCount = 0
     dynamic var followedCount = 0
     dynamic var isFollowed = false
@@ -40,7 +40,7 @@ extension Person: Mappable {
         email               <- map["email"]
         fullName            <- map["full_name"]
         userName            <- map["user_name"]
-        description_        <- map["description"]
+        text                <- map["text"]
         followersCount      <- map["followers_count"]
         followedCount       <- map["followed_count"]
         isFollowed          <- map["is_followed"]

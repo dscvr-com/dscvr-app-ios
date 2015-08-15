@@ -22,7 +22,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
     let userNameInputView = BottomLineTextField()
     let userNameTakenView = UILabel()
     let descriptionIconView = UILabel()
-    let descriptionInputView = UITextView()
+    let textInputView = UITextView()
     let privateHeaderView = UILabel()
     let emailIconView = UILabel()
     let emailView = UILabel()
@@ -110,13 +110,13 @@ class EditProfileViewController: UIViewController, RedNavbar {
         descriptionIconView.textColor = UIColor(0xe5e5e5)
         view.addSubview(descriptionIconView)
         
-        descriptionInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
-        descriptionInputView.textColor = UIColor(0x4d4d4d)
-        descriptionInputView.rac_text <~ viewModel.description
-        descriptionInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.description.value = $0 as! String })
-        descriptionInputView.textContainer.lineFragmentPadding = 0 // remove left padding
-        descriptionInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
-        view.addSubview(descriptionInputView)
+        textInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
+        textInputView.textColor = UIColor(0x4d4d4d)
+        textInputView.rac_text <~ viewModel.text
+        textInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.text.value = $0 as! String })
+        textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
+        textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
+        view.addSubview(textInputView)
         
         privateHeaderView.text = "PRIVATE INFORMATION"
         privateHeaderView.textColor = UIColor(0xcfcfcf)
@@ -231,12 +231,12 @@ class EditProfileViewController: UIViewController, RedNavbar {
         descriptionIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         descriptionIconView.autoSetDimension(.Width, toSize: 20)
         
-        descriptionInputView.autoPinEdge(.Top, toEdge: .Top, ofView: descriptionIconView)
-        descriptionInputView.autoPinEdge(.Left, toEdge: .Right, ofView: descriptionIconView, withOffset: 15)
-        descriptionInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-        descriptionInputView.autoSetDimension(.Height, toSize: 80)
+        textInputView.autoPinEdge(.Top, toEdge: .Top, ofView: descriptionIconView)
+        textInputView.autoPinEdge(.Left, toEdge: .Right, ofView: descriptionIconView, withOffset: 15)
+        textInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        textInputView.autoSetDimension(.Height, toSize: 80)
         
-        privateHeaderView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionInputView, withOffset: 10)
+        privateHeaderView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textInputView, withOffset: 10)
         privateHeaderView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         
         emailIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: privateHeaderView, withOffset: 30)

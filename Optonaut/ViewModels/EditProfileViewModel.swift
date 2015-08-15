@@ -18,7 +18,7 @@ class EditProfileViewModel {
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let userNameTaken = MutableProperty<Bool>(false)
-    let description = MutableProperty<String>("")
+    let text = MutableProperty<String>("")
     let email = MutableProperty<String>("")
     let avatarUrl = MutableProperty<String>("")
     let debugEnabled = MutableProperty<Bool>(false)
@@ -52,7 +52,7 @@ class EditProfileViewModel {
         fullName.value = person.fullName
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
-        description.value = person.description_
+        text.value = person.text
         avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(person.id % 4).jpg"
     }
     
@@ -60,7 +60,7 @@ class EditProfileViewModel {
         let parameters = [
             "full_name": fullName.value,
             "user_name": userName.value,
-            "description": description.value,
+            "text": text.value,
             "wants_newsletter": wantsNewsletter.value,
         ]
         
