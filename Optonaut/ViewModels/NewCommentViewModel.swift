@@ -11,9 +11,24 @@ import ReactiveCocoa
 
 class NewCommentViewModel {
     
+    let optographId: ConstantProperty<Int>
     let text = MutableProperty<String>("")
+    let isValid = MutableProperty<Bool>(false)
     
-    init() {
+    init(optographId: Int) {
+        self.optographId = ConstantProperty(optographId)
+        
+        text.producer
+            .map { !$0.isEmpty }
+            .start(next: { self.isValid.value = $0 })
+    }
+    
+    func postComment() -> SignalProducer<JSONResponse, NSError> {
+        let parameters = ["text": text.value]
+        return Api.post("optographs/\(optographId.value)/comments", authorized: true, parameters: parameters)
+            .on(completed: {
+                self.text.value = ""
+            })
     }
     
 }

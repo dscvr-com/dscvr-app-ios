@@ -12,9 +12,11 @@ import ObjectMapper
 
 class CommentsViewModel {
     
+    let optographId: ConstantProperty<Int>
     let results = MutableProperty<[Comment]>([])
     
     init(optographId: Int) {
+        self.optographId = ConstantProperty(optographId)
         
         Api.get("optographs/\(optographId)/comments", authorized: true)
             .map { json in Mapper<Comment>().mapArray(json)! }

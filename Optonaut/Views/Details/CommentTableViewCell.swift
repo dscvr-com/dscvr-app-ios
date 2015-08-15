@@ -18,11 +18,15 @@ class CommentTableViewCell: UITableViewCell {
     
     // subviews
     let textView = KILabel()
+    let avatarImageView = UIImageView()
+    let fullNameView = UILabel()
+    let userNameView = UILabel()
+    let dateView = UILabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        contentView.backgroundColor = UIColor.greenColor().alpha(0.5)
+//        contentView.backgroundColor = UIColor.greenColor().alpha(0.5)
         
         textView.numberOfLines = 0
         textView.tintColor = BaseColor
@@ -30,6 +34,28 @@ class CommentTableViewCell: UITableViewCell {
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
         textView.textColor = UIColor(0x4d4d4d)
         contentView.addSubview(textView)
+        
+        avatarImageView.layer.cornerRadius = 15
+        avatarImageView.clipsToBounds = true
+        avatarImageView.userInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        contentView.addSubview(avatarImageView)
+        
+        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        fullNameView.textColor = UIColor(0x4d4d4d)
+        fullNameView.userInteractionEnabled = true
+        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        contentView.addSubview(fullNameView)
+        
+        userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
+        userNameView.textColor = UIColor(0xb3b3b3)
+        userNameView.userInteractionEnabled = true
+        userNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        contentView.addSubview(userNameView)
+        
+        dateView.font = UIFont.robotoOfSize(12, withType: .Light)
+        dateView.textColor = UIColor(0xb3b3b3)
+        contentView.addSubview(dateView)
         
         contentView.setNeedsUpdateConstraints()
     }
@@ -39,8 +65,21 @@ class CommentTableViewCell: UITableViewCell {
     }
     
     override func updateConstraints() {
-        textView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 16)
-        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+        avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 15)
+        avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+        avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+        
+        fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
+        fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        
+        userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 4)
+        
+        dateView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 15)
+        dateView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+        
+        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 3)
+        textView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         
         super.updateConstraints()
@@ -50,11 +89,18 @@ class CommentTableViewCell: UITableViewCell {
         viewModel = CommentViewModel(comment: comment)
         
         textView.rac_text <~ viewModel.text
+        
+        if let avatarUrl = NSURL(string: viewModel.avatarUrl.value) {
+            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
+        }
+        
+        fullNameView.rac_text <~ viewModel.fullName
+        userNameView.rac_text <~ viewModel.userName
+        dateView.rac_text <~ viewModel.timeSinceCreated
     }
     
     func pushProfile() {
-//        let profileViewController = ProfileViewController(personId: viewModel.personId.value)
-//        navigationController?.pushViewController(profileViewController, animated: true)
+        navigationController?.pushViewController(ProfileContainerViewController(personId: viewModel.personId.value), animated: true)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}
