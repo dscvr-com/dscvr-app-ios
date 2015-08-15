@@ -21,7 +21,7 @@ class ProfileHeaderViewController: UIViewController {
     let avatarImageView = UIImageView()
     let fullNameView = UILabel()
     let userNameView = UILabel()
-    let descriptionView = UILabel()
+    let textView = UILabel()
     let followButtonView = UIButton()
     let logoutButtonView = UIButton()
     let editProfileButtonView = UIButton()
@@ -75,12 +75,12 @@ class ProfileHeaderViewController: UIViewController {
         userNameView.rac_text <~ viewModel.userName.producer .map { "@\($0)" }
         view.addSubview(userNameView)
         
-        descriptionView.numberOfLines = 2
-        descriptionView.textAlignment = .Center
-        descriptionView.font = UIFont.robotoOfSize(13, withType: .Light)
-        descriptionView.textColor = .whiteColor()
-        descriptionView.rac_text <~ viewModel.description
-        view.addSubview(descriptionView)
+        textView.numberOfLines = 2
+        textView.textAlignment = .Center
+        textView.font = UIFont.robotoOfSize(13, withType: .Light)
+        textView.textColor = .whiteColor()
+        textView.rac_text <~ viewModel.text
+        view.addSubview(textView)
         
         followButtonView.backgroundColor = .whiteColor()
         followButtonView.layer.borderWidth = 1
@@ -171,9 +171,9 @@ class ProfileHeaderViewController: UIViewController {
         userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: fullNameView, withOffset: -2)
         userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 5)
         
-        descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 5)
-        descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 5)
+        textView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        textView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
         followButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
         followButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)

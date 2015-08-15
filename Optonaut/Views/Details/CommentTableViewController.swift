@@ -114,7 +114,10 @@ extension CommentTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if indexPath.row < viewModel.results.value.count {
-            return 60
+            let textWidth = view.frame.width - 38 - 41
+            let textHeight = calcTextHeight(viewModel.results.value[indexPath.row].text, withWidth: textWidth)
+            let restHeight = CGFloat(40) // includes name and spacing
+            return restHeight + textHeight
         } else {
             return 52
         }

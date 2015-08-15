@@ -26,7 +26,7 @@ class OptographTableViewCell: UITableViewCell {
     let starButtonView = UIButton()
     let previewImageView = UIImageView()
     let locationView = InsetLabel()
-    let descriptionView = KILabel()
+    let textView = KILabel()
     let lineView = UIView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -68,12 +68,12 @@ class OptographTableViewCell: UITableViewCell {
         locationView.edgeInsets = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
         contentView.addSubview(locationView)
         
-        descriptionView.numberOfLines = 0
-        descriptionView.tintColor = BaseColor
-        descriptionView.userInteractionEnabled = true
-        descriptionView.font = UIFont.robotoOfSize(13, withType: .Light)
-        descriptionView.textColor = UIColor(0x4d4d4d)
-        contentView.addSubview(descriptionView)
+        textView.numberOfLines = 0
+        textView.tintColor = BaseColor
+        textView.userInteractionEnabled = true
+        textView.font = UIFont.robotoOfSize(13, withType: .Light)
+        textView.textColor = UIColor(0x4d4d4d)
+        contentView.addSubview(textView)
         
         lineView.backgroundColor = UIColor(0xe5e5e5)
         contentView.addSubview(lineView)
@@ -109,11 +109,11 @@ class OptographTableViewCell: UITableViewCell {
         locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
         locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
         
-        descriptionView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
-        descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
+        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         
-        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionView, withOffset: 14)
+        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textView, withOffset: 14)
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
         lineView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         lineView.autoSetDimension(.Height, toSize: 1)
@@ -147,8 +147,8 @@ class OptographTableViewCell: UITableViewCell {
             .map { $0 ? BaseColor : UIColor(0xe6e6e6) }
             .start(next: { self.starButtonView.setTitleColor($0, forState: .Normal)})
         
-        descriptionView.rac_text <~ viewModel.description
-        descriptionView.userHandleLinkTapHandler = { label, handle, range in
+        textView.rac_text <~ viewModel.text
+        textView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
             Api.get("persons/user-name/\(userName)", authorized: true)
                 .map { json in Mapper<Person>().map(json)! }
@@ -156,7 +156,7 @@ class OptographTableViewCell: UITableViewCell {
                     self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
                 })
         }
-        descriptionView.hashtagLinkTapHandler = { label, hashtag, range in
+        textView.hashtagLinkTapHandler = { label, hashtag, range in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
     }

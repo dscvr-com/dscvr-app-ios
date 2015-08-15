@@ -27,7 +27,7 @@ class DetailsViewModel {
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let personId = MutableProperty<Int>(0)
-    let description = MutableProperty<String>("")
+    let text = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     
     var optograph = Optograph()
@@ -63,7 +63,7 @@ class DetailsViewModel {
         fullName.value = optograph.person!.fullName
         userName.value = "@\(optograph.person!.userName)"
         personId.value = optograph.person!.id
-        description.value = optograph.description_
+        text.value = optograph.text
         location.value = optograph.location
     }
     

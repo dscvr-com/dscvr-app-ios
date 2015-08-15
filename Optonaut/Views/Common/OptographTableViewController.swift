@@ -35,7 +35,7 @@ class OptographTableViewController: UIViewController {
 extension OptographTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let textHeight = calcTextHeight(items[indexPath.row].description_, withWidth: view.frame.width - 38)
+        let textHeight = calcTextHeight(items[indexPath.row].text, withWidth: view.frame.width - 38)
         let imageHeight = view.frame.width * 0.45
         let restHeight = CGFloat(100) // includes avatar, name, bottom line and spacing
         return imageHeight + restHeight + textHeight

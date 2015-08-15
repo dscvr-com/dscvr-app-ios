@@ -21,7 +21,7 @@ class OptographViewModel {
     let fullName: ConstantProperty<String>
     let userName: ConstantProperty<String>
     let personId: ConstantProperty<Int>
-    let description: ConstantProperty<String>
+    let text: ConstantProperty<String>
     let location: ConstantProperty<String>
     
     let isStarred = MutableProperty<Bool>(false)
@@ -41,7 +41,7 @@ class OptographViewModel {
         fullName = ConstantProperty(optograph.person!.fullName)
         userName = ConstantProperty("@\(optograph.person!.userName)")
         personId = ConstantProperty(optograph.person!.id)
-        description = ConstantProperty(optograph.description_)
+        text = ConstantProperty(optograph.text)
         location = ConstantProperty(optograph.location)
         
         isStarred.value = optograph.isStarred
