@@ -19,12 +19,12 @@ struct SelectionPoint {
 //This interface takes matrices in SCNSpace and also gives them back in SCNSpace.
 //It's that simple.
 
-- (void)Push:(GLKMatrix4)extrinsics :(ImageBuffer)image;
+- (void)Push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image;
 - (GLKMatrix4)GetCurrentRotation;
 - (bool)IsPreviewImageValialble;
-- (ImageBuffer)GetPreviewImage;
-- (void)FreeImageBuffer:(ImageBuffer)toFree;
+- (struct ImageBuffer)GetPreviewImage;
+- (void)FreeImageBuffer:(struct ImageBuffer)toFree;
 - (NSArray<NSValue*>*)GetSelectionPoints;
-- (void)DisableSelectionPoint:(SelectionPoint)toDisable;
+- (void)DisableSelectionPoint:(struct SelectionPoint)toDisable;
 
 @end

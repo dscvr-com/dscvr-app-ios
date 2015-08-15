@@ -83,7 +83,6 @@
 		8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */; };
 		8FA2E7AE1B55366D00407181 /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E7AD1B55366D00407181 /* EditProfileViewModel.swift */; };
 		8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA2E7B11B55576500407181 /* opencv2.framework */; };
-		8FA2E7B71B55588400407181 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E7B61B55588400407181 /* Stitcher.mm */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
 		8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */; };
 		8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */; };
@@ -115,6 +114,8 @@
 		A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00A1B7E19E200DCD598 /* quat.cpp */; };
 		A5C1C01A1B7E19E200DCD598 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00D1B7E19E200DCD598 /* simpleSphereStitcher.cpp */; };
 		A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0101B7E19E200DCD598 /* support.cpp */; };
+		A5C1C0241B7F33BD00DCD598 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0221B7F33BD00DCD598 /* Stitcher.mm */; };
+		A5C1C0251B7F33BD00DCD598 /* StitcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0231B7F33BD00DCD598 /* StitcherUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -206,8 +207,6 @@
 		8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNavViewController.swift; sourceTree = "<group>"; };
 		8FA2E7AD1B55366D00407181 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		8FA2E7B11B55576500407181 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Carthage/Build/iOS/opencv2.framework; sourceTree = "<group>"; };
-		8FA2E7B61B55588400407181 /* Stitcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Stitcher.mm; sourceTree = "<group>"; };
-		8FA2E7B81B5558A800407181 /* Stitcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stitcher.h; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
@@ -258,6 +257,9 @@
 		A5C1C0121B7E19E200DCD598 /* thresholdSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = thresholdSeamer.hpp; sourceTree = "<group>"; };
 		A5C1C0131B7E19E200DCD598 /* visualAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualAligner.hpp; sourceTree = "<group>"; };
 		A5C1C01E1B7E525200DCD598 /* intrinsics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = intrinsics.hpp; sourceTree = "<group>"; };
+		A5C1C0211B7F33BD00DCD598 /* Stitcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stitcher.h; path = Stitcher/Stitcher.h; sourceTree = "<group>"; };
+		A5C1C0221B7F33BD00DCD598 /* Stitcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Stitcher.mm; path = Stitcher/Stitcher.mm; sourceTree = "<group>"; };
+		A5C1C0231B7F33BD00DCD598 /* StitcherUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StitcherUtils.swift; path = Stitcher/StitcherUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,8 +391,6 @@
 		8F5FD9CD1B3AFBDC007E073C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				8FA2E7B61B55588400407181 /* Stitcher.mm */,
-				8FA2E7B81B5558A800407181 /* Stitcher.h */,
 				8F5FD9CE1B3AFBDC007E073C /* Api.swift */,
 				8F4C6E191B4717DF007508ED /* Icomoon.swift */,
 				8F4C6E571B4A73BE007508ED /* Fonts.swift */,
@@ -545,6 +545,7 @@
 		8FCCA02D1B3806040091F1B1 /* Optonaut */ = {
 			isa = PBXGroup;
 			children = (
+				A5C1C01F1B7F326200DCD598 /* Stitcher */,
 				8FCCA0511B3806680091F1B1 /* AppDelegate.swift */,
 				8F5FD9CD1B3AFBDC007E073C /* Utils */,
 				8F7738121B380F5D001F642B /* Models */,
@@ -620,6 +621,16 @@
 				8FFCE4B81B4DBF1900832C88 /* KILabel.m */,
 			);
 			path = Vendor;
+			sourceTree = "<group>";
+		};
+		A5C1C01F1B7F326200DCD598 /* Stitcher */ = {
+			isa = PBXGroup;
+			children = (
+				A5C1C0211B7F33BD00DCD598 /* Stitcher.h */,
+				A5C1C0221B7F33BD00DCD598 /* Stitcher.mm */,
+				A5C1C0231B7F33BD00DCD598 /* StitcherUtils.swift */,
+			);
+			name = Stitcher;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -788,6 +799,7 @@
 				8F3FB0681B7B474700016A8A /* CreateOptographViewModel.swift in Sources */,
 				8F5FD9F71B3DB7B3007E073C /* ActivityNavViewController.swift in Sources */,
 				8FB2D6D61B7CBBB000BFB795 /* CommentsViewModel.swift in Sources */,
+				A5C1C0241B7F33BD00DCD598 /* Stitcher.mm in Sources */,
 				8F04CA181B7E4CAF000EE998 /* ProfileContainerViewController.swift in Sources */,
 				8F5FDA091B412DB2007E073C /* Constants.swift in Sources */,
 				8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */,
@@ -802,6 +814,7 @@
 				A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */,
 				8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */,
 				8F500D021B4D8471002B9878 /* ExploreTableViewController.swift in Sources */,
+				A5C1C0251B7F33BD00DCD598 /* StitcherUtils.swift in Sources */,
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
 				8F500CFE1B4D6D70002B9878 /* ProfileTableViewController.swift in Sources */,
@@ -827,7 +840,6 @@
 				8F5FD9E71B3D579C007E073C /* CameraViewController.swift in Sources */,
 				8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */,
 				8FEAB9791B51182B00F9FE64 /* DetailsViewModel.swift in Sources */,
-				8FA2E7B71B55588400407181 /* Stitcher.mm in Sources */,
 				8F5FD9F01B3DB724007E073C /* SearchViewModel.swift in Sources */,
 				8FFCE4BD1B4EAA2300832C88 /* ActivityViewModel.swift in Sources */,
 				8FBDE8B41B60FE9E00C78486 /* FeedViewModel.swift in Sources */,
