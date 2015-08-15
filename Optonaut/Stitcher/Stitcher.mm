@@ -23,7 +23,7 @@ void GLK4ToCVMat(GLKMatrix4 m, cv::Mat &output) {
         m.m20, m.m21, m.m22, m.m23,
         m.m30, m.m31, m.m32, m.m33 };
     
-    output = cv::Mat(4, 4, CV_64F, data);
+    output = cv::Mat(4, 4, CV_64F, data).clone();
 }
 
 void ImageBufferToCVMat(ImageBuffer image, cv::Mat &output) {

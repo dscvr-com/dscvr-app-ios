@@ -27,6 +27,9 @@ class CameraViewController: UIViewController {
     var videoDeviceOutput: AVCaptureVideoDataOutput!
     
     // stitcher pointer and variables
+    
+    let stitcher = IosPipeline()
+    
     var frameCount = 0
     let intrinsics = CameraIntrinsics
     let intrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
@@ -57,6 +60,7 @@ class CameraViewController: UIViewController {
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         
         setupScene()
+        setupSelectionPoints();
         
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
@@ -160,10 +164,6 @@ class CameraViewController: UIViewController {
         
         scene.rootNode.addChildNode(cameraNode)
         
-//        sphereGeometry.firstMaterial?.doubleSided = true
-//        let sphereNode = SCNNode(geometry: sphereGeometry)
-//        scene.rootNode.addChildNode(sphereNode)
-        
         let scnView = SCNView()
         scnView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
         scnView.backgroundColor = .clearColor()
@@ -172,6 +172,29 @@ class CameraViewController: UIViewController {
         scnView.delegate = self
         
         view.addSubview(scnView)
+    }
+    
+    private func setupSelectionPoints() {
+        print("Adding points")
+        for wrapped in stitcher.GetSelectionPoints() {
+            var point = SelectionPoint()
+            wrapped.getValue(&point)
+            
+            let scnGeometey = SCNSphere(radius: 0.02)
+            scnGeometey.firstMaterial?.diffuse.contents = UIColor.orangeColor()
+            scnGeometey.firstMaterial?.doubleSided = true
+            
+            
+            let scnNode = SCNNode(geometry: scnGeometey)
+            let translation = GLKMatrix4MakeTranslation(0, 0, -1)
+            let res = GLKMatrix4Multiply(point.extrinsics, translation)
+            scnNode.transform = SCNMatrix4FromGLKMatrix4(res)
+            
+            print("Adding Point")
+        
+            scene.rootNode.addChildNode(scnNode)
+
+        }
     }
     
     private func authorizeCamera() {
@@ -213,21 +236,25 @@ class CameraViewController: UIViewController {
         
         if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
             
+            let r = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
-            //let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
-            //let width = CVPixelBufferGetWidth(pixelBuffer)
-            //let height = CVPixelBufferGetHeight(pixelBuffer)
             
-            let r = motion.attitude.rotationMatrix
-            let extrinsics = [r.m11, r.m12, r.m13, 0,
-                              r.m21, r.m22, r.m23, 0,
-                              r.m31, r.m32, r.m33, 0,
-                              0,     0,     0,     1]
-            extrinsicsPointer.initializeFrom(extrinsics)
+            var buf = ImageBuffer()
+            buf.data = CVPixelBufferGetBaseAddress(pixelBuffer)
+            buf.width = Int32(CVPixelBufferGetWidth(pixelBuffer))
+            buf.height = Int32(CVPixelBufferGetHeight(pixelBuffer))
             
-            let usePicture = true//Stitcher.push(extrinsicsPointer, intrinsicsPointer, baseAddress, Int32(width), Int32(height), resultExtrinsicsPointer, Int32(frameCount))
+            print("Push!", true);
+
+            stitcher.Push(r, buf)
+            
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
+            if(stitcher.IsPreviewImageValialble()) {
+                print("Preview Image!", true);
+            }
+            
+            /*
             if usePicture {
                 
                 CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
@@ -259,6 +286,7 @@ class CameraViewController: UIViewController {
             
             
             debugHelper?.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
+*/
         }
     }
     
@@ -280,12 +308,8 @@ extension CameraViewController: SCNSceneRendererDelegate {
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         if let motion = self.motionManager.deviceMotion {
-            let r = motion.attitude.rotationMatrix
             
-            let rGlk = GLKMatrix4Make(Float(r.m11), Float(r.m12), Float(r.m13), 0,
-                Float(r.m21), Float(r.m22), Float(r.m23), 0,
-                Float(r.m31), Float(r.m32), Float(r.m33), 0,
-                0,     0,     0,     1)
+            let rGlk = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix);
             
             self.cameraNode.transform = SCNMatrix4FromGLKMatrix4(rGlk)
         
