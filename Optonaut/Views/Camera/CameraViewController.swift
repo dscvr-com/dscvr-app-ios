@@ -14,6 +14,24 @@ import ReactiveCocoa
 import Alamofire
 import SceneKit
 
+struct Edge: Hashable {
+    let one: SelectionPoint
+    let two: SelectionPoint
+    
+    var hashValue: Int {
+        return one.id.hashValue ^ two.id.hashValue
+    }
+    
+    init(_ one: SelectionPoint, _ two: SelectionPoint) {
+        self.one = one
+        self.two = two
+    }
+}
+
+func == (lhs: Edge, rhs: Edge) -> Bool {
+    return lhs.one.id == rhs.one.id && lhs.two.id == rhs.two.id
+}
+
 class CameraViewController: UIViewController {
     
     let viewModel = CameraViewModel()
@@ -38,7 +56,7 @@ class CameraViewController: UIViewController {
     
     
     var debugHelper: CameraDebugHelper?
-    var points = [Int32: SCNNode]()
+    var edges = [Edge: SCNNode]()
     
     // subviews
     let closeButtonView = UIButton()
@@ -175,27 +193,47 @@ class CameraViewController: UIViewController {
         view.addSubview(scnView)
     }
     
+    private func createLineNode(posA: GLKVector3, posB: GLKVector3) -> SCNNode {
+        let positions: [Float32] = [posA.x, posA.y, posA.z, posB.x, posB.y, posB.z]
+        let positionData = NSData(bytes: positions, length: sizeof(Float32)*positions.count)
+        let indices: [Int32] = [0, 1]
+        let indexData = NSData(bytes: indices, length: sizeof(Int32) * indices.count)
+        
+        let source = SCNGeometrySource(data: positionData, semantic: SCNGeometrySourceSemanticVertex, vectorCount: indices.count, floatComponents: true, componentsPerVector: 3, bytesPerComponent: sizeof(Float32), dataOffset: 0, dataStride: sizeof(Float32) * 3)
+        let element = SCNGeometryElement(data: indexData, primitiveType: SCNGeometryPrimitiveType.Line, primitiveCount: indices.count, bytesPerIndex: sizeof(Int32))
+        
+        let line = SCNGeometry(sources: [source], elements: [element])
+        let node = SCNNode(geometry: line)
+    
+        line.firstMaterial?.diffuse.contents = UIColor(red: 239 / 255.0, green: 71 / 255.0, blue: 54 / 255.0, alpha: 1.0)
+        
+        return node;
+    }
+    
     private func setupSelectionPoints() {
         print("Adding points")
-        for wrapped in stitcher.GetSelectionPoints() {
+        let points = stitcher.GetSelectionPoints().map( { (wrapped: NSValue) -> SelectionPoint in
             var point = SelectionPoint()
             wrapped.getValue(&point)
-            
-            let scnGeometey = SCNSphere(radius: 0.02)
-            scnGeometey.firstMaterial?.diffuse.contents = UIColor.orangeColor()
-            scnGeometey.firstMaterial?.doubleSided = true
-            
-            
-            let scnNode = SCNNode(geometry: scnGeometey)
-            let translation = GLKMatrix4MakeTranslation(0, 0, -1)
-            let res = GLKMatrix4Multiply(point.extrinsics, translation)
-            scnNode.transform = SCNMatrix4FromGLKMatrix4(res)
-            
-            print("Adding Point")
-            points[point.id] = scnNode
+            return point;
+        })
         
-            scene.rootNode.addChildNode(scnNode)
-
+        for a in points {
+            for b in points {
+                if(stitcher.AreAdjacent(a, b)) {
+                    let edge = Edge(a, b)
+                    
+                    let vec = GLKVector3Make(0, 0, -1);
+                    let posA = GLKMatrix4MultiplyVector3(a.extrinsics, vec)
+                    let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
+                    
+                    let edgeNode = createLineNode(posA, posB: posB)
+                    
+                    edges[edge] = edgeNode;
+                    
+                    scene.rootNode.addChildNode(edgeNode)
+                }
+            }
         }
     }
     
@@ -252,15 +290,20 @@ class CameraViewController: UIViewController {
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
+            //No, that's not a good idea.
+            //self.cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
+            
             if(stitcher.IsPreviewImageValialble()) {
                 
                 let previewData = stitcher.GetPreviewImage()
                 
-                let currentPoint = stitcher.ClosestPoint()
-                let nodeToRemove = points[currentPoint.id]
+                let currentPoint = stitcher.CurrentPoint()
+                let previousPoint = stitcher.PreviousPoint()
+                let edge = Edge(previousPoint, currentPoint)
+                let nodeToRemove = edges[edge]
                 nodeToRemove?.removeFromParentNode()
-                points.removeValueForKey(currentPoint.id)
-                print("Preview Image!");
+                edges.removeValueForKey(edge)
+                print("Preview Image!")
             
                 let cgImage = ImageBufferToCGImage(previewData);
                 
@@ -272,7 +315,7 @@ class CameraViewController: UIViewController {
                 let planeNode = SCNNode(geometry: planeGeometry)
                 
                 let L = GLKMatrix4MakeRotation(Float(M_PI_2), 0, 0, -1)
-                let R = stitcher.GetCurrentRotation()
+                let R = stitcher.GetPreviewRotation()
                 
                 let T = GLKMatrix4MakeTranslation(0, 0, -Float(intrinsics[0]))
                 let TL = GLKMatrix4Multiply(T, L)
@@ -281,9 +324,8 @@ class CameraViewController: UIViewController {
                 scene.rootNode.addChildNode(planeNode)
                 
                 stitcher.FreeImageBuffer(previewData)
-                stitcher.DisableSelectionPoint(currentPoint)
                 
-                if(points.count <= 1) {
+                if(edges.count <= 1) {
                     finish()
                 }
             }
@@ -335,6 +377,9 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 extension CameraViewController: SCNSceneRendererDelegate {
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
+        glLineWidth(5)
+        glColor4f(1, 0, 0, 1)
+    
         if let motion = self.motionManager.deviceMotion {
             
             let rGlk = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix);

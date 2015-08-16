@@ -43,6 +43,24 @@ ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
     return output;
 }
 
+SelectionPoint ConvertSelectionPoint(optonaut::SelectionPoint point) {
+    SelectionPoint newPoint;
+    newPoint.id = point.id;
+    newPoint.localId = point.localId;
+    newPoint.ringId = point.ringId;
+    newPoint.extrinsics = CVMatToGLK4(point.extrinsics);
+    return newPoint;
+}
+
+optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
+    optonaut::SelectionPoint newPoint;
+    newPoint.id = point.id;
+    newPoint.localId = point.localId;
+    newPoint.ringId = point.ringId;
+    GLK4ToCVMat(point.extrinsics, newPoint.extrinsics);
+    return newPoint;
+}
+
 
 @implementation IosPipeline {
 @private
@@ -76,6 +94,9 @@ ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
 - (GLKMatrix4)GetCurrentRotation {
     return CVMatToGLK4(pipe->GetCurrentRotation());
 }
+- (GLKMatrix4)GetPreviewRotation {
+    return CVMatToGLK4(pipe->GetPreviewRotation());
+}
 - (bool)IsPreviewImageValialble {
     return pipe->IsPreviewImageAvailable();
 }
@@ -88,14 +109,12 @@ ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
 - (void)FreeImageBuffer:(ImageBuffer)toFree {
     free(toFree.data);
 }
-- (SelectionPoint)ClosestPoint {
-    optonaut::SelectionPoint point = pipe->ClosestPoint().closestPoint;
-    SelectionPoint newPoint;
-    newPoint.id = point.id;
-    newPoint.localId = point.localId;
-    newPoint.ringId = point.ringId;
-    newPoint.extrinsics = CVMatToGLK4(point.extrinsics);
-    return newPoint;
+- (SelectionPoint)CurrentPoint {
+    return ConvertSelectionPoint(pipe->CurrentPoint().closestPoint);
+}
+
+- (SelectionPoint)PreviousPoint {
+    return ConvertSelectionPoint(pipe->PreviousPoint().closestPoint);
 }
 - (NSArray<NSValue*>*)GetSelectionPoints {
     vector<optonaut::SelectionPoint> points = pipe->GetSelectionPoints();
@@ -103,11 +122,7 @@ ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
     NSMutableArray *outPoints = [NSMutableArray array];
     
     for(auto point : points) {
-        SelectionPoint newPoint;
-        newPoint.id = point.id;
-        newPoint.localId = point.localId;
-        newPoint.ringId = point.ringId;
-        newPoint.extrinsics = CVMatToGLK4(point.extrinsics);
+        SelectionPoint newPoint = ConvertSelectionPoint(point);
         
         [outPoints addObject:[NSValue valueWithBytes:&newPoint objCType:@encode(struct SelectionPoint)]];
     }
@@ -116,14 +131,8 @@ ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
     
     return immutableOutPoints;
 }
-- (void)DisableSelectionPoint:(SelectionPoint)toDisable {
-    optonaut::SelectionPoint p;
-    p.id = toDisable.id;
-    p.ringId = toDisable.ringId;
-    p.localId = toDisable.localId;
-    
-    //Only Ids are needed to disable the selection point.
-    pipe->DisableSelectionPoint(p);
+- (bool)AreAdjacent:(SelectionPoint)a:(SelectionPoint)b {
+    return pipe->AreAdjacent(ConvertSelectionPoint(a), ConvertSelectionPoint(b));
 }
 - (void)EnableDebug:(NSString*)path {
     debugPath = std::string([path UTF8String]);
