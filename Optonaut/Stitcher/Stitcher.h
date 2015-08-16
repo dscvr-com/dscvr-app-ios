@@ -21,10 +21,16 @@ struct SelectionPoint {
 
 - (void)Push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image;
 - (GLKMatrix4)GetCurrentRotation;
+- (GLKMatrix4)GetPreviewRotation;
 - (bool)IsPreviewImageValialble;
 - (struct ImageBuffer)GetPreviewImage;
 - (void)FreeImageBuffer:(struct ImageBuffer)toFree;
 - (NSArray<NSValue*>*)GetSelectionPoints;
-- (void)DisableSelectionPoint:(struct SelectionPoint)toDisable;
+- (struct SelectionPoint)CurrentPoint;
+- (struct SelectionPoint)PreviousPoint;
+- (void)EnableDebug:(NSString*)path;
+- (struct ImageBuffer)GetLeftResult;
+- (struct ImageBuffer)GetRightResult;
+- (bool)AreAdjacent:(struct SelectionPoint)a:(struct SelectionPoint)b;
 
 @end
