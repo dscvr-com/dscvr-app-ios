@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 import WebImage
-import TTTAttributedLabel
 
 class ActivityTableViewCell: UITableViewCell {
     
@@ -19,7 +18,7 @@ class ActivityTableViewCell: UITableViewCell {
     
     // subviews
     let avatarImageView = UIImageView()
-    let textView = TTTAttributedLabel(forAutoLayout: ())
+//    let textView = TTTAttributedLabel(forAutoLayout: ())
     let optographImageView = UIImageView()
     let lineView = UIView()
     
@@ -32,11 +31,11 @@ class ActivityTableViewCell: UITableViewCell {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(avatarImageView)
         
-        textView.numberOfLines = 2
-        textView.font = UIFont.robotoOfSize(13, withType: .Regular)
-        textView.textColor = UIColor(0x4d4d4d)
-        contentView.addSubview(textView)
-        
+//        textView.numberOfLines = 2
+//        textView.font = UIFont.robotoOfSize(13, withType: .Regular)
+//        textView.textColor = UIColor(0x4d4d4d)
+//        contentView.addSubview(textView)
+//        
         optographImageView.userInteractionEnabled = true
         optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
         contentView.addSubview(optographImageView)
@@ -52,9 +51,9 @@ class ActivityTableViewCell: UITableViewCell {
         avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
         
-        textView.autoAlignAxisToSuperviewAxis(.Horizontal)
-        textView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 12)
-        textView.autoPinEdge(.Right, toEdge: .Left, ofView: optographImageView, withOffset: -12)
+//        textView.autoAlignAxisToSuperviewAxis(.Horizontal)
+//        textView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 12)
+//        textView.autoPinEdge(.Right, toEdge: .Left, ofView: optographImageView, withOffset: -12)
         
         optographImageView.autoAlignAxisToSuperviewAxis(.Horizontal)
         optographImageView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
@@ -87,14 +86,14 @@ class ActivityTableViewCell: UITableViewCell {
             .map { $0 ? UIColor.clearColor() : BaseColor.alpha(0.1) }
             .start(next: { self.backgroundColor = $0 })
         
-        textView.rac_text <~ viewModel.activityType.producer
-            .map { type in
-                switch type {
-                case .Like: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) stard your Optograph"
-                case .Follow: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) followed you"
-                default: return ""
-                }
-            }
+//        textView.rac_text <~ viewModel.activityType.producer
+//            .map { type in
+//                switch type {
+//                case .Like: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) stard your Optograph"
+//                case .Follow: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) followed you"
+//                default: return ""
+//                }
+//            }
     }
     
     func pushProfile() {

@@ -15,6 +15,7 @@ class Comment: Object, Model {
     dynamic var text = ""
     dynamic var createdAt = NSDate()
     dynamic var person: Person?
+    dynamic var optograph: Optograph?
     
     override static func primaryKey() -> String? {
         return "id"
@@ -31,6 +32,7 @@ extension Comment: Mappable {
         id                  <- map["id"]
         text                <- map["text"]
         person              <- map["person"]
+        optograph           <- map["optograph"]
         createdAt           <- (map["created_at"], NSDateTransform())
     }
     
