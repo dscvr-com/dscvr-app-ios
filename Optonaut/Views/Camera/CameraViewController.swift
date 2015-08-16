@@ -25,6 +25,9 @@ class CameraViewController: UIViewController {
     var sessionQueue: dispatch_queue_t!
     var videoDeviceInput: AVCaptureDeviceInput!
     var videoDeviceOutput: AVCaptureVideoDataOutput!
+    var previewLayer: AVCaptureVideoPreviewLayer!
+    
+    var scnView: SCNView!
     
     // stitcher pointer and variables
     
@@ -56,24 +59,23 @@ class CameraViewController: UIViewController {
         
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         
-        setupScene()
-        setupSelectionPoints();
         
         //stitcher.EnableDebug(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0])
         
         // layer for preview
-//        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-//        previewLayer.frame = view.bounds
-//        previewLayer.frame = CGRect(x: view.bounds.width / 4, y: view.bounds.height / 4, width: view.bounds.width / 2, height: view.bounds.height / 2)
-//        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-//        view.layer.addSublayer(previewLayer)
+        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer.frame = view.bounds
+        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         
-//        let blurEffect = UIBlurEffect(style: .Dark)
-//        let blurView = UIVisualEffectView(effect: blurEffect)
-//        blurView.frame = view.bounds
-//        view.addSubview(blurView)
-//        view.clipsToBounds = true
-//        view.contentMode = UIViewContentMode.ScaleAspectFill
+        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = view.bounds
+        
+        view.layer.addSublayer(previewLayer)
+        view.addSubview(blurView)
+        
+        setupScene()
+        setupSelectionPoints();
         
         closeButtonView.setTitle(String.icomoonWithName(.Cross), forState: .Normal)
         closeButtonView.setTitleColor(.whiteColor(), forState: .Normal)
@@ -163,9 +165,9 @@ class CameraViewController: UIViewController {
         
         scene.rootNode.addChildNode(cameraNode)
         
-        let scnView = SCNView()
+        scnView = SCNView()
         scnView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
-        scnView.backgroundColor = .clearColor()
+        scnView.backgroundColor = UIColor.clearColor()
         scnView.scene = scene
         scnView.playing = true
         scnView.delegate = self
