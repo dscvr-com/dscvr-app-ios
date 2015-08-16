@@ -335,20 +335,19 @@ class CameraViewController: UIViewController {
     }
     
     private func finish() {
-        
         //This code can (and should be executed asynchronously while the user enters
         //the description.
         print("Finalizing");
         
         let leftBuffer = stitcher.GetLeftResult()
-        let rightBuffer = stitcher.GetRightResult()
         let left = ImageBufferToCGImage(leftBuffer)
+        stitcher.FreeImageBuffer(leftBuffer);
+        
+        let rightBuffer = stitcher.GetRightResult()
         let right = ImageBufferToCGImage(rightBuffer)
+        stitcher.FreeImageBuffer(rightBuffer);
         
         upload(left, rightImage: right);
-        
-        stitcher.FreeImageBuffer(leftBuffer);
-        stitcher.FreeImageBuffer(rightBuffer);
     }
     
     func upload(leftImage: CGImage, rightImage: CGImage) {
