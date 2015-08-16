@@ -122,6 +122,8 @@ class CameraViewController: UIViewController {
             self.session.commitConfiguration()
         }
         
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
+        
         view.setNeedsUpdateConstraints()
     }
     
@@ -334,21 +336,23 @@ class CameraViewController: UIViewController {
         }
     }
     
-    private func finish() {
+    func finish() {
         
         //This code can (and should be executed asynchronously while the user enters
         //the description.
-        print("Finalizing");
+        print("Finalizing")
         
         let leftBuffer = stitcher.GetLeftResult()
         let rightBuffer = stitcher.GetRightResult()
         let left = ImageBufferToCGImage(leftBuffer)
         let right = ImageBufferToCGImage(rightBuffer)
         
-        upload(left, rightImage: right);
+        upload(left, rightImage: right)
         
-        stitcher.FreeImageBuffer(leftBuffer);
-        stitcher.FreeImageBuffer(rightBuffer);
+        stitcher.FreeImageBuffer(leftBuffer)
+        stitcher.FreeImageBuffer(rightBuffer)
+        
+        navigationController?.popViewControllerAnimated(false)
     }
     
     func upload(leftImage: CGImage, rightImage: CGImage) {

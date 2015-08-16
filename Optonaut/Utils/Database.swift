@@ -83,6 +83,6 @@ class DatabaseManager {
     
 }
 
-extension Table {
+//extension Table {
 //    ins
-}
+//}
