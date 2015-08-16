@@ -8,8 +8,6 @@
 
 import UIKit
 import PureLayout_iOS
-import RealmSwift
-import Alamofire
 import Refresher
 
 class ActivityTableViewController: UIViewController, RedNavbar {

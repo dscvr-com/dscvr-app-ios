@@ -8,12 +8,8 @@
 
 import Foundation
 import ReactiveCocoa
-import ObjectMapper
-import RealmSwift
 
 class ActivitiesViewModel: NSObject {
-    
-    let realm = try! Realm()
     
     var refreshTimer: NSTimer!
     
@@ -26,19 +22,19 @@ class ActivitiesViewModel: NSObject {
     override init() {
         super.init()
         
-        results.value = realm.objects(Activity).sorted("createdAt", ascending: false).map(identity).subArray(20)
+//        results.value = realm.objects(Activity).sorted("createdAt", ascending: false).map(identity).subArray(20)
         
-        refreshNotificationSignal.subscribe {
-            Api.get("activities", authorized: true)
-                .map { Mapper<Activity>().mapArray($0)! }
-                .start(next: self.processApi)
-        }
-        
-        loadMoreNotificationSignal.subscribe {
-            Api.get("activities?offset=\(results.value.count)", authorized: true)
-                .map { Mapper<Activity>().mapArray($0)! }
-                .start(next: self.processApi)
-        }
+//        refreshNotificationSignal.subscribe {
+//            Api.get("activities")
+//                .map { Mapper<Activity>().mapArray($0)! }
+//                .start(next: self.processApi)
+//        }
+//        
+//        loadMoreNotificationSignal.subscribe {
+//            Api.get("activities?offset=\(results.value.count)")
+//                .map { Mapper<Activity>().mapArray($0)! }
+//                .start(next: self.processApi)
+//        }
         
         refreshNotificationSignal.notify()
         refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
@@ -53,7 +49,7 @@ class ActivitiesViewModel: NSObject {
 //            self.realm.add(activities, update: true)
 //        }
         
-        results.value = Array(Set(results.value + activities)).sort { $0.createdAt > $1.createdAt }
+//        results.value = Array(Set(results.value + activities)).sort { $0.createdAt > $1.createdAt }
         unreadCount.value = results.value.reduce(0) { (acc, activity) in acc + (activity.isRead ? 0 : 1) }
     }
     

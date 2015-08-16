@@ -42,35 +42,31 @@ class LoginViewModel {
     }
     
     func login() -> SignalProducer<Void, NSError> {
-        return SignalProducer { sink, disposable in
-            self.pending.value = true
-            
-            var parameters = ["email": "", "user_name": "", "password": self.password.value]
-            
-            if self.emailOrUserName.value.rangeOfString("@") != nil {
-                parameters["email"] = self.emailOrUserName.value
-            } else {
-                parameters["user_name"] = self.emailOrUserName.value
-            }
-            
-            Api.post("persons/login", authorized: false, parameters: parameters)
-                .map { json in Mapper<LoginMappable>().map(json)! }
-                .start(
-                    next: { loginData in
-                        NSUserDefaults.standardUserDefaults().setBool(true, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
-                        NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: PersonDefaultsKeys.PersonToken.rawValue)
-                        NSUserDefaults.standardUserDefaults().setInteger(loginData.id, forKey: PersonDefaultsKeys.PersonId.rawValue)
-                        self.pending.value = false
-                        sendCompleted(sink)
-                    },
-                    error: { error in
-                        self.pending.value = false
-                        sendError(sink, error)
-                    }
-            )
-            
-            disposable.addDisposable {}
+        self.pending.value = true
+        
+        var parameters = ["email": "", "user_name": "", "password": self.password.value]
+        
+        if self.emailOrUserName.value.rangeOfString("@") != nil {
+            parameters["email"] = self.emailOrUserName.value
+        } else {
+            parameters["user_name"] = self.emailOrUserName.value
         }
+        
+        return Api.post("persons/login", parameters: parameters)
+            .on(
+                next: { (loginData: LoginMappable) in
+                    NSUserDefaults.standardUserDefaults().setBool(true, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
+                    NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: PersonDefaultsKeys.PersonToken.rawValue)
+                    NSUserDefaults.standardUserDefaults().setInteger(loginData.id, forKey: PersonDefaultsKeys.PersonId.rawValue)
+                },
+                completed: {
+                    self.pending.value = false
+                },
+                error: { error in
+                    self.pending.value = false
+                }
+            )
+            .flatMap(.Latest) { _ in SignalProducer(value: ()) }
     }
     
 }

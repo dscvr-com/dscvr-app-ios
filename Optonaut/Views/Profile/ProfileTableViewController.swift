@@ -38,14 +38,17 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         
         viewModel.resultsLoading.value = true
         
-        blankHeaderView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 280)
-        tableView.tableHeaderView = blankHeaderView
+//        print(tableView.gestureRecognizers)
+        
+//        blankHeaderView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 280)
+//        tableView.tableHeaderView = blankHeaderView
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        tableView.contentInset = UIEdgeInsetsZero
+//        tableView.contentInset = UIEdgeInsetsZero
+        tableView.contentInset = UIEdgeInsets(top: 280, left: 0, bottom: 0, right: 0)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -61,7 +64,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        scrollCallback?(tableView.contentOffset.y)
+        scrollCallback?(tableView.contentOffset.y + 280)
     }
     
 }

@@ -23,9 +23,9 @@ class NewCommentViewModel {
             .start(next: { self.isValid.value = $0 })
     }
     
-    func postComment() -> SignalProducer<JSONResponse, NSError> {
+    func postComment() -> SignalProducer<Comment, NSError> {
         let parameters = ["text": text.value]
-        return Api.post("optographs/\(optographId.value)/comments", authorized: true, parameters: parameters)
+        return Api.post("optographs/\(optographId.value)/comments", parameters: parameters)
             .on(completed: {
                 self.text.value = ""
             })

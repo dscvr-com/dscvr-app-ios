@@ -95,8 +95,8 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     }
     
     func pushCamera() {
-        navigationController?.pushViewController(CameraViewController(), animated: false)
-//        navigationController?.pushViewController(CreateOptographViewController(), animated: false)
+//        navigationController?.pushViewController(CameraViewController(), animated: false)
+        navigationController?.pushViewController(CreateOptographViewController(), animated: false)
     }
     
     func pushSearch() {

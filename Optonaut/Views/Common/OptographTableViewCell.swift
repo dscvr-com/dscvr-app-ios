@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 import WebImage
-import ObjectMapper
 import HexColor
 
 class OptographTableViewCell: UITableViewCell {
@@ -150,8 +149,7 @@ class OptographTableViewCell: UITableViewCell {
         textView.rac_text <~ viewModel.text
         textView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
-            Api.get("persons/user-name/\(userName)", authorized: true)
-                .map { json in Mapper<Person>().map(json)! }
+            Api<Person>.get("persons/user-name/\(userName)")
                 .start(next: { person in
                     self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
                 })

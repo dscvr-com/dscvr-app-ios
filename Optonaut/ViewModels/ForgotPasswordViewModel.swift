@@ -22,11 +22,11 @@ class ForgotPasswordViewModel {
             })
     }
     
-    func sendEmail() -> SignalProducer<JSONResponse, NSError> {
+    func sendEmail() -> SignalProducer<EmptyResponse, NSError> {
         pending.value = true
         
         let parameters = ["email": email.value]
-        return Api.post("persons/forgot-password", authorized: false, parameters: parameters)
+        return Api.post("persons/forgot-password", parameters: parameters)
             .on(
                 completed: { _ in
                     self.pending.value = false

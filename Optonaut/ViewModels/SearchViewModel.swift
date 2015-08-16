@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveCocoa
-import ObjectMapper
 
 class SearchViewModel {
     
@@ -21,10 +20,9 @@ class SearchViewModel {
             .filter { $0.characters.count > 2 }
             .throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
             .map(escape)
-            .flatMap(.Latest) { keyword in Api.get("optographs/search?keyword=\(keyword)", authorized: true) }
-            .map { json in Mapper<Optograph>().mapArray(json)! }
-            .start(next: { optographs in
-                self.results.value = optographs.sort { $0.createdAt.compare($1.createdAt) == NSComparisonResult.OrderedDescending }
+            .flatMap(.Latest) { keyword in Api.get("optographs/search?keyword=\(keyword)") }
+            .start(next: { optograph in
+                self.results.value.append(optograph)
             })
     }
     

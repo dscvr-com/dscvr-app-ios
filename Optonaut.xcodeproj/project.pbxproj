@@ -15,6 +15,9 @@
 		8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */; };
 		8F17CF711B4F15B100A10DA3 /* NSDateTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */; };
 		8F2234741B7F6791005E11F8 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8F2234721B7F6791005E11F8 /* Model.xcdatamodeld */; };
+		8F2234761B7F7614005E11F8 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2234751B7F7614005E11F8 /* Database.swift */; };
+		8F23D09E1B810464002CDDB7 /* PersonMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23D09D1B810464002CDDB7 /* PersonMigration.swift */; };
+		8F23D0A01B810477002CDDB7 /* PersonSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23D09F1B810477002CDDB7 /* PersonSchema.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F366DD21B59342E00C0012E /* CameraDebugHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */; };
 		8F3FB0661B7B466000016A8A /* CreateOptographViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3FB0651B7B466000016A8A /* CreateOptographViewController.swift */; };
@@ -71,13 +74,12 @@
 		8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA001B3EECB0007E073C /* Activity.swift */; };
 		8F5FDA091B412DB2007E073C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA081B412DB2007E073C /* Constants.swift */; };
 		8F5FDA0B1B433DAB007E073C /* ViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA0A1B433DAB007E073C /* ViewerViewController.swift */; };
+		8F740CFC1B80DCF200FED1D0 /* CommentSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F740CFB1B80DCF200FED1D0 /* CommentSchema.swift */; };
+		8F740CFE1B80DDE200FED1D0 /* CommentMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F740CFD1B80DDE200FED1D0 /* CommentMigration.swift */; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* Person.swift */; };
 		8F77382B1B380FC1001F642B /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738211B380FC1001F642B /* TabBarViewController.swift */; };
 		8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738311B3816C7001F642B /* PureLayout_iOS.framework */; };
-		8F7738361B3816C7001F642B /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738321B3816C7001F642B /* Realm.framework */; };
-		8F7738371B3816C7001F642B /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738331B3816C7001F642B /* RealmSwift.framework */; };
-		8F7738381B3816C7001F642B /* TTTAttributedLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738341B3816C7001F642B /* TTTAttributedLabel.framework */; };
 		8F77383A1B381770001F642B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F7738391B381770001F642B /* Assets.xcassets */; };
 		8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9A4FF41B39DF85009C4548 /* Refresher.framework */; };
 		8F9A4FF81B39E992009C4548 /* ProfileHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF71B39E992009C4548 /* ProfileHeaderViewController.swift */; };
@@ -87,6 +89,7 @@
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
 		8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */; };
 		8FA55BF21B387DD800BBA4A2 /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */; };
+		8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA66BA41B80905C00EE5D44 /* SQLite.framework */; };
 		8FA74CA71B7B992800366203 /* KMPlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA74CA61B7B992800366203 /* KMPlaceholderTextView.swift */; };
 		8FB2693B1B7E624D00C77A40 /* NewCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2693A1B7E624D00C77A40 /* NewCommentTableViewCell.swift */; };
 		8FB2693D1B7E629100C77A40 /* NewCommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2693C1B7E629100C77A40 /* NewCommentViewModel.swift */; };
@@ -106,6 +109,8 @@
 		8FD7F87E1B592708001680AA /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD7F87D1B592708001680AA /* AWSCore.framework */; };
 		8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */; };
 		8FEAB9791B51182B00F9FE64 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEAB9781B51182B00F9FE64 /* DetailsViewModel.swift */; };
+		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
+		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
 		8FFCE4B91B4DBF1900832C88 /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4B81B4DBF1900832C88 /* KILabel.m */; };
 		8FFCE4BB1B4EA9AC00832C88 /* ActivityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4BA1B4EA9AC00832C88 /* ActivityTableViewCell.swift */; };
 		8FFCE4BD1B4EAA2300832C88 /* ActivityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4BC1B4EAA2300832C88 /* ActivityViewModel.swift */; };
@@ -138,9 +143,11 @@
 		8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectMapper.framework; path = Carthage/Build/iOS/ObjectMapper.framework; sourceTree = "<group>"; };
 		8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateTransform.swift; sourceTree = "<group>"; };
 		8F2234731B7F6791005E11F8 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		8F2234751B7F7614005E11F8 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		8F23D09D1B810464002CDDB7 /* PersonMigration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonMigration.swift; sourceTree = "<group>"; };
+		8F23D09F1B810477002CDDB7 /* PersonSchema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonSchema.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraDebugHelper.swift; sourceTree = "<group>"; };
-		8F366DD31B59451000C0012E /* ZipArchive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipArchive.framework; path = Carthage/Build/iOS/ZipArchive.framework; sourceTree = "<group>"; };
 		8F3FB0651B7B466000016A8A /* CreateOptographViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateOptographViewController.swift; sourceTree = "<group>"; };
 		8F3FB0671B7B474700016A8A /* CreateOptographViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateOptographViewModel.swift; sourceTree = "<group>"; };
 		8F464AF51B4ACE4E00A66FA5 /* RequestInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestInviteViewController.swift; sourceTree = "<group>"; };
@@ -195,6 +202,8 @@
 		8F5FDA001B3EECB0007E073C /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		8F5FDA081B412DB2007E073C /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8F5FDA0A1B433DAB007E073C /* ViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewerViewController.swift; sourceTree = "<group>"; };
+		8F740CFB1B80DCF200FED1D0 /* CommentSchema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentSchema.swift; sourceTree = "<group>"; };
+		8F740CFD1B80DDE200FED1D0 /* CommentMigration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentMigration.swift; sourceTree = "<group>"; };
 		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F7738141B380F5D001F642B /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
@@ -202,7 +211,6 @@
 		8F7738311B3816C7001F642B /* PureLayout_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout_iOS.framework; path = Carthage/Build/iOS/PureLayout_iOS.framework; sourceTree = "<group>"; };
 		8F7738321B3816C7001F642B /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		8F7738331B3816C7001F642B /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
-		8F7738341B3816C7001F642B /* TTTAttributedLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TTTAttributedLabel.framework; path = Carthage/Build/iOS/TTTAttributedLabel.framework; sourceTree = "<group>"; };
 		8F7738391B381770001F642B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8F9A4FF41B39DF85009C4548 /* Refresher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Refresher.framework; path = Carthage/Build/iOS/Refresher.framework; sourceTree = "<group>"; };
 		8F9A4FF71B39E992009C4548 /* ProfileHeaderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewController.swift; sourceTree = "<group>"; };
@@ -213,6 +221,7 @@
 		8FA55BEA1B386E8C00BBA4A2 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		8FA55BEE1B387DD800BBA4A2 /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
 		8FA55BEF1B387DD800BBA4A2 /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
+		8FA66BA41B80905C00EE5D44 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
 		8FA74CA61B7B992800366203 /* KMPlaceholderTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KMPlaceholderTextView.swift; sourceTree = "<group>"; };
 		8FB2693A1B7E624D00C77A40 /* NewCommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentTableViewCell.swift; sourceTree = "<group>"; };
 		8FB2693C1B7E629100C77A40 /* NewCommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentViewModel.swift; sourceTree = "<group>"; };
@@ -236,6 +245,7 @@
 		8FD7F87D1B592708001680AA /* AWSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCore.framework; path = Carthage/Build/iOS/AWSCore.framework; sourceTree = "<group>"; };
 		8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
 		8FEAB9781B51182B00F9FE64 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
+		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		8FFCE4B71B4DBF1900832C88 /* KILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabel.h; sourceTree = "<group>"; };
 		8FFCE4B81B4DBF1900832C88 /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabel.m; sourceTree = "<group>"; };
 		8FFCE4BA1B4EA9AC00832C88 /* ActivityTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityTableViewCell.swift; sourceTree = "<group>"; };
@@ -269,6 +279,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */,
 				8FD7F87E1B592708001680AA /* AWSCore.framework in Frameworks */,
 				8FD7F85B1B591452001680AA /* AWSS3.framework in Frameworks */,
 				8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */,
@@ -280,10 +291,7 @@
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
 				8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */,
-				8F7738361B3816C7001F642B /* Realm.framework in Frameworks */,
 				8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */,
-				8F7738371B3816C7001F642B /* RealmSwift.framework in Frameworks */,
-				8F7738381B3816C7001F642B /* TTTAttributedLabel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,9 +308,9 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FA66BA41B80905C00EE5D44 /* SQLite.framework */,
 				8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */,
 				8FBDE8B11B5D186800C78486 /* Device.framework */,
-				8F366DD31B59451000C0012E /* ZipArchive.framework */,
 				8FD7F87D1B592708001680AA /* AWSCore.framework */,
 				8FD7F85A1B591452001680AA /* AWSS3.framework */,
 				8FA2E7B11B55576500407181 /* opencv2.framework */,
@@ -316,7 +324,6 @@
 				8F7738311B3816C7001F642B /* PureLayout_iOS.framework */,
 				8F7738321B3816C7001F642B /* Realm.framework */,
 				8F7738331B3816C7001F642B /* RealmSwift.framework */,
-				8F7738341B3816C7001F642B /* TTTAttributedLabel.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -397,6 +404,7 @@
 				8F4C6E191B4717DF007508ED /* Icomoon.swift */,
 				8F4C6E571B4A73BE007508ED /* Fonts.swift */,
 				8F5FDA081B412DB2007E073C /* Constants.swift */,
+				8F2234751B7F7614005E11F8 /* Database.swift */,
 				8F53ED0D1B6F6A1D00D99F41 /* LoadMore.swift */,
 				8F5FD9CF1B3AFBDC007E073C /* Utils.swift */,
 				8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */,
@@ -474,6 +482,33 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
+		8F740CF81B80DC6200FED1D0 /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				8F740CF91B80DCE800FED1D0 /* Migrations */,
+				8F740CFA1B80DCE800FED1D0 /* Schemas */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
+		8F740CF91B80DCE800FED1D0 /* Migrations */ = {
+			isa = PBXGroup;
+			children = (
+				8F740CFD1B80DDE200FED1D0 /* CommentMigration.swift */,
+				8F23D09D1B810464002CDDB7 /* PersonMigration.swift */,
+			);
+			path = Migrations;
+			sourceTree = "<group>";
+		};
+		8F740CFA1B80DCE800FED1D0 /* Schemas */ = {
+			isa = PBXGroup;
+			children = (
+				8F740CFB1B80DCF200FED1D0 /* CommentSchema.swift */,
+				8F23D09F1B810477002CDDB7 /* PersonSchema.swift */,
+			);
+			path = Schemas;
+			sourceTree = "<group>";
+		};
 		8F7738121B380F5D001F642B /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -549,6 +584,7 @@
 			children = (
 				A5C1C01F1B7F326200DCD598 /* Stitcher */,
 				8FCCA0511B3806680091F1B1 /* AppDelegate.swift */,
+				8F740CF81B80DC6200FED1D0 /* Database */,
 				8F5FD9CD1B3AFBDC007E073C /* Utils */,
 				8F7738121B380F5D001F642B /* Models */,
 				8F5FD9D01B3AFBDC007E073C /* ViewModels */,
@@ -575,6 +611,7 @@
 			isa = PBXGroup;
 			children = (
 				8FCCA0461B3806040091F1B1 /* OptonautTests.swift */,
+				8FFA5F531B812749004CC2B3 /* ModelTests.swift */,
 				8FCCA0441B3806040091F1B1 /* Supporting Files */,
 			);
 			path = OptonautTests;
@@ -756,10 +793,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/Realm.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RealmSwift.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PureLayout_iOS.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/TTTAttributedLabel.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Refresher.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ReactiveCocoa.framework",
@@ -768,6 +802,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Device.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/HexColor.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SQLite.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -787,6 +822,7 @@
 				8F5FD9FB1B3DB853007E073C /* ActivityTableViewController.swift in Sources */,
 				8F500CFA1B4D5D6E002B9878 /* OptographTableViewCell.swift in Sources */,
 				8F366DD21B59342E00C0012E /* CameraDebugHelper.swift in Sources */,
+				8F2234761B7F7614005E11F8 /* Database.swift in Sources */,
 				8FBA5CAC1B54266B00F0F489 /* EditProfileViewController.swift in Sources */,
 				A5C1C0181B7E19E200DCD598 /* monoStitcher.cpp in Sources */,
 				8F5FDA0B1B433DAB007E073C /* ViewerViewController.swift in Sources */,
@@ -796,6 +832,7 @@
 				8F5FD9E01B3C5578007E073C /* OptographsViewModel.swift in Sources */,
 				8F464B041B4C767300A66FA5 /* OptographTableViewController.swift in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
+				8F740CFC1B80DCF200FED1D0 /* CommentSchema.swift in Sources */,
 				8FB2D6D21B7CBB4F00BFB795 /* CommentTableViewController.swift in Sources */,
 				8F5FD9D41B3AFDA0007E073C /* UIKitExtensions.swift in Sources */,
 				8FA74CA71B7B992800366203 /* KMPlaceholderTextView.swift in Sources */,
@@ -815,6 +852,7 @@
 				8F464B021B4C727200A66FA5 /* ExploreNavViewController.swift in Sources */,
 				8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */,
 				A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */,
+				8F740CFE1B80DDE200FED1D0 /* CommentMigration.swift in Sources */,
 				8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */,
 				8F500D021B4D8471002B9878 /* ExploreTableViewController.swift in Sources */,
 				A5C1C0251B7F33BD00DCD598 /* StitcherUtils.swift in Sources */,
@@ -822,6 +860,7 @@
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
 				8F500CFE1B4D6D70002B9878 /* ProfileTableViewController.swift in Sources */,
 				8F464AF61B4ACE4E00A66FA5 /* RequestInviteViewController.swift in Sources */,
+				8F23D0A01B810477002CDDB7 /* PersonSchema.swift in Sources */,
 				8F464B071B4C7A9000A66FA5 /* HashtagTableViewController.swift in Sources */,
 				8F3FB0661B7B466000016A8A /* CreateOptographViewController.swift in Sources */,
 				8FB2693D1B7E629100C77A40 /* NewCommentViewModel.swift in Sources */,
@@ -845,6 +884,7 @@
 				8F5FD9D21B3AFBDC007E073C /* Utils.swift in Sources */,
 				8FEAB9791B51182B00F9FE64 /* DetailsViewModel.swift in Sources */,
 				8F5FD9F01B3DB724007E073C /* SearchViewModel.swift in Sources */,
+				8F23D09E1B810464002CDDB7 /* PersonMigration.swift in Sources */,
 				8FFCE4BD1B4EAA2300832C88 /* ActivityViewModel.swift in Sources */,
 				8FBDE8B41B60FE9E00C78486 /* FeedViewModel.swift in Sources */,
 				8F7738161B380F5D001F642B /* Person.swift in Sources */,
@@ -866,7 +906,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */,
 				8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */,
+				8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -981,6 +1023,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = Optonaut/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1008,6 +1051,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Optonaut/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

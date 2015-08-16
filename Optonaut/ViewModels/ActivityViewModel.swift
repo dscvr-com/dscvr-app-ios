@@ -9,11 +9,11 @@
 
 import Foundation
 import ReactiveCocoa
-import RealmSwift
+//import RealmSwift
 
 class ActivityViewModel {
     
-    private let realm = try! Realm()
+//    private let realm = try! Realm()
     
     let activityType: ConstantProperty<ActivityType>
     let creatorAvatarUrl: ConstantProperty<String>
@@ -40,13 +40,13 @@ class ActivityViewModel {
     }
     
     func read() {
-        Api.post("activities/\(activity.id)/read", authorized: true, parameters: nil)
-            .start(completed: { _ in
+        Api<EmptyResponse>.post("activities/\(activity.id)/read", parameters: nil)
+            .start(completed: {
                 self.isRead.value = true
                 
-                self.realm.write {
-                    self.activity.isRead = true
-                }
+//                self.realm.write {
+//                    self.activity.isRead = true
+//                }
             })
     }
     

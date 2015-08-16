@@ -22,11 +22,11 @@ class RequestInviteViewModel {
             })
     }
     
-    func requestInvite() -> SignalProducer<JSONResponse, NSError> {
+    func requestInvite() -> SignalProducer<EmptyResponse, NSError> {
         pending.value = true
         
         let parameters = ["email": email.value]
-        return Api.post("persons/request-invite", authorized: false, parameters: parameters)
+        return Api.post("persons/request-invite", parameters: parameters)
             .on(
                 completed: { _ in
                     self.pending.value = false

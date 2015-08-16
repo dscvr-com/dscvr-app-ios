@@ -7,36 +7,37 @@
 //
 
 import Foundation
-import RealmSwift
 import ObjectMapper
 
-class Optograph: Object, Model {
-    dynamic var id = 0
-    dynamic var text = ""
-    dynamic var person: Person?
-    dynamic var createdAt = NSDate()
-    dynamic var isStarred = false
-    dynamic var starsCount = 0
-    dynamic var commentsCount = 0
-    dynamic var viewsCount = 0
-    dynamic var location = ""
-    
-    override static func primaryKey() -> String? {
-        return "id"
-    }
-}
-
-func ==(lhs: Optograph, rhs: Optograph) -> Bool {
-    return lhs.hashValue == rhs.hashValue
+struct Optograph: Model {
+    var id: Int
+    var text: String
+    var person: Person?
+    var createdAt: NSDate
+    var isStarred: Bool
+    var starsCount: Int
+    var commentsCount: Int
+    var viewsCount: Int
+    var location: String
 }
 
 extension Optograph: Mappable {
     
     static func newInstance() -> Mappable {
-        return Optograph()
+        return Optograph(
+            id: 0,
+            text: "",
+            person: nil,
+            createdAt: NSDate(),
+            isStarred: false,
+            starsCount: 0,
+            commentsCount: 0,
+            viewsCount: 0,
+            location: ""
+        )
     }
     
-    func mapping(map: Map) {
+    mutating func mapping(map: Map) {
         id              <- map["id"]
         text            <- map["text"]
         person          <- map["person"]

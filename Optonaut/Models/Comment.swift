@@ -7,35 +7,34 @@
 //
 
 import Foundation
-import RealmSwift
 import ObjectMapper
 
-class Comment: Object, Model {
-    dynamic var id = 0
-    dynamic var text = ""
-    dynamic var createdAt = NSDate()
-    dynamic var person: Person?
-    
-    override static func primaryKey() -> String? {
-        return "id"
-    }
-}
-
-func ==(lhs: Comment, rhs: Comment) -> Bool {
-    return lhs.hashValue == rhs.hashValue
+struct Comment: Model {
+    var id: Int
+    var text: String
+    var createdAt: NSDate
+    var person: Person?
+    var optograph: Optograph?
 }
 
 extension Comment: Mappable {
     
-    func mapping(map: Map) {
-        id                  <- map["id"]
-        text                <- map["text"]
-        person              <- map["person"]
-        createdAt           <- (map["created_at"], NSDateTransform())
+    static func newInstance() -> Mappable {
+        return Comment(
+            id: 0,
+            text: "",
+            createdAt: NSDate(),
+            person: nil,
+            optograph: nil
+        )
     }
     
-    static func newInstance() -> Mappable {
-        return Comment()
+    mutating func mapping(map: Map) {
+        id          <- map["id"]
+        text        <- map["text"]
+        person      <- map["person"]
+        optograph   <- map["optograph"]
+        createdAt   <- (map["created_at"], NSDateTransform())
     }
     
 }

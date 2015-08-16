@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveCocoa
-import ObjectMapper
 
 class CameraViewModel {
     

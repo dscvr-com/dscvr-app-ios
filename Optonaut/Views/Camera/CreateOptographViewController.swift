@@ -17,7 +17,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     let previewImageView = UIImageView()
     let locationView = InsetLabel()
     let descriptionView = KILabel()
-    let descriptionInputView = KMPlaceholderTextView()
+    let textInputView = KMPlaceholderTextView()
     let lineView = UIView()
     
     override func viewDidLoad() {
@@ -59,14 +59,14 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         locationView.edgeInsets = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
         view.addSubview(locationView)
         
-        descriptionInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
-        descriptionInputView.placeholder = "Enter a description here..."
-        descriptionInputView.placeholderColor = UIColor(0xcfcfcf)
-        descriptionInputView.textColor = UIColor(0x4d4d4d)
-        descriptionInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.description_.value = $0 as! String })
-        descriptionInputView.textContainer.lineFragmentPadding = 0 // remove left padding
-        descriptionInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
-        view.addSubview(descriptionInputView)
+        textInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
+        textInputView.placeholder = "Enter a description here..."
+        textInputView.placeholderColor = UIColor(0xcfcfcf)
+        textInputView.textColor = UIColor(0x4d4d4d)
+        textInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.text.value = $0 as! String })
+        textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
+        textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
+        view.addSubview(textInputView)
         
         lineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(lineView)
@@ -84,12 +84,12 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
         locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
         
-        descriptionInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 20)
-        descriptionInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        descriptionInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-        descriptionInputView.autoSetDimension(.Height, toSize: 100)
+        textInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 20)
+        textInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        textInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        textInputView.autoSetDimension(.Height, toSize: 100)
         
-        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: descriptionInputView, withOffset: 5)
+        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textInputView, withOffset: 5)
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         lineView.autoSetDimension(.Height, toSize: 1)
