@@ -7,35 +7,39 @@
 //
 
 import Foundation
-import RealmSwift
 import ObjectMapper
 
-class Person: Object, Model {
-    dynamic var id = 0
-    dynamic var email = ""
-    dynamic var fullName = ""
-    dynamic var userName = ""
-    dynamic var text = ""
-    dynamic var followersCount = 0
-    dynamic var followedCount = 0
-    dynamic var isFollowed = false
-    dynamic var createdAt = NSDate()
-    dynamic var wantsNewsletter = false
-    
-    let optographs = List<Optograph>()
-    
-    override static func primaryKey() -> String? {
-        return "id"
-    }
-}
-
-func ==(lhs: Person, rhs: Person) -> Bool {
-    return lhs.hashValue == rhs.hashValue
+struct Person: Model {
+    var id: Int
+    var email: String
+    var fullName: String
+    var userName: String
+    var text: String
+    var followersCount: Int
+    var followedCount: Int
+    var isFollowed: Bool
+    var createdAt: NSDate
+    var wantsNewsletter: Bool
 }
 
 extension Person: Mappable {
     
-    func mapping(map: Map) {
+    static func newInstance() -> Mappable {
+        return Person(
+            id: 0,
+            email: "",
+            fullName: "",
+            userName: "",
+            text: "",
+            followersCount: 0,
+            followedCount: 0,
+            isFollowed: false,
+            createdAt: NSDate(),
+            wantsNewsletter: false
+        )
+    }
+    
+    mutating func mapping(map: Map) {
         id                  <- map["id"]
         email               <- map["email"]
         fullName            <- map["full_name"]
@@ -46,18 +50,6 @@ extension Person: Mappable {
         isFollowed          <- map["is_followed"]
         createdAt           <- (map["created_at"], NSDateTransform())
         wantsNewsletter     <- map["wants_newsletter"]
-        
-        var arr = [Optograph]()
-        arr <- map["optographs"]
-        
-        optographs.removeAll()
-        for optograph in arr {
-            optographs.append(optograph)
-        }
-    }
-    
-    static func newInstance() -> Mappable {
-        return Person()
     }
     
 }

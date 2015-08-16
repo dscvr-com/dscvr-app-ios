@@ -35,7 +35,7 @@ class ActivityTableViewCell: UITableViewCell {
 //        textView.font = UIFont.robotoOfSize(13, withType: .Regular)
 //        textView.textColor = UIColor(0x4d4d4d)
 //        contentView.addSubview(textView)
-//        
+        
         optographImageView.userInteractionEnabled = true
         optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
         contentView.addSubview(optographImageView)

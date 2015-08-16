@@ -9,11 +9,11 @@
 
 import Foundation
 import ReactiveCocoa
-import RealmSwift
+//import RealmSwift
 
 class OptographViewModel {
     
-    let realm = try! Realm()
+//    let realm = try! Realm()
     
     let id: ConstantProperty<Int>
     let previewUrl: ConstantProperty<String>
@@ -60,15 +60,15 @@ class OptographViewModel {
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
             .flatMap(.Latest) { starredBefore in
                 starredBefore
-                    ? Api.delete("optographs/\(self.id.value)/star", authorized: true)
-                    : Api.post("optographs/\(self.id.value)/star", authorized: true, parameters: nil)
+                    ? Api<EmptyResponse>.delete("optographs/\(self.id.value)/star")
+                    : Api<EmptyResponse>.post("optographs/\(self.id.value)/star", parameters: nil)
             }
             .start(
                 completed: {
-                    self.realm.write {
-                        self.optograph.isStarred = self.isStarred.value
-                        self.optograph.starsCount = self.starsCount.value
-                    }
+//                    self.realm.write {
+//                        self.optograph.isStarred = self.isStarred.value
+//                        self.optograph.starsCount = self.starsCount.value
+//                    }
                 },
                 error: { _ in
                     self.starsCount.value = starsCountBefore

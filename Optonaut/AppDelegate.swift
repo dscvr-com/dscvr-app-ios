@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RealmSwift
+//import RealmSwift
 import Device
 
 @UIApplicationMain
@@ -17,14 +17,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
+        print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
+        
+        DatabaseManager.prepare()
+        
         setupAppearanceDefaults()
         
-        do {
+//        do {
 //            try NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath)
-            print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
-        } catch let err {
-            print(err)
-        }
+//        } catch let err {
+//            print(err)
+//        }
         
         if NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.DebugEnabled.rawValue) == nil {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: PersonDefaultsKeys.DebugEnabled.rawValue)

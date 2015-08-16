@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import RealmSwift
 import ObjectMapper
 
 enum ActivityType: String {
@@ -16,43 +15,43 @@ enum ActivityType: String {
     case Nil = ""
 }
 
-class Activity: Object, Model {
-    dynamic var id = 0
-    dynamic var creator: Person?
-    dynamic var receiver: Person?
-    dynamic var optograph: Optograph?
-    dynamic var createdAt = NSDate()
-    dynamic var isRead = false
-    var activityType: ActivityType = .Nil
-    
-    override static func primaryKey() -> String? {
-        return "id"
-    }
-}
-
-func ==(lhs: Activity, rhs: Activity) -> Bool {
-    return lhs.hashValue == rhs.hashValue
+struct Activity: Model {
+    var id: Int
+    var creator: Person?
+    var receiver: Person?
+    var optograph: Optograph?
+    var createdAt: NSDate
+    var isRead: Bool
+    var activityType: ActivityType
 }
 
 extension Activity: Mappable {
     
     static func newInstance() -> Mappable {
-        return Activity()
+        return Activity(
+            id: 0,
+            creator: nil,
+            receiver: nil,
+            optograph: nil,
+            createdAt: NSDate(),
+            isRead: false,
+            activityType: .Nil
+        )
     }
     
-    func mapping(map: Map) {
-//        let typeTransform = TransformOf<ActivityType, String>(
-//            fromJSON: { (value: String?) -> ActivityType? in
-//                switch value! {
-//                case "star": return .Like
-//                case "follow": return .Follow
-//                default: return .Nil
-//                }
-//            },
-//            toJSON: { (value: ActivityType?) -> String? in
-//                return value!.rawValue
-//            }
-//        )
+    mutating func mapping(map: Map) {
+        let typeTransform = TransformOf<ActivityType, String>(
+            fromJSON: { (value: String?) -> ActivityType? in
+                switch value! {
+                case "star": return .Like
+                case "follow": return .Follow
+                default: return .Nil
+                }
+            },
+            toJSON: { (value: ActivityType?) -> String? in
+                return value!.rawValue
+            }
+        )
         
         id              <- map["id"]
         creator         <- map["creator"]
@@ -60,7 +59,7 @@ extension Activity: Mappable {
         optograph       <- map["optograph"]
         createdAt       <- (map["created_at"], NSDateTransform())
         isRead          <- map["is_read"]
-//        activityType    <- (map["type"], typeTransform)
+        activityType    <- (map["type"], typeTransform)
     }
     
 }

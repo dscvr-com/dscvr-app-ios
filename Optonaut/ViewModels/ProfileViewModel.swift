@@ -9,12 +9,8 @@
 
 import Foundation
 import ReactiveCocoa
-import ObjectMapper
-import RealmSwift
 
 class ProfileViewModel {
-    
-    let realm = try! Realm()
     
     let id = MutableProperty<Int>(0)
     let fullName = MutableProperty<String>("")
@@ -29,13 +25,12 @@ class ProfileViewModel {
         // TODO check if really needed here
         self.id.value = id
         
-        if let person = realm.objectForPrimaryKey(Person.self, key: id) {
-            setPerson(person)
-        }
+//        if let person = realm.objectForPrimaryKey(Person.self, key: id) {
+//            setPerson(person)
+//        }
     
-        Api.get("persons/\(id)", authorized: true)
-            .start(next: { json in
-                let person = Mapper<Person>().map(json)!
+        Api.get("persons/\(id)")
+            .start(next: { person in
                 self.setPerson(person)
             })
     }
@@ -46,12 +41,12 @@ class ProfileViewModel {
         isFollowed.value = !followedBefore
         
         if followedBefore {
-            Api.delete("persons/\(id.value)/follow", authorized: true)
+            Api<EmptyResponse>.delete("persons/\(id.value)/follow")
                 .start(error: { _ in
                     self.isFollowed.value = followedBefore
                 })
         } else {
-            Api.post("persons/\(id.value)/follow", authorized: true, parameters: nil)
+            Api<EmptyResponse>.post("persons/\(id.value)/follow", parameters: nil)
                 .start(error: { _ in
                     self.isFollowed.value = followedBefore
                 })

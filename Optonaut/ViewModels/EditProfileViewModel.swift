@@ -8,12 +8,8 @@
 
 import Foundation
 import ReactiveCocoa
-import ObjectMapper
-import RealmSwift
 
 class EditProfileViewModel {
-    
-    let realm = try! Realm()
     
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
@@ -28,12 +24,11 @@ class EditProfileViewModel {
         let id = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
         debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(PersonDefaultsKeys.DebugEnabled.rawValue)
         
-        if let person = realm.objectForPrimaryKey(Person.self, key: id) {
-            setPerson(person)
-        }
+//        if let person = realm.objectForPrimaryKey(Person.self, key: id) {
+//            setPerson(person)
+//        }
         
-        Api.get("persons/\(id)", authorized: true)
-            .map { json in Mapper<Person>().map(json)! }
+        Api.get("persons/\(id)")
             .start(next: setPerson)
         
         userName.producer
@@ -42,7 +37,7 @@ class EditProfileViewModel {
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
             .start(next: { userName in
                 let parameters = ["user_name": userName]
-                Api.post("persons/check-user-name", authorized: true, parameters: parameters)
+                Api<EmptyResponse>.post("persons/check-user-name", parameters: parameters)
                     .start(error: { _ in self.userNameTaken.value = true })
             })
     }
@@ -56,7 +51,7 @@ class EditProfileViewModel {
         avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(person.id % 4).jpg"
     }
     
-    func updateData() -> SignalProducer<JSONResponse, NSError> {
+    func updateData() -> SignalProducer<EmptyResponse, NSError> {
         let parameters = [
             "full_name": fullName.value,
             "user_name": userName.value,
@@ -64,7 +59,7 @@ class EditProfileViewModel {
             "wants_newsletter": wantsNewsletter.value,
         ]
         
-        return Api.put("persons/me", authorized: true, parameters: parameters as? [String : AnyObject])
+        return Api.put("persons/me", parameters: parameters as? [String : AnyObject])
     }
     
     func updateAvatar() {
@@ -74,21 +69,19 @@ class EditProfileViewModel {
     func updatePassword(currentPassword: String, newPassword: String) {
         let parameters = ["current": currentPassword, "new": newPassword]
         
-        Api.post("persons/me/change-password", authorized: true, parameters: parameters)
-            .start(error: { error in
-                print(error)
-            })
+        Api<EmptyResponse>.post("persons/me/change-password", parameters: parameters)
+            .start()
     }
     
     func updateEmail(email: String) {
         let parameters = ["email": email]
         
-        Api.post("persons/me/change-email", authorized: true, parameters: parameters)
-            .start(completed: {
-                self.email.value = email
-                }, error: { error in
-                    print(error)
-            })
+        Api<EmptyResponse>.post("persons/me/change-email", parameters: parameters)
+            .start(
+                completed: {
+                    self.email.value = email
+                }
+        )
     }
     
     func toggleDebug() {

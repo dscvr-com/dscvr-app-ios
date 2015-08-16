@@ -10,7 +10,6 @@ import UIKit
 import ReactiveCocoa
 import WebImage
 import CoreMotion
-import ObjectMapper
 
 class DetailsHeaderViewController: UIViewController {
     
@@ -171,12 +170,11 @@ class DetailsHeaderViewController: UIViewController {
         textView.textColor = UIColor(0x4d4d4d)
         textView.rac_text <~ viewModel.text
         textView.userHandleLinkTapHandler = { label, handle, range in
-            let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
-            Api.get("persons/user-name/\(userName)", authorized: true)
-                .start(next: { json in
-                    let person = Mapper<Person>().map(json)!
-                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
-                })
+//            let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
+//            Api.get("persons/user-name/\(userName)")
+//                .start(next: { person in
+//                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
+//                })
         }
         textView.hashtagLinkTapHandler = { label, hashtag, range in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)

@@ -7,23 +7,29 @@
 //
 
 import Foundation
-import RealmSwift
 
-protocol Model: Hashable {
+protocol Model {
     var id: Int { get set }
     var createdAt: NSDate { get set }
 }
 
-extension Model where Self: Object {
+extension Array where Element: Model {
     
-    var hashValue: Int {
-        get {
-            return id.hashValue
+    mutating func orderedInsert(newModel: Element, withOrder order: NSComparisonResult) {
+        // check if already in array
+        if contains({ $0.id == newModel.id }) {
+            return
         }
-    }
-
-    func values(keys: [String]) -> [String: AnyObject] {
-        return keys.toDictionary { ($0, self.valueForKeyPath($0)!) }
+        
+        for (index, model) in self.enumerate() {
+            if model.createdAt.compare(newModel.createdAt) != order {
+                insert(newModel, atIndex: index)
+                return
+            }
+        }
+        
+        // append to end as fallback
+        append(newModel)
     }
     
 }

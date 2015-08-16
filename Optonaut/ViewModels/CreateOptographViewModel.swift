@@ -19,7 +19,7 @@ class CreateOptographViewModel: NSObject {
     let location = MutableProperty<String>("")
     let latitude = MutableProperty<Float>(0)
     let longitude = MutableProperty<Float>(0)
-    let description_ = MutableProperty<String>("")
+    let text = MutableProperty<String>("")
     
     override init() {
         super.init()
@@ -35,17 +35,14 @@ class CreateOptographViewModel: NSObject {
     
     func post() -> SignalProducer<Optograph, NSError> {
         let parameters = [
-            "description": description_.value,
+            "text": text.value,
             "location": [
                 "latitude": latitude.value,
                 "longitude": longitude.value,
             ]
         ]
         
-        let signalProducer = Api.post("optographs", authorized: true, parameters: parameters as? [String : AnyObject])
-            .map { Mapper<Optograph>().map($0)! }
-        
-        return signalProducer
+        return Api.post("optographs", parameters: parameters as? [String : AnyObject])
     }
 }
 
@@ -62,8 +59,7 @@ extension CreateOptographViewModel: CLLocationManagerDelegate {
                 "latitude": lat,
                 "longitude": lon,
             ]
-            Api.post("locations/lookup", authorized: true, parameters: parameters)
-                .map { json in Mapper<LocationMappable>().map(json)! }
+            Api<LocationMappable>.post("locations/lookup", parameters: parameters)
                 .start(next: { locationData in
                     self.location.value = locationData.description
                     self.locationManager.stopUpdatingLocation()

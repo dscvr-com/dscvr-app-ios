@@ -9,12 +9,8 @@
 
 import Foundation
 import ReactiveCocoa
-import ObjectMapper
-import RealmSwift
 
 class DetailsViewModel {
-    
-    let realm = try! Realm()
     
     let id = MutableProperty<Int>(0)
     let isStarred = MutableProperty<Bool>(false)
@@ -30,24 +26,23 @@ class DetailsViewModel {
     let text = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     
-    var optograph = Optograph()
+    var optograph: Optograph!
     
     init(optographId: Int) {
         
-        if let optograph = realm.objectForPrimaryKey(Optograph.self, key: optographId) {
-            self.optograph = optograph
-            update()
-        }
+//        if let optograph = realm.objectForPrimaryKey(Optograph.self, key: optographId) {
+//            self.optograph = optograph
+//            update()
+//        }
         
-        Api.get("optographs/\(optographId)", authorized: true)
-            .map { json in Mapper<Optograph>().map(json)! }
-            .start(next: { optograph in
+        Api.get("optographs/\(optographId)")
+            .start(next: { (optograph: Optograph) in
                 self.optograph = optograph
                 self.update()
                 
-                self.realm.write {
-                    self.realm.add(optograph, update: true)
-                }
+//                self.realm.write {
+//                    self.realm.add(optograph, update: true)
+//                }
             })
     }
     
@@ -78,15 +73,15 @@ class DetailsViewModel {
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
             .flatMap(.Latest) { starredBefore in
                 starredBefore
-                    ? Api.delete("optographs/\(self.id.value)/star", authorized: true)
-                    : Api.post("optographs/\(self.id.value)/star", authorized: true, parameters: nil)
+                    ? Api<EmptyResponse>.delete("optographs/\(self.id.value)/star")
+                    : Api<EmptyResponse>.post("optographs/\(self.id.value)/star", parameters: nil)
             }
             .start(
                 completed: {
-                    self.realm.write {
-                        self.optograph.isStarred = self.isStarred.value
-                        self.optograph.starsCount = self.starsCount.value
-                    }
+//                    self.realm.write {
+//                        self.optograph.isStarred = self.isStarred.value
+//                        self.optograph.starsCount = self.starsCount.value
+//                    }
                 },
                 error: { _ in
                     self.starsCount.value = starsCountBefore
@@ -96,13 +91,13 @@ class DetailsViewModel {
     }
     
     func increaseViewsCount() {
-        Api.post("optographs/\(id.value)/views", authorized: true, parameters: nil)
+        Api<EmptyResponse>.post("optographs/\(id.value)/views", parameters: nil)
             .start(completed: {
                 self.viewsCount.value = self.viewsCount.value + 1
                 
-                self.realm.write {
-                    self.optograph.viewsCount = self.viewsCount.value
-                }
+//                self.realm.write {
+//                    self.optograph.viewsCount = self.viewsCount.value
+//                }
             })
     }
     

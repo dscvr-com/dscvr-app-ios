@@ -9,36 +9,44 @@
 import Foundation
 import Alamofire
 import ReactiveCocoa
+import ObjectMapper
 
-typealias JSONResponse = AnyObject
-
-class Api {
 //    static let host = "beta.api.optonaut.com"
 //    static let host = "b7535ff5.ngrok.io"
 //    static let port = 80
 //    static let host = "192.168.2.102"
-    static let host = "localhost"
-    static let port = 3000
-    
-    static func get(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {
-        return request(endpoint, method: .GET, authorized: authorized, parameters: nil)
+let host = "localhost"
+let port = 3000
+
+struct EmptyResponse: Mappable {
+    static func newInstance() -> Mappable {
+        return EmptyResponse()
     }
     
-    static func post(endpoint: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSONResponse, NSError> {
-        return request(endpoint, method: .POST, authorized: authorized, parameters: parameters)
+    mutating func mapping(map: Map) {}
+}
+
+class Api<T: Mappable> {
+    
+    static func get(endpoint: String) -> SignalProducer<T, NSError> {
+        return request(endpoint, method: .GET, parameters: nil)
     }
     
-    static func put(endpoint: String, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSONResponse, NSError> {
-        return request(endpoint, method: .PUT, authorized: authorized, parameters: parameters)
+    static func post(endpoint: String, parameters: [String: AnyObject]?) -> SignalProducer<T, NSError> {
+        return request(endpoint, method: .POST, parameters: parameters)
     }
     
-    static func delete(endpoint: String, authorized: Bool) -> SignalProducer<JSONResponse, NSError> {
-        return request(endpoint, method: .DELETE, authorized: authorized, parameters: nil)
+    static func put(endpoint: String, parameters: [String: AnyObject]?) -> SignalProducer<T, NSError> {
+        return request(endpoint, method: .PUT, parameters: parameters)
     }
     
-    private static func request(endpoint: String, method: Alamofire.Method, authorized: Bool, parameters: [String: AnyObject]?) -> SignalProducer<JSONResponse, NSError> {
+    static func delete(endpoint: String) -> SignalProducer<T, NSError> {
+        return request(endpoint, method: .DELETE, parameters: nil)
+    }
+    
+    private static func request(endpoint: String, method: Alamofire.Method, parameters: [String: AnyObject]?) -> SignalProducer<T, NSError> {
         return SignalProducer { sink, disposable in
-            let URL = NSURL(string: "http://\(self.host):\(self.port)/\(endpoint)")!
+            let URL = NSURL(string: "http://\(host):\(port)/\(endpoint)")!
             let mutableURLRequest = NSMutableURLRequest(URL: URL)
             mutableURLRequest.HTTPMethod = method.rawValue
             
@@ -48,8 +56,7 @@ class Api {
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
             
-            if authorized {
-                let token = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonToken.rawValue) as! String
+            if let token = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonToken.rawValue) as? String {
                 mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
             
@@ -70,7 +77,17 @@ class Api {
                         if let data = data where data.length > 0 {
                             do {
                                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-                                sendNext(sink, json)
+                                if let object = Mapper<T>().map(json) {
+                                    sendNext(sink, object)
+                                } else if let array = Mapper<T>().mapArray(json) {
+                                    for object in array {
+                                        sendNext(sink, object)
+                                    }
+                                } else {
+                                    let error = NSError(domain: "JSON couldn't be mapped to type T", code: 0, userInfo: nil)
+                                    print(error)
+                                    sendError(sink, error)
+                                }
                             } catch let error {
                                 print(error)
                                 sendError(sink, error as NSError)
