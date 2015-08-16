@@ -27,12 +27,12 @@ void GLK4ToCVMat(GLKMatrix4 m, cv::Mat &output) {
 }
 
 void ImageBufferToCVMat(ImageBuffer image, cv::Mat &output) {
-    cv::cvtColor(Mat(image.width, image.height, CV_8UC4), output, COLOR_RGBA2RGB);
+    cv::cvtColor(Mat(image.height, image.width, CV_8UC4, image.data), output, COLOR_RGBA2RGB);
 }
 
 ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
     Mat converted(input.rows, input.cols, CV_8UC4);
-    cv::cvtColor(input, converted, COLOR_RGB2BGRA);
+    cv::cvtColor(input, converted, COLOR_RGB2RGBA);
     
     ImageBuffer output;
     output.width = input.cols;
@@ -48,6 +48,8 @@ ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
 @private
     optonaut::Pipeline* pipe;
     cv::Mat intrinsics;
+    std::string debugPath;
+    bool isDebug;
 }
 
 -(id)init {
@@ -65,19 +67,35 @@ ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
     GLK4ToCVMat(extrinsics, oImage->extrinsics);
     oImage->source = "Camera";
     
+    if(isDebug) {
+        cv::imwrite(debugPath + "/pushed.jpg", oImage->img);
+    }
+    
     pipe->Push(oImage);
 }
 - (GLKMatrix4)GetCurrentRotation {
-    return GLKMatrix4MakeWithArray(NULL);
+    return CVMatToGLK4(pipe->GetCurrentRotation());
 }
 - (bool)IsPreviewImageValialble {
     return pipe->IsPreviewImageAvailable();
 }
 - (ImageBuffer)GetPreviewImage {
+    if(isDebug) {
+        cv::imwrite(debugPath + "/preview.jpg", pipe->GetPreviewImage()->img);
+    }
     return CVMatToImageBuffer(pipe->GetPreviewImage()->img);
 }
 - (void)FreeImageBuffer:(ImageBuffer)toFree {
     free(toFree.data);
+}
+- (SelectionPoint)ClosestPoint {
+    optonaut::SelectionPoint point = pipe->ClosestPoint().closestPoint;
+    SelectionPoint newPoint;
+    newPoint.id = point.id;
+    newPoint.localId = point.localId;
+    newPoint.ringId = point.ringId;
+    newPoint.extrinsics = CVMatToGLK4(point.extrinsics);
+    return newPoint;
 }
 - (NSArray<NSValue*>*)GetSelectionPoints {
     vector<optonaut::SelectionPoint> points = pipe->GetSelectionPoints();
@@ -106,5 +124,15 @@ ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
     
     //Only Ids are needed to disable the selection point.
     pipe->DisableSelectionPoint(p);
+}
+- (void)EnableDebug:(NSString*)path {
+    debugPath = std::string([path UTF8String]);
+    isDebug = true;
+}
+- (ImageBuffer)GetLeftResult {
+    return CVMatToImageBuffer(pipe->FinishLeft()->image);
+}
+- (ImageBuffer)GetRightResult {
+    return CVMatToImageBuffer(pipe->FinishRight()->image);
 }
 @end

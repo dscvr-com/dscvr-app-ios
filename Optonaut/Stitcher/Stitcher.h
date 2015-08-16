@@ -25,6 +25,10 @@ struct SelectionPoint {
 - (struct ImageBuffer)GetPreviewImage;
 - (void)FreeImageBuffer:(struct ImageBuffer)toFree;
 - (NSArray<NSValue*>*)GetSelectionPoints;
+- (struct SelectionPoint)ClosestPoint;
 - (void)DisableSelectionPoint:(struct SelectionPoint)toDisable;
+- (void)EnableDebug:(NSString*)path;
+- (struct ImageBuffer)GetLeftResult;
+- (struct ImageBuffer)GetRightResult;
 
 @end

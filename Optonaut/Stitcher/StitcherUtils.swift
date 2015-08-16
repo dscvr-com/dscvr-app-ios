@@ -14,3 +14,14 @@ func CMRotationToGLKMatrix4(r: CMRotationMatrix) -> GLKMatrix4{
         0,     0,     0,     1)
 }
 
+func CMRotationToDoubleArray(r: CMRotationMatrix) -> [Double] {
+    return [r.m11, r.m12, r.m13, 0,
+        r.m21, r.m22, r.m23, 0,
+        r.m31, r.m32, r.m33, 0,
+        0,     0,     0,     1]
+}
+
+func ImageBufferToCGImage(buf: ImageBuffer) -> CGImage {
+    let bitmapContext = CGBitmapContextCreate(buf.data, Int(buf.width), Int(buf.height), 8, Int(buf.width) * 4, CGColorSpaceCreateDeviceRGB(), CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue)
+    return CGBitmapContextCreateImage(bitmapContext)!
+}

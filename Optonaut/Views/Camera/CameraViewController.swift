@@ -32,11 +32,10 @@ class CameraViewController: UIViewController {
     
     var frameCount = 0
     let intrinsics = CameraIntrinsics
-    let intrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
-    let extrinsicsPointer = UnsafeMutablePointer<Double>.alloc(9)
-    let resultExtrinsicsPointer = UnsafeMutablePointer<Double>.alloc(16)
+    
     
     var debugHelper: CameraDebugHelper?
+    var points = [Int32: SCNNode]()
     
     // subviews
     let closeButtonView = UIButton()
@@ -44,13 +43,11 @@ class CameraViewController: UIViewController {
     
     // sphere
     let cameraNode = SCNNode()
-//    let sphereGeometry = SCNSphere(radius: 5.0)
+    
     let scene = SCNScene()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        intrinsicsPointer.initializeFrom(intrinsics)
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -62,12 +59,14 @@ class CameraViewController: UIViewController {
         setupScene()
         setupSelectionPoints();
         
+        //stitcher.EnableDebug(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0])
+        
         // layer for preview
-        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+//        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
 //        previewLayer.frame = view.bounds
-        previewLayer.frame = CGRect(x: view.bounds.width / 4, y: view.bounds.height / 4, width: view.bounds.width / 2, height: view.bounds.height / 2)
-        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        view.layer.addSublayer(previewLayer)
+//        previewLayer.frame = CGRect(x: view.bounds.width / 4, y: view.bounds.height / 4, width: view.bounds.width / 2, height: view.bounds.height / 2)
+//        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+//        view.layer.addSublayer(previewLayer)
         
 //        let blurEffect = UIBlurEffect(style: .Dark)
 //        let blurView = UIVisualEffectView(effect: blurEffect)
@@ -191,6 +190,7 @@ class CameraViewController: UIViewController {
             scnNode.transform = SCNMatrix4FromGLKMatrix4(res)
             
             print("Adding Point")
+            points[point.id] = scnNode
         
             scene.rootNode.addChildNode(scnNode)
 
@@ -244,54 +244,80 @@ class CameraViewController: UIViewController {
             buf.width = Int32(CVPixelBufferGetWidth(pixelBuffer))
             buf.height = Int32(CVPixelBufferGetHeight(pixelBuffer))
             
-            print("Push!", true);
+            print("Push!");
 
             stitcher.Push(r, buf)
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
             if(stitcher.IsPreviewImageValialble()) {
-                print("Preview Image!", true);
-            }
+                
+                let previewData = stitcher.GetPreviewImage()
+                
+                let currentPoint = stitcher.ClosestPoint()
+                let nodeToRemove = points[currentPoint.id]
+                nodeToRemove?.removeFromParentNode()
+                points.removeValueForKey(currentPoint.id)
+                print("Preview Image!");
             
-            /*
-            if usePicture {
+                let cgImage = ImageBufferToCGImage(previewData);
                 
-                CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
-                let width = CVPixelBufferGetWidth(pixelBuffer)
-                let height = CVPixelBufferGetHeight(pixelBuffer)
-                let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
-                let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-                CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
-                
-                let bitmapContext = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue)
-                let cgImage = CGBitmapContextCreateImage(bitmapContext)!
-                
-                
-                let planeGeometry = SCNPlane(width: CGFloat(intrinsics[2]), height: CGFloat(intrinsics[5]))
+                let ratio = CGFloat(previewData.height) / CGFloat(previewData.width)
+                let planeGeometry = SCNPlane(width: CGFloat(1), height: ratio)
                 planeGeometry.firstMaterial?.doubleSided = true
                 planeGeometry.firstMaterial?.diffuse.contents = cgImage
                 
                 let planeNode = SCNNode(geometry: planeGeometry)
                 
-                let r = Array(UnsafeBufferPointer(start: resultExtrinsicsPointer, count: 16)).map { Float($0) }
-                let R = GLKMatrix4Make(r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[13], r[14], r[15])
+                let L = GLKMatrix4MakeRotation(Float(M_PI_2), 0, 0, -1)
+                let R = stitcher.GetCurrentRotation()
                 
-                let T = GLKMatrix4MakeTranslation(0, 0, Float(intrinsics[0]))
-                
-                planeNode.transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Multiply(R, T))
+                let T = GLKMatrix4MakeTranslation(0, 0, -Float(intrinsics[0]))
+                let TL = GLKMatrix4Multiply(T, L)
+                planeNode.transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Multiply(R, TL))
                 
                 scene.rootNode.addChildNode(planeNode)
+                
+                stitcher.FreeImageBuffer(previewData)
+                stitcher.DisableSelectionPoint(currentPoint)
+                
+                if(points.count <= 1) {
+                    finish()
+                }
             }
-            
-            
-            debugHelper?.push(pixelBuffer, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
-*/
+            //debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
+
         }
     }
     
-    func upload(leftImage: CGImage, rightImage: CGImage, origin: [Double]) {
+    private func finish() {
         
+        //This code can (and should be executed asynchronously while the user enters
+        //the description.
+        print("Finalizing");
+        
+        let leftBuffer = stitcher.GetLeftResult()
+        let rightBuffer = stitcher.GetRightResult()
+        let left = ImageBufferToCGImage(leftBuffer)
+        let right = ImageBufferToCGImage(rightBuffer)
+        
+        upload(left, rightImage: right);
+        
+        stitcher.FreeImageBuffer(leftBuffer);
+        stitcher.FreeImageBuffer(rightBuffer);
+    }
+    
+    func upload(leftImage: CGImage, rightImage: CGImage) {
+        print("Uploading");
+        
+        let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
+        saveCGImage(leftImage, path: path + "/left.jpg")
+        saveCGImage(rightImage, path: path + "/right.jpg")
+    }
+    
+    func saveCGImage(image: CGImage, path: String) {
+        let i = UIImagePNGRepresentation(UIImage(CGImage: image))
+        i!.writeToFile(path, atomically: true)
     }
 }
 
