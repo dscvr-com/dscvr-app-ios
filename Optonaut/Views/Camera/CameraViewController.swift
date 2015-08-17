@@ -363,11 +363,12 @@ class CameraViewController: UIViewController {
         stitcher.FreeImageBuffer(rightBuffer)
         
         var imageStrings: [String] = []
+        let randomNumber = random()
         
         for (side, cgImage) in ["left": left, "right": right] {
             let image = UIImageJPEGRepresentation(UIImage(CGImage: cgImage), 1)!
             let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
-            image.writeToFile("\(path)/\(random())/\(side).jpg", atomically: true)
+            image.writeToFile("\(path)/\(randomNumber)-\(side).jpg", atomically: true)
             let imageString = image.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
             imageStrings.append(imageString)
         }
