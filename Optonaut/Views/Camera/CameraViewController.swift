@@ -286,7 +286,7 @@ class CameraViewController: UIViewController {
             buf.width = Int32(CVPixelBufferGetWidth(pixelBuffer))
             buf.height = Int32(CVPixelBufferGetHeight(pixelBuffer))
             
-            print("Push!");
+            //print("Push!");
 
             stitcher.Push(r, buf)
             
@@ -305,7 +305,7 @@ class CameraViewController: UIViewController {
                 let nodeToRemove = edges[edge]
                 nodeToRemove?.removeFromParentNode()
                 edges.removeValueForKey(edge)
-                print("Preview Image!")
+                //print("Preview Image!")
             
                 let cgImage = ImageBufferToCGImage(previewData);
                 
