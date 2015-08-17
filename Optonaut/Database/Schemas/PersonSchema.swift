@@ -23,8 +23,3 @@ struct PersonSchemaType: ModelSchema {
 
 let PersonSchema = PersonSchemaType()
 let PersonTable = Table("person")
-
-extension Person: SQLiteModel {
-    static let Schema = CommentSchema
-    static let Table = CommentTable
-}

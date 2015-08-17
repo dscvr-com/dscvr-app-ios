@@ -18,16 +18,7 @@ protocol Migration {
     static func down() -> String
 }
 
-protocol SQLiteModel {
-    typealias T: ModelSchema
-    static var Schema: T { get }
-    static var Table: SQLite.Table { get }
-}
-
 extension NSDate {
-//    class var declaredDatatype: String {
-//        return String.declaredDatatype
-//    }
     class func fromDatatypeValue(stringValue: String) -> NSDate {
         return SQLDateFormatter.dateFromString(stringValue)!
     }
@@ -68,6 +59,7 @@ class DatabaseManager {
         
         let migrationClasses: [Migration.Type] = [
             PersonMigration.self,
+            OptographMigration.self,
             CommentMigration.self
         ]
         
@@ -82,7 +74,3 @@ class DatabaseManager {
     }
     
 }
-
-//extension Table {
-//    ins
-//}

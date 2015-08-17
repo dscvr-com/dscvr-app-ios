@@ -9,6 +9,7 @@
 
 import Foundation
 import ReactiveCocoa
+import SQLite
 
 class DetailsViewModel {
     
@@ -34,6 +35,38 @@ class DetailsViewModel {
 //            self.optograph = optograph
 //            update()
 //        }
+        
+        let query = OptographTable
+            .select(*)
+            .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
+            .filter(OptographTable[OptographSchema.id] == optographId)
+//            .order(CommentSchema.createdAt.asc)
+        let optograph = DatabaseManager.defaultConnection.pluck(query).map { row -> Optograph in
+            let person = Person(
+                id: row[PersonSchema.id],
+                email: row[PersonSchema.email],
+                fullName: row[PersonSchema.fullName],
+                userName: row[PersonSchema.userName],
+                text: row[PersonSchema.text],
+                followersCount: row[PersonSchema.followersCount],
+                followedCount: row[PersonSchema.followedCount],
+                isFollowed: row[PersonSchema.isFollowed],
+                createdAt: row[PersonSchema.createdAt],
+                wantsNewsletter: row[PersonSchema.wantsNewsletter]
+            )
+            
+            return Optograph(
+                id: row[OptographSchema.id],
+                text: row[OptographSchema.text],
+                person: person,
+                createdAt: row[OptographSchema.createdAt],
+                isStarred: row[OptographSchema.isStarred],
+                starsCount: row[OptographSchema.starsCount],
+                commentsCount: row[OptographSchema.commentsCount],
+                viewsCount: row[OptographSchema.viewsCount],
+                location: row[OptographSchema.location]
+            )
+        }
         
         Api.get("optographs/\(optographId)")
             .start(next: { (optograph: Optograph) in

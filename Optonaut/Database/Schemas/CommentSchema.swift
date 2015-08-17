@@ -18,8 +18,3 @@ struct CommentSchemaType: ModelSchema {
 
 let CommentSchema = CommentSchemaType()
 let CommentTable = Table("comment")
-
-extension Comment: SQLiteModel {
-    static let Schema = CommentSchema
-    static let Table = CommentTable
-}

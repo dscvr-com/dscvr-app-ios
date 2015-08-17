@@ -60,6 +60,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSUserDefaults.standardUserDefaults().setObject("", forKey: PersonDefaultsKeys.PersonToken.rawValue)
         NSUserDefaults.standardUserDefaults().setBool(false, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
         
+        // reset db
+        let db = DatabaseManager.defaultConnection
+        try! db.run(PersonTable.delete())
+        try! db.run(OptographTable.delete())
+        try! db.run(CommentTable.delete())
+        
         if let window = window {
             window.rootViewController = LoginViewController()
         }

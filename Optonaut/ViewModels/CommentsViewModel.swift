@@ -57,16 +57,6 @@ class CommentsViewModel {
                 }
                 
                 try! DatabaseManager.defaultConnection.run(
-                    CommentTable.insert(or: .Replace,
-                        CommentSchema.id <- comment.id,
-                        CommentSchema.text <- comment.text,
-                        CommentSchema.createdAt <- comment.createdAt,
-                        CommentSchema.personId <- person.id,
-                        CommentSchema.optographId <- self.optographId.value
-                    )
-                )
-                
-                try! DatabaseManager.defaultConnection.run(
                     PersonTable.insert(or: .Replace,
                         PersonSchema.id <- person.id,
                         PersonSchema.email <- person.email,
@@ -78,6 +68,16 @@ class CommentsViewModel {
                         PersonSchema.isFollowed <- person.isFollowed,
                         PersonSchema.createdAt <- person.createdAt,
                         PersonSchema.wantsNewsletter <- person.wantsNewsletter
+                    )
+                )
+                
+                try! DatabaseManager.defaultConnection.run(
+                    CommentTable.insert(or: .Replace,
+                        CommentSchema.id <- comment.id,
+                        CommentSchema.text <- comment.text,
+                        CommentSchema.createdAt <- comment.createdAt,
+                        CommentSchema.personId <- person.id,
+                        CommentSchema.optographId <- self.optographId.value
                     )
                 )
                 
