@@ -293,7 +293,7 @@ class CameraViewController: UIViewController {
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
             //No, that's not a good idea.
-            //self.cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
+            self.cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
             
             if(stitcher.IsPreviewImageValialble()) {
                 
@@ -350,6 +350,8 @@ class CameraViewController: UIViewController {
         let right = ImageBufferToCGImage(rightBuffer)
         stitcher.FreeImageBuffer(rightBuffer);
     
+        upload(left, rightImage: right)
+        
         navigationController?.popViewControllerAnimated(false)
     }
     
@@ -382,13 +384,13 @@ extension CameraViewController: SCNSceneRendererDelegate {
         glLineWidth(5)
         glColor4f(1, 0, 0, 1)
     
-        if let motion = self.motionManager.deviceMotion {
+        /*if let motion = self.motionManager.deviceMotion {
             
             let rGlk = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix);
             
             self.cameraNode.transform = SCNMatrix4FromGLKMatrix4(rGlk)
         
-        }
+        }*/
     }
     
 }
