@@ -19,11 +19,15 @@ class CommentViewModel {
     let timeSinceCreated = MutableProperty<String>("")
     
     init(comment: Comment) {
+        guard let person = comment.person else {
+            fatalError("person can not be nil")
+        }
+        
         text = ConstantProperty(comment.text)
-        avatarUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/avatars/\(comment.person!.id % 4).jpg")
-        fullName = ConstantProperty(comment.person!.fullName)
-        userName = ConstantProperty("@\(comment.person!.userName)")
-        personId = ConstantProperty(comment.person!.id)
+        avatarUrl = ConstantProperty("https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg")
+        fullName = ConstantProperty(person.fullName)
+        userName = ConstantProperty("@\(person.userName)")
+        personId = ConstantProperty(person.id)
         timeSinceCreated.value = RoundedDuration(date: comment.createdAt).shortDescription()
     }
     

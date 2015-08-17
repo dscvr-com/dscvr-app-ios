@@ -269,7 +269,7 @@ class DetailsHeaderViewController: UIViewController {
     }
     
     func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
-        navigationController?.pushViewController(ViewerViewController(orientation: orientation), animated: false)
+        navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph), animated: false)
         viewModel.increaseViewsCount()
     }
     

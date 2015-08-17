@@ -21,7 +21,13 @@ class CreateOptographViewModel: NSObject {
     let longitude = MutableProperty<Float>(0)
     let text = MutableProperty<String>("")
     
-    override init() {
+    let leftImage: String
+    let rightImage: String
+    
+    init(leftImage: String, rightImage: String) {
+        self.leftImage = leftImage
+        self.rightImage = rightImage
+        
         super.init()
         
         locationManager.delegate = self
@@ -36,6 +42,8 @@ class CreateOptographViewModel: NSObject {
     func post() -> SignalProducer<Optograph, NSError> {
         let parameters = [
             "text": text.value,
+            "left_image": leftImage,
+            "right_image": rightImage,
             "location": [
                 "latitude": latitude.value,
                 "longitude": longitude.value,

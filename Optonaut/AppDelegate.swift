@@ -20,19 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
         DatabaseManager.prepare()
-        
         setupAppearanceDefaults()
-        
-//        do {
-//            try NSFileManager.defaultManager().removeItemAtPath(Realm.defaultPath)
-//        } catch let err {
-//            print(err)
-//        }
         
         if NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.DebugEnabled.rawValue) == nil {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: PersonDefaultsKeys.DebugEnabled.rawValue)
         }
         
+        // TODO remove aws stuff
         let credProvider = AWSStaticCredentialsProvider(accessKey: "AKIAJ6AYCIIVD6E4FDLQ", secretKey: "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")
         let configuration = AWSServiceConfiguration(region: .EUWest1, credentialsProvider: credProvider)
         AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = configuration

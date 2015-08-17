@@ -11,12 +11,12 @@ import Alamofire
 import ReactiveCocoa
 import ObjectMapper
 
-//let host = "beta.api.optonaut.com"
-//let host = "b7535ff5.ngrok.io"
-//let port = 80
+let host = "beta.api.optonaut.com"
+//let host = "0e69aa37.ngrok.io"
+let port = 80
 //let host = "192.168.2.102"
-let host = "localhost"
-let port = 3000
+//let host = "localhost"
+//let port = 3000
 
 struct EmptyResponse: Mappable {
     static func newInstance() -> Mappable {

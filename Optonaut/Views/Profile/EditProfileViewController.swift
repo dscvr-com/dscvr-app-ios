@@ -12,6 +12,8 @@ import HexColor
 
 class EditProfileViewController: UIViewController, RedNavbar {
     
+    let imagePickerController = UIImagePickerController()
+    
     let viewModel = EditProfileViewModel()
     
     // subviews
@@ -63,6 +65,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
         
         avatarImageView.layer.cornerRadius = 30
         avatarImageView.clipsToBounds = true
+        avatarImageView.userInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "updatePicture"))
         view.addSubview(avatarImageView)
         
         viewModel.avatarUrl.producer
@@ -381,8 +385,26 @@ class EditProfileViewController: UIViewController, RedNavbar {
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
+    func updatePicture() {
+        if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
+            imagePickerController.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+            imagePickerController.allowsEditing = true
+            imagePickerController.delegate = self
+            self.presentViewController(imagePickerController, animated: true, completion: nil)
+        }
+    }
+    
     func dismissKeyboard() {
         view.endEditing(true)
     }
     
+}
+
+extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        imagePickerController.dismissViewControllerAnimated(true, completion: nil)
+        
+        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
+        viewModel.updateAvatar(image).start()
+    }
 }

@@ -48,7 +48,8 @@ class DatabaseManager {
         let db = try! Connection("\(path)/db.sqlite3")
         
         // enable console logging
-        db.trace(print)
+//        db.trace(print)
+        db.trace(nil)
         
         let migrations = Table("schema_migrations")
         let version = Expression<Int>("version")

@@ -92,7 +92,7 @@ class ProfileViewModel {
         followersCount.value = person.followersCount
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed
-        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(person.id % 4).jpg"
+        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg"
     }
     
 }

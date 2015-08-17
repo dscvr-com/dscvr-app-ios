@@ -113,6 +113,10 @@ class DetailsViewModel {
     }
     
     private func update() {
+        guard let person = optograph.person else {
+            fatalError("person can not be nil")
+        }
+        
         id.value = optograph.id
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
@@ -120,10 +124,10 @@ class DetailsViewModel {
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
         detailsUrl.value = "http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id % 3).jpg"
-        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(optograph.person!.id % 4).jpg"
-        fullName.value = optograph.person!.fullName
-        userName.value = "@\(optograph.person!.userName)"
-        personId.value = optograph.person!.id
+        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg"
+        fullName.value = person.fullName
+        userName.value = "@\(person.userName)"
+        personId.value = person.id
         text.value = optograph.text
         location.value = optograph.location
     }

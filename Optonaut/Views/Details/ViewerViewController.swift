@@ -7,6 +7,7 @@ import CoreGraphics
 class ViewerViewController: UIViewController  {
     
     let orientation: UIInterfaceOrientation
+    let optograph: Optograph
     
     let motionManager = CMMotionManager()
     
@@ -16,8 +17,9 @@ class ViewerViewController: UIViewController  {
     var originalBrightness: CGFloat!
     var enableDistortion = false
     
-    required init(orientation: UIInterfaceOrientation) {
+    required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
         self.orientation = orientation
+        self.optograph = optograph
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -46,15 +48,19 @@ class ViewerViewController: UIViewController  {
         rightCameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         rightScene.rootNode.addChildNode(rightCameraNode)
         
+        let leftUrl = NSURL(string: "http://optonaut-ios-beta-dev.s3.amazonaws.com/optographs/original/\(optograph.id)/left.jpg")!
+        let leftData = NSData(contentsOfURL: leftUrl)!
         let leftSphereGeometry = SCNSphere(radius: 5.0)
-        leftSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "heights_right")
+        leftSphereGeometry.firstMaterial?.diffuse.contents = UIImage(data: leftData)
         leftSphereGeometry.firstMaterial?.doubleSided = true
         let leftSphereNode = SCNNode(geometry: leftSphereGeometry)
         leftSphereNode.transform = SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0)
         leftScene.rootNode.addChildNode(leftSphereNode)
         
+        let rightUrl = NSURL(string: "http://optonaut-ios-beta-dev.s3.amazonaws.com/optographs/original/\(optograph.id)/right.jpg")!
+        let rightData = NSData(contentsOfURL: rightUrl)!
         let rightSphereGeometry = SCNSphere(radius: 5.0)
-        rightSphereGeometry.firstMaterial?.diffuse.contents = UIImage(named: "heights_left")
+        rightSphereGeometry.firstMaterial?.diffuse.contents = UIImage(data: rightData)
         rightSphereGeometry.firstMaterial?.doubleSided = true
         let rightSphereNode = SCNNode(geometry: rightSphereGeometry)
         rightSphereNode.transform = SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0)

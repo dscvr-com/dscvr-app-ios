@@ -37,7 +37,7 @@ class EditProfileViewModel {
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
             .start(next: { userName in
                 let parameters = ["user_name": userName]
-                Api<EmptyResponse>.post("persons/check-user-name", parameters: parameters)
+                Api<EmptyResponse>.post("persons/me/check-user-name", parameters: parameters)
                     .start(error: { _ in self.userNameTaken.value = true })
             })
     }
@@ -48,7 +48,7 @@ class EditProfileViewModel {
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
         text.value = person.text
-        avatarUrl.value = "http://beem-parts.s3.amazonaws.com/avatars/\(person.id % 4).jpg"
+        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg"
     }
     
     func updateData() -> SignalProducer<EmptyResponse, NSError> {
@@ -62,8 +62,12 @@ class EditProfileViewModel {
         return Api.put("persons/me", parameters: parameters as? [String : AnyObject])
     }
     
-    func updateAvatar() {
+    func updateAvatar(image: UIImage) -> SignalProducer<EmptyResponse, NSError> {
+        let data = UIImageJPEGRepresentation(image, 1)
+        let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         
+        let parameters = ["profile_picture": str!]
+        return Api.post("persons/me/upload-profile-image", parameters: parameters)
     }
     
     func updatePassword(currentPassword: String, newPassword: String) {

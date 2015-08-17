@@ -35,12 +35,16 @@ class OptographViewModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
+        guard let person = optograph.person else {
+            fatalError("person can not be nil")
+        }
+        
         id = ConstantProperty(optograph.id)
         previewUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(optograph.id % 3).jpg")
-        avatarUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/avatars/\(optograph.person!.id % 4).jpg")
-        fullName = ConstantProperty(optograph.person!.fullName)
-        userName = ConstantProperty("@\(optograph.person!.userName)")
-        personId = ConstantProperty(optograph.person!.id)
+        avatarUrl = ConstantProperty("https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg")
+        fullName = ConstantProperty(person.fullName)
+        userName = ConstantProperty("@\(person.userName)")
+        personId = ConstantProperty(person.id)
         text = ConstantProperty(optograph.text)
         location = ConstantProperty(optograph.location)
         

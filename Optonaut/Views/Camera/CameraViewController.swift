@@ -344,28 +344,23 @@ class CameraViewController: UIViewController {
         
         let leftBuffer = stitcher.GetLeftResult()
         let left = ImageBufferToCGImage(leftBuffer)
-        stitcher.FreeImageBuffer(leftBuffer);
+        stitcher.FreeImageBuffer(leftBuffer)
         
         let rightBuffer = stitcher.GetRightResult()
         let right = ImageBufferToCGImage(rightBuffer)
-        stitcher.FreeImageBuffer(rightBuffer);
-    
-        upload(left, rightImage: right)
+        stitcher.FreeImageBuffer(rightBuffer)
         
-        navigationController?.popViewControllerAnimated(false)
-    }
-    
-    func upload(leftImage: CGImage, rightImage: CGImage) {
-        print("Uploading");
+        var imageStrings: [String] = []
         
-        let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
-        saveCGImage(leftImage, path: path + "/left.jpg")
-        saveCGImage(rightImage, path: path + "/right.jpg")
-    }
+        for (side, cgImage) in ["left": left, "right": right] {
+            let image = UIImageJPEGRepresentation(UIImage(CGImage: cgImage), 1)!
+            let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
+            image.writeToFile("\(path)/\(random())/\(side).jpg", atomically: true)
+            let imageString = image.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            imageStrings.append(imageString)
+        }
     
-    func saveCGImage(image: CGImage, path: String) {
-        let i = UIImagePNGRepresentation(UIImage(CGImage: image))
-        i!.writeToFile(path, atomically: true)
+        navigationController?.pushViewController(CreateOptographViewController(leftImage: imageStrings[0], rightImage: imageStrings[1]), animated: false)
     }
 }
 

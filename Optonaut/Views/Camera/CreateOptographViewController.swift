@@ -11,7 +11,7 @@ import ReactiveCocoa
 
 class CreateOptographViewController: UIViewController, RedNavbar {
     
-    let viewModel = CreateOptographViewModel()
+    let viewModel: CreateOptographViewModel
     
     // subviews
     let previewImageView = UIImageView()
@@ -19,6 +19,16 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     let descriptionView = KILabel()
     let textInputView = KMPlaceholderTextView()
     let lineView = UIView()
+    
+    required init(leftImage: String, rightImage: String) {
+        viewModel = CreateOptographViewModel(leftImage: leftImage, rightImage: rightImage)
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -124,7 +134,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
             .start(next: { optograph in
                 self.navigationController!.pushViewController(DetailsContainerViewController(optographId: optograph.id), animated: false)
                 let viewControllersCount = self.navigationController!.viewControllers.count
-                self.navigationController!.viewControllers.removeAtIndex(viewControllersCount - 2)
+                self.navigationController!.viewControllers.removeAtIndex(1)
+                self.navigationController!.viewControllers.removeAtIndex(1)
             })
     }
     
