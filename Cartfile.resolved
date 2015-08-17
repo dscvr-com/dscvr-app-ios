@@ -1,7 +1,6 @@
 github "Alamofire/Alamofire" "e6bc5c707afa4d8b4aa336f1a63808641dc189f7"
 github "schickling/Device.swift" "0.2.0"
 github "artman/HexColor" "1.0.0"
-github "MoZhouqi/KMPlaceholderTextView" "1.0"
 github "Hearst-DD/ObjectMapper" "87180c69bf38ca3ca7955214bc4cacb45e859445"
 github "smileyborg/PureLayout" "v2.0.6"
 github "antitypical/Result" "0.6-beta.1"

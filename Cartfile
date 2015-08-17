@@ -7,4 +7,3 @@ github "Hearst-DD/ObjectMapper" "swift-2.0"
 github "schickling/Device.swift" >= 0.2.0
 github "artman/HexColor" ~> 1.0
 github "stephencelis/SQLite.swift" "swift-2"
-github "MoZhouqi/KMPlaceholderTextView"
