@@ -12,7 +12,6 @@ import ReactiveCocoa
 import ObjectMapper
 
 let host = "beta.api.optonaut.com"
-//let host = "0e69aa37.ngrok.io"
 let port = 80
 //let host = "192.168.2.102"
 //let host = "localhost"
