@@ -11,10 +11,10 @@ import Alamofire
 import ReactiveCocoa
 import ObjectMapper
 
-//    static let host = "beta.api.optonaut.com"
-//    static let host = "b7535ff5.ngrok.io"
-//    static let port = 80
-//    static let host = "192.168.2.102"
+//let host = "beta.api.optonaut.com"
+//let host = "b7535ff5.ngrok.io"
+//let port = 80
+//let host = "192.168.2.102"
 let host = "localhost"
 let port = 3000
 

@@ -18,7 +18,11 @@ class CommentsViewModel {
     init(optographId: Int) {
         self.optographId = ConstantProperty(optographId)
         
-        let query = CommentTable.select(*).join(PersonTable, on: CommentTable[CommentSchema.personId] == PersonTable[PersonSchema.id])
+        let query = CommentTable
+            .select(*)
+            .join(PersonTable, on: CommentTable[CommentSchema.personId] == PersonTable[PersonSchema.id])
+            .filter(CommentTable[CommentSchema.optographId] == optographId)
+//            .order(CommentSchema.createdAt.asc)
         let comments = DatabaseManager.defaultConnection.prepare(query).map { row -> Comment in
             let person = Person(
                 id: row[PersonSchema.id],
@@ -42,11 +46,11 @@ class CommentsViewModel {
             )
         }
         
-        results.value = comments
+        results.value = comments.sort { $0.createdAt < $1.createdAt }
         
         Api.get("optographs/\(optographId)/comments")
             .start(next: { (comment: Comment) in
-                self.results.value.append(comment)
+                self.results.value.orderedInsert(comment, withOrder: .OrderedAscending)
                 
                 guard let person = comment.person else {
                     fatalError("person can not be nil")

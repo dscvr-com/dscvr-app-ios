@@ -15,6 +15,8 @@ struct TestModel: Model {
 
 class ModelTests: XCTestCase {
     
+    let now = NSDate()
+    
     var ascendingModels: [TestModel]!
     var descendingModels: [TestModel]!
     
@@ -54,27 +56,27 @@ class ModelTests: XCTestCase {
     }
 
     func testOrderedInsertDescendingAtBeginning() {
-        let model = TestModel(id: 0, createdAt: date(0))
-        ascendingModels.orderedInsert(model, withOrder: .OrderedAscending)
-        XCTAssertEqual(ascendingModels[0].id, model.id)
+        let model = TestModel(id: 4, createdAt: date(4))
+        descendingModels.orderedInsert(model, withOrder: .OrderedDescending)
+        XCTAssertEqual(descendingModels[0].id, model.id)
     }
 
     func testOrderedInsertDescendingAtEnd() {
-        let model = TestModel(id: 4, createdAt: date(4))
-        ascendingModels.orderedInsert(model, withOrder: .OrderedAscending)
-        XCTAssertEqual(ascendingModels[3].id, model.id)
+        let model = TestModel(id: 0, createdAt: date(0))
+        descendingModels.orderedInsert(model, withOrder: .OrderedDescending)
+        XCTAssertEqual(descendingModels[3].id, model.id)
     }
 
     func testOrderedInsertDescendingAtMiddle() {
-        ascendingModels.append(TestModel(id: 4, createdAt: date(4)))
-        ascendingModels.append(TestModel(id: 6, createdAt: date(6)))
+        descendingModels.insert(TestModel(id: 6, createdAt: date(6)), atIndex: 0)
+        descendingModels.insert(TestModel(id: 4, createdAt: date(4)), atIndex: 1)
         let model = TestModel(id: 5, createdAt: date(5))
-        ascendingModels.orderedInsert(model, withOrder: .OrderedAscending)
-        XCTAssertEqual(ascendingModels[4].id, model.id)
+        descendingModels.orderedInsert(model, withOrder: .OrderedDescending)
+        XCTAssertEqual(descendingModels[1].id, model.id)
     }
     
     private func date(secondsFromNow: Double) -> NSDate {
-        return NSDate(timeIntervalSinceNow: NSTimeInterval(secondsFromNow))
+        return now.dateByAddingTimeInterval(NSTimeInterval(secondsFromNow))
     }
 
 }
