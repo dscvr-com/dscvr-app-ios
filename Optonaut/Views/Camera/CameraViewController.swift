@@ -47,6 +47,8 @@ class CameraViewController: UIViewController {
     
     var scnView: SCNView!
     
+    var originalBrightness: CGFloat!
+    
     // stitcher pointer and variables
     
     let stitcher = IosPipeline()
@@ -140,6 +142,11 @@ class CameraViewController: UIViewController {
         
         frameCount = 0
         
+        originalBrightness = UIScreen.mainScreen().brightness
+        UIScreen.mainScreen().brightness = 1
+        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
+        UIApplication.sharedApplication().idleTimerDisabled = true
+        
 //        motionManager.startDeviceMotionUpdates()
         motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
         
@@ -156,6 +163,10 @@ class CameraViewController: UIViewController {
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
         debugHelper?.cleanup()
+        
+        UIScreen.mainScreen().brightness = originalBrightness
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
+        UIApplication.sharedApplication().idleTimerDisabled = false
         
         motionManager.stopDeviceMotionUpdates()
         session.stopRunning()
@@ -362,6 +373,7 @@ class CameraViewController: UIViewController {
         }
     
         navigationController?.pushViewController(CreateOptographViewController(leftImage: imageStrings[0], rightImage: imageStrings[1]), animated: false)
+        navigationController?.viewControllers.removeAtIndex(1)
     }
 }
 

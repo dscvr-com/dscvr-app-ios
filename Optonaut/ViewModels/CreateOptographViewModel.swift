@@ -20,6 +20,7 @@ class CreateOptographViewModel: NSObject {
     let latitude = MutableProperty<Float>(0)
     let longitude = MutableProperty<Float>(0)
     let text = MutableProperty<String>("")
+    let pending = MutableProperty<Bool>(false)
     
     let leftImage: String
     let rightImage: String
@@ -40,6 +41,8 @@ class CreateOptographViewModel: NSObject {
     }
     
     func post() -> SignalProducer<Optograph, NSError> {
+        pending.value = true
+        
         let parameters = [
             "text": text.value,
             "left_image": leftImage,
@@ -51,6 +54,13 @@ class CreateOptographViewModel: NSObject {
         ]
         
         return Api.post("optographs", parameters: parameters as? [String : AnyObject])
+            .on(
+                completed: {
+                    self.pending.value = false
+                }, error: { _ in
+                    self.pending.value = false
+                }
+        )
     }
 }
 

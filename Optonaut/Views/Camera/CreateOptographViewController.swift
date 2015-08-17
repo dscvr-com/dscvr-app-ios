@@ -19,6 +19,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     let descriptionView = KILabel()
     let textInputView = KMPlaceholderTextView()
     let lineView = UIView()
+    let loadingView = UIView()
     
     required init(leftImage: String, rightImage: String) {
         viewModel = CreateOptographViewModel(leftImage: leftImage, rightImage: rightImage)
@@ -81,6 +82,10 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         lineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(lineView)
         
+        loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
+        loadingView.rac_hidden <~ viewModel.pending.producer.map { !$0 }
+        view.addSubview(loadingView)
+        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
         view.setNeedsUpdateConstraints()
@@ -103,6 +108,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         lineView.autoSetDimension(.Height, toSize: 1)
+        
+        loadingView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
     }
@@ -132,10 +139,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     func post() {
         viewModel.post()
             .start(next: { optograph in
-                self.navigationController!.pushViewController(DetailsContainerViewController(optographId: optograph.id), animated: false)
-                let viewControllersCount = self.navigationController!.viewControllers.count
-                self.navigationController!.viewControllers.removeAtIndex(1)
-                self.navigationController!.viewControllers.removeAtIndex(1)
+                self.navigationController?.pushViewController(DetailsContainerViewController(optographId: optograph.id), animated: false)
+                self.navigationController?.viewControllers.removeAtIndex(1)
             })
     }
     

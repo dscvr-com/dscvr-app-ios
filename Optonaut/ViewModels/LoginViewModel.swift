@@ -42,7 +42,7 @@ class LoginViewModel {
     }
     
     func login() -> SignalProducer<Void, NSError> {
-        self.pending.value = true
+        pending.value = true
         
         var parameters = ["email": "", "user_name": "", "password": self.password.value]
         
