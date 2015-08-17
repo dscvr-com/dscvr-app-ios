@@ -40,7 +40,6 @@ class DetailsViewModel {
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
             .filter(OptographTable[OptographSchema.id] == optographId)
-//            .order(CommentSchema.createdAt.asc)
         let optograph = DatabaseManager.defaultConnection.pluck(query).map { row -> Optograph in
             let person = Person(
                 id: row[PersonSchema.id],
@@ -68,14 +67,48 @@ class DetailsViewModel {
             )
         }
         
+        if let optograph = optograph {
+            self.optograph = optograph
+            update()
+        }
+        
         Api.get("optographs/\(optographId)")
             .start(next: { (optograph: Optograph) in
                 self.optograph = optograph
                 self.update()
+        
+                guard let person = optograph.person else {
+                    fatalError("person can not be nil")
+                }
                 
-//                self.realm.write {
-//                    self.realm.add(optograph, update: true)
-//                }
+                try! DatabaseManager.defaultConnection.run(
+                    PersonTable.insert(or: .Replace,
+                        PersonSchema.id <- person.id,
+                        PersonSchema.email <- person.email,
+                        PersonSchema.fullName <- person.fullName,
+                        PersonSchema.userName <- person.userName,
+                        PersonSchema.text <- person.text,
+                        PersonSchema.followersCount <- person.followersCount,
+                        PersonSchema.followedCount <- person.followedCount,
+                        PersonSchema.isFollowed <- person.isFollowed,
+                        PersonSchema.createdAt <- person.createdAt,
+                        PersonSchema.wantsNewsletter <- person.wantsNewsletter
+                    )
+                )
+                
+                try! DatabaseManager.defaultConnection.run(
+                    OptographTable.insert(or: .Replace,
+                        OptographSchema.id <- optograph.id,
+                        OptographSchema.text <- optograph.text,
+                        OptographSchema.personId <- person.id,
+                        OptographSchema.createdAt <- optograph.createdAt,
+                        OptographSchema.isStarred <- optograph.isStarred,
+                        OptographSchema.starsCount <- optograph.starsCount,
+                        OptographSchema.commentsCount <- optograph.commentsCount,
+                        OptographSchema.viewsCount <- optograph.viewsCount,
+                        OptographSchema.location <- optograph.location
+                    )
+                )
             })
     }
     
@@ -111,16 +144,16 @@ class DetailsViewModel {
             }
             .start(
                 completed: {
-//                    self.realm.write {
-//                        self.optograph.isStarred = self.isStarred.value
-//                        self.optograph.starsCount = self.starsCount.value
-//                    }
+                    //                    self.realm.write {
+                    //                        self.optograph.isStarred = self.isStarred.value
+                    //                        self.optograph.starsCount = self.starsCount.value
+                    //                    }
                 },
                 error: { _ in
                     self.starsCount.value = starsCountBefore
                     self.isStarred.value = starredBefore
                 }
-            )
+        )
     }
     
     func increaseViewsCount() {
@@ -128,9 +161,9 @@ class DetailsViewModel {
             .start(completed: {
                 self.viewsCount.value = self.viewsCount.value + 1
                 
-//                self.realm.write {
-//                    self.optograph.viewsCount = self.viewsCount.value
-//                }
+                //                self.realm.write {
+                //                    self.optograph.viewsCount = self.viewsCount.value
+                //                }
             })
     }
     

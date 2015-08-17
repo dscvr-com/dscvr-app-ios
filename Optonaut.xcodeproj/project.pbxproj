@@ -14,7 +14,6 @@
 		8F04CA1A1B7E530A000EE998 /* DetailsContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F04CA191B7E530A000EE998 /* DetailsContainerViewController.swift */; };
 		8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */; };
 		8F17CF711B4F15B100A10DA3 /* NSDateTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */; };
-		8F2234741B7F6791005E11F8 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8F2234721B7F6791005E11F8 /* Model.xcdatamodeld */; };
 		8F2234761B7F7614005E11F8 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2234751B7F7614005E11F8 /* Database.swift */; };
 		8F23D09E1B810464002CDDB7 /* 0001-PersonMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23D09D1B810464002CDDB7 /* 0001-PersonMigration.swift */; };
 		8F23D0A01B810477002CDDB7 /* PersonSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23D09F1B810477002CDDB7 /* PersonSchema.swift */; };
@@ -144,7 +143,6 @@
 		8F04CA191B7E530A000EE998 /* DetailsContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsContainerViewController.swift; sourceTree = "<group>"; };
 		8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectMapper.framework; path = Carthage/Build/iOS/ObjectMapper.framework; sourceTree = "<group>"; };
 		8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateTransform.swift; sourceTree = "<group>"; };
-		8F2234731B7F6791005E11F8 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		8F2234751B7F7614005E11F8 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		8F23D09D1B810464002CDDB7 /* 0001-PersonMigration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "0001-PersonMigration.swift"; sourceTree = "<group>"; };
 		8F23D09F1B810477002CDDB7 /* PersonSchema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonSchema.swift; sourceTree = "<group>"; };
@@ -597,7 +595,6 @@
 				8F5FD9D01B3AFBDC007E073C /* ViewModels */,
 				8F7738171B380FC1001F642B /* Views */,
 				8F7738391B381770001F642B /* Assets.xcassets */,
-				8F2234721B7F6791005E11F8 /* Model.xcdatamodeld */,
 				8FFCE4B61B4DBF1900832C88 /* Vendor */,
 				8F488ED51B4416A100599B61 /* Resources */,
 				8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */,
@@ -887,7 +884,6 @@
 				8FFA5F571B8140D1004CC2B3 /* 0002-OptographMigration.swift in Sources */,
 				8F5FD9D61B3AFE41007E073C /* LoginViewModel.swift in Sources */,
 				8F5B26931B56AE0D00E0B955 /* CameraViewModel.swift in Sources */,
-				8F2234741B7F6791005E11F8 /* Model.xcdatamodeld in Sources */,
 				8F04CA121B7E0040000EE998 /* ForgotPasswordViewController.swift in Sources */,
 				8F5FD9F81B3DB7B3007E073C /* DetailsHeaderViewController.swift in Sources */,
 				8F5FD9E71B3D579C007E073C /* CameraViewController.swift in Sources */,
@@ -1141,19 +1137,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		8F2234721B7F6791005E11F8 /* Model.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				8F2234731B7F6791005E11F8 /* Model.xcdatamodel */,
-			);
-			currentVersion = 8F2234731B7F6791005E11F8 /* Model.xcdatamodel */;
-			path = Model.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 8FCCA0231B3806040091F1B1 /* Project object */;
 }

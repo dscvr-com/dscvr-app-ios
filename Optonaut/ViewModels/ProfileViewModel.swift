@@ -9,6 +9,7 @@
 
 import Foundation
 import ReactiveCocoa
+import SQLite
 
 class ProfileViewModel {
     
@@ -25,13 +26,44 @@ class ProfileViewModel {
         // TODO check if really needed here
         self.id.value = id
         
-//        if let person = realm.objectForPrimaryKey(Person.self, key: id) {
-//            setPerson(person)
-//        }
+        let query = PersonTable.filter(PersonTable[PersonSchema.id] == id)
+        let person = DatabaseManager.defaultConnection.pluck(query).map { row in
+            return Person(
+                id: row[PersonSchema.id],
+                email: row[PersonSchema.email],
+                fullName: row[PersonSchema.fullName],
+                userName: row[PersonSchema.userName],
+                text: row[PersonSchema.text],
+                followersCount: row[PersonSchema.followersCount],
+                followedCount: row[PersonSchema.followedCount],
+                isFollowed: row[PersonSchema.isFollowed],
+                createdAt: row[PersonSchema.createdAt],
+                wantsNewsletter: row[PersonSchema.wantsNewsletter]
+            )
+        }
+        
+        if let person = person {
+            setPerson(person)
+        }
     
         Api.get("persons/\(id)")
-            .start(next: { person in
+            .start(next: { (person: Person) in
                 self.setPerson(person)
+                
+                try! DatabaseManager.defaultConnection.run(
+                    PersonTable.insert(or: .Replace,
+                        PersonSchema.id <- person.id,
+                        PersonSchema.email <- person.email,
+                        PersonSchema.fullName <- person.fullName,
+                        PersonSchema.userName <- person.userName,
+                        PersonSchema.text <- person.text,
+                        PersonSchema.followersCount <- person.followersCount,
+                        PersonSchema.followedCount <- person.followedCount,
+                        PersonSchema.isFollowed <- person.isFollowed,
+                        PersonSchema.createdAt <- person.createdAt,
+                        PersonSchema.wantsNewsletter <- person.wantsNewsletter
+                    )
+                )
             })
     }
     
