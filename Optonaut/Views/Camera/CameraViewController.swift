@@ -327,11 +327,12 @@ class CameraViewController: UIViewController {
                 
                 stitcher.FreeImageBuffer(previewData)
                 
-                if(edges.count <= 1) {
+                if(edges.count == 0) {
                     finish()
                 }
             }
-            //debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
+            
+            debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
 
         }
     }
