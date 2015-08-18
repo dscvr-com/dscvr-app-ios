@@ -21,8 +21,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     let lineView = UIView()
     let loadingView = UIView()
     
-    required init(leftImage: String, rightImage: String) {
-        viewModel = CreateOptographViewModel(leftImage: leftImage, rightImage: rightImage)
+    required init(optograph: Optograph) {
+        viewModel = CreateOptographViewModel(optograph: optograph)
         
         super.init(nibName: nil, bundle: nil)
     }

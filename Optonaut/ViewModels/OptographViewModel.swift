@@ -45,7 +45,7 @@ class OptographViewModel {
         userName = ConstantProperty("@\(person.userName)")
         personId = ConstantProperty(person.id)
         text = ConstantProperty(optograph.text)
-        location = ConstantProperty(optograph.location)
+        location = ConstantProperty(optograph.location.text)
         
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount

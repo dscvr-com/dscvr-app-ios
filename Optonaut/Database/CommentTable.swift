@@ -1,5 +1,5 @@
 //
-//  CommentSchema.swift
+//  Comment.swift
 //  Optonaut
 //
 //  Created by Johannes Schickling on 8/16/15.
@@ -18,3 +18,13 @@ struct CommentSchemaType: ModelSchema {
 
 let CommentSchema = CommentSchemaType()
 let CommentTable = Table("comment")
+
+func CommentMigration() -> String {
+    return CommentTable.create { t in
+        t.column(CommentSchema.id, primaryKey: true)
+        t.column(CommentSchema.text)
+        t.column(CommentSchema.createdAt)
+        t.column(CommentSchema.personId)
+        t.column(CommentSchema.optographId)
+    }
+}

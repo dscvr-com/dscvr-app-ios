@@ -39,6 +39,7 @@ class DetailsViewModel {
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
+            .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(OptographTable[OptographSchema.id] == optographId)
         let optograph = DatabaseManager.defaultConnection.pluck(query).map { row -> Optograph in
             let person = Person(
@@ -54,6 +55,14 @@ class DetailsViewModel {
                 wantsNewsletter: row[PersonSchema.wantsNewsletter]
             )
             
+            let location = Location(
+                id: row[LocationSchema.id],
+                text: row[LocationSchema.text],
+                createdAt: row[LocationSchema.createdAt],
+                latitude: row[LocationSchema.latitude],
+                longitude: row[LocationSchema.longitude]
+            )
+            
             return Optograph(
                 id: row[OptographSchema.id],
                 text: row[OptographSchema.text],
@@ -63,7 +72,8 @@ class DetailsViewModel {
                 starsCount: row[OptographSchema.starsCount],
                 commentsCount: row[OptographSchema.commentsCount],
                 viewsCount: row[OptographSchema.viewsCount],
-                location: row[OptographSchema.location]
+                location: location,
+                isPublished: row[OptographSchema.isPublished]
             )
         }
         
@@ -96,6 +106,18 @@ class DetailsViewModel {
                     )
                 )
                 
+                let location = optograph.location
+                
+                try! DatabaseManager.defaultConnection.run(
+                    LocationTable.insert(or: .Replace,
+                        LocationSchema.id <- location.id,
+                        LocationSchema.text <- location.text,
+                        LocationSchema.createdAt <- location.createdAt,
+                        LocationSchema.latitude <- location.latitude,
+                        LocationSchema.longitude <- location.longitude
+                    )
+                )
+                
                 try! DatabaseManager.defaultConnection.run(
                     OptographTable.insert(or: .Replace,
                         OptographSchema.id <- optograph.id,
@@ -106,7 +128,8 @@ class DetailsViewModel {
                         OptographSchema.starsCount <- optograph.starsCount,
                         OptographSchema.commentsCount <- optograph.commentsCount,
                         OptographSchema.viewsCount <- optograph.viewsCount,
-                        OptographSchema.location <- optograph.location
+                        OptographSchema.locationId <- location.id,
+                        OptographSchema.isPublished <- optograph.isPublished
                     )
                 )
             })
@@ -129,7 +152,7 @@ class DetailsViewModel {
         userName.value = "@\(person.userName)"
         personId.value = person.id
         text.value = optograph.text
-        location.value = optograph.location
+        location.value = optograph.location.text
     }
     
     func toggleLike() {

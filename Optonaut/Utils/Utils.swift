@@ -68,7 +68,7 @@ struct RoundedDuration {
 }
 
 func uuid() -> UUID {
-    return NSUUID().UUIDString
+    return NSUUID().UUIDString.lowercaseString
 }
 
 func isValidEmail(email: String) -> Bool {

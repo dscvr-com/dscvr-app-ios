@@ -27,6 +27,10 @@ extension NSDate {
     }
 }
 
+protocol Migrateable {
+    func migrate() -> String
+}
+
 let SQLDateFormatter: NSDateFormatter = {
     let formatter = NSDateFormatter()
     formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
@@ -40,10 +44,11 @@ class DatabaseManager {
     static var defaultConnection: Connection!
     
     private static let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/db.sqlite3"
-    private static let migrations: [Migration.Type] = [
-        PersonMigration.self,
-        OptographMigration.self,
-        CommentMigration.self,
+    private static let migrations = [
+        CommentMigration,
+        LocationMigration,
+        OptographMigration,
+        PersonMigration,
     ]
     
     static func prepare() throws {
@@ -64,7 +69,7 @@ class DatabaseManager {
         // migrate database if new version
         if isNewVersion {
             for migration in migrations {
-                try db.run(migration.up())
+                try db.run(migration())
             }
         }
         

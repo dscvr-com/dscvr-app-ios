@@ -22,6 +22,7 @@ class OptographsViewModel {
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
+            .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(PersonTable[PersonSchema.id] == personId)
         let optographs = DatabaseManager.defaultConnection.prepare(query).map { row -> Optograph in
             let person = Person(
@@ -37,6 +38,14 @@ class OptographsViewModel {
                 wantsNewsletter: row[PersonSchema.wantsNewsletter]
             )
             
+            let location = Location(
+                id: row[LocationSchema.id],
+                text: row[LocationSchema.text],
+                createdAt: row[LocationSchema.createdAt],
+                latitude: row[LocationSchema.latitude],
+                longitude: row[LocationSchema.longitude]
+            )
+            
             return Optograph(
                 id: row[OptographSchema.id],
                 text: row[OptographSchema.text],
@@ -46,7 +55,8 @@ class OptographsViewModel {
                 starsCount: row[OptographSchema.starsCount],
                 commentsCount: row[OptographSchema.commentsCount],
                 viewsCount: row[OptographSchema.viewsCount],
-                location: row[OptographSchema.location]
+                location: location,
+                isPublished: row[OptographSchema.isPublished]
             )
         }
         

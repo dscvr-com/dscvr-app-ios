@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactiveCocoa
+import SQLite
 
 class EditProfileViewModel {
     
@@ -24,8 +25,27 @@ class EditProfileViewModel {
         let id = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonId.rawValue) as! UUID
         debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(PersonDefaultsKeys.DebugEnabled.rawValue)
         
-        Api.get("persons/\(id)")
-            .start(next: setPerson)
+        let query = PersonTable.filter(PersonTable[PersonSchema.id] == id)
+        let person = DatabaseManager.defaultConnection.pluck(query).map { row in
+            return Person(
+                id: row[PersonSchema.id],
+                email: row[PersonSchema.email],
+                fullName: row[PersonSchema.fullName],
+                userName: row[PersonSchema.userName],
+                text: row[PersonSchema.text],
+                followersCount: row[PersonSchema.followersCount],
+                followedCount: row[PersonSchema.followedCount],
+                isFollowed: row[PersonSchema.isFollowed],
+                createdAt: row[PersonSchema.createdAt],
+                wantsNewsletter: row[PersonSchema.wantsNewsletter]
+            )
+        }
+        
+        if let person = person {
+            setPerson(person)
+        }
+        
+        Api.get("persons/\(id)").start(next: setPerson)
         
         userName.producer
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}

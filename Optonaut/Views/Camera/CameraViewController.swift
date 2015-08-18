@@ -355,25 +355,20 @@ class CameraViewController: UIViewController {
         print("Finalizing")
         
         let leftBuffer = stitcher.GetLeftResult()
-        let left = ImageBufferToCGImage(leftBuffer)
+        let leftCGImage = ImageBufferToCGImage(leftBuffer)
+        let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage), 1)
         stitcher.FreeImageBuffer(leftBuffer)
         
         let rightBuffer = stitcher.GetRightResult()
-        let right = ImageBufferToCGImage(rightBuffer)
+        let rightCGImage = ImageBufferToCGImage(rightBuffer)
+        let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage), 1)
         stitcher.FreeImageBuffer(rightBuffer)
         
-        var imageStrings: [String] = []
-        let randomNumber = random()
-        
-        for (side, cgImage) in ["left": left, "right": right] {
-            let image = UIImageJPEGRepresentation(UIImage(CGImage: cgImage), 1)!
-            let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
-            image.writeToFile("\(path)/\(randomNumber)-\(side).jpg", atomically: true)
-            let imageString = image.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-            imageStrings.append(imageString)
-        }
+        let optograph = Optograph.newInstance() as! Optograph
+        // TODO add person reference
+        try! optograph.saveImages(leftImage: leftImageData!, rightImage: rightImageData!)
     
-        navigationController!.pushViewController(CreateOptographViewController(leftImage: imageStrings[0], rightImage: imageStrings[1]), animated: false)
+        navigationController!.pushViewController(CreateOptographViewController(optograph: optograph), animated: false)
         navigationController!.viewControllers.removeAtIndex(1)
     }
 }

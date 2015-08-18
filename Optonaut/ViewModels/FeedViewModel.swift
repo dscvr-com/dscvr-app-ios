@@ -27,6 +27,7 @@ class FeedViewModel: NSObject {
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
+            .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
 //            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.id] == meId)
 //            .order(CommentSchema.createdAt.asc)
         let optographs = DatabaseManager.defaultConnection.prepare(query).map { row -> Optograph in
@@ -43,6 +44,14 @@ class FeedViewModel: NSObject {
                 wantsNewsletter: row[PersonSchema.wantsNewsletter]
             )
             
+            let location = Location(
+                id: row[LocationSchema.id],
+                text: row[LocationSchema.text],
+                createdAt: row[LocationSchema.createdAt],
+                latitude: row[LocationSchema.latitude],
+                longitude: row[LocationSchema.longitude]
+            )
+            
             return Optograph(
                 id: row[OptographSchema.id],
                 text: row[OptographSchema.text],
@@ -52,7 +61,8 @@ class FeedViewModel: NSObject {
                 starsCount: row[OptographSchema.starsCount],
                 commentsCount: row[OptographSchema.commentsCount],
                 viewsCount: row[OptographSchema.viewsCount],
-                location: row[OptographSchema.location]
+                location: location,
+                isPublished: row[OptographSchema.isPublished]
             )
         }
         
@@ -103,6 +113,18 @@ class FeedViewModel: NSObject {
             )
         )
         
+        let location = optograph.location
+        
+        try! DatabaseManager.defaultConnection.run(
+            LocationTable.insert(or: .Replace,
+                LocationSchema.id <- location.id,
+                LocationSchema.text <- location.text,
+                LocationSchema.createdAt <- location.createdAt,
+                LocationSchema.latitude <- location.latitude,
+                LocationSchema.longitude <- location.longitude
+            )
+        )
+        
         try! DatabaseManager.defaultConnection.run(
             OptographTable.insert(or: .Replace,
                 OptographSchema.id <- optograph.id,
@@ -113,7 +135,8 @@ class FeedViewModel: NSObject {
                 OptographSchema.starsCount <- optograph.starsCount,
                 OptographSchema.commentsCount <- optograph.commentsCount,
                 OptographSchema.viewsCount <- optograph.viewsCount,
-                OptographSchema.location <- optograph.location
+                OptographSchema.locationId <- location.id,
+                OptographSchema.isPublished <- optograph.isPublished
             )
         )
     }

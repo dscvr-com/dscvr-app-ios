@@ -22,12 +22,10 @@ class CreateOptographViewModel: NSObject {
     let text = MutableProperty<String>("")
     let pending = MutableProperty<Bool>(false)
     
-    let leftImage: String
-    let rightImage: String
+    var optograph: Optograph
     
-    init(leftImage: String, rightImage: String) {
-        self.leftImage = leftImage
-        self.rightImage = rightImage
+    init(optograph: Optograph) {
+        self.optograph = optograph
         
         super.init()
         
@@ -43,10 +41,14 @@ class CreateOptographViewModel: NSObject {
     func post() -> SignalProducer<Optograph, NSError> {
         pending.value = true
         
+        let (leftData, rightData) = optograph.loadImages()
+        let leftImageStr = leftData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        let rightImageStr = rightData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        
         let parameters = [
             "text": text.value,
-            "left_image": leftImage,
-            "right_image": rightImage,
+            "left_image": leftImageStr,
+            "right_image": rightImageStr,
             "location": [
                 "latitude": latitude.value,
                 "longitude": longitude.value,

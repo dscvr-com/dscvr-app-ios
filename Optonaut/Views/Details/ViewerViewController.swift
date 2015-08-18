@@ -48,8 +48,8 @@ class ViewerViewController: UIViewController  {
         rightCameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         rightScene.rootNode.addChildNode(rightCameraNode)
         
-        let leftUrl = NSURL(string: "http://optonaut-ios-beta-dev.s3.amazonaws.com/optographs/original/\(optograph.id)/left.jpg")!
-        let leftData = NSData(contentsOfURL: leftUrl)!
+        let (leftData, rightData) = optograph.loadImages()
+        
         let leftImage = UIImage(data: leftData)!.imageRotatedByDegrees(0, flip: true)
         let leftSphereGeometry = SCNSphere(radius: 5.0)
         leftSphereGeometry.firstMaterial?.diffuse.contents = leftImage
@@ -58,8 +58,6 @@ class ViewerViewController: UIViewController  {
         leftSphereNode.transform = SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0)
         leftScene.rootNode.addChildNode(leftSphereNode)
         
-        let rightUrl = NSURL(string: "http://optonaut-ios-beta-dev.s3.amazonaws.com/optographs/original/\(optograph.id)/right.jpg")!
-        let rightData = NSData(contentsOfURL: rightUrl)!
         let rightImage = UIImage(data: rightData)!.imageRotatedByDegrees(0, flip: true)
         let rightSphereGeometry = SCNSphere(radius: 5.0)
         rightSphereGeometry.firstMaterial?.diffuse.contents = rightImage.CGImage!
