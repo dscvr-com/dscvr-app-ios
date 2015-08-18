@@ -303,6 +303,8 @@ class CameraViewController: UIViewController {
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
+            debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
+            
             //No, that's not a good idea.
             self.cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
             
@@ -338,12 +340,10 @@ class CameraViewController: UIViewController {
                 
                 stitcher.FreeImageBuffer(previewData)
                 
-                if(edges.count == 0) {
-                    finish()
+                if edges.isEmpty {
+                    dispatch_async(dispatch_get_main_queue(), finish)
                 }
             }
-            
-            debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
 
         }
     }
@@ -373,8 +373,8 @@ class CameraViewController: UIViewController {
             imageStrings.append(imageString)
         }
     
-        navigationController?.pushViewController(CreateOptographViewController(leftImage: imageStrings[0], rightImage: imageStrings[1]), animated: false)
-        navigationController?.viewControllers.removeAtIndex(1)
+        navigationController!.pushViewController(CreateOptographViewController(leftImage: imageStrings[0], rightImage: imageStrings[1]), animated: false)
+        navigationController!.viewControllers.removeAtIndex(1)
     }
 }
 

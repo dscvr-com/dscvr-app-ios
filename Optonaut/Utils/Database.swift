@@ -37,6 +37,10 @@ let SQLDateFormatter: NSDateFormatter = {
     return formatter
     }()
 
+    
+func log(message: String) {
+//    print(message)
+}
 
 
 class DatabaseManager {
@@ -48,8 +52,7 @@ class DatabaseManager {
         let db = try! Connection("\(path)/db.sqlite3")
         
         // enable console logging
-//        db.trace(print)
-        db.trace(nil)
+        db.trace(log)
         
         let migrations = Table("schema_migrations")
         let version = Expression<Int>("version")
