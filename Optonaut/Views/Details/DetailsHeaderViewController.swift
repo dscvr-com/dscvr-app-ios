@@ -52,11 +52,6 @@ class DetailsHeaderViewController: UIViewController {
         
         navigationItem.title = ""
         
-        // TODO move to better location
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
-            try! self.viewModel.optograph.downloadImages()
-        }
-        
         viewModel.detailsUrl.producer
             .start(next: { url in
                 if let detailsUrl = NSURL(string: url) {
@@ -274,8 +269,8 @@ class DetailsHeaderViewController: UIViewController {
     }
     
     func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
-        if viewModel.optograph.downloaded {
-            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph), animated: false)
+        if let optograph = viewModel.optograph where optograph.downloaded {
+            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: optograph), animated: false)
             viewModel.increaseViewsCount()
         }
     }

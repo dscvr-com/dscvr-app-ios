@@ -27,7 +27,7 @@ class DetailsViewModel {
     let text = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     
-    var optograph: Optograph!
+    var optograph: Optograph?
     
     init(optographId: UUID) {
         
@@ -136,8 +136,17 @@ class DetailsViewModel {
     }
     
     private func update() {
+        guard let optograph = optograph else {
+            fatalError("person can not be nil")
+        }
+        
         guard let person = optograph.person else {
             fatalError("person can not be nil")
+        }
+        
+        // TODO move to better location
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+            try! optograph.downloadImages()
         }
         
         id.value = optograph.id
