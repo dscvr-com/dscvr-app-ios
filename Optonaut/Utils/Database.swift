@@ -10,7 +10,7 @@ import Foundation
 import SQLite
 
 protocol ModelSchema {
-    var id: Expression<Int> { get }
+    var id: Expression<UUID> { get }
 }
 
 protocol Migration {
@@ -27,8 +27,6 @@ extension NSDate {
     }
 }
 
-
-
 let SQLDateFormatter: NSDateFormatter = {
     let formatter = NSDateFormatter()
     formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
@@ -37,44 +35,51 @@ let SQLDateFormatter: NSDateFormatter = {
     return formatter
     }()
 
-    
-func log(message: String) {
-//    print(message)
-}
-
-
 class DatabaseManager {
     
     static var defaultConnection: Connection!
     
-    static func prepare() {
-        let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
-        let db = try! Connection("\(path)/db.sqlite3")
+    private static let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/db.sqlite3"
+    private static let migrations: [Migration.Type] = [
+        PersonMigration.self,
+        OptographMigration.self,
+        CommentMigration.self,
+    ]
+    
+    static func prepare() throws {
+        let lastVersion = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.LastReleaseVersion.rawValue) as? String ?? ""
+        let newVersion = NSBundle.mainBundle().releaseVersionNumber
+        let isNewVersion = lastVersion != newVersion
+        
+        // remove old database if new version
+        if isNewVersion {
+            try removeDatabaseFile()
+        }
+        
+        let db = try Connection(path)
         
         // enable console logging
-        db.trace(log)
+        db.trace(print)
         
-        let migrations = Table("schema_migrations")
-        let version = Expression<Int>("version")
-        
-        try! db.run(migrations.create(ifNotExists: true) { t in
-            t.column(version, primaryKey: .Autoincrement)
-            })
-        
-        let migrationClasses: [Migration.Type] = [
-            PersonMigration.self,
-            OptographMigration.self,
-            CommentMigration.self
-        ]
-        
-        var currentVersion = db.prepare(migrations).map({ $0[version] }).maxElement() ?? 0
-        for migration in migrationClasses.slice(currentVersion) {
-            try! db.run(migration.up())
-            currentVersion++
-            try! db.run(migrations.insert(version <- currentVersion))
+        // migrate database if new version
+        if isNewVersion {
+            for migration in migrations {
+                try db.run(migration.up())
+            }
         }
         
         defaultConnection = db
+    }
+    
+    static func reset() throws {
+        try removeDatabaseFile()
+        try prepare()
+    }
+    
+    private static func removeDatabaseFile() throws {
+        if NSFileManager.defaultManager().fileExistsAtPath(path) {
+            try NSFileManager.defaultManager().removeItemAtPath(path)
+        }
     }
     
 }

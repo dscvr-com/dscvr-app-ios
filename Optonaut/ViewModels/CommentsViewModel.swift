@@ -12,10 +12,10 @@ import SQLite
 
 class CommentsViewModel {
     
-    let optographId: ConstantProperty<Int>
+    let optographId: ConstantProperty<UUID>
     let results = MutableProperty<[Comment]>([])
     
-    init(optographId: Int) {
+    init(optographId: UUID) {
         self.optographId = ConstantProperty(optographId)
         
         let query = CommentTable

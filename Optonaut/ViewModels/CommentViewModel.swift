@@ -15,7 +15,7 @@ class CommentViewModel {
     let avatarUrl: ConstantProperty<String>
     let fullName: ConstantProperty<String>
     let userName: ConstantProperty<String>
-    let personId: ConstantProperty<Int>
+    let personId: ConstantProperty<UUID>
     let timeSinceCreated = MutableProperty<String>("")
     
     init(comment: Comment) {
@@ -24,7 +24,7 @@ class CommentViewModel {
         }
         
         text = ConstantProperty(comment.text)
-        avatarUrl = ConstantProperty("https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg")
+        avatarUrl = ConstantProperty("https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-images/thumb/\(person.id).jpg")
         fullName = ConstantProperty(person.fullName)
         userName = ConstantProperty("@\(person.userName)")
         personId = ConstantProperty(person.id)

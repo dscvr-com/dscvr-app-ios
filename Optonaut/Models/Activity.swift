@@ -16,7 +16,7 @@ enum ActivityType: String {
 }
 
 struct Activity: Model {
-    var id: Int
+    var id: UUID
     var creator: Person?
     var receiver: Person?
     var optograph: Optograph?
@@ -29,7 +29,7 @@ extension Activity: Mappable {
     
     static func newInstance() -> Mappable {
         return Activity(
-            id: 0,
+            id: uuid(),
             creator: nil,
             receiver: nil,
             optograph: nil,

@@ -19,7 +19,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     
     var scrollCallback: ((CGFloat) -> ())?
     
-    required init(personId: Int) {
+    required init(personId: UUID) {
         viewModel = OptographsViewModel(personId: personId)
         super.init(nibName: nil, bundle: nil)
     }

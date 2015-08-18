@@ -22,7 +22,7 @@ class ProfileNavViewController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let userId = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
+        let userId = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonId.rawValue) as! UUID
         
         pushViewController(ProfileContainerViewController(personId: userId), animated: false)
     }

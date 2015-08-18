@@ -31,9 +31,9 @@ class ProfileHeaderViewController: UIViewController {
     let followedHeadingView = UILabel()
     let followedCountView = UILabel()
     
-    required init(personId: Int) {
+    required init(personId: UUID) {
         viewModel = ProfileViewModel(id: personId)
-        isMe = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue) == personId
+        isMe = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonId.rawValue) as! UUID == personId
         super.init(nibName: nil, bundle: nil)
     }
     

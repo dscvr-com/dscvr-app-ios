@@ -88,6 +88,7 @@ class RequestInviteViewController: UIViewController {
                         self.submitButtonView.userInteractionEnabled = false
                         self.submitButtonView.alpha = 0.5
                         self.titleView.text = "Congratulations"
+                        self.cancelButtonView.setTitle("Back", forState: .Normal)
                         self.descriptionView.text = "Thanks for your request. We'll be in touch soon. In order to stay up to date you can follow us on Facebook or Twitter. Cheers!"
                     }
             )

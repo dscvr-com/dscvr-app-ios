@@ -15,7 +15,7 @@ class ProfileContainerViewController: UIViewController {
     private let headerViewController: ProfileHeaderViewController
     private let headerView: UIView
     
-    required init(personId: Int) {
+    required init(personId: UUID) {
         tableViewController = ProfileTableViewController(personId: personId)
         tableView = tableViewController.view
         

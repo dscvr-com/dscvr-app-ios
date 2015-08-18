@@ -12,11 +12,11 @@ import SQLite
 
 class OptographsViewModel {
     
-    let id: ConstantProperty<Int>
+    let id: ConstantProperty<UUID>
     let results = MutableProperty<[Optograph]>([])
     let resultsLoading = MutableProperty<Bool>(false)
     
-    init(personId: Int) {
+    init(personId: UUID) {
         id = ConstantProperty(personId)
         
         let query = OptographTable

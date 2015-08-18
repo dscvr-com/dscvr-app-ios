@@ -10,7 +10,7 @@ import Foundation
 import ObjectMapper
 
 struct Person: Model {
-    var id: Int
+    var id: UUID
     var email: String
     var fullName: String
     var userName: String
@@ -26,7 +26,7 @@ extension Person: Mappable {
     
     static func newInstance() -> Mappable {
         return Person(
-            id: 0,
+            id: uuid(),
             email: "",
             fullName: "",
             userName: "",

@@ -9,7 +9,6 @@
 
 import Foundation
 import ReactiveCocoa
-//import RealmSwift
 
 class ActivityViewModel {
     
@@ -17,11 +16,11 @@ class ActivityViewModel {
     
     let activityType: ConstantProperty<ActivityType>
     let creatorAvatarUrl: ConstantProperty<String>
-    let creatorId: ConstantProperty<Int>
+    let creatorId: ConstantProperty<UUID>
     let creatorUserName: ConstantProperty<String>
     let timeSinceCreated: ConstantProperty<String>
     let optographUrl: ConstantProperty<String?>
-    let optographId: ConstantProperty<Int?>
+    let optographId: ConstantProperty<UUID?>
     let isRead: MutableProperty<Bool>
     
     private let activity: Activity
@@ -30,11 +29,11 @@ class ActivityViewModel {
         self.activity = activity
         
         activityType = ConstantProperty(activity.activityType)
-        creatorAvatarUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/avatars/\(activity.creator!.id % 4).jpg")
+        creatorAvatarUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/avatars/\(activity.creator!.id).jpg")
         creatorId = ConstantProperty(activity.creator!.id)
         creatorUserName = ConstantProperty(activity.creator!.userName)
         timeSinceCreated = ConstantProperty(RoundedDuration(date: activity.createdAt).shortDescription())
-        optographUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(activity.optograph!.id % 3).jpg")
+        optographUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(activity.optograph!.id).jpg")
         optographId = ConstantProperty(activity.optograph?.id)
         isRead = MutableProperty(activity.isRead)
     }
@@ -43,10 +42,6 @@ class ActivityViewModel {
         Api<EmptyResponse>.post("activities/\(activity.id)/read", parameters: nil)
             .start(completed: {
                 self.isRead.value = true
-                
-//                self.realm.write {
-//                    self.activity.isRead = true
-//                }
             })
     }
     

@@ -15,6 +15,7 @@ enum PersonDefaultsKeys: String {
     case PersonToken = "person_token"
     case PersonId = "person_id"
     case DebugEnabled = "debug_enabled"
+    case LastReleaseVersion = "last_release_version"
 }
 
 enum NotificationKeys: String {

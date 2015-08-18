@@ -67,6 +67,10 @@ struct RoundedDuration {
     }
 }
 
+func uuid() -> UUID {
+    return NSUUID().UUIDString
+}
+
 func isValidEmail(email: String) -> Bool {
     let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
     let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
@@ -174,37 +178,6 @@ class Utility{
     }
 }
 
-extension Array {
-    func slice(args: Int...) -> Array {
-        var s = args[0]
-        var e = self.count - 1
-        if args.count > 1 { e = args[1] }
-        
-        if e < 0 {
-            e += self.count
-        }
-        
-        if s < 0 {
-            s += self.count
-        }
-        
-        if s == self.count {
-            return []
-        }
-        
-        let count = (s < e ? e-s : s-e)+1
-        let inc = s < e ? 1 : -1
-        var ret = Array()
-        
-        var idx = s
-        for var i=0; i<count; i++  {
-            ret.append(self[idx])
-            idx += inc
-        }
-        return ret
-    }
-}
-
 extension UIImage {
     public func imageRotatedByDegrees(degrees: CGFloat, flip: Bool) -> UIImage {
         let degreesToRadians: (CGFloat) -> CGFloat = {
@@ -244,4 +217,16 @@ extension UIImage {
         
         return newImage
     }
+}
+
+extension NSBundle {
+    
+    var releaseVersionNumber: String? {
+        return self.infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+    
+    var buildVersionNumber: String? {
+        return self.infoDictionary?["CFBundleVersion"] as? String
+    }
+    
 }

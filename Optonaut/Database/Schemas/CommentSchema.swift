@@ -9,11 +9,11 @@
 import SQLite
 
 struct CommentSchemaType: ModelSchema {
-    let id = Expression<Int>("comment_id")
+    let id = Expression<UUID>("comment_id")
     let text = Expression<String>("comment_text")
     let createdAt = Expression<NSDate>("comment_created_at")
-    let personId = Expression<Int>("comment_person_id")
-    let optographId = Expression<Int>("comment_optograph_id")
+    let personId = Expression<UUID>("comment_person_id")
+    let optographId = Expression<UUID>("comment_optograph_id")
 }
 
 let CommentSchema = CommentSchemaType()

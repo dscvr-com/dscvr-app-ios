@@ -9,18 +9,17 @@
 
 import Foundation
 import ReactiveCocoa
-//import RealmSwift
 
 class OptographViewModel {
     
 //    let realm = try! Realm()
     
-    let id: ConstantProperty<Int>
+    let id: ConstantProperty<UUID>
     let previewUrl: ConstantProperty<String>
     let avatarUrl: ConstantProperty<String>
     let fullName: ConstantProperty<String>
     let userName: ConstantProperty<String>
-    let personId: ConstantProperty<Int>
+    let personId: ConstantProperty<UUID>
     let text: ConstantProperty<String>
     let location: ConstantProperty<String>
     
@@ -40,8 +39,8 @@ class OptographViewModel {
         }
         
         id = ConstantProperty(optograph.id)
-        previewUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(optograph.id % 3).jpg")
-        avatarUrl = ConstantProperty("https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg")
+        previewUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(optograph.id).jpg")
+        avatarUrl = ConstantProperty("https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-images/thumb/\(person.id).jpg")
         fullName = ConstantProperty(person.fullName)
         userName = ConstantProperty("@\(person.userName)")
         personId = ConstantProperty(person.id)

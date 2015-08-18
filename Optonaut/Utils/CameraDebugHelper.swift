@@ -80,18 +80,18 @@ class CameraDebugHelper {
     }
     
     private func uploadToS3(fileName: String) {
-        let request = AWSS3TransferManagerUploadRequest()
-        request.bucket = "optonaut-ios-beta"
-        request.key = "\(timestamp)/\(fileName)"
-        request.body = NSURL(fileURLWithPath: path.stringByAppendingPathComponent(fileName))
-
-        let s3TransferManager = AWSS3TransferManager.defaultS3TransferManager()
-        s3TransferManager.upload(request).continueWithBlock { task in
-            if task.faulted {
-                print(task.error)
-            }
-            return nil
-        }
+//        let request = AWSS3TransferManagerUploadRequest()
+//        request.bucket = "optonaut-ios-beta"
+//        request.key = "\(timestamp)/\(fileName)"
+//        request.body = NSURL(fileURLWithPath: path.stringByAppendingPathComponent(fileName))
+//
+//        let s3TransferManager = AWSS3TransferManager.defaultS3TransferManager()
+//        s3TransferManager.upload(request).continueWithBlock { task in
+//            if task.faulted {
+//                print(task.error)
+//            }
+//            return nil
+//        }
     }
     
 }

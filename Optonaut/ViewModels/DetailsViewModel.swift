@@ -13,7 +13,7 @@ import SQLite
 
 class DetailsViewModel {
     
-    let id = MutableProperty<Int>(0)
+    let id = MutableProperty<UUID>("")
     let isStarred = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let commentsCount = MutableProperty<Int>(0)
@@ -23,13 +23,13 @@ class DetailsViewModel {
     let avatarUrl = MutableProperty<String>("")
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
-    let personId = MutableProperty<Int>(0)
+    let personId = MutableProperty<UUID>("")
     let text = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     
     var optograph: Optograph!
     
-    init(optographId: Int) {
+    init(optographId: UUID) {
         
 //        if let optograph = realm.objectForPrimaryKey(Optograph.self, key: optographId) {
 //            self.optograph = optograph
@@ -123,8 +123,8 @@ class DetailsViewModel {
         commentsCount.value = optograph.commentsCount
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
-        detailsUrl.value = "http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id % 3).jpg"
-        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg"
+        detailsUrl.value = "http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id).jpg"
+        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-images/thumb/\(person.id).jpg"
         fullName.value = person.fullName
         userName.value = "@\(person.userName)"
         personId.value = person.id

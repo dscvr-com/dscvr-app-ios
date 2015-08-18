@@ -20,7 +20,7 @@ class CommentTableViewController: UIViewController, TransparentNavbar {
     
     var scrollCallback: ((CGFloat) -> ())?
     
-    required init(optographId: Int) {
+    required init(optographId: UUID) {
         viewModel = CommentsViewModel(optographId: optographId)
         super.init(nibName: nil, bundle: nil)
     }

@@ -11,11 +11,11 @@ import ReactiveCocoa
 
 class NewCommentViewModel {
     
-    let optographId: ConstantProperty<Int>
+    let optographId: ConstantProperty<UUID>
     let text = MutableProperty<String>("")
     let isValid = MutableProperty<Bool>(false)
     
-    init(optographId: Int) {
+    init(optographId: UUID) {
         self.optographId = ConstantProperty(optographId)
         
         text.producer

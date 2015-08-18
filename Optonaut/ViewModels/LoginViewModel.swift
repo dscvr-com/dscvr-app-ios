@@ -57,7 +57,7 @@ class LoginViewModel {
                 next: { (loginData: LoginMappable) in
                     NSUserDefaults.standardUserDefaults().setBool(true, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
                     NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: PersonDefaultsKeys.PersonToken.rawValue)
-                    NSUserDefaults.standardUserDefaults().setInteger(loginData.id, forKey: PersonDefaultsKeys.PersonId.rawValue)
+                    NSUserDefaults.standardUserDefaults().setObject(loginData.id, forKey: PersonDefaultsKeys.PersonId.rawValue)
                 },
                 completed: {
                     self.pending.value = false
@@ -72,8 +72,8 @@ class LoginViewModel {
 }
 
 private struct LoginMappable: Mappable {
-    var token = ""
-    var id = 0
+    var token: String = ""
+    var id: UUID = ""
     
     private static func newInstance() -> Mappable {
         return LoginMappable()

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-//import RealmSwift
 import Device
 
 @UIApplicationMain
@@ -19,17 +18,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
-        DatabaseManager.prepare()
+        try! DatabaseManager.prepare()
+        
         setupAppearanceDefaults()
         
         if NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.DebugEnabled.rawValue) == nil {
             NSUserDefaults.standardUserDefaults().setBool(false, forKey: PersonDefaultsKeys.DebugEnabled.rawValue)
         }
-        
-        // TODO remove aws stuff
-        let credProvider = AWSStaticCredentialsProvider(accessKey: "AKIAJ6AYCIIVD6E4FDLQ", secretKey: "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")
-        let configuration = AWSServiceConfiguration(region: .EUWest1, credentialsProvider: credProvider)
-        AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = configuration
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         if let window = window {
@@ -47,6 +42,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.makeKeyAndVisible()
         }
         
+        if let version = NSBundle.mainBundle().releaseVersionNumber {
+            NSUserDefaults.standardUserDefaults().setObject(version, forKey: PersonDefaultsKeys.LastReleaseVersion.rawValue)
+        }
+        
         return true
     }
     
@@ -54,11 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSUserDefaults.standardUserDefaults().setObject("", forKey: PersonDefaultsKeys.PersonToken.rawValue)
         NSUserDefaults.standardUserDefaults().setBool(false, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
         
-        // reset db
-        let db = DatabaseManager.defaultConnection
-        try! db.run(PersonTable.delete())
-        try! db.run(OptographTable.delete())
-        try! db.run(CommentTable.delete())
+        try! DatabaseManager.reset()
         
         if let window = window {
             window.rootViewController = LoginViewController()

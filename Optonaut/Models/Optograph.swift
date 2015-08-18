@@ -10,7 +10,7 @@ import Foundation
 import ObjectMapper
 
 struct Optograph: Model {
-    var id: Int
+    var id: UUID
     var text: String
     var person: Person?
     var createdAt: NSDate
@@ -25,7 +25,7 @@ extension Optograph: Mappable {
     
     static func newInstance() -> Mappable {
         return Optograph(
-            id: 0,
+            id: uuid(),
             text: "",
             person: nil,
             createdAt: NSDate(),

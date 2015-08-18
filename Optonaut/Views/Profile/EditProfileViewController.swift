@@ -66,7 +66,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         avatarImageView.layer.cornerRadius = 30
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
-        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "updatePicture"))
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "updateImage"))
         view.addSubview(avatarImageView)
         
         viewModel.avatarUrl.producer
@@ -385,7 +385,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
-    func updatePicture() {
+    func updateImage() {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             imagePickerController.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
             imagePickerController.allowsEditing = true

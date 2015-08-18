@@ -35,7 +35,7 @@ class DetailsHeaderViewController: UIViewController {
     
     let motionManager = CMMotionManager()
     
-    required init(optographId: Int) {
+    required init(optographId: UUID) {
         self.viewModel = DetailsViewModel(optographId: optographId)
         super.init(nibName: nil, bundle: nil)
     }

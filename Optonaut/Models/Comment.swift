@@ -10,7 +10,7 @@ import Foundation
 import ObjectMapper
 
 struct Comment: Model {
-    var id: Int
+    var id: UUID
     var text: String
     var createdAt: NSDate
     var person: Person?
@@ -21,7 +21,7 @@ extension Comment: Mappable {
     
     static func newInstance() -> Mappable {
         return Comment(
-            id: 0,
+            id: uuid(),
             text: "",
             createdAt: NSDate(),
             person: nil,

@@ -56,7 +56,7 @@ class NewCommentTableViewCell: UITableViewCell {
         super.updateConstraints()
     }
     
-    func bindViewModel(optographId: Int) {
+    func bindViewModel(optographId: UUID) {
         viewModel = NewCommentViewModel(optographId: optographId)
         
         textInputView.rac_text <~ viewModel.text

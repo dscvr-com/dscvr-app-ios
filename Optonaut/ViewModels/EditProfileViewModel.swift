@@ -21,12 +21,8 @@ class EditProfileViewModel {
     let wantsNewsletter = MutableProperty<Bool>(false)
     
     init() {
-        let id = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
+        let id = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonId.rawValue) as! UUID
         debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(PersonDefaultsKeys.DebugEnabled.rawValue)
-        
-//        if let person = realm.objectForPrimaryKey(Person.self, key: id) {
-//            setPerson(person)
-//        }
         
         Api.get("persons/\(id)")
             .start(next: setPerson)
@@ -48,7 +44,7 @@ class EditProfileViewModel {
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
         text.value = person.text
-        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg"
+        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-images/thumb/\(person.id).jpg"
     }
     
     func updateData() -> SignalProducer<EmptyResponse, NSError> {
@@ -66,7 +62,7 @@ class EditProfileViewModel {
         let data = UIImageJPEGRepresentation(image, 1)
         let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         
-        let parameters = ["profile_picture": str!]
+        let parameters = ["profile_image": str!]
         return Api.post("persons/me/upload-profile-image", parameters: parameters)
     }
     

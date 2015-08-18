@@ -13,7 +13,7 @@ import SQLite
 
 class ProfileViewModel {
     
-    let id = MutableProperty<Int>(0)
+    let id = MutableProperty<UUID>("")
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let text = MutableProperty<String>("")
@@ -22,7 +22,7 @@ class ProfileViewModel {
     let isFollowed = MutableProperty<Bool>(false)
     let avatarUrl = MutableProperty<String>("")
     
-    init(id: Int) {
+    init(id: UUID) {
         // TODO check if really needed here
         self.id.value = id
         
@@ -92,7 +92,7 @@ class ProfileViewModel {
         followersCount.value = person.followersCount
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed
-        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-pictures/thumb/\(person.id).jpg"
+        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-images/thumb/\(person.id).jpg"
     }
     
 }

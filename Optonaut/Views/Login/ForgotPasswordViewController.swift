@@ -88,6 +88,7 @@ class ForgotPasswordViewController: UIViewController {
                         self.submitButtonView.userInteractionEnabled = false
                         self.submitButtonView.alpha = 0.5
                         self.titleView.text = "Check your inbox"
+                        self.cancelButtonView.setTitle("Back", forState: .Normal)
                         self.descriptionView.text = "We sent you an email with a link to reset your password by choosing a new one."
                     }
             )

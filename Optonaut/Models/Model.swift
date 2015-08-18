@@ -8,8 +8,10 @@
 
 import Foundation
 
+typealias UUID = String
+
 protocol Model {
-    var id: Int { get set }
+    var id: UUID { get set }
     var createdAt: NSDate { get set }
 }
 
