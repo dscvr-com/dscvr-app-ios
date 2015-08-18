@@ -233,7 +233,7 @@ class CameraViewController: UIViewController {
         
         for a in points {
             for b in points {
-                if(stitcher.AreAdjacent(a, b)) {
+                if(stitcher.AreAdjacent(a, and: b)) {
                     let edge = Edge(a, b)
                     
                     let vec = GLKVector3Make(0, 0, -1);

@@ -31,6 +31,6 @@ struct SelectionPoint {
 - (void)EnableDebug:(NSString*)path;
 - (struct ImageBuffer)GetLeftResult;
 - (struct ImageBuffer)GetRightResult;
-- (bool)AreAdjacent:(struct SelectionPoint)a:(struct SelectionPoint)b;
+- (bool)AreAdjacent:(struct SelectionPoint)a and:(struct SelectionPoint)b;
 
 @end

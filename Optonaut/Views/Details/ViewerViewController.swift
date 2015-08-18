@@ -50,8 +50,9 @@ class ViewerViewController: UIViewController  {
         
         let leftUrl = NSURL(string: "http://optonaut-ios-beta-dev.s3.amazonaws.com/optographs/original/\(optograph.id)/left.jpg")!
         let leftData = NSData(contentsOfURL: leftUrl)!
+        let leftImage = UIImage(data: leftData)!.imageRotatedByDegrees(0, flip: true)
         let leftSphereGeometry = SCNSphere(radius: 5.0)
-        leftSphereGeometry.firstMaterial?.diffuse.contents = UIImage(data: leftData)
+        leftSphereGeometry.firstMaterial?.diffuse.contents = leftImage
         leftSphereGeometry.firstMaterial?.doubleSided = true
         let leftSphereNode = SCNNode(geometry: leftSphereGeometry)
         leftSphereNode.transform = SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0)
@@ -59,8 +60,9 @@ class ViewerViewController: UIViewController  {
         
         let rightUrl = NSURL(string: "http://optonaut-ios-beta-dev.s3.amazonaws.com/optographs/original/\(optograph.id)/right.jpg")!
         let rightData = NSData(contentsOfURL: rightUrl)!
+        let rightImage = UIImage(data: rightData)!.imageRotatedByDegrees(0, flip: true)
         let rightSphereGeometry = SCNSphere(radius: 5.0)
-        rightSphereGeometry.firstMaterial?.diffuse.contents = UIImage(data: rightData)
+        rightSphereGeometry.firstMaterial?.diffuse.contents = rightImage.CGImage!
         rightSphereGeometry.firstMaterial?.doubleSided = true
         let rightSphereNode = SCNNode(geometry: rightSphereGeometry)
         rightSphereNode.transform = SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0)

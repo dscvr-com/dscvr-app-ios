@@ -131,7 +131,7 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
     
     return immutableOutPoints;
 }
-- (bool)AreAdjacent:(SelectionPoint)a:(SelectionPoint)b {
+- (bool)AreAdjacent:(SelectionPoint)a and:(SelectionPoint)b {
     return pipe->AreAdjacent(ConvertSelectionPoint(a), ConvertSelectionPoint(b));
 }
 - (void)EnableDebug:(NSString*)path {
