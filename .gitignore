@@ -43,3 +43,9 @@ xcuserdata
 Carthage/Checkouts
 
 Carthage/Build
+
+# Fastlane
+report.xml
+fastlane/screenshots
+*.ipa
+*.dSYM.zip
