@@ -92,5 +92,6 @@ public enum Icomoon: String {
     case PaperPlane = "\u{e614}"
     case VCard = "\u{e615}"
     case Bell = "\u{f0a2}"
+    case Retry = "\u{f0e2}"
     case CommentOutlined = "\u{f0e5}"
 }

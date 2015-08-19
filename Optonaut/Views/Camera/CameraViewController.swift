@@ -13,6 +13,7 @@ import CoreGraphics
 import ReactiveCocoa
 import Alamofire
 import SceneKit
+import Async
 
 struct Edge: Hashable {
     let one: SelectionPoint
@@ -40,7 +41,7 @@ class CameraViewController: UIViewController {
     
     // camera
     var session: AVCaptureSession!
-    var sessionQueue: dispatch_queue_t!
+    var sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
     var videoDeviceInput: AVCaptureDeviceInput!
     var videoDeviceOutput: AVCaptureVideoDataOutput!
     var previewLayer: AVCaptureVideoPreviewLayer!
@@ -76,8 +77,6 @@ class CameraViewController: UIViewController {
         
         session = AVCaptureSession()
         session.sessionPreset = AVCaptureSessionPreset640x480
-        
-        sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         
         
         //stitcher.EnableDebug(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0])
@@ -116,15 +115,15 @@ class CameraViewController: UIViewController {
         
         viewModel.instruction.value = "Select"
         
-        dispatch_async(sessionQueue) {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
+        
+        Async.customQueue(sessionQueue) {
             self.authorizeCamera()
             self.session.beginConfiguration()
             self.addVideoInput()
             self.addVideoOutput()
             self.session.commitConfiguration()
         }
-        
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
         
         view.setNeedsUpdateConstraints()
     }
@@ -150,7 +149,7 @@ class CameraViewController: UIViewController {
 //        motionManager.startDeviceMotionUpdates()
         motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
         
-        dispatch_async(sessionQueue) {
+        Async.customQueue(sessionQueue) {
             self.session.startRunning()
         }
     }
@@ -253,7 +252,7 @@ class CameraViewController: UIViewController {
     private func authorizeCamera() {
         AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: { granted in
             if !granted {
-                dispatch_async(dispatch_get_main_queue()) {
+                Async.main {
                     UIAlertView(
                         title: "Could not use camera!",
                         message: "This application does not have permission to use camera. Please update your privacy settings.",
@@ -296,8 +295,6 @@ class CameraViewController: UIViewController {
             buf.data = CVPixelBufferGetBaseAddress(pixelBuffer)
             buf.width = Int32(CVPixelBufferGetWidth(pixelBuffer))
             buf.height = Int32(CVPixelBufferGetHeight(pixelBuffer))
-            
-            //print("Push!");
 
             stitcher.Push(r, buf)
             
@@ -305,8 +302,8 @@ class CameraViewController: UIViewController {
             
             debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
             
-            //No, that's not a good idea.
-            self.cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
+            // No, that's not a good idea.
+            cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
             
             if(stitcher.IsPreviewImageValialble()) {
                 
@@ -318,7 +315,6 @@ class CameraViewController: UIViewController {
                 let nodeToRemove = edges[edge]
                 nodeToRemove?.removeFromParentNode()
                 edges.removeValueForKey(edge)
-                //print("Preview Image!")
             
                 let cgImage = ImageBufferToCGImage(previewData);
                 
@@ -331,7 +327,6 @@ class CameraViewController: UIViewController {
                 
                 let L = GLKMatrix4MakeRotation(Float(M_PI_2), 0, 0, -1)
                 let R = stitcher.GetPreviewRotation()
-                
                 let T = GLKMatrix4MakeTranslation(0, 0, -Float(intrinsics[0]))
                 let TL = GLKMatrix4Multiply(T, L)
                 planeNode.transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Multiply(R, TL))
@@ -341,7 +336,10 @@ class CameraViewController: UIViewController {
                 stitcher.FreeImageBuffer(previewData)
                 
                 if edges.isEmpty {
-                    dispatch_async(dispatch_get_main_queue(), finish)
+                    // needed since processSampleBuffer doesn't run on UI thread
+                    Async.main {
+                        self.finish()
+                    }
                 }
             }
 
@@ -349,26 +347,26 @@ class CameraViewController: UIViewController {
     }
     
     func finish() {
+        let signalProducer = SignalProducer<(left: NSData, right: NSData), NoError> { sink, disposable in
+            let leftBuffer = self.stitcher.GetLeftResult()
+            let leftCGImage = ImageBufferToCGImage(leftBuffer)
+            let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage), 1)
+            self.stitcher.FreeImageBuffer(leftBuffer)
+            
+            let rightBuffer = self.stitcher.GetRightResult()
+            let rightCGImage = ImageBufferToCGImage(rightBuffer)
+            let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage), 1)
+            self.stitcher.FreeImageBuffer(rightBuffer)
+            
+            sendNext(sink, (left: leftImageData!, right: rightImageData!))
+            sendCompleted(sink)
+            
+            disposable.addDisposable {
+                // TODO insert code to cancel stitching
+            }
+        }
         
-        //This code can (and should be executed asynchronously while the user enters
-        //the description.
-        print("Finalizing")
-        
-        let leftBuffer = stitcher.GetLeftResult()
-        let leftCGImage = ImageBufferToCGImage(leftBuffer)
-        let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage), 1)
-        stitcher.FreeImageBuffer(leftBuffer)
-        
-        let rightBuffer = stitcher.GetRightResult()
-        let rightCGImage = ImageBufferToCGImage(rightBuffer)
-        let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage), 1)
-        stitcher.FreeImageBuffer(rightBuffer)
-        
-        let optograph = Optograph.newInstance() as! Optograph
-        // TODO add person reference
-        try! optograph.saveImages(leftImage: leftImageData!, rightImage: rightImageData!)
-    
-        navigationController!.pushViewController(CreateOptographViewController(optograph: optograph), animated: false)
+        navigationController!.pushViewController(CreateOptographViewController(signalProducer: signalProducer), animated: false)
         navigationController!.viewControllers.removeAtIndex(1)
     }
 }

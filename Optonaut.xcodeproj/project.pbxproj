@@ -15,6 +15,7 @@
 		8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */; };
 		8F17CF711B4F15B100A10DA3 /* NSDateTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
+		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F366DD21B59342E00C0012E /* CameraDebugHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */; };
 		8F3FB0661B7B466000016A8A /* CreateOptographViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3FB0651B7B466000016A8A /* CreateOptographViewController.swift */; };
 		8F3FB0681B7B474700016A8A /* CreateOptographViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3FB0671B7B474700016A8A /* CreateOptographViewModel.swift */; };
@@ -83,6 +84,8 @@
 		8F900B471B839E690085566C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B461B839E690085566C /* Location.swift */; };
 		8F900B571B8479250085566C /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B551B8479250085566C /* Crashlytics.framework */; };
 		8F900B581B8479250085566C /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B561B8479250085566C /* Fabric.framework */; };
+		8F900B5A1B84A5240085566C /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B591B84A5240085566C /* Reachability.swift */; };
+		8F900B5C1B84AA3C0085566C /* LocationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B5B1B84AA3C0085566C /* LocationHelper.swift */; };
 		8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9A4FF41B39DF85009C4548 /* Refresher.framework */; };
 		8F9A4FF81B39E992009C4548 /* ProfileHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF71B39E992009C4548 /* ProfileHeaderViewController.swift */; };
 		8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */; };
@@ -143,6 +146,7 @@
 		8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectMapper.framework; path = Carthage/Build/iOS/ObjectMapper.framework; sourceTree = "<group>"; };
 		8F17CF701B4F15B100A10DA3 /* NSDateTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateTransform.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
+		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F366DD11B59342E00C0012E /* CameraDebugHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraDebugHelper.swift; sourceTree = "<group>"; };
 		8F3FB0651B7B466000016A8A /* CreateOptographViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateOptographViewController.swift; sourceTree = "<group>"; };
 		8F3FB0671B7B474700016A8A /* CreateOptographViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateOptographViewModel.swift; sourceTree = "<group>"; };
@@ -210,10 +214,10 @@
 		8F900B3F1B839D0C0085566C /* PersonTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonTable.swift; sourceTree = "<group>"; };
 		8F900B441B839D7A0085566C /* LocationTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTable.swift; sourceTree = "<group>"; };
 		8F900B461B839E690085566C /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
-		8F900B4D1B83DD9F0085566C /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
-		8F900B4E1B83DD9F0085566C /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		8F900B551B8479250085566C /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/iOS/Crashlytics.framework; sourceTree = "<group>"; };
 		8F900B561B8479250085566C /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/iOS/Fabric.framework; sourceTree = "<group>"; };
+		8F900B591B84A5240085566C /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		8F900B5B1B84AA3C0085566C /* LocationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationHelper.swift; sourceTree = "<group>"; };
 		8F9A4FF41B39DF85009C4548 /* Refresher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Refresher.framework; path = Carthage/Build/iOS/Refresher.framework; sourceTree = "<group>"; };
 		8F9A4FF71B39E992009C4548 /* ProfileHeaderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewController.swift; sourceTree = "<group>"; };
 		8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNavViewController.swift; sourceTree = "<group>"; };
@@ -293,6 +297,7 @@
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
 				8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */,
 				8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */,
+				8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,10 +314,9 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F29FB561B84C26500B2C005 /* Async.framework */,
 				8F900B551B8479250085566C /* Crashlytics.framework */,
 				8F900B561B8479250085566C /* Fabric.framework */,
-				8F900B4D1B83DD9F0085566C /* Fabric.framework */,
-				8F900B4E1B83DD9F0085566C /* Crashlytics.framework */,
 				8FA66BA41B80905C00EE5D44 /* SQLite.framework */,
 				8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */,
 				8FBDE8B11B5D186800C78486 /* Device.framework */,
@@ -405,6 +409,8 @@
 				8F4C6E191B4717DF007508ED /* Icomoon.swift */,
 				8F4C6E571B4A73BE007508ED /* Fonts.swift */,
 				8F5FDA081B412DB2007E073C /* Constants.swift */,
+				8F900B5B1B84AA3C0085566C /* LocationHelper.swift */,
+				8F900B591B84A5240085566C /* Reachability.swift */,
 				8F53ED0D1B6F6A1D00D99F41 /* LoadMore.swift */,
 				8F5FD9CF1B3AFBDC007E073C /* Utils.swift */,
 				8F5FD9D31B3AFDA0007E073C /* UIKitExtensions.swift */,
@@ -790,6 +796,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Device.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/HexColor.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SQLite.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Async.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -810,7 +817,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Fabric.framework/run 53fc9712e5de047419972713413240dd2b622b06 f78dcffa6cbcdd240cadde100dc677edd82bcbc18b55e01341087f06a7d3242c";
+			shellScript = "./Carthage/Build/iOS/Fabric.framework/run 53fc9712e5de047419972713413240dd2b622b06 f78dcffa6cbcdd240cadde100dc677edd82bcbc18b55e01341087f06a7d3242c";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -844,6 +851,7 @@
 				8F04CA181B7E4CAF000EE998 /* ProfileContainerViewController.swift in Sources */,
 				8F5FDA091B412DB2007E073C /* Constants.swift in Sources */,
 				8FA55BF11B387DD800BBA4A2 /* FeedNavViewController.swift in Sources */,
+				8F900B5C1B84AA3C0085566C /* LocationHelper.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
 				8F5FD9D11B3AFBDC007E073C /* Api.swift in Sources */,
 				8F04CA1A1B7E530A000EE998 /* DetailsContainerViewController.swift in Sources */,
@@ -851,6 +859,7 @@
 				8F464AFD1B4BC4BB00A66FA5 /* InsetLabel.swift in Sources */,
 				8F53ED0E1B6F6A1D00D99F41 /* LoadMore.swift in Sources */,
 				8F464B021B4C727200A66FA5 /* ExploreNavViewController.swift in Sources */,
+				8F900B5A1B84A5240085566C /* Reachability.swift in Sources */,
 				8F5FD9E21B3D4309007E073C /* ProfileViewModel.swift in Sources */,
 				A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */,
 				8F500CFC1B4D5F97002B9878 /* NavbarProtocols.swift in Sources */,

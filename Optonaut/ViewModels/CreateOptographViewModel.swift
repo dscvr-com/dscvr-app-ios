@@ -8,95 +8,96 @@
 
 import Foundation
 import ReactiveCocoa
-import CoreLocation
 import ObjectMapper
+import Async
 
-class CreateOptographViewModel: NSObject {
-    
-    let locationManager = CLLocationManager()
+class CreateOptographViewModel {
     
     let previewUrl = MutableProperty<String>("")
     let location = MutableProperty<String>("")
-    let latitude = MutableProperty<Float>(0)
-    let longitude = MutableProperty<Float>(0)
     let text = MutableProperty<String>("")
-    let pending = MutableProperty<Bool>(false)
+    let pending = MutableProperty<Bool>(true)
+    let publishedLater: MutableProperty<Bool>
     
-    var optograph: Optograph
+    private var optograph: Optograph
     
-    init(optograph: Optograph) {
-        self.optograph = optograph
+    init() {
+        // TODO add person reference
+        optograph = Optograph.newInstance() as! Optograph
         
-        super.init()
+        publishedLater = MutableProperty(!Reachability.connectedToNetwork())
         
-        locationManager.delegate = self
-        locationManager.startUpdatingLocation()
+        LocationHelper.location()
+            .on(next: { (lat, lon) in
+                self.optograph.location.latitude = lat
+                self.optograph.location.longitude = lon
+            })
+            .map { (lat, lon) in ["latitude": lat, "longitude": lon] }
+            .flatMap(.Latest) { parameters in Api<LocationMappable>.post("locations/lookup", parameters: parameters) }
+            .start(next: { locationData in
+                self.location.value = locationData.text
+            })
         
-        if CLLocationManager.authorizationStatus() != CLAuthorizationStatus.AuthorizedWhenInUse {
-            locationManager.requestWhenInUseAuthorization()
-        }
-            
+        text.producer.start(next: { self.optograph.text = $0 })
+        location.producer.start(next: { self.optograph.location.text = $0 })
+    }
+    
+    func saveImages(images: ImagePair) {
+        try! optograph.saveImages(images)
     }
     
     func post() -> SignalProducer<Optograph, NSError> {
         pending.value = true
+        saveToDatabase()
         
-        let (leftData, rightData) = optograph.loadImages()
-        let leftImageStr = leftData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-        let rightImageStr = rightData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        if !publishedLater.value {
+            Async.background {
+                self.optograph.publish().start()
+            }
+        }
         
-        let parameters = [
-            "text": text.value,
-            "left_image": leftImageStr,
-            "right_image": rightImageStr,
-            "location": [
-                "latitude": latitude.value,
-                "longitude": longitude.value,
-            ]
-        ]
+        return SignalProducer(value: optograph)
+    }
+    
+    private func saveToDatabase() {
+        let location = optograph.location
+        let personId = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonId.rawValue) as! UUID
         
-        return Api.post("optographs", parameters: parameters as? [String : AnyObject])
-            .on(
-                completed: {
-                    self.pending.value = false
-                }, error: { _ in
-                    self.pending.value = false
-                }
+        try! DatabaseManager.defaultConnection.run(
+            LocationTable.insert(or: .Replace,
+                LocationSchema.id <-- location.id,
+                LocationSchema.text <-- location.text,
+                LocationSchema.createdAt <-- location.createdAt,
+                LocationSchema.latitude <-- location.latitude,
+                LocationSchema.longitude <-- location.longitude
+            )
+        )
+        
+        try! DatabaseManager.defaultConnection.run(
+            OptographTable.insert(or: .Replace,
+                OptographSchema.id <-- optograph.id,
+                OptographSchema.text <-- optograph.text,
+                OptographSchema.personId <-- personId,
+                OptographSchema.createdAt <-- optograph.createdAt,
+                OptographSchema.isStarred <-- optograph.isStarred,
+                OptographSchema.starsCount <-- optograph.starsCount,
+                OptographSchema.commentsCount <-- optograph.commentsCount,
+                OptographSchema.viewsCount <-- optograph.viewsCount,
+                OptographSchema.locationId <-- location.id,
+                OptographSchema.isPublished <-- optograph.isPublished
+            )
         )
     }
 }
 
-// MARK: - CLLocationManagerDelegate
-extension CreateOptographViewModel: CLLocationManagerDelegate {
-    
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last {
-            let lat = Float(location.coordinate.latitude)
-            let lon = Float(location.coordinate.longitude)
-            latitude.value = lat
-            longitude.value = lon
-            let parameters = [
-                "latitude": lat,
-                "longitude": lon,
-            ]
-            Api<LocationMappable>.post("locations/lookup", parameters: parameters)
-                .start(next: { locationData in
-                    self.location.value = locationData.description
-                    self.locationManager.stopUpdatingLocation()
-                })
-        }
-    }
-    
-}
-
 private struct LocationMappable: Mappable {
-    var description = ""
+    var text = ""
     
     private static func newInstance() -> Mappable {
         return LocationMappable()
     }
     
     mutating func mapping(map: Map) {
-        description   <- map["description"]
+        text   <- map["text"]
     }
 }

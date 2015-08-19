@@ -7,6 +7,9 @@
 //
 
 import ObjectMapper
+import ReactiveCocoa
+
+typealias ImagePair = (left: NSData, right: NSData)
 
 struct Optograph: Model {
     
@@ -29,13 +32,14 @@ struct Optograph: Model {
         return NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/optographs/\(id)"
     }
     
-    func saveImages(leftImage left: NSData, rightImage right: NSData) throws {
+    func saveImages(images: ImagePair) throws {
+        let (left, right) = images
         try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
         left.writeToFile("\(path)/left.jpg", atomically: true)
         right.writeToFile("\(path)/right.jpg", atomically: true)
     }
     
-    func loadImages() -> (left: NSData, right: NSData) {
+    func loadImages() -> ImagePair {
         let left = NSData(contentsOfFile: "\(path)/left.jpg")
         let right = NSData(contentsOfFile: "\(path)/right.jpg")
         return (left: left!, right: right!)
@@ -52,6 +56,34 @@ struct Optograph: Model {
             let data = NSData(contentsOfURL: url!)
             data!.writeToFile("\(path)/\(side).jpg", atomically: true)
         }
+    }
+    
+    mutating func publish() -> SignalProducer<Optograph, NSError> {
+        assert(!isPublished)
+        
+        let parameters = SignalProducer<[String: AnyObject], NSError> { sink, disposable in
+            let (left, right) = self.loadImages()
+            var parameters = Mapper().toJSON(self)
+            
+            parameters["left_image"] = left.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            parameters["right_image"] = right.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            
+            sendNext(sink, parameters)
+            sendCompleted(sink)
+            
+            disposable.addDisposable {}
+        }
+        
+        return parameters.flatMap(.Latest) { Api.post("optographs", parameters: $0) }
+            .on(completed: {
+                self.isPublished = true
+                
+                try! DatabaseManager.defaultConnection.run(
+                    OptographTable.filter(OptographSchema.id ==- self.id).update(
+                        OptographSchema.isPublished <-- self.isPublished
+                    )
+                )
+            })
     }
 }
 

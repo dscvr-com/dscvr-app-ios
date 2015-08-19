@@ -10,11 +10,14 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import Async
 
 class DetailsViewModel {
     
     let id = MutableProperty<UUID>("")
     let isStarred = MutableProperty<Bool>(false)
+    let isPublished: MutableProperty<Bool>
+    let isPublishing = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let commentsCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
@@ -31,17 +34,12 @@ class DetailsViewModel {
     
     init(optographId: UUID) {
         
-//        if let optograph = realm.objectForPrimaryKey(Optograph.self, key: optographId) {
-//            self.optograph = optograph
-//            update()
-//        }
-        
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(OptographTable[OptographSchema.id] == optographId)
-        let optograph = DatabaseManager.defaultConnection.pluck(query).map { row -> Optograph in
+        guard let optograph = DatabaseManager.defaultConnection.pluck(query).map({ row -> Optograph in
             let person = Person(
                 id: row[PersonSchema.id],
                 email: row[PersonSchema.email],
@@ -75,77 +73,78 @@ class DetailsViewModel {
                 location: location,
                 isPublished: row[OptographSchema.isPublished]
             )
+        }) else {
+            fatalError("optograph can not be nil")
         }
         
-        if let optograph = optograph {
-            self.optograph = optograph
-            update()
+        // TODO remove
+        self.optograph = optograph
+        
+        isPublished = MutableProperty(optograph.isPublished)
+        
+        setOptograph(optograph)
+        
+        if !optograph.isPublished {
+            Api.get("optographs/\(optographId)")
+                .start(next: { (optograph: Optograph) in
+                    self.setOptograph(optograph)
+                    
+                    guard let person = optograph.person else {
+                        fatalError("person can not be nil")
+                    }
+                    
+                    try! DatabaseManager.defaultConnection.run(
+                        PersonTable.insert(or: .Replace,
+                            PersonSchema.id <- person.id,
+                            PersonSchema.email <- person.email,
+                            PersonSchema.fullName <- person.fullName,
+                            PersonSchema.userName <- person.userName,
+                            PersonSchema.text <- person.text,
+                            PersonSchema.followersCount <- person.followersCount,
+                            PersonSchema.followedCount <- person.followedCount,
+                            PersonSchema.isFollowed <- person.isFollowed,
+                            PersonSchema.createdAt <- person.createdAt,
+                            PersonSchema.wantsNewsletter <- person.wantsNewsletter
+                        )
+                    )
+                    
+                    let location = optograph.location
+                    
+                    try! DatabaseManager.defaultConnection.run(
+                        LocationTable.insert(or: .Replace,
+                            LocationSchema.id <- location.id,
+                            LocationSchema.text <- location.text,
+                            LocationSchema.createdAt <- location.createdAt,
+                            LocationSchema.latitude <- location.latitude,
+                            LocationSchema.longitude <- location.longitude
+                        )
+                    )
+                    
+                    try! DatabaseManager.defaultConnection.run(
+                        OptographTable.insert(or: .Replace,
+                            OptographSchema.id <- optograph.id,
+                            OptographSchema.text <- optograph.text,
+                            OptographSchema.personId <- person.id,
+                            OptographSchema.createdAt <- optograph.createdAt,
+                            OptographSchema.isStarred <- optograph.isStarred,
+                            OptographSchema.starsCount <- optograph.starsCount,
+                            OptographSchema.commentsCount <- optograph.commentsCount,
+                            OptographSchema.viewsCount <- optograph.viewsCount,
+                            OptographSchema.locationId <- location.id,
+                            OptographSchema.isPublished <- optograph.isPublished
+                        )
+                    )
+                })
         }
-        
-        Api.get("optographs/\(optographId)")
-            .start(next: { (optograph: Optograph) in
-                self.optograph = optograph
-                self.update()
-        
-                guard let person = optograph.person else {
-                    fatalError("person can not be nil")
-                }
-                
-                try! DatabaseManager.defaultConnection.run(
-                    PersonTable.insert(or: .Replace,
-                        PersonSchema.id <- person.id,
-                        PersonSchema.email <- person.email,
-                        PersonSchema.fullName <- person.fullName,
-                        PersonSchema.userName <- person.userName,
-                        PersonSchema.text <- person.text,
-                        PersonSchema.followersCount <- person.followersCount,
-                        PersonSchema.followedCount <- person.followedCount,
-                        PersonSchema.isFollowed <- person.isFollowed,
-                        PersonSchema.createdAt <- person.createdAt,
-                        PersonSchema.wantsNewsletter <- person.wantsNewsletter
-                    )
-                )
-                
-                let location = optograph.location
-                
-                try! DatabaseManager.defaultConnection.run(
-                    LocationTable.insert(or: .Replace,
-                        LocationSchema.id <- location.id,
-                        LocationSchema.text <- location.text,
-                        LocationSchema.createdAt <- location.createdAt,
-                        LocationSchema.latitude <- location.latitude,
-                        LocationSchema.longitude <- location.longitude
-                    )
-                )
-                
-                try! DatabaseManager.defaultConnection.run(
-                    OptographTable.insert(or: .Replace,
-                        OptographSchema.id <- optograph.id,
-                        OptographSchema.text <- optograph.text,
-                        OptographSchema.personId <- person.id,
-                        OptographSchema.createdAt <- optograph.createdAt,
-                        OptographSchema.isStarred <- optograph.isStarred,
-                        OptographSchema.starsCount <- optograph.starsCount,
-                        OptographSchema.commentsCount <- optograph.commentsCount,
-                        OptographSchema.viewsCount <- optograph.viewsCount,
-                        OptographSchema.locationId <- location.id,
-                        OptographSchema.isPublished <- optograph.isPublished
-                    )
-                )
-            })
     }
     
-    private func update() {
-        guard let optograph = optograph else {
-            fatalError("person can not be nil")
-        }
-        
+    private func setOptograph(optograph: Optograph) {
         guard let person = optograph.person else {
             fatalError("person can not be nil")
         }
         
         // TODO move to better location
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+        Async.background {
             try! optograph.downloadImages()
         }
         
@@ -200,6 +199,17 @@ class DetailsViewModel {
                 //                self.realm.write {
                 //                    self.optograph.viewsCount = self.viewsCount.value
                 //                }
+            })
+    }
+    
+    func publish() {
+        isPublishing.value = true
+        
+        optograph!.publish()
+            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
+            .start(completed: {
+                self.isPublished.value = true
+                self.isPublishing.value = false
             })
     }
     

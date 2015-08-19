@@ -16,7 +16,7 @@ public class NSDateTransform: TransformType {
     let dateFormatter = NSDateFormatter()
     
     public init() {
-        dateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZ"
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
     }
     
     public func transformFromJSON(value: AnyObject?) -> NSDate? {

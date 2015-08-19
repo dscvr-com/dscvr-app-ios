@@ -11,7 +11,7 @@ import ReactiveCocoa
 
 class CreateOptographViewController: UIViewController, RedNavbar {
     
-    let viewModel: CreateOptographViewModel
+    let viewModel = CreateOptographViewModel()
     
     // subviews
     let previewImageView = UIImageView()
@@ -19,10 +19,11 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     let descriptionView = KILabel()
     let textInputView = KMPlaceholderTextView()
     let lineView = UIView()
-    let loadingView = UIView()
     
-    required init(optograph: Optograph) {
-        viewModel = CreateOptographViewModel(optograph: optograph)
+    let stitchingSignalProducer: SignalProducer<(left: NSData, right: NSData), NoError>
+    
+    required init(signalProducer: SignalProducer<(left: NSData, right: NSData), NoError>) {
+        stitchingSignalProducer = signalProducer
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -45,14 +46,28 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         cancelButton.action = "cancel"
         navigationItem.setLeftBarButtonItem(cancelButton, animated: false)
         
-        let saveButton = UIBarButtonItem()
-        saveButton.title = "Post"
-        saveButton.setTitleTextAttributes(attributes, forState: .Normal)
-        saveButton.target = self
-        saveButton.action = "post"
-        navigationItem.setRightBarButtonItem(saveButton, animated: false)
+        let postButton = UIBarButtonItem()
+        postButton.title = "Post"
+        postButton.setTitleTextAttributes(attributes, forState: .Normal)
+        postButton.target = self
+        postButton.action = "post"
         
         navigationItem.title = "New Optograph"
+        
+        let spinnerView = UIActivityIndicatorView()
+        let spinnerButton = UIBarButtonItem(customView: spinnerView)
+        
+        viewModel.pending.producer
+            .start(next: { pending in
+                if pending {
+                    self.navigationItem.setRightBarButtonItem(spinnerButton, animated: true)
+                    spinnerView.startAnimating()
+                } else {
+                    self.navigationItem.setRightBarButtonItem(postButton, animated: true)
+                    spinnerView.stopAnimating()
+                }
+            })
+        
         
         viewModel.previewUrl.producer
             .start(next: { url in
@@ -82,11 +97,14 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         lineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(lineView)
         
-        loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
-        loadingView.rac_hidden <~ viewModel.pending.producer.map { !$0 }
-        view.addSubview(loadingView)
-        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
+        
+        stitchingSignalProducer
+            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)))
+            .start(next: { images in
+                self.viewModel.saveImages(images)
+                self.viewModel.pending.value = false
+            })
         
         view.setNeedsUpdateConstraints()
     }
@@ -108,8 +126,6 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         lineView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         lineView.autoSetDimension(.Height, toSize: 1)
-        
-        loadingView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
     }

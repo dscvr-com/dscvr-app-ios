@@ -24,6 +24,8 @@ class DetailsHeaderViewController: UIViewController {
     let userNameView = UILabel()
     let dateView = UILabel()
     let shareButtonView = UIButton()
+    let publishButtonView = UIButton()
+    let publishingIndicatorView = UIActivityIndicatorView()
     let starButtonView = UIButton()
     let starCountView = UILabel()
     let commentIconView = UILabel()
@@ -125,7 +127,24 @@ class DetailsHeaderViewController: UIViewController {
             }
             return RACSignal.empty()
         })
+        shareButtonView.rac_hidden <~ viewModel.isPublished.producer.map { !$0 }
         view.addSubview(shareButtonView)
+        
+        publishButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
+        publishButtonView.setTitle(String.icomoonWithName(.Retry), forState: .Normal)
+        publishButtonView.setTitleColor(BaseColor, forState: .Normal)
+        publishButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.viewModel.publish()
+            return RACSignal.empty()
+        })
+        
+        publishButtonView.rac_hidden <~ viewModel.isPublishing.producer.combineLatestWith(viewModel.isPublishing.producer).map { $0 || $1 }
+        view.addSubview(publishButtonView)
+        
+        publishingIndicatorView.hidesWhenStopped = true
+        publishingIndicatorView.activityIndicatorViewStyle = .Gray
+        publishingIndicatorView.rac_animating <~ viewModel.isPublishing
+        view.addSubview(publishingIndicatorView)
         
         starButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
         starButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
@@ -238,6 +257,12 @@ class DetailsHeaderViewController: UIViewController {
         shareButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView, withOffset: 12)
         shareButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
+        publishButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView, withOffset: 12)
+        publishButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        
+        publishingIndicatorView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView, withOffset: 16)
+        publishingIndicatorView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -23)
+        
         starButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 12)
         starButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         
@@ -279,5 +304,4 @@ class DetailsHeaderViewController: UIViewController {
         let profileContainerViewController = ProfileContainerViewController(personId: viewModel.personId.value)
         navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
-    
 }

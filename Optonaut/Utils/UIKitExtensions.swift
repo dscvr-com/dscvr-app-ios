@@ -19,6 +19,7 @@ struct AssociationKey {
     static var image: UInt8 = 7
     static var title: UInt8 = 8
     static var placeholder: UInt8 = 9
+    static var animating: UInt8 = 10
 }
 
 enum objc_AssociationPolicy : UInt {
@@ -143,6 +144,27 @@ extension UITextView: UITextViewDelegate {
             return property
         }
     }
+    
+}
+
+extension UIActivityIndicatorView {
+    
+    public var rac_animating: MutableProperty<Bool> {
+        return lazyAssociatedProperty(self, key: &AssociationKey.animating) {
+            
+            let property = MutableProperty<Bool>(false)
+            property.producer
+                .start(next: { animate in
+                    if animate {
+                        self.startAnimating()
+                    } else {
+                        self.stopAnimating()
+                    }
+                })
+            return property
+        }
+    }
+    
     
 }
 
