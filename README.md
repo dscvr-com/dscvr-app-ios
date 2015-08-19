@@ -13,8 +13,6 @@ Download and copy the needed frameworks into `Carthage/Build/iOS` by hand. I kno
 
 * [OpenCV 3](http://opencv.org/downloads.html)
   * `opencv2.framework`
-* [AWS](http://aws.amazon.com/mobile/sdk/)
-  * `AWSS3.framework`
-* [Realm](https://github.com/realm/realm-cocoa) - Clone via git and run `./build.sh ios-swift`
-  * `Realm.framework`
-  * `RealmSwift.framework`
+* [Crashlytics](https://fabric.io/kits/ios/crashlytics) - Install via Fabric OSX tool
+  * `Crashlytics.framework`
+  * `Fabric.framework`
