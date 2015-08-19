@@ -34,7 +34,7 @@ class ViewerViewController: UIViewController  {
         let rightScene = SCNScene()
         
         let camera = SCNCamera()
-        let fov = 65 as Double
+        let fov = 105 as Double
         camera.zNear = 0.01
         camera.zFar = 10000
         camera.xFov = fov

@@ -254,6 +254,8 @@
 		8FFCE4B81B4DBF1900832C88 /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabel.m; sourceTree = "<group>"; };
 		8FFCE4BA1B4EA9AC00832C88 /* ActivityTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityTableViewCell.swift; sourceTree = "<group>"; };
 		8FFCE4BC1B4EAA2300832C88 /* ActivityViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityViewModel.swift; sourceTree = "<group>"; };
+		A59923E71B8520B5000773D7 /* imageResizer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = imageResizer.hpp; sourceTree = "<group>"; };
+		A59923E81B8520DF000773D7 /* imageResizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageResizer.hpp; sourceTree = "<group>"; };
 		A5C1C0021B7E19E200DCD598 /* alignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = alignment.hpp; sourceTree = "<group>"; };
 		A5C1C0031B7E19E200DCD598 /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = image.cpp; sourceTree = "<group>"; };
 		A5C1C0041B7E19E200DCD598 /* image.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = image.hpp; sourceTree = "<group>"; };
@@ -623,6 +625,7 @@
 				A5C1C0021B7E19E200DCD598 /* alignment.hpp */,
 				A5C1C0031B7E19E200DCD598 /* image.cpp */,
 				A5C1C0041B7E19E200DCD598 /* image.hpp */,
+				A59923E81B8520DF000773D7 /* imageResizer.hpp */,
 				A5C1C0051B7E19E200DCD598 /* imageSelector.hpp */,
 				A5C1C0061B7E19E200DCD598 /* lib */,
 				A5C1C0071B7E19E200DCD598 /* monoStitcher.cpp */,
@@ -633,6 +636,7 @@
 				A5C1C00C1B7E19E200DCD598 /* simpleSeamer.hpp */,
 				A5C1C00D1B7E19E200DCD598 /* simpleSphereStitcher.cpp */,
 				A5C1C00E1B7E19E200DCD598 /* simpleSphereStitcher.hpp */,
+				A59923E71B8520B5000773D7 /* imageResizer.hpp */,
 				A5C1C00F1B7E19E200DCD598 /* streamAligner.hpp */,
 				A5C1C01E1B7E525200DCD598 /* intrinsics.hpp */,
 				A5C1C0101B7E19E200DCD598 /* support.cpp */,
