@@ -350,12 +350,12 @@ class CameraViewController: UIViewController {
         let signalProducer = SignalProducer<(left: NSData, right: NSData), NoError> { sink, disposable in
             let leftBuffer = self.stitcher.GetLeftResult()
             let leftCGImage = ImageBufferToCGImage(leftBuffer)
-            let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage), 1)
+            let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage), 0.8)
             self.stitcher.FreeImageBuffer(leftBuffer)
             
             let rightBuffer = self.stitcher.GetRightResult()
             let rightCGImage = ImageBufferToCGImage(rightBuffer)
-            let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage), 1)
+            let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage), 0.8)
             self.stitcher.FreeImageBuffer(rightBuffer)
             
             sendNext(sink, (left: leftImageData!, right: rightImageData!))
