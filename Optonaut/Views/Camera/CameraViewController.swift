@@ -341,6 +341,8 @@ class CameraViewController: UIViewController {
                         self.finish()
                     }
                 }
+                
+                debugHelper?.push(pixelBuffer, intrinsics: CameraIntrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
             }
 
         }
