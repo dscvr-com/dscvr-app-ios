@@ -55,9 +55,9 @@ class LoginViewModel {
         return Api.post("persons/login", parameters: parameters)
             .on(
                 next: { (loginData: LoginMappable) in
-                    NSUserDefaults.standardUserDefaults().setBool(true, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
-                    NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: PersonDefaultsKeys.PersonToken.rawValue)
-                    NSUserDefaults.standardUserDefaults().setObject(loginData.id, forKey: PersonDefaultsKeys.PersonId.rawValue)
+                    NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.PersonIsLoggedIn.rawValue)
+                    NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: UserDefaultsKeys.PersonToken.rawValue)
+                    NSUserDefaults.standardUserDefaults().setObject(loginData.id, forKey: UserDefaultsKeys.PersonId.rawValue)
                 },
                 completed: {
                     self.pending.value = false

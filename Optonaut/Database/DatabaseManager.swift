@@ -52,7 +52,7 @@ class DatabaseManager {
     ]
     
     static func prepare() throws {
-        let lastVersion = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.LastReleaseVersion.rawValue) as? String ?? ""
+        let lastVersion = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.LastReleaseVersion.rawValue) as? String ?? ""
         let newVersion = NSBundle.mainBundle().releaseVersionNumber
         let isNewVersion = lastVersion != newVersion
         

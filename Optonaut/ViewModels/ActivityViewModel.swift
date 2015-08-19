@@ -29,11 +29,11 @@ class ActivityViewModel {
         self.activity = activity
         
         activityType = ConstantProperty(activity.activityType)
-        creatorAvatarUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/avatars/\(activity.creator!.id).jpg")
+        creatorAvatarUrl = ConstantProperty("\(StaticFilePath)/avatars/\(activity.creator!.id).jpg")
         creatorId = ConstantProperty(activity.creator!.id)
         creatorUserName = ConstantProperty(activity.creator!.userName)
         timeSinceCreated = ConstantProperty(RoundedDuration(date: activity.createdAt).shortDescription())
-        optographUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(activity.optograph!.id).jpg")
+        optographUrl = ConstantProperty("\(StaticFilePath)/thumbs/thumb_\(activity.optograph!.id).jpg")
         optographId = ConstantProperty(activity.optograph?.id)
         isRead = MutableProperty(activity.isRead)
     }

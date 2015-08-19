@@ -23,7 +23,7 @@ class FeedViewModel: NSObject {
     override init() {
         super.init()
         
-//        let meId = NSUserDefaults.standardUserDefaults().integerForKey(PersonDefaultsKeys.PersonId.rawValue)
+//        let meId = NSUserDefaults.standardUserDefaults().integerForKey(UserDefaultsKeys.PersonId.rawValue)
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])

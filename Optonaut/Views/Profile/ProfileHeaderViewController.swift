@@ -33,7 +33,7 @@ class ProfileHeaderViewController: UIViewController {
     
     required init(personId: UUID) {
         viewModel = ProfileViewModel(id: personId)
-        isMe = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonId.rawValue) as! UUID == personId
+        isMe = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID == personId
         super.init(nibName: nil, bundle: nil)
     }
     

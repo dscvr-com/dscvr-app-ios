@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 import SQLite
-    
+
 enum RoundedDurationType: String {
     case Seconds = "seconds"
     case Minutes = "minutes"

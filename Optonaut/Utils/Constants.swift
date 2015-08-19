@@ -10,7 +10,26 @@ import Foundation
 import UIKit
 import Device
 
-enum PersonDefaultsKeys: String {
+
+enum EnvType {
+    case Development
+    case Staging
+    case Production
+}
+
+//let Env = EnvType.Development
+let Env = EnvType.Staging
+//let Env = EnvType.Production
+
+var StaticFilePath: String {
+    switch Env {
+    case .Development: return "http://optonaut-ios-beta-dev.s3.amazonaws.com"
+    case .Staging: return "http://optonaut-ios-beta-staging.s3.amazonaws.com"
+    case .Production: return "http://optonaut-ios-beta-production.s3.amazonaws.com"
+    }
+}
+
+enum UserDefaultsKeys: String {
     case PersonIsLoggedIn = "person_is_logged_in"
     case PersonToken = "person_token"
     case PersonId = "person_id"

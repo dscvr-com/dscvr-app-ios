@@ -52,7 +52,7 @@ struct Optograph: Model {
         
         try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
         for side in ["left", "right"] {
-            let url = NSURL(string: "http://optonaut-ios-beta-dev.s3.amazonaws.com/optographs/original/\(id)/\(side).jpg")
+            let url = NSURL(string: "\(StaticFilePath)/optographs/original/\(id)/\(side).jpg")
             let data = NSData(contentsOfURL: url!)
             data!.writeToFile("\(path)/\(side).jpg", atomically: true)
         }

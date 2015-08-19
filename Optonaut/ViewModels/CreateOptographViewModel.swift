@@ -61,7 +61,7 @@ class CreateOptographViewModel {
     
     private func saveToDatabase() {
         let location = optograph.location
-        let personId = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonId.rawValue) as! UUID
+        let personId = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
         
         try! DatabaseManager.defaultConnection.run(
             LocationTable.insert(or: .Replace,

@@ -11,13 +11,6 @@ import Alamofire
 import ReactiveCocoa
 import ObjectMapper
 
-let host = "beta.api.optonaut.com"
-//let host = "e1540956.ngrok.io"
-let port = 80
-//let host = "192.168.2.102"
-//let host = "localhost"
-//let port = 3000
-
 struct EmptyResponse: Mappable {
     static func newInstance() -> Mappable {
         return EmptyResponse()
@@ -27,6 +20,22 @@ struct EmptyResponse: Mappable {
 }
 
 class Api<T: Mappable> {
+    
+    private static var host: String {
+        switch Env {
+        case .Development: return "optonaut.ngrok.io"
+        case .Staging: return "beta.api.optonaut.com"
+        case .Production: return "beta.api.optonaut.com"
+        }
+    }
+    
+    private static var port: Int {
+        switch Env {
+        case .Development: return 3000
+        case .Staging: return 80
+        case .Production: return 80
+        }
+    }
     
     static func get(endpoint: String) -> SignalProducer<T, NSError> {
         return request(endpoint, method: .GET, parameters: nil)
@@ -56,7 +65,7 @@ class Api<T: Mappable> {
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
             
-            if let token = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonToken.rawValue) as? String {
+            if let token = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonToken.rawValue) as? String {
                 mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
             

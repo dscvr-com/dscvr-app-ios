@@ -22,8 +22,8 @@ class EditProfileViewModel {
     let wantsNewsletter = MutableProperty<Bool>(false)
     
     init() {
-        let id = NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.PersonId.rawValue) as! UUID
-        debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(PersonDefaultsKeys.DebugEnabled.rawValue)
+        let id = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
+        debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue)
         
         let query = PersonTable.filter(PersonTable[PersonSchema.id] == id)
         let person = DatabaseManager.defaultConnection.pluck(query).map { row in
@@ -64,7 +64,7 @@ class EditProfileViewModel {
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
         text.value = person.text
-        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-images/thumb/\(person.id).jpg"
+        avatarUrl.value = "\(StaticFilePath)/profile-images/thumb/\(person.id).jpg"
     }
     
     func updateData() -> SignalProducer<EmptyResponse, NSError> {
@@ -106,7 +106,7 @@ class EditProfileViewModel {
     
     func toggleDebug() {
         debugEnabled.value = !debugEnabled.value
-        NSUserDefaults.standardUserDefaults().setBool(debugEnabled.value, forKey: PersonDefaultsKeys.DebugEnabled.rawValue)
+        NSUserDefaults.standardUserDefaults().setBool(debugEnabled.value, forKey: UserDefaultsKeys.DebugEnabled.rawValue)
     }
     
     func toggleNewsletter() {

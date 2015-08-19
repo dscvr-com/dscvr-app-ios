@@ -154,8 +154,8 @@ class DetailsViewModel {
         commentsCount.value = optograph.commentsCount
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
-        detailsUrl.value = "http://beem-parts.s3.amazonaws.com/thumbs/details_\(optograph.id).jpg"
-        avatarUrl.value = "https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-images/thumb/\(person.id).jpg"
+        detailsUrl.value = "\(StaticFilePath)/thumbs/details_\(optograph.id).jpg"
+        avatarUrl.value = "\(StaticFilePath)/profile-images/thumb/\(person.id).jpg"
         fullName.value = person.fullName
         userName.value = "@\(person.userName)"
         personId.value = person.id

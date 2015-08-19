@@ -15,7 +15,7 @@ class CameraViewModel {
     let debugEnabled: ConstantProperty<Bool>
     
     init() {
-        debugEnabled = ConstantProperty(NSUserDefaults.standardUserDefaults().boolForKey(PersonDefaultsKeys.DebugEnabled.rawValue))
+        debugEnabled = ConstantProperty(NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue))
     }
     
 }

@@ -39,8 +39,8 @@ class OptographViewModel {
         }
         
         id = ConstantProperty(optograph.id)
-        previewUrl = ConstantProperty("http://beem-parts.s3.amazonaws.com/thumbs/thumb_\(optograph.id).jpg")
-        avatarUrl = ConstantProperty("https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-images/thumb/\(person.id).jpg")
+        previewUrl = ConstantProperty("\(StaticFilePath)/thumbs/thumb_\(optograph.id).jpg")
+        avatarUrl = ConstantProperty("\(StaticFilePath)/profile-images/thumb/\(person.id).jpg")
         fullName = ConstantProperty(person.fullName)
         userName = ConstantProperty("@\(person.userName)")
         personId = ConstantProperty(person.id)

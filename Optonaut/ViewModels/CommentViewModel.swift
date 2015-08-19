@@ -24,7 +24,7 @@ class CommentViewModel {
         }
         
         text = ConstantProperty(comment.text)
-        avatarUrl = ConstantProperty("https://s3-eu-west-1.amazonaws.com/optonaut-ios-beta-dev/profile-images/thumb/\(person.id).jpg")
+        avatarUrl = ConstantProperty("\(StaticFilePath)/profile-images/thumb/\(person.id).jpg")
         fullName = ConstantProperty(person.fullName)
         userName = ConstantProperty("@\(person.userName)")
         personId = ConstantProperty(person.id)

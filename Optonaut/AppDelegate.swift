@@ -26,8 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupAppearanceDefaults()
         
-        if NSUserDefaults.standardUserDefaults().objectForKey(PersonDefaultsKeys.DebugEnabled.rawValue) == nil {
-            NSUserDefaults.standardUserDefaults().setBool(false, forKey: PersonDefaultsKeys.DebugEnabled.rawValue)
+        if NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.DebugEnabled.rawValue) == nil {
+            NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.DebugEnabled.rawValue)
         }
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             window.backgroundColor = UIColor.whiteColor()
             
-            let userIsLoggedIn = NSUserDefaults.standardUserDefaults().boolForKey(PersonDefaultsKeys.PersonIsLoggedIn.rawValue);
+            let userIsLoggedIn = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.PersonIsLoggedIn.rawValue);
             if userIsLoggedIn {
                 window.rootViewController = TabBarViewController()
             } else {
@@ -47,15 +47,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         if let version = NSBundle.mainBundle().releaseVersionNumber {
-            NSUserDefaults.standardUserDefaults().setObject(version, forKey: PersonDefaultsKeys.LastReleaseVersion.rawValue)
+            NSUserDefaults.standardUserDefaults().setObject(version, forKey: UserDefaultsKeys.LastReleaseVersion.rawValue)
         }
         
         return true
     }
     
     func onNotificationLogout() {
-        NSUserDefaults.standardUserDefaults().setObject("", forKey: PersonDefaultsKeys.PersonToken.rawValue)
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: PersonDefaultsKeys.PersonIsLoggedIn.rawValue)
+        NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.PersonToken.rawValue)
+        NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.PersonIsLoggedIn.rawValue)
         
         try! DatabaseManager.reset()
         
