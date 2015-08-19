@@ -48,22 +48,23 @@ class ViewerViewController: UIViewController  {
         rightCameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         rightScene.rootNode.addChildNode(rightCameraNode)
         
+        let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
         let (leftData, rightData) = optograph.loadImages()
         
-        let leftImage = UIImage(data: leftData)!.imageRotatedByDegrees(0, flip: true)
+        let leftImage = UIImage(data: leftData)
         let leftSphereGeometry = SCNSphere(radius: 5.0)
-        leftSphereGeometry.firstMaterial?.diffuse.contents = leftImage
+        leftSphereGeometry.firstMaterial?.diffuse.contents = leftImage!
         leftSphereGeometry.firstMaterial?.doubleSided = true
         let leftSphereNode = SCNNode(geometry: leftSphereGeometry)
-        leftSphereNode.transform = SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0)
+        leftSphereNode.transform = transform
         leftScene.rootNode.addChildNode(leftSphereNode)
         
-        let rightImage = UIImage(data: rightData)!.imageRotatedByDegrees(0, flip: true)
+        let rightImage = UIImage(data: rightData)
         let rightSphereGeometry = SCNSphere(radius: 5.0)
-        rightSphereGeometry.firstMaterial?.diffuse.contents = rightImage.CGImage!
+        rightSphereGeometry.firstMaterial?.diffuse.contents = rightImage!
         rightSphereGeometry.firstMaterial?.doubleSided = true
         let rightSphereNode = SCNNode(geometry: rightSphereGeometry)
-        rightSphereNode.transform = SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0)
+        rightSphereNode.transform = transform
         rightScene.rootNode.addChildNode(rightSphereNode)
         
         let width = view.bounds.width

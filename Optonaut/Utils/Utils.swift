@@ -9,13 +9,6 @@
 import Foundation
 import UIKit
 import ReactiveCocoa
-import HexColor
-
-let BaseColor = UIColor(0xef4836)
-
-func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icomoon) {
-    tabBarItem.title = String.icomoonWithName(icon)
-}
     
 enum RoundedDurationType: String {
     case Seconds = "seconds"
@@ -100,42 +93,6 @@ func calcTextHeight(text: String, withWidth width: CGFloat) -> CGFloat {
     return textRect.height
 }
 
-extension Array {
-    
-    func subArray(end: Int) -> Array {
-        if self.isEmpty {
-            return self
-        }
-        
-        let endIndex = min(self.count, end)
-        return Array(self[0..<endIndex])
-    }
-
-    func toDictionary<K, V>(transformer: (element: Array.Element) -> (key: K, value: V)?) -> Dictionary<K, V> {
-        return self.reduce([:]) {
-            (var dict, e) in
-            if let (key, value) = transformer(element: e)
-            {
-                dict[key] = value
-            }
-            return dict
-        }
-    }
-    
-    func unique<T: Equatable>() -> [T] {
-        var result = [T]()
-        
-        for item in self {
-            if !result.contains(item as! T) {
-                result.append(item as! T)
-            }
-        }
-        
-        return result
-    }
-    
-}
-
 class NotificationSignal {
     
     private let (signal, sink) = Signal<Void, NoError>.pipe()
@@ -171,62 +128,8 @@ extension String {
     }
 }
 
-class Utility{
-    class func classNameAsString(obj: Any) -> String {
-        //prints more readable results for dictionaries, arrays, Int, etc
-        return _stdlib_getDemangledTypeName(obj).componentsSeparatedByString(".").last!
-    }
-}
-
-extension UIImage {
-    public func imageRotatedByDegrees(degrees: CGFloat, flip: Bool) -> UIImage {
-        let degreesToRadians: (CGFloat) -> CGFloat = {
-            return $0 / 180.0 * CGFloat(M_PI)
-        }
-        
-        // calculate the size of the rotated view's containing box for our drawing space
-        let rotatedViewBox = UIView(frame: CGRect(origin: CGPointZero, size: size))
-        let t = CGAffineTransformMakeRotation(degreesToRadians(degrees));
-        rotatedViewBox.transform = t
-        let rotatedSize = rotatedViewBox.frame.size
-        
-        // Create the bitmap context
-        UIGraphicsBeginImageContext(rotatedSize)
-        let bitmap = UIGraphicsGetCurrentContext()
-        
-        // Move the origin to the middle of the image so we will rotate and scale around the center.
-        CGContextTranslateCTM(bitmap, rotatedSize.width / 2.0, rotatedSize.height / 2.0);
-        
-        //   // Rotate the image context
-        CGContextRotateCTM(bitmap, degreesToRadians(degrees));
-        
-        // Now, draw the rotated/scaled image into the context
-        var yFlip: CGFloat
-        
-        if(flip){
-            yFlip = CGFloat(-1.0)
-        } else {
-            yFlip = CGFloat(1.0)
-        }
-        
-        CGContextScaleCTM(bitmap, yFlip, -1.0)
-        CGContextDrawImage(bitmap, CGRectMake(-size.width / 2, -size.height / 2, size.width, size.height), CGImage)
-        
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return newImage
-    }
-}
-
 extension NSBundle {
-    
     var releaseVersionNumber: String? {
         return self.infoDictionary?["CFBundleShortVersionString"] as? String
     }
-    
-    var buildVersionNumber: String? {
-        return self.infoDictionary?["CFBundleVersion"] as? String
-    }
-    
 }

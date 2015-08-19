@@ -81,6 +81,8 @@
 		8F900B431B839D0C0085566C /* PersonTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3F1B839D0C0085566C /* PersonTable.swift */; };
 		8F900B451B839D7A0085566C /* LocationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B441B839D7A0085566C /* LocationTable.swift */; };
 		8F900B471B839E690085566C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B461B839E690085566C /* Location.swift */; };
+		8F900B571B8479250085566C /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B551B8479250085566C /* Crashlytics.framework */; };
+		8F900B581B8479250085566C /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B561B8479250085566C /* Fabric.framework */; };
 		8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9A4FF41B39DF85009C4548 /* Refresher.framework */; };
 		8F9A4FF81B39E992009C4548 /* ProfileHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF71B39E992009C4548 /* ProfileHeaderViewController.swift */; };
 		8F9A4FFA1B39EA41009C4548 /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */; };
@@ -208,6 +210,10 @@
 		8F900B3F1B839D0C0085566C /* PersonTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonTable.swift; sourceTree = "<group>"; };
 		8F900B441B839D7A0085566C /* LocationTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTable.swift; sourceTree = "<group>"; };
 		8F900B461B839E690085566C /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		8F900B4D1B83DD9F0085566C /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
+		8F900B4E1B83DD9F0085566C /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		8F900B551B8479250085566C /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/iOS/Crashlytics.framework; sourceTree = "<group>"; };
+		8F900B561B8479250085566C /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/iOS/Fabric.framework; sourceTree = "<group>"; };
 		8F9A4FF41B39DF85009C4548 /* Refresher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Refresher.framework; path = Carthage/Build/iOS/Refresher.framework; sourceTree = "<group>"; };
 		8F9A4FF71B39E992009C4548 /* ProfileHeaderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewController.swift; sourceTree = "<group>"; };
 		8F9A4FF91B39EA41009C4548 /* ProfileNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNavViewController.swift; sourceTree = "<group>"; };
@@ -274,6 +280,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F900B571B8479250085566C /* Crashlytics.framework in Frameworks */,
+				8F900B581B8479250085566C /* Fabric.framework in Frameworks */,
 				8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */,
 				8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */,
 				8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */,
@@ -301,6 +309,10 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F900B551B8479250085566C /* Crashlytics.framework */,
+				8F900B561B8479250085566C /* Fabric.framework */,
+				8F900B4D1B83DD9F0085566C /* Fabric.framework */,
+				8F900B4E1B83DD9F0085566C /* Crashlytics.framework */,
 				8FA66BA41B80905C00EE5D44 /* SQLite.framework */,
 				8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */,
 				8FBDE8B11B5D186800C78486 /* Device.framework */,
@@ -658,6 +670,7 @@
 				8FCCA0281B3806040091F1B1 /* Frameworks */,
 				8FCCA0291B3806040091F1B1 /* Resources */,
 				8F7738061B38098B001F642B /* Carthage */,
+				8F900B481B83DC720085566C /* Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -784,6 +797,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+		8F900B481B83DC720085566C /* Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Crashlytics;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run 53fc9712e5de047419972713413240dd2b622b06 f78dcffa6cbcdd240cadde100dc677edd82bcbc18b55e01341087f06a7d3242c";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -992,6 +1019,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1025,6 +1053,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Optonaut/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
