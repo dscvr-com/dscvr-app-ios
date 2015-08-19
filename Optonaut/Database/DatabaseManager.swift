@@ -13,11 +13,6 @@ protocol ModelSchema {
     var id: Expression<UUID> { get }
 }
 
-protocol Migration {
-    static func up() -> String
-    static func down() -> String
-}
-
 extension NSDate {
     class func fromDatatypeValue(stringValue: String) -> NSDate {
         return SQLDateFormatter.dateFromString(stringValue)!
@@ -25,10 +20,6 @@ extension NSDate {
     var datatypeValue: String {
         return SQLDateFormatter.stringFromDate(self)
     }
-}
-
-protocol Migrateable {
-    func migrate() -> String
 }
 
 let SQLDateFormatter: NSDateFormatter = {
@@ -50,40 +41,44 @@ class DatabaseManager {
         OptographMigration,
         PersonMigration,
     ]
+    private static let tables = [
+        CommentTable,
+        LocationTable,
+        OptographTable,
+        PersonTable,
+    ]
     
     static func prepare() throws {
+        // set database connection instance
+        defaultConnection = try Connection(path)
+        
+        // enable console logging
+        defaultConnection.trace(print)
+        
         let lastVersion = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.LastReleaseVersion.rawValue) as? String ?? ""
         let newVersion = NSBundle.mainBundle().releaseVersionNumber
         let isNewVersion = lastVersion != newVersion
         
-        // remove old database if new version
+        // reset database if new version available
         if isNewVersion {
-            try removeDatabaseFile()
+            try reset()
         }
-        
-        let db = try Connection(path)
-        
-        // enable console logging
-        db.trace(print)
-        
-        // migrate database if new version
-        if isNewVersion {
-            for migration in migrations {
-                try db.run(migration())
-            }
-        }
-        
-        defaultConnection = db
     }
     
     static func reset() throws {
-        try removeDatabaseFile()
-        try prepare()
+        try dropAllTables()
+        try migrate()
     }
     
-    private static func removeDatabaseFile() throws {
-        if NSFileManager.defaultManager().fileExistsAtPath(path) {
-            try NSFileManager.defaultManager().removeItemAtPath(path)
+    private static func dropAllTables() throws {
+        for table in tables {
+            try defaultConnection.run(table.drop(ifExists: true))
+        }
+    }
+    
+    private static func migrate() throws {
+        for migration in migrations {
+            try defaultConnection.run(migration())
         }
     }
     

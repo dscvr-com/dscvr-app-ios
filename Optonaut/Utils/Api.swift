@@ -31,7 +31,7 @@ class Api<T: Mappable> {
     
     private static var port: Int {
         switch Env {
-        case .Development: return 3000
+        case .Development: return 80
         case .Staging: return 80
         case .Production: return 80
         }
