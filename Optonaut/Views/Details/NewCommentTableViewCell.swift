@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactiveCocoa
+import KMPlaceholderTextView
 
 class NewCommentTableViewCell: UITableViewCell {
     

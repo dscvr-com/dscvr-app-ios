@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import KMPlaceholderTextView
 
 class CreateOptographViewController: UIViewController, RedNavbar {
     
