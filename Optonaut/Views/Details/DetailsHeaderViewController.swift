@@ -138,7 +138,7 @@ class DetailsHeaderViewController: UIViewController {
             return RACSignal.empty()
         })
         
-        publishButtonView.rac_hidden <~ viewModel.isPublishing.producer.combineLatestWith(viewModel.isPublishing.producer).map { $0 || $1 }
+        publishButtonView.rac_hidden <~ viewModel.isPublished.producer.combineLatestWith(viewModel.isPublishing.producer).map { $0 || $1 }
         view.addSubview(publishButtonView)
         
         publishingIndicatorView.hidesWhenStopped = true

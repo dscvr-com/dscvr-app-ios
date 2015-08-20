@@ -77,6 +77,11 @@ class DetailsViewModel {
             fatalError("optograph can not be nil")
         }
         
+        // TODO move to better location
+        Async.background {
+            try! optograph.downloadImages()
+        }
+        
         // TODO remove
         self.optograph = optograph
         
@@ -141,11 +146,6 @@ class DetailsViewModel {
     private func setOptograph(optograph: Optograph) {
         guard let person = optograph.person else {
             fatalError("person can not be nil")
-        }
-        
-        // TODO move to better location
-        Async.background {
-            try! optograph.downloadImages()
         }
         
         id.value = optograph.id

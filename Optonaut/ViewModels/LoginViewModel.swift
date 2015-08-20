@@ -44,7 +44,7 @@ class LoginViewModel {
     func login() -> SignalProducer<Void, NSError> {
         pending.value = true
         
-        var parameters = ["email": "", "user_name": "", "password": self.password.value]
+        var parameters: [String: AnyObject] = ["email": "", "user_name": "", "password": self.password.value]
         
         if self.emailOrUserName.value.rangeOfString("@") != nil {
             parameters["email"] = self.emailOrUserName.value
@@ -52,9 +52,9 @@ class LoginViewModel {
             parameters["user_name"] = self.emailOrUserName.value
         }
         
-        return Api.post("persons/login", parameters: parameters)
+        return Api<LoginMappable>.post("persons/login", parameters: parameters)
             .on(
-                next: { (loginData: LoginMappable) in
+                next: { loginData in
                     NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.PersonIsLoggedIn.rawValue)
                     NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: UserDefaultsKeys.PersonToken.rawValue)
                     NSUserDefaults.standardUserDefaults().setObject(loginData.id, forKey: UserDefaultsKeys.PersonId.rawValue)
@@ -66,6 +66,23 @@ class LoginViewModel {
                     self.pending.value = false
                 }
             )
+            .flatMap(.Latest) { loginData in Api<Person>.get("persons/\(loginData.id)") }
+            .on(next: { person in
+                try! DatabaseManager.defaultConnection.run(
+                    PersonTable.insert(or: .Replace,
+                        PersonSchema.id <-- person.id,
+                        PersonSchema.email <-- person.email,
+                        PersonSchema.fullName <-- person.fullName,
+                        PersonSchema.userName <-- person.userName,
+                        PersonSchema.text <-- person.text,
+                        PersonSchema.followersCount <-- person.followersCount,
+                        PersonSchema.followedCount <-- person.followedCount,
+                        PersonSchema.isFollowed <-- person.isFollowed,
+                        PersonSchema.createdAt <-- person.createdAt,
+                        PersonSchema.wantsNewsletter <-- person.wantsNewsletter
+                    )
+                )
+            })
             .flatMap(.Latest) { _ in SignalProducer(value: ()) }
     }
     

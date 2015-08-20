@@ -17,7 +17,7 @@ class CreateOptographViewModel {
     let location = MutableProperty<String>("")
     let text = MutableProperty<String>("")
     let pending = MutableProperty<Bool>(true)
-    let publishedLater: MutableProperty<Bool>
+    let publishLater: MutableProperty<Bool>
     
     private var optograph: Optograph
     
@@ -25,7 +25,7 @@ class CreateOptographViewModel {
         // TODO add person reference
         optograph = Optograph.newInstance() as! Optograph
         
-        publishedLater = MutableProperty(!Reachability.connectedToNetwork())
+        publishLater = MutableProperty(!Reachability.connectedToNetwork())
         
         LocationHelper.location()
             .on(next: { (lat, lon) in
@@ -50,7 +50,7 @@ class CreateOptographViewModel {
         pending.value = true
         saveToDatabase()
         
-        if !publishedLater.value {
+        if !publishLater.value {
             Async.background {
                 self.optograph.publish().start()
             }
