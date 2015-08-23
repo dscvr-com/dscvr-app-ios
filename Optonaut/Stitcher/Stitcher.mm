@@ -84,7 +84,7 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
     self->isDebug = false,
-    self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics);
+    self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, ImageSelector::ModeCenter, true);
     return self;
 }
 
