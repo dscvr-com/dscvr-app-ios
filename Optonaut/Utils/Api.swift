@@ -78,9 +78,9 @@ class Api<T: Mappable> {
                             NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
                         }
                         if let data = data {
-                            print(data)
+                            //print(data)
                         }
-                        print(error)
+                        //print(error)
                         sendError(sink, error)
                     } else {
                         if let data = data where data.length > 0 {
@@ -94,11 +94,11 @@ class Api<T: Mappable> {
                                     }
                                 } else {
                                     let error = NSError(domain: "JSON couldn't be mapped to type T", code: 0, userInfo: nil)
-                                    print(error)
+                                    //print(error)
                                     sendError(sink, error)
                                 }
                             } catch let error {
-                                print(error)
+                                //print(error)
                                 sendError(sink, error as NSError)
                             }
                         }

@@ -30,6 +30,16 @@ void ImageBufferToCVMat(ImageBuffer image, cv::Mat &output) {
     cv::cvtColor(Mat(image.height, image.width, CV_8UC4, image.data), output, COLOR_RGBA2RGB);
 }
 
+optonaut::ImageRef ImageBufferToImageRef(ImageBuffer image) {
+    optonaut::ImageRef ref;
+    ref.data = image.data;
+    ref.width = image.width;
+    ref.height = image.height;
+    ref.colorSpace = optonaut::colorspace::RGBA;
+    
+    return ref;
+}
+
 ImageBuffer CVMatToImageBuffer(const cv::Mat &input) {
     Mat converted(input.rows, input.cols, CV_8UC4);
     cv::cvtColor(input, converted, COLOR_RGB2RGBA);
@@ -73,13 +83,16 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
 -(id)init {
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
+    self->isDebug = false,
     self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics);
     return self;
 }
 
 - (void)Push:(GLKMatrix4)extrinsics :(ImageBuffer)image {
     optonaut::ImageP oImage(new optonaut::Image());
-    ImageBufferToCVMat(image, oImage->img);
+    //Nu-Uh. No more copying. Save some memory. 
+    //ImageBufferToCVMat(image, oImage->img);
+    oImage->dataRef = ImageBufferToImageRef(image);
     oImage->intrinsics = intrinsics;
     oImage->id = 0;
     GLK4ToCVMat(extrinsics, oImage->extrinsics);
@@ -135,6 +148,7 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
     return pipe->AreAdjacent(ConvertSelectionPoint(a), ConvertSelectionPoint(b));
 }
 - (void)EnableDebug:(NSString*)path {
+    assert(false);
     debugPath = std::string([path UTF8String]);
     isDebug = true;
 }

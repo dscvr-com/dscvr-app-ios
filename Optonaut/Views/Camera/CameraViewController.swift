@@ -223,7 +223,7 @@ class CameraViewController: UIViewController {
     }
     
     private func setupSelectionPoints() {
-        print("Adding points")
+        
         let points = stitcher.GetSelectionPoints().map( { (wrapped: NSValue) -> SelectionPoint in
             var point = SelectionPoint()
             wrapped.getValue(&point)
@@ -302,7 +302,7 @@ class CameraViewController: UIViewController {
             
             debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
             
-            // No, that's not a good idea.
+            // Take transform from the stitcher. 
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
             
             if(stitcher.IsPreviewImageValialble()) {
