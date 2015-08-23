@@ -76,7 +76,7 @@ class CameraViewController: UIViewController {
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         session = AVCaptureSession()
-        session.sessionPreset = AVCaptureSessionPreset640x480
+        session.sessionPreset = AVCaptureSessionPresetHigh
         
         
         //stitcher.EnableDebug(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0])
