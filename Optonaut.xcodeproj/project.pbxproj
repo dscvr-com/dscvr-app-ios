@@ -258,7 +258,6 @@
 		8FFCE4BC1B4EAA2300832C88 /* ActivityViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityViewModel.swift; sourceTree = "<group>"; };
 		A59923E71B8520B5000773D7 /* imageResizer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = imageResizer.hpp; sourceTree = "<group>"; };
 		A59923E81B8520DF000773D7 /* imageResizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageResizer.hpp; sourceTree = "<group>"; };
-		A5C1C0021B7E19E200DCD598 /* alignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = alignment.hpp; sourceTree = "<group>"; };
 		A5C1C0031B7E19E200DCD598 /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = image.cpp; sourceTree = "<group>"; };
 		A5C1C0041B7E19E200DCD598 /* image.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = image.hpp; sourceTree = "<group>"; };
 		A5C1C0051B7E19E200DCD598 /* imageSelector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSelector.hpp; sourceTree = "<group>"; };
@@ -281,6 +280,7 @@
 		A5C1C0221B7F33BD00DCD598 /* Stitcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Stitcher.mm; path = Stitcher/Stitcher.mm; sourceTree = "<group>"; };
 		A5C1C0231B7F33BD00DCD598 /* StitcherUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StitcherUtils.swift; path = Stitcher/StitcherUtils.swift; sourceTree = "<group>"; };
 		A5DF584E1B81FC4A000DA118 /* asyncAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncAligner.hpp; sourceTree = "<group>"; };
+		A5FE6B691B8A630A005B0E0E /* aligner.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = aligner.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -636,7 +636,7 @@
 			isa = PBXGroup;
 			children = (
 				A5DF584E1B81FC4A000DA118 /* asyncAligner.hpp */,
-				A5C1C0021B7E19E200DCD598 /* alignment.hpp */,
+				A5FE6B691B8A630A005B0E0E /* aligner.hpp */,
 				A5C1C0031B7E19E200DCD598 /* image.cpp */,
 				A5C1C0041B7E19E200DCD598 /* image.hpp */,
 				A59923E81B8520DF000773D7 /* imageResizer.hpp */,

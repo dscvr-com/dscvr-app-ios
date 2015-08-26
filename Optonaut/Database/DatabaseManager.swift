@@ -53,7 +53,7 @@ class DatabaseManager {
         defaultConnection = try Connection(path)
         
         // enable console logging
-        defaultConnection.trace(print)
+        //defaultConnection.trace(print)
         
         let lastVersion = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.LastReleaseVersion.rawValue) as? String ?? ""
         let newVersion = NSBundle.mainBundle().releaseVersionNumber

@@ -76,7 +76,7 @@ class CameraViewController: UIViewController {
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         session = AVCaptureSession()
-        session.sessionPreset = AVCaptureSessionPreset640x480
+        session.sessionPreset = AVCaptureSessionPresetHigh
         
         
         //stitcher.EnableDebug(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0])
@@ -223,7 +223,7 @@ class CameraViewController: UIViewController {
     }
     
     private func setupSelectionPoints() {
-        print("Adding points")
+        
         let points = stitcher.GetSelectionPoints().map( { (wrapped: NSValue) -> SelectionPoint in
             var point = SelectionPoint()
             wrapped.getValue(&point)
@@ -302,7 +302,7 @@ class CameraViewController: UIViewController {
             
             debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
             
-            // No, that's not a good idea.
+            // Take transform from the stitcher. 
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
             
             if(stitcher.IsPreviewImageValialble()) {
@@ -341,10 +341,9 @@ class CameraViewController: UIViewController {
                         self.finish()
                     }
                 }
-                
-                debugHelper?.push(pixelBuffer, intrinsics: CameraIntrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
             }
-
+            
+            //debugHelper?.push(pixelBuffer, intrinsics: CameraIntrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
         }
     }
     

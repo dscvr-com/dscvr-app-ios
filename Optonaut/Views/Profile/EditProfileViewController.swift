@@ -328,7 +328,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
                     self.navigationController?.popViewControllerAnimated(false)
                 },
                 error: { err in
-                    print(err)
+                    //print(err)
                 }
         )
     }
