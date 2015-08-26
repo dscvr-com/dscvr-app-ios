@@ -12,9 +12,9 @@ import ReactiveCocoa
 
 typealias Coordinate = (latitude: Double, longitude: Double)
 
-class LocationHelper: NSObject {
+class LocationService: NSObject {
     
-    private static let sharedInstance = LocationHelper()
+    private static let sharedInstance = LocationService()
     
     private let locationManager = CLLocationManager()
     private var callback: (Coordinate -> ())?
@@ -46,7 +46,7 @@ class LocationHelper: NSObject {
 }
 
 // MARK: - CLLocationManagerDelegate
-extension LocationHelper: CLLocationManagerDelegate {
+extension LocationService: CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {

@@ -29,6 +29,7 @@ class DetailsViewModel {
     let personId = MutableProperty<UUID>("")
     let text = MutableProperty<String>("")
     let location = MutableProperty<String>("")
+    let downloadProgress = MutableProperty<Float>(0)
     
     var optograph: Optograph?
     
@@ -77,15 +78,33 @@ class DetailsViewModel {
             fatalError("optograph can not be nil")
         }
         
-        // TODO move to better location
-        Async.background {
-            try! optograph.downloadImages()
+        isPublished = MutableProperty(optograph.isPublished)
+        
+        if !optograph.downloaded {
+            var leftProgress: Float = 0
+            var rightProgress: Float = 0
+            for side in ["left", "right"] {
+                let url = "\(StaticFilePath)/optographs/original/\(optograph.id)/\(side).jpg"
+                let path = "\(optograph.path)/\(side).jpg"
+                
+                try! NSFileManager.defaultManager().createDirectoryAtPath(optograph.path, withIntermediateDirectories: true, attributes: nil)
+            
+                DownloadService.download(from: url, to: path)
+                    .observe(next: { progress in
+                        if side == "left" {
+                            leftProgress = progress
+                        } else {
+                            rightProgress = progress
+                        }
+                        self.downloadProgress.value = leftProgress / 2 + rightProgress / 2
+                    })
+            }
+        } else {
+            downloadProgress.value = 1
         }
         
         // TODO remove
         self.optograph = optograph
-        
-        isPublished = MutableProperty(optograph.isPublished)
         
         setOptograph(optograph)
         

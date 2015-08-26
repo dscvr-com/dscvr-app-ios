@@ -28,7 +28,7 @@ struct Optograph: Model {
         return NSFileManager.defaultManager().fileExistsAtPath("\(path)/left.jpg") && NSFileManager.defaultManager().fileExistsAtPath("\(path)/right.jpg")
     }
     
-    private var path: String {
+    var path: String {
         return NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/optographs/\(id)"
     }
     
@@ -43,19 +43,6 @@ struct Optograph: Model {
         let left = NSData(contentsOfFile: "\(path)/left.jpg")
         let right = NSData(contentsOfFile: "\(path)/right.jpg")
         return (left: left!, right: right!)
-    }
-    
-    func downloadImages(forceDownload: Bool = false) throws {
-        if downloaded {
-            return
-        }
-        
-        try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
-        for side in ["left", "right"] {
-            let url = NSURL(string: "\(StaticFilePath)/optographs/original/\(id)/\(side).jpg")
-            let data = NSData(contentsOfURL: url!)
-            data!.writeToFile("\(path)/\(side).jpg", atomically: true)
-        }
     }
     
     mutating func publish() -> SignalProducer<Optograph, NSError> {

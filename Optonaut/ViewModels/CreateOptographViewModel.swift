@@ -27,7 +27,7 @@ class CreateOptographViewModel {
         
         publishLater = MutableProperty(!Reachability.connectedToNetwork())
         
-        LocationHelper.location()
+        LocationService.location()
             .on(next: { (lat, lon) in
                 self.optograph.location.latitude = lat
                 self.optograph.location.longitude = lon

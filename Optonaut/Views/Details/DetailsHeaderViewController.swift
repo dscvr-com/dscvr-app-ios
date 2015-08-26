@@ -10,6 +10,7 @@ import UIKit
 import ReactiveCocoa
 import WebImage
 import CoreMotion
+import Async
 
 class DetailsHeaderViewController: UIViewController {
     
@@ -20,6 +21,7 @@ class DetailsHeaderViewController: UIViewController {
     let locationView = InsetLabel()
     let maximizeButtonView = UIButton()
     let avatarImageView = UIImageView()
+    let progressView = UIProgressView()
     let fullNameView = UILabel()
     let userNameView = UILabel()
     let dateView = UILabel()
@@ -77,6 +79,17 @@ class DetailsHeaderViewController: UIViewController {
             return RACSignal.empty()
         })
         view.addSubview(maximizeButtonView)
+        
+        progressView.progressViewStyle = UIProgressViewStyle.Bar
+        progressView.progressTintColor = BaseColor
+        progressView.rac_hidden <~ viewModel.downloadProgress.producer.observeOn(QueueScheduler.mainQueueScheduler).map { $0 == 1 }
+        viewModel.downloadProgress.producer
+            .start(next: { progress in
+                Async.main {
+                    self.progressView.setProgress(progress, animated: true)
+                }
+            })
+        view.addSubview(progressView)
         
         viewModel.avatarUrl.producer
             .start(next: { url in
@@ -244,6 +257,9 @@ class DetailsHeaderViewController: UIViewController {
         avatarImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView, withOffset: 15)
         avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: detailsImageView, withOffset: 19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+        
+        progressView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView)
+        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
         
         fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
         fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
