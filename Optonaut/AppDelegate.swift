@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
-        Fabric.with([Crashlytics()])
+        Fabric.with([Crashlytics.self()])
         
         try! DatabaseManager.prepare()
         

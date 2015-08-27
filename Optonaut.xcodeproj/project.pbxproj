@@ -100,6 +100,9 @@
 		8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */; };
 		8FAB9F8A1B8F05BD00B4C8CB /* IcomoonExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */; };
 		8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */; };
+		8FAB9F921B8F484700B4C8CB /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F901B8F484700B4C8CB /* CWStatusBarNotification.swift */; };
+		8FAB9F931B8F484700B4C8CB /* CWStatusBarNotificationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F911B8F484700B4C8CB /* CWStatusBarNotificationUtils.swift */; };
+		8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */; };
 		8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */; };
 		8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7411B8E3D7900656D99 /* LocationService.swift */; };
 		8FB3B7441B8E3DAA00656D99 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */; };
@@ -227,6 +230,9 @@
 		8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIFontExtensions.swift; sourceTree = "<group>"; };
 		8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IcomoonExtension.swift; sourceTree = "<group>"; };
 		8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateExtensions.swift; sourceTree = "<group>"; };
+		8FAB9F901B8F484700B4C8CB /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
+		8FAB9F911B8F484700B4C8CB /* CWStatusBarNotificationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotificationUtils.swift; sourceTree = "<group>"; };
+		8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HexColor.framework; path = Carthage/Build/iOS/HexColor.framework; sourceTree = "<group>"; };
 		8FB3B7411B8E3D7900656D99 /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
@@ -543,6 +549,15 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		8FAB9F8F1B8F484700B4C8CB /* CWStatusBarNotification */ = {
+			isa = PBXGroup;
+			children = (
+				8FAB9F901B8F484700B4C8CB /* CWStatusBarNotification.swift */,
+				8FAB9F911B8F484700B4C8CB /* CWStatusBarNotificationUtils.swift */,
+			);
+			path = CWStatusBarNotification;
+			sourceTree = "<group>";
+		};
 		8FB3B7401B8E3D5E00656D99 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -550,6 +565,7 @@
 				8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */,
 				8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */,
 				8FB3B7411B8E3D7900656D99 /* LocationService.swift */,
+				8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */,
 			);
 			name = Services;
 			path = Optonaut/Services;
@@ -652,6 +668,7 @@
 			isa = PBXGroup;
 			children = (
 				8FD7F85C1B5924D5001680AA /* Stitcher */,
+				8FAB9F8F1B8F484700B4C8CB /* CWStatusBarNotification */,
 				8FFCE4B71B4DBF1900832C88 /* KILabel.h */,
 				8FFCE4B81B4DBF1900832C88 /* KILabel.m */,
 			);
@@ -814,6 +831,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FAB9F931B8F484700B4C8CB /* CWStatusBarNotificationUtils.swift in Sources */,
 				8F900B451B839D7A0085566C /* LocationTable.swift in Sources */,
 				8FAB9F471B8F01DF00B4C8CB /* FeedTableViewController.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
@@ -848,6 +866,7 @@
 				8FAB9F3F1B8F01DF00B4C8CB /* DetailsViewModel.swift in Sources */,
 				8FAB9F801B8F03E800B4C8CB /* UIKitExtensions.swift in Sources */,
 				8FAB9F3C1B8F01DF00B4C8CB /* CommentViewModel.swift in Sources */,
+				8FAB9F921B8F484700B4C8CB /* CWStatusBarNotification.swift in Sources */,
 				A5C1C0161B7E19E200DCD598 /* image.cpp in Sources */,
 				A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */,
 				8FAB9F841B8F045600B4C8CB /* SQLiteWrapper.swift in Sources */,
@@ -884,6 +903,7 @@
 				8FAB9F3B1B8F01DF00B4C8CB /* CommentTableViewController.swift in Sources */,
 				8F900B421B839D0C0085566C /* OptographTable.swift in Sources */,
 				8FAB9F781B8F02D500B4C8CB /* Stitcher.mm in Sources */,
+				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
 				8FAB9F381B8F01DF00B4C8CB /* RefreshAnimator.swift in Sources */,
 				8FAB9F351B8F01DF00B4C8CB /* OptographTableViewCell.swift in Sources */,
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,

@@ -48,7 +48,6 @@ class ExploreViewModel {
                     self.resultsLoading.value = false
                 }
         )
-        
     }
     
     private func processNewOptograph(optograph: Optograph) {

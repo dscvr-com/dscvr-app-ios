@@ -10,6 +10,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import Crashlytics
 
 class ProfileViewModel {
     
@@ -23,6 +24,12 @@ class ProfileViewModel {
     let avatarUrl = MutableProperty<String>("")
     
     init(id: UUID) {
+        
+        Answers.logContentViewWithName("Profile \(id)",
+            contentType: "Profile",
+            contentId: "profile-\(id)",
+            customAttributes: [:])
+        
         // TODO check if really needed here
         self.id.value = id
         

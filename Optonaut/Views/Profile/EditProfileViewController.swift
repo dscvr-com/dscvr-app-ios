@@ -323,14 +323,10 @@ class EditProfileViewController: UIViewController, RedNavbar {
     
     func save() {
         viewModel.updateData()
-            .start(
-                completed: {
-                    self.navigationController?.popViewControllerAnimated(false)
-                },
-                error: { err in
-                    //print(err)
-                }
-        )
+            .start(completed: {
+                self.navigationController?.popViewControllerAnimated(false)
+                NotificationService.push("Profile information updated", level: .Success)
+            })
     }
     
     func showPasswordAlert() {
@@ -401,10 +397,15 @@ class EditProfileViewController: UIViewController, RedNavbar {
 }
 
 extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)
-        
+    
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
-        viewModel.updateAvatar(image).start()
+        viewModel.updateAvatar(image)
+            .start(completed: {
+                NotificationService.push("Profile image updated", level: .Success)
+            })
     }
+    
 }

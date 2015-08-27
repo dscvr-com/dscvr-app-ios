@@ -11,6 +11,7 @@ import Foundation
 import ReactiveCocoa
 import SQLite
 import Async
+import Crashlytics
 
 class DetailsViewModel {
     
@@ -34,6 +35,11 @@ class DetailsViewModel {
     var optograph: Optograph?
     
     init(optographId: UUID) {
+        
+        Answers.logContentViewWithName("Optograph \(optographId)",
+            contentType: "Optograph",
+            contentId: "optograph-\(optographId)",
+            customAttributes: [:])
         
         let query = OptographTable
             .select(*)

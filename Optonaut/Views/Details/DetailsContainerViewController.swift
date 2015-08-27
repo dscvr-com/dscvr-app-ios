@@ -16,6 +16,7 @@ class DetailsContainerViewController: UIViewController {
     let headerView: UIView
     
     required init(optographId: UUID) {
+        
         tableViewController = CommentTableViewController(optographId: optographId)
         tableView = tableViewController.view
         

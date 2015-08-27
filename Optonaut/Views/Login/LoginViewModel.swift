@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import ObjectMapper
+import Crashlytics
 
 class LoginViewModel {
     
@@ -46,10 +47,11 @@ class LoginViewModel {
         
         var parameters: [String: AnyObject] = ["email": "", "user_name": "", "password": self.password.value]
         
-        if self.emailOrUserName.value.rangeOfString("@") != nil {
-            parameters["email"] = self.emailOrUserName.value
+        let usesEmail = emailOrUserName.value.rangeOfString("@") != nil
+        if usesEmail {
+            parameters["email"] = emailOrUserName.value
         } else {
-            parameters["user_name"] = self.emailOrUserName.value
+            parameters["user_name"] = emailOrUserName.value
         }
         
         return ApiService<LoginMappable>.post("persons/login", parameters: parameters)
@@ -61,8 +63,10 @@ class LoginViewModel {
                 },
                 completed: {
                     self.pending.value = false
+                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: true, customAttributes: [:])
                 },
                 error: { error in
+                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: false, customAttributes: [:])
                     self.pending.value = false
                 }
             )
