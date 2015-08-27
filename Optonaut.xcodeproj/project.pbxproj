@@ -99,6 +99,7 @@
 		8FAB9F861B8F047700B4C8CB /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F851B8F047700B4C8CB /* ApiService.swift */; };
 		8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */; };
 		8FAB9F8A1B8F05BD00B4C8CB /* IcomoonExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */; };
+		8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */; };
 		8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */; };
 		8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7411B8E3D7900656D99 /* LocationService.swift */; };
 		8FB3B7441B8E3DAA00656D99 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */; };
@@ -225,6 +226,7 @@
 		8FAB9F851B8F047700B4C8CB /* ApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
 		8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIFontExtensions.swift; sourceTree = "<group>"; };
 		8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IcomoonExtension.swift; sourceTree = "<group>"; };
+		8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateExtensions.swift; sourceTree = "<group>"; };
 		8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HexColor.framework; path = Carthage/Build/iOS/HexColor.framework; sourceTree = "<group>"; };
 		8FB3B7411B8E3D7900656D99 /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 		8FAB9EEC1B8F01DF00B4C8CB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8FAB9F281B8F01DF00B4C8CB /* TabBarViewController.swift */,
 				8FAB9EED1B8F01DF00B4C8CB /* Activity */,
 				8FAB9EF31B8F01DF00B4C8CB /* Camera */,
 				8FAB9EF81B8F01DF00B4C8CB /* Common */,
@@ -381,7 +384,6 @@
 				8FAB9F171B8F01DF00B4C8CB /* Login */,
 				8FAB9F1E1B8F01DF00B4C8CB /* Profile */,
 				8FAB9F271B8F01DF00B4C8CB /* Search */,
-				8FAB9F281B8F01DF00B4C8CB /* TabBarViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -533,6 +535,7 @@
 			children = (
 				8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */,
 				8FAB9F811B8F041F00B4C8CB /* LoadMoreExtension.swift */,
+				8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */,
 				8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */,
 				8FAB9F7D1B8F03BE00B4C8CB /* UIKitRACExtensions.swift */,
 				8FAB9F7F1B8F03E800B4C8CB /* UIKitExtensions.swift */,
@@ -869,6 +872,7 @@
 				8FAB9F2E1B8F01DF00B4C8CB /* CameraViewController.swift in Sources */,
 				8FAB9F481B8F01DF00B4C8CB /* FeedViewModel.swift in Sources */,
 				8F900B401B839D0C0085566C /* CommentTable.swift in Sources */,
+				8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				8FAB9F501B8F01DF00B4C8CB /* RequestInviteViewController.swift in Sources */,
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,

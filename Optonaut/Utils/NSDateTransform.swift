@@ -13,22 +13,16 @@ public class NSDateTransform: TransformType {
     public typealias Object = NSDate
     public typealias JSON = String
     
-    let dateFormatter = NSDateFormatter()
-    
-    public init() {
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-    }
-    
     public func transformFromJSON(value: AnyObject?) -> NSDate? {
         if let str = value as? String {
-            return dateFormatter.dateFromString(str)
+            return NSDate.fromRFC3339String(str)
         }
         return nil
     }
     
     public func transformToJSON(value: NSDate?) -> String? {
-        if let value = value {
-            return dateFormatter.stringFromDate(value)
+        if let date = value {
+            return date.toRFC3339String()
         }
         return nil
     }

@@ -20,20 +20,12 @@ protocol SQLiteModel {
 
 extension NSDate {
     class func fromDatatypeValue(stringValue: String) -> NSDate {
-        return SQLDateFormatter.dateFromString(stringValue)!
+        return NSDate.fromRFC3339String(stringValue)!
     }
     var datatypeValue: String {
-        return SQLDateFormatter.stringFromDate(self)
+        return self.toRFC3339String()
     }
 }
-
-let SQLDateFormatter: NSDateFormatter = {
-    let formatter = NSDateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-    formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
-    formatter.timeZone = NSTimeZone(forSecondsFromGMT: 0)
-    return formatter
-    }()
 
 class DatabaseManager {
     
