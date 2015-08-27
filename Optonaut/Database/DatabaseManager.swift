@@ -13,6 +13,11 @@ protocol ModelSchema {
     var id: Expression<UUID> { get }
 }
 
+protocol SQLiteModel {
+    static func fromSQL(row: Row) -> Self
+    func toSQL() -> [Setter]
+}
+
 extension NSDate {
     class func fromDatatypeValue(stringValue: String) -> NSDate {
         return SQLDateFormatter.dateFromString(stringValue)!

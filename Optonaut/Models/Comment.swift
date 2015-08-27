@@ -13,7 +13,7 @@ struct Comment: Model {
     var id: UUID
     var text: String
     var createdAt: NSDate
-    var person: Person?
+    var person: Person
     var optograph: Optograph?
 }
 
@@ -24,7 +24,7 @@ extension Comment: Mappable {
             id: uuid(),
             text: "",
             createdAt: NSDate(),
-            person: nil,
+            person: Person.newInstance() as! Person,
             optograph: nil
         )
     }
@@ -35,6 +35,29 @@ extension Comment: Mappable {
         person      <- map["person"]
         optograph   <- map["optograph"]
         createdAt   <- (map["created_at"], NSDateTransform())
+    }
+    
+}
+
+extension Comment: SQLiteModel {
+    
+    static func fromSQL(row: SQLiteRow) -> Comment {
+        return Comment(
+            id: row[CommentSchema.id],
+            text: row[CommentSchema.text],
+            createdAt: row[CommentSchema.createdAt],
+            person: Person.newInstance() as! Person,
+            optograph: nil
+        )
+    }
+    
+    func toSQL() -> [SQLiteSetter] {
+        return [
+            CommentSchema.id <-- id,
+            CommentSchema.text <-- text,
+            CommentSchema.createdAt <-- createdAt,
+            CommentSchema.personId <-- person.id,
+        ]
     }
     
 }

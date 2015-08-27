@@ -12,8 +12,6 @@ import ReactiveCocoa
 
 class OptographViewModel {
     
-//    let realm = try! Realm()
-    
     let id: ConstantProperty<UUID>
     let previewUrl: ConstantProperty<String>
     let avatarUrl: ConstantProperty<String>
@@ -34,16 +32,12 @@ class OptographViewModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        guard let person = optograph.person else {
-            fatalError("person can not be nil")
-        }
-        
         id = ConstantProperty(optograph.id)
         previewUrl = ConstantProperty("\(StaticFilePath)/thumbs/thumb_\(optograph.id).jpg")
-        avatarUrl = ConstantProperty("\(StaticFilePath)/profile-images/thumb/\(person.id).jpg")
-        fullName = ConstantProperty(person.fullName)
-        userName = ConstantProperty("@\(person.userName)")
-        personId = ConstantProperty(person.id)
+        avatarUrl = ConstantProperty("\(StaticFilePath)/profile-images/thumb/\(optograph.person.id).jpg")
+        fullName = ConstantProperty(optograph.person.fullName)
+        userName = ConstantProperty("@\(optograph.person.userName)")
+        personId = ConstantProperty(optograph.person.id)
         text = ConstantProperty(optograph.text)
         location = ConstantProperty(optograph.location.text)
         
@@ -63,8 +57,8 @@ class OptographViewModel {
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
             .flatMap(.Latest) { starredBefore in
                 starredBefore
-                    ? Api<EmptyResponse>.delete("optographs/\(self.id.value)/star")
-                    : Api<EmptyResponse>.post("optographs/\(self.id.value)/star", parameters: nil)
+                    ? ApiService<EmptyResponse>.delete("optographs/\(self.id.value)/star")
+                    : ApiService<EmptyResponse>.post("optographs/\(self.id.value)/star", parameters: nil)
             }
             .start(
                 completed: {

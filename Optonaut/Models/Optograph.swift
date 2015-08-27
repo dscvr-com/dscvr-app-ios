@@ -15,7 +15,7 @@ struct Optograph: Model {
     
     var id: UUID
     var text: String
-    var person: Person?
+    var person: Person
     var createdAt: NSDate
     var isStarred: Bool
     var starsCount: Int
@@ -61,7 +61,7 @@ struct Optograph: Model {
             disposable.addDisposable {}
         }
         
-        return parameters.flatMap(.Latest) { Api.post("optographs", parameters: $0) }
+        return parameters.flatMap(.Latest) { ApiService.post("optographs", parameters: $0) }
             .on(completed: {
                 self.isPublished = true
                 
@@ -80,7 +80,7 @@ extension Optograph: Mappable {
         return Optograph(
             id: uuid(),
             text: "",
-            person: nil,
+            person: Person.newInstance() as! Person,
             createdAt: NSDate(),
             isStarred: false,
             starsCount: 0,
@@ -105,6 +105,40 @@ extension Optograph: Mappable {
         commentsCount   <- map["comments_count"]
         viewsCount      <- map["views_count"]
         location        <- map["location"]
+    }
+    
+}
+
+extension Optograph: SQLiteModel {
+    
+    static func fromSQL(row: SQLiteRow) -> Optograph {
+        return Optograph(
+            id: row[OptographSchema.id],
+            text: row[OptographSchema.text],
+            person: Person.newInstance() as! Person,
+            createdAt: row[OptographSchema.createdAt],
+            isStarred: row[OptographSchema.isStarred],
+            starsCount: row[OptographSchema.starsCount],
+            commentsCount: row[OptographSchema.commentsCount],
+            viewsCount: row[OptographSchema.viewsCount],
+            location: Location.newInstance() as! Location,
+            isPublished: row[OptographSchema.isPublished]
+        )
+    }
+    
+    func toSQL() -> [SQLiteSetter] {
+        return [
+            OptographSchema.id <-- id,
+            OptographSchema.text <-- text,
+            OptographSchema.personId <-- person.id,
+            OptographSchema.createdAt <-- createdAt,
+            OptographSchema.isStarred <-- isStarred,
+            OptographSchema.starsCount <-- starsCount,
+            OptographSchema.commentsCount <-- commentsCount,
+            OptographSchema.viewsCount <-- viewsCount,
+            OptographSchema.locationId <-- location.id,
+            OptographSchema.isPublished <-- isPublished
+        ]
     }
     
 }

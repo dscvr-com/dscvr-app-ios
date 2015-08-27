@@ -203,7 +203,7 @@ class DetailsHeaderViewController: UIViewController {
         textView.rac_text <~ viewModel.text
         textView.userHandleLinkTapHandler = { label, handle, range in
 //            let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
-//            Api.get("persons/user-name/\(userName)")
+//            ApiService.get("persons/user-name/\(userName)")
 //                .start(next: { person in
 //                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
 //                })

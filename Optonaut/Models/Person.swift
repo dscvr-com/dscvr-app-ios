@@ -53,3 +53,37 @@ extension Person: Mappable {
     }
     
 }
+
+extension Person: SQLiteModel {
+    
+    static func fromSQL(row: SQLiteRow) -> Person {
+        return Person(
+            id: row[PersonSchema.id],
+            email: row[PersonSchema.email],
+            fullName: row[PersonSchema.fullName],
+            userName: row[PersonSchema.userName],
+            text: row[PersonSchema.text],
+            followersCount: row[PersonSchema.followersCount],
+            followedCount: row[PersonSchema.followedCount],
+            isFollowed: row[PersonSchema.isFollowed],
+            createdAt: row[PersonSchema.createdAt],
+            wantsNewsletter: row[PersonSchema.wantsNewsletter]
+        )
+    }
+    
+    func toSQL() -> [SQLiteSetter] {
+        return [
+            PersonSchema.id <-- id,
+            PersonSchema.email <-- email,
+            PersonSchema.fullName <-- fullName,
+            PersonSchema.userName <-- userName,
+            PersonSchema.text <-- text,
+            PersonSchema.followersCount <-- followersCount,
+            PersonSchema.followedCount <-- followedCount,
+            PersonSchema.isFollowed <-- isFollowed,
+            PersonSchema.createdAt <-- createdAt,
+            PersonSchema.wantsNewsletter <-- wantsNewsletter
+        ]
+    }
+    
+}

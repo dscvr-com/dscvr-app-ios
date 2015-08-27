@@ -46,24 +46,11 @@ class ProfileViewModel {
             setPerson(person)
         }
     
-        Api.get("persons/\(id)")
+        ApiService.get("persons/\(id)")
             .start(next: { (person: Person) in
                 self.setPerson(person)
                 
-                try! DatabaseManager.defaultConnection.run(
-                    PersonTable.insert(or: .Replace,
-                        PersonSchema.id <- person.id,
-                        PersonSchema.email <- person.email,
-                        PersonSchema.fullName <- person.fullName,
-                        PersonSchema.userName <- person.userName,
-                        PersonSchema.text <- person.text,
-                        PersonSchema.followersCount <- person.followersCount,
-                        PersonSchema.followedCount <- person.followedCount,
-                        PersonSchema.isFollowed <- person.isFollowed,
-                        PersonSchema.createdAt <- person.createdAt,
-                        PersonSchema.wantsNewsletter <- person.wantsNewsletter
-                    )
-                )
+                try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, person.toSQL()))
             })
     }
     
@@ -73,12 +60,12 @@ class ProfileViewModel {
         isFollowed.value = !followedBefore
         
         if followedBefore {
-            Api<EmptyResponse>.delete("persons/\(id.value)/follow")
+            ApiService<EmptyResponse>.delete("persons/\(id.value)/follow")
                 .start(error: { _ in
                     self.isFollowed.value = followedBefore
                 })
         } else {
-            Api<EmptyResponse>.post("persons/\(id.value)/follow", parameters: nil)
+            ApiService<EmptyResponse>.post("persons/\(id.value)/follow", parameters: nil)
                 .start(error: { _ in
                     self.isFollowed.value = followedBefore
                 })

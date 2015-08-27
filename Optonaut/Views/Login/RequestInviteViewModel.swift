@@ -1,15 +1,15 @@
 //
-//  ForgotPasswordViewModel.swift
+//  RequestInviteViewModel.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 8/14/15.
-//  Copyright © 2015 Optonaut. All rights reserved.
+//  Created by Johannes Schickling on 7/6/15.
+//  Copyright (c) 2015 Optonaut. All rights reserved.
 //
 
 import Foundation
 import ReactiveCocoa
 
-class ForgotPasswordViewModel {
+class RequestInviteViewModel {
     
     let email = MutableProperty<String>("")
     let emailValid = MutableProperty<Bool>(false)
@@ -22,11 +22,11 @@ class ForgotPasswordViewModel {
             })
     }
     
-    func sendEmail() -> SignalProducer<EmptyResponse, NSError> {
+    func requestInvite() -> SignalProducer<EmptyResponse, NSError> {
         pending.value = true
         
         let parameters = ["email": email.value]
-        return Api.post("persons/forgot-password", parameters: parameters)
+        return ApiService.post("persons/request-invite", parameters: parameters)
             .on(
                 completed: { _ in
                     self.pending.value = false

@@ -25,15 +25,15 @@ class ActivitiesViewModel: NSObject {
 //        results.value = realm.objects(Activity).sorted("createdAt", ascending: false).map(identity).subArray(20)
         
 //        refreshNotificationSignal.subscribe {
-//            Api.get("activities")
+//            ApiService.get("activities")
 //                .map { Mapper<Activity>().mapArray($0)! }
-//                .start(next: self.processApi)
+//                .start(next: self.processModel)
 //        }
 //        
 //        loadMoreNotificationSignal.subscribe {
-//            Api.get("activities?offset=\(results.value.count)")
+//            ApiService.get("activities?offset=\(results.value.count)")
 //                .map { Mapper<Activity>().mapArray($0)! }
-//                .start(next: self.processApi)
+//                .start(next: self.processModel)
 //        }
         
         refreshNotificationSignal.notify()
@@ -44,7 +44,7 @@ class ActivitiesViewModel: NSObject {
         refreshNotificationSignal.notify()
     }
     
-    private func processApi(activities: [Activity]) {
+    private func processModel(activities: [Activity]) {
 //        realm.write {
 //            self.realm.add(activities, update: true)
 //        }

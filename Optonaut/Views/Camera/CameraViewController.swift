@@ -58,7 +58,7 @@ class CameraViewController: UIViewController {
     let intrinsics = CameraIntrinsics
     
     
-    var debugHelper: CameraDebugHelper?
+    var debugHelper: CameraDebugService?
     var edges = [Edge: SCNNode]()
     
     // subviews
@@ -136,7 +136,7 @@ class CameraViewController: UIViewController {
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         
         if viewModel.debugEnabled.value {
-            debugHelper = CameraDebugHelper()
+            debugHelper = CameraDebugService()
         }
         
         frameCount = 0

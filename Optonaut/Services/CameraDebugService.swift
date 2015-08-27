@@ -1,5 +1,5 @@
 //
-//  CameraDebugHelper.swift
+//  CameraDebugService.swift
 //  Optonaut
 //
 //  Created by Johannes Schickling on 7/17/15.
@@ -11,7 +11,7 @@ import CoreMedia
 import ImageIO
 import MobileCoreServices
 
-class CameraDebugHelper {
+class CameraDebugService {
     
     var timestamp: NSTimeInterval
     var path: String
@@ -23,7 +23,7 @@ class CameraDebugHelper {
         let dir = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, .AllDomainsMask, true)[0]
         path = dir.stringByAppendingPathComponent("\(timestamp)/")
         
-        queue = dispatch_queue_create("cameraDebugHelperQueue", DISPATCH_QUEUE_CONCURRENT)
+        queue = dispatch_queue_create("CameraDebugServiceQueue", DISPATCH_QUEUE_CONCURRENT)
         
         dispatch_async(queue) {
             try! NSFileManager.defaultManager().createDirectoryAtPath(self.path, withIntermediateDirectories: true, attributes: nil)

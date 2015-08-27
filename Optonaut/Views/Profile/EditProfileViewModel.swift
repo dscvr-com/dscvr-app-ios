@@ -45,7 +45,7 @@ class EditProfileViewModel {
             setPerson(person)
         }
         
-        Api.get("persons/\(id)").start(next: setPerson)
+        ApiService.get("persons/\(id)").start(next: setPerson)
         
         userName.producer
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
@@ -53,7 +53,7 @@ class EditProfileViewModel {
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
             .start(next: { userName in
                 let parameters = ["user_name": userName]
-                Api<EmptyResponse>.post("persons/me/check-user-name", parameters: parameters)
+                ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: parameters)
                     .start(error: { _ in self.userNameTaken.value = true })
             })
     }
@@ -75,7 +75,7 @@ class EditProfileViewModel {
             "wants_newsletter": wantsNewsletter.value,
         ]
         
-        return Api.put("persons/me", parameters: parameters as? [String : AnyObject])
+        return ApiService.put("persons/me", parameters: parameters as? [String : AnyObject])
     }
     
     func updateAvatar(image: UIImage) -> SignalProducer<EmptyResponse, NSError> {
@@ -83,20 +83,20 @@ class EditProfileViewModel {
         let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         
         let parameters = ["profile_image": str!]
-        return Api.post("persons/me/upload-profile-image", parameters: parameters)
+        return ApiService.post("persons/me/upload-profile-image", parameters: parameters)
     }
     
     func updatePassword(currentPassword: String, newPassword: String) {
         let parameters = ["current": currentPassword, "new": newPassword]
         
-        Api<EmptyResponse>.post("persons/me/change-password", parameters: parameters)
+        ApiService<EmptyResponse>.post("persons/me/change-password", parameters: parameters)
             .start()
     }
     
     func updateEmail(email: String) {
         let parameters = ["email": email]
         
-        Api<EmptyResponse>.post("persons/me/change-email", parameters: parameters)
+        ApiService<EmptyResponse>.post("persons/me/change-email", parameters: parameters)
             .start(
                 completed: {
                     self.email.value = email

@@ -19,15 +19,11 @@ class CommentViewModel {
     let timeSinceCreated = MutableProperty<String>("")
     
     init(comment: Comment) {
-        guard let person = comment.person else {
-            fatalError("person can not be nil")
-        }
-        
         text = ConstantProperty(comment.text)
-        avatarUrl = ConstantProperty("\(StaticFilePath)/profile-images/thumb/\(person.id).jpg")
-        fullName = ConstantProperty(person.fullName)
-        userName = ConstantProperty("@\(person.userName)")
-        personId = ConstantProperty(person.id)
+        avatarUrl = ConstantProperty("\(StaticFilePath)/profile-images/thumb/\(comment.person.id).jpg")
+        fullName = ConstantProperty(comment.person.fullName)
+        userName = ConstantProperty("@\(comment.person.userName)")
+        personId = ConstantProperty(comment.person.id)
         timeSinceCreated.value = RoundedDuration(date: comment.createdAt).shortDescription()
     }
     

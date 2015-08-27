@@ -41,39 +41,14 @@ class DetailsViewModel {
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(OptographTable[OptographSchema.id] == optographId)
         guard let optograph = DatabaseManager.defaultConnection.pluck(query).map({ row -> Optograph in
-            let person = Person(
-                id: row[PersonSchema.id],
-                email: row[PersonSchema.email],
-                fullName: row[PersonSchema.fullName],
-                userName: row[PersonSchema.userName],
-                text: row[PersonSchema.text],
-                followersCount: row[PersonSchema.followersCount],
-                followedCount: row[PersonSchema.followedCount],
-                isFollowed: row[PersonSchema.isFollowed],
-                createdAt: row[PersonSchema.createdAt],
-                wantsNewsletter: row[PersonSchema.wantsNewsletter]
-            )
+            let person = Person.fromSQL(row)
+            let location = Location.fromSQL(row)
+            var optograph = Optograph.fromSQL(row)
             
-            let location = Location(
-                id: row[LocationSchema.id],
-                text: row[LocationSchema.text],
-                createdAt: row[LocationSchema.createdAt],
-                latitude: row[LocationSchema.latitude],
-                longitude: row[LocationSchema.longitude]
-            )
+            optograph.person = person
+            optograph.location = location
             
-            return Optograph(
-                id: row[OptographSchema.id],
-                text: row[OptographSchema.text],
-                person: person,
-                createdAt: row[OptographSchema.createdAt],
-                isStarred: row[OptographSchema.isStarred],
-                starsCount: row[OptographSchema.starsCount],
-                commentsCount: row[OptographSchema.commentsCount],
-                viewsCount: row[OptographSchema.viewsCount],
-                location: location,
-                isPublished: row[OptographSchema.isPublished]
-            )
+            return optograph
         }) else {
             fatalError("optograph can not be nil")
         }
@@ -109,64 +84,18 @@ class DetailsViewModel {
         setOptograph(optograph)
         
         if !optograph.isPublished {
-            Api.get("optographs/\(optographId)")
+            ApiService.get("optographs/\(optographId)")
                 .start(next: { (optograph: Optograph) in
                     self.setOptograph(optograph)
                     
-                    guard let person = optograph.person else {
-                        fatalError("person can not be nil")
-                    }
-                    
-                    try! DatabaseManager.defaultConnection.run(
-                        PersonTable.insert(or: .Replace,
-                            PersonSchema.id <- person.id,
-                            PersonSchema.email <- person.email,
-                            PersonSchema.fullName <- person.fullName,
-                            PersonSchema.userName <- person.userName,
-                            PersonSchema.text <- person.text,
-                            PersonSchema.followersCount <- person.followersCount,
-                            PersonSchema.followedCount <- person.followedCount,
-                            PersonSchema.isFollowed <- person.isFollowed,
-                            PersonSchema.createdAt <- person.createdAt,
-                            PersonSchema.wantsNewsletter <- person.wantsNewsletter
-                        )
-                    )
-                    
-                    let location = optograph.location
-                    
-                    try! DatabaseManager.defaultConnection.run(
-                        LocationTable.insert(or: .Replace,
-                            LocationSchema.id <- location.id,
-                            LocationSchema.text <- location.text,
-                            LocationSchema.createdAt <- location.createdAt,
-                            LocationSchema.latitude <- location.latitude,
-                            LocationSchema.longitude <- location.longitude
-                        )
-                    )
-                    
-                    try! DatabaseManager.defaultConnection.run(
-                        OptographTable.insert(or: .Replace,
-                            OptographSchema.id <- optograph.id,
-                            OptographSchema.text <- optograph.text,
-                            OptographSchema.personId <- person.id,
-                            OptographSchema.createdAt <- optograph.createdAt,
-                            OptographSchema.isStarred <- optograph.isStarred,
-                            OptographSchema.starsCount <- optograph.starsCount,
-                            OptographSchema.commentsCount <- optograph.commentsCount,
-                            OptographSchema.viewsCount <- optograph.viewsCount,
-                            OptographSchema.locationId <- location.id,
-                            OptographSchema.isPublished <- optograph.isPublished
-                        )
-                    )
+                    try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, optograph.person.toSQL()))
+                    try! DatabaseManager.defaultConnection.run(LocationTable.insert(or: .Replace, optograph.location.toSQL()))
+                    try! DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, optograph.toSQL()))
                 })
         }
     }
     
     private func setOptograph(optograph: Optograph) {
-        guard let person = optograph.person else {
-            fatalError("person can not be nil")
-        }
-        
         id.value = optograph.id
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
@@ -174,10 +103,10 @@ class DetailsViewModel {
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
         detailsUrl.value = "\(StaticFilePath)/thumbs/details_\(optograph.id).jpg"
-        avatarUrl.value = "\(StaticFilePath)/profile-images/thumb/\(person.id).jpg"
-        fullName.value = person.fullName
-        userName.value = "@\(person.userName)"
-        personId.value = person.id
+        avatarUrl.value = "\(StaticFilePath)/profile-images/thumb/\(optograph.person.id).jpg"
+        fullName.value = optograph.person.fullName
+        userName.value = "@\(optograph.person.userName)"
+        personId.value = optograph.person.id
         text.value = optograph.text
         location.value = optograph.location.text
     }
@@ -193,8 +122,8 @@ class DetailsViewModel {
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
             .flatMap(.Latest) { starredBefore in
                 starredBefore
-                    ? Api<EmptyResponse>.delete("optographs/\(self.id.value)/star")
-                    : Api<EmptyResponse>.post("optographs/\(self.id.value)/star", parameters: nil)
+                    ? ApiService<EmptyResponse>.delete("optographs/\(self.id.value)/star")
+                    : ApiService<EmptyResponse>.post("optographs/\(self.id.value)/star", parameters: nil)
             }
             .start(
                 completed: {
@@ -211,7 +140,7 @@ class DetailsViewModel {
     }
     
     func increaseViewsCount() {
-        Api<EmptyResponse>.post("optographs/\(id.value)/views", parameters: nil)
+        ApiService<EmptyResponse>.post("optographs/\(id.value)/views", parameters: nil)
             .start(completed: {
                 self.viewsCount.value = self.viewsCount.value + 1
                 

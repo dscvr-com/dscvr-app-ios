@@ -20,7 +20,7 @@ class SearchViewModel {
             .filter { $0.characters.count > 2 }
             .throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
             .map(escape)
-            .flatMap(.Latest) { keyword in Api.get("optographs/search?keyword=\(keyword)") }
+            .flatMap(.Latest) { keyword in ApiService.get("optographs/search?keyword=\(keyword)") }
             .start(next: { optograph in
                 self.results.value.append(optograph)
             })

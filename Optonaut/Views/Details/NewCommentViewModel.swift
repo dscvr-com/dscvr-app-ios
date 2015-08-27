@@ -25,7 +25,7 @@ class NewCommentViewModel {
     
     func postComment() -> SignalProducer<Comment, NSError> {
         let parameters = ["text": text.value]
-        return Api.post("optographs/\(optographId.value)/comments", parameters: parameters)
+        return ApiService.post("optographs/\(optographId.value)/comments", parameters: parameters)
             .on(completed: {
                 self.text.value = ""
             })

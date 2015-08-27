@@ -1,5 +1,5 @@
 //
-//  Api.swift
+//  ApiService.swift
 //  Optonaut
 //
 //  Created by Johannes Schickling on 6/23/15.
@@ -19,7 +19,7 @@ struct EmptyResponse: Mappable {
     mutating func mapping(map: Map) {}
 }
 
-class Api<T: Mappable> {
+class ApiService<T: Mappable> {
     
     private static var host: String {
         switch Env {
@@ -78,9 +78,9 @@ class Api<T: Mappable> {
                             NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
                         }
                         if let data = data {
-                            //print(data)
+                            print(data)
                         }
-                        //print(error)
+                        print(error)
                         sendError(sink, error)
                     } else {
                         if let data = data where data.length > 0 {

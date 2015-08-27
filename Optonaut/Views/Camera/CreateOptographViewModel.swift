@@ -33,7 +33,7 @@ class CreateOptographViewModel {
                 self.optograph.location.longitude = lon
             })
             .map { (lat, lon) in ["latitude": lat, "longitude": lon] }
-            .flatMap(.Latest) { parameters in Api<LocationMappable>.post("locations/lookup", parameters: parameters) }
+            .flatMap(.Latest) { parameters in ApiService<LocationMappable>.post("locations/lookup", parameters: parameters) }
             .start(next: { locationData in
                 self.location.value = locationData.text
             })

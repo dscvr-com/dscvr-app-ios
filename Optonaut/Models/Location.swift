@@ -35,5 +35,28 @@ extension Location: Mappable {
         latitude        <- map["latitude"]
         longitude       <- map["longitude"]
     }
+}
+
+extension Location: SQLiteModel {
+    
+    static func fromSQL(row: SQLiteRow) -> Location {
+        return Location(
+            id: row[LocationSchema.id],
+            text: row[LocationSchema.text],
+            createdAt: row[LocationSchema.createdAt],
+            latitude: row[LocationSchema.latitude],
+            longitude: row[LocationSchema.longitude]
+        )
+    }
+    
+    func toSQL() -> [SQLiteSetter] {
+        return [
+            LocationSchema.id <-- id,
+            LocationSchema.text <-- text,
+            LocationSchema.createdAt <-- createdAt,
+            LocationSchema.latitude <-- latitude,
+            LocationSchema.longitude <-- longitude
+        ]
+    }
     
 }

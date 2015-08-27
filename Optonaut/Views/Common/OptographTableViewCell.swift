@@ -149,7 +149,7 @@ class OptographTableViewCell: UITableViewCell {
         textView.rac_text <~ viewModel.text
         textView.userHandleLinkTapHandler = { label, handle, range in
             let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
-            Api<Person>.get("persons/user-name/\(userName)")
+            ApiService<Person>.get("persons/user-name/\(userName)")
                 .start(next: { person in
                     self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
                 })
