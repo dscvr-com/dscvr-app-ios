@@ -42,9 +42,9 @@ class NotificationService {
     
     private static func levelToColor(level: NotificationLevel) -> UIColor {
         switch level {
-        case .Success: return .greenColor()
-        case .Info: return .blueColor()
-        case .Warning: return .yellowColor()
+        case .Success: return UIColor(0x91CB3E)
+        case .Info: return UIColor(0x1C77C3)
+        case .Warning: return UIColor(0xFB8B24)
         case .Error: return BaseColor
         }
     }

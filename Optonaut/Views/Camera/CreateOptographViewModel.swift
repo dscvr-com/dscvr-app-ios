@@ -32,6 +32,7 @@ class CreateOptographViewModel {
                 self.optograph.location.latitude = lat
                 self.optograph.location.longitude = lon
             })
+            .mapError { _ in ApiError.Nil }
             .map { (lat, lon) in ["latitude": lat, "longitude": lon] }
             .flatMap(.Latest) { parameters in ApiService<LocationMappable>.post("locations/lookup", parameters: parameters) }
             .start(next: { locationData in
@@ -60,33 +61,10 @@ class CreateOptographViewModel {
     }
     
     private func saveToDatabase() {
-        let location = optograph.location
-        let personId = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
+        optograph.person.id = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
         
-        try! DatabaseManager.defaultConnection.run(
-            LocationTable.insert(or: .Replace,
-                LocationSchema.id <-- location.id,
-                LocationSchema.text <-- location.text,
-                LocationSchema.createdAt <-- location.createdAt,
-                LocationSchema.latitude <-- location.latitude,
-                LocationSchema.longitude <-- location.longitude
-            )
-        )
-        
-        try! DatabaseManager.defaultConnection.run(
-            OptographTable.insert(or: .Replace,
-                OptographSchema.id <-- optograph.id,
-                OptographSchema.text <-- optograph.text,
-                OptographSchema.personId <-- personId,
-                OptographSchema.createdAt <-- optograph.createdAt,
-                OptographSchema.isStarred <-- optograph.isStarred,
-                OptographSchema.starsCount <-- optograph.starsCount,
-                OptographSchema.commentsCount <-- optograph.commentsCount,
-                OptographSchema.viewsCount <-- optograph.viewsCount,
-                OptographSchema.locationId <-- location.id,
-                OptographSchema.isPublished <-- optograph.isPublished
-            )
-        )
+        try! optograph.save()
+        try! optograph.location.save()
     }
 }
 

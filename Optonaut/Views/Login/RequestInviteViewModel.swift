@@ -22,7 +22,7 @@ class RequestInviteViewModel {
             })
     }
     
-    func requestInvite() -> SignalProducer<EmptyResponse, NSError> {
+    func requestInvite() -> SignalProducer<EmptyResponse, ApiError> {
         pending.value = true
         
         let parameters = ["email": email.value]

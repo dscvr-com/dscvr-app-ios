@@ -45,10 +45,10 @@ struct Optograph: Model {
         return (left: left!, right: right!)
     }
     
-    mutating func publish() -> SignalProducer<Optograph, NSError> {
+    mutating func publish() -> SignalProducer<Optograph, ApiError> {
         assert(!isPublished)
         
-        let parameters = SignalProducer<[String: AnyObject], NSError> { sink, disposable in
+        let parameters = SignalProducer<[String: AnyObject], ApiError> { sink, disposable in
             let (left, right) = self.loadImages()
             var parameters = Mapper().toJSON(self)
             
@@ -139,6 +139,10 @@ extension Optograph: SQLiteModel {
             OptographSchema.locationId <-- location.id,
             OptographSchema.isPublished <-- isPublished
         ]
+    }
+    
+    func save() throws {
+        try DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, toSQL()))
     }
     
 }

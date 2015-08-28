@@ -39,7 +39,7 @@ class OptographsViewModel {
         results.value = optographs.sort { $0.createdAt > $1.createdAt }
         
         resultsLoading.producer
-            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil) }
+            .mapError { _ in ApiError.Nil }
             .filter { $0 }
             .flatMap(.Latest) { _ in ApiService.get("persons/\(personId)/optographs") }
             .start(
@@ -57,9 +57,9 @@ class OptographsViewModel {
     private func processNewOptograph(optograph: Optograph) {
         results.value.orderedInsert(optograph, withOrder: .OrderedDescending)
         
-        try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, optograph.person.toSQL()))
-        try! DatabaseManager.defaultConnection.run(LocationTable.insert(or: .Replace, optograph.location.toSQL()))
-        try! DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, optograph.toSQL()))
+        try! optograph.save()
+        try! optograph.location.save()
+        try! optograph.person.save()
     }
     
 }

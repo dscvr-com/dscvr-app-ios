@@ -32,7 +32,7 @@ class OptographViewModel {
         self.optograph = optograph
         
         previewUrl = ConstantProperty("\(StaticFilePath)/thumbs/thumb_\(optograph.id).jpg")
-        avatarUrl = ConstantProperty("\(StaticFilePath)/profile-images/thumb/\(optograph.person.id).jpg")
+        avatarUrl = ConstantProperty(optograph.person.avatarUrl)
         fullName = ConstantProperty(optograph.person.fullName)
         userName = ConstantProperty("@\(optograph.person.userName)")
         personId = ConstantProperty(optograph.person.id)
@@ -48,29 +48,31 @@ class OptographViewModel {
         let starredBefore = isStarred.value
         let starsCountBefore = starsCount.value
         
-        SignalProducer<Bool, NSError>(value: starredBefore)
+        SignalProducer<Bool, ApiError>(value: starredBefore)
             .flatMap(.Latest) { followedBefore in
                 starredBefore
                     ? ApiService<EmptyResponse>.delete("optographs/\(self.optograph.id)/star")
                     : ApiService<EmptyResponse>.post("optographs/\(self.optograph.id)/star", parameters: nil)
             }
-            .on(started: {
-                self.optograph.isStarred = !starredBefore
-                self.optograph.starsCount += starredBefore ? -1 : 1
-                self.update()
-            })
-            .start(error: { _ in
-                self.optograph.isStarred = starredBefore
-                self.optograph.starsCount = starsCountBefore
-                self.update()
-            })
+            .on(
+                started: {
+                    self.isStarred.value = !starredBefore
+                    self.starsCount.value += starredBefore ? -1 : 1
+                },
+                error: { _ in
+                    self.isStarred.value = starredBefore
+                    self.starsCount.value = starsCountBefore
+                },
+                completed: updateModel
+            )
+            .start()
     }
     
-    private func update() {
-        isStarred.value = optograph.isStarred
-        starsCount.value = optograph.starsCount
+    private func updateModel() {
+        optograph.isStarred = isStarred.value
+        optograph.starsCount = starsCount.value
         
-        try! DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, optograph.toSQL()))
+        try! optograph.save()
     }
     
 }

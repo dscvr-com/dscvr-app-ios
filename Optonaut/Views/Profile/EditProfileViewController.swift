@@ -323,10 +323,15 @@ class EditProfileViewController: UIViewController, RedNavbar {
     
     func save() {
         viewModel.updateData()
-            .start(completed: {
-                self.navigationController?.popViewControllerAnimated(false)
-                NotificationService.push("Profile information updated", level: .Success)
-            })
+            .start(
+                error: { _ in
+                    NotificationService.push("Profile information invalid.", level: .Error)
+                },
+                completed: {
+                    self.navigationController?.popViewControllerAnimated(false)
+                    NotificationService.push("Profile information updated.", level: .Success)
+                }
+        )
     }
     
     func showPasswordAlert() {
@@ -355,6 +360,11 @@ class EditProfileViewController: UIViewController, RedNavbar {
             let oldPassword = oldPasswordtextField.text!
             let newPassword = newPasswordtextField.text!
             self.viewModel.updatePassword(oldPassword, newPassword: newPassword)
+                .start(
+                    completed: {
+                        NotificationService.push("Password changed successfully.", level: .Success)
+                    }
+            )
         }))
         
         newPasswordAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
@@ -374,6 +384,14 @@ class EditProfileViewController: UIViewController, RedNavbar {
             let textField = alert.textFields![0] as UITextField
             let email = textField.text!
             self.viewModel.updateEmail(email)
+                .start(
+                    error: { _ in
+                        NotificationService.push("Email address already taken. Please try another one.", level: .Error)
+                    },
+                    completed: {
+                        NotificationService.push("Please check your inbox and confirm your new address.", level: .Success)
+                    }
+            )
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))

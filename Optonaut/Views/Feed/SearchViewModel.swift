@@ -16,7 +16,7 @@ class SearchViewModel {
     
     init() {
         searchText.producer
-            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
+            .mapError { _ in ApiError.Nil }
             .filter { $0.characters.count > 2 }
             .throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
             .map(escape)

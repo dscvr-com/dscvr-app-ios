@@ -39,8 +39,8 @@ class CommentsViewModel {
             .start(next: { (comment: Comment) in
                 self.results.value.orderedInsert(comment, withOrder: .OrderedAscending)
                 
-                try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, comment.person.toSQL()))
-                try! DatabaseManager.defaultConnection.run(CommentTable.insert(or: .Replace, comment.toSQL()))
+                try! comment.person.save()
+                try! comment.save()
             })
         
     }

@@ -70,9 +70,9 @@ class FeedViewModel: NSObject {
     private func processNewOptograph(optograph: Optograph) {
         results.value.orderedInsert(optograph, withOrder: .OrderedDescending)
         
-        try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, optograph.person.toSQL()))
-        try! DatabaseManager.defaultConnection.run(LocationTable.insert(or: .Replace, optograph.location.toSQL()))
-        try! DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, optograph.toSQL()))
+        try! optograph.save()
+        try! optograph.location.save()
+        try! optograph.person.save()
     }
     
 }

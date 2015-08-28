@@ -54,7 +54,7 @@ class DetailsViewModel {
         }
         
         self.optograph = optograph
-        update()
+        updateProperties()
         
         if !optograph.downloaded {
             download()
@@ -66,7 +66,8 @@ class DetailsViewModel {
             ApiService.get("optographs/\(optographId)")
                 .start(next: { (optograph: Optograph) in
                     self.optograph = optograph
-                    self.update()
+                    self.saveModel()
+                    self.updateProperties()
                 })
         }
     }
@@ -75,29 +76,35 @@ class DetailsViewModel {
         let starredBefore = isStarred.value
         let starsCountBefore = starsCount.value
         
-        SignalProducer<Bool, NSError>(value: starredBefore)
+        SignalProducer<Bool, ApiError>(value: starredBefore)
             .flatMap(.Latest) { followedBefore in
                 starredBefore
                     ? ApiService<EmptyResponse>.delete("optographs/\(self.optograph.id)/star")
                     : ApiService<EmptyResponse>.post("optographs/\(self.optograph.id)/star", parameters: nil)
             }
-            .on(started: {
-                self.optograph.isStarred = !starredBefore
-                self.optograph.starsCount += starredBefore ? -1 : 1
-                self.update()
-            })
-            .start(error: { _ in
-                self.optograph.isStarred = starredBefore
-                self.optograph.starsCount = starsCountBefore
-                self.update()
-            })
+            .on(
+                started: {
+                    self.isStarred.value = !starredBefore
+                    self.starsCount.value += starredBefore ? -1 : 1
+                },
+                error: { _ in
+                    self.isStarred.value = starredBefore
+                    self.starsCount.value = starsCountBefore
+                },
+                completed: {
+                    self.updateModel()
+                    self.saveModel()
+                }
+            )
+            .start()
     }
     
     func increaseViewsCount() {
         ApiService<EmptyResponse>.post("optographs/\(optograph.id)/views", parameters: nil)
             .start(completed: {
-                self.optograph.viewsCount++
-                self.update()
+                self.viewsCount.value++
+                self.updateModel()
+                self.saveModel()
             })
     }
     
@@ -107,8 +114,9 @@ class DetailsViewModel {
         optograph.publish()
             .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
             .start(completed: {
-                self.optograph.isPublished = true
-                self.update()
+                self.isPublished.value = true
+                self.updateModel()
+                self.saveModel()
                 
                 self.isPublishing.value = false
             })
@@ -135,24 +143,33 @@ class DetailsViewModel {
         }
     }
     
-    private func update() {
+    private func updateModel() {
+        optograph.isPublished = isPublished.value
+        optograph.isStarred = isStarred.value
+        optograph.starsCount = starsCount.value
+        optograph.viewsCount = viewsCount.value
+    }
+    
+    private func saveModel() {
+        try! optograph.save()
+        try! optograph.location.save()
+        try! optograph.person.save()
+    }
+    
+    private func updateProperties() {
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
         commentsCount.value = optograph.commentsCount
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
         detailsUrl.value = "\(StaticFilePath)/thumbs/details_\(optograph.id).jpg"
-        avatarUrl.value = "\(StaticFilePath)/profile-images/thumb/\(optograph.person.id).jpg"
+        avatarUrl.value = optograph.person.avatarUrl
         fullName.value = optograph.person.fullName
         userName.value = "@\(optograph.person.userName)"
         personId.value = optograph.person.id
         text.value = optograph.text
         location.value = optograph.location.text
         isPublished.value = optograph.isPublished
-        
-        try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, optograph.person.toSQL()))
-        try! DatabaseManager.defaultConnection.run(LocationTable.insert(or: .Replace, optograph.location.toSQL()))
-        try! DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, optograph.toSQL()))
     }
     
 }

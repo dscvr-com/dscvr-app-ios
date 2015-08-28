@@ -42,7 +42,7 @@ class LoginViewModel {
             })
     }
     
-    func login() -> SignalProducer<Void, NSError> {
+    func login() -> SignalProducer<Void, ApiError> {
         pending.value = true
         
         var parameters: [String: AnyObject] = ["email": "", "user_name": "", "password": self.password.value]
@@ -72,7 +72,7 @@ class LoginViewModel {
             )
             .flatMap(.Latest) { loginData in ApiService<Person>.get("persons/\(loginData.id)") }
             .on(next: { person in
-                try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, person.toSQL()))
+                try! person.save()
             })
             .flatMap(.Latest) { _ in SignalProducer(value: ()) }
     }

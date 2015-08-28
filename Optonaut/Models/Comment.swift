@@ -60,4 +60,8 @@ extension Comment: SQLiteModel {
         ]
     }
     
+    func save() throws {
+        try DatabaseManager.defaultConnection.run(CommentTable.insert(or: .Replace, toSQL()))
+    }
+    
 }

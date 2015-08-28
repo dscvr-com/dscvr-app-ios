@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import WebImage
 
 class EditProfileViewModel {
     
@@ -21,87 +22,74 @@ class EditProfileViewModel {
     let debugEnabled = MutableProperty<Bool>(false)
     let wantsNewsletter = MutableProperty<Bool>(false)
     
+    private var person = Person.newInstance() as! Person
+    
     init() {
         let id = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
         debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue)
         
         let query = PersonTable.filter(PersonTable[PersonSchema.id] == id)
-        let person = DatabaseManager.defaultConnection.pluck(query).map { row in
-            return Person(
-                id: row[PersonSchema.id],
-                email: row[PersonSchema.email],
-                fullName: row[PersonSchema.fullName],
-                userName: row[PersonSchema.userName],
-                text: row[PersonSchema.text],
-                followersCount: row[PersonSchema.followersCount],
-                followedCount: row[PersonSchema.followedCount],
-                isFollowed: row[PersonSchema.isFollowed],
-                createdAt: row[PersonSchema.createdAt],
-                wantsNewsletter: row[PersonSchema.wantsNewsletter]
-            )
+        
+        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
+            self.person = person
+            saveModel()
+            updateProperties()
         }
         
-        if let person = person {
-            setPerson(person)
-        }
-        
-        ApiService.get("persons/\(id)").start(next: setPerson)
+        ApiService<Person>.get("persons/\(id)")
+            .start(next: { person in
+                self.person = person
+                self.saveModel()
+                self.updateProperties()
+            })
         
         userName.producer
-            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
+            .mapError { _ in ApiError.Nil }
             .on(next: { _ in self.userNameTaken.value = false })
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
             .start(next: { userName in
-                let parameters = ["user_name": userName]
-                ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: parameters)
+                // nesting needed in order to accept ApiErrors
+                ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: ["user_name": userName])
                     .start(error: { _ in self.userNameTaken.value = true })
             })
     }
     
-    private func setPerson(person: Person) {
-        email.value = person.email
-        fullName.value = person.fullName
-        userName.value = person.userName
-        wantsNewsletter.value = person.wantsNewsletter
-        text.value = person.text
-        avatarUrl.value = "\(StaticFilePath)/profile-images/thumb/\(person.id).jpg"
-    }
-    
-    func updateData() -> SignalProducer<EmptyResponse, NSError> {
+    func updateData() -> SignalProducer<EmptyResponse, ApiError> {
+        if userNameTaken.value {
+            return SignalProducer(error: ApiError(timeout: false, status: 400, message: "Username taken", error: nil))
+        }
+        
         let parameters = [
             "full_name": fullName.value,
             "user_name": userName.value,
             "text": text.value,
             "wants_newsletter": wantsNewsletter.value,
-        ]
+        ] as [String: AnyObject]
         
-        return ApiService.put("persons/me", parameters: parameters as? [String : AnyObject])
+        return ApiService.put("persons/me", parameters: parameters)
+            .on(completed: {
+                self.updateModel()
+                self.saveModel()
+            })
     }
     
-    func updateAvatar(image: UIImage) -> SignalProducer<EmptyResponse, NSError> {
+    func updateAvatar(image: UIImage) -> SignalProducer<EmptyResponse, ApiError> {
         let data = UIImageJPEGRepresentation(image, 1)
         let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         
-        let parameters = ["profile_image": str!]
-        return ApiService.post("persons/me/upload-profile-image", parameters: parameters)
+        return ApiService.post("persons/me/upload-profile-image", parameters: ["profile_image": str!])
+            .on(completed: {
+                SDImageCache.sharedImageCache().removeImageForKey(self.person.avatarUrl, fromDisk: true)
+                self.avatarUrl.value = self.avatarUrl.value
+            })
     }
     
-    func updatePassword(currentPassword: String, newPassword: String) {
-        let parameters = ["current": currentPassword, "new": newPassword]
-        
-        ApiService<EmptyResponse>.post("persons/me/change-password", parameters: parameters)
-            .start()
+    func updatePassword(currentPassword: String, newPassword: String) -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.post("persons/me/change-password", parameters: ["current": currentPassword, "new": newPassword])
     }
     
-    func updateEmail(email: String) {
-        let parameters = ["email": email]
-        
-        ApiService<EmptyResponse>.post("persons/me/change-email", parameters: parameters)
-            .start(
-                completed: {
-                    self.email.value = email
-                }
-        )
+    func updateEmail(email: String) -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.post("persons/me/change-email", parameters: ["email": email])
     }
     
     func toggleDebug() {
@@ -111,6 +99,27 @@ class EditProfileViewModel {
     
     func toggleNewsletter() {
         wantsNewsletter.value = !wantsNewsletter.value
+    }
+    
+    private func updateProperties() {
+        email.value = person.email
+        fullName.value = person.fullName
+        userName.value = person.userName
+        wantsNewsletter.value = person.wantsNewsletter
+        text.value = person.text
+        avatarUrl.value = person.avatarUrl
+    }
+    
+    private func updateModel() {
+        person.email = email.value
+        person.fullName = fullName.value
+        person.userName = userName.value
+        person.wantsNewsletter = wantsNewsletter.value
+        person.text = text.value
+    }
+    
+    private func saveModel() {
+        try! person.save()
     }
     
 }

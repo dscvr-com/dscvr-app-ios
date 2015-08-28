@@ -22,7 +22,7 @@ class ForgotPasswordViewModel {
             })
     }
     
-    func sendEmail() -> SignalProducer<EmptyResponse, NSError> {
+    func sendEmail() -> SignalProducer<EmptyResponse, ApiError> {
         pending.value = true
         
         let parameters = ["email": email.value]

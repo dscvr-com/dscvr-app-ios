@@ -10,6 +10,7 @@ import Foundation
 import Alamofire
 import ReactiveCocoa
 import ObjectMapper
+import Crashlytics
 
 struct EmptyResponse: Mappable {
     static func newInstance() -> Mappable {
@@ -17,6 +18,20 @@ struct EmptyResponse: Mappable {
     }
     
     mutating func mapping(map: Map) {}
+}
+
+struct ApiError: ErrorType {
+    
+    static let Nil = ApiError(timeout: false, status: nil, message: "", error: nil)
+    
+    let timeout: Bool
+    let status: Int?
+    let message: String
+    let error: NSError?
+    
+    var suspicious: Bool {
+        return status == 500 || status == -1
+    }
 }
 
 class ApiService<T: Mappable> {
@@ -37,23 +52,23 @@ class ApiService<T: Mappable> {
         }
     }
     
-    static func get(endpoint: String) -> SignalProducer<T, NSError> {
+    static func get(endpoint: String) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .GET, parameters: nil)
     }
     
-    static func post(endpoint: String, parameters: [String: AnyObject]?) -> SignalProducer<T, NSError> {
+    static func post(endpoint: String, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .POST, parameters: parameters)
     }
     
-    static func put(endpoint: String, parameters: [String: AnyObject]?) -> SignalProducer<T, NSError> {
+    static func put(endpoint: String, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .PUT, parameters: parameters)
     }
     
-    static func delete(endpoint: String) -> SignalProducer<T, NSError> {
+    static func delete(endpoint: String) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .DELETE, parameters: nil)
     }
     
-    private static func request(endpoint: String, method: Alamofire.Method, parameters: [String: AnyObject]?) -> SignalProducer<T, NSError> {
+    private static func request(endpoint: String, method: Alamofire.Method, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return SignalProducer { sink, disposable in
             let URL = NSURL(string: "http://\(host):\(port)/\(endpoint)")!
             let mutableURLRequest = NSMutableURLRequest(URL: URL)
@@ -73,15 +88,13 @@ class ApiService<T: Mappable> {
                 .validate()
                 .response { (_, response, data, error) in
                     if let error = error {
-                        // TODO remove login hack
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
                         }
-                        if let data = data {
-                            print(data)
-                        }
-                        print(error)
-                        sendError(sink, error)
+                        // TODO https://github.com/Alamofire/Alamofire/issues/233
+                        
+                        let apiError = ApiError(timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode, message: error.description, error: error)
+                        sendError(sink, apiError)
                     } else {
                         if let data = data where data.length > 0 {
                             do {
@@ -93,13 +106,12 @@ class ApiService<T: Mappable> {
                                         sendNext(sink, object)
                                     }
                                 } else {
-                                    let error = NSError(domain: "JSON couldn't be mapped to type T", code: 0, userInfo: nil)
-                                    //print(error)
-                                    sendError(sink, error)
+                                    let apiError = ApiError(timeout: false, status: -1, message: "JSON couldn't be mapped to type T", error: nil)
+                                    sendError(sink, apiError)
                                 }
                             } catch let error {
-                                //print(error)
-                                sendError(sink, error as NSError)
+                                let apiError = ApiError(timeout: false, status: -1, message: "JSON invalid", error: error as NSError)
+                                sendError(sink, apiError)
                             }
                         }
                         sendCompleted(sink)
@@ -110,6 +122,12 @@ class ApiService<T: Mappable> {
                 request.cancel()
             }
         }
-        
+            .on(error: { error in
+                print(error)
+                if error.suspicious {
+                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+                    Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
+                }
+            })
     }
 }

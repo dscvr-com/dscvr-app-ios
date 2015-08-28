@@ -29,7 +29,7 @@ class ActivityViewModel {
         self.activity = activity
         
         activityType = ConstantProperty(activity.activityType)
-        creatorAvatarUrl = ConstantProperty("\(StaticFilePath)/avatars/\(activity.creator!.id).jpg")
+        creatorAvatarUrl = ConstantProperty(activity.creator!.avatarUrl)
         creatorId = ConstantProperty(activity.creator!.id)
         creatorUserName = ConstantProperty(activity.creator!.userName)
         timeSinceCreated = ConstantProperty(RoundedDuration(date: activity.createdAt).shortDescription())

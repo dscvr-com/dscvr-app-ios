@@ -59,4 +59,8 @@ extension Location: SQLiteModel {
         ]
     }
     
+    func save() throws {
+        try DatabaseManager.defaultConnection.run(LocationTable.insert(or: .Replace, toSQL()))
+    }
+    
 }

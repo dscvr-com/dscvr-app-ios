@@ -16,6 +16,7 @@ protocol ModelSchema {
 protocol SQLiteModel {
     static func fromSQL(row: Row) -> Self
     func toSQL() -> [Setter]
+    func save() throws
 }
 
 extension NSDate {

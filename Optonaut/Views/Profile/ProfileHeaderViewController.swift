@@ -155,6 +155,12 @@ class ProfileHeaderViewController: UIViewController {
         view.addSubview(followedCountView)
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewModel.avatarUrl.value = viewModel.avatarUrl.value
+    }
+    
     override func updateViewConstraints() {
         avatarBackgroundImageView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Bottom)
         avatarBackgroundImageView.autoSetDimension(.Height, toSize: 213)

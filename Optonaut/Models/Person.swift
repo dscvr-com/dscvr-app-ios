@@ -20,6 +20,10 @@ struct Person: Model {
     var isFollowed: Bool
     var createdAt: NSDate
     var wantsNewsletter: Bool
+    
+    var avatarUrl: String {
+        return "\(StaticFilePath)/profile-images/thumb/\(id).jpg"
+    }
 }
 
 extension Person: Mappable {
@@ -84,6 +88,10 @@ extension Person: SQLiteModel {
             PersonSchema.createdAt <-- createdAt,
             PersonSchema.wantsNewsletter <-- wantsNewsletter
         ]
+    }
+    
+    func save() throws {
+        try DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, toSQL()))
     }
     
 }

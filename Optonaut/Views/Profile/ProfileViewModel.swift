@@ -48,7 +48,7 @@ class ProfileViewModel {
     func toggleFollow() {
         let followedBefore = person.isFollowed
         
-        SignalProducer<Bool, NSError>(value: followedBefore)
+        SignalProducer<Bool, ApiError>(value: followedBefore)
             .flatMap(.Latest) { followedBefore in
                 followedBefore
                     ? ApiService<EmptyResponse>.delete("persons/\(self.person.id)/follow")
@@ -71,9 +71,9 @@ class ProfileViewModel {
         followersCount.value = person.followersCount
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed
-        avatarUrl.value = "\(StaticFilePath)/profile-images/thumb/\(person.id).jpg"
+        avatarUrl.value = person.avatarUrl
         
-        try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, person.toSQL()))
+        try! person.save()
     }
     
 }
