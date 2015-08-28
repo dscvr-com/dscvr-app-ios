@@ -14,7 +14,6 @@ import Crashlytics
 
 class ProfileViewModel {
     
-    let id = MutableProperty<UUID>("")
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let text = MutableProperty<String>("")
@@ -23,6 +22,8 @@ class ProfileViewModel {
     let isFollowed = MutableProperty<Bool>(false)
     let avatarUrl = MutableProperty<String>("")
     
+    private var person = Person.newInstance() as! Person
+    
     init(id: UUID) {
         
         Answers.logContentViewWithName("Profile \(id)",
@@ -30,56 +31,40 @@ class ProfileViewModel {
             contentId: "profile-\(id)",
             customAttributes: [:])
         
-        // TODO check if really needed here
-        self.id.value = id
-        
         let query = PersonTable.filter(PersonTable[PersonSchema.id] == id)
-        let person = DatabaseManager.defaultConnection.pluck(query).map { row in
-            return Person(
-                id: row[PersonSchema.id],
-                email: row[PersonSchema.email],
-                fullName: row[PersonSchema.fullName],
-                userName: row[PersonSchema.userName],
-                text: row[PersonSchema.text],
-                followersCount: row[PersonSchema.followersCount],
-                followedCount: row[PersonSchema.followedCount],
-                isFollowed: row[PersonSchema.isFollowed],
-                createdAt: row[PersonSchema.createdAt],
-                wantsNewsletter: row[PersonSchema.wantsNewsletter]
-            )
-        }
         
-        if let person = person {
-            setPerson(person)
+        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
+            self.person = person
+            update()
         }
     
         ApiService.get("persons/\(id)")
             .start(next: { (person: Person) in
-                self.setPerson(person)
-                
-                try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, person.toSQL()))
+                self.person = person
+                self.update()
             })
     }
     
     func toggleFollow() {
-        let followedBefore = isFollowed.value
+        let followedBefore = person.isFollowed
         
-        isFollowed.value = !followedBefore
-        
-        if followedBefore {
-            ApiService<EmptyResponse>.delete("persons/\(id.value)/follow")
-                .start(error: { _ in
-                    self.isFollowed.value = followedBefore
-                })
-        } else {
-            ApiService<EmptyResponse>.post("persons/\(id.value)/follow", parameters: nil)
-                .start(error: { _ in
-                    self.isFollowed.value = followedBefore
-                })
-        }
+        SignalProducer<Bool, NSError>(value: followedBefore)
+            .flatMap(.Latest) { followedBefore in
+                followedBefore
+                    ? ApiService<EmptyResponse>.delete("persons/\(self.person.id)/follow")
+                    : ApiService<EmptyResponse>.post("persons/\(self.person.id)/follow", parameters: nil)
+            }
+            .on(started: {
+                self.person.isFollowed = !followedBefore
+                self.update()
+            })
+            .start(error: { _ in
+                self.person.isFollowed = followedBefore
+                self.update()
+            })
     }
     
-    private func setPerson(person: Person) {
+    private func update() {
         fullName.value = person.fullName
         userName.value = person.userName
         text.value = person.text
@@ -87,6 +72,8 @@ class ProfileViewModel {
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed
         avatarUrl.value = "\(StaticFilePath)/profile-images/thumb/\(person.id).jpg"
+        
+        try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, person.toSQL()))
     }
     
 }

@@ -12,7 +12,6 @@ import ReactiveCocoa
 
 class OptographViewModel {
     
-    let id: ConstantProperty<UUID>
     let previewUrl: ConstantProperty<String>
     let avatarUrl: ConstantProperty<String>
     let fullName: ConstantProperty<String>
@@ -27,12 +26,11 @@ class OptographViewModel {
     let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
     
-    let optograph: Optograph
+    var optograph: Optograph
     
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        id = ConstantProperty(optograph.id)
         previewUrl = ConstantProperty("\(StaticFilePath)/thumbs/thumb_\(optograph.id).jpg")
         avatarUrl = ConstantProperty("\(StaticFilePath)/profile-images/thumb/\(optograph.person.id).jpg")
         fullName = ConstantProperty(optograph.person.fullName)
@@ -50,28 +48,29 @@ class OptographViewModel {
         let starredBefore = isStarred.value
         let starsCountBefore = starsCount.value
         
-        starsCount.value = starsCountBefore + (starredBefore ? -1 : 1)
-        isStarred.value = !starredBefore
-        
-        (SignalProducer(value: starredBefore) as SignalProducer<Bool, NoError>)
-            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
-            .flatMap(.Latest) { starredBefore in
+        SignalProducer<Bool, NSError>(value: starredBefore)
+            .flatMap(.Latest) { followedBefore in
                 starredBefore
-                    ? ApiService<EmptyResponse>.delete("optographs/\(self.id.value)/star")
-                    : ApiService<EmptyResponse>.post("optographs/\(self.id.value)/star", parameters: nil)
+                    ? ApiService<EmptyResponse>.delete("optographs/\(self.optograph.id)/star")
+                    : ApiService<EmptyResponse>.post("optographs/\(self.optograph.id)/star", parameters: nil)
             }
-            .start(
-                completed: {
-//                    self.realm.write {
-//                        self.optograph.isStarred = self.isStarred.value
-//                        self.optograph.starsCount = self.starsCount.value
-//                    }
-                },
-                error: { _ in
-                    self.starsCount.value = starsCountBefore
-                    self.isStarred.value = starredBefore
-                }
-            )
+            .on(started: {
+                self.optograph.isStarred = !starredBefore
+                self.optograph.starsCount += starredBefore ? -1 : 1
+                self.update()
+            })
+            .start(error: { _ in
+                self.optograph.isStarred = starredBefore
+                self.optograph.starsCount = starsCountBefore
+                self.update()
+            })
+    }
+    
+    private func update() {
+        isStarred.value = optograph.isStarred
+        starsCount.value = optograph.starsCount
+        
+        try! DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, optograph.toSQL()))
     }
     
 }

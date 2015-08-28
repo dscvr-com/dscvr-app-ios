@@ -310,8 +310,8 @@ class DetailsHeaderViewController: UIViewController {
     }
     
     func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
-        if let optograph = viewModel.optograph where optograph.downloaded {
-            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: optograph), animated: false)
+        if viewModel.downloadProgress.value == 1 {
+            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph), animated: false)
             viewModel.increaseViewsCount()
         }
     }

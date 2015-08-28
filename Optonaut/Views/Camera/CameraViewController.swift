@@ -14,6 +14,7 @@ import ReactiveCocoa
 import Alamofire
 import SceneKit
 import Async
+import Crashlytics
 
 struct Edge: Hashable {
     let one: SelectionPoint
@@ -72,6 +73,8 @@ class CameraViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Recording"])
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         

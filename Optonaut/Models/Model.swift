@@ -18,8 +18,9 @@ protocol Model {
 extension Array where Element: Model {
     
     mutating func orderedInsert(newModel: Element, withOrder order: NSComparisonResult) {
-        // check if already in array
-        if contains({ $0.id == newModel.id }) {
+        // replace if already in array
+        if let index = indexOf({ $0.id == newModel.id }) {
+            self[index] = newModel
             return
         }
         

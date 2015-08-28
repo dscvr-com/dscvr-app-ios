@@ -11,13 +11,11 @@ import Foundation
 import ReactiveCocoa
 import SQLite
 import Async
-import Crashlytics
 
 class DetailsViewModel {
     
-    let id = MutableProperty<UUID>("")
     let isStarred = MutableProperty<Bool>(false)
-    let isPublished: MutableProperty<Bool>
+    let isPublished = MutableProperty<Bool>(false)
     let isPublishing = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let commentsCount = MutableProperty<Int>(0)
@@ -32,20 +30,16 @@ class DetailsViewModel {
     let location = MutableProperty<String>("")
     let downloadProgress = MutableProperty<Float>(0)
     
-    var optograph: Optograph?
+    var optograph: Optograph
     
     init(optographId: UUID) {
-        
-        Answers.logContentViewWithName("Optograph \(optographId)",
-            contentType: "Optograph",
-            contentId: "optograph-\(optographId)",
-            customAttributes: [:])
         
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(OptographTable[OptographSchema.id] == optographId)
+        
         guard let optograph = DatabaseManager.defaultConnection.pluck(query).map({ row -> Optograph in
             let person = Person.fromSQL(row)
             let location = Location.fromSQL(row)
@@ -59,50 +53,89 @@ class DetailsViewModel {
             fatalError("optograph can not be nil")
         }
         
-        isPublished = MutableProperty(optograph.isPublished)
+        self.optograph = optograph
+        update()
         
         if !optograph.downloaded {
-            var leftProgress: Float = 0
-            var rightProgress: Float = 0
-            for side in ["left", "right"] {
-                let url = "\(StaticFilePath)/optographs/original/\(optograph.id)/\(side).jpg"
-                let path = "\(optograph.path)/\(side).jpg"
-                
-                try! NSFileManager.defaultManager().createDirectoryAtPath(optograph.path, withIntermediateDirectories: true, attributes: nil)
-            
-                DownloadService.download(from: url, to: path)
-                    .observe(next: { progress in
-                        if side == "left" {
-                            leftProgress = progress
-                        } else {
-                            rightProgress = progress
-                        }
-                        self.downloadProgress.value = leftProgress / 2 + rightProgress / 2
-                    })
-            }
+            download()
         } else {
             downloadProgress.value = 1
         }
         
-        // TODO remove
-        self.optograph = optograph
-        
-        setOptograph(optograph)
-        
         if !optograph.isPublished {
             ApiService.get("optographs/\(optographId)")
                 .start(next: { (optograph: Optograph) in
-                    self.setOptograph(optograph)
-                    
-                    try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, optograph.person.toSQL()))
-                    try! DatabaseManager.defaultConnection.run(LocationTable.insert(or: .Replace, optograph.location.toSQL()))
-                    try! DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, optograph.toSQL()))
+                    self.optograph = optograph
+                    self.update()
                 })
         }
     }
     
-    private func setOptograph(optograph: Optograph) {
-        id.value = optograph.id
+    func toggleLike() {
+        let starredBefore = isStarred.value
+        let starsCountBefore = starsCount.value
+        
+        SignalProducer<Bool, NSError>(value: starredBefore)
+            .flatMap(.Latest) { followedBefore in
+                starredBefore
+                    ? ApiService<EmptyResponse>.delete("optographs/\(self.optograph.id)/star")
+                    : ApiService<EmptyResponse>.post("optographs/\(self.optograph.id)/star", parameters: nil)
+            }
+            .on(started: {
+                self.optograph.isStarred = !starredBefore
+                self.optograph.starsCount += starredBefore ? -1 : 1
+                self.update()
+            })
+            .start(error: { _ in
+                self.optograph.isStarred = starredBefore
+                self.optograph.starsCount = starsCountBefore
+                self.update()
+            })
+    }
+    
+    func increaseViewsCount() {
+        ApiService<EmptyResponse>.post("optographs/\(optograph.id)/views", parameters: nil)
+            .start(completed: {
+                self.optograph.viewsCount++
+                self.update()
+            })
+    }
+    
+    func publish() {
+        isPublishing.value = true
+        
+        optograph.publish()
+            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
+            .start(completed: {
+                self.optograph.isPublished = true
+                self.update()
+                
+                self.isPublishing.value = false
+            })
+    }
+    
+    private func download() {
+        var leftProgress: Float = 0
+        var rightProgress: Float = 0
+        for side in ["left", "right"] {
+            let url = "\(StaticFilePath)/optographs/original/\(optograph.id)/\(side).jpg"
+            let path = "\(optograph.path)/\(side).jpg"
+            
+            try! NSFileManager.defaultManager().createDirectoryAtPath(optograph.path, withIntermediateDirectories: true, attributes: nil)
+            
+            DownloadService.download(from: url, to: path)
+                .observe(next: { progress in
+                    if side == "left" {
+                        leftProgress = progress
+                    } else {
+                        rightProgress = progress
+                    }
+                    self.downloadProgress.value = leftProgress / 2 + rightProgress / 2
+                })
+        }
+    }
+    
+    private func update() {
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
         commentsCount.value = optograph.commentsCount
@@ -115,56 +148,11 @@ class DetailsViewModel {
         personId.value = optograph.person.id
         text.value = optograph.text
         location.value = optograph.location.text
-    }
-    
-    func toggleLike() {
-        let starredBefore = isStarred.value
-        let starsCountBefore = starsCount.value
+        isPublished.value = optograph.isPublished
         
-        starsCount.value = starsCountBefore + (starredBefore ? -1 : 1)
-        isStarred.value = !starredBefore
-        
-        SignalProducer<Bool, NoError>(value: starredBefore)
-            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil)}
-            .flatMap(.Latest) { starredBefore in
-                starredBefore
-                    ? ApiService<EmptyResponse>.delete("optographs/\(self.id.value)/star")
-                    : ApiService<EmptyResponse>.post("optographs/\(self.id.value)/star", parameters: nil)
-            }
-            .start(
-                completed: {
-                    //                    self.realm.write {
-                    //                        self.optograph.isStarred = self.isStarred.value
-                    //                        self.optograph.starsCount = self.starsCount.value
-                    //                    }
-                },
-                error: { _ in
-                    self.starsCount.value = starsCountBefore
-                    self.isStarred.value = starredBefore
-                }
-        )
-    }
-    
-    func increaseViewsCount() {
-        ApiService<EmptyResponse>.post("optographs/\(id.value)/views", parameters: nil)
-            .start(completed: {
-                self.viewsCount.value = self.viewsCount.value + 1
-                
-                //                self.realm.write {
-                //                    self.optograph.viewsCount = self.viewsCount.value
-                //                }
-            })
-    }
-    
-    func publish() {
-        isPublishing.value = true
-        
-        optograph!.publish()
-            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
-            .start(completed: {
-                self.isPublished.value = true
-                self.isPublishing.value = false
-            })
+        try! DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, optograph.person.toSQL()))
+        try! DatabaseManager.defaultConnection.run(LocationTable.insert(or: .Replace, optograph.location.toSQL()))
+        try! DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, optograph.toSQL()))
     }
     
 }

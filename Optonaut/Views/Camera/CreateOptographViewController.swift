@@ -9,6 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import KMPlaceholderTextView
+import Crashlytics
 
 class CreateOptographViewController: UIViewController, RedNavbar {
     
@@ -35,6 +36,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Preparing"])
         
         view.backgroundColor = .whiteColor()
         
@@ -154,6 +157,9 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     }
     
     func post() {
+        
+        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Posting"])
+        
         viewModel.post()
             .start(next: { optograph in
                 self.navigationController?.pushViewController(DetailsContainerViewController(optographId: optograph.id), animated: false)

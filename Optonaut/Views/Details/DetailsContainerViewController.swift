@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Crashlytics
 
 class DetailsContainerViewController: UIViewController {
     
@@ -16,6 +17,11 @@ class DetailsContainerViewController: UIViewController {
     let headerView: UIView
     
     required init(optographId: UUID) {
+        
+        Answers.logContentViewWithName("Optograph Details \(optographId)",
+            contentType: "OptographDetails",
+            contentId: "optograph-details-\(optographId)",
+            customAttributes: [:])
         
         tableViewController = CommentTableViewController(optographId: optographId)
         tableView = tableViewController.view

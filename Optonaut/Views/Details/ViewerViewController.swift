@@ -3,6 +3,7 @@ import QuartzCore
 import SceneKit
 import CoreMotion
 import CoreGraphics
+import Crashlytics
 
 class ViewerViewController: UIViewController  {
     
@@ -18,6 +19,12 @@ class ViewerViewController: UIViewController  {
     var enableDistortion = false
     
     required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
+        
+        Answers.logContentViewWithName("Optograph Viewer \(optograph.id)",
+            contentType: "OptographViewer",
+            contentId: "optograph-viewer-\(optograph.id)",
+            customAttributes: [:])
+        
         self.orientation = orientation
         self.optograph = optograph
         super.init(nibName: nil, bundle: nil)
