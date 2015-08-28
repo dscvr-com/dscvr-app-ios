@@ -56,11 +56,14 @@ class CameraViewController: UIViewController {
     let stitcher = IosPipeline()
     
     var frameCount = 0
+    var previewImageCount = 0
     let intrinsics = CameraIntrinsics
     
     
     var debugHelper: CameraDebugService?
     var edges = [Edge: SCNNode]()
+    
+    var previewImage: CGImage?
     
     // subviews
     let closeButtonView = UIButton()
@@ -338,6 +341,14 @@ class CameraViewController: UIViewController {
                 
                 stitcher.FreeImageBuffer(previewData)
                 
+                previewImageCount++;
+                
+                if(previewImageCount == 5) {
+                    self.previewImage = ImageBufferToCGImage(buf)
+                
+                    debugHelper?.saveFileToDisk(self.previewImage!, name: "preview.jpg")
+                }
+                
                 if edges.isEmpty {
                     // needed since processSampleBuffer doesn't run on UI thread
                     Async.main {
@@ -346,11 +357,15 @@ class CameraViewController: UIViewController {
                 }
             }
             
-            //debugHelper?.push(pixelBuffer, intrinsics: CameraIntrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
+            debugHelper?.push(pixelBuffer, intrinsics: CameraIntrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
         }
     }
     
     func finish() {
+        
+        //Use self.previewImage here.
+        
+        
         let signalProducer = SignalProducer<(left: NSData, right: NSData), NoError> { sink, disposable in
             let leftBuffer = self.stitcher.GetLeftResult()
             let leftCGImage = ImageBufferToCGImage(leftBuffer)
