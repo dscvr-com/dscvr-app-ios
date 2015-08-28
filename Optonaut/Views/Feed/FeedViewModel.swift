@@ -45,13 +45,14 @@ class FeedViewModel: NSObject {
         results.value = optographs.sort { $0.createdAt > $1.createdAt }
         
         refreshNotificationSignal.subscribe {
-            ApiService.get("optographs/feed")
-                .on(next: { (optograph: Optograph) in
-                    if let firstOptograph = self.results.value.first {
+            var count = 0
+            ApiService<Optograph>.get("optographs/feed")
+                .on(next: { optograph in
+                    if let firstOptograph = self.results.value.first where count++ == 0 {
                         self.newResultsAvailable.value = optograph.id != firstOptograph.id
                     }
                 })
-                .start(next: processNewOptograph)
+                .start(next: self.processNewOptograph)
         }
         
         loadMoreNotificationSignal.subscribe {
