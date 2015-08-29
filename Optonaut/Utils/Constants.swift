@@ -42,8 +42,8 @@ enum NotificationKeys: String {
 
 let CameraIntrinsics: [Double] = {
     switch UIDevice.currentDevice().deviceType {
-    case .IPhone6: return [4.854369, 0, 3, 0, 4.854369, 1.6875, 0, 0, 1]
-    case .IPhone5S: return [4.854369, 0, 3, 0, 4.854369, 2.4, 0, 0, 1]
+    case .IPhone6: return [4.854369, 0, 1.6875, 0, 4.854369, 3, 0, 0, 1]
+    case .IPhone5S: return [4.854369, 0, 2.4, 0, 4.854369, 3, 0, 0, 1]
     default: return []
     }
 }()

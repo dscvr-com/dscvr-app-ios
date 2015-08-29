@@ -115,6 +115,7 @@
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
 		8FFCE4B91B4DBF1900832C88 /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCE4B81B4DBF1900832C88 /* KILabel.m */; };
+		A571CC611B91D7B400124FD2 /* pipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A571CC5F1B91D7B400124FD2 /* pipeline.cpp */; };
 		A5C1C0161B7E19E200DCD598 /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0031B7E19E200DCD598 /* image.cpp */; };
 		A5C1C0171B7E19E200DCD598 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5C1C0061B7E19E200DCD598 /* lib */; };
 		A5C1C0181B7E19E200DCD598 /* monoStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0071B7E19E200DCD598 /* monoStitcher.cpp */; };
@@ -249,6 +250,7 @@
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		8FFCE4B71B4DBF1900832C88 /* KILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabel.h; sourceTree = "<group>"; };
 		8FFCE4B81B4DBF1900832C88 /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabel.m; sourceTree = "<group>"; };
+		A571CC5F1B91D7B400124FD2 /* pipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pipeline.cpp; sourceTree = "<group>"; };
 		A59923E71B8520B5000773D7 /* imageResizer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = imageResizer.hpp; sourceTree = "<group>"; };
 		A59923E81B8520DF000773D7 /* imageResizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageResizer.hpp; sourceTree = "<group>"; };
 		A5C1C0031B7E19E200DCD598 /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = image.cpp; sourceTree = "<group>"; };
@@ -659,6 +661,7 @@
 				A5C1C0111B7E19E200DCD598 /* support.hpp */,
 				A5C1C0121B7E19E200DCD598 /* thresholdSeamer.hpp */,
 				A5C1C0131B7E19E200DCD598 /* visualAligner.hpp */,
+				A571CC5F1B91D7B400124FD2 /* pipeline.cpp */,
 			);
 			name = Stitcher;
 			path = stitcher/src;
@@ -900,6 +903,7 @@
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
 				8FAB9F391B8F01DF00B4C8CB /* CommentsViewModel.swift in Sources */,
 				A5C1C01A1B7E19E200DCD598 /* simpleSphereStitcher.cpp in Sources */,
+				A571CC611B91D7B400124FD2 /* pipeline.cpp in Sources */,
 				8FAB9F3B1B8F01DF00B4C8CB /* CommentTableViewController.swift in Sources */,
 				8F900B421B839D0C0085566C /* OptographTable.swift in Sources */,
 				8FAB9F781B8F02D500B4C8CB /* Stitcher.mm in Sources */,

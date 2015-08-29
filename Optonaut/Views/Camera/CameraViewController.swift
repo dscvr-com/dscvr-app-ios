@@ -331,11 +331,9 @@ class CameraViewController: UIViewController {
                 
                 let planeNode = SCNNode(geometry: planeGeometry)
                 
-                let L = GLKMatrix4MakeRotation(Float(M_PI_2), 0, 0, -1)
                 let R = stitcher.GetPreviewRotation()
                 let T = GLKMatrix4MakeTranslation(0, 0, -Float(intrinsics[0]))
-                let TL = GLKMatrix4Multiply(T, L)
-                planeNode.transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Multiply(R, TL))
+                planeNode.transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Multiply(R, T))
                 
                 scene.rootNode.addChildNode(planeNode)
                 
