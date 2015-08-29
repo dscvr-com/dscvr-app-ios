@@ -343,7 +343,7 @@ class CameraViewController: UIViewController {
                 
                 previewImageCount++;
                 
-                if(previewImageCount == 5) {
+                if previewImageCount == 5 {
                     self.previewImage = ImageBufferToCGImage(buf)
                 
                     debugHelper?.saveFileToDisk(self.previewImage!, name: "preview.jpg")
@@ -363,29 +363,30 @@ class CameraViewController: UIViewController {
     
     func finish() {
         
-        //Use self.previewImage here.
-        
-        
-        let signalProducer = SignalProducer<(left: NSData, right: NSData), NoError> { sink, disposable in
+        let assetSignalProducer = SignalProducer<OptographAsset, NoError> { sink, disposable in
+            let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)
+            sendNext(sink, OptographAsset.LeftImage(preview!))
+            
             let leftBuffer = self.stitcher.GetLeftResult()
             let leftCGImage = ImageBufferToCGImage(leftBuffer)
             let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage), 0.8)
             self.stitcher.FreeImageBuffer(leftBuffer)
+            sendNext(sink, OptographAsset.LeftImage(leftImageData!))
             
             let rightBuffer = self.stitcher.GetRightResult()
             let rightCGImage = ImageBufferToCGImage(rightBuffer)
             let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage), 0.8)
             self.stitcher.FreeImageBuffer(rightBuffer)
+            sendNext(sink, OptographAsset.LeftImage(rightImageData!))
             
-            sendNext(sink, (left: leftImageData!, right: rightImageData!))
             sendCompleted(sink)
             
             disposable.addDisposable {
-                // TODO insert code to cancel stitching
+                // TODO @emiswelt! insert code to cancel stitching
             }
         }
         
-        navigationController!.pushViewController(CreateOptographViewController(signalProducer: signalProducer), animated: false)
+        navigationController!.pushViewController(CreateOptographViewController(assetSignalProducer: assetSignalProducer), animated: false)
         navigationController!.viewControllers.removeAtIndex(1)
     }
 }

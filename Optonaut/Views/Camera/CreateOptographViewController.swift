@@ -22,10 +22,10 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     let textInputView = KMPlaceholderTextView()
     let lineView = UIView()
     
-    let stitchingSignalProducer: SignalProducer<(left: NSData, right: NSData), NoError>
+    let assetSignalProducer: SignalProducer<OptographAsset, NoError>
     
-    required init(signalProducer: SignalProducer<(left: NSData, right: NSData), NoError>) {
-        stitchingSignalProducer = signalProducer
+    required init(assetSignalProducer: SignalProducer<OptographAsset, NoError>) {
+        self.assetSignalProducer = assetSignalProducer
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -103,12 +103,16 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
-        stitchingSignalProducer
+        assetSignalProducer
             .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)))
-            .start(next: { images in
-                self.viewModel.saveImages(images)
-                self.viewModel.pending.value = false
-            })
+            .start(
+                next: { asset in
+                    self.viewModel.saveAsset(asset)
+                },
+                completed: {
+                    self.viewModel.pending.value = false
+                }
+        )
         
         view.setNeedsUpdateConstraints()
     }
