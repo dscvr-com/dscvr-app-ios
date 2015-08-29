@@ -363,6 +363,10 @@ class CameraViewController: UIViewController {
         
         //Use self.previewImage here.
         
+        for child in scene.rootNode.childNodes
+        {
+            child.removeFromParentNode()
+        }
         
         let signalProducer = SignalProducer<(left: NSData, right: NSData), NoError> { sink, disposable in
             let leftBuffer = self.stitcher.GetLeftResult()
