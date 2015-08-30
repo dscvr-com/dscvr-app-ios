@@ -367,17 +367,19 @@ class CameraViewController: UIViewController {
         let assetSignalProducer = SignalProducer<OptographAsset, NoError> { sink, disposable in
             let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)
             sendNext(sink, OptographAsset.LeftImage(preview!))
-            
+        
             let leftBuffer = self.stitcher.GetLeftResult()
-            let leftCGImage = ImageBufferToCGImage(leftBuffer)
-            let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage), 0.8)
+            var leftCGImage: CGImage? = ImageBufferToCGImage(leftBuffer)
+            let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage!), 0.8)
             self.stitcher.FreeImageBuffer(leftBuffer)
+            leftCGImage = nil
             sendNext(sink, OptographAsset.LeftImage(leftImageData!))
-            
+
             let rightBuffer = self.stitcher.GetRightResult()
-            let rightCGImage = ImageBufferToCGImage(rightBuffer)
-            let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage), 0.8)
+            var rightCGImage: CGImage? = ImageBufferToCGImage(rightBuffer)
+            let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage!), 0.8)
             self.stitcher.FreeImageBuffer(rightBuffer)
+            rightCGImage = nil
             sendNext(sink, OptographAsset.LeftImage(rightImageData!))
             
             sendCompleted(sink)
