@@ -57,11 +57,11 @@ class DownloadService: NSObject {
             }
             
             let request = Alamofire.request(.GET, url)
+                .validate(statusCode: 200..<300)
                 .progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
                     let progress = Float(totalBytesRead) / Float(totalBytesExpectedToRead)
                     sendNext(sink, Event.Progress(progress))
                 }
-                .validate(statusCode: 200..<300)
                 .response { _, _, data, error in
                     if let error = error {
                         print(error)
