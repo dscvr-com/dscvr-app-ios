@@ -52,8 +52,8 @@ func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: T
 }
 
 extension UIImageView {
-    public var rac_image: MutableProperty<UIImage?> {
-        return lazyMutableProperty(self, key: &AssociationKey.image, setter: { self.image = $0 }, getter: { self.image })
+    public var rac_image: MutableProperty<UIImage> {
+        return lazyMutableProperty(self, key: &AssociationKey.image, setter: { self.image = $0 }, getter: { self.image! })
     }
 }
 
@@ -108,11 +108,7 @@ extension UITextField {
             self.addTarget(self, action: "changed", forControlEvents: UIControlEvents.EditingChanged)
             
             let property = MutableProperty<String>(self.text ?? "")
-            property.producer
-                .start(next: {
-                    newValue in
-                    self.text = newValue
-                })
+            property.producer.start(next: { self.text = $0 })
             return property
         }
     }
@@ -130,25 +126,17 @@ extension UITextField {
     }
 }
 
-extension UITextView: UITextViewDelegate {
-    
+extension UITextView {
     public var rac_text: MutableProperty<String> {
         return lazyAssociatedProperty(self, key: &AssociationKey.text) {
-            
             let property = MutableProperty<String>(self.text ?? "")
-            property.producer
-                .start(next: {
-                    newValue in
-                    self.text = newValue
-                })
+            property.producer.start(next: { self.text = $0 })
             return property
         }
     }
-    
 }
 
 extension UIActivityIndicatorView {
-    
     public var rac_animating: MutableProperty<Bool> {
         return lazyAssociatedProperty(self, key: &AssociationKey.animating) {
             
@@ -164,6 +152,4 @@ extension UIActivityIndicatorView {
             return property
         }
     }
-    
-    
 }

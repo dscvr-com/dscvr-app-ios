@@ -11,6 +11,15 @@ import ReactiveCocoa
 
 typealias ImagePair = (left: NSData, right: NSData)
 
+enum OptographAsset {
+    case PreviewImage(NSData)
+    case PreviewImageType
+    case LeftImage(NSData)
+    case LeftImageType
+    case RightImage(NSData)
+    case RightImageType
+}
+
 struct Optograph: Model {
     
     var id: UUID
@@ -32,28 +41,35 @@ struct Optograph: Model {
         return NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/optographs/\(id)"
     }
     
-    func saveImages(images: ImagePair) throws {
-        let (left, right) = images
+    func saveAsset(asset: OptographAsset) throws {
         try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
-        left.writeToFile("\(path)/left.jpg", atomically: true)
-        right.writeToFile("\(path)/right.jpg", atomically: true)
+        
+        switch asset {
+        case .LeftImage(let data): data.writeToFile("\(path)/left.jpg", atomically: true)
+        case .RightImage(let data): data.writeToFile("\(path)/right.jpg", atomically: true)
+        case .PreviewImage(let data): data.writeToFile("\(path)/preview.jpg", atomically: true)
+        default: fatalError("not implemented")
+        }
     }
     
-    func loadImages() -> ImagePair {
-        let left = NSData(contentsOfFile: "\(path)/left.jpg")
-        let right = NSData(contentsOfFile: "\(path)/right.jpg")
-        return (left: left!, right: right!)
+    func loadAsset(type: OptographAsset) -> NSData {
+        switch type {
+        case .LeftImageType: return NSData(contentsOfFile: "\(path)/left.jpg")!
+        case .RightImageType: return NSData(contentsOfFile: "\(path)/right.jpg")!
+        case .PreviewImageType: return NSData(contentsOfFile: "\(path)/preview.jpg")!
+        default: fatalError("not implemented")
+        }
     }
     
     mutating func publish() -> SignalProducer<Optograph, ApiError> {
         assert(!isPublished)
         
         let parameters = SignalProducer<[String: AnyObject], ApiError> { sink, disposable in
-            let (left, right) = self.loadImages()
             var parameters = Mapper().toJSON(self)
             
-            parameters["left_image"] = left.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-            parameters["right_image"] = right.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            parameters["left_image"] = self.loadAsset(.LeftImageType).base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            parameters["right_image"] = self.loadAsset(.RightImageType).base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            parameters["preview_image"] = self.loadAsset(.PreviewImageType).base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
             
             sendNext(sink, parameters)
             sendCompleted(sink)

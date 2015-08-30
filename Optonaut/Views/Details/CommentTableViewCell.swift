@@ -26,8 +26,6 @@ class CommentTableViewCell: UITableViewCell {
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-//        contentView.backgroundColor = UIColor.greenColor().alpha(0.5)
-        
         textView.numberOfLines = 0
         textView.tintColor = BaseColor
         textView.userInteractionEnabled = true
@@ -89,11 +87,7 @@ class CommentTableViewCell: UITableViewCell {
         viewModel = CommentViewModel(comment: comment)
         
         textView.rac_text <~ viewModel.text
-        
-        if let avatarUrl = NSURL(string: viewModel.avatarUrl.value) {
-            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
-        }
-        
+        avatarImageView.rac_image <~ viewModel.avatarImage
         fullNameView.rac_text <~ viewModel.fullName
         userNameView.rac_text <~ viewModel.userName
         dateView.rac_text <~ viewModel.timeSinceCreated
