@@ -378,7 +378,7 @@ class CameraViewController: UIViewController {
             let rightCGImage = ImageBufferToCGImage(rightBuffer)
             let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage), 0.8)
             self.stitcher.FreeImageBuffer(rightBuffer)
-            sendNext(sink, OptographAsset.LeftImage(rightImageData!))
+            sendNext(sink, OptographAsset.RightImage(rightImageData!))
             
             sendCompleted(sink)
             
