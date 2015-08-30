@@ -147,7 +147,7 @@ class DetailsViewModel {
         
         let leftProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.leftTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")
         let rightProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.rightTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")
-        downloadProgress <~ leftProgress.zipWith(rightProgress).map { ($0 + $1) / 2 }
+        downloadProgress <~ leftProgress.combineLatestWith(rightProgress).map { ($0 + $1) / 2 }
     }
     
 }
