@@ -22,8 +22,9 @@ struct EmptyResponse: Mappable {
 
 struct ApiError: ErrorType {
     
-    static let Nil = ApiError(timeout: false, status: nil, message: "", error: nil)
+    static let Nil = ApiError(endpoint: "", timeout: false, status: nil, message: "", error: nil)
     
+    let endpoint: String
     let timeout: Bool
     let status: Int?
     let message: String
@@ -101,7 +102,7 @@ class ApiService<T: Mappable> {
                             print(json)
                         } catch {}
                         
-                        let apiError = ApiError(timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode, message: error.description, error: error)
+                        let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode, message: error.description, error: error)
                         sendError(sink, apiError)
                     } else {
                         if let data = data where data.length > 0 {
@@ -114,11 +115,11 @@ class ApiService<T: Mappable> {
                                         sendNext(sink, object)
                                     }
                                 } else {
-                                    let apiError = ApiError(timeout: false, status: -1, message: "JSON couldn't be mapped to type T", error: nil)
+                                    let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON couldn't be mapped to type T", error: nil)
                                     sendError(sink, apiError)
                                 }
                             } catch let error {
-                                let apiError = ApiError(timeout: false, status: -1, message: "JSON invalid", error: error as NSError)
+                                let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON invalid", error: error as NSError)
                                 sendError(sink, apiError)
                             }
                         }

@@ -56,7 +56,7 @@ class EditProfileViewModel {
     
     func updateData() -> SignalProducer<EmptyResponse, ApiError> {
         if userNameTaken.value {
-            return SignalProducer(error: ApiError(timeout: false, status: 400, message: "Username taken", error: nil))
+            return SignalProducer(error: ApiError(endpoint: "", timeout: false, status: 400, message: "Username taken", error: nil))
         }
         
         let parameters = [
@@ -79,7 +79,7 @@ class EditProfileViewModel {
         
         avatarImage.value = UIImage(data: data!)!
         
-        return ApiService.post("persons/me/upload-profile-image", parameters: ["profile_image": str!])
+        return ApiService.post("persons/me/upload-profile-image", parameters: ["avatar_asset": str!])
             .on(next: { person in
                 self.person = person
                 self.saveModel()
