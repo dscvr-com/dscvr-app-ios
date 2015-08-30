@@ -39,8 +39,8 @@ class ApiService<T: Mappable> {
     private static var host: String {
         switch Env {
         case .Development: return "optonaut.ngrok.io"
-        case .Staging: return "beta.api-0-12.optonaut.co"
-        case .Production: return "api-0-12.optonaut.co"
+        case .Staging: return "beta.api-0-2.optonaut.co"
+        case .Production: return "api-0-2.optonaut.co"
         }
     }
     

@@ -21,8 +21,8 @@ class DetailsViewModel {
     let commentsCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
-    let detailsUrl = MutableProperty<String>("")
-    let avatarUrl = MutableProperty<String>("")
+    let detailsImage = MutableProperty<UIImage>(UIImage(named: "optograph-details-placeholder")!)
+    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let personId = MutableProperty<UUID>("")
@@ -131,7 +131,7 @@ class DetailsViewModel {
             
             try! NSFileManager.defaultManager().createDirectoryAtPath(optograph.path, withIntermediateDirectories: true, attributes: nil)
             
-            DownloadService.download(from: url, to: path)
+            DownloadService.downloadProgress(from: url, to: path)
                 .observe(next: { progress in
                     if side == "left" {
                         leftProgress = progress
@@ -163,7 +163,7 @@ class DetailsViewModel {
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
         detailsUrl.value = "\(StaticFilePath)/thumbs/details_\(optograph.id).jpg"
-        avatarUrl.value = optograph.person.avatarUrl
+        avatarImage <~ DownloadService.downloadData(from: optograph.person.avatarUrl, to: optograph.person.avatarPath).map { UIImage(data: $0)! }
         fullName.value = optograph.person.fullName
         userName.value = "@\(optograph.person.userName)"
         personId.value = optograph.person.id

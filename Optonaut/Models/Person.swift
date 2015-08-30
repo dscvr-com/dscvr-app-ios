@@ -24,6 +24,10 @@ struct Person: Model {
     var avatarUrl: String {
         return "\(StaticFilePath)/profile-images/thumb/\(id).jpg"
     }
+    
+    var avatarPath: String {
+        return "\(ImagePath)/\(id).jpg"
+    }
 }
 
 extension Person: Mappable {

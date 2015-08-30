@@ -16,8 +16,8 @@ enum EnvType {
     case Production
 }
 
-let Env = EnvType.Development
-//let Env = EnvType.Staging
+//let Env = EnvType.Development
+let Env = EnvType.Staging
 //let Env = EnvType.Production
 
 var StaticFilePath: String {
@@ -27,6 +27,8 @@ var StaticFilePath: String {
     case .Production: return "http://optonaut-ios-beta-production.s3.amazonaws.com"
     }
 }
+
+let ImagePath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/images"
 
 enum UserDefaultsKeys: String {
     case PersonIsLoggedIn = "person_is_logged_in"
