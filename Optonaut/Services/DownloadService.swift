@@ -56,20 +56,19 @@ class DownloadService: NSObject {
                 return
             }
             
-            let destination: Alamofire.Request.DownloadFileDestination = { tmpUrl, _ in
-                return NSURL(fileURLWithPath: path) ?? tmpUrl
-            }
-            
-            let request = Alamofire.download(.GET, url, destination: destination)
+            let request = Alamofire.request(.GET, url)
                 .progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
                     let progress = Float(totalBytesRead) / Float(totalBytesExpectedToRead)
                     sendNext(sink, Event.Progress(progress))
                 }
-                .response { _, _, _, error in
+                .validate(statusCode: 200..<300)
+                .response { _, _, data, error in
                     if let error = error {
                         print(error)
                     } else {
-                        sendNext(sink, Event.Data(NSData(contentsOfFile: path)!))
+                        data!.writeToFile(path, atomically: true)
+                        sendNext(sink, Event.Progress(1))
+                        sendNext(sink, Event.Data(data!))
                         sendCompleted(sink)
                     }
                 }
