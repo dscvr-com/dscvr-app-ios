@@ -20,14 +20,7 @@ struct Person: Model {
     var isFollowed: Bool
     var createdAt: NSDate
     var wantsNewsletter: Bool
-    
-    var avatarUrl: String {
-        return "\(StaticFilePath)/profile-images/thumb/\(id).jpg"
-    }
-    
-    var avatarPath: String {
-        return "\(ImagePath)/\(id).jpg"
-    }
+    var avatarAssetId: UUID
 }
 
 extension Person: Mappable {
@@ -43,7 +36,8 @@ extension Person: Mappable {
             followedCount: 0,
             isFollowed: false,
             createdAt: NSDate(),
-            wantsNewsletter: false
+            wantsNewsletter: false,
+            avatarAssetId: uuid()
         )
     }
     
@@ -58,6 +52,7 @@ extension Person: Mappable {
         isFollowed          <- map["is_followed"]
         createdAt           <- (map["created_at"], NSDateTransform())
         wantsNewsletter     <- map["wants_newsletter"]
+        avatarAssetId       <- map["avatar_asset_id"]
     }
     
 }
@@ -75,7 +70,8 @@ extension Person: SQLiteModel {
             followedCount: row[PersonSchema.followedCount],
             isFollowed: row[PersonSchema.isFollowed],
             createdAt: row[PersonSchema.createdAt],
-            wantsNewsletter: row[PersonSchema.wantsNewsletter]
+            wantsNewsletter: row[PersonSchema.wantsNewsletter],
+            avatarAssetId: row[PersonSchema.avatarAssetId]
         )
     }
     
@@ -90,7 +86,8 @@ extension Person: SQLiteModel {
             PersonSchema.followedCount <-- followedCount,
             PersonSchema.isFollowed <-- isFollowed,
             PersonSchema.createdAt <-- createdAt,
-            PersonSchema.wantsNewsletter <-- wantsNewsletter
+            PersonSchema.wantsNewsletter <-- wantsNewsletter,
+            PersonSchema.avatarAssetId <-- avatarAssetId
         ]
     }
     

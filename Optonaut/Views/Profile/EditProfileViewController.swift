@@ -67,14 +67,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "updateImage"))
+        avatarImageView.rac_image <~ viewModel.avatarImage
         view.addSubview(avatarImageView)
-        
-        viewModel.avatarUrl.producer
-            .start(next: { url in
-                if let avatarUrl = NSURL(string: url) {
-                    self.avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
-                }
-            })
         
         fullNameIconView.font = .icomoonOfSize(20)
         fullNameIconView.text = .icomoonWithName(.VCard)

@@ -13,18 +13,15 @@ import Async
 
 class CreateOptographViewModel {
     
-    let previewUrl = MutableProperty<String>("")
+    let previewImage = MutableProperty<UIImage>(UIImage(named: "optograph-details-placeholder")!)
     let location = MutableProperty<String>("")
     let text = MutableProperty<String>("")
     let pending = MutableProperty<Bool>(true)
     let publishLater: MutableProperty<Bool>
     
-    private var optograph: Optograph
+    private var optograph = Optograph.newInstance() as! Optograph
     
     init() {
-        // TODO add person reference
-        optograph = Optograph.newInstance() as! Optograph
-        
         publishLater = MutableProperty(!Reachability.connectedToNetwork())
         
         LocationService.location()
@@ -44,7 +41,15 @@ class CreateOptographViewModel {
     }
     
     func saveAsset(asset: OptographAsset) {
-        try! optograph.saveAsset(asset)
+        switch asset {
+        case .LeftImage(let data):
+            data.writeToFile("\(StaticPath)/\(optograph.leftTextureAssetId).jpg", atomically: true)
+        case .RightImage(let data):
+            data.writeToFile("\(StaticPath)/\(optograph.rightTextureAssetId).jpg", atomically: true)
+        case .PreviewImage(let data):
+            data.writeToFile("\(StaticPath)/\(optograph.previewAssetId).jpg", atomically: true)
+            previewImage.value = UIImage(data: data)!
+        }
     }
     
     func post() -> SignalProducer<Optograph, NSError> {

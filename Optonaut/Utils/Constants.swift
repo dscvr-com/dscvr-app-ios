@@ -16,11 +16,11 @@ enum EnvType {
     case Production
 }
 
-let Env = EnvType.Development
-//let Env = EnvType.Staging
+//let Env = EnvType.Development
+let Env = EnvType.Staging
 //let Env = EnvType.Production
 
-var StaticFilePath: String {
+var S3URL: String {
     switch Env {
     case .Development: return "http://optonaut-ios-beta-dev.s3.amazonaws.com"
     case .Staging: return "http://optonaut-ios-beta-staging.s3.amazonaws.com"
@@ -28,7 +28,12 @@ var StaticFilePath: String {
     }
 }
 
-let ImagePath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/images"
+let StaticPath: String = {
+    let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
+    let path = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first! + "/\(appId!)/static"
+    try! NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+    return path
+}()
 
 enum UserDefaultsKeys: String {
     case PersonIsLoggedIn = "person_is_logged_in"

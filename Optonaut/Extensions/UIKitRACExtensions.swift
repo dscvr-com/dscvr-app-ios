@@ -53,7 +53,7 @@ func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: T
 
 extension UIImageView {
     public var rac_image: MutableProperty<UIImage> {
-        return lazyMutableProperty(self, key: &AssociationKey.image, setter: { self.image = $0 }, getter: { self.image! })
+        return lazyMutableProperty(self, key: &AssociationKey.image, setter: { self.image = $0 }, getter: { self.image ?? UIImage() })
     }
 }
 

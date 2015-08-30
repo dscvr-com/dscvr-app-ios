@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        //print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
+        print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
         Fabric.with([Crashlytics.self()])
         

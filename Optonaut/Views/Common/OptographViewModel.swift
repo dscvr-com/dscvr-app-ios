@@ -12,14 +12,14 @@ import ReactiveCocoa
 
 class OptographViewModel {
     
-    let previewUrl: ConstantProperty<String>
-    let avatarUrl: ConstantProperty<String>
     let fullName: ConstantProperty<String>
     let userName: ConstantProperty<String>
     let personId: ConstantProperty<UUID>
     let text: ConstantProperty<String>
     let location: ConstantProperty<String>
     
+    let previewImage = MutableProperty<UIImage>(UIImage(named: "optograph-placeholder")!)
+    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let isStarred = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let commentCount = MutableProperty<Int>(0)
@@ -31,8 +31,9 @@ class OptographViewModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        previewUrl = ConstantProperty("\(StaticFilePath)/thumbs/thumb_\(optograph.id).jpg")
-        avatarUrl = ConstantProperty(optograph.person.avatarUrl)
+        previewImage <~ DownloadService.downloadData(from: "\(S3URL)/original/\(optograph.previewAssetId).jpg", to: "\(StaticPath)/\(optograph.previewAssetId).jpg").map { UIImage(data: $0)! }
+        avatarImage <~ DownloadService.downloadData(from: "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg", to: "\(StaticPath)/\(optograph.person.avatarAssetId).jpg").map { UIImage(data: $0)! }
+        
         fullName = ConstantProperty(optograph.person.fullName)
         userName = ConstantProperty("@\(optograph.person.userName)")
         personId = ConstantProperty(optograph.person.id)

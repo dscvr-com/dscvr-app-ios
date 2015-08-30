@@ -18,7 +18,7 @@ class EditProfileViewModel {
     let userNameTaken = MutableProperty<Bool>(false)
     let text = MutableProperty<String>("")
     let email = MutableProperty<String>("")
-    let avatarUrl = MutableProperty<String>("")
+    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let debugEnabled = MutableProperty<Bool>(false)
     let wantsNewsletter = MutableProperty<Bool>(false)
     
@@ -73,14 +73,17 @@ class EditProfileViewModel {
             })
     }
     
-    func updateAvatar(image: UIImage) -> SignalProducer<EmptyResponse, ApiError> {
+    func updateAvatar(image: UIImage) -> SignalProducer<Person, ApiError> {
         let data = UIImageJPEGRepresentation(image, 1)
         let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         
+        avatarImage.value = UIImage(data: data!)!
+        
         return ApiService.post("persons/me/upload-profile-image", parameters: ["profile_image": str!])
-            .on(completed: {
-                SDImageCache.sharedImageCache().removeImageForKey(self.person.avatarUrl, fromDisk: true)
-                self.avatarUrl.value = self.avatarUrl.value
+            .on(next: { person in
+                self.person = person
+                self.saveModel()
+                self.updateProperties()
             })
     }
     
@@ -107,7 +110,7 @@ class EditProfileViewModel {
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
         text.value = person.text
-        avatarUrl.value = person.avatarUrl
+        avatarImage <~ DownloadService.downloadData(from: "\(S3URL)/400x400/\(person.avatarAssetId).jpg", to: "\(StaticPath)/\(person.avatarAssetId).jpg").map { UIImage(data: $0)! }
     }
     
     private func updateModel() {

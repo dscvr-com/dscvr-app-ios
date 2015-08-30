@@ -17,7 +17,7 @@ class DetailsHeaderViewController: UIViewController {
     var viewModel: DetailsViewModel
     
     // subviews
-    let detailsImageView = UIImageView()
+    let previewImageView = UIImageView()
     let locationView = InsetLabel()
     let maximizeButtonView = UIButton()
     let avatarImageView = UIImageView()
@@ -56,13 +56,8 @@ class DetailsHeaderViewController: UIViewController {
         
         navigationItem.title = ""
         
-        viewModel.detailsUrl.producer
-            .start(next: { url in
-                if let detailsUrl = NSURL(string: url) {
-                    self.detailsImageView.sd_setImageWithURL(detailsUrl, placeholderImage: UIImage(named: "optograph-details-placeholder"))
-                }
-            })
-        view.addSubview(detailsImageView)
+        previewImageView.rac_image <~ viewModel.previewImage
+        view.addSubview(previewImageView)
         
         locationView.font = UIFont.robotoOfSize(12, withType: .Regular)
         locationView.textColor = .whiteColor()
@@ -91,12 +86,7 @@ class DetailsHeaderViewController: UIViewController {
             })
         view.addSubview(progressView)
         
-        viewModel.avatarUrl.producer
-            .start(next: { url in
-                if let avatarUrl = NSURL(string: url) {
-                    self.avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
-                }
-            })
+        avatarImageView.rac_image <~ viewModel.avatarImage
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
@@ -244,21 +234,21 @@ class DetailsHeaderViewController: UIViewController {
     }
     
     override func updateViewConstraints() {
-        detailsImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
-        detailsImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        detailsImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.84)
+        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
+        previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
+        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.84)
         
-        locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: detailsImageView, withOffset: -13)
-        locationView.autoPinEdge(.Left, toEdge: .Left, ofView: detailsImageView, withOffset: 19)
+        locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
+        locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
         
-        maximizeButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: detailsImageView, withOffset: -8)
-        maximizeButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: detailsImageView, withOffset: -19)
+        maximizeButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -8)
+        maximizeButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: previewImageView, withOffset: -19)
         
-        avatarImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView, withOffset: 15)
-        avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: detailsImageView, withOffset: 19)
+        avatarImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 15)
+        avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
         
-        progressView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView)
+        progressView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView)
         progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
         
         fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
@@ -270,13 +260,13 @@ class DetailsHeaderViewController: UIViewController {
         dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
         dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
-        shareButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView, withOffset: 12)
+        shareButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
         shareButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
-        publishButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView, withOffset: 12)
+        publishButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
         publishButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
-        publishingIndicatorView.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailsImageView, withOffset: 16)
+        publishingIndicatorView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
         publishingIndicatorView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -23)
         
         starButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 12)
