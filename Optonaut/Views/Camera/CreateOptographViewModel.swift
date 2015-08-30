@@ -43,8 +43,8 @@ class CreateOptographViewModel {
         location.producer.start(next: { self.optograph.location.text = $0 })
     }
     
-    func saveImages(images: ImagePair) {
-        try! optograph.saveImages(images)
+    func saveAsset(asset: OptographAsset) {
+        try! optograph.saveAsset(asset)
     }
     
     func post() -> SignalProducer<Optograph, NSError> {

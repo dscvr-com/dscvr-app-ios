@@ -39,8 +39,8 @@ class ApiService<T: Mappable> {
     private static var host: String {
         switch Env {
         case .Development: return "optonaut.ngrok.io"
-        case .Staging: return "beta.api.optonaut.co"
-        case .Production: return "api.optonaut.co"
+        case .Staging: return "beta.api-0-2.optonaut.co"
+        case .Production: return "api-0-2.optonaut.co"
         }
     }
     
@@ -50,6 +50,10 @@ class ApiService<T: Mappable> {
         case .Staging: return 80
         case .Production: return 80
         }
+    }
+    
+    static func checkVersion() -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.get("info")
     }
     
     static func get(endpoint: String) -> SignalProducer<T, ApiError> {
@@ -91,7 +95,11 @@ class ApiService<T: Mappable> {
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
                         }
-                        // TODO https://github.com/Alamofire/Alamofire/issues/233
+                        
+                        do {
+                            let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
+                            print(json)
+                        } catch {}
                         
                         let apiError = ApiError(timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode, message: error.description, error: error)
                         sendError(sink, apiError)

@@ -12,7 +12,7 @@ import ReactiveCocoa
 class CommentViewModel {
     
     let text: ConstantProperty<String>
-    let avatarUrl: ConstantProperty<String>
+    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let fullName: ConstantProperty<String>
     let userName: ConstantProperty<String>
     let personId: ConstantProperty<UUID>
@@ -20,7 +20,7 @@ class CommentViewModel {
     
     init(comment: Comment) {
         text = ConstantProperty(comment.text)
-        avatarUrl = ConstantProperty(comment.person.avatarUrl)
+        avatarImage <~ DownloadService.downloadData(from: comment.person.avatarUrl, to: comment.person.avatarPath).map { UIImage(data: $0)! }
         fullName = ConstantProperty(comment.person.fullName)
         userName = ConstantProperty("@\(comment.person.userName)")
         personId = ConstantProperty(comment.person.id)
