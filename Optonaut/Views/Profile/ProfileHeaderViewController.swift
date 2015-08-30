@@ -51,19 +51,13 @@ class ProfileHeaderViewController: UIViewController {
         avatarBackgroundImageView.addSubview(avatarBackgroundBlurView)
         avatarBackgroundImageView.clipsToBounds = true
         avatarBackgroundImageView.contentMode = UIViewContentMode.ScaleAspectFill
+        avatarBackgroundImageView.rac_image <~ viewModel.avatarImage
         view.addSubview(avatarBackgroundImageView)
         
         avatarImageView.layer.cornerRadius = 42
         avatarImageView.clipsToBounds = true
+        avatarImageView.rac_image <~ viewModel.avatarImage
         view.addSubview(avatarImageView)
-        
-        viewModel.avatarUrl.producer
-            .start(next: { url in
-                if let avatarUrl = NSURL(string: url) {
-                    self.avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
-                    self.avatarBackgroundImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
-                }
-            })
         
         fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
         fullNameView.textColor = .whiteColor()
@@ -153,12 +147,6 @@ class ProfileHeaderViewController: UIViewController {
         followedCountView.font = .robotoOfSize(13, withType: .Medium)
         followedCountView.textColor = .blackColor()
         view.addSubview(followedCountView)
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        viewModel.avatarUrl.value = viewModel.avatarUrl.value
     }
     
     override func updateViewConstraints() {

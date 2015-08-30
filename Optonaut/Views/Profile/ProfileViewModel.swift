@@ -20,7 +20,7 @@ class ProfileViewModel {
     let followersCount = MutableProperty<Int>(0)
     let followedCount = MutableProperty<Int>(0)
     let isFollowed = MutableProperty<Bool>(false)
-    let avatarUrl = MutableProperty<String>("")
+    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     
     private var person = Person.newInstance() as! Person
     
@@ -35,13 +35,13 @@ class ProfileViewModel {
         
         if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
             self.person = person
-            update()
+            updateProperties()
         }
     
         ApiService.get("persons/\(id)")
             .start(next: { (person: Person) in
                 self.person = person
-                self.update()
+                self.updateProperties()
             })
     }
     
@@ -55,24 +55,35 @@ class ProfileViewModel {
                     : ApiService<EmptyResponse>.post("persons/\(self.person.id)/follow", parameters: nil)
             }
             .on(started: {
-                self.person.isFollowed = !followedBefore
-                self.update()
+                self.isFollowed.value = !followedBefore
             })
-            .start(error: { _ in
-                self.person.isFollowed = followedBefore
-                self.update()
-            })
+            .start(
+                error: { _ in
+                    self.isFollowed.value = followedBefore
+                },
+                completed: {
+                    self.updateModel()
+                    self.saveModel()
+                }
+            )
     }
     
-    private func update() {
+    private func updateModel() {
+        person.isFollowed = isFollowed.value
+    }
+    
+    private func updateProperties() {
         fullName.value = person.fullName
         userName.value = person.userName
         text.value = person.text
         followersCount.value = person.followersCount
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed
-        avatarUrl.value = person.avatarUrl
         
+        avatarImage <~ DownloadService.downloadData(from: "\(S3URL)/400x400/\(person.avatarAssetId).jpg", to: "\(StaticPath)/\(person.avatarAssetId).jpg").map { UIImage(data: $0)! }
+    }
+    
+    private func saveModel() {
         try! person.save()
     }
     

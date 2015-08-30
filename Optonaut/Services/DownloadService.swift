@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import Alamofire
+import Crashlytics
 
 class DownloadService: NSObject {
     
@@ -17,9 +18,9 @@ class DownloadService: NSObject {
         case Data(NSData)
     }
     
-    private static var activeDownloads: [String: Signal<Event, NoError>] = [:]
+    private static var activeDownloads: [String: SignalProducer<Event, NoError>] = [:]
     
-    static func downloadProgress(from url: String, to path: String) -> Signal<Float, NoError> {
+    static func downloadProgress(from url: String, to path: String) -> SignalProducer<Float, NoError> {
         return download(from: url, to: path)
             .map { event in
                 switch event {
@@ -30,7 +31,7 @@ class DownloadService: NSObject {
             .filter { $0 != -1 }
     }
     
-    static func downloadData(from url: String, to path: String) -> Signal<NSData, NoError> {
+    static func downloadData(from url: String, to path: String) -> SignalProducer<NSData, NoError> {
         return download(from: url, to: path)
             .map { event in
                 switch event {
@@ -41,12 +42,20 @@ class DownloadService: NSObject {
             .filter { $0.length > 0 }
     }
     
-    private static func download(from url: String, to path: String) -> Signal<Event, NoError> {
-        if let signal = activeDownloads[url] {
-            return signal
+    private static func download(from url: String, to path: String) -> SignalProducer<Event, NoError> {
+        if let signalProducer = activeDownloads[url] {
+            return signalProducer
         }
         
-        let signal = Signal<Event, NSError> { sink in
+        let signalProducer = SignalProducer<Event, NoError> { sink, disposable in
+            
+            if NSFileManager.defaultManager().fileExistsAtPath(path) {
+                sendNext(sink, Event.Progress(1))
+                sendNext(sink, Event.Data(NSData(contentsOfFile: path)!))
+                sendCompleted(sink)
+                return
+            }
+            
             let destination: Alamofire.Request.DownloadFileDestination = { tmpUrl, _ in
                 return NSURL(fileURLWithPath: path) ?? tmpUrl
             }
@@ -56,23 +65,23 @@ class DownloadService: NSObject {
                     let progress = Float(totalBytesRead) / Float(totalBytesExpectedToRead)
                     sendNext(sink, Event.Progress(progress))
                 }
-                .response { _, _, data, error in
+                .response { _, _, _, error in
                     if let error = error {
                         print(error)
                     } else {
-                        sendNext(sink, Event.Data(data!))
+                        sendNext(sink, Event.Data(NSData(contentsOfFile: path)!))
                         sendCompleted(sink)
                     }
                 }
             
-            return ActionDisposable {
+            disposable.addDisposable {
                 request.cancel()
             }
         }
         
-        activeDownloads[url] = signal
+        activeDownloads[url] = signalProducer
         
-        signal.observe(
+        return signalProducer.on(
             completed: {
                 activeDownloads.removeValueForKey(url)
             },
@@ -80,7 +89,5 @@ class DownloadService: NSObject {
                 activeDownloads.removeValueForKey(url)
             }
         )
-        
-        return signal
     }
 }

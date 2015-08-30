@@ -19,6 +19,9 @@ struct OptographSchemaType: ModelSchema {
     let commentsCount = Expression<Int>("optograph_comments_count")
     let viewsCount = Expression<Int>("optograph_views_count")
     let isPublished = Expression<Bool>("optograph_is_published")
+    let previewAssetId = Expression<UUID>("optograph_preview_asset_id")
+    let leftTextureAssetId = Expression<UUID>("optograph_left_texture_asset_id")
+    let rightTextureAssetId = Expression<UUID>("optograph_right_texture_asset_id")
 }
 
 let OptographSchema = OptographSchemaType()
@@ -36,5 +39,8 @@ func OptographMigration() -> String {
         t.column(OptographSchema.commentsCount)
         t.column(OptographSchema.viewsCount)
         t.column(OptographSchema.isPublished)
+        t.column(OptographSchema.previewAssetId)
+        t.column(OptographSchema.leftTextureAssetId)
+        t.column(OptographSchema.rightTextureAssetId)
     }
 }

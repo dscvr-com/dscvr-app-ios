@@ -74,9 +74,9 @@ class ActivityTableViewCell: UITableViewCell {
     func bindViewModel(activity: Activity) {
         viewModel = ActivityViewModel(activity: activity)
         
-        if let avatarUrl = NSURL(string: viewModel.creatorAvatarUrl.value) {
-            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
-        }
+//        if let avatarUrl = NSURL(string: viewModel.creatorAvatarUrl.value) {
+//            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
+//        }
         
         if let url = viewModel.optographUrl.value, imageUrl = NSURL(string: url) {
             optographImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "optograph-placeholder"))

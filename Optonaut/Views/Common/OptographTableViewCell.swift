@@ -123,18 +123,11 @@ class OptographTableViewCell: UITableViewCell {
     func bindViewModel(optograph: Optograph) {
         viewModel = OptographViewModel(optograph: optograph)
         
-        if let previewUrl = NSURL(string: viewModel.previewUrl.value) {
-            previewImageView.sd_setImageWithURL(previewUrl, placeholderImage: UIImage(named: "optograph-placeholder"))
-        }
-        
-        if let avatarUrl = NSURL(string: viewModel.avatarUrl.value) {
-            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
-        }
-        
+        previewImageView.rac_image <~ viewModel.previewImage
+        avatarImageView.rac_image <~ viewModel.avatarImage
         fullNameView.rac_text <~ viewModel.fullName
         userNameView.rac_text <~ viewModel.userName
         locationView.rac_text <~ viewModel.location
-        
         dateView.rac_text <~ viewModel.timeSinceCreated
         
         starButtonView.rac_command = RACCommand(signalBlock: { _ in

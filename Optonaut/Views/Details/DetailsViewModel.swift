@@ -21,7 +21,7 @@ class DetailsViewModel {
     let commentsCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
-    let detailsImage = MutableProperty<UIImage>(UIImage(named: "optograph-details-placeholder")!)
+    let previewImage = MutableProperty<UIImage>(UIImage(named: "optograph-details-placeholder")!)
     let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
@@ -55,12 +55,6 @@ class DetailsViewModel {
         
         self.optograph = optograph
         updateProperties()
-        
-        if !optograph.downloaded {
-            download()
-        } else {
-            downloadProgress.value = 1
-        }
         
         if !optograph.isPublished {
             ApiService.get("optographs/\(optographId)")
@@ -122,27 +116,6 @@ class DetailsViewModel {
             })
     }
     
-    private func download() {
-        var leftProgress: Float = 0
-        var rightProgress: Float = 0
-        for side in ["left", "right"] {
-            let url = "\(StaticFilePath)/optographs/original/\(optograph.id)/\(side).jpg"
-            let path = "\(optograph.path)/\(side).jpg"
-            
-            try! NSFileManager.defaultManager().createDirectoryAtPath(optograph.path, withIntermediateDirectories: true, attributes: nil)
-            
-            DownloadService.downloadProgress(from: url, to: path)
-                .observe(next: { progress in
-                    if side == "left" {
-                        leftProgress = progress
-                    } else {
-                        rightProgress = progress
-                    }
-                    self.downloadProgress.value = leftProgress / 2 + rightProgress / 2
-                })
-        }
-    }
-    
     private func updateModel() {
         optograph.isPublished = isPublished.value
         optograph.isStarred = isStarred.value
@@ -162,14 +135,19 @@ class DetailsViewModel {
         commentsCount.value = optograph.commentsCount
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
-        detailsUrl.value = "\(StaticFilePath)/thumbs/details_\(optograph.id).jpg"
-        avatarImage <~ DownloadService.downloadData(from: optograph.person.avatarUrl, to: optograph.person.avatarPath).map { UIImage(data: $0)! }
         fullName.value = optograph.person.fullName
         userName.value = "@\(optograph.person.userName)"
         personId.value = optograph.person.id
         text.value = optograph.text
         location.value = optograph.location.text
         isPublished.value = optograph.isPublished
+        
+        previewImage <~ DownloadService.downloadData(from: "\(S3URL)/original/\(optograph.previewAssetId).jpg", to: "\(StaticPath)/\(optograph.previewAssetId).jpg").map { UIImage(data: $0)! }
+        avatarImage <~ DownloadService.downloadData(from: "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg", to: "\(StaticPath)/\(optograph.person.avatarAssetId).jpg").map { UIImage(data: $0)! }
+        
+        let leftProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.leftTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")
+        let rightProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.rightTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")
+        downloadProgress <~ leftProgress.zipWith(rightProgress).map { ($0 + $1) / 2 }
     }
     
 }

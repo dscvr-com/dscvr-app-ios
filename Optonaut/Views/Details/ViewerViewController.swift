@@ -57,7 +57,7 @@ class ViewerViewController: UIViewController  {
         
         let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
         
-        let leftImage = UIImage(data: optograph.loadAsset(.LeftImageType))
+        let leftImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")!)
         let leftSphereGeometry = SCNSphere(radius: 5.0)
         leftSphereGeometry.firstMaterial?.diffuse.contents = leftImage!
         leftSphereGeometry.firstMaterial?.doubleSided = true
@@ -65,7 +65,7 @@ class ViewerViewController: UIViewController  {
         leftSphereNode.transform = transform
         leftScene.rootNode.addChildNode(leftSphereNode)
         
-        let rightImage = UIImage(data: optograph.loadAsset(.RightImageType))
+        let rightImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")!)
         let rightSphereGeometry = SCNSphere(radius: 5.0)
         rightSphereGeometry.firstMaterial?.diffuse.contents = rightImage!
         rightSphereGeometry.firstMaterial?.doubleSided = true

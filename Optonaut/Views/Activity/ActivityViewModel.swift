@@ -12,10 +12,8 @@ import ReactiveCocoa
 
 class ActivityViewModel {
     
-//    private let realm = try! Realm()
-    
     let activityType: ConstantProperty<ActivityType>
-    let creatorAvatarUrl: ConstantProperty<String>
+    let creatorAvatarUrl = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let creatorId: ConstantProperty<UUID>
     let creatorUserName: ConstantProperty<String>
     let timeSinceCreated: ConstantProperty<String>
@@ -29,11 +27,11 @@ class ActivityViewModel {
         self.activity = activity
         
         activityType = ConstantProperty(activity.activityType)
-        creatorAvatarUrl = ConstantProperty(activity.creator!.avatarUrl)
+//        creatorAvatarUrl = ConstantProperty(activity.creator!.avatarUrl)
         creatorId = ConstantProperty(activity.creator!.id)
         creatorUserName = ConstantProperty(activity.creator!.userName)
         timeSinceCreated = ConstantProperty(RoundedDuration(date: activity.createdAt).shortDescription())
-        optographUrl = ConstantProperty("\(StaticFilePath)/thumbs/thumb_\(activity.optograph!.id).jpg")
+        optographUrl = ConstantProperty("\(S3URL)/thumbs/thumb_\(activity.optograph!.id).jpg")
         optographId = ConstantProperty(activity.optograph?.id)
         isRead = MutableProperty(activity.isRead)
     }

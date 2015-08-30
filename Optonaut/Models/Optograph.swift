@@ -13,11 +13,8 @@ typealias ImagePair = (left: NSData, right: NSData)
 
 enum OptographAsset {
     case PreviewImage(NSData)
-    case PreviewImageType
     case LeftImage(NSData)
-    case LeftImageType
     case RightImage(NSData)
-    case RightImageType
 }
 
 struct Optograph: Model {
@@ -32,34 +29,9 @@ struct Optograph: Model {
     var viewsCount: Int
     var location: Location
     var isPublished: Bool
-    
-    var downloaded: Bool {
-        return NSFileManager.defaultManager().fileExistsAtPath("\(path)/left.jpg") && NSFileManager.defaultManager().fileExistsAtPath("\(path)/right.jpg")
-    }
-    
-    var path: String {
-        return NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/optographs/\(id)"
-    }
-    
-    func saveAsset(asset: OptographAsset) throws {
-        try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
-        
-        switch asset {
-        case .LeftImage(let data): data.writeToFile("\(path)/left.jpg", atomically: true)
-        case .RightImage(let data): data.writeToFile("\(path)/right.jpg", atomically: true)
-        case .PreviewImage(let data): data.writeToFile("\(path)/preview.jpg", atomically: true)
-        default: fatalError("not implemented")
-        }
-    }
-    
-    func loadAsset(type: OptographAsset) -> NSData {
-        switch type {
-        case .LeftImageType: return NSData(contentsOfFile: "\(path)/left.jpg")!
-        case .RightImageType: return NSData(contentsOfFile: "\(path)/right.jpg")!
-        case .PreviewImageType: return NSData(contentsOfFile: "\(path)/preview.jpg")!
-        default: fatalError("not implemented")
-        }
-    }
+    var previewAssetId: UUID
+    var leftTextureAssetId: UUID
+    var rightTextureAssetId: UUID
     
     mutating func publish() -> SignalProducer<Optograph, ApiError> {
         assert(!isPublished)
@@ -67,9 +39,9 @@ struct Optograph: Model {
         let parameters = SignalProducer<[String: AnyObject], ApiError> { sink, disposable in
             var parameters = Mapper().toJSON(self)
             
-            parameters["left_image"] = self.loadAsset(.LeftImageType).base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-            parameters["right_image"] = self.loadAsset(.RightImageType).base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-            parameters["preview_image"] = self.loadAsset(.PreviewImageType).base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            parameters["left_image"] = NSData(contentsOfFile: "\(StaticPath)/\(self.leftTextureAssetId).jpg")!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            parameters["right_image"] = NSData(contentsOfFile: "\(StaticPath)/\(self.rightTextureAssetId).jpg")!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            parameters["preview_image"] = NSData(contentsOfFile: "\(StaticPath)/\(self.previewAssetId).jpg")!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
             
             sendNext(sink, parameters)
             sendCompleted(sink)
@@ -103,7 +75,10 @@ extension Optograph: Mappable {
             commentsCount: 0,
             viewsCount: 0,
             location: Location.newInstance() as! Location,
-            isPublished: false
+            isPublished: false,
+            previewAssetId: uuid(),
+            leftTextureAssetId: uuid(),
+            rightTextureAssetId: uuid()
         )
     }
     
@@ -112,15 +87,18 @@ extension Optograph: Mappable {
             isPublished = true
         }
         
-        id              <- map["id"]
-        text            <- map["text"]
-        person          <- map["person"]
-        createdAt       <- (map["created_at"], NSDateTransform())
-        isStarred       <- map["is_starred"]
-        starsCount      <- map["stars_count"]
-        commentsCount   <- map["comments_count"]
-        viewsCount      <- map["views_count"]
-        location        <- map["location"]
+        id                  <- map["id"]
+        text                <- map["text"]
+        person              <- map["person"]
+        createdAt           <- (map["created_at"], NSDateTransform())
+        isStarred           <- map["is_starred"]
+        starsCount          <- map["stars_count"]
+        commentsCount       <- map["comments_count"]
+        viewsCount          <- map["views_count"]
+        location            <- map["location"]
+        previewAssetId      <- map["preview_asset_id"]
+        leftTextureAssetId  <- map["left_texture_asset_id"]
+        rightTextureAssetId <- map["right_texture_asset_id"]
     }
     
 }
@@ -138,7 +116,10 @@ extension Optograph: SQLiteModel {
             commentsCount: row[OptographSchema.commentsCount],
             viewsCount: row[OptographSchema.viewsCount],
             location: Location.newInstance() as! Location,
-            isPublished: row[OptographSchema.isPublished]
+            isPublished: row[OptographSchema.isPublished],
+            previewAssetId: row[OptographSchema.previewAssetId],
+            leftTextureAssetId: row[OptographSchema.leftTextureAssetId],
+            rightTextureAssetId: row[OptographSchema.rightTextureAssetId]
         )
     }
     
@@ -153,7 +134,10 @@ extension Optograph: SQLiteModel {
             OptographSchema.commentsCount <-- commentsCount,
             OptographSchema.viewsCount <-- viewsCount,
             OptographSchema.locationId <-- location.id,
-            OptographSchema.isPublished <-- isPublished
+            OptographSchema.isPublished <-- isPublished,
+            OptographSchema.previewAssetId <-- previewAssetId,
+            OptographSchema.leftTextureAssetId <-- leftTextureAssetId,
+            OptographSchema.rightTextureAssetId <-- rightTextureAssetId
         ]
     }
     

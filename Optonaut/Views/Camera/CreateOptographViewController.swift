@@ -72,13 +72,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
                 }
             })
         
-        
-        viewModel.previewUrl.producer
-            .start(next: { url in
-                if let previewUrl = NSURL(string: url) {
-                    self.previewImageView.sd_setImageWithURL(previewUrl, placeholderImage: UIImage(named: "optograph-placeholder"))
-                }
-            })
+        previewImageView.rac_image <~ viewModel.previewImage
         view.addSubview(previewImageView)
         
         locationView.rac_text <~ viewModel.location

@@ -19,6 +19,7 @@ struct PersonSchemaType: ModelSchema {
     let isFollowed = Expression<Bool>("person_is_followed")
     let createdAt = Expression<NSDate>("person_created_at")
     let wantsNewsletter = Expression<Bool>("person_wants_newsletter")
+    let avatarAssetId = Expression<UUID>("person_avatar_asset_id")
 }
 
 let PersonSchema = PersonSchemaType()
@@ -36,5 +37,6 @@ func PersonMigration() -> String {
         t.column(PersonSchema.isFollowed)
         t.column(PersonSchema.createdAt)
         t.column(PersonSchema.wantsNewsletter)
+        t.column(PersonSchema.avatarAssetId)
     }
 }

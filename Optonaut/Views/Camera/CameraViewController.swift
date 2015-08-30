@@ -366,7 +366,7 @@ class CameraViewController: UIViewController {
         
         let assetSignalProducer = SignalProducer<OptographAsset, NoError> { sink, disposable in
             let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)
-            sendNext(sink, OptographAsset.LeftImage(preview!))
+            sendNext(sink, OptographAsset.PreviewImage(preview!))
             
             let leftBuffer = self.stitcher.GetLeftResult()
             let leftCGImage = ImageBufferToCGImage(leftBuffer)
