@@ -321,6 +321,7 @@ class CameraViewController: UIViewController {
                 edges.removeValueForKey(edge)
             
                 let cgImage = ImageBufferToCGImage(previewData);
+            
                 
                 let ratio = CGFloat(previewData.height) / CGFloat(previewData.width)
                 let planeGeometry = SCNPlane(width: CGFloat(1), height: ratio)
@@ -339,9 +340,10 @@ class CameraViewController: UIViewController {
                 
                 previewImageCount++;
                 
-                if previewImageCount == 5 {
+                if previewImageCount == 2 {
                     self.previewImage = ImageBufferToCGImage(buf)
-                
+                    //TODO Rotate
+                    
                     debugHelper?.saveFileToDisk(self.previewImage!, name: "preview.jpg")
                 }
                 
