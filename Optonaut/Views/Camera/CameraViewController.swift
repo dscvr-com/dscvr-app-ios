@@ -16,7 +16,7 @@ import SceneKit
 import Async
 import Crashlytics
 
-struct Edge: Hashable {
+private struct Edge: Hashable {
     let one: SelectionPoint
     let two: SelectionPoint
     
@@ -30,49 +30,49 @@ struct Edge: Hashable {
     }
 }
 
-func == (lhs: Edge, rhs: Edge) -> Bool {
+private func ==(lhs: Edge, rhs: Edge) -> Bool {
     return lhs.one.id == rhs.one.id && lhs.two.id == rhs.two.id
 }
 
 class CameraViewController: UIViewController {
     
-    let viewModel = CameraViewModel()
+    private let viewModel = CameraViewModel()
     
-    let motionManager = CMMotionManager()
+    private let motionManager = CMMotionManager()
     
     // camera
-    var session: AVCaptureSession!
-    var sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
-    var videoDeviceInput: AVCaptureDeviceInput!
-    var videoDeviceOutput: AVCaptureVideoDataOutput!
-    var previewLayer: AVCaptureVideoPreviewLayer!
+    private var session: AVCaptureSession!
+    private var sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
+    private var videoDeviceInput: AVCaptureDeviceInput!
+    private var videoDeviceOutput: AVCaptureVideoDataOutput!
+    private var previewLayer: AVCaptureVideoPreviewLayer!
     
-    var scnView: SCNView!
+    private var scnView: SCNView!
     
-    var originalBrightness: CGFloat!
+    private var originalBrightness: CGFloat!
     
     // stitcher pointer and variables
     
-    let stitcher = IosPipeline()
+    private let stitcher = IosPipeline()
     
-    var frameCount = 0
-    var previewImageCount = 0
-    let intrinsics = CameraIntrinsics
+    private var frameCount = 0
+    private var previewImageCount = 0
+    private let intrinsics = CameraIntrinsics
     
     
-    var debugHelper: CameraDebugService?
-    var edges = [Edge: SCNNode]()
+    private var debugHelper: CameraDebugService?
+    private var edges = [Edge: SCNNode]()
     
     var previewImage: CGImage?
     
     // subviews
-    let closeButtonView = UIButton()
-    let instructionView = UILabel()
+    private let closeButtonView = UIButton()
+    private let instructionView = UILabel()
     
     // sphere
-    let cameraNode = SCNNode()
+    private let cameraNode = SCNNode()
     
-    let scene = SCNScene()
+    private let scene = SCNScene()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,7 +105,6 @@ class CameraViewController: UIViewController {
         closeButtonView.setTitle(String.icomoonWithName(.Cross), forState: .Normal)
         closeButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         closeButtonView.titleLabel?.font = .icomoonOfSize(40)
-        closeButtonView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         closeButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.navigationController?.popViewControllerAnimated(false)
             return RACSignal.empty()
@@ -116,7 +115,6 @@ class CameraViewController: UIViewController {
         instructionView.textColor = .whiteColor()
         instructionView.textAlignment = .Center
         instructionView.rac_text <~ viewModel.instruction
-        instructionView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         view.addSubview(instructionView)
         
         viewModel.instruction.value = "Select"
@@ -180,11 +178,11 @@ class CameraViewController: UIViewController {
     override func updateViewConstraints() {
         view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero) // needed to cover tabbar (49pt)
         
-        closeButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -20)
+        closeButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
         closeButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
         
-        instructionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 35)
-        instructionView.autoAlignAxis(.Horizontal, toSameAxisOfView: view)
+        instructionView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
+        instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         
         super.updateViewConstraints()
     }
@@ -360,6 +358,11 @@ class CameraViewController: UIViewController {
     }
     
     func finish() {
+        
+        for child in scene.rootNode.childNodes
+        {
+            child.removeFromParentNode()
+        }
         
         let assetSignalProducer = SignalProducer<OptographAsset, NoError> { sink, disposable in
             let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)

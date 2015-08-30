@@ -8,6 +8,8 @@
 #include "intrinsics.hpp"
 #include "Stitcher.h"
 
+int counter = 0;
+
 GLKMatrix4 CVMatToGLK4(const cv::Mat &m) {
     assert(m.cols == 4 && m.rows == 4 && m.type() == CV_64F);
     
@@ -85,6 +87,20 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
     self->intrinsics = optonaut::iPhone6Intrinsics;
     self->isDebug = false,
     self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::ImageSelector::ModeAll, true);
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *tempDirectory = [[paths objectAtIndex:0] stringByAppendingString:@"/tmp/"];
+    
+    counter = 0;
+    
+    BOOL isDir;
+    NSFileManager *fileManager= [NSFileManager defaultManager];
+    if(![fileManager fileExistsAtPath:tempDirectory isDirectory:&isDir])
+        if(![fileManager createDirectoryAtPath:tempDirectory withIntermediateDirectories:YES attributes:nil error:NULL])
+            NSLog(@"Error: Create temp folder failed: %@", tempDirectory);
+    
+    optonaut::Pipeline::tempDirectory = std::string([tempDirectory UTF8String]);
+
     return self;
 }
 
@@ -94,7 +110,7 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
     //ImageBufferToCVMat(image, oImage->img);
     oImage->dataRef = ImageBufferToImageRef(image);
     oImage->intrinsics = intrinsics;
-    oImage->id = 0;
+    oImage->id = counter++;
     GLK4ToCVMat(extrinsics, oImage->extrinsics);
     oImage->source = "Camera";
     
