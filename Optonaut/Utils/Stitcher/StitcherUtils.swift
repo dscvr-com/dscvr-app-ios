@@ -27,19 +27,38 @@ func ImageBufferToCGImage(buf: ImageBuffer) -> CGImage {
 }
 
 func RotateCGImage(image: CGImage, orientation: UIImageOrientation) -> CGImage {
-    let context = UIGraphicsGetCurrentContext()
     
-    if orientation == UIImageOrientation.Right {
-        CGContextRotateCTM(context, CGFloat(M_PI_2))
-    } else if orientation == UIImageOrientation.Left {
-        CGContextRotateCTM (context, CGFloat(-M_PI_2))
-    } else if orientation == UIImageOrientation.Down {
-        CGContextRotateCTM (context, CGFloat(M_PI))
-    } else if orientation == UIImageOrientation.Up {
-        CGContextRotateCTM (context, CGFloat(M_PI))
+    let imageSize = CGSize(width: CGImageGetWidth(image), height: CGImageGetHeight(image))
+    var rotatedSize = imageSize
+    
+    if orientation == UIImageOrientation.Right || orientation == UIImageOrientation.Left {
+        rotatedSize = CGSize(width: imageSize.height, height: imageSize.width)
     }
     
-    CGContextDrawImage(context, CGRect(x: 0, y: 0, width: CGImageGetWidth(image), height: CGImageGetHeight(image)), image)
+    let rotCenterX = rotatedSize.width / 2
+    let rotCenterY = rotatedSize.height / 2
     
-    return CGBitmapContextCreateImage(context)!
+    UIGraphicsBeginImageContextWithOptions(rotatedSize, false, 1)
+    let context = UIGraphicsGetCurrentContext()
+    
+    CGContextTranslateCTM(context, rotCenterX, rotCenterY)
+    if orientation == UIImageOrientation.Right {
+        CGContextRotateCTM(context, CGFloat(-M_PI_2))
+        CGContextTranslateCTM(context, -rotCenterY, -rotCenterX)
+    } else if orientation == UIImageOrientation.Left {
+        CGContextRotateCTM (context, CGFloat(M_PI_2))
+        CGContextTranslateCTM(context, -rotCenterY, -rotCenterX)
+    } else if orientation == UIImageOrientation.Down {
+        CGContextRotateCTM (context, CGFloat(M_PI))
+        CGContextTranslateCTM(context, -rotCenterX, -rotCenterY)
+    } else if orientation == UIImageOrientation.Up {
+        CGContextRotateCTM (context, CGFloat(M_PI))
+        CGContextTranslateCTM(context, -rotCenterX, -rotCenterY)
+    }
+    
+    CGContextDrawImage(context, CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height), image)
+    
+    let res = CGBitmapContextCreateImage(context)!
+    UIGraphicsEndImageContext()
+    return res
 }
