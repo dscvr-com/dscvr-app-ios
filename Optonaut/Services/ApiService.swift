@@ -73,20 +73,60 @@ class ApiService<T: Mappable> {
         return request(endpoint, method: .DELETE, parameters: nil)
     }
     
+    static func upload(endpoint: String, uploadData: [String: String]) -> SignalProducer<Float, NSError> {
+        return SignalProducer<Float, NSError> { sink, disposable in
+            let mutableURLRequest = buildURLRequest(endpoint, method: .POST)
+            let multipartFormData = { (data: MultipartFormData) in
+                for (path, name) in uploadData {
+                    data.appendBodyPart(fileURL: NSURL(fileURLWithPath: path), name: name)
+                }
+            }
+            
+            var request: Alamofire.Request?
+    
+            Alamofire.upload(mutableURLRequest, multipartFormData: multipartFormData) { result in
+                switch result {
+                case .Success(let upload, _, _):
+                    request = upload
+                        .validate(statusCode: 200..<300)
+                        .response { _, _, _, error in
+                            if let error = error {
+                                sendError(sink, error)
+                            } else {
+                                sendCompleted(sink)
+                            }
+                    }
+                case .Failure(let error):
+                    sendError(sink, error)
+                }
+            }
+            
+            disposable.addDisposable {
+                request?.cancel()
+            }
+        }
+    }
+    
+    private static func buildURLRequest(endpoint: String, method: Alamofire.Method) -> NSMutableURLRequest {
+        let URL = NSURL(string: "http://\(host):\(port)/\(endpoint)")!
+        let mutableURLRequest = NSMutableURLRequest(URL: URL)
+        mutableURLRequest.HTTPMethod = method.rawValue
+        
+        if let token = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonToken.rawValue) as? String {
+            mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        return mutableURLRequest
+    }
+    
     private static func request(endpoint: String, method: Alamofire.Method, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return SignalProducer { sink, disposable in
-            let URL = NSURL(string: "http://\(host):\(port)/\(endpoint)")!
-            let mutableURLRequest = NSMutableURLRequest(URL: URL)
-            mutableURLRequest.HTTPMethod = method.rawValue
+            let mutableURLRequest = buildURLRequest(endpoint, method: method)
             
             if let parameters = parameters {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters, options: [])
                 mutableURLRequest.HTTPBody = Optional(json)
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            }
-            
-            if let token = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonToken.rawValue) as? String {
-                mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
             
             let request = Alamofire.request(mutableURLRequest)

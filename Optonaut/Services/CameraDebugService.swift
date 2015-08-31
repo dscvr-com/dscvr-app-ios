@@ -10,28 +10,20 @@ import Foundation
 import CoreMedia
 import ImageIO
 import MobileCoreServices
+import ReactiveCocoa
 
 class CameraDebugService {
     
-    var timestamp: NSTimeInterval
-    var path: String
+    let path = StaticPath + "/debug"
     let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)
     
     init() {
-        timestamp = NSDate().timeIntervalSince1970
-        
-        let dir = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, .AllDomainsMask, true)[0]
-        path = dir.stringByAppendingPathComponent("\(timestamp)/")
-        
         dispatch_async(queue) {
-            try! NSFileManager.defaultManager().createDirectoryAtPath(self.path, withIntermediateDirectories: true, attributes: nil)
-        }
-    }
-    
-    func cleanup() {
-        dispatch_async(queue) {
-//            try! NSFileManager.defaultManager().removeItemAtPath(self.path)
-            return
+            let fileManager = NSFileManager.defaultManager()
+            if fileManager.fileExistsAtPath(self.path) {
+                try! fileManager.removeItemAtPath(self.path)
+            }
+            try! fileManager.createDirectoryAtPath(self.path, withIntermediateDirectories: true, attributes: nil)
         }
     }
     
@@ -58,9 +50,23 @@ class CameraDebugService {
         
         let smallCGImage = CGBitmapContextCreateImage(smallContext)!
         
-        dispatch_async(queue, {
+        dispatch_async(queue) {
             self.saveFilesToDisk(smallCGImage, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
-        })
+        }
+    }
+    
+    func upload() -> SignalProducer<Float, NSError> {
+        if !Reachability.connectedToNetwork() {
+            return SignalProducer<Float, NSError>(value: 0)
+        }
+        
+        var uploadData: [String: String] = [:]
+        let enumerator = NSFileManager.defaultManager().enumeratorAtPath(path)
+        while let element = enumerator?.nextObject() as? String {
+            uploadData["\(path)/\(element)"] = element
+        }
+        
+        return ApiService<EmptyResponse>.upload("optographs/tmp/upload-debug", uploadData: uploadData)
     }
     
     private func saveFilesToDisk(cgImage: CGImage, intrinsics: [Double], extrinsics: [Double], frameCount: Int) {

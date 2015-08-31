@@ -165,8 +165,6 @@ class CameraViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
-        debugHelper?.cleanup()
-        
         UIScreen.mainScreen().brightness = originalBrightness
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
@@ -381,7 +379,13 @@ class CameraViewController: UIViewController {
 
             sendNext(sink, OptographAsset.RightImage(rightImageData!))
             
-            sendCompleted(sink)
+            if self.viewModel.debugEnabled.value {
+                self.debugHelper?.upload().start(completed: {
+                    sendCompleted(sink)
+                })
+            } else {
+                sendCompleted(sink)
+            }
             
             disposable.addDisposable {
                 // TODO @emiswelt! insert code to cancel stitching
