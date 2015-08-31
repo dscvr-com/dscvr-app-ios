@@ -25,3 +25,21 @@ func ImageBufferToCGImage(buf: ImageBuffer) -> CGImage {
     let bitmapContext = CGBitmapContextCreate(buf.data, Int(buf.width), Int(buf.height), 8, Int(buf.width) * 4, CGColorSpaceCreateDeviceRGB(), CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue)
     return CGBitmapContextCreateImage(bitmapContext)!
 }
+
+func RotateCGImage(image: CGImage, orientation: UIImageOrientation) -> CGImage {
+    let context = UIGraphicsGetCurrentContext()
+    
+    if orientation == UIImageOrientation.Right {
+        CGContextRotateCTM(context, CGFloat(M_PI_2))
+    } else if orientation == UIImageOrientation.Left {
+        CGContextRotateCTM (context, CGFloat(-M_PI_2))
+    } else if orientation == UIImageOrientation.Down {
+        CGContextRotateCTM (context, CGFloat(M_PI))
+    } else if orientation == UIImageOrientation.Up {
+        CGContextRotateCTM (context, CGFloat(M_PI))
+    }
+    
+    CGContextDrawImage(context, CGRect(x: 0, y: 0, width: CGImageGetWidth(image), height: CGImageGetHeight(image)), image)
+    
+    return CGBitmapContextCreateImage(context)!
+}

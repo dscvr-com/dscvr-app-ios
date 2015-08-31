@@ -1055,7 +1055,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0fbb9da7-0660-4dbb-a630-57fbee6b2bce";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1085,7 +1085,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0fbb9da7-0660-4dbb-a630-57fbee6b2bce";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

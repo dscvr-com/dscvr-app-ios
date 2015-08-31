@@ -341,7 +341,7 @@ class CameraViewController: UIViewController {
                 previewImageCount++;
                 
                 if previewImageCount == 2 {
-                    self.previewImage = ImageBufferToCGImage(buf)
+                    self.previewImage = RotateCGImage(ImageBufferToCGImage(buf), orientation: UIImageOrientation.Left)
                     //TODO Rotate
                     
                     debugHelper?.saveFileToDisk(self.previewImage!, name: "preview.jpg")
