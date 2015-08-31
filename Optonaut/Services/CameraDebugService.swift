@@ -66,7 +66,7 @@ class CameraDebugService {
             uploadData["\(path)/\(element)"] = element
         }
         
-        return ApiService<EmptyResponse>.upload("optographs/tmp/upload-debug", uploadData: uploadData)
+        return ApiService<EmptyResponse>.upload("optographs/tmp-\(NSDate().timeIntervalSince1970)/upload-debug", uploadData: uploadData)
     }
     
     private func saveFilesToDisk(cgImage: CGImage, intrinsics: [Double], extrinsics: [Double], frameCount: Int) {
