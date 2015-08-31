@@ -7,6 +7,8 @@ import Foundation
 import GLKit
 import CoreMotion
 
+let StitcherVersion: String = IosPipeline.GetVersion()
+
 func CMRotationToGLKMatrix4(r: CMRotationMatrix) -> GLKMatrix4{
     return GLKMatrix4Make(Float(r.m11), Float(r.m12), Float(r.m13), 0,
         Float(r.m21), Float(r.m22), Float(r.m23), 0,

@@ -39,7 +39,7 @@ struct Optograph: Model {
         let parameters = SignalProducer<[String: AnyObject], ApiError> { sink, disposable in
             var parameters = Mapper().toJSON(self)
             
-            parameters["stitcher_version"] = "0.1.0"
+            parameters["stitcher_version"] = StitcherVersion
             parameters["left_texture_asset"] = NSData(contentsOfFile: "\(StaticPath)/\(self.leftTextureAssetId).jpg")!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
             parameters["right_texture_asset"] = NSData(contentsOfFile: "\(StaticPath)/\(self.rightTextureAssetId).jpg")!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
             parameters["preview_asset"] = NSData(contentsOfFile: "\(StaticPath)/\(self.previewAssetId).jpg")!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)

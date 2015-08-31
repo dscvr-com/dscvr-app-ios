@@ -89,6 +89,10 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
     bool isDebug;
 }
 
++ (NSString*)GetVersion {
+    return [NSString stringWithCString:optonaut::Pipeline::version.c_str() encoding: [NSString defaultCStringEncoding]];
+}
+
 -(id)init {
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
@@ -181,4 +185,5 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
 - (ImageBuffer)GetRightResult {
     return CVMatToImageBuffer(pipe->FinishRight()->image);
 }
+
 @end

@@ -19,6 +19,8 @@ struct SelectionPoint {
 //This interface takes matrices in SCNSpace and also gives them back in SCNSpace.
 //It's that simple.
 
++ (NSString*)GetVersion;
+
 - (void)Push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image;
 - (GLKMatrix4)GetCurrentRotation;
 - (GLKMatrix4)GetPreviewRotation;
