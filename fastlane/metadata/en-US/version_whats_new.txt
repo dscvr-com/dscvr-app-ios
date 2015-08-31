@@ -1,1 +1,10 @@
-Test
+New in 0.3.0:
+
+- [Feature] Offline support for taking Optographs
+- [Feature] Preview image for Optographs
+- [Feature] Download progress for Optographs
+- [Feature] Upload profile pictures
+- [Feature] Forgot password
+- [Fix] Correct order in explore view
+
+PS: Thanks for testing! This helps us a lot!
