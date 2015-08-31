@@ -42,18 +42,17 @@ func RotateCGImage(image: CGImage, orientation: UIImageOrientation) -> CGImage {
     let context = UIGraphicsGetCurrentContext()
     
     CGContextTranslateCTM(context, rotCenterX, rotCenterY)
-    if orientation == UIImageOrientation.Right {
+    switch orientation {
+    case .Right:
         CGContextRotateCTM(context, CGFloat(-M_PI_2))
         CGContextTranslateCTM(context, -rotCenterY, -rotCenterX)
-    } else if orientation == UIImageOrientation.Left {
-        CGContextRotateCTM (context, CGFloat(M_PI_2))
+    case .Left:
+        CGContextRotateCTM(context, CGFloat(M_PI_2))
         CGContextTranslateCTM(context, -rotCenterY, -rotCenterX)
-    } else if orientation == UIImageOrientation.Down {
-        CGContextRotateCTM (context, CGFloat(M_PI))
+    case .Down, .Up:
+        CGContextRotateCTM(context, CGFloat(M_PI))
         CGContextTranslateCTM(context, -rotCenterX, -rotCenterY)
-    } else if orientation == UIImageOrientation.Up {
-        CGContextRotateCTM (context, CGFloat(M_PI))
-        CGContextTranslateCTM(context, -rotCenterX, -rotCenterY)
+    default: ()
     }
     
     CGContextDrawImage(context, CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height), image)
