@@ -14,6 +14,8 @@ class NewCommentTableViewCell: UITableViewCell {
     
     var viewModel: NewCommentViewModel!
     
+    var postCallback: (Comment -> ())?
+    
     // subviews
     let textInputView = KMPlaceholderTextView()
     let sendButtonView = UIButton()
@@ -31,9 +33,12 @@ class NewCommentTableViewCell: UITableViewCell {
         sendButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
         sendButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.postComment()
-                .start(completed: {
-                    self.contentView.endEditing(true)
-                })
+                .start(
+                    next: self.postCallback,
+                    completed: {
+                        self.contentView.endEditing(true)
+                    }
+                )
             return RACSignal.empty()
         })
         contentView.addSubview(sendButtonView)

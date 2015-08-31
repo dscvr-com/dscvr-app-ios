@@ -16,7 +16,6 @@
 		8F4C6E4E1B4A70CD007508ED /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E3B1B4A70CD007508ED /* Roboto-Regular.ttf */; };
 		8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
 		8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9D81B3B0080007E073C /* Result.framework */; };
-		8F5FD9E91B3D60E5007E073C /* WebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9E81B3D60E5007E073C /* WebImage.framework */; };
 		8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA001B3EECB0007E073C /* Activity.swift */; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* Person.swift */; };
@@ -289,7 +288,6 @@
 				8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */,
 				8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */,
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
-				8F5FD9E91B3D60E5007E073C /* WebImage.framework in Frameworks */,
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
 				8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */,
@@ -798,7 +796,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Refresher.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ReactiveCocoa.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WebImage.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Device.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/HexColor.framework",
@@ -1058,7 +1055,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "0fbb9da7-0660-4dbb-a630-57fbee6b2bce";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1088,7 +1085,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "0fbb9da7-0660-4dbb-a630-57fbee6b2bce";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

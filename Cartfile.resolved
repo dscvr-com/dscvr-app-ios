@@ -6,7 +6,6 @@ github "MoZhouqi/KMPlaceholderTextView" "48595736a21326872ef38c627c7049333184c24
 github "Hearst-DD/ObjectMapper" "87180c69bf38ca3ca7955214bc4cacb45e859445"
 github "smileyborg/PureLayout" "v3.0.0"
 github "antitypical/Result" "0.6-beta.1"
-github "rs/SDWebImage" "49f6e532b520840bc8531688efbbee02c29ac636"
 github "stephencelis/SQLite.swift" "4b942f29e764fe732ab032cd0579ec459e8eb152"
 github "schickling/refresher" "56fe1a71d4842c31759d9f40ba4ed7159d0eceaa"
 github "ReactiveCocoa/ReactiveCocoa" "5cb359c2ac17625ae9f4ce3ac955cc100d666fa6"

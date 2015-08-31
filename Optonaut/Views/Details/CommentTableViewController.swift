@@ -141,6 +141,7 @@ extension CommentTableViewController: UITableViewDataSource {
         } else {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
             cell.bindViewModel(viewModel.optographId.value)
+            cell.postCallback = viewModel.insertNewComment
             return cell
         }
     }

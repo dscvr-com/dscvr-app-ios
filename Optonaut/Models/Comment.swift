@@ -14,7 +14,7 @@ struct Comment: Model {
     var text: String
     var createdAt: NSDate
     var person: Person
-    var optograph: Optograph?
+    var optograph: Optograph
 }
 
 extension Comment: Mappable {
@@ -25,7 +25,7 @@ extension Comment: Mappable {
             text: "",
             createdAt: NSDate(),
             person: Person.newInstance() as! Person,
-            optograph: nil
+            optograph: Optograph.newInstance() as! Optograph
         )
     }
     
@@ -47,7 +47,7 @@ extension Comment: SQLiteModel {
             text: row[CommentSchema.text],
             createdAt: row[CommentSchema.createdAt],
             person: Person.newInstance() as! Person,
-            optograph: nil
+            optograph: Optograph.newInstance() as! Optograph
         )
     }
     
@@ -57,6 +57,7 @@ extension Comment: SQLiteModel {
             CommentSchema.text <-- text,
             CommentSchema.createdAt <-- createdAt,
             CommentSchema.personId <-- person.id,
+            CommentSchema.optographId <-- optograph.id,
         ]
     }
     
