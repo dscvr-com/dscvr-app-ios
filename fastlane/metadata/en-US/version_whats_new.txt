@@ -1,5 +1,6 @@
 New in 0.3.0:
 
+- [Change] Hold phone in portrait mode to record optograph
 - [Feature] Offline support for taking Optographs
 - [Feature] Preview image for Optographs
 - [Feature] Download progress for Optographs
