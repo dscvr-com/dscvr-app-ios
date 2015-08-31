@@ -40,16 +40,27 @@ platform :ios do
     #snapshot
   end
 
-  desc "Submit a new Beta Build to Apple TestFlight"
+  desc "Submit a new Beta Build to Crashlytics"
   desc "This will also make sure the profile is up to date"
   lane :beta do
     #snapshot
-    sigh
-    deliver(beta: true)
+    sigh(adhoc: true)
+    crashlytics(notes_path: "./fastlane/metadata/en-US/version_whats_new.txt", crashlytics_path: "./Carthage/Build/iOS/Crashlytics.framework", ipa_path: "./Optonaut.ipa")
 
     # sh "your_script.sh"
     # You can also use other beta testing services here
   end
+
+  #desc "Submit a new Beta Build to Apple TestFlight"
+  #desc "This will also make sure the profile is up to date"
+  #lane :beta do
+    ##snapshot
+    #sigh
+    #deliver(beta: true)
+
+    ## sh "your_script.sh"
+    ## You can also use other beta testing services here
+  #end
 
   desc "Deploy a new version to the App Store"
   desc "** Full Markdown** Support: `code`"
@@ -65,9 +76,9 @@ platform :ios do
   after_all do |lane|
     # This block is called, only if the executed lane was successful
     
-    # slack(
-    #   message: "Successfully deployed new App Update."
-    # )
+    slack(
+      message: "Successfully deployed new App Update."
+    )
   end
 
 

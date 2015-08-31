@@ -57,6 +57,8 @@ class OptographTableViewCell: UITableViewCell {
         starButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
         contentView.addSubview(starButtonView)
         
+        previewImageView.contentMode = .ScaleAspectFill
+        previewImageView.clipsToBounds = true
         previewImageView.userInteractionEnabled = true
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
         contentView.addSubview(previewImageView)

@@ -56,6 +56,8 @@ class DetailsHeaderViewController: UIViewController {
         
         navigationItem.title = ""
         
+        previewImageView.contentMode = .ScaleAspectFill
+        previewImageView.clipsToBounds = true
         previewImageView.rac_image <~ viewModel.previewImage
         view.addSubview(previewImageView)
         
