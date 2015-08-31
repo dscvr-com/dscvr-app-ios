@@ -137,7 +137,7 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
 - (GLKMatrix4)GetPreviewRotation {
     return CVMatToGLK4(pipe->GetPreviewRotation());
 }
-- (bool)IsPreviewImageValialble {
+- (bool)IsPreviewImageAvailable {
     return pipe->IsPreviewImageAvailable();
 }
 - (ImageBuffer)GetPreviewImage {

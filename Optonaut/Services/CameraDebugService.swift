@@ -15,15 +15,13 @@ class CameraDebugService {
     
     var timestamp: NSTimeInterval
     var path: String
-    var queue: dispatch_queue_t!
+    let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)
     
     init() {
         timestamp = NSDate().timeIntervalSince1970
         
         let dir = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, .AllDomainsMask, true)[0]
         path = dir.stringByAppendingPathComponent("\(timestamp)/")
-        
-        queue = dispatch_queue_create("CameraDebugServiceQueue", DISPATCH_QUEUE_CONCURRENT)
         
         dispatch_async(queue) {
             try! NSFileManager.defaultManager().createDirectoryAtPath(self.path, withIntermediateDirectories: true, attributes: nil)
@@ -45,12 +43,24 @@ class CameraDebugService {
         let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
         CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
         
-        let bitmapContext = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, CGColorSpaceCreateDeviceRGB(), CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue)
-        let cgImage = CGBitmapContextCreateImage(bitmapContext)!
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue
+        let context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, colorSpace, bitmapInfo)
+        let cgImage = CGBitmapContextCreateImage(context)!
+    
+        let ratio = Float(width) / Float(height)
+        let smallWidth = 640
+        let smallHeight = Int(Float(smallWidth) / ratio)
+        let smallContext = CGBitmapContextCreate(nil, smallWidth, smallHeight, 8, bytesPerRow, colorSpace, bitmapInfo)
         
-//        dispatch_async(queue, {
-            self.saveFilesToDisk(cgImage, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
-//        })
+        CGContextSetInterpolationQuality(smallContext, .None)
+        CGContextDrawImage(smallContext, CGRect(x: 0, y: 0, width: smallWidth, height: smallHeight), cgImage)
+        
+        let smallCGImage = CGBitmapContextCreateImage(smallContext)!
+        
+        dispatch_async(queue, {
+            self.saveFilesToDisk(smallCGImage, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
+        })
     }
     
     private func saveFilesToDisk(cgImage: CGImage, intrinsics: [Double], extrinsics: [Double], frameCount: Int) {
@@ -66,16 +76,11 @@ class CameraDebugService {
         json.writeToFile(dataFile, atomically: false)
         
         // image file
-        let imageFileName = "\(frameCount).jpg"
-        saveFileToDisk(cgImage, name: imageFileName)
-    }
-    
-    func saveFileToDisk(cgImage: CGImage, name: String) {
-        let imageFile = path.stringByAppendingPathComponent(name)
-        
+        let imageFile = path.stringByAppendingPathComponent("\(frameCount).jpg")
         let url = NSURL(fileURLWithPath: imageFile) as CFURL
         let dest = CGImageDestinationCreateWithURL(url, kUTTypeJPEG, 1, nil)!
-        CGImageDestinationAddImage(dest, cgImage, nil)
+        let imageProperties = [kCGImageDestinationLossyCompressionQuality as String: 0.8]
+        CGImageDestinationAddImage(dest, cgImage, imageProperties)
         CGImageDestinationFinalize(dest)
     }
 }

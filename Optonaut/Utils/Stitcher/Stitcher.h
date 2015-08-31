@@ -24,7 +24,7 @@ struct SelectionPoint {
 - (void)Push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image;
 - (GLKMatrix4)GetCurrentRotation;
 - (GLKMatrix4)GetPreviewRotation;
-- (bool)IsPreviewImageValialble;
+- (bool)IsPreviewImageAvailable;
 - (struct ImageBuffer)GetPreviewImage;
 - (void)FreeImageBuffer:(struct ImageBuffer)toFree;
 - (NSArray<NSValue*>*)GetSelectionPoints;

@@ -304,12 +304,10 @@ class CameraViewController: UIViewController {
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
-            debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
-            
             // Take transform from the stitcher. 
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
             
-            if(stitcher.IsPreviewImageValialble()) {
+            if stitcher.IsPreviewImageAvailable() {
                 
                 let previewData = stitcher.GetPreviewImage()
                 
@@ -320,7 +318,7 @@ class CameraViewController: UIViewController {
                 nodeToRemove?.removeFromParentNode()
                 edges.removeValueForKey(edge)
             
-                let cgImage = ImageBufferToCGImage(previewData);
+                let cgImage = ImageBufferToCGImage(previewData)
             
                 
                 let ratio = CGFloat(previewData.height) / CGFloat(previewData.width)
@@ -341,9 +339,7 @@ class CameraViewController: UIViewController {
                 previewImageCount++;
                 
                 if previewImageCount == 2 {
-                    self.previewImage = RotateCGImage(ImageBufferToCGImage(buf), orientation: UIImageOrientation.Left)
-                    
-                    debugHelper?.saveFileToDisk(self.previewImage!, name: "preview.jpg")
+                    self.previewImage = RotateCGImage(ImageBufferToCGImage(buf), orientation: .Left)
                 }
                 
                 if edges.isEmpty {
@@ -352,9 +348,9 @@ class CameraViewController: UIViewController {
                         self.finish()
                     }
                 }
-            }
             
-            debugHelper?.push(pixelBuffer, intrinsics: CameraIntrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
+                debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
+            }
         }
     }
     
