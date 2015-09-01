@@ -24,11 +24,16 @@ class NewCommentViewModel {
     }
     
     func postComment() -> SignalProducer<Comment, ApiError> {
-        let parameters = ["text": text.value]
-        return ApiService.post("optographs/\(optographId.value)/comments", parameters: parameters)
-            .on(completed: {
-                self.text.value = ""
-            })
+        return ApiService.post("optographs/\(optographId.value)/comments", parameters: ["text": text.value])
+            .on(
+                next: { comment in
+                    try! comment.person.save()
+                    try! comment.save()
+                },
+                completed: {
+                    self.text.value = ""
+                }
+        )
     }
     
 }

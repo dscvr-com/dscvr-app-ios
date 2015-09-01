@@ -81,9 +81,8 @@ class EditProfileViewModel {
         
         return ApiService.post("persons/me/upload-profile-image", parameters: ["avatar_asset": str!])
             .on(next: { person in
-                self.person = person
+                self.person.avatarAssetId = person.avatarAssetId
                 self.saveModel()
-                self.updateProperties()
             })
     }
     
