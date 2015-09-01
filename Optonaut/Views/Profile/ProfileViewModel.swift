@@ -25,24 +25,29 @@ class ProfileViewModel {
     private var person = Person.newInstance() as! Person
     
     init(id: UUID) {
+        person.id = id
         
         Answers.logContentViewWithName("Profile \(id)",
             contentType: "Profile",
             contentId: "profile-\(id)",
             customAttributes: [:])
         
-        let query = PersonTable.filter(PersonTable[PersonSchema.id] == id)
-        
-        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
-            self.person = person
-            updateProperties()
-        }
+        loadModel()
     
         ApiService.get("persons/\(id)")
             .start(next: { (person: Person) in
                 self.person = person
                 self.updateProperties()
             })
+    }
+    
+    func loadModel() {
+        let query = PersonTable.filter(PersonTable[PersonSchema.id] == person.id)
+        
+        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
+            self.person = person
+            updateProperties()
+        }
     }
     
     func toggleFollow() {

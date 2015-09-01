@@ -201,6 +201,12 @@ class ProfileHeaderViewController: UIViewController {
         super.updateViewConstraints()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewModel.loadModel()
+    }
+    
     private func editProfile() {
         navigationController?.pushViewController(EditProfileViewController(), animated: false)
     }
