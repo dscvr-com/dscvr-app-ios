@@ -20,6 +20,7 @@ struct AssociationKey {
     static var title: UInt8 = 8
     static var placeholder: UInt8 = 9
     static var animating: UInt8 = 10
+    static var backgroundColor: UInt8 = 11
 }
 
 enum objc_AssociationPolicy : UInt {
@@ -64,6 +65,10 @@ extension UIButton {
     
     public var rac_userInteractionEnabled: MutableProperty<Bool> {
         return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.userInteractionEnabled = $0 }, getter: { self.userInteractionEnabled })
+    }
+    
+    public var rac_backgroundColor: MutableProperty<UIColor?> {
+        return lazyMutableProperty(self, key: &AssociationKey.backgroundColor, setter: { self.backgroundColor = $0 }, getter: { self.backgroundColor })
     }
 }
 

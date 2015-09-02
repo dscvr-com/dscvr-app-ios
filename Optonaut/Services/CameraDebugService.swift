@@ -18,13 +18,11 @@ class CameraDebugService {
     let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)
     
     init() {
-        dispatch_async(queue) {
-            let fileManager = NSFileManager.defaultManager()
-            if fileManager.fileExistsAtPath(self.path) {
-                try! fileManager.removeItemAtPath(self.path)
-            }
-            try! fileManager.createDirectoryAtPath(self.path, withIntermediateDirectories: true, attributes: nil)
+        let fileManager = NSFileManager.defaultManager()
+        if fileManager.fileExistsAtPath(path) {
+            try! fileManager.removeItemAtPath(path)
         }
+        try! fileManager.createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
     }
     
     func push(pixelBuffer: CVPixelBufferRef, intrinsics: [Double], extrinsics: [Double], frameCount: Int) {

@@ -15,6 +15,7 @@ import Alamofire
 import SceneKit
 import Async
 import Crashlytics
+import AudioToolbox
 
 private struct Edge: Hashable {
     let one: SelectionPoint
@@ -68,6 +69,7 @@ class CameraViewController: UIViewController {
     // subviews
     private let closeButtonView = UIButton()
     private let instructionView = UILabel()
+    private let recordButtonView = UIButton()
     
     // sphere
     private let cameraNode = SCNNode()
@@ -111,15 +113,30 @@ class CameraViewController: UIViewController {
         })
         view.addSubview(closeButtonView)
         
-        instructionView.font = UIFont.robotoOfSize(17, withType: .Regular)
-        instructionView.textColor = .whiteColor()
-        instructionView.textAlignment = .Center
-        instructionView.rac_text <~ viewModel.instruction
-        view.addSubview(instructionView)
+//        instructionView.font = UIFont.robotoOfSize(17, withType: .Regular)
+//        instructionView.textColor = .whiteColor()
+//        instructionView.textAlignment = .Center
+//        instructionView.rac_text <~ viewModel.instruction
+//        view.addSubview(instructionView)
         
-        viewModel.instruction.value = "Select"
+//        viewModel.instruction.value = "Select"
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
+        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor : .blackColor() }
+        recordButtonView.layer.cornerRadius = 40
+        recordButtonView.layer.borderWidth = 6
+        recordButtonView.layer.borderColor = UIColor.whiteColor().CGColor
+        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
+            .map { _ in true }
+            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+            .on(next: { _ in
+                AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            })
+        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
+            .map { _ in false }
+            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+        view.addSubview(recordButtonView)
+        
+//        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
         
         Async.customQueue(sessionQueue) {
             self.authorizeCamera()
@@ -179,8 +196,12 @@ class CameraViewController: UIViewController {
         closeButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
         closeButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
         
-        instructionView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
-        instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+//        instructionView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
+//        instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        
+        recordButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
+        recordButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        recordButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 80))
         
         super.updateViewConstraints()
     }
@@ -289,6 +310,9 @@ class CameraViewController: UIViewController {
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         
         if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
+            
+            // TODO @emiswelt
+            let isRecording = self.viewModel.isRecording.value
             
             let r = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
