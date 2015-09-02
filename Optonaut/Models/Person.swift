@@ -20,11 +20,8 @@ struct Person: Model {
     var createdAt: NSDate
     var wantsNewsletter: Bool
     var avatarAssetId: UUID
-}
-
-extension Person: Mappable {
     
-    static func newInstance() -> Mappable {
+    static func newInstance() -> Person {
         return Person(
             id: uuid(),
             email: "",
@@ -38,6 +35,13 @@ extension Person: Mappable {
             wantsNewsletter: false,
             avatarAssetId: uuid()
         )
+    }
+}
+
+extension Person: Mappable {
+    
+    init?(_ map: Map){
+        self = Person.newInstance()
     }
     
     mutating func mapping(map: Map) {

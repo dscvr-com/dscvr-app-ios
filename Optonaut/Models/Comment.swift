@@ -15,18 +15,23 @@ struct Comment: Model {
     var createdAt: NSDate
     var person: Person
     var optograph: Optograph
-}
-
-extension Comment: Mappable {
     
-    static func newInstance() -> Mappable {
+    static func newInstance() -> Comment {
         return Comment(
             id: uuid(),
             text: "",
             createdAt: NSDate(),
-            person: Person.newInstance() as! Person,
-            optograph: Optograph.newInstance() as! Optograph
+            person: Person.newInstance(),
+            optograph: Optograph.newInstance()
         )
+    }
+    
+}
+
+extension Comment: Mappable {
+    
+    init?(_ map: Map){
+        self = Comment.newInstance()
     }
     
     mutating func mapping(map: Map) {
@@ -46,8 +51,8 @@ extension Comment: SQLiteModel {
             id: row[CommentSchema.id],
             text: row[CommentSchema.text],
             createdAt: row[CommentSchema.createdAt],
-            person: Person.newInstance() as! Person,
-            optograph: Optograph.newInstance() as! Optograph
+            person: Person.newInstance(),
+            optograph: Optograph.newInstance()
         )
     }
     

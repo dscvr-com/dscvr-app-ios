@@ -22,7 +22,7 @@ class EditProfileViewModel {
     let debugEnabled = MutableProperty<Bool>(false)
     let wantsNewsletter = MutableProperty<Bool>(false)
     
-    private var person = Person.newInstance() as! Person
+    private var person = Person.newInstance()
     
     init() {
         debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue)

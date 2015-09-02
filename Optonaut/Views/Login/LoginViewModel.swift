@@ -83,9 +83,7 @@ private struct LoginMappable: Mappable {
     var token: String = ""
     var id: UUID = ""
     
-    private static func newInstance() -> Mappable {
-        return LoginMappable()
-    }
+    init?(_ map: Map) {}
     
     mutating func mapping(map: Map) {
         token   <- map["token"]

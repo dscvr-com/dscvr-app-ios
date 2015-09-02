@@ -22,7 +22,7 @@ class ProfileViewModel {
     let isFollowed = MutableProperty<Bool>(false)
     let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     
-    private var person = Person.newInstance() as! Person
+    private var person = Person.newInstance()
     
     init(id: UUID) {
         person.id = id

@@ -14,11 +14,8 @@ struct Location: Model {
     var createdAt: NSDate
     var latitude: Double
     var longitude: Double
-}
-
-extension Location: Mappable {
     
-    static func newInstance() -> Mappable {
+    static func newInstance() -> Location {
         return Location(
             id: uuid(),
             text: "",
@@ -26,6 +23,14 @@ extension Location: Mappable {
             latitude: 0,
             longitude: 0
         )
+    }
+    
+}
+
+extension Location: Mappable {
+    
+    init?(_ map: Map){
+        self = Location.newInstance()
     }
     
     mutating func mapping(map: Map) {

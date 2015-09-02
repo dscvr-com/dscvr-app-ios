@@ -33,6 +33,24 @@ struct Optograph: Model {
     var leftTextureAssetId: UUID
     var rightTextureAssetId: UUID
     
+    static func newInstance() -> Optograph {
+        return Optograph(
+            id: uuid(),
+            text: "",
+            person: Person.newInstance(),
+            createdAt: NSDate(),
+            isStarred: false,
+            starsCount: 0,
+            commentsCount: 0,
+            viewsCount: 0,
+            location: Location.newInstance(),
+            isPublished: false,
+            previewAssetId: uuid(),
+            leftTextureAssetId: uuid(),
+            rightTextureAssetId: uuid()
+        )
+    }
+    
     mutating func publish() -> SignalProducer<Optograph, ApiError> {
         assert(!isPublished)
         
@@ -65,22 +83,8 @@ struct Optograph: Model {
 
 extension Optograph: Mappable {
     
-    static func newInstance() -> Mappable {
-        return Optograph(
-            id: uuid(),
-            text: "",
-            person: Person.newInstance() as! Person,
-            createdAt: NSDate(),
-            isStarred: false,
-            starsCount: 0,
-            commentsCount: 0,
-            viewsCount: 0,
-            location: Location.newInstance() as! Location,
-            isPublished: false,
-            previewAssetId: uuid(),
-            leftTextureAssetId: uuid(),
-            rightTextureAssetId: uuid()
-        )
+    init?(_ map: Map){
+        self = Optograph.newInstance()
     }
     
     mutating func mapping(map: Map) {
@@ -110,13 +114,13 @@ extension Optograph: SQLiteModel {
         return Optograph(
             id: row[OptographSchema.id],
             text: row[OptographSchema.text],
-            person: Person.newInstance() as! Person,
+            person: Person.newInstance(),
             createdAt: row[OptographSchema.createdAt],
             isStarred: row[OptographSchema.isStarred],
             starsCount: row[OptographSchema.starsCount],
             commentsCount: row[OptographSchema.commentsCount],
             viewsCount: row[OptographSchema.viewsCount],
-            location: Location.newInstance() as! Location,
+            location: Location.newInstance(),
             isPublished: row[OptographSchema.isPublished],
             previewAssetId: row[OptographSchema.previewAssetId],
             leftTextureAssetId: row[OptographSchema.leftTextureAssetId],

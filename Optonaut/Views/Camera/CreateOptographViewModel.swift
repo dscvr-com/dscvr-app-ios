@@ -19,7 +19,7 @@ class CreateOptographViewModel {
     let pending = MutableProperty<Bool>(true)
     let publishLater: MutableProperty<Bool>
     
-    private var optograph = Optograph.newInstance() as! Optograph
+    private var optograph = Optograph.newInstance() 
     
     init() {
         publishLater = MutableProperty(!Reachability.connectedToNetwork())
@@ -76,9 +76,7 @@ class CreateOptographViewModel {
 private struct LocationMappable: Mappable {
     var text = ""
     
-    private static func newInstance() -> Mappable {
-        return LocationMappable()
-    }
+    init?(_ map: Map) {}
     
     mutating func mapping(map: Map) {
         text   <- map["text"]

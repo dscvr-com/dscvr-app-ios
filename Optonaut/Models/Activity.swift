@@ -23,11 +23,8 @@ struct Activity: Model {
     var createdAt: NSDate
     var isRead: Bool
     var activityType: ActivityType
-}
-
-extension Activity: Mappable {
     
-    static func newInstance() -> Mappable {
+    static func newInstance() -> Activity {
         return Activity(
             id: uuid(),
             creator: nil,
@@ -37,6 +34,13 @@ extension Activity: Mappable {
             isRead: false,
             activityType: .Nil
         )
+    }
+}
+
+extension Activity: Mappable {
+    
+    init?(_ map: Map){
+        self = Activity.newInstance()
     }
     
     mutating func mapping(map: Map) {

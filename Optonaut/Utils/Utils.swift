@@ -55,7 +55,7 @@ struct RoundedDuration {
     
     func longDescription() -> String {
         let typeRaw = type.rawValue
-        let typeString = value == 1 ? typeRaw.substringToIndex(advance(typeRaw.endIndex, -1)) : typeRaw
+        let typeString = value == 1 ? typeRaw.substringToIndex(typeRaw.endIndex.advancedBy(-1)) : typeRaw
         return "\(value) \(typeString) ago"
     }
 }

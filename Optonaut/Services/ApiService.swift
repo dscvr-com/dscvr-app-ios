@@ -13,10 +13,7 @@ import ObjectMapper
 import Crashlytics
 
 struct EmptyResponse: Mappable {
-    static func newInstance() -> Mappable {
-        return EmptyResponse()
-    }
-    
+    init?(_ map: Map) {}
     mutating func mapping(map: Map) {}
 }
 
