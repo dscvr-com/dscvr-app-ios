@@ -42,8 +42,8 @@ class CommentsViewModel {
                 // TODO maybe return optograph from API?
                 comment.optograph.id = optographId
                 
-                try! comment.person.save()
-                try! comment.save()
+                try! comment.person.insertOrReplace()
+                try! comment.insertOrReplace()
             })
     }
     

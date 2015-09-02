@@ -142,7 +142,7 @@ extension Optograph: SQLiteModel {
         ]
     }
     
-    func save() throws {
+    func insertOrReplace() throws {
         try DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, toSQL()))
     }
     

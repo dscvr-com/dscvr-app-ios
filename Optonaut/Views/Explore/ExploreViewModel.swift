@@ -53,9 +53,9 @@ class ExploreViewModel {
     private func processNewOptograph(optograph: Optograph) {
         results.value.orderedInsert(optograph, withOrder: .OrderedDescending)
         
-        try! optograph.save()
-        try! optograph.location.save()
-        try! optograph.person.save()
+        try! optograph.insertOrReplace()
+        try! optograph.location.insertOrReplace()
+        try! optograph.person.insertOrReplace()
     }
     
 }

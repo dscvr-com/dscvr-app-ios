@@ -72,7 +72,7 @@ class LoginViewModel {
             )
             .flatMap(.Latest) { loginData in ApiService<Person>.get("persons/\(loginData.id)") }
             .on(next: { person in
-                try! person.save()
+                try! person.insertOrReplace()
             })
             .flatMap(.Latest) { _ in SignalProducer(value: ()) }
     }

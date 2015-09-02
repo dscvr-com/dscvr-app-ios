@@ -124,9 +124,9 @@ class DetailsViewModel {
     }
     
     private func saveModel() {
-        try! optograph.save()
-        try! optograph.location.save()
-        try! optograph.person.save()
+        try! optograph.insertOrReplace()
+        try! optograph.location.insertOrReplace()
+        try! optograph.person.insertOrReplace()
     }
     
     private func updateProperties() {

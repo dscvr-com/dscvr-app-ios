@@ -27,8 +27,8 @@ class NewCommentViewModel {
         return ApiService.post("optographs/\(optographId.value)/comments", parameters: ["text": text.value])
             .on(
                 next: { comment in
-                    try! comment.person.save()
-                    try! comment.save()
+                    try! comment.person.insertOrReplace()
+                    try! comment.insertOrReplace()
                 },
                 completed: {
                     self.text.value = ""
