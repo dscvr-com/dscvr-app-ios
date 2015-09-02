@@ -68,7 +68,7 @@ class NewCommentTableViewCell: UITableViewCell {
         textInputView.rac_text <~ viewModel.text
         textInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.text.value = $0 as! String })
         
-        sendButtonView.rac_userInteractionEnabled <~ viewModel.isValid
+        sendButtonView.rac_userInteractionEnabled <~ viewModel.isValid.producer.combineLatestWith(viewModel.isPosting.producer).map { $0 && !$1 }
         sendButtonView.rac_alpha <~ viewModel.isValid.producer.map { $0 ? 1 : 0.5 }
     }
     

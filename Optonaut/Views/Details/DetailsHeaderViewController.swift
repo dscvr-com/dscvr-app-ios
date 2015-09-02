@@ -8,7 +8,6 @@
 
 import UIKit
 import ReactiveCocoa
-import WebImage
 import CoreMotion
 import Async
 

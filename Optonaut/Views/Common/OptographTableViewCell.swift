@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import ReactiveCocoa
-import WebImage
 import HexColor
 
 class OptographTableViewCell: UITableViewCell {

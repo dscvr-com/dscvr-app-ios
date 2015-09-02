@@ -14,6 +14,7 @@ class NewCommentViewModel {
     let optographId: ConstantProperty<UUID>
     let text = MutableProperty<String>("")
     let isValid = MutableProperty<Bool>(false)
+    let isPosting = MutableProperty<Bool>(false)
     
     init(optographId: UUID) {
         self.optographId = ConstantProperty(optographId)
@@ -26,12 +27,16 @@ class NewCommentViewModel {
     func postComment() -> SignalProducer<Comment, ApiError> {
         return ApiService.post("optographs/\(optographId.value)/comments", parameters: ["text": text.value])
             .on(
+                started: {
+                    self.isPosting.value = true
+                },
                 next: { comment in
                     try! comment.person.insertOrReplace()
                     try! comment.insertOrReplace()
                 },
                 completed: {
                     self.text.value = ""
+                    self.isPosting.value = false
                 }
         )
     }

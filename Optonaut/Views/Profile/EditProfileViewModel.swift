@@ -9,7 +9,6 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
-import WebImage
 
 class EditProfileViewModel {
     

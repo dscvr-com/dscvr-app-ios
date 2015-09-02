@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import ReactiveCocoa
-import WebImage
 
 class ActivityTableViewCell: UITableViewCell {
     
@@ -78,9 +77,9 @@ class ActivityTableViewCell: UITableViewCell {
 //            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
 //        }
         
-        if let url = viewModel.optographUrl.value, imageUrl = NSURL(string: url) {
-            optographImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "optograph-placeholder"))
-        }
+//        if let url = viewModel.optographUrl.value, imageUrl = NSURL(string: url) {
+//            optographImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "optograph-placeholder"))
+//        }
         
         viewModel.isRead.producer
             .map { $0 ? UIColor.clearColor() : BaseColor.alpha(0.1) }
