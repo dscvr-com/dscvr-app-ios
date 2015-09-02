@@ -57,25 +57,25 @@ class ApiService<T: Mappable> {
         return ApiService<EmptyResponse>.get("info")
     }
     
-    static func get(endpoint: String) -> SignalProducer<T, ApiError> {
-        return request(endpoint, method: .GET, parameters: nil)
+    static func get(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
+        return request(endpoint, method: .GET, queries: queries, parameters: nil)
     }
     
-    static func post(endpoint: String, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
-        return request(endpoint, method: .POST, parameters: parameters)
+    static func post(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+        return request(endpoint, method: .POST, queries: queries, parameters: parameters)
     }
     
-    static func put(endpoint: String, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
-        return request(endpoint, method: .PUT, parameters: parameters)
+    static func put(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+        return request(endpoint, method: .PUT, queries: queries, parameters: parameters)
     }
     
-    static func delete(endpoint: String) -> SignalProducer<T, ApiError> {
-        return request(endpoint, method: .DELETE, parameters: nil)
+    static func delete(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
+        return request(endpoint, method: .DELETE, queries: queries, parameters: nil)
     }
     
     static func upload(endpoint: String, uploadData: [String: String]) -> SignalProducer<Float, NSError> {
         return SignalProducer<Float, NSError> { sink, disposable in
-            let mutableURLRequest = buildURLRequest(endpoint, method: .POST)
+            let mutableURLRequest = buildURLRequest(endpoint, method: .POST, queries: nil)
             let multipartFormData = { (data: MultipartFormData) in
                 for (path, name) in uploadData {
                     data.appendBodyPart(fileURL: NSURL(fileURLWithPath: path), name: name)
@@ -107,8 +107,16 @@ class ApiService<T: Mappable> {
         }
     }
     
-    private static func buildURLRequest(endpoint: String, method: Alamofire.Method) -> NSMutableURLRequest {
-        let URL = NSURL(string: "http://\(host):\(port)/\(endpoint)")!
+    private static func buildURLRequest(endpoint: String, method: Alamofire.Method, queries: [String: String]?) -> NSMutableURLRequest {
+        var queryStr = ""
+        if let queries = queries {
+            for (index, (key, value)) in queries.enumerate() {
+                queryStr += index == 0 ? "?" : "&"
+                queryStr += "\(key)=\(value.escaped)"
+            }
+        }
+        
+        let URL = NSURL(string: "http://\(host):\(port)/\(endpoint)\(queryStr)")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
@@ -119,9 +127,9 @@ class ApiService<T: Mappable> {
         return mutableURLRequest
     }
     
-    private static func request(endpoint: String, method: Alamofire.Method, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
+    private static func request(endpoint: String, method: Alamofire.Method, queries: [String: String]? = nil, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return SignalProducer { sink, disposable in
-            let mutableURLRequest = buildURLRequest(endpoint, method: method)
+            let mutableURLRequest = buildURLRequest(endpoint, method: method, queries: queries)
             
             if let parameters = parameters {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters, options: [])

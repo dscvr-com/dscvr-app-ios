@@ -21,7 +21,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         
         let refreshAction = {
             NSOperationQueue().addOperationWithBlock {
-                self.viewModel.resultsLoading.value = true
+                self.viewModel.refreshNotificationSignal.notify()
             }
         }
         
@@ -37,8 +37,6 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
                 self.tableView.stopPullToRefresh()
         })
         
-        viewModel.resultsLoading.value = true
-        
         view.setNeedsUpdateConstraints()
     }
     
@@ -52,6 +50,18 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
+    }
+    
+}
+
+
+// MARK: - LoadMore
+extension ExploreTableViewController: LoadMore {
+    
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        checkRow(indexPath) {
+            self.viewModel.loadMoreNotificationSignal.notify()
+        }
     }
     
 }

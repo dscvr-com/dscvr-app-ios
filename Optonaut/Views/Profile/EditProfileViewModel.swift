@@ -25,9 +25,9 @@ class EditProfileViewModel {
     private var person = Person.newInstance() as! Person
     
     init() {
-        let id = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
         debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue)
         
+        let id = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
         let query = PersonTable.filter(PersonTable[PersonSchema.id] == id)
         
         if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
@@ -36,7 +36,7 @@ class EditProfileViewModel {
             updateProperties()
         }
         
-        ApiService<Person>.get("persons/\(id)")
+        ApiService<Person>.get("persons/me")
             .start(next: { person in
                 self.person = person
                 self.saveModel()

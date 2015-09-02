@@ -6,7 +6,6 @@
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
-import Foundation
 import ObjectMapper
 
 struct Person: Model {
@@ -93,10 +92,6 @@ extension Person: SQLiteModel {
     
     func insertOrReplace() throws {
         try DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, toSQL()))
-    }
-    
-    func insertIfNotExists() throws {
-        
     }
     
 }

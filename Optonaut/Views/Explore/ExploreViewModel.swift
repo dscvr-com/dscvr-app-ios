@@ -13,7 +13,9 @@ import SQLite
 class ExploreViewModel {
     
     let results = MutableProperty<[Optograph]>([])
-    let resultsLoading = MutableProperty<Bool>(false)
+    
+    let refreshNotificationSignal = NotificationSignal()
+    let loadMoreNotificationSignal = NotificationSignal()
     
     init() {
         
@@ -35,19 +37,19 @@ class ExploreViewModel {
         
         results.value = optographs.sort { $0.createdAt > $1.createdAt }
         
-        resultsLoading.producer
-            .mapError { _ in ApiError.Nil }
-            .filter { $0 }
-            .flatMap(.Latest) { _ in ApiService.get("optographs") }
-            .start(
-                next: processNewOptograph,
-                completed: {
-                    self.resultsLoading.value = false
-                },
-                error: { _ in
-                    self.resultsLoading.value = false
-                }
-        )
+        refreshNotificationSignal.subscribe {
+            ApiService<Optograph>.get("optographs")
+                .start(next: self.processNewOptograph)
+        }
+        
+        loadMoreNotificationSignal.subscribe {
+            if let oldestResult = self.results.value.last {
+                ApiService.get("optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                    .start(next: self.processNewOptograph)
+            }
+        }
+        
+        refreshNotificationSignal.notify()
     }
     
     private func processNewOptograph(optograph: Optograph) {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */; };
+		8F2214C31B976E6100E693CE /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* StringExtension.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E311B4A70CD007508ED /* icomoon.ttf */; };
@@ -135,6 +136,7 @@
 
 /* Begin PBXFileReference section */
 		8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectMapper.framework; path = Carthage/Build/iOS/ObjectMapper.framework; sourceTree = "<group>"; };
+		8F2214C21B976E6100E693CE /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F4C6E311B4A70CD007508ED /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
@@ -542,6 +544,7 @@
 				8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */,
 				8FAB9F811B8F041F00B4C8CB /* LoadMoreExtension.swift */,
 				8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */,
+				8F2214C21B976E6100E693CE /* StringExtension.swift */,
 				8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */,
 				8FAB9F7D1B8F03BE00B4C8CB /* UIKitRACExtensions.swift */,
 				8FAB9F7F1B8F03E800B4C8CB /* UIKitExtensions.swift */,
@@ -880,6 +883,7 @@
 				8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */,
 				8FAB9F541B8F01DF00B4C8CB /* OptographsViewModel.swift in Sources */,
 				8FAB9F7E1B8F03BE00B4C8CB /* UIKitRACExtensions.swift in Sources */,
+				8F2214C31B976E6100E693CE /* StringExtension.swift in Sources */,
 				8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */,
 				8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */,
 				8FAB9F421B8F01DF00B4C8CB /* ViewerViewController.swift in Sources */,

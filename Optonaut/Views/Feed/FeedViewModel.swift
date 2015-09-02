@@ -23,12 +23,12 @@ class FeedViewModel: NSObject {
     override init() {
         super.init()
         
-//        let meId = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
+        let meId = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
-//            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.id] == meId)
+            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.id] == meId)
 //            .order(CommentSchema.createdAt.asc)
         
         let optographs = DatabaseManager.defaultConnection.prepare(query).map { row -> Optograph in
@@ -56,8 +56,10 @@ class FeedViewModel: NSObject {
         }
         
         loadMoreNotificationSignal.subscribe {
-            ApiService.get("optographs/feed?offset=\(results.value.count)")
-                .start(next: processNewOptograph)
+            if let oldestResult = self.results.value.last {
+                ApiService.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                    .start(next: self.processNewOptograph)
+            }
         }
         
         refreshNotificationSignal.notify()
@@ -71,9 +73,9 @@ class FeedViewModel: NSObject {
     private func processNewOptograph(optograph: Optograph) {
         results.value.orderedInsert(optograph, withOrder: .OrderedDescending)
         
-        try! optograph.insertOrReplace()
-        try! optograph.location.insertOrReplace()
-        try! optograph.person.insertOrReplace()
+//        try! optograph.insertOrReplace()
+//        try! optograph.location.insertOrReplace()
+//        try! optograph.person.insertOrReplace()
     }
     
 }
