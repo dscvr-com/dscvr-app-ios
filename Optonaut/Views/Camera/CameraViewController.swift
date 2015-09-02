@@ -130,7 +130,7 @@ class CameraViewController: UIViewController {
         viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
             .map { _ in false }
             .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-        view.addSubview(recordButtonView)
+//        view.addSubview(recordButtonView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
         
@@ -195,9 +195,9 @@ class CameraViewController: UIViewController {
 //        instructionView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
 //        instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         
-        recordButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
-        recordButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        recordButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 80))
+//        recordButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
+//        recordButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+//        recordButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 80))
         
         super.updateViewConstraints()
     }
