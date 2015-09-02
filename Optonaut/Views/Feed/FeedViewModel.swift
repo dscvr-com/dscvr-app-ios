@@ -73,9 +73,9 @@ class FeedViewModel: NSObject {
     private func processNewOptograph(optograph: Optograph) {
         results.value.orderedInsert(optograph, withOrder: .OrderedDescending)
         
-//        try! optograph.insertOrReplace()
-//        try! optograph.location.insertOrReplace()
-//        try! optograph.person.insertOrReplace()
+        try! optograph.insertOrReplace()
+        try! optograph.location.insertOrReplace()
+        try! optograph.person.insertOrReplace()
     }
     
 }
