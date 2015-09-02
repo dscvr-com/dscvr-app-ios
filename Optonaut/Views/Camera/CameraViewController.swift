@@ -22,7 +22,7 @@ private struct Edge: Hashable {
     let two: SelectionPoint
     
     var hashValue: Int {
-        return one.id.hashValue ^ two.id.hashValue
+        return one.globalId.hashValue ^ two.globalId.hashValue
     }
     
     init(_ one: SelectionPoint, _ two: SelectionPoint) {
@@ -32,7 +32,7 @@ private struct Edge: Hashable {
 }
 
 private func ==(lhs: Edge, rhs: Edge) -> Bool {
-    return lhs.one.id == rhs.one.id && lhs.two.id == rhs.two.id
+    return lhs.one.globalId == rhs.one.globalId && lhs.two.globalId == rhs.two.globalId
 }
 
 class CameraViewController: UIViewController {
@@ -136,7 +136,7 @@ class CameraViewController: UIViewController {
             .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
         view.addSubview(recordButtonView)
         
-//        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
         
         Async.customQueue(sessionQueue) {
             self.authorizeCamera()
@@ -247,15 +247,20 @@ class CameraViewController: UIViewController {
     
     private func setupSelectionPoints() {
         
-        let points = stitcher.GetSelectionPoints().map( { (wrapped: NSValue) -> SelectionPoint in
-            var point = SelectionPoint()
-            wrapped.getValue(&point)
-            return point;
-        })
+        let rawPoints = stitcher.GetSelectionPoints()
+        var points = [SelectionPoint]()
+        
+        while rawPoints.HasMore() {
+            let point = rawPoints.Next()
+            points.append(point)
+        }
         
         for a in points {
             for b in points {
+                
+                
                 if(stitcher.AreAdjacent(a, and: b)) {
+                    
                     let edge = Edge(a, b)
                     
                     let vec = GLKVector3Make(0, 0, -1);
@@ -319,8 +324,8 @@ class CameraViewController: UIViewController {
             
             var buf = ImageBuffer()
             buf.data = CVPixelBufferGetBaseAddress(pixelBuffer)
-            buf.width = Int32(CVPixelBufferGetWidth(pixelBuffer))
-            buf.height = Int32(CVPixelBufferGetHeight(pixelBuffer))
+            buf.width = UInt32(CVPixelBufferGetWidth(pixelBuffer))
+            buf.height = UInt32(CVPixelBufferGetHeight(pixelBuffer))
 
             stitcher.Push(r, buf)
             

@@ -2,17 +2,29 @@
 #import <GLKit/GLKit.h>
 
 struct ImageBuffer {
-    void* data;
-    int width;
-    int height;
+        void* data;
+        uint32_t width;
+        uint32_t height;
 };
 
-struct SelectionPoint {
-    GLKMatrix4 extrinsics;
-    int id;
-    int ringId;
-    int localId;
-};
+@interface SelectionPoint : NSObject {
+    @public
+        GLKMatrix4 _extrinsics;
+        uint32_t _globalId;
+        uint32_t _ringId;
+        uint32_t _localId;
+}
+@property uint32_t globalId;
+@property uint32_t ringId;
+@property uint32_t localId;
+@property GLKMatrix4 extrinsics;
+@end
+
+
+@interface SelectionPointIterator : NSObject
+- (bool)HasMore;
+- (SelectionPoint*)Next;
+@end
 
 @interface IosPipeline : NSObject
 
@@ -27,12 +39,12 @@ struct SelectionPoint {
 - (bool)IsPreviewImageAvailable;
 - (struct ImageBuffer)GetPreviewImage;
 - (void)FreeImageBuffer:(struct ImageBuffer)toFree;
-- (NSArray<NSValue*>*)GetSelectionPoints;
-- (struct SelectionPoint)CurrentPoint;
-- (struct SelectionPoint)PreviousPoint;
+- (SelectionPointIterator*)GetSelectionPoints;
+- (SelectionPoint*)CurrentPoint;
+- (SelectionPoint*)PreviousPoint;
 - (void)EnableDebug:(NSString*)path;
 - (struct ImageBuffer)GetLeftResult;
 - (struct ImageBuffer)GetRightResult;
-- (bool)AreAdjacent:(struct SelectionPoint)a and:(struct SelectionPoint)b;
+- (bool)AreAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b;
 
 @end

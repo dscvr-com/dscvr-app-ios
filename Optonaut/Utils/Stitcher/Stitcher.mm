@@ -10,8 +10,14 @@
 
 int counter = 0;
 
+@implementation SelectionPoint
+
+@end
+
 GLKMatrix4 CVMatToGLK4(const cv::Mat &m) {
     assert(m.cols == 4 && m.rows == 4 && m.type() == CV_64F);
+    assert(sizeof(float) == 4);
+    assert(sizeof(double) == 8);
     
     return GLKMatrix4Make((float)m.at<double>(0, 0), (float)m.at<double>(0, 1), (float)m.at<double>(0, 2), (float)m.at<double>(0, 3),
                           (float)m.at<double>(1, 0), (float)m.at<double>(1, 1), (float)m.at<double>(1, 2), (float)m.at<double>(1, 3),
@@ -24,7 +30,7 @@ void GLK4ToCVMat(GLKMatrix4 m, cv::Mat &output) {
         m.m10, m.m11, m.m12, m.m13,
         m.m20, m.m21, m.m22, m.m23,
         m.m30, m.m31, m.m32, m.m33 };
-    
+  
     output = cv::Mat(4, 4, CV_64F, data).clone();
 }
 
@@ -62,24 +68,46 @@ CGImageRef CVMatToCGImage(const cv::Mat &input) {
     return CGBitmapContextCreateImage(ctx);
 }
 
-SelectionPoint ConvertSelectionPoint(optonaut::SelectionPoint point) {
-    SelectionPoint newPoint;
-    newPoint.id = point.id;
-    newPoint.localId = point.localId;
-    newPoint.ringId = point.ringId;
-    newPoint.extrinsics = CVMatToGLK4(point.extrinsics);
+SelectionPoint* ConvertSelectionPoint(optonaut::SelectionPoint point) {
+    SelectionPoint* newPoint = [SelectionPoint alloc];
+    newPoint->_globalId = point.globalId;
+    newPoint->_localId = point.localId;
+    newPoint->_ringId = point.ringId;
+    newPoint->_extrinsics = CVMatToGLK4(point.extrinsics);
     return newPoint;
 }
 
-optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
-    optonaut::SelectionPoint newPoint;
-    newPoint.id = point.id;
-    newPoint.localId = point.localId;
-    newPoint.ringId = point.ringId;
-    GLK4ToCVMat(point.extrinsics, newPoint.extrinsics);
-    return newPoint;
+void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newPoint) {
+    newPoint->globalId = point->_globalId;
+    newPoint->localId = point->_localId;
+    newPoint->ringId = point->_ringId;
+    GLK4ToCVMat(point->_extrinsics, newPoint->extrinsics);
 }
 
+
+
+@implementation SelectionPointIterator {
+@private
+    std::vector<optonaut::SelectionPoint> data;
+    int i;
+}
+- (id)init:(std::vector<optonaut::SelectionPoint>)points {
+    self  = [super init];
+    self->i = 0;
+    self->data = points;
+    return self;
+}
+- (SelectionPoint*)Next {
+    assert(i < data.size());
+    
+    SelectionPoint* q = ConvertSelectionPoint(data[i]);
+    i++;
+    return q;
+}
+- (bool)HasMore {
+    return i < data.size();
+}
+@end
 
 @implementation IosPipeline {
 @private
@@ -149,30 +177,20 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
 - (void)FreeImageBuffer:(ImageBuffer)toFree {
     free(toFree.data);
 }
-- (SelectionPoint)CurrentPoint {
+- (SelectionPoint*)CurrentPoint {
     return ConvertSelectionPoint(pipe->CurrentPoint().closestPoint);
 }
 
-- (SelectionPoint)PreviousPoint {
+- (SelectionPoint*)PreviousPoint {
     return ConvertSelectionPoint(pipe->PreviousPoint().closestPoint);
 }
-- (NSArray<NSValue*>*)GetSelectionPoints {
-    vector<optonaut::SelectionPoint> points = pipe->GetSelectionPoints();
-    
-    NSMutableArray *outPoints = [NSMutableArray array];
-    
-    for(auto point : points) {
-        SelectionPoint newPoint = ConvertSelectionPoint(point);
-        
-        [outPoints addObject:[NSValue valueWithBytes:&newPoint objCType:@encode(struct SelectionPoint)]];
-    }
-    
-    NSArray *immutableOutPoints = [NSArray arrayWithArray:outPoints];
-    
-    return immutableOutPoints;
-}
-- (bool)AreAdjacent:(SelectionPoint)a and:(SelectionPoint)b {
-    return pipe->AreAdjacent(ConvertSelectionPoint(a), ConvertSelectionPoint(b));
+
+- (bool)AreAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
+    optonaut::SelectionPoint convA;
+    optonaut::SelectionPoint convB;
+    ConvertSelectionPoint(a, &convA);
+    ConvertSelectionPoint(b, &convB);
+    return pipe->AreAdjacent(convA, convB);
 }
 - (void)EnableDebug:(NSString*)path {
     assert(false);
@@ -184,6 +202,10 @@ optonaut::SelectionPoint ConvertSelectionPoint(SelectionPoint point) {
 }
 - (ImageBuffer)GetRightResult {
     return CVMatToImageBuffer(pipe->FinishRight()->image);
+}
+
+- (SelectionPointIterator*)GetSelectionPoints {
+    return [[SelectionPointIterator alloc] init: pipe->GetSelectionPoints()];
 }
 
 @end
