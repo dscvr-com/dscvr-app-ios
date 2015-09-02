@@ -68,8 +68,8 @@ class CreateOptographViewModel {
     private func saveToDatabase() {
         optograph.person.id = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
         
-        try! optograph.save()
-        try! optograph.location.save()
+        try! optograph.insertOrReplace()
+        try! optograph.location.insertOrReplace()
     }
 }
 

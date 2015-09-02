@@ -37,6 +37,7 @@ class ProfileViewModel {
         ApiService.get("persons/\(id)")
             .start(next: { (person: Person) in
                 self.person = person
+                self.saveModel()
                 self.updateProperties()
             })
     }
@@ -89,7 +90,7 @@ class ProfileViewModel {
     }
     
     private func saveModel() {
-        try! person.save()
+        try! person.insertOrReplace()
     }
     
 }

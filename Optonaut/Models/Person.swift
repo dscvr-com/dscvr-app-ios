@@ -91,8 +91,12 @@ extension Person: SQLiteModel {
         ]
     }
     
-    func save() throws {
+    func insertOrReplace() throws {
         try DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, toSQL()))
+    }
+    
+    func insertIfNotExists() throws {
+        
     }
     
 }
