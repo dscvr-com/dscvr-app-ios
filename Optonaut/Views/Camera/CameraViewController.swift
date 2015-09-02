@@ -15,7 +15,6 @@ import Alamofire
 import SceneKit
 import Async
 import Crashlytics
-import AudioToolbox
 
 private struct Edge: Hashable {
     let one: SelectionPoint
@@ -128,9 +127,6 @@ class CameraViewController: UIViewController {
         viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
             .map { _ in true }
             .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-            .on(next: { _ in
-                AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
-            })
         viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
             .map { _ in false }
             .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
