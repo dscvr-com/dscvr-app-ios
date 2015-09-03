@@ -162,7 +162,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         
         viewModel.post()
             .start(next: { optograph in
-                self.navigationController?.pushViewController(DetailsContainerViewController(optographId: optograph.id), animated: false)
+                self.navigationController?.pushViewController(DetailsTableViewController(optographId: optograph.id), animated: false)
                 self.navigationController?.viewControllers.removeAtIndex(1)
             })
     }

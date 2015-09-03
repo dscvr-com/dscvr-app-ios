@@ -6,7 +6,6 @@
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import ReactiveCocoa
 import HexColor
@@ -17,11 +16,11 @@ class CommentTableViewCell: UITableViewCell {
     var viewModel: CommentViewModel!
     
     // subviews
-    let textView = KILabel()
-    let avatarImageView = UIImageView()
-    let fullNameView = UILabel()
-    let userNameView = UILabel()
-    let dateView = UILabel()
+    private let textView = KILabel()
+    private let avatarImageView = UIImageView()
+    private let fullNameView = UILabel()
+    private let userNameView = UILabel()
+    private let dateView = UILabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -98,7 +97,6 @@ class CommentTableViewCell: UITableViewCell {
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}
-    
     override func setHighlighted(highlighted: Bool, animated: Bool) {}
     
 }

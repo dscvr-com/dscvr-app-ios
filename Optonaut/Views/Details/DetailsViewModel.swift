@@ -29,6 +29,7 @@ class DetailsViewModel {
     let text = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     let downloadProgress = MutableProperty<Float>(0)
+    let comments = MutableProperty<[Comment]>([])
     
     var optograph: Optograph
     
@@ -64,6 +65,32 @@ class DetailsViewModel {
                     self.updateProperties()
                 })
         }
+        
+        let commentQuery = CommentTable
+            .select(*)
+            .join(PersonTable, on: CommentTable[CommentSchema.personId] == PersonTable[PersonSchema.id])
+            .filter(CommentTable[CommentSchema.optographId] == optographId)
+        
+        DatabaseManager.defaultConnection.prepare(commentQuery)
+            .map { row -> Comment in
+                let person = Person.fromSQL(row)
+                var comment = Comment.fromSQL(row)
+                
+                comment.person = person
+                
+                return comment
+            }
+            .forEach(insertNewComment)
+        
+        ApiService<Comment>.get("optographs/\(optographId)/comments")
+            .start(next: { (var comment) in
+                self.insertNewComment(comment)
+                
+                comment.optograph.id = optographId
+                
+                try! comment.insertOrReplace()
+                try! comment.person.insertOrReplace()
+            })
     }
     
     func toggleLike() {
@@ -114,6 +141,10 @@ class DetailsViewModel {
                 
                 self.isPublishing.value = false
             })
+    }
+    
+    func insertNewComment(comment: Comment) {
+        comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
     }
     
     private func updateModel() {

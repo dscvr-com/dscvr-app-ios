@@ -154,7 +154,7 @@ class OptographTableViewCell: UITableViewCell {
     }
     
     func pushDetails() {
-        navigationController?.pushViewController(DetailsContainerViewController(optographId: viewModel.optograph.id), animated: true)
+        navigationController?.pushViewController(DetailsTableViewController(optographId: viewModel.optograph.id), animated: true)
     }
     
     func pushProfile() {

@@ -12,13 +12,13 @@ import KMPlaceholderTextView
 
 class NewCommentTableViewCell: UITableViewCell {
     
-    var viewModel: NewCommentViewModel!
+    private var viewModel: NewCommentViewModel!
     
     var postCallback: (Comment -> ())?
     
     // subviews
-    let textInputView = KMPlaceholderTextView()
-    let sendButtonView = UIButton()
+    private let textInputView = KMPlaceholderTextView()
+    private let sendButtonView = UIButton()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -73,7 +73,6 @@ class NewCommentTableViewCell: UITableViewCell {
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}
-    
     override func setHighlighted(highlighted: Bool, animated: Bool) {}
     
 }

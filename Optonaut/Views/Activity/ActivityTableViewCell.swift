@@ -102,7 +102,7 @@ class ActivityTableViewCell: UITableViewCell {
     
     func pushDetails() {
         if let id = viewModel.optographId.value {
-            navigationController?.pushViewController(DetailsContainerViewController(optographId: id), animated: true)
+            navigationController?.pushViewController(DetailsTableViewController(optographId: id), animated: true)
         }
     }
     

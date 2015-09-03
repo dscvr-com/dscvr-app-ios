@@ -32,6 +32,7 @@
 		8F900B571B8479250085566C /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B551B8479250085566C /* Crashlytics.framework */; };
 		8F900B581B8479250085566C /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B561B8479250085566C /* Fabric.framework */; };
 		8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9A4FF41B39DF85009C4548 /* Refresher.framework */; };
+		8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */; settings = {ASSET_TAGS = (); }; };
 		8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA2E7B11B55576500407181 /* opencv2.framework */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
 		8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA66BA41B80905C00EE5D44 /* SQLite.framework */; };
@@ -51,12 +52,9 @@
 		8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */; };
 		8FAB9F371B8F01DF00B4C8CB /* OptographViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFE1B8F01DF00B4C8CB /* OptographViewModel.swift */; };
 		8FAB9F381B8F01DF00B4C8CB /* RefreshAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFF1B8F01DF00B4C8CB /* RefreshAnimator.swift */; };
-		8FAB9F391B8F01DF00B4C8CB /* CommentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F011B8F01DF00B4C8CB /* CommentsViewModel.swift */; };
 		8FAB9F3A1B8F01DF00B4C8CB /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */; };
-		8FAB9F3B1B8F01DF00B4C8CB /* CommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F031B8F01DF00B4C8CB /* CommentTableViewController.swift */; };
-		8FAB9F3C1B8F01DF00B4C8CB /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F041B8F01DF00B4C8CB /* CommentViewModel.swift */; };
-		8FAB9F3D1B8F01DF00B4C8CB /* DetailsContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F051B8F01DF00B4C8CB /* DetailsContainerViewController.swift */; };
-		8FAB9F3E1B8F01DF00B4C8CB /* DetailsHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F061B8F01DF00B4C8CB /* DetailsHeaderViewController.swift */; };
+		8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */; };
+		8FAB9F3E1B8F01DF00B4C8CB /* DetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */; };
 		8FAB9F3F1B8F01DF00B4C8CB /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F071B8F01DF00B4C8CB /* DetailsViewModel.swift */; };
 		8FAB9F401B8F01DF00B4C8CB /* NewCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */; };
 		8FAB9F411B8F01DF00B4C8CB /* NewCommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */; };
@@ -163,6 +161,7 @@
 		8F900B551B8479250085566C /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/iOS/Crashlytics.framework; sourceTree = "<group>"; };
 		8F900B561B8479250085566C /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/iOS/Fabric.framework; sourceTree = "<group>"; };
 		8F9A4FF41B39DF85009C4548 /* Refresher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Refresher.framework; path = Carthage/Build/iOS/Refresher.framework; sourceTree = "<group>"; };
+		8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		8FA2E7B11B55576500407181 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Carthage/Build/iOS/opencv2.framework; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		8FA66BA41B80905C00EE5D44 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
@@ -182,12 +181,9 @@
 		8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9EFE1B8F01DF00B4C8CB /* OptographViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographViewModel.swift; sourceTree = "<group>"; };
 		8FAB9EFF1B8F01DF00B4C8CB /* RefreshAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshAnimator.swift; sourceTree = "<group>"; };
-		8FAB9F011B8F01DF00B4C8CB /* CommentsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentsViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
-		8FAB9F031B8F01DF00B4C8CB /* CommentTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewController.swift; sourceTree = "<group>"; };
-		8FAB9F041B8F01DF00B4C8CB /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
-		8FAB9F051B8F01DF00B4C8CB /* DetailsContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsContainerViewController.swift; sourceTree = "<group>"; };
-		8FAB9F061B8F01DF00B4C8CB /* DetailsHeaderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsHeaderViewController.swift; sourceTree = "<group>"; };
+		8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
+		8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewCell.swift; sourceTree = "<group>"; };
 		8FAB9F071B8F01DF00B4C8CB /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentTableViewCell.swift; sourceTree = "<group>"; };
 		8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentViewModel.swift; sourceTree = "<group>"; };
@@ -436,12 +432,10 @@
 		8FAB9F001B8F01DF00B4C8CB /* Details */ = {
 			isa = PBXGroup;
 			children = (
-				8FAB9F011B8F01DF00B4C8CB /* CommentsViewModel.swift */,
 				8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */,
-				8FAB9F031B8F01DF00B4C8CB /* CommentTableViewController.swift */,
-				8FAB9F041B8F01DF00B4C8CB /* CommentViewModel.swift */,
-				8FAB9F051B8F01DF00B4C8CB /* DetailsContainerViewController.swift */,
-				8FAB9F061B8F01DF00B4C8CB /* DetailsHeaderViewController.swift */,
+				8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */,
+				8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */,
+				8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */,
 				8FAB9F071B8F01DF00B4C8CB /* DetailsViewModel.swift */,
 				8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */,
 				8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */,
@@ -847,7 +841,7 @@
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,
 				8FAB9F511B8F01DF00B4C8CB /* RequestInviteViewModel.swift in Sources */,
 				8FAB9F451B8F01DF00B4C8CB /* ExploreViewModel.swift in Sources */,
-				8FAB9F3E1B8F01DF00B4C8CB /* DetailsHeaderViewController.swift in Sources */,
+				8FAB9F3E1B8F01DF00B4C8CB /* DetailsTableViewCell.swift in Sources */,
 				8F900B471B839E690085566C /* Location.swift in Sources */,
 				8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
@@ -865,11 +859,10 @@
 				8FAB9F791B8F02D500B4C8CB /* StitcherUtils.swift in Sources */,
 				8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */,
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
-				8FAB9F3D1B8F01DF00B4C8CB /* DetailsContainerViewController.swift in Sources */,
+				8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
 				8FAB9F3F1B8F01DF00B4C8CB /* DetailsViewModel.swift in Sources */,
 				8FAB9F801B8F03E800B4C8CB /* UIKitExtensions.swift in Sources */,
-				8FAB9F3C1B8F01DF00B4C8CB /* CommentViewModel.swift in Sources */,
 				8FAB9F921B8F484700B4C8CB /* CWStatusBarNotification.swift in Sources */,
 				A5C1C0161B7E19E200DCD598 /* image.cpp in Sources */,
 				A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */,
@@ -903,14 +896,13 @@
 				8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */,
 				8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */,
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
-				8FAB9F391B8F01DF00B4C8CB /* CommentsViewModel.swift in Sources */,
 				A5C1C01A1B7E19E200DCD598 /* simpleSphereStitcher.cpp in Sources */,
 				A571CC611B91D7B400124FD2 /* pipeline.cpp in Sources */,
 				8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */,
-				8FAB9F3B1B8F01DF00B4C8CB /* CommentTableViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F900B421B839D0C0085566C /* OptographTable.swift in Sources */,
 				8FAB9F781B8F02D500B4C8CB /* Stitcher.mm in Sources */,
+				8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
 				8FAB9F381B8F01DF00B4C8CB /* RefreshAnimator.swift in Sources */,
 				8FAB9F351B8F01DF00B4C8CB /* OptographTableViewCell.swift in Sources */,
