@@ -196,6 +196,13 @@ class EditProfileViewController: UIViewController, RedNavbar {
         newsletterSwitchView.addTarget(self, action: "toggleNewsletter", forControlEvents: .ValueChanged)
         view.addSubview(newsletterSwitchView)
         
+        imagePickerController.navigationBar.translucent = false
+        imagePickerController.navigationBar.barTintColor = BaseColor
+        imagePickerController.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
+            NSForegroundColorAttributeName: UIColor.whiteColor(),
+        ]
+        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
         view.setNeedsUpdateConstraints()
@@ -395,7 +402,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
     
     func updateImage() {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
-            imagePickerController.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+            imagePickerController.sourceType = .PhotoLibrary
             imagePickerController.allowsEditing = true
             imagePickerController.delegate = self
             self.presentViewController(imagePickerController, animated: true, completion: nil)

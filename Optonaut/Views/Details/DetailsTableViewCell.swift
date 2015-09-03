@@ -39,6 +39,7 @@ class DetailsTableViewCell: UITableViewCell {
         
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
+        previewImageView.userInteractionEnabled = true
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushViewer"))
         contentView.addSubview(previewImageView)
         
@@ -269,9 +270,9 @@ class DetailsTableViewCell: UITableViewCell {
         navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
     
-    func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
+    func pushViewer() {
         if viewModel.downloadProgress.value == 1 {
-            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph), animated: false)
+            navigationController?.pushViewController(ViewerViewController(orientation: .LandscapeLeft, optograph: viewModel.optograph), animated: false)
             viewModel.increaseViewsCount()
         }
     }
