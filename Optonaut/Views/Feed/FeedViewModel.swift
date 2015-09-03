@@ -23,12 +23,11 @@ class FeedViewModel: NSObject {
     override init() {
         super.init()
         
-        let meId = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
-            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.id] == meId)
+            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
 //            .order(CommentSchema.createdAt.asc)
         
         let optographs = DatabaseManager.defaultConnection.prepare(query).map { row -> Optograph in

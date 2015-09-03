@@ -30,7 +30,7 @@ class ActivityViewModel {
 //        creatorAvatarUrl = ConstantProperty(activity.creator!.avatarUrl)
         creatorId = ConstantProperty(activity.creator!.id)
         creatorUserName = ConstantProperty(activity.creator!.userName)
-        timeSinceCreated = ConstantProperty(RoundedDuration(date: activity.createdAt).shortDescription())
+        timeSinceCreated = ConstantProperty(activity.createdAt.shortDescription)
         optographUrl = ConstantProperty("\(S3URL)/thumbs/thumb_\(activity.optograph!.id).jpg")
         optographId = ConstantProperty(activity.optograph?.id)
         isRead = MutableProperty(activity.isRead)

@@ -16,8 +16,7 @@ class TabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let id = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
-        let query = PersonTable.filter(PersonTable[PersonSchema.id] == id)
+        let query = PersonTable.filter(PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
         if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
             Crashlytics.sharedInstance().setUserIdentifier(person.id)
             Crashlytics.sharedInstance().setUserEmail(person.email)

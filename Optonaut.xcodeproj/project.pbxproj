@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */; };
+		8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E0AC31B98251A002E2FB5 /* SessionService.swift */; settings = {ASSET_TAGS = (); }; };
+		8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E0AC51B98304F002E2FB5 /* VersionService.swift */; settings = {ASSET_TAGS = (); }; };
 		8F2214C31B976E6100E693CE /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* StringExtension.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
@@ -136,6 +138,8 @@
 
 /* Begin PBXFileReference section */
 		8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectMapper.framework; path = Carthage/Build/iOS/ObjectMapper.framework; sourceTree = "<group>"; };
+		8F1E0AC31B98251A002E2FB5 /* SessionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionService.swift; sourceTree = "<group>"; };
+		8F1E0AC51B98304F002E2FB5 /* VersionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VersionService.swift; sourceTree = "<group>"; };
 		8F2214C21B976E6100E693CE /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
@@ -565,6 +569,8 @@
 				8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */,
 				8FB3B7411B8E3D7900656D99 /* LocationService.swift */,
 				8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */,
+				8F1E0AC31B98251A002E2FB5 /* SessionService.swift */,
+				8F1E0AC51B98304F002E2FB5 /* VersionService.swift */,
 			);
 			name = Services;
 			path = Optonaut/Services;
@@ -900,7 +906,9 @@
 				8FAB9F391B8F01DF00B4C8CB /* CommentsViewModel.swift in Sources */,
 				A5C1C01A1B7E19E200DCD598 /* simpleSphereStitcher.cpp in Sources */,
 				A571CC611B91D7B400124FD2 /* pipeline.cpp in Sources */,
+				8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */,
 				8FAB9F3B1B8F01DF00B4C8CB /* CommentTableViewController.swift in Sources */,
+				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F900B421B839D0C0085566C /* OptographTable.swift in Sources */,
 				8FAB9F781B8F02D500B4C8CB /* Stitcher.mm in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,

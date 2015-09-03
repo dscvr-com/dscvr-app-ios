@@ -26,56 +26,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupAppearanceDefaults()
         
-        if NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.DebugEnabled.rawValue) == nil {
-            NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.DebugEnabled.rawValue)
-        }
         
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        if let window = window {
-            
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "onNotificationLogout", name: NotificationKeys.Logout.rawValue, object: nil)
-            
-            window.backgroundColor = UIColor.whiteColor()
-            
-            let userIsLoggedIn = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.PersonIsLoggedIn.rawValue);
-            if userIsLoggedIn {
-                window.rootViewController = TabBarViewController()
-            } else {
-                window.rootViewController = LoginViewController()
-            }
-            window.makeKeyAndVisible()
-            
-            ApiService<EmptyResponse>.checkVersion()
-                .start(
-                    error: { error in
-                        if error.status == 404 {
-                            let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of Optonaut. Please update to the newest version.", preferredStyle: .Alert)
-                            alert.addAction(UIAlertAction(title: "Update", style: .Default, handler: { _ in
-                                let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
-                                let url = NSURL(string: "itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=\(appId!)&mt=8")
-                                UIApplication.sharedApplication().openURL(url!)
-                            }))
-                            window.rootViewController?.presentViewController(alert, animated: true, completion: nil)
-                        }
-                })
-        }
+        let window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        self.window = window
         
-        if let version = NSBundle.mainBundle().releaseVersionNumber {
-            NSUserDefaults.standardUserDefaults().setObject(version, forKey: UserDefaultsKeys.LastReleaseVersion.rawValue)
-        }
+        SessionService.prepare()
+        SessionService.onLogout(performAlways: true) { window.rootViewController = LoginViewController() }
         
-        return true
-    }
-    
-    func onNotificationLogout() {
-        NSUserDefaults.standardUserDefaults().setObject("", forKey: UserDefaultsKeys.PersonToken.rawValue)
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: UserDefaultsKeys.PersonIsLoggedIn.rawValue)
-        
-        try! DatabaseManager.reset()
-        
-        if let window = window {
+        if SessionService.isLoggedIn {
+            window.rootViewController = TabBarViewController()
+        } else {
             window.rootViewController = LoginViewController()
         }
+        
+        VersionService.onOutdatedApiVersion {
+            let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of Optonaut. Please update to the newest version.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Update", style: .Default, handler: { _ in
+                let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
+                let url = NSURL(string: "itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=\(appId!)&mt=8")
+                UIApplication.sharedApplication().openURL(url!)
+            }))
+            window.rootViewController?.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+        window.makeKeyAndVisible()
+        
+        VersionService.updateToLatest()
+        
+        return true
     }
     
     func applicationWillResignActive(application: UIApplication) {

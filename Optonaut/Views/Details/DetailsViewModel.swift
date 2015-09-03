@@ -134,7 +134,7 @@ class DetailsViewModel {
         starsCount.value = optograph.starsCount
         commentsCount.value = optograph.commentsCount
         viewsCount.value = optograph.viewsCount
-        timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
+        timeSinceCreated.value = optograph.createdAt.longDescription
         fullName.value = optograph.person.fullName
         userName.value = "@\(optograph.person.userName)"
         personId.value = optograph.person.id

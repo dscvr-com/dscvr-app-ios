@@ -53,14 +53,12 @@ class DatabaseManager {
         // enable console logging
         //defaultConnection.trace(print)
         
-        let lastVersion = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.LastReleaseVersion.rawValue) as? String ?? ""
-        let newVersion = NSBundle.mainBundle().releaseVersionNumber
-        let isNewVersion = lastVersion != newVersion
-        
         // reset database if new version available
-        if isNewVersion {
+        if VersionService.isNew {
             try reset()
         }
+        
+        SessionService.onLogout(performAlways: true) { try! reset() }
     }
     
     static func reset() throws {

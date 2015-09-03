@@ -24,10 +24,9 @@ class EditProfileViewModel {
     private var person = Person.newInstance()
     
     init() {
-        debugEnabled.value = NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue)
+        debugEnabled.value = SessionService.sessionData!.debuggingEnabled
         
-        let id = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID
-        let query = PersonTable.filter(PersonTable[PersonSchema.id] == id)
+        let query = PersonTable.filter(PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
         
         if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
             self.person = person
@@ -95,7 +94,7 @@ class EditProfileViewModel {
     
     func toggleDebug() {
         debugEnabled.value = !debugEnabled.value
-        NSUserDefaults.standardUserDefaults().setBool(debugEnabled.value, forKey: UserDefaultsKeys.DebugEnabled.rawValue)
+        SessionService.sessionData?.debuggingEnabled = debugEnabled.value
     }
     
     func toggleNewsletter() {

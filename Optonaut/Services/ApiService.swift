@@ -117,7 +117,7 @@ class ApiService<T: Mappable> {
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
-        if let token = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonToken.rawValue) as? String {
+        if let token = SessionService.sessionData?.token {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         
@@ -139,7 +139,7 @@ class ApiService<T: Mappable> {
                 .response { (_, response, data, error) in
                     if let error = error {
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
-                            NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
+                            SessionService.logout()
                         }
                         
                         do {

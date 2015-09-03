@@ -10,55 +10,6 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 
-enum RoundedDurationType: String {
-    case Seconds = "seconds"
-    case Minutes = "minutes"
-    case Hours = "hours"
-    case Days = "days"
-    case Weeks = "weeks"
-}
-
-struct RoundedDuration {
-    
-    var type: RoundedDurationType
-    var value: Int
-    
-    init(date: NSDate) {
-        let oneMinuteMark: NSTimeInterval = 60
-        let oneHourMark: NSTimeInterval = oneMinuteMark * 60
-        let oneDayMark: NSTimeInterval = oneHourMark * 24
-        let oneWeekMark: NSTimeInterval = oneDayMark * 7
-        let differenceInSeconds = -date.timeIntervalSinceNow
-    
-        switch differenceInSeconds {
-        case 0...oneMinuteMark:
-            type = .Seconds
-            value = Int(differenceInSeconds)
-        case oneMinuteMark...oneHourMark:
-            type = .Minutes
-            value = Int(differenceInSeconds / oneMinuteMark)
-        case oneHourMark...oneDayMark:
-            type = .Hours
-            value = Int(differenceInSeconds / oneHourMark)
-        case oneDayMark...oneWeekMark:
-            type = .Days
-            value = Int(differenceInSeconds / oneDayMark)
-        default:
-            type = .Weeks
-            value = Int(differenceInSeconds / oneWeekMark)
-        }
-    }
-    
-    func shortDescription() -> String {
-        return "\(value)\(Array(type.rawValue.characters)[0])"
-    }
-    
-    func longDescription() -> String {
-        let typeRaw = type.rawValue
-        let typeString = value == 1 ? typeRaw.substringToIndex(typeRaw.endIndex.advancedBy(-1)) : typeRaw
-        return "\(value) \(typeString) ago"
-    }
-}
 
 func uuid() -> UUID {
     return NSUUID().UUIDString.lowercaseString
@@ -107,29 +58,4 @@ class NotificationSignal {
     
 }
 
-public func <(a: NSDate, b: NSDate) -> Bool {
-    return a.compare(b) == NSComparisonResult.OrderedAscending
-}
 
-public func >(a: NSDate, b: NSDate) -> Bool {
-    return a.compare(b) == NSComparisonResult.OrderedDescending
-}
-
-public func ==(a: NSDate, b: NSDate) -> Bool {
-    return a.compare(b) == NSComparisonResult.OrderedSame
-}
-
-extension NSDate: Comparable { }
-
-extension String {
-    func stringByAppendingPathComponent(path: String) -> String {
-        let nsSt = self as NSString
-        return nsSt.stringByAppendingPathComponent(path)
-    }
-}
-
-extension NSBundle {
-    var releaseVersionNumber: String? {
-        return self.infoDictionary?["CFBundleShortVersionString"] as? String
-    }
-}

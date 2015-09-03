@@ -24,7 +24,7 @@ class CommentViewModel {
         fullName = ConstantProperty(comment.person.fullName)
         userName = ConstantProperty("@\(comment.person.userName)")
         personId = ConstantProperty(comment.person.id)
-        timeSinceCreated.value = RoundedDuration(date: comment.createdAt).shortDescription()
+        timeSinceCreated.value = comment.createdAt.shortDescription
     }
     
 }

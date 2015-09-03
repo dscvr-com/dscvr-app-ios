@@ -33,7 +33,7 @@ class ProfileHeaderViewController: UIViewController {
     
     required init(personId: UUID) {
         viewModel = ProfileViewModel(id: personId)
-        isMe = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKeys.PersonId.rawValue) as! UUID == personId
+        isMe = SessionService.sessionData!.id == personId
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -215,7 +215,7 @@ class ProfileHeaderViewController: UIViewController {
         let refreshAlert = UIAlertController(title: "You're about to log out...", message: "Really? Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
         
         refreshAlert.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { (action: UIAlertAction!) in
-            NSNotificationCenter.defaultCenter().postNotificationName(NotificationKeys.Logout.rawValue, object: nil)
+            SessionService.logout()
         }))
         
         refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))

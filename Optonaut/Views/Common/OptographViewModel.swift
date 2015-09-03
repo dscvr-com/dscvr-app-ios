@@ -42,7 +42,7 @@ class OptographViewModel {
         
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
-        timeSinceCreated.value = RoundedDuration(date: optograph.createdAt).longDescription()
+        timeSinceCreated.value = optograph.createdAt.longDescription
     }
     
     func toggleLike() {

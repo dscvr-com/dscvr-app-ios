@@ -43,34 +43,22 @@ class LoginViewModel {
     }
     
     func login() -> SignalProducer<Void, ApiError> {
-        pending.value = true
-        
-        var parameters: [String: AnyObject] = ["email": "", "user_name": "", "password": self.password.value]
         
         let usesEmail = emailOrUserName.value.rangeOfString("@") != nil
-        if usesEmail {
-            parameters["email"] = emailOrUserName.value
-        } else {
-            parameters["user_name"] = emailOrUserName.value
-        }
+        let identifier = usesEmail ? LoginIdentifier.Email(emailOrUserName.value) : LoginIdentifier.UserName(emailOrUserName.value)
         
-        return ApiService<LoginMappable>.post("persons/login", parameters: parameters)
+        return SessionService.login(identifier, password: password.value)
             .on(
-                next: { loginData in
-                    NSUserDefaults.standardUserDefaults().setBool(true, forKey: UserDefaultsKeys.PersonIsLoggedIn.rawValue)
-                    NSUserDefaults.standardUserDefaults().setObject(loginData.token, forKey: UserDefaultsKeys.PersonToken.rawValue)
-                    NSUserDefaults.standardUserDefaults().setObject(loginData.id, forKey: UserDefaultsKeys.PersonId.rawValue)
+                started: {
+                    self.pending.value = true
                 },
-                completed: {
+                next: { success in
                     self.pending.value = false
-                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: true, customAttributes: [:])
-                },
-                error: { error in
-                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: false, customAttributes: [:])
-                    self.pending.value = false
+                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: success, customAttributes: [:])
                 }
             )
-            .flatMap(.Latest) { loginData in ApiService<Person>.get("persons/\(loginData.id)") }
+            .mapError { _ in ApiError.Nil }
+            .flatMap(.Latest) { _ in ApiService<Person>.get("persons/\(SessionService.sessionData!.id)") }
             .on(next: { person in
                 try! person.insertOrReplace()
             })

@@ -35,18 +35,6 @@ let StaticPath: String = {
     return path
 }()
 
-enum UserDefaultsKeys: String {
-    case PersonIsLoggedIn = "person_is_logged_in"
-    case PersonToken = "person_token"
-    case PersonId = "person_id"
-    case DebugEnabled = "debug_enabled"
-    case LastReleaseVersion = "last_release_version"
-}
-
-enum NotificationKeys: String {
-    case Logout = "logout"
-}
-
 let CameraIntrinsics: [Double] = {
     switch UIDevice.currentDevice().deviceType {
     case .IPhone6: return [6.9034, 0, 1.6875, 0, 6.9034, 3, 0, 0, 1]

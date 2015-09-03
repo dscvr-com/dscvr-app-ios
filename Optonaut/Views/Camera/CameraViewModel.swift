@@ -16,7 +16,7 @@ class CameraViewModel {
     let isRecording = MutableProperty<Bool>(false)
     
     init() {
-        debugEnabled = ConstantProperty(NSUserDefaults.standardUserDefaults().boolForKey(UserDefaultsKeys.DebugEnabled.rawValue))
+        debugEnabled = ConstantProperty(SessionService.sessionData!.debuggingEnabled)
     }
     
 }
