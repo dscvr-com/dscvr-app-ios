@@ -63,6 +63,7 @@ class FeedViewModel: NSObject {
         
         refreshNotificationSignal.notify()
         refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
+        SessionService.onLogout { self.refreshTimer.invalidate() }
     }
     
     func refresh() {

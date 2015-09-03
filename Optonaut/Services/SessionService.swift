@@ -9,6 +9,7 @@
 import Foundation
 import ObjectMapper
 import ReactiveCocoa
+import Crashlytics
 
 enum LoginIdentifier {
     case UserName(String)
@@ -53,6 +54,13 @@ class SessionService {
         let debuggingEnabled = NSUserDefaults.standardUserDefaults().boolForKey("session_person_debugging_enabled")
         if let id = id, token = token {
             sessionData = SessionData(id: id, token: token, debuggingEnabled: debuggingEnabled)
+        }
+        
+        let query = PersonTable.filter(PersonTable[PersonSchema.id] ==- SessionService.sessionData!.id)
+        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
+            Crashlytics.sharedInstance().setUserIdentifier(person.id)
+            Crashlytics.sharedInstance().setUserEmail(person.email)
+            Crashlytics.sharedInstance().setUserName(person.userName)
         }
     }
     
