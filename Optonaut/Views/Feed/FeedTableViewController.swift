@@ -8,11 +8,11 @@
 
 import UIKit
 import PureLayout_iOS
-import Refresher
 
 class FeedTableViewController: OptographTableViewController, RedNavbar {
     
     let viewModel = FeedViewModel()
+    let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,26 +32,22 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         searchButton.action = "pushSearch"
         navigationItem.setLeftBarButtonItem(searchButton, animated: false)
         
-        let refreshAction = {
-            NSOperationQueue().addOperationWithBlock {
-                self.viewModel.refreshNotificationSignal.notify()
-            }
-        }
-        
-        tableView.addPullToRefreshWithAction(refreshAction, withAnimator: RefreshAnimator())
+        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().start(next: { _ in
+            self.viewModel.refreshNotificationSignal.notify()
+        })
+        tableView.addSubview(refreshControl)
         
         viewModel.results.producer
             .start(
                 next: { results in
                     self.items = results
                     self.tableView.reloadData()
-                    self.tableView.stopPullToRefresh()
+                    self.refreshControl.endRefreshing()
                 },
                 error: { _ in
-                    self.tableView.stopPullToRefresh()
-                }, completed: {
-                    
-            })
+                    self.refreshControl.endRefreshing()
+                }
+        )
         
         view.setNeedsUpdateConstraints()
     }

@@ -8,12 +8,12 @@
 
 import UIKit
 import PureLayout_iOS
-import Refresher
 
 class HashtagTableViewController: OptographTableViewController, RedNavbar {
     
     let viewModel = SearchViewModel()
-    var hashtag: String
+    
+    let hashtag: String
     
     required init(hashtag: String) {
         self.hashtag = hashtag
@@ -31,15 +31,15 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar {
         
         viewModel.searchText.value = hashtag
         
-        viewModel.results.producer.start(
-            next: { results in
-                self.items = results
-                self.tableView.reloadData()
-                self.tableView.stopPullToRefresh()
-            },
-            error: { _ in
-                self.tableView.stopPullToRefresh()
-        })
+        viewModel.results.producer
+            .start(
+                next: { results in
+                    self.items = results
+                    self.tableView.reloadData()
+                },
+                error: { _ in
+                }
+        )
         
         view.setNeedsUpdateConstraints()
     }

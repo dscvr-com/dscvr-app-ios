@@ -8,7 +8,6 @@
 
 import UIKit
 import PureLayout_iOS
-import Refresher
 
 class ProfileTableViewController: OptographTableViewController, TransparentNavbar {
     

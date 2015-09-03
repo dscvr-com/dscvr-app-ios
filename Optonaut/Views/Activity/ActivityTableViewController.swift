@@ -8,7 +8,6 @@
 
 import UIKit
 import PureLayout_iOS
-import Refresher
 
 class ActivityTableViewController: UIViewController, RedNavbar {
     
@@ -28,22 +27,12 @@ class ActivityTableViewController: UIViewController, RedNavbar {
         
         tableView.registerClass(ActivityTableViewCell.self, forCellReuseIdentifier: "cell")
         
-        let refreshAction = {
-            NSOperationQueue().addOperationWithBlock {
-                self.viewModel.refreshNotificationSignal.notify()
-            }
-        }
-        
-        tableView.addPullToRefreshWithAction(refreshAction, withAnimator: RefreshAnimator())
-        
         viewModel.results.producer.start(
             next: { results in
                 self.items = results
                 self.tableView.reloadData()
-                self.tableView.stopPullToRefresh()
             },
             error: { _ in
-                self.tableView.stopPullToRefresh()
         })
         
         view.addSubview(tableView)

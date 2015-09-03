@@ -31,7 +31,6 @@
 		8F900B471B839E690085566C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B461B839E690085566C /* Location.swift */; };
 		8F900B571B8479250085566C /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B551B8479250085566C /* Crashlytics.framework */; };
 		8F900B581B8479250085566C /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B561B8479250085566C /* Fabric.framework */; };
-		8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9A4FF41B39DF85009C4548 /* Refresher.framework */; };
 		8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */; settings = {ASSET_TAGS = (); }; };
 		8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA2E7B11B55576500407181 /* opencv2.framework */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
@@ -51,7 +50,6 @@
 		8FAB9F351B8F01DF00B4C8CB /* OptographTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */; };
 		8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */; };
 		8FAB9F371B8F01DF00B4C8CB /* OptographViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFE1B8F01DF00B4C8CB /* OptographViewModel.swift */; };
-		8FAB9F381B8F01DF00B4C8CB /* RefreshAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFF1B8F01DF00B4C8CB /* RefreshAnimator.swift */; };
 		8FAB9F3A1B8F01DF00B4C8CB /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */; };
 		8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */; };
 		8FAB9F3E1B8F01DF00B4C8CB /* DetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */; };
@@ -160,7 +158,6 @@
 		8F900B461B839E690085566C /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		8F900B551B8479250085566C /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/iOS/Crashlytics.framework; sourceTree = "<group>"; };
 		8F900B561B8479250085566C /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/iOS/Fabric.framework; sourceTree = "<group>"; };
-		8F9A4FF41B39DF85009C4548 /* Refresher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Refresher.framework; path = Carthage/Build/iOS/Refresher.framework; sourceTree = "<group>"; };
 		8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		8FA2E7B11B55576500407181 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Carthage/Build/iOS/opencv2.framework; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
@@ -180,7 +177,6 @@
 		8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCell.swift; sourceTree = "<group>"; };
 		8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9EFE1B8F01DF00B4C8CB /* OptographViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographViewModel.swift; sourceTree = "<group>"; };
-		8FAB9EFF1B8F01DF00B4C8CB /* RefreshAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshAnimator.swift; sourceTree = "<group>"; };
 		8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
 		8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewCell.swift; sourceTree = "<group>"; };
@@ -291,7 +287,6 @@
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
 				8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */,
-				8F9A4FF51B39DF85009C4548 /* Refresher.framework in Frameworks */,
 				8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -320,7 +315,6 @@
 				8F17CF6C1B4EE7DA00A10DA3 /* ObjectMapper.framework */,
 				8F5FD9D81B3B0080007E073C /* Result.framework */,
 				8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */,
-				8F9A4FF41B39DF85009C4548 /* Refresher.framework */,
 				8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */,
 				8F7738311B3816C7001F642B /* PureLayout_iOS.framework */,
 			);
@@ -424,7 +418,6 @@
 				8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */,
 				8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */,
 				8FAB9EFE1B8F01DF00B4C8CB /* OptographViewModel.swift */,
-				8FAB9EFF1B8F01DF00B4C8CB /* RefreshAnimator.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -791,7 +784,6 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/PureLayout_iOS.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Refresher.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ReactiveCocoa.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework",
@@ -904,7 +896,6 @@
 				8FAB9F781B8F02D500B4C8CB /* Stitcher.mm in Sources */,
 				8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
-				8FAB9F381B8F01DF00B4C8CB /* RefreshAnimator.swift in Sources */,
 				8FAB9F351B8F01DF00B4C8CB /* OptographTableViewCell.swift in Sources */,
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityTableViewCell.swift in Sources */,
