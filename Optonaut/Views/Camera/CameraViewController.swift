@@ -312,9 +312,6 @@ class CameraViewController: UIViewController {
         
         if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
             
-            // TODO @emiswelt
-            let isRecording = self.viewModel.isRecording.value
-            
             let r = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
@@ -322,7 +319,8 @@ class CameraViewController: UIViewController {
             buf.data = CVPixelBufferGetBaseAddress(pixelBuffer)
             buf.width = UInt32(CVPixelBufferGetWidth(pixelBuffer))
             buf.height = UInt32(CVPixelBufferGetHeight(pixelBuffer))
-
+            
+            stitcher.SetIdle(self.viewModel.isRecording.value)
             stitcher.Push(r, buf)
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
@@ -379,6 +377,10 @@ class CameraViewController: UIViewController {
     }
     
     func finish() {
+        
+        if !stitcher.HasResults() {
+            return
+        }
         
         for child in scene.rootNode.childNodes
         {

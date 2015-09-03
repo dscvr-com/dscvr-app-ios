@@ -207,5 +207,14 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 - (SelectionPointIterator*)GetSelectionPoints {
     return [[SelectionPointIterator alloc] init: pipe->GetSelectionPoints()];
 }
+- (void)SetIdle:(bool)isIdle {
+    pipe->SetIdle(isIdle);
+}
+- (bool)IsIdle {
+    return pipe->IsIdle();
+}
+- (bool)HasResults {
+    return pipe->HasResults();
+}
 
 @end

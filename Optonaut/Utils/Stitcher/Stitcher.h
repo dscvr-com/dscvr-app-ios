@@ -43,8 +43,11 @@ struct ImageBuffer {
 - (SelectionPoint*)CurrentPoint;
 - (SelectionPoint*)PreviousPoint;
 - (void)EnableDebug:(NSString*)path;
+- (void)SetIdle:(bool)isIdle;
+- (bool)IsIdle;
 - (struct ImageBuffer)GetLeftResult;
 - (struct ImageBuffer)GetRightResult;
 - (bool)AreAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b;
+- (bool)HasResults;
 
 @end
