@@ -320,7 +320,7 @@ class CameraViewController: UIViewController {
             buf.width = UInt32(CVPixelBufferGetWidth(pixelBuffer))
             buf.height = UInt32(CVPixelBufferGetHeight(pixelBuffer))
             
-            stitcher.SetIdle(self.viewModel.isRecording.value)
+            stitcher.SetIdle(!self.viewModel.isRecording.value)
             stitcher.Push(r, buf)
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
