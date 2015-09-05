@@ -11,6 +11,7 @@ import ReactiveCocoa
 import KMPlaceholderTextView
 import Crashlytics
 import ActiveLabel
+import PermissionScope
 
 class CreateOptographViewController: UIViewController, RedNavbar {
     
@@ -37,6 +38,28 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let pscope = PermissionScope()
+        
+        pscope.headerLabel.text = "Where are you?"
+        pscope.bodyLabel.text = "Please share your location\r\nto tag your Optograph"
+        pscope.unauthorizedButtonColor = BaseColor
+        pscope.permissionButtonTextColor = BaseColor
+        pscope.permissionButtonBorderColor = BaseColor
+        pscope.permissionLabelColor = UIColor(0x4d4d4d)
+        pscope.closeButton.titleLabel?.font = UIFont.icomoonOfSize(30)
+        pscope.closeButton.setTitle(String.icomoonWithName(.Cross), forState: .Normal)
+        pscope.closeButtonTextColor = UIColor(0x4d4d4d)
+        pscope.closeOffset = CGSize(width: 7, height: 5)
+        
+        pscope.addPermission(LocationWhileInUsePermission(), message: "This step is just needed once")
+        
+        pscope.show(
+            { finished, results in },
+            cancelled: { _ in
+                self.navigationController?.popViewControllerAnimated(false)
+            }
+        )
         
         Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Preparing"])
         
@@ -93,6 +116,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         textInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.text.value = $0 as! String })
         textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
+        textInputView.keyboardType = .Twitter
         view.addSubview(textInputView)
         
         lineView.backgroundColor = UIColor(0xe5e5e5)

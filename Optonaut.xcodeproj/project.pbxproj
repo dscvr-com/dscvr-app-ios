@@ -24,6 +24,7 @@
 		8F7738161B380F5D001F642B /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* Person.swift */; };
 		8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738311B3816C7001F642B /* PureLayout_iOS.framework */; };
 		8F86D4F31B9A1858009F91EB /* ActiveLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */; };
+		8F86D4F51B9B1EC4009F91EB /* PermissionScope.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */; };
 		8F900B401B839D0C0085566C /* CommentTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3C1B839D0C0085566C /* CommentTable.swift */; };
 		8F900B411B839D0C0085566C /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3D1B839D0C0085566C /* DatabaseManager.swift */; };
 		8F900B421B839D0C0085566C /* OptographTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3E1B839D0C0085566C /* OptographTable.swift */; };
@@ -151,6 +152,7 @@
 		8F7738141B380F5D001F642B /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		8F7738311B3816C7001F642B /* PureLayout_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout_iOS.framework; path = Carthage/Build/iOS/PureLayout_iOS.framework; sourceTree = "<group>"; };
 		8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActiveLabel.framework; path = Carthage/Build/iOS/ActiveLabel.framework; sourceTree = "<group>"; };
+		8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PermissionScope.framework; path = Carthage/Build/iOS/PermissionScope.framework; sourceTree = "<group>"; };
 		8F900B3C1B839D0C0085566C /* CommentTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTable.swift; sourceTree = "<group>"; };
 		8F900B3D1B839D0C0085566C /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		8F900B3E1B839D0C0085566C /* OptographTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTable.swift; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */,
 				8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */,
 				8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */,
+				8F86D4F51B9B1EC4009F91EB /* PermissionScope.framework in Frameworks */,
 				8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */,
 				8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */,
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
@@ -304,6 +307,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */,
 				8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */,
 				8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */,
 				8F29FB561B84C26500B2C005 /* Async.framework */,
@@ -792,6 +796,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/Async.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/KMPlaceholderTextView.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ActiveLabel.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/PermissionScope.framework",
 			);
 			name = Carthage;
 			outputPaths = (

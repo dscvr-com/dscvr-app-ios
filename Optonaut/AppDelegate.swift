@@ -26,7 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupAppearanceDefaults()
         
-        
         let window = UIWindow(frame: UIScreen.mainScreen().bounds)
         self.window = window
         

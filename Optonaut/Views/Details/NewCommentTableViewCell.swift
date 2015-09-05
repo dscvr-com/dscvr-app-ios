@@ -26,6 +26,7 @@ class NewCommentTableViewCell: UITableViewCell {
         textInputView.font = UIFont.robotoOfSize(13, withType: .Light)
         textInputView.textColor = UIColor(0x4d4d4d)
         textInputView.placeholder = "Write a comment"
+        textInputView.keyboardType = .Twitter
         contentView.addSubview(textInputView)
         
         sendButtonView.setTitle("Send", forState: .Normal)

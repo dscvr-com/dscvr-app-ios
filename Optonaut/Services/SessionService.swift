@@ -54,6 +54,8 @@ class SessionService {
         let debuggingEnabled = NSUserDefaults.standardUserDefaults().boolForKey("session_person_debugging_enabled")
         if let id = id, token = token {
             sessionData = SessionData(id: id, token: token, debuggingEnabled: debuggingEnabled)
+        } else {
+            return
         }
         
         let query = PersonTable.filter(PersonTable[PersonSchema.id] ==- SessionService.sessionData!.id)

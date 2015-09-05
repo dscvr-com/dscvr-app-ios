@@ -23,20 +23,19 @@ class LocationService: NSObject {
         super.init()
         
         locationManager.delegate = self
-        
-        if CLLocationManager.authorizationStatus() != CLAuthorizationStatus.AuthorizedWhenInUse {
-            locationManager.requestWhenInUseAuthorization()
-        }
     }
     
     static func location() -> SignalProducer<Coordinate, NSError> {
         return SignalProducer { sink, disposable in
-            sharedInstance.locationManager.startUpdatingLocation()
+            
             sharedInstance.callback = { coordinate in
                 sendNext(sink, coordinate)
                 sendCompleted(sink)
                 self.sharedInstance.locationManager.stopUpdatingLocation()
             }
+            
+            sharedInstance.locationManager.startUpdatingLocation()
+            
             disposable.addDisposable {
                 self.sharedInstance.locationManager.stopUpdatingLocation()
             }

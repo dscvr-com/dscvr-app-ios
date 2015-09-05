@@ -72,6 +72,10 @@ extension NSDate {
         let oneWeekMark: NSTimeInterval = oneDayMark * 7
         let differenceInSeconds = -self.timeIntervalSinceNow
     
+        if differenceInSeconds < 0 {
+            return(0, .Seconds)
+        }
+    
         switch differenceInSeconds {
         case 0...oneMinuteMark:
             return(Int(differenceInSeconds), .Seconds)
