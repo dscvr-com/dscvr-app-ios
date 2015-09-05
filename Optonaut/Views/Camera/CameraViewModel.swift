@@ -12,11 +12,19 @@ import ReactiveCocoa
 class CameraViewModel {
     
     let instruction = MutableProperty<String>("")
-    let debugEnabled: ConstantProperty<Bool>
     let isRecording = MutableProperty<Bool>(false)
+    let progress = MutableProperty<Float>(0)
     
     init() {
-        debugEnabled = ConstantProperty(SessionService.sessionData!.debuggingEnabled)
+        
+        isRecording.producer
+            .start(next: { isRecording in
+                if isRecording {
+                    self.instruction.value = "Follow the red dot"
+                } else {
+                    self.instruction.value = "Press the button\r\nto start recording"
+                }
+            })
     }
     
 }

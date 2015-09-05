@@ -1,4 +1,4 @@
-github "smileyborg/PureLayout"
+github "PureLayout/PureLayout"
 github "Alamofire/Alamofire" "swift-2.0"
 github "ReactiveCocoa/ReactiveCocoa" "swift2"
 github "Hearst-DD/ObjectMapper" "swift-2.0"

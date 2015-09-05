@@ -22,9 +22,9 @@
 		8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA001B3EECB0007E073C /* Activity.swift */; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* Person.swift */; };
-		8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F7738311B3816C7001F642B /* PureLayout_iOS.framework */; };
 		8F86D4F31B9A1858009F91EB /* ActiveLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */; };
 		8F86D4F51B9B1EC4009F91EB /* PermissionScope.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */; };
+		8F86D4F71B9B9664009F91EB /* PureLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F61B9B9664009F91EB /* PureLayout.framework */; };
 		8F900B401B839D0C0085566C /* CommentTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3C1B839D0C0085566C /* CommentTable.swift */; };
 		8F900B411B839D0C0085566C /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3D1B839D0C0085566C /* DatabaseManager.swift */; };
 		8F900B421B839D0C0085566C /* OptographTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3E1B839D0C0085566C /* OptographTable.swift */; };
@@ -150,9 +150,9 @@
 		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F7738141B380F5D001F642B /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
-		8F7738311B3816C7001F642B /* PureLayout_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout_iOS.framework; path = Carthage/Build/iOS/PureLayout_iOS.framework; sourceTree = "<group>"; };
 		8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActiveLabel.framework; path = Carthage/Build/iOS/ActiveLabel.framework; sourceTree = "<group>"; };
 		8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PermissionScope.framework; path = Carthage/Build/iOS/PermissionScope.framework; sourceTree = "<group>"; };
+		8F86D4F61B9B9664009F91EB /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/iOS/PureLayout.framework; sourceTree = "<group>"; };
 		8F900B3C1B839D0C0085566C /* CommentTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTable.swift; sourceTree = "<group>"; };
 		8F900B3D1B839D0C0085566C /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		8F900B3E1B839D0C0085566C /* OptographTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTable.swift; sourceTree = "<group>"; };
@@ -278,6 +278,7 @@
 			files = (
 				8F86D4F31B9A1858009F91EB /* ActiveLabel.framework in Frameworks */,
 				8FC9EC3C1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework in Frameworks */,
+				8F86D4F71B9B9664009F91EB /* PureLayout.framework in Frameworks */,
 				8F900B571B8479250085566C /* Crashlytics.framework in Frameworks */,
 				8F900B581B8479250085566C /* Fabric.framework in Frameworks */,
 				8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */,
@@ -289,7 +290,6 @@
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
-				8F7738351B3816C7001F642B /* PureLayout_iOS.framework in Frameworks */,
 				8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -307,6 +307,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F86D4F61B9B9664009F91EB /* PureLayout.framework */,
 				8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */,
 				8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */,
 				8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */,
@@ -321,7 +322,6 @@
 				8F5FD9D81B3B0080007E073C /* Result.framework */,
 				8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */,
 				8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */,
-				8F7738311B3816C7001F642B /* PureLayout_iOS.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -785,7 +785,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/PureLayout_iOS.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/PureLayout.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ReactiveCocoa.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Result.framework",

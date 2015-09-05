@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import PureLayout_iOS
 import Alamofire
 
 class SearchTableViewController: OptographTableViewController, RedNavbar {

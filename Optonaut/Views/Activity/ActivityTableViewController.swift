@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import PureLayout_iOS
 
 class ActivityTableViewController: UIViewController, RedNavbar {
     

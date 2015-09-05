@@ -16,63 +16,36 @@ import SceneKit
 import Async
 import Crashlytics
 
-private struct Edge: Hashable {
-    let one: SelectionPoint
-    let two: SelectionPoint
-    
-    var hashValue: Int {
-        return one.globalId.hashValue ^ two.globalId.hashValue
-    }
-    
-    init(_ one: SelectionPoint, _ two: SelectionPoint) {
-        self.one = one
-        self.two = two
-    }
-}
-
-private func ==(lhs: Edge, rhs: Edge) -> Bool {
-    return lhs.one.globalId == rhs.one.globalId && lhs.two.globalId == rhs.two.globalId
-}
-
 class CameraViewController: UIViewController {
     
     private let viewModel = CameraViewModel()
     
     private let motionManager = CMMotionManager()
-    
-    // camera
-    private var session: AVCaptureSession!
-    private var sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
-    private var videoDeviceInput: AVCaptureDeviceInput!
-    private var videoDeviceOutput: AVCaptureVideoDataOutput!
-    private var previewLayer: AVCaptureVideoPreviewLayer!
-    
-    private var scnView: SCNView!
-    
     private var originalBrightness: CGFloat!
     
+    // camera
+    private let session = AVCaptureSession()
+    private let sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
+    
     // stitcher pointer and variables
-    
     private let stitcher = IosPipeline()
-    
     private var frameCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
-    
-    
     private var debugHelper: CameraDebugService?
     private var edges = [Edge: SCNNode]()
-    
-    var previewImage: CGImage?
+    private var previewImage: CGImage?
     
     // subviews
-    private let closeButtonView = UIButton()
+    private let progressView = ProgressView()
     private let instructionView = UILabel()
+    private let circleView = DashedCircle()
     private let recordButtonView = UIButton()
+    private let closeButtonView = UIButton()
     
     // sphere
     private let cameraNode = SCNNode()
-    
+    private let scnView = SCNView()
     private let scene = SCNScene()
     
     override func viewDidLoad() {
@@ -80,29 +53,39 @@ class CameraViewController: UIViewController {
         
         Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Recording"])
         
-        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
-        
-        session = AVCaptureSession()
-        session.sessionPreset = AVCaptureSessionPresetHigh
-        
-        
-        //stitcher.EnableDebug(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0])
-        
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.frame = view.bounds
         previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        
-        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.Dark)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.frame = view.bounds
-        
         view.layer.addSublayer(previewLayer)
-        view.addSubview(blurView)
         
         setupScene()
-        setupSelectionPoints();
+        setupSelectionPoints()
         
+        view.addSubview(progressView)
+        
+        instructionView.font = UIFont.robotoOfSize(19, withType: .Medium)
+        instructionView.numberOfLines = 0
+        instructionView.textColor = .whiteColor()
+        instructionView.textAlignment = .Center
+        instructionView.rac_text <~ viewModel.instruction
+        view.addSubview(instructionView)
+        
+        circleView.layer.cornerRadius = 35
+        viewModel.isRecording.producer.start(next: { self.circleView.borderDashed = !$0 })
+        view.addSubview(circleView)
+        
+        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor : .whiteColor() }
+        recordButtonView.layer.cornerRadius = 30
+        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
+            .map { _ in true }
+            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
+            .map { _ in false }
+            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+        view.addSubview(recordButtonView)
+        
+        closeButtonView.rac_hidden <~ viewModel.isRecording
         closeButtonView.setTitle(String.icomoonWithName(.Cross), forState: .Normal)
         closeButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         closeButtonView.titleLabel?.font = .icomoonOfSize(40)
@@ -112,35 +95,11 @@ class CameraViewController: UIViewController {
         })
         view.addSubview(closeButtonView)
         
-//        instructionView.font = UIFont.robotoOfSize(17, withType: .Regular)
-//        instructionView.textColor = .whiteColor()
-//        instructionView.textAlignment = .Center
-//        instructionView.rac_text <~ viewModel.instruction
-//        view.addSubview(instructionView)
-        
-//        viewModel.instruction.value = "Select"
-        
-        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor : .blackColor() }
-        recordButtonView.layer.cornerRadius = 40
-        recordButtonView.layer.borderWidth = 6
-        recordButtonView.layer.borderColor = UIColor.whiteColor().CGColor
-        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
-            .map { _ in true }
-            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
-            .map { _ in false }
-            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-        view.addSubview(recordButtonView)
-        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
         
-        Async.customQueue(sessionQueue) {
-            self.authorizeCamera()
-            self.session.beginConfiguration()
-            self.addVideoInput()
-            self.addVideoOutput()
-            self.session.commitConfiguration()
-        }
+        setupCamera()
+        
+        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
     }
@@ -150,9 +109,9 @@ class CameraViewController: UIViewController {
         
         tabBarController?.tabBar.hidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
-        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
+        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
-        if viewModel.debugEnabled.value {
+        if SessionService.sessionData!.debuggingEnabled {
             debugHelper = CameraDebugService()
         }
         
@@ -160,15 +119,11 @@ class CameraViewController: UIViewController {
         
         originalBrightness = UIScreen.mainScreen().brightness
         UIScreen.mainScreen().brightness = 1
-        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = true
         
-//        motionManager.startDeviceMotionUpdates()
         motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
         
-        Async.customQueue(sessionQueue) {
-            self.session.startRunning()
-        }
+        session.startRunning()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -179,7 +134,6 @@ class CameraViewController: UIViewController {
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
         UIScreen.mainScreen().brightness = originalBrightness
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
         
         motionManager.stopDeviceMotionUpdates()
@@ -189,15 +143,23 @@ class CameraViewController: UIViewController {
     override func updateViewConstraints() {
         view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero) // needed to cover tabbar (49pt)
         
-        closeButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
-        closeButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
+        progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 10)
+        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -10)
+        progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         
-//        instructionView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
-//        instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        instructionView.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withMultiplier: 0.5)
+        instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        
+        circleView.autoAlignAxis(.Horizontal, toSameAxisOfView: view)
+        circleView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        circleView.autoSetDimensionsToSize(CGSize(width: 70, height: 70))
         
         recordButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
         recordButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        recordButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 80))
+        recordButtonView.autoSetDimensionsToSize(CGSize(width: 60, height: 60))
+        
+        closeButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view, withMultiplier: 0.5)
+        closeButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: recordButtonView)
         
         super.updateViewConstraints()
     }
@@ -214,7 +176,6 @@ class CameraViewController: UIViewController {
         
         scene.rootNode.addChildNode(cameraNode)
         
-        scnView = SCNView()
         scnView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
         scnView.backgroundColor = UIColor.clearColor()
         scnView.scene = scene
@@ -273,6 +234,34 @@ class CameraViewController: UIViewController {
         }
     }
     
+    private func setupCamera() {
+        authorizeCamera()
+        
+        session.sessionPreset = AVCaptureSessionPresetHigh
+        
+        let videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else {
+            return
+        }
+        
+        session.beginConfiguration()
+        
+        if session.canAddInput(videoDeviceInput) {
+            session.addInput(videoDeviceInput)
+        }
+        
+        let videoDeviceOutput = AVCaptureVideoDataOutput()
+        videoDeviceOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
+        videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
+        videoDeviceOutput.setSampleBufferDelegate(self, queue: sessionQueue)
+        
+        if session.canAddOutput(videoDeviceOutput) {
+            session.addOutput(videoDeviceOutput)
+        }
+        
+        session.commitConfiguration()
+    }
+    
     private func authorizeCamera() {
         AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: { granted in
             if !granted {
@@ -285,26 +274,6 @@ class CameraViewController: UIViewController {
                 }
             }
         });
-    }
-    
-    private func addVideoInput() {
-        let videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
-        videoDeviceInput = try! AVCaptureDeviceInput(device: videoDevice)
-        
-        if session.canAddInput(videoDeviceInput) {
-            session.addInput(videoDeviceInput)
-        }
-    }
-    
-    private func addVideoOutput() {
-        videoDeviceOutput = AVCaptureVideoDataOutput()
-        videoDeviceOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
-        videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
-        videoDeviceOutput.setSampleBufferDelegate(self, queue: sessionQueue)
-        
-        if session.canAddOutput(videoDeviceOutput) {
-            session.addOutput(videoDeviceOutput)
-        }
     }
  
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
@@ -382,8 +351,7 @@ class CameraViewController: UIViewController {
             return
         }
         
-        for child in scene.rootNode.childNodes
-        {
+        for child in scene.rootNode.childNodes {
             child.removeFromParentNode()
         }
         
@@ -407,10 +375,11 @@ class CameraViewController: UIViewController {
 
             sendNext(sink, OptographAsset.RightImage(rightImageData!))
             
-            if self.viewModel.debugEnabled.value {
-                self.debugHelper?.upload().start(completed: {
-                    sendCompleted(sink)
-                })
+            if SessionService.sessionData!.debuggingEnabled {
+                self.debugHelper?.upload()
+                    .start(completed: {
+                        sendCompleted(sink)
+                    })
             } else {
                 sendCompleted(sink)
             }
@@ -439,14 +408,86 @@ extension CameraViewController: SCNSceneRendererDelegate {
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         glLineWidth(5)
         glColor4f(1, 0, 0, 1)
-    
-        /*if let motion = self.motionManager.deviceMotion {
-            
-            let rGlk = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix);
-            
-            self.cameraNode.transform = SCNMatrix4FromGLKMatrix4(rGlk)
-        
-        }*/
     }
     
+}
+
+private struct Edge: Hashable {
+    let one: SelectionPoint
+    let two: SelectionPoint
+    
+    var hashValue: Int {
+        return one.globalId.hashValue ^ two.globalId.hashValue
+    }
+    
+    init(_ one: SelectionPoint, _ two: SelectionPoint) {
+        self.one = one
+        self.two = two
+    }
+}
+
+private func ==(lhs: Edge, rhs: Edge) -> Bool {
+    return lhs.one.globalId == rhs.one.globalId && lhs.two.globalId == rhs.two.globalId
+}
+
+private class DashedCircle: UIView {
+    
+    private let border = CAShapeLayer()
+    var borderDashed = true {
+        didSet {
+            border.lineDashPattern = borderDashed ? [19, 8] : nil
+        }
+    }
+    
+    override init (frame: CGRect) {
+        super.init(frame: frame)
+        
+        border.strokeColor = UIColor.whiteColor().CGColor
+        border.fillColor = nil
+        border.lineWidth = 3
+        
+        layer.addSublayer(border)
+    }
+    
+    convenience init () {
+        self.init(frame: CGRectZero)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        border.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: layer.cornerRadius).CGPath
+        border.frame = bounds
+    }
+    
+}
+
+private class ProgressView: UIView {
+    private let line = CALayer()
+    
+    override init (frame: CGRect) {
+        super.init(frame: frame)
+        
+        line.backgroundColor = UIColor.whiteColor().CGColor
+        
+        layer.addSublayer(line)
+    }
+    
+    convenience init () {
+        self.init(frame: CGRectZero)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        line.frame = CGRect(origin: bounds.origin, size: CGSize(width: bounds.width, height: 1))
+    }
 }

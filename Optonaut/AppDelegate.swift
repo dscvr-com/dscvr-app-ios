@@ -10,6 +10,7 @@ import UIKit
 import Device
 import Fabric
 import Crashlytics
+import PureLayout
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
