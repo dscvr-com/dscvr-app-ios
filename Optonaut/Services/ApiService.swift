@@ -87,14 +87,14 @@ class ApiService<T: Mappable> {
                     request = upload
                         .validate(statusCode: 200..<300)
                         .response { _, _, _, error in
-                            if let error = error {
+                            if let error = error as? NSError {
                                 sendError(sink, error)
                             } else {
                                 sendCompleted(sink)
                             }
                     }
                 case .Failure(let error):
-                    sendError(sink, error)
+                    sendError(sink, error as NSError)
                 }
             }
             
@@ -137,7 +137,7 @@ class ApiService<T: Mappable> {
             let request = Alamofire.request(mutableURLRequest)
                 .validate()
                 .response { (_, response, data, error) in
-                    if let error = error {
+                    if let error = error as? NSError {
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             SessionService.logout()
                         }

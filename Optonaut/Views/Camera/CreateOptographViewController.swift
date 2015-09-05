@@ -10,6 +10,7 @@ import UIKit
 import ReactiveCocoa
 import KMPlaceholderTextView
 import Crashlytics
+import ActiveLabel
 
 class CreateOptographViewController: UIViewController, RedNavbar {
     
@@ -18,7 +19,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     // subviews
     let previewImageView = UIImageView()
     let locationView = InsetLabel()
-    let descriptionView = KILabel()
+    let descriptionView = ActiveLabel()
     let textInputView = KMPlaceholderTextView()
     let lineView = UIView()
     

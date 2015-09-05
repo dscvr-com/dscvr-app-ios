@@ -9,6 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import HexColor
+import ActiveLabel
 
 class CommentTableViewCell: UITableViewCell {
     
@@ -16,7 +17,7 @@ class CommentTableViewCell: UITableViewCell {
     var viewModel: CommentViewModel!
     
     // subviews
-    private let textView = KILabel()
+    private let textView = ActiveLabel()
     private let avatarImageView = UIImageView()
     private let fullNameView = UILabel()
     private let userNameView = UILabel()
@@ -26,7 +27,9 @@ class CommentTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         textView.numberOfLines = 0
-        textView.tintColor = BaseColor
+        textView.mentionColor = BaseColor
+        textView.hashtagColor = BaseColor
+        textView.URLEnabled = false
         textView.userInteractionEnabled = true
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
         textView.textColor = UIColor(0x4d4d4d)
@@ -86,6 +89,16 @@ class CommentTableViewCell: UITableViewCell {
         viewModel = CommentViewModel(comment: comment)
         
         textView.rac_text <~ viewModel.text
+        textView.handleHashtagTap { hashtag in
+            self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
+        }
+        textView.handleMentionTap { userName in
+            ApiService<Person>.get("persons/user-name/\(userName)")
+                .start(next: { person in
+                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
+                })
+        }
+        
         avatarImageView.rac_image <~ viewModel.avatarImage
         fullNameView.rac_text <~ viewModel.fullName
         userNameView.rac_text <~ viewModel.userName

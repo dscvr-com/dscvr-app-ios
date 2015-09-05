@@ -27,7 +27,7 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = hashtag
+        navigationItem.title = "#\(hashtag)"
         
         viewModel.searchText.value = hashtag
         

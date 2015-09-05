@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import ActiveLabel
 
 class DetailsTableViewCell: UITableViewCell {
     
@@ -31,7 +32,7 @@ class DetailsTableViewCell: UITableViewCell {
     private let commentCountView = UILabel()
     private let viewIconView = UILabel()
     private let viewsCountView = UILabel()
-    private let textView = KILabel()
+    private let textView = ActiveLabel()
     private let lineView = UIView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -116,15 +117,12 @@ class DetailsTableViewCell: UITableViewCell {
         contentView.addSubview(viewsCountView)
         
         textView.numberOfLines = 0
-        textView.tintColor = BaseColor
         textView.userInteractionEnabled = true
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
         textView.textColor = UIColor(0x4d4d4d)
-        textView.userHandleLinkTapHandler = { label, handle, range in
-        }
-        textView.hashtagLinkTapHandler = { label, hashtag, range in
-            self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
-        }
+        textView.mentionColor = BaseColor
+        textView.hashtagColor = BaseColor
+        textView.URLEnabled = false
         contentView.addSubview(textView)
         
         lineView.backgroundColor = UIColor(0xe5e5e5)
@@ -263,9 +261,18 @@ class DetailsTableViewCell: UITableViewCell {
         viewsCountView.rac_text <~ viewModel.viewsCount.producer .map { "\($0) views" }
         
         textView.rac_text <~ viewModel.text
+        textView.handleHashtagTap { hashtag in
+            self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
+        }
+        textView.handleMentionTap { userName in
+            ApiService<Person>.get("persons/user-name/\(userName)")
+                .start(next: { person in
+                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
+                })
+        }
     }
     
-    private func pushProfile() {
+    func pushProfile() {
         let profileContainerViewController = ProfileContainerViewController(personId: viewModel.personId.value)
         navigationController?.pushViewController(profileContainerViewController, animated: true)
     }

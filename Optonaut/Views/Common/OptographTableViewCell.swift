@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 import HexColor
+import ActiveLabel
 
 class OptographTableViewCell: UITableViewCell {
     
@@ -24,7 +25,7 @@ class OptographTableViewCell: UITableViewCell {
     let starButtonView = UIButton()
     let previewImageView = UIImageView()
     let locationView = InsetLabel()
-    let textView = KILabel()
+    let textView = ActiveLabel()
     let lineView = UIView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -71,7 +72,9 @@ class OptographTableViewCell: UITableViewCell {
         contentView.addSubview(locationView)
         
         textView.numberOfLines = 0
-        textView.tintColor = BaseColor
+        textView.mentionColor = BaseColor
+        textView.hashtagColor = BaseColor
+        textView.URLEnabled = false
         textView.userInteractionEnabled = true
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
         textView.textColor = UIColor(0x4d4d4d)
@@ -143,15 +146,14 @@ class OptographTableViewCell: UITableViewCell {
             .start(next: { self.starButtonView.setTitleColor($0, forState: .Normal)})
         
         textView.rac_text <~ viewModel.text
-        textView.userHandleLinkTapHandler = { label, handle, range in
-            let userName = handle.stringByReplacingOccurrencesOfString("@", withString: "")
+        textView.handleHashtagTap { hashtag in
+            self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
+        }
+        textView.handleMentionTap { userName in
             ApiService<Person>.get("persons/user-name/\(userName)")
                 .start(next: { person in
                     self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
                 })
-        }
-        textView.hashtagLinkTapHandler = { label, hashtag, range in
-            self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
     }
     
