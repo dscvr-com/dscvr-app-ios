@@ -125,7 +125,7 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
     self->isDebug = false,
-    self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::ImageSelector::ModeCenter, true);
+    self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::RecorderGraph::ModeCenter, true);
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *tempDirectory = [[paths objectAtIndex:0] stringByAppendingString:@"/tmp/"];
