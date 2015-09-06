@@ -216,5 +216,8 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 - (bool)HasResults {
     return pipe->HasResults();
 }
+- (GLKMatrix4)GetBallPosition {
+    return CVMatToGLK4(pipe->GetBallPosition());
+}
 
 @end

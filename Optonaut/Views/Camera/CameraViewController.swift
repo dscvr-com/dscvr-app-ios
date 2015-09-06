@@ -53,6 +53,9 @@ class CameraViewController: UIViewController {
     private let scnView = SCNView()
     private let scene = SCNScene()
     
+    // ball
+    private let ballNode = SCNNode()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -65,7 +68,9 @@ class CameraViewController: UIViewController {
         view.layer.addSublayer(previewLayer)
         
         setupScene()
+        setupBall()
         setupSelectionPoints()
+    
         
         viewModel.progress.producer.start(next: { self.progressView.progress = $0 })
         viewModel.isRecording.producer.start(next: { self.progressView.isActive = $0 })
@@ -112,6 +117,38 @@ class CameraViewController: UIViewController {
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
+    }
+    
+    private func setupSelectionPoints() {
+        
+        let rawPoints = stitcher.GetSelectionPoints()
+        var points = [SelectionPoint]()
+        
+        while rawPoints.HasMore() {
+            let point = rawPoints.Next()
+            points.append(point)
+        }
+        
+        for a in points {
+            for b in points {
+                
+                
+                if(stitcher.AreAdjacent(a, and: b)) {
+                    
+                    let edge = Edge(a, b)
+                    
+                    let vec = GLKVector3Make(0, 0, -1);
+                    let posA = GLKMatrix4MultiplyVector3(a.extrinsics, vec)
+                    let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
+                    
+                    let edgeNode = createLineNode(posA, posB: posB)
+                    
+                    edges[edge] = edgeNode;
+                    
+                    scene.rootNode.addChildNode(edgeNode)
+                }
+            }
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -212,37 +249,21 @@ class CameraViewController: UIViewController {
         return node;
     }
     
-    private func setupSelectionPoints() {
+    private func setupBall() {
+        ballNode.geometry = SCNSphere(radius: CGFloat(0.1))
+        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor.redColor()
         
-        let rawPoints = stitcher.GetSelectionPoints()
-        var points = [SelectionPoint]()
-        
-        while rawPoints.HasMore() {
-            let point = rawPoints.Next()
-            points.append(point)
-        }
-        
-        for a in points {
-            for b in points {
-                
-                
-                if(stitcher.AreAdjacent(a, and: b)) {
-                    
-                    let edge = Edge(a, b)
-                    
-                    let vec = GLKVector3Make(0, 0, -1);
-                    let posA = GLKMatrix4MultiplyVector3(a.extrinsics, vec)
-                    let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
-                    
-                    let edgeNode = createLineNode(posA, posB: posB)
-                    
-                    edges[edge] = edgeNode;
-                    
-                    scene.rootNode.addChildNode(edgeNode)
-                }
-            }
-        }
+        scene.rootNode.addChildNode(ballNode)
     }
+    
+    private func updateBallPosition() {
+        
+        let vec = GLKVector3Make(0, 0, -1);
+        let res = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
+        
+        ballNode.position = SCNVector3FromGLKVector3(res);
+    }
+    
     
     private func setupCamera() {
         authorizeCamera()
@@ -301,6 +322,8 @@ class CameraViewController: UIViewController {
             
             stitcher.SetIdle(!self.viewModel.isRecording.value)
             stitcher.Push(r, buf)
+            
+            updateBallPosition()
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
