@@ -33,6 +33,7 @@
 		8F900B471B839E690085566C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B461B839E690085566C /* Location.swift */; };
 		8F900B571B8479250085566C /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B551B8479250085566C /* Crashlytics.framework */; };
 		8F900B581B8479250085566C /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B561B8479250085566C /* Fabric.framework */; };
+		8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */; settings = {ASSET_TAGS = (); }; };
 		8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */; settings = {ASSET_TAGS = (); }; };
 		8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA2E7B11B55576500407181 /* opencv2.framework */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
@@ -161,6 +162,7 @@
 		8F900B461B839E690085566C /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		8F900B551B8479250085566C /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/iOS/Crashlytics.framework; sourceTree = "<group>"; };
 		8F900B561B8479250085566C /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/iOS/Fabric.framework; sourceTree = "<group>"; };
+		8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
 		8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		8FA2E7B11B55576500407181 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Carthage/Build/iOS/opencv2.framework; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
@@ -538,6 +540,7 @@
 				8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */,
 				8F2214C21B976E6100E693CE /* StringExtension.swift */,
 				8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */,
+				8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */,
 				8FAB9F7D1B8F03BE00B4C8CB /* UIKitRACExtensions.swift */,
 				8FAB9F7F1B8F03E800B4C8CB /* UIKitExtensions.swift */,
 			);
@@ -875,6 +878,7 @@
 				8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */,
 				8FAB9F541B8F01DF00B4C8CB /* OptographsViewModel.swift in Sources */,
 				8FAB9F7E1B8F03BE00B4C8CB /* UIKitRACExtensions.swift in Sources */,
+				8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */,
 				8F2214C31B976E6100E693CE /* StringExtension.swift in Sources */,
 				8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */,
 				8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */,

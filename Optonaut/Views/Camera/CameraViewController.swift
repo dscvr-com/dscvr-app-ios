@@ -25,7 +25,12 @@ class CameraViewController: UIViewController {
     
     // camera
     private let session = AVCaptureSession()
-    private let sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
+    private let sessionQueue: dispatch_queue_t = {
+        let queue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
+        let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
+        dispatch_set_target_queue(queue, high)
+        return queue
+    }()
     
     // stitcher pointer and variables
     private let stitcher = IosPipeline()
@@ -39,7 +44,7 @@ class CameraViewController: UIViewController {
     // subviews
     private let progressView = ProgressView()
     private let instructionView = UILabel()
-    private let circleView = DashedCircle()
+    private let circleView = DashedCircleView()
     private let recordButtonView = UIButton()
     private let closeButtonView = UIButton()
     
@@ -62,9 +67,11 @@ class CameraViewController: UIViewController {
         setupScene()
         setupSelectionPoints()
         
+        viewModel.progress.producer.start(next: { self.progressView.progress = $0 })
+        viewModel.isRecording.producer.start(next: { self.progressView.isActive = $0 })
         view.addSubview(progressView)
         
-        instructionView.font = UIFont.robotoOfSize(19, withType: .Medium)
+        instructionView.font = UIFont.robotoOfSize(22, withType: .Medium)
         instructionView.numberOfLines = 0
         instructionView.textColor = .whiteColor()
         instructionView.textAlignment = .Center
@@ -75,8 +82,10 @@ class CameraViewController: UIViewController {
         viewModel.isRecording.producer.start(next: { self.circleView.borderDashed = !$0 })
         view.addSubview(circleView)
         
-        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor : .whiteColor() }
-        recordButtonView.layer.cornerRadius = 30
+        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor.hatched : UIColor.whiteColor().hatched }
+//        let backgroundImage = UIImage(CIImage: .CIImage!, scale: 1, orientation: UIImageOrientation.Up)
+//        recordButtonView.backgroundColor = BaseColor.hatched
+        recordButtonView.layer.cornerRadius = 35
         viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
             .map { _ in true }
             .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
@@ -86,9 +95,10 @@ class CameraViewController: UIViewController {
         view.addSubview(recordButtonView)
         
         closeButtonView.rac_hidden <~ viewModel.isRecording
-        closeButtonView.setTitle(String.icomoonWithName(.Cross), forState: .Normal)
+        closeButtonView.setTitle("Cancel", forState: .Normal)
         closeButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-        closeButtonView.titleLabel?.font = .icomoonOfSize(40)
+        closeButtonView.titleLabel?.font = UIFont.robotoOfSize(16, withType: .Regular)
+        closeButtonView.alpha = 0.8
         closeButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.navigationController?.popViewControllerAnimated(false)
             return RACSignal.empty()
@@ -143,8 +153,8 @@ class CameraViewController: UIViewController {
     override func updateViewConstraints() {
         view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero) // needed to cover tabbar (49pt)
         
-        progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 10)
-        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -10)
+        progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 15)
+        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -30)
         progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         
         instructionView.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withMultiplier: 0.5)
@@ -156,9 +166,9 @@ class CameraViewController: UIViewController {
         
         recordButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
         recordButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        recordButtonView.autoSetDimensionsToSize(CGSize(width: 60, height: 60))
+        recordButtonView.autoSetDimensionsToSize(CGSize(width: 70, height: 70))
         
-        closeButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view, withMultiplier: 0.5)
+        closeButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view, withMultiplier: 0.43)
         closeButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: recordButtonView)
         
         super.updateViewConstraints()
@@ -176,7 +186,7 @@ class CameraViewController: UIViewController {
         
         scene.rootNode.addChildNode(cameraNode)
         
-        scnView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
+        scnView.frame = view.bounds
         scnView.backgroundColor = UIColor.clearColor()
         scnView.scene = scene
         scnView.playing = true
@@ -430,21 +440,23 @@ private func ==(lhs: Edge, rhs: Edge) -> Bool {
     return lhs.one.globalId == rhs.one.globalId && lhs.two.globalId == rhs.two.globalId
 }
 
-private class DashedCircle: UIView {
+private class DashedCircleView: UIView {
     
-    private let border = CAShapeLayer()
     var borderDashed = true {
         didSet {
             border.lineDashPattern = borderDashed ? [19, 8] : nil
         }
     }
     
+    private let border = CAShapeLayer()
+    
     override init (frame: CGRect) {
         super.init(frame: frame)
         
         border.strokeColor = UIColor.whiteColor().CGColor
         border.fillColor = nil
-        border.lineWidth = 3
+        border.lineWidth = 4
+        border.opacity = 0.8
         
         layer.addSublayer(border)
     }
@@ -467,14 +479,47 @@ private class DashedCircle: UIView {
 }
 
 private class ProgressView: UIView {
-    private let line = CALayer()
+    
+    var progress: Float = 0 {
+        didSet {
+            layoutSubviews()
+        }
+    }
+    var isActive = false {
+        didSet {
+            layoutSubviews()
+        }
+    }
+    
+    private let firstBackgroundLine = CALayer()
+    private let secondBackgroundLine = CALayer()
+    private let middlePoint = CALayer()
+    private let endPoint = CALayer()
+    private let foregroundLine = CALayer()
+    private let trackingPoint = CALayer()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        line.backgroundColor = UIColor.whiteColor().CGColor
+        firstBackgroundLine.backgroundColor = UIColor.whiteColor().CGColor
+        layer.addSublayer(firstBackgroundLine)
         
-        layer.addSublayer(line)
+        secondBackgroundLine.backgroundColor = UIColor.whiteColor().CGColor
+        layer.addSublayer(secondBackgroundLine)
+        
+        middlePoint.borderColor = UIColor.whiteColor().CGColor
+        middlePoint.borderWidth = 1
+        middlePoint.cornerRadius = 3.5
+        layer.addSublayer(middlePoint)
+        endPoint.backgroundColor = UIColor.whiteColor().CGColor
+        endPoint.cornerRadius = 3.5
+        layer.addSublayer(endPoint)
+        
+        foregroundLine.cornerRadius = 1
+        layer.addSublayer(foregroundLine)
+        
+        trackingPoint.cornerRadius = 7
+        layer.addSublayer(trackingPoint)
     }
     
     convenience init () {
@@ -488,6 +533,20 @@ private class ProgressView: UIView {
     private override func layoutSubviews() {
         super.layoutSubviews()
         
-        line.frame = CGRect(origin: bounds.origin, size: CGSize(width: bounds.width, height: 1))
+        let width = bounds.width - 12
+        let originX = bounds.origin.x + 6
+        let originY = bounds.origin.y + 6
+        
+        foregroundLine.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
+        trackingPoint.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
+        
+        middlePoint.hidden = progress > 0.5
+        
+        firstBackgroundLine.frame = CGRect(x: originX, y: originY - 0.6, width: width * 0.5 - 3.5, height: 1.2)
+        secondBackgroundLine.frame = CGRect(x: originX + width * 0.5 + 3.5, y: originY - 0.6, width: width * 0.5 - 3.5, height: 1.2)
+        middlePoint.frame = CGRect(x: originX + width * 0.5 - 3.5, y: originY - 3.5, width: 7, height: 7)
+        endPoint.frame = CGRect(x: width + 3.5, y: originY - 3.5, width: 7, height: 7)
+        foregroundLine.frame = CGRect(x: originX, y: originY - 1, width: width * CGFloat(progress), height: 2)
+        trackingPoint.frame = CGRect(x: originX + width * CGFloat(progress) - 6, y: originY - 6, width: 12, height: 12)
     }
 }
