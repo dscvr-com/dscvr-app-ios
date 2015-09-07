@@ -261,7 +261,9 @@ class CameraViewController: UIViewController {
         let vec = GLKVector3Make(0, 0, -1);
         let res = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
         
-        ballNode.position = SCNVector3FromGLKVector3(res);
+        print("Ball pos: \(res.x), \(res.y), \(res.z)")
+        
+        ballNode.position = SCNVector3FromGLKVector3(res)
     }
     
     
