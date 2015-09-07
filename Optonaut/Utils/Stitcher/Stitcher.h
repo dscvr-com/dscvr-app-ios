@@ -50,5 +50,11 @@ struct ImageBuffer {
 - (bool)AreAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b;
 - (bool)HasResults;
 - (GLKMatrix4)GetBallPosition;
+- (bool)IsFinished;
+- (void)SetPreviewImageEnabled:(bool)enabled;
+- (double)GetDistanceToBall;
+- (GLKVector3)GetAngularDistanceToBall;
+- (uint32_t)GetRecordedImagesCount;
+- (uint32_t)GetImagesToRecordCount;
 
 @end

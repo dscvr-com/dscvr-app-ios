@@ -261,10 +261,11 @@ class CameraViewController: UIViewController {
         let vec = GLKVector3Make(0, 0, -1);
         let res = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
         
-        print("Ball pos: \(res.x), \(res.y), \(res.z)")
+        //print("Ball pos: \(res.x), \(res.y), \(res.z)")
         
         ballNode.position = SCNVector3FromGLKVector3(res)
     }
+
     
     
     private func setupCamera() {
@@ -325,6 +326,11 @@ class CameraViewController: UIViewController {
             stitcher.SetIdle(!self.viewModel.isRecording.value)
             stitcher.Push(r, buf)
             
+            let errorVec = stitcher.GetAngularDistanceToBall();
+            let error = stitcher.GetDistanceToBall();
+            
+            print("Error: \(error), x: \(errorVec.x), y: \(errorVec.y), z: \(errorVec.z). Images: \(stitcher.GetRecordedImagesCount()) / \(stitcher.GetImagesToRecordCount())")
+            
             updateBallPosition()
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
@@ -333,48 +339,17 @@ class CameraViewController: UIViewController {
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
             
             if stitcher.IsPreviewImageAvailable() {
-                
-                let previewData = stitcher.GetPreviewImage()
-                
-                let currentPoint = stitcher.CurrentPoint()
-                let previousPoint = stitcher.PreviousPoint()
-                let edge = Edge(previousPoint, currentPoint)
-                let nodeToRemove = edges[edge]
-                nodeToRemove?.removeFromParentNode()
-                edges.removeValueForKey(edge)
-            
-                let cgImage = ImageBufferToCGImage(previewData)
-            
-                
-                let ratio = CGFloat(previewData.height) / CGFloat(previewData.width)
-                let planeGeometry = SCNPlane(width: CGFloat(1), height: ratio)
-                planeGeometry.firstMaterial?.doubleSided = true
-                planeGeometry.firstMaterial?.diffuse.contents = cgImage
-                
-                let planeNode = SCNNode(geometry: planeGeometry)
-                
-                let R = stitcher.GetPreviewRotation()
-                let T = GLKMatrix4MakeTranslation(0, 0, -Float(intrinsics[0]))
-                planeNode.transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Multiply(R, T))
-                
-                scene.rootNode.addChildNode(planeNode)
-                
-                stitcher.FreeImageBuffer(previewData)
-                
-                previewImageCount++;
-                
-                if previewImageCount == 2 {
-                    self.previewImage = RotateCGImage(ImageBufferToCGImage(buf), orientation: .Left)
-                }
-                
-                if edges.isEmpty {
-                    // needed since processSampleBuffer doesn't run on UI thread
-                    Async.main {
-                        self.finish()
-                    }
-                }
-            
+                self.previewImage = RotateCGImage(ImageBufferToCGImage(buf), orientation: .Left)
+                stitcher.SetPreviewImageEnabled(false)
             }
+            
+            if stitcher.IsFinished() {
+                // needed since processSampleBuffer doesn't run on UI thread
+                Async.main {
+                    self.finish()
+                }
+            }
+
             
             debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
         }

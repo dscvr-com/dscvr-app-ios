@@ -34,6 +34,12 @@ void GLK4ToCVMat(GLKMatrix4 m, cv::Mat &output) {
     output = cv::Mat(4, 4, CV_64F, data).clone();
 }
 
+GLKVector3 CVMatToGLK3Vec(const cv::Mat &m) {
+    assert(m.cols == 1 && m.rows >= 3 && m.type() == CV_64F);
+    
+    return GLKVector3Make((float)m.at<double>(0, 0), (float)m.at<double>(1, 0), (float)m.at<double>(2, 0));
+}
+
 void ImageBufferToCVMat(ImageBuffer image, cv::Mat &output) {
     cv::cvtColor(Mat(image.height, image.width, CV_8UC4, image.data), output, COLOR_RGBA2RGB);
 }
@@ -125,7 +131,7 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
     self->isDebug = false,
-    self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::RecorderGraph::ModeAll, true);
+    self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::RecorderGraph::ModeCenter, true);
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *tempDirectory = [[paths objectAtIndex:0] stringByAppendingString:@"/tmp/"];
@@ -219,5 +225,24 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 - (GLKMatrix4)GetBallPosition {
     return CVMatToGLK4(pipe->GetBallPosition());
 }
-
+- (bool)IsFinished {
+    return pipe->IsFinished();
+}
+- (void)SetPreviewImageEnabled:(bool)enabled {
+    pipe->SetPreviewImageEnabled(enabled);
+}
+- (double)GetDistanceToBall {
+    return pipe->GetDistanceToBall();
+}
+- (GLKVector3)GetAngularDistanceToBall {
+    //Special coord remapping, so we respect the screen coord system.
+    const Mat &m = pipe->GetAngularDistanceToBall();
+    return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
+}
+- (uint32_t)GetRecordedImagesCount {
+    return pipe->GetRecordedImagesCount();
+}
+- (uint32_t)GetImagesToRecordCount {
+    return pipe->GetImagesToRecordCount();
+}
 @end
