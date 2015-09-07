@@ -126,14 +126,14 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         
         assetSignalProducer
             .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)))
-            .start(
-                next: { asset in
-                    self.viewModel.saveAsset(asset)
-                },
-                completed: {
-                    self.viewModel.pending.value = false
-                }
-        )
+            .on(next: { asset in
+                self.viewModel.saveAsset(asset)
+            })
+            .observeOn(UIScheduler())
+            .on(completed: {
+                self.viewModel.pending.value = false
+            })
+            .start()
         
         view.setNeedsUpdateConstraints()
     }

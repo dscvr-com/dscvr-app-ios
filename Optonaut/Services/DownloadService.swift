@@ -13,45 +13,45 @@ import Crashlytics
 
 class DownloadService: NSObject {
     
-    private enum Event {
+    private enum DownloadData {
         case Progress(Float)
-        case Data(NSData)
+        case Contents(NSData)
     }
     
-    private static var activeDownloads: [String: SignalProducer<Event, NoError>] = [:]
+    private static var activeDownloads: [String: SignalProducer<DownloadData, NoError>] = [:]
     
     static func downloadProgress(from url: String, to path: String) -> SignalProducer<Float, NoError> {
         return download(from: url, to: path)
-            .map { event in
+            .map { event -> Float? in
                 switch event {
                 case .Progress(let progress): return progress
-                case .Data(_): return -1
+                case .Contents(_): return nil
                 }
             }
-            .filter { $0 != -1 }
+            .ignoreNil()
     }
     
-    static func downloadData(from url: String, to path: String) -> SignalProducer<NSData, NoError> {
+    static func downloadContents(from url: String, to path: String) -> SignalProducer<NSData, NoError> {
         return download(from: url, to: path)
-            .map { event in
+            .map { event -> NSData? in
                 switch event {
-                case .Progress(_): return NSData()
-                case .Data(let data): return data
+                case .Progress(_): return nil
+                case .Contents(let data): return data
                 }
             }
-            .filter { $0.length > 0 }
+            .ignoreNil()
     }
     
-    private static func download(from url: String, to path: String) -> SignalProducer<Event, NoError> {
+    private static func download(from url: String, to path: String) -> SignalProducer<DownloadData, NoError> {
         if let signalProducer = activeDownloads[url] {
             return signalProducer
         }
         
-        let signalProducer = SignalProducer<Event, NoError> { sink, disposable in
+        let signalProducer = SignalProducer<DownloadData, NoError> { sink, disposable in
             
             if NSFileManager.defaultManager().fileExistsAtPath(path) {
-                sendNext(sink, Event.Progress(1))
-                sendNext(sink, Event.Data(NSData(contentsOfFile: path)!))
+                sendNext(sink, DownloadData.Progress(1))
+                sendNext(sink, DownloadData.Contents(NSData(contentsOfFile: path)!))
                 sendCompleted(sink)
                 return
             }
@@ -60,15 +60,15 @@ class DownloadService: NSObject {
                 .validate(statusCode: 200..<300)
                 .progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
                     let progress = Float(totalBytesRead) / Float(totalBytesExpectedToRead)
-                    sendNext(sink, Event.Progress(progress))
+                    sendNext(sink, DownloadData.Progress(progress))
                 }
                 .response { _, _, data, error in
                     if let error = error {
                         print(error)
                     } else {
                         data!.writeToFile(path, atomically: true)
-                        sendNext(sink, Event.Progress(1))
-                        sendNext(sink, Event.Data(data!))
+                        sendNext(sink, DownloadData.Progress(1))
+                        sendNext(sink, DownloadData.Contents(data!))
                         sendCompleted(sink)
                     }
                 }
@@ -78,9 +78,10 @@ class DownloadService: NSObject {
             }
         }
         
-        activeDownloads[url] = signalProducer
-        
         return signalProducer.on(
+            started: {
+                activeDownloads[url] = signalProducer
+            },
             completed: {
                 activeDownloads.removeValueForKey(url)
             },

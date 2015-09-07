@@ -51,8 +51,8 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
         tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
         view.addSubview(tableView)
         
-        viewModel.comments.producer.start(next: { _ in
-            self.tableView.reloadData()
+        viewModel.comments.producer.start(next: { [weak self] _ in
+            self?.tableView.reloadData()
         })
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
@@ -188,18 +188,20 @@ extension DetailsTableViewController: UITableViewDataSource {
         if indexPath.row == 0 {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("details-cell") as! DetailsTableViewCell
             cell.viewModel = viewModel
-            cell.navigationController = navigationController
+            cell.navigationController = navigationController as? NavigationController
             cell.bindViewModel()
             return cell
         } else if indexPath.row <= viewModel.comments.value.count {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("comment-cell") as! CommentTableViewCell
-            cell.navigationController = navigationController
+            cell.navigationController = navigationController as? NavigationController
             cell.bindViewModel(viewModel.comments.value[indexPath.row - 1])
             return cell
         } else {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
             cell.bindViewModel(viewModel.optograph.id)
-            cell.postCallback = viewModel.insertNewComment
+            cell.postCallback = { [weak self] comment in
+                self?.viewModel.insertNewComment(comment)
+            }
             return cell
         }
     }

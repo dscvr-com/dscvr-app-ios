@@ -8,13 +8,17 @@
 
 import UIKit
 
-class HashtagTableViewController: OptographTableViewController, RedNavbar {
+class HashtagTableViewController: OptographTableViewController, RedNavbar, UniqueView {
     
-    let viewModel = SearchViewModel()
+    private let viewModel = SearchViewModel()
     
-    let hashtag: String
+    private let hashtag: String
+    
+    let uniqueIdentifier: String
     
     required init(hashtag: String) {
+        uniqueIdentifier = "hashtag-\(hashtag)"
+        
         self.hashtag = hashtag
         super.init(nibName: nil, bundle: nil)
     }

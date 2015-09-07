@@ -10,7 +10,7 @@ import UIKit
 import ReactiveCocoa
 import HexColor
 
-class EditProfileViewController: UIViewController, RedNavbar {
+class EditProfileViewController: UIViewController, RedNavbar, UINavigationControllerDelegate {
     
     let imagePickerController = UIImagePickerController()
     
@@ -415,7 +415,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
     
 }
 
-extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension EditProfileViewController: UIImagePickerControllerDelegate {
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)

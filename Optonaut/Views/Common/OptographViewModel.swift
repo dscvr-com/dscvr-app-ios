@@ -31,8 +31,8 @@ class OptographViewModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        previewImage <~ DownloadService.downloadData(from: "\(S3URL)/original/\(optograph.previewAssetId).jpg", to: "\(StaticPath)/\(optograph.previewAssetId).jpg").map { UIImage(data: $0)! }
-        avatarImage <~ DownloadService.downloadData(from: "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg", to: "\(StaticPath)/\(optograph.person.avatarAssetId).jpg").map { UIImage(data: $0)! }
+        previewImage <~ DownloadService.downloadContents(from: "\(S3URL)/original/\(optograph.previewAssetId).jpg", to: "\(StaticPath)/\(optograph.previewAssetId).jpg").map { UIImage(data: $0)! }
+        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg", to: "\(StaticPath)/\(optograph.person.avatarAssetId).jpg").map { UIImage(data: $0)! }
         
         fullName = ConstantProperty(optograph.person.fullName)
         userName = ConstantProperty("@\(optograph.person.userName)")

@@ -82,7 +82,7 @@ extension ActivityTableViewController: UITableViewDataSource {
         let cell = self.tableView.dequeueReusableCellWithIdentifier("cell")! as! ActivityTableViewCell
         let activity = items[indexPath.row]
         cell.bindViewModel(activity)
-        cell.navigationController = navigationController
+        cell.navigationController = navigationController as? NavigationController
         
         return cell
     }

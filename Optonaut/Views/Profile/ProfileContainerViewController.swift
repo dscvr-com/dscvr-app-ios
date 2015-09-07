@@ -8,14 +8,18 @@
 
 import Foundation
 
-class ProfileContainerViewController: UIViewController {
+class ProfileContainerViewController: UIViewController, UniqueView {
     
     private let tableViewController: ProfileTableViewController
     private let tableView: UIView
     private let headerViewController: ProfileHeaderViewController
     private let headerView: UIView
     
+    let uniqueIdentifier: String
+    
     required init(personId: UUID) {
+        uniqueIdentifier = "profile-\(personId)"
+        
         tableViewController = ProfileTableViewController(personId: personId)
         tableView = tableViewController.view
         

@@ -46,7 +46,7 @@ extension OptographTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! OptographTableViewCell
-        cell.navigationController = navigationController
+        cell.navigationController = navigationController as? NavigationController
         cell.bindViewModel(items[indexPath.row])
         
         return cell
