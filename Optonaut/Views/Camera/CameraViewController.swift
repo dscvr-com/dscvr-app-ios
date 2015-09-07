@@ -42,6 +42,7 @@ class CameraViewController: UIViewController {
     private var previewImage: CGImage?
     
     // subviews
+    private let tiltView = TiltView()
     private let progressView = ProgressView()
     private let instructionView = UILabel()
     private let circleView = DashedCircleView()
@@ -70,8 +71,10 @@ class CameraViewController: UIViewController {
         setupScene()
         setupBall()
         setupSelectionPoints()
-    
         
+        viewModel.tiltAngle.producer.start(next: { self.tiltView.angle = $0 })
+        view.addSubview(tiltView)
+    
         viewModel.progress.producer.start(next: { self.progressView.progress = $0 })
         viewModel.isRecording.producer.start(next: { self.progressView.isActive = $0 })
         view.addSubview(progressView)
@@ -84,12 +87,10 @@ class CameraViewController: UIViewController {
         view.addSubview(instructionView)
         
         circleView.layer.cornerRadius = 35
-        viewModel.isRecording.producer.start(next: { self.circleView.borderDashed = !$0 })
+        viewModel.isRecording.producer.start(next: { self.circleView.isActive = !$0 })
         view.addSubview(circleView)
         
         recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor.hatched : UIColor.whiteColor().hatched }
-//        let backgroundImage = UIImage(CIImage: .CIImage!, scale: 1, orientation: UIImageOrientation.Up)
-//        recordButtonView.backgroundColor = BaseColor.hatched
         recordButtonView.layer.cornerRadius = 35
         viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
             .map { _ in true }
@@ -110,7 +111,9 @@ class CameraViewController: UIViewController {
         })
         view.addSubview(closeButtonView)
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
+        if SessionService.sessionData!.debuggingEnabled {
+            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
+        }
         
         setupCamera()
         
@@ -132,18 +135,17 @@ class CameraViewController: UIViewController {
         for a in points {
             for b in points {
                 
-                
-                if(stitcher.AreAdjacent(a, and: b)) {
+                if stitcher.AreAdjacent(a, and: b) {
                     
                     let edge = Edge(a, b)
                     
-                    let vec = GLKVector3Make(0, 0, -1);
+                    let vec = GLKVector3Make(0, 0, -1)
                     let posA = GLKMatrix4MultiplyVector3(a.extrinsics, vec)
                     let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
                     
                     let edgeNode = createLineNode(posA, posB: posB)
                     
-                    edges[edge] = edgeNode;
+                    edges[edge] = edgeNode
                     
                     scene.rootNode.addChildNode(edgeNode)
                 }
@@ -190,6 +192,8 @@ class CameraViewController: UIViewController {
     override func updateViewConstraints() {
         view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero) // needed to cover tabbar (49pt)
         
+        tiltView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
+        
         progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 15)
         progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -30)
         progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
@@ -213,10 +217,11 @@ class CameraViewController: UIViewController {
     
     private func setupScene() {
         let camera = SCNCamera()
+        let fov = 45 as Double
         camera.zNear = 0.01
         camera.zFar = 10000
-        camera.xFov = 65
-        camera.yFov = 65 * Double(view.bounds.height / view.bounds.width)
+        camera.xFov = fov
+        camera.yFov = fov * Double(view.bounds.width / 2 / view.bounds.height)
         
         cameraNode.camera = camera
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
@@ -246,19 +251,19 @@ class CameraViewController: UIViewController {
     
         line.firstMaterial?.diffuse.contents = UIColor(red: 239 / 255.0, green: 71 / 255.0, blue: 54 / 255.0, alpha: 1.0)
         
-        return node;
+        return node
     }
     
     private func setupBall() {
-        ballNode.geometry = SCNSphere(radius: CGFloat(0.1))
-        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor.redColor()
+        ballNode.geometry = SCNSphere(radius: CGFloat(0.04))
+        ballNode.geometry?.firstMaterial?.diffuse.contents = BaseColor
         
         scene.rootNode.addChildNode(ballNode)
     }
     
     private func updateBallPosition() {
         
-        let vec = GLKVector3Make(0, 0, -1);
+        let vec = GLKVector3Make(0, 0, -1)
         let res = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
         
         //print("Ball pos: \(res.x), \(res.y), \(res.z)")
@@ -307,10 +312,14 @@ class CameraViewController: UIViewController {
                         cancelButtonTitle: "OK").show()
                 }
             }
-        });
+        })
     }
  
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
+        if stitcher.IsFinished() {
+            return
+        }
+        
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         
         if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
@@ -326,8 +335,13 @@ class CameraViewController: UIViewController {
             stitcher.SetIdle(!self.viewModel.isRecording.value)
             stitcher.Push(r, buf)
             
-            let errorVec = stitcher.GetAngularDistanceToBall();
-            let error = stitcher.GetDistanceToBall();
+            let errorVec = stitcher.GetAngularDistanceToBall()
+            let error = stitcher.GetDistanceToBall()
+            
+            Async.main {
+                self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
+                self.viewModel.tiltAngle.value = Float(errorVec.z)
+            }
             
             print("Error: \(error), x: \(errorVec.x), y: \(errorVec.y), z: \(errorVec.z). Images: \(stitcher.GetRecordedImagesCount()) / \(stitcher.GetImagesToRecordCount())")
             
@@ -356,10 +370,12 @@ class CameraViewController: UIViewController {
     }
     
     func finish() {
-        
+        // TODO remove
         if !stitcher.HasResults() {
             return
         }
+        
+        session.stopRunning()
         
         for child in scene.rootNode.childNodes {
             child.removeFromParentNode()
@@ -416,8 +432,7 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 extension CameraViewController: SCNSceneRendererDelegate {
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
-        glLineWidth(5)
-        glColor4f(1, 0, 0, 1)
+        glLineWidth(6)
     }
     
 }
@@ -442,9 +457,10 @@ private func ==(lhs: Edge, rhs: Edge) -> Bool {
 
 private class DashedCircleView: UIView {
     
-    var borderDashed = true {
+    var isActive = true {
         didSet {
-            border.lineDashPattern = borderDashed ? [19, 8] : nil
+            border.lineDashPattern = isActive ? [19, 8] : nil
+            border.strokeColor = isActive ? UIColor.whiteColor().CGColor : BaseColor.CGColor
         }
     }
     
@@ -453,7 +469,6 @@ private class DashedCircleView: UIView {
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        border.strokeColor = UIColor.whiteColor().CGColor
         border.fillColor = nil
         border.lineWidth = 4
         border.opacity = 0.8
@@ -487,7 +502,8 @@ private class ProgressView: UIView {
     }
     var isActive = false {
         didSet {
-            layoutSubviews()
+            foregroundLine.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
+            trackingPoint.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
         }
     }
     
@@ -533,14 +549,11 @@ private class ProgressView: UIView {
     private override func layoutSubviews() {
         super.layoutSubviews()
         
+        middlePoint.hidden = progress > 0.5
+        
         let width = bounds.width - 12
         let originX = bounds.origin.x + 6
         let originY = bounds.origin.y + 6
-        
-        foregroundLine.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
-        trackingPoint.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
-        
-        middlePoint.hidden = progress > 0.5
         
         firstBackgroundLine.frame = CGRect(x: originX, y: originY - 0.6, width: width * 0.5 - 3.5, height: 1.2)
         secondBackgroundLine.frame = CGRect(x: originX + width * 0.5 + 3.5, y: originY - 0.6, width: width * 0.5 - 3.5, height: 1.2)
@@ -549,4 +562,43 @@ private class ProgressView: UIView {
         foregroundLine.frame = CGRect(x: originX, y: originY - 1, width: width * CGFloat(progress), height: 2)
         trackingPoint.frame = CGRect(x: originX + width * CGFloat(progress) - 6, y: originY - 6, width: 12, height: 12)
     }
+}
+
+private class TiltView: UIView {
+    var angle: Float = 0 {
+        didSet {
+            diagonalLine.transform = CATransform3DMakeRotation(CGFloat(angle), 0, 0, -1)
+        }
+    }
+    
+    private let diagonalLine = CALayer()
+    private let tmpLine = CALayer()
+    
+    override init (frame: CGRect) {
+        super.init(frame: frame)
+        
+        diagonalLine.backgroundColor = UIColor.whiteColor().CGColor
+        diagonalLine.opacity = 0.8
+        layer.addSublayer(diagonalLine)
+        
+        tmpLine.backgroundColor = BaseColor.CGColor
+        tmpLine.opacity = 0.8
+        layer.addSublayer(tmpLine)
+    }
+    
+    convenience init () {
+        self.init(frame: CGRectZero)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        diagonalLine.frame = CGRect(x: bounds.width / 2, y: 0, width: 1, height: bounds.height)
+        tmpLine.frame = CGRect(x: bounds.width / 2, y: 0, width: 1, height: bounds.height)
+    }
+    
 }
