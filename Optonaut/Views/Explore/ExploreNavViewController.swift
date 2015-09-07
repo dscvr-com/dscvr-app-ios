@@ -10,7 +10,7 @@ import Foundation
 
 import UIKit
 
-class ExploreNavViewController: UINavigationController {
+class ExploreNavViewController: NavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)

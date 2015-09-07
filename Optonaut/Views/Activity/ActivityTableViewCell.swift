@@ -12,7 +12,7 @@ import ReactiveCocoa
 
 class ActivityTableViewCell: UITableViewCell {
     
-    weak var navigationController: UINavigationController?
+    weak var navigationController: NavigationController?
     var viewModel: ActivityViewModel!
     
     // subviews

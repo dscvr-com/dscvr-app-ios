@@ -38,6 +38,7 @@
 		8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA2E7B11B55576500407181 /* opencv2.framework */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
 		8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA66BA41B80905C00EE5D44 /* SQLite.framework */; };
+		8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */; settings = {ASSET_TAGS = (); }; };
 		8FAB9F291B8F01DF00B4C8CB /* ActivitiesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EEE1B8F01DF00B4C8CB /* ActivitiesViewModel.swift */; };
 		8FAB9F2A1B8F01DF00B4C8CB /* ActivityNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EEF1B8F01DF00B4C8CB /* ActivityNavViewController.swift */; };
 		8FAB9F2B1B8F01DF00B4C8CB /* ActivityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF01B8F01DF00B4C8CB /* ActivityTableViewCell.swift */; };
@@ -169,6 +170,7 @@
 		8FA2E7B11B55576500407181 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Carthage/Build/iOS/opencv2.framework; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		8FA66BA41B80905C00EE5D44 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
+		8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		8FAB9EEE1B8F01DF00B4C8CB /* ActivitiesViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivitiesViewModel.swift; sourceTree = "<group>"; };
 		8FAB9EEF1B8F01DF00B4C8CB /* ActivityNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityNavViewController.swift; sourceTree = "<group>"; };
 		8FAB9EF01B8F01DF00B4C8CB /* ActivityTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityTableViewCell.swift; sourceTree = "<group>"; };
@@ -430,6 +432,7 @@
 				8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */,
 				8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */,
 				8FAB9EFE1B8F01DF00B4C8CB /* OptographViewModel.swift */,
+				8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -886,6 +889,7 @@
 				8F900B411B839D0C0085566C /* DatabaseManager.swift in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
 				8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */,
+				8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */,
 				8FAB9F541B8F01DF00B4C8CB /* OptographsViewModel.swift in Sources */,
 				8FAB9F7E1B8F03BE00B4C8CB /* UIKitRACExtensions.swift in Sources */,
 				8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */,

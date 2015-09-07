@@ -11,7 +11,7 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 
-class ActivityNavViewController: UINavigationController, RedNavbar {
+class ActivityNavViewController: NavigationController, RedNavbar {
     
     let activityTableViewController = ActivityTableViewController()
     

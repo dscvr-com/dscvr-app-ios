@@ -13,7 +13,7 @@ import ActiveLabel
 class DetailsTableViewCell: UITableViewCell {
     
     weak var viewModel: DetailsViewModel!
-    weak var navigationController: UINavigationController?
+    weak var navigationController: NavigationController?
     
     // subviews
     private let previewImageView = UIImageView()
@@ -206,7 +206,8 @@ class DetailsTableViewCell: UITableViewCell {
         progressView.rac_hidden <~ viewModel.downloadProgress.producer.observeOn(QueueScheduler.mainQueueScheduler).map { $0 == 1 }
         
         viewModel.downloadProgress.producer
-            .startOn(UIScheduler())
+            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)))
+            .observeOn(UIScheduler())
             .start(next: { progress in
                 self.progressView.setProgress(progress, animated: true)
             })

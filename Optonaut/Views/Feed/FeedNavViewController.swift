@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FeedNavViewController: UINavigationController {
+class FeedNavViewController: NavigationController {
     
     let feedTableViewController = FeedTableViewController()
     

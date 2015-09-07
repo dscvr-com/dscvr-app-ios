@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ProfileNavViewController: UINavigationController {
+class ProfileNavViewController: NavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)

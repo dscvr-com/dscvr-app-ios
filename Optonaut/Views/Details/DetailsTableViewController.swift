@@ -188,12 +188,12 @@ extension DetailsTableViewController: UITableViewDataSource {
         if indexPath.row == 0 {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("details-cell") as! DetailsTableViewCell
             cell.viewModel = viewModel
-            cell.navigationController = navigationController
+            cell.navigationController = navigationController as? NavigationController
             cell.bindViewModel()
             return cell
         } else if indexPath.row <= viewModel.comments.value.count {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("comment-cell") as! CommentTableViewCell
-            cell.navigationController = navigationController
+            cell.navigationController = navigationController as? NavigationController
             cell.bindViewModel(viewModel.comments.value[indexPath.row - 1])
             return cell
         } else {
