@@ -122,6 +122,8 @@
 		A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00A1B7E19E200DCD598 /* quat.cpp */; };
 		A5C1C01A1B7E19E200DCD598 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00D1B7E19E200DCD598 /* simpleSphereStitcher.cpp */; };
 		A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0101B7E19E200DCD598 /* support.cpp */; };
+		A5DA67091B9CA08F00D9F3EE /* recorderGraph.hpp in Resources */ = {isa = PBXBuildFile; fileRef = A5DA67081B9CA08F00D9F3EE /* recorderGraph.hpp */; settings = {ASSET_TAGS = (); }; };
+		A5DA670B1B9CA29A00D9F3EE /* recorderController.hpp in Resources */ = {isa = PBXBuildFile; fileRef = A5DA670A1B9CA29A00D9F3EE /* recorderController.hpp */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -253,7 +255,7 @@
 		A59923E81B8520DF000773D7 /* imageResizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageResizer.hpp; sourceTree = "<group>"; };
 		A5C1C0031B7E19E200DCD598 /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = image.cpp; sourceTree = "<group>"; };
 		A5C1C0041B7E19E200DCD598 /* image.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = image.hpp; sourceTree = "<group>"; };
-		A5C1C0051B7E19E200DCD598 /* imageSelector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSelector.hpp; sourceTree = "<group>"; };
+		A5C1C0051B7E19E200DCD598 /* recorderGraphGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderGraphGenerator.hpp; sourceTree = "<group>"; };
 		A5C1C0061B7E19E200DCD598 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		A5C1C0071B7E19E200DCD598 /* monoStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = monoStitcher.cpp; sourceTree = "<group>"; };
 		A5C1C0081B7E19E200DCD598 /* monoStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = monoStitcher.hpp; sourceTree = "<group>"; };
@@ -269,6 +271,9 @@
 		A5C1C0121B7E19E200DCD598 /* thresholdSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = thresholdSeamer.hpp; sourceTree = "<group>"; };
 		A5C1C0131B7E19E200DCD598 /* visualAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualAligner.hpp; sourceTree = "<group>"; };
 		A5C1C01E1B7E525200DCD598 /* intrinsics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = intrinsics.hpp; sourceTree = "<group>"; };
+		A5DA67081B9CA08F00D9F3EE /* recorderGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderGraph.hpp; sourceTree = "<group>"; };
+		A5DA670A1B9CA29A00D9F3EE /* recorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderController.hpp; sourceTree = "<group>"; };
+		A5DA670C1B9CD52D00D9F3EE /* trivialAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = trivialAligner.hpp; sourceTree = "<group>"; };
 		A5DF584E1B81FC4A000DA118 /* asyncAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncAligner.hpp; sourceTree = "<group>"; };
 		A5FE6B691B8A630A005B0E0E /* aligner.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = aligner.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -642,7 +647,7 @@
 				A5C1C0031B7E19E200DCD598 /* image.cpp */,
 				A5C1C0041B7E19E200DCD598 /* image.hpp */,
 				A59923E81B8520DF000773D7 /* imageResizer.hpp */,
-				A5C1C0051B7E19E200DCD598 /* imageSelector.hpp */,
+				A5C1C0051B7E19E200DCD598 /* recorderGraphGenerator.hpp */,
 				A5C1C0061B7E19E200DCD598 /* lib */,
 				A5C1C0071B7E19E200DCD598 /* monoStitcher.cpp */,
 				A5C1C0081B7E19E200DCD598 /* monoStitcher.hpp */,
@@ -660,6 +665,9 @@
 				A5C1C0121B7E19E200DCD598 /* thresholdSeamer.hpp */,
 				A5C1C0131B7E19E200DCD598 /* visualAligner.hpp */,
 				A571CC5F1B91D7B400124FD2 /* pipeline.cpp */,
+				A5DA67081B9CA08F00D9F3EE /* recorderGraph.hpp */,
+				A5DA670A1B9CA29A00D9F3EE /* recorderController.hpp */,
+				A5DA670C1B9CD52D00D9F3EE /* trivialAligner.hpp */,
 			);
 			name = Stitcher;
 			path = stitcher/src;
@@ -767,8 +775,10 @@
 				8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */,
 				8F4C6E4A1B4A70CD007508ED /* Roboto-Light.ttf in Resources */,
 				8F4C6E4C1B4A70CD007508ED /* Roboto-Medium.ttf in Resources */,
+				A5DA67091B9CA08F00D9F3EE /* recorderGraph.hpp in Resources */,
 				8F4C6E4E1B4A70CD007508ED /* Roboto-Regular.ttf in Resources */,
 				8FAB9F5E1B8F02A900B4C8CB /* Assets.xcassets in Resources */,
+				A5DA670B1B9CA29A00D9F3EE /* recorderController.hpp in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

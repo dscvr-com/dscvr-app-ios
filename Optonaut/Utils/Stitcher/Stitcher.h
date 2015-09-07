@@ -49,5 +49,6 @@ struct ImageBuffer {
 - (struct ImageBuffer)GetRightResult;
 - (bool)AreAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b;
 - (bool)HasResults;
+- (GLKMatrix4)GetBallPosition;
 
 @end
