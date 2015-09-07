@@ -51,8 +51,8 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
         tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
         view.addSubview(tableView)
         
-        viewModel.comments.producer.start(next: { _ in
-            self.tableView.reloadData()
+        viewModel.comments.producer.start(next: { [weak self] _ in
+            self?.tableView.reloadData()
         })
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
@@ -199,7 +199,9 @@ extension DetailsTableViewController: UITableViewDataSource {
         } else {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
             cell.bindViewModel(viewModel.optograph.id)
-            cell.postCallback = viewModel.insertNewComment
+            cell.postCallback = { [weak self] comment in
+                self?.viewModel.insertNewComment(comment)
+            }
             return cell
         }
     }

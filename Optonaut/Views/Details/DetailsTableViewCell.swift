@@ -12,8 +12,8 @@ import ActiveLabel
 
 class DetailsTableViewCell: UITableViewCell {
     
-    var viewModel: DetailsViewModel!
-    var navigationController: UINavigationController?
+    weak var viewModel: DetailsViewModel!
+    weak var navigationController: UINavigationController?
     
     // subviews
     private let previewImageView = UIImageView()

@@ -20,7 +20,7 @@ class CommentViewModel {
     
     init(comment: Comment) {
         text = ConstantProperty(comment.text)
-        avatarImage <~ DownloadService.downloadData(from: "\(S3URL)/400x400/\(comment.person.avatarAssetId).jpg", to: "\(StaticPath)/\(comment.person.avatarAssetId).jpg").map { UIImage(data: $0)! }
+        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(comment.person.avatarAssetId).jpg", to: "\(StaticPath)/\(comment.person.avatarAssetId).jpg").map { UIImage(data: $0)! }
         fullName = ConstantProperty(comment.person.fullName)
         userName = ConstantProperty("@\(comment.person.userName)")
         personId = ConstantProperty(comment.person.id)

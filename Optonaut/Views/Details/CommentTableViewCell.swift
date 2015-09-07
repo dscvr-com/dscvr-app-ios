@@ -13,7 +13,7 @@ import ActiveLabel
 
 class CommentTableViewCell: UITableViewCell {
     
-    var navigationController: UINavigationController?
+    weak var navigationController: UINavigationController?
     var viewModel: CommentViewModel!
     
     // subviews

@@ -14,7 +14,7 @@ import ActiveLabel
 
 class OptographTableViewCell: UITableViewCell {
     
-    var navigationController: UINavigationController?
+    weak var navigationController: UINavigationController?
     var viewModel: OptographViewModel!
     
     // subviews
