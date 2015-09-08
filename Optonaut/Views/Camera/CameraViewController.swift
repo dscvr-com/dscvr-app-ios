@@ -73,6 +73,7 @@ class CameraViewController: UIViewController {
         setupSelectionPoints()
         
         viewModel.tiltAngle.producer.start(next: { self.tiltView.angle = $0 })
+        tiltView.innerRadius = 35
         view.addSubview(tiltView)
     
         viewModel.progress.producer.start(next: { self.progressView.progress = $0 })
@@ -336,14 +337,14 @@ class CameraViewController: UIViewController {
             stitcher.Push(r, buf)
             
             let errorVec = stitcher.GetAngularDistanceToBall()
-            let error = stitcher.GetDistanceToBall()
+//            let error = stitcher.GetDistanceToBall()
             
             Async.main {
                 self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
                 self.viewModel.tiltAngle.value = Float(errorVec.z)
             }
             
-            print("Error: \(error), x: \(errorVec.x), y: \(errorVec.y), z: \(errorVec.z). Images: \(stitcher.GetRecordedImagesCount()) / \(stitcher.GetImagesToRecordCount())")
+//            print("Error: \(error), x: \(errorVec.x), y: \(errorVec.y), z: \(errorVec.z). Images: \(stitcher.GetRecordedImagesCount()) / \(stitcher.GetImagesToRecordCount())")
             
             updateBallPosition()
             
@@ -567,23 +568,49 @@ private class ProgressView: UIView {
 private class TiltView: UIView {
     var angle: Float = 0 {
         didSet {
-            diagonalLine.transform = CATransform3DMakeRotation(CGFloat(angle), 0, 0, -1)
+            let visibleLimit = Float(M_PI / 70)
+            let criticalLimit = Float(M_PI / 50)
+            if abs(angle) < visibleLimit {
+                alpha = 0
+            } else {
+                alpha = min(0.8, CGFloat(0.8 * (1 - (criticalLimit - visibleLimit) / (abs(angle) - visibleLimit))))
+            }
+            updatePaths()
         }
     }
     
-    private let diagonalLine = CALayer()
-    private let tmpLine = CALayer()
+    var innerRadius: Float = 0 {
+        didSet {
+            updatePaths()
+        }
+    }
+    
+    private let diagonalLine = CAShapeLayer()
+    private let verticalLine = CAShapeLayer()
+    private let ringSegment = CAShapeLayer()
+    private let circleSegment = CAShapeLayer()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        diagonalLine.backgroundColor = UIColor.whiteColor().CGColor
-        diagonalLine.opacity = 0.8
+        diagonalLine.strokeColor = UIColor.whiteColor().CGColor
+        diagonalLine.fillColor = UIColor.clearColor().CGColor
+        diagonalLine.lineWidth = 2
         layer.addSublayer(diagonalLine)
         
-        tmpLine.backgroundColor = BaseColor.CGColor
-        tmpLine.opacity = 0.8
-        layer.addSublayer(tmpLine)
+        verticalLine.strokeColor = BaseColor.CGColor
+        verticalLine.fillColor = UIColor.clearColor().CGColor
+        verticalLine.lineWidth = 2
+        layer.addSublayer(verticalLine)
+        
+        ringSegment.strokeColor = BaseColor.CGColor
+        ringSegment.fillColor = UIColor.clearColor().CGColor
+        ringSegment.lineWidth = 2
+        layer.addSublayer(ringSegment)
+        
+        circleSegment.strokeColor = UIColor.clearColor().CGColor
+        circleSegment.fillColor = BaseColor.hatched.CGColor
+        layer.addSublayer(circleSegment)
     }
     
     convenience init () {
@@ -594,11 +621,55 @@ private class TiltView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func updatePaths() {
+        let angle = CGFloat(self.angle)
+        let swap = {(inout a: CGFloat, inout b: CGFloat) in
+            if angle < 0 {
+                let tmp = a
+                a = b
+                b = tmp
+            }
+        }
+        
+        let diagonalPath = UIBezierPath()
+        diagonalPath.moveToPoint(CGPoint(x: bounds.width / 2 - tan(angle) * bounds.height / 2, y: 0))
+        diagonalPath.addLineToPoint(CGPoint(x: bounds.width / 2 + tan(angle) * bounds.height / 2, y: bounds.height))
+        diagonalLine.path = diagonalPath.CGPath
+        
+        let verticalPath = UIBezierPath()
+        let verticalLineHeight = (bounds.height / 2 - CGFloat(innerRadius)) * 3 / 5
+        let radius = verticalLineHeight + CGFloat(innerRadius)
+        verticalPath.moveToPoint(CGPoint(x: bounds.width / 2, y: bounds.height / 2 - radius))
+        verticalPath.addLineToPoint(CGPoint(x: bounds.width / 2, y: bounds.height / 2 - CGFloat(innerRadius)))
+        verticalLine.path = verticalPath.CGPath
+        
+        let ringSegmentPath = UIBezierPath()
+        let offsetAngle = min(abs(angle) * 2, CGFloat(Float(M_PI * 0.05))) * (angle > 0 ? 1 : -1)
+        var offsetStartAngle = CGFloat(-M_PI_2) + offsetAngle
+        var offsetEndAngle = CGFloat(-M_PI_2) - angle - offsetAngle
+        swap(&offsetStartAngle, &offsetEndAngle)
+        ringSegmentPath.addArcWithCenter(CGPoint(x: bounds.width / 2, y: bounds.height / 2), radius: radius, startAngle: offsetStartAngle, endAngle: offsetEndAngle, clockwise: false)
+        ringSegment.path = ringSegmentPath.CGPath
+        
+        let circleSegmentPath = UIBezierPath()
+        let startAngle = CGFloat(-M_PI_2)
+        let endAngle = CGFloat(-M_PI_2) - angle
+        circleSegmentPath.moveToPoint(CGPoint(x: bounds.width / 2, y: bounds.height / 2 - CGFloat(innerRadius)))
+        circleSegmentPath.addArcWithCenter(CGPoint(x: bounds.width / 2, y: bounds.height / 2), radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: angle < 0)
+        circleSegmentPath.addLineToPoint(CGPoint(x: bounds.width / 2 + CGFloat(innerRadius) * cos(endAngle), y: bounds.height / 2 + CGFloat(innerRadius) * sin(endAngle)))
+        circleSegmentPath.addArcWithCenter(CGPoint(x: bounds.width / 2, y: bounds.height / 2), radius: CGFloat(innerRadius), startAngle: endAngle, endAngle: startAngle, clockwise: angle > 0)
+        circleSegment.path = circleSegmentPath.CGPath
+    }
+    
     private override func layoutSubviews() {
         super.layoutSubviews()
         
-        diagonalLine.frame = CGRect(x: bounds.width / 2, y: 0, width: 1, height: bounds.height)
-        tmpLine.frame = CGRect(x: bounds.width / 2, y: 0, width: 1, height: bounds.height)
+        updatePaths()
+        
+        diagonalLine.frame = bounds
+        verticalLine.frame = bounds
+        ringSegment.frame = bounds
+        circleSegment.frame = bounds
     }
     
 }
