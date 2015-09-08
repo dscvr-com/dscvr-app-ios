@@ -73,6 +73,7 @@ class CameraViewController: UIViewController {
         setupSelectionPoints()
         
         viewModel.tiltAngle.producer.start(next: { self.tiltView.angle = $0 })
+        viewModel.distXY.producer.start(next: { self.tiltView.distXY = $0 })
         tiltView.innerRadius = 35
         view.addSubview(tiltView)
     
@@ -342,6 +343,7 @@ class CameraViewController: UIViewController {
             Async.main {
                 self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
                 self.viewModel.tiltAngle.value = Float(errorVec.z)
+                self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
             }
             
 //            print("Error: \(error), x: \(errorVec.x), y: \(errorVec.y), z: \(errorVec.z). Images: \(stitcher.GetRecordedImagesCount()) / \(stitcher.GetImagesToRecordCount())")
@@ -568,16 +570,16 @@ private class ProgressView: UIView {
 private class TiltView: UIView {
     var angle: Float = 0 {
         didSet {
-            let visibleLimit = Float(M_PI / 70)
-            let criticalLimit = Float(M_PI / 50)
-            if abs(angle) < visibleLimit {
-                alpha = 0
-            } else {
-                alpha = min(0.8, CGFloat(0.8 * (1 - (criticalLimit - visibleLimit) / (abs(angle) - visibleLimit))))
-            }
             updatePaths()
         }
     }
+    
+    var distXY: Float = 0 {
+        didSet {
+            updatePaths()
+        }
+    }
+
     
     var innerRadius: Float = 0 {
         didSet {
@@ -631,16 +633,19 @@ private class TiltView: UIView {
             }
         }
         
+        let cx = bounds.width / 2
+        let cy = bounds.height / 2
+        
         let diagonalPath = UIBezierPath()
-        diagonalPath.moveToPoint(CGPoint(x: bounds.width / 2 - tan(angle) * bounds.height / 2, y: 0))
-        diagonalPath.addLineToPoint(CGPoint(x: bounds.width / 2 + tan(angle) * bounds.height / 2, y: bounds.height))
+        diagonalPath.moveToPoint(CGPoint(x: cx - tan(angle) * cy, y: 0))
+        diagonalPath.addLineToPoint(CGPoint(x: cx + tan(angle) * cy, y: bounds.height))
         diagonalLine.path = diagonalPath.CGPath
         
         let verticalPath = UIBezierPath()
-        let verticalLineHeight = (bounds.height / 2 - CGFloat(innerRadius)) * 3 / 5
+        let verticalLineHeight = (cy - CGFloat(innerRadius)) * 3 / 5
         let radius = verticalLineHeight + CGFloat(innerRadius)
-        verticalPath.moveToPoint(CGPoint(x: bounds.width / 2, y: bounds.height / 2 - radius))
-        verticalPath.addLineToPoint(CGPoint(x: bounds.width / 2, y: bounds.height / 2 - CGFloat(innerRadius)))
+        verticalPath.moveToPoint(CGPoint(x: cx, y: cy - radius))
+        verticalPath.addLineToPoint(CGPoint(x: cx, y: cy - CGFloat(innerRadius)))
         verticalLine.path = verticalPath.CGPath
         
         let ringSegmentPath = UIBezierPath()
@@ -648,17 +653,29 @@ private class TiltView: UIView {
         var offsetStartAngle = CGFloat(-M_PI_2) + offsetAngle
         var offsetEndAngle = CGFloat(-M_PI_2) - angle - offsetAngle
         swap(&offsetStartAngle, &offsetEndAngle)
-        ringSegmentPath.addArcWithCenter(CGPoint(x: bounds.width / 2, y: bounds.height / 2), radius: radius, startAngle: offsetStartAngle, endAngle: offsetEndAngle, clockwise: false)
+        ringSegmentPath.addArcWithCenter(CGPoint(x: cx, y: cy), radius: radius, startAngle: offsetStartAngle, endAngle: offsetEndAngle, clockwise: false)
         ringSegment.path = ringSegmentPath.CGPath
         
         let circleSegmentPath = UIBezierPath()
         let startAngle = CGFloat(-M_PI_2)
         let endAngle = CGFloat(-M_PI_2) - angle
-        circleSegmentPath.moveToPoint(CGPoint(x: bounds.width / 2, y: bounds.height / 2 - CGFloat(innerRadius)))
-        circleSegmentPath.addArcWithCenter(CGPoint(x: bounds.width / 2, y: bounds.height / 2), radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: angle < 0)
-        circleSegmentPath.addLineToPoint(CGPoint(x: bounds.width / 2 + CGFloat(innerRadius) * cos(endAngle), y: bounds.height / 2 + CGFloat(innerRadius) * sin(endAngle)))
-        circleSegmentPath.addArcWithCenter(CGPoint(x: bounds.width / 2, y: bounds.height / 2), radius: CGFloat(innerRadius), startAngle: endAngle, endAngle: startAngle, clockwise: angle > 0)
+        circleSegmentPath.moveToPoint(CGPoint(x: cx, y: cy - CGFloat(innerRadius)))
+        circleSegmentPath.addArcWithCenter(CGPoint(x: cx, y: cy), radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: angle < 0)
+        circleSegmentPath.addLineToPoint(CGPoint(x: cx + CGFloat(innerRadius) * cos(endAngle), y: cy + CGFloat(innerRadius) * sin(endAngle)))
+        circleSegmentPath.addArcWithCenter(CGPoint(x: cx, y: cy), radius: CGFloat(innerRadius), startAngle: endAngle, endAngle: startAngle, clockwise: angle > 0)
         circleSegment.path = circleSegmentPath.CGPath
+        
+        //Update transparency
+        let visibleLimit = Float(M_PI / 70)
+        let criticalLimit = Float(M_PI / 50)
+        let distLimit = Float(M_PI / 30)
+        if abs(self.angle) < visibleLimit {
+            alpha = 0
+        } else {
+            alpha = min(0.8, CGFloat(0.8 * (1 - (criticalLimit - visibleLimit) / (abs(self.angle) - visibleLimit))))
+            alpha = min(alpha, CGFloat((distLimit - self.distXY) / distLimit + 1))
+            alpha = max(alpha, 0)
+        }
     }
     
     private override func layoutSubviews() {

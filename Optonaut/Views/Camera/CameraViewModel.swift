@@ -15,6 +15,7 @@ class CameraViewModel {
     let isRecording = MutableProperty<Bool>(false)
     let progress = MutableProperty<Float>(0)
     let tiltAngle = MutableProperty<Float>(0)
+    let distXY = MutableProperty<Float>(0)
     
     init() {
         
