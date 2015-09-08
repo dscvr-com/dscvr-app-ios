@@ -52,9 +52,13 @@ class LoginViewModel {
                 started: {
                     self.pending.value = true
                 },
-                next: { success in
+                next: { _ in
                     self.pending.value = false
-                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: success, customAttributes: [:])
+                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: true, customAttributes: [:])
+                },
+                error: { _ in
+                    self.pending.value = false
+                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: false, customAttributes: [:])
                 }
             )
             .mapError { _ in ApiError.Nil }
