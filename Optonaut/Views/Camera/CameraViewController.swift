@@ -665,7 +665,7 @@ private class TiltView: UIView {
         circleSegmentPath.addArcWithCenter(CGPoint(x: cx, y: cy), radius: CGFloat(innerRadius), startAngle: endAngle, endAngle: startAngle, clockwise: angle > 0)
         circleSegment.path = circleSegmentPath.CGPath
         
-        //Update transparency
+        // Update transparency
         let visibleLimit = Float(M_PI / 70)
         let criticalLimit = Float(M_PI / 50)
         let distLimit = Float(M_PI / 30)
