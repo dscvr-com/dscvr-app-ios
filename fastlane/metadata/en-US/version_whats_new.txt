@@ -1,11 +1,13 @@
-New in 0.3.0:
+New in 0.4.0:
 
-- [Change] Hold phone in portrait mode to record optograph
-- [Feature] Offline support for taking Optographs
-- [Feature] Preview image for Optographs
-- [Feature] Download progress for Optographs
-- [Feature] Upload profile pictures
-- [Feature] Forgot password
-- [Fix] Correct order in explore view
+- [Feature] Feedback on phone position and actions while recording Optograph
+- [Feature] Button to explicitly start/stop recording while recording Optograph
+- [Fix] Shown content in Feed/Explore listings  
+- [Fix] Loading indicator when completing Optograph actually stops
+- [Fix] Several issues related to comments
+- [Fix] Several issues related to profile pictures
+- [Fix] Ask for permission to use location if not already granted
+- [Fix] Several issues related to profile editing
+- [Fix] Debug mode now uses a lot less bandwith
 
 PS: Thanks for testing! This helps us a lot!
