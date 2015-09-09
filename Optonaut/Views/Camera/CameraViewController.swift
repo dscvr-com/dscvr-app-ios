@@ -272,8 +272,6 @@ class CameraViewController: UIViewController {
         
         ballNode.position = SCNVector3FromGLKVector3(res)
     }
-
-    
     
     private func setupCamera() {
         authorizeCamera()
@@ -338,15 +336,12 @@ class CameraViewController: UIViewController {
             stitcher.Push(r, buf)
             
             let errorVec = stitcher.GetAngularDistanceToBall()
-//            let error = stitcher.GetDistanceToBall()
             
             Async.main {
                 self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
                 self.viewModel.tiltAngle.value = Float(errorVec.z)
                 self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
             }
-            
-//            print("Error: \(error), x: \(errorVec.x), y: \(errorVec.y), z: \(errorVec.z). Images: \(stitcher.GetRecordedImagesCount()) / \(stitcher.GetImagesToRecordCount())")
             
             updateBallPosition()
             
@@ -367,8 +362,9 @@ class CameraViewController: UIViewController {
                 }
             }
 
-            
-            debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
+            if self.viewModel.isRecording.value {
+                debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
+            }
         }
     }
     
@@ -665,7 +661,7 @@ private class TiltView: UIView {
         circleSegmentPath.addArcWithCenter(CGPoint(x: cx, y: cy), radius: CGFloat(innerRadius), startAngle: endAngle, endAngle: startAngle, clockwise: angle > 0)
         circleSegment.path = circleSegmentPath.CGPath
         
-        //Update transparency
+        // Update transparency
         let visibleLimit = Float(M_PI / 70)
         let criticalLimit = Float(M_PI / 50)
         let distLimit = Float(M_PI / 30)

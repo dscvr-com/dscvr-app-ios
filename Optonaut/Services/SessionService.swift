@@ -66,7 +66,7 @@ class SessionService {
         }
     }
     
-    static func login(identifier: LoginIdentifier, password: String) -> SignalProducer<Bool, NoError> {
+    static func login(identifier: LoginIdentifier, password: String) -> SignalProducer<Void, ApiError> {
         
         var parameters: [String: AnyObject] = ["email": "", "user_name": "", "password": password]
         switch identifier {
@@ -74,25 +74,11 @@ class SessionService {
         case .UserName(let userName): parameters["user_name"] = userName
         }
         
-        return SignalProducer { sink, disposable in
-            let apiDisposable = ApiService<LoginMappable>.post("persons/login", parameters: parameters)
-                .start(
-                    next: { loginData in
-                        sessionData = SessionData(id: loginData.id, token: loginData.token, debuggingEnabled: false)
-                    },
-                    completed: {
-                        sendNext(sink, true)
-                        sendCompleted(sink)
-                    },
-                    error: { error in
-                        sendNext(sink, false)
-                        sendCompleted(sink)
-                    }
-            )
-            
-            disposable.addDisposable(apiDisposable)
-        }
-        
+        return ApiService<LoginMappable>.post("persons/login", parameters: parameters)
+            .on(next: { loginData in
+                sessionData = SessionData(id: loginData.id, token: loginData.token, debuggingEnabled: false)
+            })
+            .flatMap(.Latest) { _ in SignalProducer.empty }
     }
     
     static func logout() {
