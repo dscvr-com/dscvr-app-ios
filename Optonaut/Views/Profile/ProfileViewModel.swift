@@ -34,12 +34,11 @@ class ProfileViewModel {
         
         loadModel()
     
-        ApiService.get("persons/\(id)")
-            .start(next: { (person: Person) in
-                self.person = person
-                self.saveModel()
-                self.updateProperties()
-            })
+        ApiService.get("persons/\(id)").startWithNext { (person: Person) in
+            self.person = person
+            self.saveModel()
+            self.updateProperties()
+        }
     }
     
     func loadModel() {
@@ -60,10 +59,10 @@ class ProfileViewModel {
                     ? ApiService<EmptyResponse>.delete("persons/\(self.person.id)/follow")
                     : ApiService<EmptyResponse>.post("persons/\(self.person.id)/follow", parameters: nil)
             }
-            .on(started: {
-                self.isFollowed.value = !followedBefore
-            })
-            .start(
+            .on(
+                started: {
+                    self.isFollowed.value = !followedBefore
+                },
                 error: { _ in
                     self.isFollowed.value = followedBefore
                 },
@@ -72,6 +71,7 @@ class ProfileViewModel {
                     self.saveModel()
                 }
             )
+            .start()
     }
     
     private func updateModel() {

@@ -34,22 +34,21 @@ class EditProfileViewModel {
             updateProperties()
         }
         
-        ApiService<Person>.get("persons/me")
-            .start(next: { person in
-                self.person = person
-                self.saveModel()
-                self.updateProperties()
-            })
+        ApiService<Person>.get("persons/me").startWithNext { person in
+            self.person = person
+            self.saveModel()
+            self.updateProperties()
+        }
         
         userName.producer
             .mapError { _ in ApiError.Nil }
             .on(next: { _ in self.userNameTaken.value = false })
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
-            .start(next: { userName in
+            .startWithNext { userName in
                 // nesting needed in order to accept ApiErrors
                 ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: ["user_name": userName])
-                    .start(error: { _ in self.userNameTaken.value = true })
-            })
+                    .startWithError { _ in self.userNameTaken.value = true }
+            }
     }
     
     func updateData() -> SignalProducer<EmptyResponse, ApiError> {

@@ -208,9 +208,9 @@ class DetailsTableViewCell: UITableViewCell {
         viewModel.downloadProgress.producer
             .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)))
             .observeOn(UIScheduler())
-            .start(next: { progress in
+            .startWithNext { progress in
                 self.progressView.setProgress(progress, animated: true)
-            })
+            }
         
         avatarImageView.rac_image <~ viewModel.avatarImage
         
@@ -253,7 +253,7 @@ class DetailsTableViewCell: UITableViewCell {
         
         viewModel.isStarred.producer
             .map { $0 ? BaseColor : UIColor(0xe6e6e6) }
-            .start(next: { self.starButtonView.setTitleColor($0, forState: .Normal)})
+            .startWithNext { self.starButtonView.setTitleColor($0, forState: .Normal) }
         
         starCountView.rac_text <~ viewModel.starsCount.producer .map { "\($0) stars" }
         
@@ -267,9 +267,9 @@ class DetailsTableViewCell: UITableViewCell {
         }
         textView.handleMentionTap { userName in
             ApiService<Person>.get("persons/user-name/\(userName)")
-                .start(next: { person in
+                .startWithNext { person in
                     self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
-                })
+                }
         }
     }
     

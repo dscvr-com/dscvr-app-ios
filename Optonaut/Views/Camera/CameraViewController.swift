@@ -72,13 +72,13 @@ class CameraViewController: UIViewController {
         setupBall()
         setupSelectionPoints()
         
-        viewModel.tiltAngle.producer.start(next: { self.tiltView.angle = $0 })
-        viewModel.distXY.producer.start(next: { self.tiltView.distXY = $0 })
+        viewModel.tiltAngle.producer.startWithNext { self.tiltView.angle = $0 }
+        viewModel.distXY.producer.startWithNext { self.tiltView.distXY = $0 }
         tiltView.innerRadius = 35
         view.addSubview(tiltView)
     
-        viewModel.progress.producer.start(next: { self.progressView.progress = $0 })
-        viewModel.isRecording.producer.start(next: { self.progressView.isActive = $0 })
+        viewModel.progress.producer.startWithNext { self.progressView.progress = $0 }
+        viewModel.isRecording.producer.startWithNext { self.progressView.isActive = $0 }
         view.addSubview(progressView)
         
         instructionView.font = UIFont.robotoOfSize(22, withType: .Medium)
@@ -89,7 +89,7 @@ class CameraViewController: UIViewController {
         view.addSubview(instructionView)
         
         circleView.layer.cornerRadius = 35
-        viewModel.isRecording.producer.start(next: { self.circleView.isActive = !$0 })
+        viewModel.isRecording.producer.startWithNext { self.circleView.isActive = !$0 }
         view.addSubview(circleView)
         
         recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor.hatched : UIColor.whiteColor().hatched }
@@ -401,10 +401,7 @@ class CameraViewController: UIViewController {
             sendNext(sink, OptographAsset.RightImage(rightImageData!))
             
             if SessionService.sessionData!.debuggingEnabled {
-                self.debugHelper?.upload()
-                    .start(completed: {
-                        sendCompleted(sink)
-                    })
+                self.debugHelper?.upload().startWithCompleted { sendCompleted(sink) }
             } else {
                 sendCompleted(sink)
             }

@@ -32,12 +32,10 @@ class CreateOptographViewModel {
             .mapError { _ in ApiError.Nil }
             .map { (lat, lon) in ["latitude": lat, "longitude": lon] }
             .flatMap(.Latest) { parameters in ApiService<LocationMappable>.post("locations/lookup", parameters: parameters) }
-            .start(next: { locationData in
-                self.location.value = locationData.text
-            })
+            .startWithNext { locationData in self.location.value = locationData.text }
         
-        text.producer.start(next: { self.optograph.text = $0 })
-        location.producer.start(next: { self.optograph.location.text = $0 })
+        text.producer.startWithNext { self.optograph.text = $0 }
+        location.producer.startWithNext { self.optograph.location.text = $0 }
     }
     
     func saveAsset(asset: OptographAsset) {

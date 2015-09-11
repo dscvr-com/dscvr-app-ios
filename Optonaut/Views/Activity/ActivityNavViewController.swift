@@ -64,13 +64,12 @@ class ActivityNavViewController: NavigationController, RedNavbar {
         number.hidden = true
         tabBarController!.view.addSubview(number)
         
-        activityTableViewController.viewModel.unreadCount.producer
-            .start(next: { count in
-                let hidden = count <= 0
-                circle.hidden = hidden
-                number.hidden = hidden
-                number.text = "\(count)"
-            })
+        activityTableViewController.viewModel.unreadCount.producer.startWithNext { count in
+            let hidden = count <= 0
+            circle.hidden = hidden
+            number.hidden = hidden
+            number.text = "\(count)"
+        }
     }
     
 }

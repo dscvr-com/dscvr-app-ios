@@ -83,11 +83,10 @@ class ProfileHeaderViewController: UIViewController {
         followButtonView.layer.masksToBounds = true
         followButtonView.setTitleColor(BaseColor, forState: .Normal)
         followButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
-        viewModel.isFollowed.producer
-            .start(next: { isFollowed in
-                let title = isFollowed ? "Unfollow" : "Follow"
-                self.followButtonView.setTitle(title, forState: .Normal)
-            })
+        viewModel.isFollowed.producer.startWithNext { isFollowed in
+            let title = isFollowed ? "Unfollow" : "Follow"
+            self.followButtonView.setTitle(title, forState: .Normal)
+        }
         followButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.toggleFollow()
             return RACSignal.empty()

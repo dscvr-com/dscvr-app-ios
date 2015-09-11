@@ -93,10 +93,9 @@ class CommentTableViewCell: UITableViewCell {
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
         textView.handleMentionTap { userName in
-            ApiService<Person>.get("persons/user-name/\(userName)")
-                .start(next: { person in
-                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
-                })
+            ApiService<Person>.get("persons/user-name/\(userName)").startWithNext { person in
+                self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
+            }
         }
         
         avatarImageView.rac_image <~ viewModel.avatarImage

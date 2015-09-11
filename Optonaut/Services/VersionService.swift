@@ -26,13 +26,11 @@ class VersionService {
     }
     
     static func onOutdatedApiVersion(errorCallback: () -> ()) {
-            ApiService<EmptyResponse>.checkVersion()
-                .start(
-                    error: { error in
-                        if error.status == 404 {
-                            errorCallback()
-                        }
-                })
+        ApiService<EmptyResponse>.checkVersion().startWithError { error in
+            if error.status == 404 {
+                errorCallback()
+            }
+        }
     }
     
 }

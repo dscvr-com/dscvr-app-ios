@@ -42,7 +42,7 @@ class OptographsViewModel {
             .mapError { _ in ApiError.Nil }
             .filter { $0 }
             .flatMap(.Latest) { _ in ApiService.get("persons/\(personId)/optographs") }
-            .start(
+            .on(
                 next: processNewOptograph,
                 completed: {
                     self.resultsLoading.value = false
@@ -50,7 +50,8 @@ class OptographsViewModel {
                 error: { _ in
                     self.resultsLoading.value = false
                 }
-        )
+            )
+            .start()
         
     }
     

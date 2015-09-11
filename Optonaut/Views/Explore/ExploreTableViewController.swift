@@ -18,21 +18,23 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         
         navigationItem.title = "Explore"
         
-        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().start(next: { _ in
+        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
             self.viewModel.refreshNotificationSignal.notify()
-        })
+        }
         tableView.addSubview(refreshControl)
         
-        viewModel.results.producer.start(
-            next: { results in
-                self.items = results
-                self.tableView.reloadData()
-                self.refreshControl.endRefreshing()
-            },
-            error: { _ in
-                self.refreshControl.endRefreshing()
-            }
-        )
+        viewModel.results.producer
+            .on(
+                next: { results in
+                    self.items = results
+                    self.tableView.reloadData()
+                    self.refreshControl.endRefreshing()
+                },
+                error: { _ in
+                    self.refreshControl.endRefreshing()
+                }
+            )
+            .start()
         
         view.setNeedsUpdateConstraints()
     }

@@ -75,11 +75,11 @@ class RequestInviteViewController: UIViewController {
         submitButtonView.rac_alpha <~ viewModel.emailValid.producer.map { $0 ? 1 : 0.5 }
         submitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.requestInvite()
-                .start(
+                .on(
                     error: { _ in
-                    let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Maybe you've already requested an invite?", preferredStyle: .Alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-                        self.presentViewController(alert, animated: true, completion: nil)
+                        let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Maybe you've already requested an invite?", preferredStyle: .Alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+                            self.presentViewController(alert, animated: true, completion: nil)
                     },
                     completed: {
                         self.emailInputView.userInteractionEnabled = false
@@ -90,7 +90,8 @@ class RequestInviteViewController: UIViewController {
                         self.cancelButtonView.setTitle("Back", forState: .Normal)
                         self.descriptionView.text = "Thanks for your request. We'll be in touch soon. In order to stay up to date you can follow us on Facebook or Twitter. Cheers!"
                     }
-            )
+                )
+                .start()
             return RACSignal.empty()
         })
         formView.addSubview(submitButtonView)

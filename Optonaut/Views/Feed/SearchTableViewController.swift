@@ -24,12 +24,10 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
         
         view.addSubview(searchBar)
         
-        viewModel.results.producer.start(
-            next: { results in
-                self.items = results
-                self.tableView.reloadData()
-            }
-        )
+        viewModel.results.producer.startWithNext { results in
+            self.items = results
+            self.tableView.reloadData()
+        }
         
         view.setNeedsUpdateConstraints()
     }

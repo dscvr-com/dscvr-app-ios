@@ -34,12 +34,13 @@ class NewCommentTableViewCell: UITableViewCell {
         sendButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
         sendButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.postComment()
-                .start(
+                .on(
                     next: self.postCallback,
                     completed: {
                         self.contentView.endEditing(true)
                     }
                 )
+                .start()
             return RACSignal.empty()
         })
         contentView.addSubview(sendButtonView)
@@ -67,7 +68,7 @@ class NewCommentTableViewCell: UITableViewCell {
         viewModel = NewCommentViewModel(optographId: optographId)
         
         textInputView.rac_text <~ viewModel.text
-        textInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.text.value = $0 as! String })
+        textInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.text.value = $0 as! String }
         
         sendButtonView.rac_userInteractionEnabled <~ viewModel.isValid.producer.combineLatestWith(viewModel.isPosting.producer).map { $0 && !$1 }
         sendButtonView.rac_alpha <~ viewModel.isValid.producer.map { $0 ? 1 : 0.5 }

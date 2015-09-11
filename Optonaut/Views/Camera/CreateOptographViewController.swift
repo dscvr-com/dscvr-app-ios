@@ -85,16 +85,15 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         let spinnerView = UIActivityIndicatorView()
         let spinnerButton = UIBarButtonItem(customView: spinnerView)
         
-        viewModel.pending.producer
-            .start(next: { pending in
-                if pending {
-                    self.navigationItem.setRightBarButtonItem(spinnerButton, animated: true)
-                    spinnerView.startAnimating()
-                } else {
-                    self.navigationItem.setRightBarButtonItem(postButton, animated: true)
-                    spinnerView.stopAnimating()
-                }
-            })
+        viewModel.pending.producer.startWithNext { pending in
+            if pending {
+                self.navigationItem.setRightBarButtonItem(spinnerButton, animated: true)
+                spinnerView.startAnimating()
+            } else {
+                self.navigationItem.setRightBarButtonItem(postButton, animated: true)
+                spinnerView.stopAnimating()
+            }
+        }
         
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
@@ -113,7 +112,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         textInputView.placeholder = "Enter a description here..."
         textInputView.placeholderColor = UIColor(0xcfcfcf)
         textInputView.textColor = UIColor(0x4d4d4d)
-        textInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.text.value = $0 as! String })
+        textInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.text.value = $0 as! String }
         textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         textInputView.keyboardType = .Twitter
@@ -185,11 +184,10 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         
         Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Posting"])
         
-        viewModel.post()
-            .start(next: { optograph in
-                self.navigationController?.pushViewController(DetailsTableViewController(optographId: optograph.id), animated: false)
-                self.navigationController?.viewControllers.removeAtIndex(1)
-            })
+        viewModel.post().startWithNext { optograph in
+            self.navigationController?.pushViewController(DetailsTableViewController(optographId: optograph.id), animated: false)
+            self.navigationController?.viewControllers.removeAtIndex(1)
+        }
     }
     
     func dismissKeyboard() {

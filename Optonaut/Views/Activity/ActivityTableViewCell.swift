@@ -83,7 +83,7 @@ class ActivityTableViewCell: UITableViewCell {
         
         viewModel.isRead.producer
             .map { $0 ? UIColor.clearColor() : BaseColor.alpha(0.1) }
-            .start(next: { self.backgroundColor = $0 })
+            .startWithNext { self.backgroundColor = $0 }
         
 //        textView.rac_text <~ viewModel.activityType.producer
 //            .map { type in

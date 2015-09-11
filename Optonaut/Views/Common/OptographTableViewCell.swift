@@ -142,18 +142,16 @@ class OptographTableViewCell: UITableViewCell {
         })
         
         viewModel.isStarred.producer
-            .map { $0 ? BaseColor : UIColor(0xe6e6e6) }
-            .start(next: { self.starButtonView.setTitleColor($0, forState: .Normal)})
+            .map { $0 ? BaseColor : UIColor(0xe6e6e6) }.startWithNext { self.starButtonView.setTitleColor($0, forState: .Normal)}
         
         textView.rac_text <~ viewModel.text
         textView.handleHashtagTap { hashtag in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
         textView.handleMentionTap { userName in
-            ApiService<Person>.get("persons/user-name/\(userName)")
-                .start(next: { person in
-                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
-                })
+            ApiService<Person>.get("persons/user-name/\(userName)").startWithNext { person in
+                self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
+            }
         }
     }
     

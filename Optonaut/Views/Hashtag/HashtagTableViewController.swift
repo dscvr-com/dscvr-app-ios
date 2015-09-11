@@ -34,15 +34,10 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar, Uniqu
         
         viewModel.searchText.value = hashtag
         
-        viewModel.results.producer
-            .start(
-                next: { results in
-                    self.items = results
-                    self.tableView.reloadData()
-                },
-                error: { _ in
-                }
-        )
+        viewModel.results.producer.startWithNext { results in
+            self.items = results
+            self.tableView.reloadData()
+        }
         
         view.setNeedsUpdateConstraints()
     }

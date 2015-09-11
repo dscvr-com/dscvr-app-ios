@@ -75,7 +75,7 @@ class ForgotPasswordViewController: UIViewController {
         submitButtonView.rac_alpha <~ viewModel.emailValid.producer.map { $0 ? 1 : 0.5 }
         submitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.sendEmail()
-                .start(
+                .on(
                     error: { _ in
                         let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Please try again.", preferredStyle: .Alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
@@ -90,7 +90,8 @@ class ForgotPasswordViewController: UIViewController {
                         self.cancelButtonView.setTitle("Back", forState: .Normal)
                         self.descriptionView.text = "We sent you an email with a link to reset your password by choosing a new one."
                     }
-            )
+                )
+                .start()
             return RACSignal.empty()
         })
         formView.addSubview(submitButtonView)

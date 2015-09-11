@@ -21,9 +21,7 @@ class SearchViewModel {
             .throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
             .map(escape)
             .flatMap(.Latest) { keyword in ApiService.get("optographs/search?keyword=\(keyword)") }
-            .start(next: { optograph in
-                self.results.value.append(optograph)
-            })
+            .startWithNext { optograph in self.results.value.append(optograph) }
     }
     
     private func escape(str: String) -> String {

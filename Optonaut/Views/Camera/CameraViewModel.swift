@@ -18,15 +18,13 @@ class CameraViewModel {
     let distXY = MutableProperty<Float>(0)
     
     init() {
-        
-        isRecording.producer
-            .start(next: { isRecording in
-                if isRecording {
-                    self.instruction.value = "Follow the red dot"
-                } else {
-                    self.instruction.value = "Press the button\r\nto start recording"
-                }
-            })
+        isRecording.producer.startWithNext { isRecording in
+            if isRecording {
+                self.instruction.value = "Follow the red dot"
+            } else {
+                self.instruction.value = "Press the button\r\nto start recording"
+            }
+        }
     }
     
 }

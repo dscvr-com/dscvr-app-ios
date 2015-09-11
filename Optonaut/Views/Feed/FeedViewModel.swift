@@ -51,13 +51,13 @@ class FeedViewModel: NSObject {
                         self.newResultsAvailable.value = optograph.id != firstOptograph.id
                     }
                 })
-                .start(next: self.processNewOptograph)
+                .startWithNext(self.processNewOptograph)
         }
         
         loadMoreNotificationSignal.subscribe {
             if let oldestResult = self.results.value.last {
                 ApiService.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
-                    .start(next: self.processNewOptograph)
+                    .startWithNext(self.processNewOptograph)
             }
         }
         

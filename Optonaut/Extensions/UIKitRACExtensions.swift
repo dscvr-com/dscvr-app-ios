@@ -43,11 +43,7 @@ func lazyAssociatedProperty<T: AnyObject>(host: AnyObject, key: UnsafePointer<Vo
 func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: T -> (), getter: () -> T) -> MutableProperty<T> {
     return lazyAssociatedProperty(host, key: key) {
         let property = MutableProperty<T>(getter())
-        property.producer
-            .start(next: {
-                newValue in
-                setter(newValue)
-            })
+        property.producer.startWithNext { setter($0) }
         return property
     }
 }
@@ -113,7 +109,7 @@ extension UITextField {
             self.addTarget(self, action: "changed", forControlEvents: UIControlEvents.EditingChanged)
             
             let property = MutableProperty<String>(self.text ?? "")
-            property.producer.start(next: { self.text = $0 })
+            property.producer.startWithNext { self.text = $0 }
             return property
         }
     }
@@ -135,7 +131,7 @@ extension UITextView {
     public var rac_text: MutableProperty<String> {
         return lazyAssociatedProperty(self, key: &AssociationKey.text) {
             let property = MutableProperty<String>(self.text ?? "")
-            property.producer.start(next: { self.text = $0 })
+            property.producer.startWithNext { self.text = $0 }
             return property
         }
     }
@@ -146,14 +142,13 @@ extension UIActivityIndicatorView {
         return lazyAssociatedProperty(self, key: &AssociationKey.animating) {
             
             let property = MutableProperty<Bool>(false)
-            property.producer
-                .start(next: { animate in
-                    if animate {
-                        self.startAnimating()
-                    } else {
-                        self.stopAnimating()
-                    }
-                })
+            property.producer.startWithNext { animate in
+                if animate {
+                    self.startAnimating()
+                } else {
+                    self.stopAnimating()
+                }
+            }
             return property
         }
     }

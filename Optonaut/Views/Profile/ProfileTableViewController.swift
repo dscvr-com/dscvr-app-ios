@@ -29,10 +29,10 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.results.producer.start(next: { results in
+        viewModel.results.producer.startWithNext { results in
             self.items = results
             self.tableView.reloadData()
-        })
+        }
         
         viewModel.resultsLoading.value = true
         

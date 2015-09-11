@@ -53,7 +53,7 @@ class NotificationSignal {
     }
     
     func subscribe(fn: () -> Void) {
-        signal.observe(next: fn)
+        signal.observe { _ in fn() }
     }
     
 }

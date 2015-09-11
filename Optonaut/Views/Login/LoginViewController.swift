@@ -82,7 +82,7 @@ class LoginViewController: UIViewController {
         submitButtonView.rac_alpha <~ viewModel.allowed.producer.map { $0 ? 1 : 0.5 }
         submitButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.viewModel.login()
-                .start(
+                .on(
                     error: { _ in 
                         let alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
                         alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
@@ -90,7 +90,9 @@ class LoginViewController: UIViewController {
                     }, 
                     completed: {
                         self.presentViewController(TabBarViewController(), animated: false, completion: nil)
-                })
+                    }
+                )
+                .start()
             return RACSignal.empty()
         })
         formView.addSubview(submitButtonView)

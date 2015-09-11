@@ -16,8 +16,8 @@ enum EnvType {
     case Production
 }
 
-//let Env = EnvType.Development
-let Env = EnvType.Staging
+let Env = EnvType.Development
+//let Env = EnvType.Staging
 //let Env = EnvType.Production
 
 var S3URL: String {

@@ -40,10 +40,7 @@ class FeedNavViewController: NavigationController {
         circle.hidden = true
         tabBarController!.view.layer.addSublayer(circle)
         
-        feedTableViewController.viewModel.newResultsAvailable.producer
-            .start(next: { newAvailable in
-                circle.hidden = !newAvailable
-            })
+        feedTableViewController.viewModel.newResultsAvailable.producer.startWithNext { circle.hidden = !$0 }
     }
     
 }

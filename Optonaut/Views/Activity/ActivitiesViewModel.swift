@@ -27,13 +27,13 @@ class ActivitiesViewModel: NSObject {
 //        refreshNotificationSignal.subscribe {
 //            ApiService.get("activities")
 //                .map { Mapper<Activity>().mapArray($0)! }
-//                .start(next: self.processModel)
+//                .startWithNext(next: self.processModel)
 //        }
 //        
 //        loadMoreNotificationSignal.subscribe {
 //            ApiService.get("activities?offset=\(results.value.count)")
 //                .map { Mapper<Activity>().mapArray($0)! }
-//                .start(next: self.processModel)
+//                .startWithNext(next: self.processModel)
 //        }
         
         refreshNotificationSignal.notify()

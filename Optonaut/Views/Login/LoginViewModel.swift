@@ -22,24 +22,21 @@ class LoginViewModel {
     
     init() {
         
-        emailOrUserName.producer
-            .start(next: { str in
-                if str.rangeOfString("@") != nil {
-                    self.emailOrUserNameValid.value = isValidEmail(str)
-                } else {
-                    self.emailOrUserNameValid.value = isValidUserName(str)
-                }
-            })
+        emailOrUserName.producer.startWithNext { str in
+            if str.rangeOfString("@") != nil {
+                self.emailOrUserNameValid.value = isValidEmail(str)
+            } else {
+                self.emailOrUserNameValid.value = isValidUserName(str)
+            }
+        }
         
-        password.producer
-            .start(next: { str in
-                self.passwordValid.value = isValidPassword(str)
-            })
+        password.producer.startWithNext { str in
+            self.passwordValid.value = isValidPassword(str)
+        }
         
-        combineLatest([emailOrUserNameValid.producer, passwordValid.producer])
-            .start(next: { bools in
-                self.allowed.value = bools.reduce(true) { $0 && $1 }
-            })
+        combineLatest([emailOrUserNameValid.producer, passwordValid.producer]).startWithNext { bools in
+            self.allowed.value = bools.reduce(true) { $0 && $1 }
+        }
     }
     
     func login() -> SignalProducer<Void, ApiError> {

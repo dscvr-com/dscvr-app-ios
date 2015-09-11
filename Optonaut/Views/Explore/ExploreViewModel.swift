@@ -23,6 +23,7 @@ class ExploreViewModel {
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
+            .filter(OptographTable[OptographSchema.isStaffPick])
         
         let optographs = DatabaseManager.defaultConnection.prepare(query).map { row -> Optograph in
             let person = Person.fromSQL(row)
@@ -39,13 +40,13 @@ class ExploreViewModel {
         
         refreshNotificationSignal.subscribe {
             ApiService<Optograph>.get("optographs")
-                .start(next: self.processNewOptograph)
+                .startWithNext(self.processNewOptograph)
         }
         
         loadMoreNotificationSignal.subscribe {
             if let oldestResult = self.results.value.last {
                 ApiService.get("optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
-                    .start(next: self.processNewOptograph)
+                    .startWithNext(self.processNewOptograph)
             }
         }
         

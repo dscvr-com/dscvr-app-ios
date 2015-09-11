@@ -58,12 +58,11 @@ class DetailsViewModel {
         updateProperties()
         
         if !optograph.isPublished {
-            ApiService.get("optographs/\(optographId)")
-                .start(next: { (optograph: Optograph) in
-                    self.optograph = optograph
-                    self.saveModel()
-                    self.updateProperties()
-                })
+            ApiService<Optograph>.get("optographs/\(optographId)").startWithNext { optograph in
+                self.optograph = optograph
+                self.saveModel()
+                self.updateProperties()
+            }
         }
         
         let commentQuery = CommentTable
@@ -82,15 +81,14 @@ class DetailsViewModel {
             }
             .forEach(insertNewComment)
         
-        ApiService<Comment>.get("optographs/\(optographId)/comments")
-            .start(next: { (var comment) in
-                self.insertNewComment(comment)
-                
-                comment.optograph.id = optographId
-                
-                try! comment.insertOrReplace()
-                try! comment.person.insertOrReplace()
-            })
+        ApiService<Comment>.get("optographs/\(optographId)/comments").startWithNext { (var comment) in
+            self.insertNewComment(comment)
+            
+            comment.optograph.id = optographId
+            
+            try! comment.insertOrReplace()
+            try! comment.person.insertOrReplace()
+        }
     }
     
     func toggleLike() {
@@ -121,12 +119,11 @@ class DetailsViewModel {
     }
     
     func increaseViewsCount() {
-        ApiService<EmptyResponse>.post("optographs/\(optograph.id)/views", parameters: nil)
-            .start(completed: {
-                self.viewsCount.value++
-                self.updateModel()
-                self.saveModel()
-            })
+        ApiService<EmptyResponse>.post("optographs/\(optograph.id)/views", parameters: nil).startWithCompleted {
+            self.viewsCount.value++
+            self.updateModel()
+            self.saveModel()
+        }
     }
     
     func publish() {
@@ -134,13 +131,13 @@ class DetailsViewModel {
         
         optograph.publish()
             .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
-            .start(completed: {
+            .startWithCompleted {
                 self.isPublished.value = true
                 self.updateModel()
                 self.saveModel()
                 
                 self.isPublishing.value = false
-            })
+            }
     }
     
     func insertNewComment(comment: Comment) {

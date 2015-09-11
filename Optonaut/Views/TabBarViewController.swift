@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 import SQLite
-import Crashlytics
 
 class TabBarViewController: UITabBarController {
     

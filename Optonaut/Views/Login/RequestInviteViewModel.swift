@@ -16,10 +16,9 @@ class RequestInviteViewModel {
     let pending = MutableProperty<Bool>(false)
     
     init() {
-        email.producer
-            .start(next: { str in
-                self.emailValid.value = isValidEmail(str)
-            })
+        email.producer.startWithNext { str in
+            self.emailValid.value = isValidEmail(str)
+        }
     }
     
     func requestInvite() -> SignalProducer<EmptyResponse, ApiError> {

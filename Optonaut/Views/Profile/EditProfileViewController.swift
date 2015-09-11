@@ -79,7 +79,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         fullNameInputView.textColor = UIColor(0x4d4d4d)
         fullNameInputView.autocorrectionType = .No
         fullNameInputView.rac_text <~ viewModel.fullName
-        fullNameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.fullName.value = $0 as! String })
+        fullNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.fullName.value = $0 as! String }
         view.addSubview(fullNameInputView)
         
         userNameIconView.font = .icomoonOfSize(20)
@@ -92,7 +92,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         userNameInputView.autocorrectionType = .No
         userNameInputView.autocapitalizationType = .None
         userNameInputView.rac_text <~ viewModel.userName
-        userNameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.userName.value = $0 as! String })
+        userNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.userName.value = $0 as! String }
         
         view.addSubview(userNameInputView)
         
@@ -111,7 +111,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         textInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
         textInputView.textColor = UIColor(0x4d4d4d)
         textInputView.rac_text <~ viewModel.text
-        textInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.text.value = $0 as! String })
+        textInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.text.value = $0 as! String }
         textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         view.addSubview(textInputView)
@@ -324,7 +324,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     
     func save() {
         viewModel.updateData()
-            .start(
+            .on(
                 error: { _ in
                     NotificationService.push("Profile information invalid.", level: .Error)
                 },
@@ -332,7 +332,8 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
                     self.navigationController?.popViewControllerAnimated(false)
                     NotificationService.push("Profile information updated.", level: .Success)
                 }
-        )
+            )
+            .start()
     }
     
     func showPasswordAlert() {
@@ -360,12 +361,9 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
             let newPasswordtextField = newPasswordAlert.textFields![0] as UITextField
             let oldPassword = oldPasswordtextField.text!
             let newPassword = newPasswordtextField.text!
-            self.viewModel.updatePassword(oldPassword, newPassword: newPassword)
-                .start(
-                    completed: {
-                        NotificationService.push("Password changed successfully.", level: .Success)
-                    }
-            )
+            self.viewModel.updatePassword(oldPassword, newPassword: newPassword).startWithCompleted {
+                NotificationService.push("Password changed successfully.", level: .Success)
+            }
         }))
         
         newPasswordAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
@@ -385,14 +383,15 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
             let textField = alert.textFields![0] as UITextField
             let email = textField.text!
             self.viewModel.updateEmail(email)
-                .start(
+                .on(
                     error: { _ in
                         NotificationService.push("Email address already taken. Please try another one.", level: .Error)
                     },
                     completed: {
                         NotificationService.push("Please check your inbox and confirm your new address.", level: .Success)
                     }
-            )
+                )
+                .start()
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
@@ -421,10 +420,9 @@ extension EditProfileViewController: UIImagePickerControllerDelegate {
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)
     
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
-        viewModel.updateAvatar(image)
-            .start(completed: {
-                NotificationService.push("Profile image updated", level: .Success)
-            })
+        viewModel.updateAvatar(image).startWithCompleted {
+            NotificationService.push("Profile image updated", level: .Success)
+        }
     }
     
 }

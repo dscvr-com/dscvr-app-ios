@@ -32,6 +32,7 @@ struct Optograph: Model {
     var previewAssetId: UUID
     var leftTextureAssetId: UUID
     var rightTextureAssetId: UUID
+    var isStaffPick: Bool
     
     static func newInstance() -> Optograph {
         return Optograph(
@@ -47,7 +48,8 @@ struct Optograph: Model {
             isPublished: false,
             previewAssetId: uuid(),
             leftTextureAssetId: uuid(),
-            rightTextureAssetId: uuid()
+            rightTextureAssetId: uuid(),
+            isStaffPick: false
         )
     }
     
@@ -104,6 +106,7 @@ extension Optograph: Mappable {
         previewAssetId      <- map["preview_asset_id"]
         leftTextureAssetId  <- map["left_texture_asset_id"]
         rightTextureAssetId <- map["right_texture_asset_id"]
+        isStaffPick         <- map["is_staff_pick"]
     }
     
 }
@@ -124,7 +127,8 @@ extension Optograph: SQLiteModel {
             isPublished: row[OptographSchema.isPublished],
             previewAssetId: row[OptographSchema.previewAssetId],
             leftTextureAssetId: row[OptographSchema.leftTextureAssetId],
-            rightTextureAssetId: row[OptographSchema.rightTextureAssetId]
+            rightTextureAssetId: row[OptographSchema.rightTextureAssetId],
+            isStaffPick: row[OptographSchema.isStaffPick]
         )
     }
     
@@ -142,7 +146,8 @@ extension Optograph: SQLiteModel {
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.previewAssetId <-- previewAssetId,
             OptographSchema.leftTextureAssetId <-- leftTextureAssetId,
-            OptographSchema.rightTextureAssetId <-- rightTextureAssetId
+            OptographSchema.rightTextureAssetId <-- rightTextureAssetId,
+            OptographSchema.isStaffPick <-- isStaffPick,
         ]
     }
     
