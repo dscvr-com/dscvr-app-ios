@@ -134,6 +134,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
             })
             .start()
         
+        // TODO make signalproducer to optional -> set to nil
+        
         view.setNeedsUpdateConstraints()
     }
     

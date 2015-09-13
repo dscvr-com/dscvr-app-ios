@@ -20,6 +20,7 @@ class ProfileContainerViewController: UIViewController, UniqueView {
     required init(personId: UUID) {
         uniqueIdentifier = "profile-\(personId)"
         
+        // TODO remove viewcontroller
         tableViewController = ProfileTableViewController(personId: personId)
         tableView = tableViewController.view
         

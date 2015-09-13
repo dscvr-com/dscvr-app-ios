@@ -20,6 +20,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
             self.viewModel.refreshNotificationSignal.notify()
+            NSTimer.after(10.seconds) { self.refreshControl.endRefreshing() }
         }
         tableView.addSubview(refreshControl)
         

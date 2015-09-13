@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import Async
 
 class FeedTableViewController: OptographTableViewController, RedNavbar {
     
@@ -32,8 +33,9 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         searchButton.action = "pushSearch"
         navigationItem.setLeftBarButtonItem(searchButton, animated: false)
         
-        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().start { _ in
+        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
             self.viewModel.refreshNotificationSignal.notify()
+            Async.main(after: 10) { self.refreshControl.endRefreshing() }
         }
         tableView.addSubview(refreshControl)
         

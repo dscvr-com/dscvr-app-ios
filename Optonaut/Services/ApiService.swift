@@ -37,16 +37,8 @@ class ApiService<T: Mappable> {
     private static var host: String {
         switch Env {
         case .Development: return "optonaut.ngrok.io"
-        case .Staging: return "beta.api-0-2.optonaut.co"
-        case .Production: return "api-0-2.optonaut.co"
-        }
-    }
-    
-    private static var port: Int {
-        switch Env {
-        case .Development: return 80
-        case .Staging: return 80
-        case .Production: return 80
+        case .Staging: return "api-v4-staging.optonaut.co"
+        case .Production: return "api-v4.optonaut.co"
         }
     }
     
@@ -113,7 +105,7 @@ class ApiService<T: Mappable> {
             }
         }
         
-        let URL = NSURL(string: "http://\(host):\(port)/\(endpoint)\(queryStr)")!
+        let URL = NSURL(string: "https://\(host)/\(endpoint)\(queryStr)")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
