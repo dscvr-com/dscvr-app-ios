@@ -19,6 +19,11 @@ enum LoginIdentifier {
 struct SessionData {
     let id: UUID
     let token: String
+    var password: String {
+        willSet {
+            NSUserDefaults.standardUserDefaults().setObject(password, forKey: "session_person_password")
+        }
+    }
     var debuggingEnabled: Bool {
         willSet {
             NSUserDefaults.standardUserDefaults().setBool(debuggingEnabled, forKey: "session_person_debugging_enabled")
@@ -33,10 +38,12 @@ class SessionService {
             if let newValue = newValue {
                 NSUserDefaults.standardUserDefaults().setObject(newValue.id, forKey: "session_person_id")
                 NSUserDefaults.standardUserDefaults().setObject(newValue.token, forKey: "session_person_token")
+                NSUserDefaults.standardUserDefaults().setObject(newValue.password, forKey: "session_person_password")
                 NSUserDefaults.standardUserDefaults().setBool(newValue.debuggingEnabled, forKey: "session_person_debugging_enabled")
             } else {
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_id")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_token")
+                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_password")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_debugging_enabled")
             }
         }
@@ -51,9 +58,10 @@ class SessionService {
     static func prepare() {
         let id = NSUserDefaults.standardUserDefaults().objectForKey("session_person_id") as? UUID
         let token = NSUserDefaults.standardUserDefaults().objectForKey("session_person_token") as? String
+        let password = NSUserDefaults.standardUserDefaults().objectForKey("session_person_password") as? String
         let debuggingEnabled = NSUserDefaults.standardUserDefaults().boolForKey("session_person_debugging_enabled")
-        if let id = id, token = token {
-            sessionData = SessionData(id: id, token: token, debuggingEnabled: debuggingEnabled)
+        if let id = id, token = token, password = password {
+            sessionData = SessionData(id: id, token: token, password: password, debuggingEnabled: debuggingEnabled)
         } else {
             return
         }
@@ -76,7 +84,7 @@ class SessionService {
         
         return ApiService<LoginMappable>.post("persons/login", parameters: parameters)
             .on(next: { loginData in
-                sessionData = SessionData(id: loginData.id, token: loginData.token, debuggingEnabled: false)
+                sessionData = SessionData(id: loginData.id, token: loginData.token, password: password, debuggingEnabled: false)
             })
             .flatMap(.Latest) { _ in SignalProducer.empty }
     }

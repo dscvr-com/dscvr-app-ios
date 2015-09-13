@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Async
 
 class ExploreTableViewController: OptographTableViewController, RedNavbar {
     
@@ -20,7 +21,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
             self.viewModel.refreshNotificationSignal.notify()
-            NSTimer.after(10.seconds) { self.refreshControl.endRefreshing() }
+            Async.main(after: 10) { self.refreshControl.endRefreshing() }
         }
         tableView.addSubview(refreshControl)
         
