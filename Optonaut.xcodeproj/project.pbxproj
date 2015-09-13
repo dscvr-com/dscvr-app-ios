@@ -26,7 +26,6 @@
 		8F86D4F51B9B1EC4009F91EB /* PermissionScope.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */; };
 		8F86D4F71B9B9664009F91EB /* PureLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F61B9B9664009F91EB /* PureLayout.framework */; };
 		8F900B401B839D0C0085566C /* CommentTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3C1B839D0C0085566C /* CommentTable.swift */; };
-		8F900B411B839D0C0085566C /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3D1B839D0C0085566C /* DatabaseManager.swift */; };
 		8F900B421B839D0C0085566C /* OptographTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3E1B839D0C0085566C /* OptographTable.swift */; };
 		8F900B431B839D0C0085566C /* PersonTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B3F1B839D0C0085566C /* PersonTable.swift */; };
 		8F900B451B839D7A0085566C /* LocationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B441B839D7A0085566C /* LocationTable.swift */; };
@@ -114,6 +113,7 @@
 		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
 		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
 		8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */; };
+		8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEA6F201BA5969700153677 /* DatabaseService.swift */; settings = {ASSET_TAGS = (); }; };
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
 		A571CC611B91D7B400124FD2 /* pipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A571CC5F1B91D7B400124FD2 /* pipeline.cpp */; };
@@ -158,7 +158,6 @@
 		8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PermissionScope.framework; path = Carthage/Build/iOS/PermissionScope.framework; sourceTree = "<group>"; };
 		8F86D4F61B9B9664009F91EB /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/iOS/PureLayout.framework; sourceTree = "<group>"; };
 		8F900B3C1B839D0C0085566C /* CommentTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTable.swift; sourceTree = "<group>"; };
-		8F900B3D1B839D0C0085566C /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		8F900B3E1B839D0C0085566C /* OptographTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTable.swift; sourceTree = "<group>"; };
 		8F900B3F1B839D0C0085566C /* PersonTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonTable.swift; sourceTree = "<group>"; };
 		8F900B441B839D7A0085566C /* LocationTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTable.swift; sourceTree = "<group>"; };
@@ -251,6 +250,7 @@
 		8FCCA0461B3806040091F1B1 /* OptonautTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptonautTests.swift; sourceTree = "<group>"; };
 		8FCCA0511B3806680091F1B1 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
+		8FEA6F201BA5969700153677 /* DatabaseService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		A571CC5F1B91D7B400124FD2 /* pipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pipeline.cpp; sourceTree = "<group>"; };
 		A59923E71B8520B5000773D7 /* imageResizer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = imageResizer.hpp; sourceTree = "<group>"; };
@@ -360,7 +360,6 @@
 			isa = PBXGroup;
 			children = (
 				8F900B3C1B839D0C0085566C /* CommentTable.swift */,
-				8F900B3D1B839D0C0085566C /* DatabaseManager.swift */,
 				8F900B441B839D7A0085566C /* LocationTable.swift */,
 				8F900B3E1B839D0C0085566C /* OptographTable.swift */,
 				8F900B3F1B839D0C0085566C /* PersonTable.swift */,
@@ -569,6 +568,7 @@
 			children = (
 				8FAB9F851B8F047700B4C8CB /* ApiService.swift */,
 				8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */,
+				8FEA6F201BA5969700153677 /* DatabaseService.swift */,
 				8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */,
 				8FB3B7411B8E3D7900656D99 /* LocationService.swift */,
 				8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */,
@@ -860,6 +860,7 @@
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */,
 				8FAB9F561B8F01DF00B4C8CB /* ProfileHeaderViewController.swift in Sources */,
+				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,
 				8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */,
 				8FAB9F4A1B8F01DF00B4C8CB /* SearchViewModel.swift in Sources */,
@@ -886,7 +887,6 @@
 				8FAB9F861B8F047700B4C8CB /* ApiService.swift in Sources */,
 				8FAB9F2D1B8F01DF00B4C8CB /* ActivityViewModel.swift in Sources */,
 				8FAB9F581B8F01DF00B4C8CB /* ProfileTableViewController.swift in Sources */,
-				8F900B411B839D0C0085566C /* DatabaseManager.swift in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
 				8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */,
 				8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */,

@@ -25,7 +25,7 @@ class OptographsViewModel {
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(PersonTable[PersonSchema.id] == personId)
         
-        let optographs = DatabaseManager.defaultConnection.prepare(query).map { row -> Optograph in
+        let optographs = DatabaseService.defaultConnection.prepare(query).map { row -> Optograph in
             let person = Person.fromSQL(row)
             let location = Location.fromSQL(row)
             var optograph = Optograph.fromSQL(row)

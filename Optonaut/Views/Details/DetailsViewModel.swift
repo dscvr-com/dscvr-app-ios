@@ -41,7 +41,7 @@ class DetailsViewModel {
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(OptographTable[OptographSchema.id] == optographId)
         
-        guard let optograph = DatabaseManager.defaultConnection.pluck(query).map({ row -> Optograph in
+        guard let optograph = DatabaseService.defaultConnection.pluck(query).map({ row -> Optograph in
             let person = Person.fromSQL(row)
             let location = Location.fromSQL(row)
             var optograph = Optograph.fromSQL(row)
@@ -70,7 +70,7 @@ class DetailsViewModel {
             .join(PersonTable, on: CommentTable[CommentSchema.personId] == PersonTable[PersonSchema.id])
             .filter(CommentTable[CommentSchema.optographId] == optographId)
         
-        DatabaseManager.defaultConnection.prepare(commentQuery)
+        DatabaseService.defaultConnection.prepare(commentQuery)
             .map { row -> Comment in
                 let person = Person.fromSQL(row)
                 var comment = Comment.fromSQL(row)

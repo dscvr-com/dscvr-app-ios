@@ -95,7 +95,7 @@ extension Person: SQLiteModel {
     }
     
     func insertOrReplace() throws {
-        try DatabaseManager.defaultConnection.run(PersonTable.insert(or: .Replace, toSQL()))
+        try DatabaseService.defaultConnection.run(PersonTable.insert(or: .Replace, toSQL()))
     }
     
 }

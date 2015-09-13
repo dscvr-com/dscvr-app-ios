@@ -67,15 +67,3 @@ class LoginViewModel {
     }
     
 }
-
-private struct LoginMappable: Mappable {
-    var token: String = ""
-    var id: UUID = ""
-    
-    init?(_ map: Map) {}
-    
-    mutating func mapping(map: Map) {
-        token   <- map["token"]
-        id      <- map["id"]
-    }
-}

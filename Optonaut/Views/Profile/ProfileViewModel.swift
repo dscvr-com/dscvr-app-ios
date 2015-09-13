@@ -44,7 +44,7 @@ class ProfileViewModel {
     func loadModel() {
         let query = PersonTable.filter(PersonTable[PersonSchema.id] == person.id)
         
-        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
+        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
             self.person = person
             updateProperties()
         }

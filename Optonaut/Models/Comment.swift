@@ -67,7 +67,7 @@ extension Comment: SQLiteModel {
     }
     
     func insertOrReplace() throws {
-        try DatabaseManager.defaultConnection.run(CommentTable.insert(or: .Replace, toSQL()))
+        try DatabaseService.defaultConnection.run(CommentTable.insert(or: .Replace, toSQL()))
     }
     
 }

@@ -30,7 +30,7 @@ class FeedViewModel: NSObject {
             .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
 //            .order(CommentSchema.createdAt.asc)
         
-        let optographs = DatabaseManager.defaultConnection.prepare(query).map { row -> Optograph in
+        let optographs = DatabaseService.defaultConnection.prepare(query).map { row -> Optograph in
             let person = Person.fromSQL(row)
             let location = Location.fromSQL(row)
             var optograph = Optograph.fromSQL(row)

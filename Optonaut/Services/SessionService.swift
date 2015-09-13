@@ -18,7 +18,11 @@ enum LoginIdentifier {
 
 struct SessionData {
     let id: UUID
-    let token: String
+    var token: String {
+        willSet {
+            NSUserDefaults.standardUserDefaults().setObject(token, forKey: "session_person_token")
+        }
+    }
     var password: String {
         willSet {
             NSUserDefaults.standardUserDefaults().setObject(password, forKey: "session_person_password")
@@ -56,6 +60,7 @@ class SessionService {
     private static var logoutCallbacks: [(performAlways: Bool, fn: () -> ())] = []
     
     static func prepare() {
+        
         let id = NSUserDefaults.standardUserDefaults().objectForKey("session_person_id") as? UUID
         let token = NSUserDefaults.standardUserDefaults().objectForKey("session_person_token") as? String
         let password = NSUserDefaults.standardUserDefaults().objectForKey("session_person_password") as? String
@@ -67,7 +72,7 @@ class SessionService {
         }
         
         let query = PersonTable.filter(PersonTable[PersonSchema.id] ==- SessionService.sessionData!.id)
-        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
+        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
             Crashlytics.sharedInstance().setUserIdentifier(person.id)
             Crashlytics.sharedInstance().setUserEmail(person.email)
             Crashlytics.sharedInstance().setUserName(person.userName)
@@ -103,7 +108,7 @@ class SessionService {
     
 }
 
-private struct LoginMappable: Mappable {
+struct LoginMappable: Mappable {
     var token: String = ""
     var id: UUID = ""
     

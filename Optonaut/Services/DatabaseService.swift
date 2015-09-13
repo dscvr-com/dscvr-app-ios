@@ -1,5 +1,5 @@
 //
-//  CoreData.swift
+//  DatabaseService.swift
 //  Optonaut
 //
 //  Created by Johannes Schickling on 8/15/15.
@@ -28,7 +28,7 @@ extension NSDate {
     }
 }
 
-class DatabaseManager {
+class DatabaseService {
     
     static var defaultConnection: Connection!
     

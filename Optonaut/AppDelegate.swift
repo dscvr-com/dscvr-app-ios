@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Fabric.with([Crashlytics.self()])
         
-        try! DatabaseManager.prepare()
+        try! DatabaseService.prepare()
         
         setupAppearanceDefaults()
         

@@ -346,7 +346,14 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         }
         
         oldPasswordAlert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { _ in
-            self.presentViewController(newPasswordAlert, animated: true, completion: nil)
+            let oldPasswordtextField = oldPasswordAlert.textFields![0] as UITextField
+            if oldPasswordtextField.text == SessionService.sessionData?.password {
+                self.presentViewController(newPasswordAlert, animated: true, completion: nil)
+            } else {
+                oldPasswordAlert.message = "Your current password was wrong. Please try again."
+                oldPasswordtextField.text = ""
+                self.presentViewController(oldPasswordAlert, animated: true, completion: nil)
+            }
         }))
         
         oldPasswordAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))

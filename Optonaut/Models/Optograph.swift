@@ -74,7 +74,7 @@ struct Optograph: Model {
             .on(completed: {
                 self.isPublished = true
                 
-                try! DatabaseManager.defaultConnection.run(
+                try! DatabaseService.defaultConnection.run(
                     OptographTable.filter(OptographSchema.id ==- self.id).update(
                         OptographSchema.isPublished <-- self.isPublished
                     )
@@ -152,7 +152,7 @@ extension Optograph: SQLiteModel {
     }
     
     func insertOrReplace() throws {
-        try DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, toSQL()))
+        try DatabaseService.defaultConnection.run(OptographTable.insert(or: .Replace, toSQL()))
     }
     
 }

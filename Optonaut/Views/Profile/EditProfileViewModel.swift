@@ -28,7 +28,7 @@ class EditProfileViewModel {
         
         let query = PersonTable.filter(PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
         
-        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
+        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
             self.person = person
             saveModel()
             updateProperties()
@@ -83,8 +83,12 @@ class EditProfileViewModel {
             })
     }
     
-    func updatePassword(currentPassword: String, newPassword: String) -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.post("persons/me/change-password", parameters: ["current": currentPassword, "new": newPassword])
+    func updatePassword(currentPassword: String, newPassword: String) -> SignalProducer<LoginMappable, ApiError> {
+        return ApiService<LoginMappable>.post("persons/me/change-password", parameters: ["current": currentPassword, "new": newPassword])
+            .on(next: { loginData in
+                SessionService.sessionData?.token = loginData.token
+                SessionService.sessionData?.password = newPassword
+            })
     }
     
     func updateEmail(email: String) -> SignalProducer<EmptyResponse, ApiError> {
