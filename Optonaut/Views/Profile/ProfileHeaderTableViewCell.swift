@@ -13,6 +13,8 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     
     weak var navigationController: NavigationController?
     
+    var viewModel: ProfileViewModel!
+    
     // subviews
     private let avatarBackgroundImageView = UIImageView()
     private let avatarBackgroundBlurView: UIVisualEffectView = {
@@ -24,7 +26,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     private let userNameView = UILabel()
     private let textView = UILabel()
     private let followButtonView = UIButton()
-    private let logoutButtonView = UIButton()
+    private let settingsButtonView = UIButton()
     private let editProfileButtonView = UIButton()
     private let followersHeadingView = UILabel()
     private let followersCountView = UILabel()
@@ -35,7 +37,6 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-//        avatarBackgroundBlurView.backgroundColor = .blackColor()
         avatarBackgroundImageView.addSubview(avatarBackgroundBlurView)
         avatarBackgroundImageView.clipsToBounds = true
         avatarBackgroundImageView.contentMode = .ScaleAspectFill
@@ -68,15 +69,15 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         followButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
         contentView.addSubview(followButtonView)
         
-        logoutButtonView.backgroundColor = .whiteColor()
-        logoutButtonView.layer.borderWidth = 1
-        logoutButtonView.layer.borderColor = BaseColor.CGColor
-        logoutButtonView.layer.cornerRadius = 5
-        logoutButtonView.layer.masksToBounds = true
-        logoutButtonView.setTitle(String.icomoonWithName(.LogOut), forState: .Normal)
-        logoutButtonView.setTitleColor(BaseColor, forState: .Normal)
-        logoutButtonView.titleLabel?.font = .icomoonOfSize(16)
-        contentView.addSubview(logoutButtonView)
+        settingsButtonView.backgroundColor = .whiteColor()
+        settingsButtonView.layer.borderWidth = 1
+        settingsButtonView.layer.borderColor = BaseColor.CGColor
+        settingsButtonView.layer.cornerRadius = 5
+        settingsButtonView.layer.masksToBounds = true
+        settingsButtonView.setTitle(String.icomoonWithName(.Cog), forState: .Normal)
+        settingsButtonView.setTitleColor(BaseColor, forState: .Normal)
+        settingsButtonView.titleLabel?.font = .icomoonOfSize(16)
+        contentView.addSubview(settingsButtonView)
         
         editProfileButtonView.backgroundColor = .whiteColor()
         editProfileButtonView.layer.borderWidth = 1
@@ -140,12 +141,12 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         followButtonView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
         followButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
         
-        logoutButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        logoutButtonView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
-        logoutButtonView.autoSetDimensionsToSize(CGSize(width: 40, height: 31))
+        settingsButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
+        settingsButtonView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
+        settingsButtonView.autoSetDimensionsToSize(CGSize(width: 40, height: 31))
         
         editProfileButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        editProfileButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: logoutButtonView, withOffset: -3)
+        editProfileButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: settingsButtonView, withOffset: -3)
         editProfileButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 31))
         
         followersHeadingView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
@@ -169,8 +170,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     }
     
     func bindViewModel(personId: UUID) {
-        let viewModel = ProfileViewModel(id: personId)
-        viewModel.reloadModel()
+        viewModel = ProfileViewModel(id: personId)
         
         let isMe = SessionService.sessionData!.id == personId
         
@@ -189,16 +189,16 @@ class ProfileHeaderTableViewCell: UITableViewCell {
             self.followButtonView.setTitle(title, forState: .Normal)
         }
         followButtonView.rac_command = RACCommand(signalBlock: { _ in
-            viewModel.toggleFollow()
+            self.viewModel.toggleFollow()
             return RACSignal.empty()
         })
         followButtonView.hidden = isMe
         
-        logoutButtonView.rac_command = RACCommand(signalBlock: { _ in
+        settingsButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.logout()
             return RACSignal.empty()
         })
-        logoutButtonView.hidden = !isMe
+        settingsButtonView.hidden = !isMe
         
         editProfileButtonView.rac_command = RACCommand(signalBlock: { _ in
             self.editProfile()
@@ -216,15 +216,15 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     }
     
     private func logout() {
-        let refreshAlert = UIAlertController(title: "You're about to log out...", message: "Really? Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
+        let settingsAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         
-        refreshAlert.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { (action: UIAlertAction!) in
+        settingsAlert.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
             SessionService.logout()
         }))
         
-        refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        settingsAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
         
-        navigationController?.presentViewController(refreshAlert, animated: true, completion: nil)
+        navigationController?.presentViewController(settingsAlert, animated: true, completion: nil)
     }
     
 }

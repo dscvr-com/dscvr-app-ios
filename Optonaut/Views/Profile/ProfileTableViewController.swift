@@ -15,6 +15,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     
     // subviews
     private let blankHeaderView = UIView()
+    private var headerTableViewCell: ProfileHeaderTableViewCell!
     
     let uniqueIdentifier: String
     
@@ -33,6 +34,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         super.viewDidLoad()
         
         tableView.registerClass(ProfileHeaderTableViewCell.self, forCellReuseIdentifier: "profile-header-cell")
+        tableView.bounces = false
         
         viewModel.results.producer.startWithNext { results in
             self.items = results
@@ -56,6 +58,12 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         updateNavbarAppear()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        headerTableViewCell.viewModel.reloadModel()
+    }
+    
     override func updateViewConstraints() {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
@@ -73,6 +81,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("profile-header-cell") as! ProfileHeaderTableViewCell
+            headerTableViewCell = cell
             cell.navigationController = navigationController as? NavigationController
             cell.bindViewModel(personId)
             return cell
