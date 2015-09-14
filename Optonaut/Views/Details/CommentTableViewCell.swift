@@ -94,7 +94,7 @@ class CommentTableViewCell: UITableViewCell {
         }
         textView.handleMentionTap { userName in
             ApiService<Person>.get("persons/user-name/\(userName)").startWithNext { person in
-                self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
+                self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
             }
         }
         
@@ -105,7 +105,7 @@ class CommentTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        navigationController?.pushViewController(ProfileContainerViewController(personId: viewModel.personId.value), animated: true)
+        navigationController?.pushViewController(ProfileTableViewController(personId: viewModel.personId.value), animated: true)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

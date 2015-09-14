@@ -9,72 +9,55 @@
 import UIKit
 import ReactiveCocoa
 
-class ProfileHeaderViewController: UIViewController {
+class ProfileHeaderTableViewCell: UITableViewCell {
     
-    let viewModel: ProfileViewModel
-    
-    let isMe: Bool
+    weak var navigationController: NavigationController?
     
     // subviews
-    let avatarBackgroundImageView = UIImageView()
-    var avatarBackgroundBlurView: UIVisualEffectView!
-    let avatarImageView = UIImageView()
-    let fullNameView = UILabel()
-    let userNameView = UILabel()
-    let textView = UILabel()
-    let followButtonView = UIButton()
-    let logoutButtonView = UIButton()
-    let editProfileButtonView = UIButton()
-    let followersHeadingView = UILabel()
-    let followersCountView = UILabel()
-    let verticalLineView = UIView()
-    let followedHeadingView = UILabel()
-    let followedCountView = UILabel()
-    
-    required init(personId: UUID) {
-        viewModel = ProfileViewModel(id: personId)
-        isMe = SessionService.sessionData!.id == personId
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        view.backgroundColor = .whiteColor()
-        
+    private let avatarBackgroundImageView = UIImageView()
+    private let avatarBackgroundBlurView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .Dark)
-        avatarBackgroundBlurView = UIVisualEffectView(effect: blurEffect)
+        return UIVisualEffectView(effect: blurEffect)
+    }()
+    private let avatarImageView = UIImageView()
+    private let fullNameView = UILabel()
+    private let userNameView = UILabel()
+    private let textView = UILabel()
+    private let followButtonView = UIButton()
+    private let logoutButtonView = UIButton()
+    private let editProfileButtonView = UIButton()
+    private let followersHeadingView = UILabel()
+    private let followersCountView = UILabel()
+    private let verticalLineView = UIView()
+    private let followedHeadingView = UILabel()
+    private let followedCountView = UILabel()
+    
+    required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+//        avatarBackgroundBlurView.backgroundColor = .blackColor()
         avatarBackgroundImageView.addSubview(avatarBackgroundBlurView)
         avatarBackgroundImageView.clipsToBounds = true
-        avatarBackgroundImageView.contentMode = UIViewContentMode.ScaleAspectFill
-        avatarBackgroundImageView.rac_image <~ viewModel.avatarImage
-        view.addSubview(avatarBackgroundImageView)
+        avatarBackgroundImageView.contentMode = .ScaleAspectFill
+        contentView.addSubview(avatarBackgroundImageView)
         
         avatarImageView.layer.cornerRadius = 42
         avatarImageView.clipsToBounds = true
-        avatarImageView.rac_image <~ viewModel.avatarImage
-        view.addSubview(avatarImageView)
+        contentView.addSubview(avatarImageView)
         
         fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
         fullNameView.textColor = .whiteColor()
-        fullNameView.rac_text <~ viewModel.fullName
-        view.addSubview(fullNameView)
+        contentView.addSubview(fullNameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = .whiteColor()
-        userNameView.rac_text <~ viewModel.userName.producer .map { "@\($0)" }
-        view.addSubview(userNameView)
+        contentView.addSubview(userNameView)
         
         textView.numberOfLines = 2
         textView.textAlignment = .Center
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
         textView.textColor = .whiteColor()
-        textView.rac_text <~ viewModel.text
-        view.addSubview(textView)
+        contentView.addSubview(textView)
         
         followButtonView.backgroundColor = .whiteColor()
         followButtonView.layer.borderWidth = 1
@@ -83,16 +66,7 @@ class ProfileHeaderViewController: UIViewController {
         followButtonView.layer.masksToBounds = true
         followButtonView.setTitleColor(BaseColor, forState: .Normal)
         followButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
-        viewModel.isFollowed.producer.startWithNext { isFollowed in
-            let title = isFollowed ? "Unfollow" : "Follow"
-            self.followButtonView.setTitle(title, forState: .Normal)
-        }
-        followButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.toggleFollow()
-            return RACSignal.empty()
-        })
-        followButtonView.hidden = isMe
-        view.addSubview(followButtonView)
+        contentView.addSubview(followButtonView)
         
         logoutButtonView.backgroundColor = .whiteColor()
         logoutButtonView.layer.borderWidth = 1
@@ -102,12 +76,7 @@ class ProfileHeaderViewController: UIViewController {
         logoutButtonView.setTitle(String.icomoonWithName(.LogOut), forState: .Normal)
         logoutButtonView.setTitleColor(BaseColor, forState: .Normal)
         logoutButtonView.titleLabel?.font = .icomoonOfSize(16)
-        logoutButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.logout()
-            return RACSignal.empty()
-        })
-        logoutButtonView.hidden = !isMe
-        view.addSubview(logoutButtonView)
+        contentView.addSubview(logoutButtonView)
         
         editProfileButtonView.backgroundColor = .whiteColor()
         editProfileButtonView.layer.borderWidth = 1
@@ -117,44 +86,43 @@ class ProfileHeaderViewController: UIViewController {
         editProfileButtonView.setTitle("Edit", forState: .Normal)
         editProfileButtonView.setTitleColor(BaseColor, forState: .Normal)
         editProfileButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
-        editProfileButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.editProfile()
-            return RACSignal.empty()
-        })
-        editProfileButtonView.hidden = !isMe
-        view.addSubview(editProfileButtonView)
+        contentView.addSubview(editProfileButtonView)
         
         followersHeadingView.text = "Followers"
         followersHeadingView.font = .robotoOfSize(11, withType: .Regular)
         followersHeadingView.textColor = .blackColor()
-        view.addSubview(followersHeadingView)
+        contentView.addSubview(followersHeadingView)
         
-        followersCountView.rac_text <~ viewModel.followersCount.producer .map { "\($0)" }
         followersCountView.font = .robotoOfSize(13, withType: .Medium)
         followersCountView.textColor = .blackColor()
-        view.addSubview(followersCountView)
+        contentView.addSubview(followersCountView)
         
         verticalLineView.backgroundColor = UIColor(0xe5e5e5)
-        view.addSubview(verticalLineView)
+        contentView.addSubview(verticalLineView)
         
         followedHeadingView.text = "Following"
         followedHeadingView.font = .robotoOfSize(11, withType: .Regular)
         followedHeadingView.textColor = .blackColor()
-        view.addSubview(followedHeadingView)
+        contentView.addSubview(followedHeadingView)
         
-        followedCountView.rac_text <~ viewModel.followedCount.producer .map { "\($0)" }
         followedCountView.font = .robotoOfSize(13, withType: .Medium)
         followedCountView.textColor = .blackColor()
-        view.addSubview(followedCountView)
+        contentView.addSubview(followedCountView)
+        
+        contentView.setNeedsUpdateConstraints()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    override func updateViewConstraints() {
+    override func updateConstraints() {
         avatarBackgroundImageView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Bottom)
         avatarBackgroundImageView.autoSetDimension(.Height, toSize: 213)
         
         avatarBackgroundBlurView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
-        avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 39)
+        avatarImageView.autoPinEdge(.Top, toEdge: .Top,  ofView: contentView, withOffset: 39)
         avatarImageView.autoAlignAxisToSuperviewAxis(.Vertical)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 84, height: 84))
         
@@ -165,15 +133,15 @@ class ProfileHeaderViewController: UIViewController {
         userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 5)
         
         textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 5)
-        textView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        textView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        textView.autoPinEdge(.Left, toEdge: .Left,  ofView: contentView, withOffset: 19)
+        textView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
         
         followButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        followButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        followButtonView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
         followButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
         
         logoutButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        logoutButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        logoutButtonView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
         logoutButtonView.autoSetDimensionsToSize(CGSize(width: 40, height: 31))
         
         editProfileButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
@@ -181,7 +149,7 @@ class ProfileHeaderViewController: UIViewController {
         editProfileButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 31))
         
         followersHeadingView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        followersHeadingView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        followersHeadingView.autoPinEdge(.Left, toEdge: .Left,  ofView: contentView, withOffset: 19)
         
         followersCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
         followersCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followersHeadingView)
@@ -197,13 +165,50 @@ class ProfileHeaderViewController: UIViewController {
         followedCountView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: followButtonView)
         followedCountView.autoPinEdge(.Left, toEdge: .Left, ofView: followedHeadingView)
         
-        super.updateViewConstraints()
+        super.updateConstraints()
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
+    func bindViewModel(personId: UUID) {
+        let viewModel = ProfileViewModel(id: personId)
+        viewModel.reloadModel()
         
-        viewModel.loadModel()
+        let isMe = SessionService.sessionData!.id == personId
+        
+        avatarBackgroundImageView.rac_image <~ viewModel.avatarImage
+        
+        avatarImageView.rac_image <~ viewModel.avatarImage
+        
+        fullNameView.rac_text <~ viewModel.fullName
+        
+        userNameView.rac_text <~ viewModel.userName.producer .map { "@\($0)" }
+        
+        textView.rac_text <~ viewModel.text
+        
+        viewModel.isFollowed.producer.startWithNext { isFollowed in
+            let title = isFollowed ? "Unfollow" : "Follow"
+            self.followButtonView.setTitle(title, forState: .Normal)
+        }
+        followButtonView.rac_command = RACCommand(signalBlock: { _ in
+            viewModel.toggleFollow()
+            return RACSignal.empty()
+        })
+        followButtonView.hidden = isMe
+        
+        logoutButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.logout()
+            return RACSignal.empty()
+        })
+        logoutButtonView.hidden = !isMe
+        
+        editProfileButtonView.rac_command = RACCommand(signalBlock: { _ in
+            self.editProfile()
+            return RACSignal.empty()
+        })
+        editProfileButtonView.hidden = !isMe
+        
+        followersCountView.rac_text <~ viewModel.followersCount.producer .map { "\($0)" }
+        
+        followedCountView.rac_text <~ viewModel.followedCount.producer .map { "\($0)" }
     }
     
     private func editProfile() {
@@ -219,7 +224,7 @@ class ProfileHeaderViewController: UIViewController {
         
         refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
         
-        presentViewController(refreshAlert, animated: true, completion: nil)
+        navigationController?.presentViewController(refreshAlert, animated: true, completion: nil)
     }
     
 }

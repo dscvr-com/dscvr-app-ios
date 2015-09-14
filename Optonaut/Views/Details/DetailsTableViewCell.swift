@@ -268,13 +268,13 @@ class DetailsTableViewCell: UITableViewCell {
         textView.handleMentionTap { userName in
             ApiService<Person>.get("persons/user-name/\(userName)")
                 .startWithNext { person in
-                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
+                    self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
                 }
         }
     }
     
     func pushProfile() {
-        let profileContainerViewController = ProfileContainerViewController(personId: viewModel.personId.value)
+        let profileContainerViewController = ProfileTableViewController(personId: viewModel.personId.value)
         navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
     

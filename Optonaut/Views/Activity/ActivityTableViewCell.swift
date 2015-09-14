@@ -96,7 +96,7 @@ class ActivityTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        let profileContainerViewController = ProfileContainerViewController(personId: viewModel.creatorId.value)
+        let profileContainerViewController = ProfileTableViewController(personId: viewModel.creatorId.value)
         navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
     

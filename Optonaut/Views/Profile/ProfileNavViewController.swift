@@ -22,7 +22,7 @@ class ProfileNavViewController: NavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        pushViewController(ProfileContainerViewController(personId: SessionService.sessionData!.id), animated: false)
+        pushViewController(ProfileTableViewController(personId: SessionService.sessionData!.id), animated: false)
     }
     
 }

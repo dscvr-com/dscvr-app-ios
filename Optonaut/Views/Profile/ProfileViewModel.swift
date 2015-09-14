@@ -32,7 +32,7 @@ class ProfileViewModel {
             contentId: "profile-\(id)",
             customAttributes: [:])
         
-        loadModel()
+        reloadModel()
     
         ApiService.get("persons/\(id)").startWithNext { (person: Person) in
             self.person = person
@@ -41,7 +41,7 @@ class ProfileViewModel {
         }
     }
     
-    func loadModel() {
+    func reloadModel() {
         let query = PersonTable.filter(PersonTable[PersonSchema.id] == person.id)
         
         if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {

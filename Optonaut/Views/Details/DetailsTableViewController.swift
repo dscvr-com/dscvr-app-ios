@@ -31,10 +31,6 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
         super.init(nibName: nil, bundle: nil)
     }
     
-    deinit {
-        print("release me")
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -67,10 +63,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     }
     
     override func updateViewConstraints() {
-        tableView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
-        tableView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view)
-        tableView.autoPinEdge(.Left, toEdge: .Left, ofView: view)
-        tableView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
+        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
     }

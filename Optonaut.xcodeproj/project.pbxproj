@@ -76,8 +76,7 @@
 		8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */; };
 		8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */; };
 		8FAB9F541B8F01DF00B4C8CB /* OptographsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F211B8F01DF00B4C8CB /* OptographsViewModel.swift */; };
-		8FAB9F551B8F01DF00B4C8CB /* ProfileContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F221B8F01DF00B4C8CB /* ProfileContainerViewController.swift */; };
-		8FAB9F561B8F01DF00B4C8CB /* ProfileHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F231B8F01DF00B4C8CB /* ProfileHeaderViewController.swift */; };
+		8FAB9F561B8F01DF00B4C8CB /* ProfileHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F231B8F01DF00B4C8CB /* ProfileHeaderTableViewCell.swift */; };
 		8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */; };
 		8FAB9F581B8F01DF00B4C8CB /* ProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F251B8F01DF00B4C8CB /* ProfileTableViewController.swift */; };
 		8FAB9F591B8F01DF00B4C8CB /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */; };
@@ -210,8 +209,7 @@
 		8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F211B8F01DF00B4C8CB /* OptographsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographsViewModel.swift; sourceTree = "<group>"; };
-		8FAB9F221B8F01DF00B4C8CB /* ProfileContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileContainerViewController.swift; sourceTree = "<group>"; };
-		8FAB9F231B8F01DF00B4C8CB /* ProfileHeaderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewController.swift; sourceTree = "<group>"; };
+		8FAB9F231B8F01DF00B4C8CB /* ProfileHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNavViewController.swift; sourceTree = "<group>"; };
 		8FAB9F251B8F01DF00B4C8CB /* ProfileTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
@@ -500,8 +498,7 @@
 				8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */,
 				8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */,
 				8FAB9F211B8F01DF00B4C8CB /* OptographsViewModel.swift */,
-				8FAB9F221B8F01DF00B4C8CB /* ProfileContainerViewController.swift */,
-				8FAB9F231B8F01DF00B4C8CB /* ProfileHeaderViewController.swift */,
+				8FAB9F231B8F01DF00B4C8CB /* ProfileHeaderTableViewCell.swift */,
 				8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */,
 				8FAB9F251B8F01DF00B4C8CB /* ProfileTableViewController.swift */,
 				8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */,
@@ -859,7 +856,7 @@
 				8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */,
-				8FAB9F561B8F01DF00B4C8CB /* ProfileHeaderViewController.swift in Sources */,
+				8FAB9F561B8F01DF00B4C8CB /* ProfileHeaderTableViewCell.swift in Sources */,
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,
 				8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */,
@@ -882,7 +879,6 @@
 				A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */,
 				8FAB9F841B8F045600B4C8CB /* SQLiteWrapper.swift in Sources */,
 				8FAB9F4B1B8F01DF00B4C8CB /* HashtagTableViewController.swift in Sources */,
-				8FAB9F551B8F01DF00B4C8CB /* ProfileContainerViewController.swift in Sources */,
 				8FAB9F711B8F02D500B4C8CB /* Constants.swift in Sources */,
 				8FAB9F861B8F047700B4C8CB /* ApiService.swift in Sources */,
 				8FAB9F2D1B8F01DF00B4C8CB /* ActivityViewModel.swift in Sources */,
@@ -1049,7 +1045,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1085,7 +1081,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 47;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
