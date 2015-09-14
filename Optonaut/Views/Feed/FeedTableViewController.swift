@@ -61,6 +61,8 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         updateNavbarAppear()
         navigationController?.hidesBarsOnSwipe = true
         
+        viewModel.refreshNotificationSignal.notify()
+        
         navigationController?.navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.icomoonOfSize(50),

@@ -18,32 +18,40 @@ class OptographsViewModel {
     
     init(personId: UUID) {
         id = ConstantProperty(personId)
-        
+    }
+    
+    func reload() {
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
-            .filter(PersonTable[PersonSchema.id] == personId)
+            .filter(PersonTable[PersonSchema.id] == id.value)
         
-        let optographs = DatabaseService.defaultConnection.prepare(query).map { row -> Optograph in
-            let person = Person.fromSQL(row)
-            let location = Location.fromSQL(row)
-            var optograph = Optograph.fromSQL(row)
-            
-            optograph.person = person
-            optograph.location = location
-            
-            return optograph
-        }
-        
-        results.value = optographs.sort { $0.createdAt > $1.createdAt }
+        DatabaseService.defaultConnection.prepare(query)
+            .map({ row -> Optograph in
+                let person = Person.fromSQL(row)
+                let location = Location.fromSQL(row)
+                var optograph = Optograph.fromSQL(row)
+                
+                optograph.person = person
+                optograph.location = location
+                
+                return optograph
+            })
+            .forEach(processNewOptograph)
         
         resultsLoading.producer
             .mapError { _ in ApiError.Nil }
             .filter { $0 }
-            .flatMap(.Latest) { _ in ApiService.get("persons/\(personId)/optographs") }
+            .flatMap(.Latest) { _ in ApiService<Optograph>.get("persons/\(self.id.value)/optographs") }
             .on(
-                next: processNewOptograph,
+                next: { optograph in
+                    self.processNewOptograph(optograph)
+                    
+                    try! optograph.insertOrReplace()
+                    try! optograph.location.insertOrReplace()
+                    try! optograph.person.insertOrReplace()
+                },
                 completed: {
                     self.resultsLoading.value = false
                 },
@@ -52,15 +60,11 @@ class OptographsViewModel {
                 }
             )
             .start()
-        
     }
     
     private func processNewOptograph(optograph: Optograph) {
         results.value.orderedInsert(optograph, withOrder: .OrderedDescending)
-        
-        try! optograph.insertOrReplace()
-        try! optograph.location.insertOrReplace()
-        try! optograph.person.insertOrReplace()
+        results.value.filterDeleted()
     }
     
 }

@@ -23,7 +23,7 @@ class DetailsTableViewCell: UITableViewCell {
     private let fullNameView = UILabel()
     private let userNameView = UILabel()
     private let dateView = UILabel()
-    private let shareButtonView = UIButton()
+    private let actionButtonView = UIButton()
     private let publishButtonView = UIButton()
     private let publishingIndicatorView = UIActivityIndicatorView()
     private let starButtonView = UIButton()
@@ -76,10 +76,10 @@ class DetailsTableViewCell: UITableViewCell {
         dateView.textColor = UIColor(0xb3b3b3)
         contentView.addSubview(dateView)
         
-        shareButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
-        shareButtonView.setTitle(String.icomoonWithName(.Share), forState: .Normal)
-        shareButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
-        contentView.addSubview(shareButtonView)
+        actionButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
+        actionButtonView.setTitle(String.icomoonWithName(.DotsVertical), forState: .Normal)
+        actionButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
+        contentView.addSubview(actionButtonView)
         
         publishButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
         publishButtonView.setTitle(String.icomoonWithName(.Retry), forState: .Normal)
@@ -159,8 +159,8 @@ class DetailsTableViewCell: UITableViewCell {
         dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
         dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
-        shareButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
-        shareButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+        actionButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
+        actionButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         
         publishButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
         publishButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
@@ -220,20 +220,36 @@ class DetailsTableViewCell: UITableViewCell {
         
         dateView.rac_text <~ viewModel.timeSinceCreated
         
-        shareButtonView.rac_hidden <~ viewModel.isPublished.producer.map { !$0 }
-        shareButtonView.rac_command = RACCommand(signalBlock: { _ in
-            // TODO adjust sharing feature
-            let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value)."
+        actionButtonView.rac_hidden <~ viewModel.isPublished.producer.map { !$0 }
+        actionButtonView.rac_command = RACCommand(signalBlock: { _ in
             
-            if let myWebsite = NSURL(string: "http://www.optonaut.com")
-            {
-                let objectsToShare = [textToShare, myWebsite]
-                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-                
-                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
-                
-                self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
+            let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+            
+            if SessionService.sessionData?.id == self.viewModel.optograph.person.id {
+                actionAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
+                    self.viewModel.delete().startWithCompleted {
+                        self.navigationController?.popViewControllerAnimated(true)
+                    }
+                }))
             }
+            
+            actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
+                // TODO adjust sharing feature
+                if let myWebsite = NSURL(string: "http://www.optonaut.com") {
+                    let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value)."
+                    let objectsToShare = [textToShare, myWebsite]
+                    let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                    
+                    activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
+                    
+                    self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
+                }
+            }))
+        
+            actionAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        
+            self.navigationController?.presentViewController(actionAlert, animated: true, completion: nil)
+            
             return RACSignal.empty()
         })
         

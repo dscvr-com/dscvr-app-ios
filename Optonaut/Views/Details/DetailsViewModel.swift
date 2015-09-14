@@ -144,6 +144,14 @@ class DetailsViewModel {
         comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
     }
     
+    func delete() -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.delete("optographs/\(optograph.id)")
+            .on(completed: {
+                self.optograph.deleted = true
+                try! self.optograph.insertOrReplace()
+            })
+    }
+    
     private func updateModel() {
         optograph.isPublished = isPublished.value
         optograph.isStarred = isStarred.value

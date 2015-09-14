@@ -30,40 +30,51 @@ class FeedViewModel: NSObject {
             .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
 //            .order(CommentSchema.createdAt.asc)
         
-        let optographs = DatabaseService.defaultConnection.prepare(query).map { row -> Optograph in
-            let person = Person.fromSQL(row)
-            let location = Location.fromSQL(row)
-            var optograph = Optograph.fromSQL(row)
-            
-            optograph.person = person
-            optograph.location = location
-            
-            return optograph
-        }
-        
-        results.value = optographs.sort { $0.createdAt > $1.createdAt }
-        
         refreshNotificationSignal.subscribe {
+            DatabaseService.defaultConnection.prepare(query)
+                .map({ row -> Optograph in
+                    let person = Person.fromSQL(row)
+                    let location = Location.fromSQL(row)
+                    var optograph = Optograph.fromSQL(row)
+                    
+                    optograph.person = person
+                    optograph.location = location
+                    
+                    return optograph
+                })
+                .forEach(self.processNewOptograph)
+            
             var count = 0
             ApiService<Optograph>.get("optographs/feed")
-                .on(next: { optograph in
+                .startWithNext { optograph in
                     if let firstOptograph = self.results.value.first where count++ == 0 {
                         self.newResultsAvailable.value = optograph.id != firstOptograph.id
                     }
-                })
-                .startWithNext(self.processNewOptograph)
+                    
+                    self.processNewOptograph(optograph)
+                    
+                    try! optograph.insertOrReplace()
+                    try! optograph.location.insertOrReplace()
+                    try! optograph.person.insertOrReplace()
+                }
         }
         
         loadMoreNotificationSignal.subscribe {
             if let oldestResult = self.results.value.last {
-                ApiService.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
-                    .startWithNext(self.processNewOptograph)
+                ApiService<Optograph>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                    .startWithNext { optograph in
+                        self.processNewOptograph(optograph)
+                        
+                        try! optograph.insertOrReplace()
+                        try! optograph.location.insertOrReplace()
+                        try! optograph.person.insertOrReplace()
+                    }
             }
         }
         
         refreshNotificationSignal.notify()
         refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
-        SessionService.onLogout { self.refreshTimer.invalidate() }
+        SessionService.onLogout(fn: self.refreshTimer.invalidate)
     }
     
     func refresh() {
@@ -72,10 +83,7 @@ class FeedViewModel: NSObject {
     
     private func processNewOptograph(optograph: Optograph) {
         results.value.orderedInsert(optograph, withOrder: .OrderedDescending)
-        
-        try! optograph.insertOrReplace()
-        try! optograph.location.insertOrReplace()
-        try! optograph.person.insertOrReplace()
+        results.value.filterDeleted()
     }
     
 }

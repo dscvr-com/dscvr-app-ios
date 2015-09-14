@@ -55,6 +55,8 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        viewModel.reload()
+        
         updateNavbarAppear()
     }
     

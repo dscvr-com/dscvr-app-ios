@@ -17,12 +17,13 @@ enum OptographAsset {
     case RightImage(NSData)
 }
 
-struct Optograph: Model {
+struct Optograph: DeletableModel {
     
     var id: UUID
     var text: String
     var person: Person
     var createdAt: NSDate
+    var deleted: Bool
     var isStarred: Bool
     var starsCount: Int
     var commentsCount: Int
@@ -40,6 +41,7 @@ struct Optograph: Model {
             text: "",
             person: Person.newInstance(),
             createdAt: NSDate(),
+            deleted: false,
             isStarred: false,
             starsCount: 0,
             commentsCount: 0,
@@ -119,6 +121,7 @@ extension Optograph: SQLiteModel {
             text: row[OptographSchema.text],
             person: Person.newInstance(),
             createdAt: row[OptographSchema.createdAt],
+            deleted: row[OptographSchema.deleted],
             isStarred: row[OptographSchema.isStarred],
             starsCount: row[OptographSchema.starsCount],
             commentsCount: row[OptographSchema.commentsCount],
@@ -138,6 +141,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.text <-- text,
             OptographSchema.personId <-- person.id,
             OptographSchema.createdAt <-- createdAt,
+            OptographSchema.deleted <-- deleted,
             OptographSchema.isStarred <-- isStarred,
             OptographSchema.starsCount <-- starsCount,
             OptographSchema.commentsCount <-- commentsCount,

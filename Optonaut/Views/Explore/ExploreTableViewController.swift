@@ -41,6 +41,12 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         view.setNeedsUpdateConstraints()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewModel.refreshNotificationSignal.notify()
+    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         

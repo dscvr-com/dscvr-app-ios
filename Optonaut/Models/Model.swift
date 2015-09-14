@@ -36,3 +36,15 @@ extension Array where Element: Model {
     }
     
 }
+
+protocol DeletableModel: Model {
+    var deleted: Bool { get set }
+}
+
+extension Array where Element: DeletableModel {
+    
+    mutating func filterDeleted(){
+        self = filter { !$0.deleted }
+    }
+    
+}
