@@ -24,8 +24,6 @@ class DetailsTableViewCell: UITableViewCell {
     private let userNameView = UILabel()
     private let dateView = UILabel()
     private let actionButtonView = UIButton()
-    private let publishButtonView = UIButton()
-    private let publishingIndicatorView = UIActivityIndicatorView()
     private let starButtonView = UIButton()
     private let starCountView = UILabel()
     private let commentIconView = UILabel()
@@ -79,19 +77,12 @@ class DetailsTableViewCell: UITableViewCell {
         actionButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
         actionButtonView.setTitle(String.icomoonWithName(.DotsVertical), forState: .Normal)
         actionButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
+        actionButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showActions"))
         contentView.addSubview(actionButtonView)
-        
-        publishButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
-        publishButtonView.setTitle(String.icomoonWithName(.Retry), forState: .Normal)
-        publishButtonView.setTitleColor(BaseColor, forState: .Normal)
-        contentView.addSubview(publishButtonView)
-        
-        publishingIndicatorView.hidesWhenStopped = true
-        publishingIndicatorView.activityIndicatorViewStyle = .Gray
-        contentView.addSubview(publishingIndicatorView)
         
         starButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
         starButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
+        starButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleStar"))
         contentView.addSubview(starButtonView)
         
         starCountView.font = UIFont.robotoOfSize(12, withType: .Light)
@@ -162,12 +153,6 @@ class DetailsTableViewCell: UITableViewCell {
         actionButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
         actionButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         
-        publishButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
-        publishButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        
-        publishingIndicatorView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
-        publishingIndicatorView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -23)
-        
         starButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 12)
         starButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
         
@@ -220,62 +205,13 @@ class DetailsTableViewCell: UITableViewCell {
         
         dateView.rac_text <~ viewModel.timeSinceCreated
         
-        actionButtonView.rac_hidden <~ viewModel.isPublished.producer.map { !$0 }
-        actionButtonView.rac_command = RACCommand(signalBlock: { _ in
-            
-            let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-            
-            if SessionService.sessionData?.id == self.viewModel.optograph.person.id {
-                actionAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
-                    self.viewModel.delete().startWithCompleted {
-                        self.navigationController?.popViewControllerAnimated(true)
-                    }
-                }))
-            }
-            
-            actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
-                // TODO adjust sharing feature
-                if let myWebsite = NSURL(string: "http://www.optonaut.com") {
-                    let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value)."
-                    let objectsToShare = [textToShare, myWebsite]
-                    let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-                    
-                    activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
-                    
-                    self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
-                }
-            }))
+        starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? BaseColor : UIColor(0xe6e6e6) }
         
-            actionAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        starCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0) stars" }
         
-            self.navigationController?.presentViewController(actionAlert, animated: true, completion: nil)
-            
-            return RACSignal.empty()
-        })
+        commentCountView.rac_text <~ viewModel.commentsCount.producer.map { "\($0) comments" }
         
-        publishButtonView.rac_hidden <~ viewModel.isPublished.producer.combineLatestWith(viewModel.isPublishing.producer).map { $0 || $1 }
-        publishButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.publish()
-            return RACSignal.empty()
-        })
-        
-        
-        publishingIndicatorView.rac_animating <~ viewModel.isPublishing
-        
-        starButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.toggleLike()
-            return RACSignal.empty()
-        })
-        
-        viewModel.isStarred.producer
-            .map { $0 ? BaseColor : UIColor(0xe6e6e6) }
-            .startWithNext { self.starButtonView.setTitleColor($0, forState: .Normal) }
-        
-        starCountView.rac_text <~ viewModel.starsCount.producer .map { "\($0) stars" }
-        
-        commentCountView.rac_text <~ viewModel.commentsCount.producer .map { "\($0) comments" }
-        
-        viewsCountView.rac_text <~ viewModel.viewsCount.producer .map { "\($0) views" }
+        viewsCountView.rac_text <~ viewModel.viewsCount.producer.map { "\($0) views" }
         
         textView.rac_text <~ viewModel.text
         textView.handleHashtagTap { hashtag in
@@ -287,6 +223,45 @@ class DetailsTableViewCell: UITableViewCell {
                     self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
                 }
         }
+    }
+    
+    func showActions() {
+        let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        
+        if SessionService.sessionData?.id == viewModel.optograph.person.id {
+            actionAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
+                self.viewModel.delete().startWithCompleted {
+                    self.navigationController?.popViewControllerAnimated(true)
+                }
+            }))
+        }
+        
+        if !viewModel.isPublished.value {
+            actionAlert.addAction(UIAlertAction(title: "Publish", style: .Default, handler: { _ in
+                self.viewModel.publish()
+            }))
+        }
+        
+        actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
+            // TODO adjust sharing feature
+            if let myWebsite = NSURL(string: "http://www.optonaut.com") {
+                let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value)."
+                let objectsToShare = [textToShare, myWebsite]
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                
+                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
+                
+                self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
+            }
+        }))
+        
+        actionAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        
+        navigationController?.presentViewController(actionAlert, animated: true, completion: nil)
+    }
+    
+    func toggleStar() {
+        viewModel.toggleLike()
     }
     
     func pushProfile() {

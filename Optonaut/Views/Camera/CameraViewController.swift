@@ -108,10 +108,7 @@ class CameraViewController: UIViewController {
         closeButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         closeButtonView.titleLabel?.font = UIFont.robotoOfSize(16, withType: .Regular)
         closeButtonView.alpha = 0.8
-        closeButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.navigationController?.popViewControllerAnimated(false)
-            return RACSignal.empty()
-        })
+        closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         view.addSubview(closeButtonView)
         
         if SessionService.sessionData!.debuggingEnabled {
@@ -414,6 +411,10 @@ class CameraViewController: UIViewController {
         
         navigationController!.pushViewController(CreateOptographViewController(assetSignalProducer: assetSignalProducer), animated: false)
         navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self
+    }
+    
+    func cancel() {
+        navigationController?.popViewControllerAnimated(false)
     }
 }
 

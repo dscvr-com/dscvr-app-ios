@@ -73,27 +73,7 @@ class ForgotPasswordViewController: UIViewController {
         submitButtonView.layer.masksToBounds = true
         submitButtonView.rac_userInteractionEnabled <~ viewModel.emailValid
         submitButtonView.rac_alpha <~ viewModel.emailValid.producer.map { $0 ? 1 : 0.5 }
-        submitButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.sendEmail()
-                .on(
-                    error: { _ in
-                        let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Please try again.", preferredStyle: .Alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-                        self.presentViewController(alert, animated: true, completion: nil)
-                    },
-                    completed: {
-                        self.emailInputView.userInteractionEnabled = false
-                        self.emailInputView.alpha = 0.5
-                        self.submitButtonView.userInteractionEnabled = false
-                        self.submitButtonView.alpha = 0.5
-                        self.titleView.text = "Check your inbox"
-                        self.cancelButtonView.setTitle("Back", forState: .Normal)
-                        self.descriptionView.text = "We sent you an email with a link to reset your password by choosing a new one."
-                    }
-                )
-                .start()
-            return RACSignal.empty()
-        })
+        submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "sendEmail"))
         formView.addSubview(submitButtonView)
         
         cancelButtonView.backgroundColor = UIColor(0xb5362c)
@@ -102,14 +82,11 @@ class ForgotPasswordViewController: UIViewController {
         cancelButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
         cancelButtonView.layer.cornerRadius = 5
         cancelButtonView.layer.masksToBounds = true
-        cancelButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.presentViewController(LoginViewController(), animated: false, completion: nil)
-            return RACSignal.empty()
-        })
+        cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "sendEmail"))
         formView.addSubview(cancelButtonView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
-        loadingView.rac_hidden <~ viewModel.pending.producer .map { !$0 }
+        loadingView.rac_hidden <~ viewModel.pending.producer.map { !$0 }
         view.addSubview(loadingView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
@@ -210,6 +187,31 @@ class ForgotPasswordViewController: UIViewController {
     
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func sendEmail() {
+        viewModel.sendEmail()
+            .on(
+                error: { _ in
+                    let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Please try again.", preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                },
+                completed: {
+                    self.emailInputView.userInteractionEnabled = false
+                    self.emailInputView.alpha = 0.5
+                    self.submitButtonView.userInteractionEnabled = false
+                    self.submitButtonView.alpha = 0.5
+                    self.titleView.text = "Check your inbox"
+                    self.cancelButtonView.setTitle("Back", forState: .Normal)
+                    self.descriptionView.text = "We sent you an email with a link to reset your password by choosing a new one."
+                }
+            )
+            .start()
+    }
+    
+    func showLogin() {
+        presentViewController(LoginViewController(), animated: false, completion: nil)
     }
     
 }

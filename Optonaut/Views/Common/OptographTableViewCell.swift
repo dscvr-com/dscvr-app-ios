@@ -57,6 +57,7 @@ class OptographTableViewCell: UITableViewCell {
         
         starButtonView.titleLabel?.font = UIFont.icomoonOfSize(24)
         starButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
+        starButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleStar"))
         contentView.addSubview(starButtonView)
         
         previewImageView.contentMode = .ScaleAspectFill
@@ -135,22 +136,15 @@ class OptographTableViewCell: UITableViewCell {
         userNameView.rac_text <~ viewModel.userName
         locationView.rac_text <~ viewModel.location
         dateView.rac_text <~ viewModel.timeSinceCreated
-        
-        starButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.toggleLike()
-            return RACSignal.empty()
-        })
-        
-        viewModel.isStarred.producer
-            .map { $0 ? BaseColor : UIColor(0xe6e6e6) }.startWithNext { self.starButtonView.setTitleColor($0, forState: .Normal)}
+        starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? BaseColor : UIColor(0xe6e6e6) }
         
         textView.rac_text <~ viewModel.text
-        textView.handleHashtagTap { hashtag in
-            self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
+        textView.handleHashtagTap { [weak self] hashtag in
+            self?.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
         textView.handleMentionTap { userName in
-            ApiService<Person>.get("persons/user-name/\(userName)").startWithNext { person in
-                self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
+            ApiService<Person>.get("persons/user-name/\(userName)").startWithNext { [weak self] person in
+                self?.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
             }
         }
     }
@@ -161,6 +155,10 @@ class OptographTableViewCell: UITableViewCell {
     
     func pushProfile() {
         navigationController?.pushViewController(ProfileTableViewController(personId: viewModel.personId.value), animated: true)
+    }
+    
+    func toggleStar() {
+        viewModel.toggleLike()
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

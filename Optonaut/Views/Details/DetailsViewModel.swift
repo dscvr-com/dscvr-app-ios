@@ -16,7 +16,6 @@ class DetailsViewModel {
     
     let isStarred = MutableProperty<Bool>(false)
     let isPublished = MutableProperty<Bool>(false)
-    let isPublishing = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let commentsCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
@@ -127,21 +126,18 @@ class DetailsViewModel {
     }
     
     func publish() {
-        isPublishing.value = true
-        
         optograph.publish()
             .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
             .startWithCompleted {
                 self.isPublished.value = true
                 self.updateModel()
                 self.saveModel()
-                
-                self.isPublishing.value = false
             }
     }
     
     func insertNewComment(comment: Comment) {
         comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
+        commentsCount.value = comments.value.count
     }
     
     func delete() -> SignalProducer<EmptyResponse, ApiError> {

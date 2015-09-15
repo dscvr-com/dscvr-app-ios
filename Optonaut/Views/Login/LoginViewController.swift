@@ -80,21 +80,7 @@ class LoginViewController: UIViewController {
         submitButtonView.layer.masksToBounds = true
         submitButtonView.rac_userInteractionEnabled <~ viewModel.allowed
         submitButtonView.rac_alpha <~ viewModel.allowed.producer.map { $0 ? 1 : 0.5 }
-        submitButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.login()
-                .on(
-                    error: { _ in 
-                        let alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-                        self.presentViewController(alert, animated: true, completion: nil)
-                    }, 
-                    completed: {
-                        self.presentViewController(TabBarViewController(), animated: false, completion: nil)
-                    }
-                )
-                .start()
-            return RACSignal.empty()
-        })
+        submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "login"))
         formView.addSubview(submitButtonView)
         
         forgotPasswordView.textColor = .whiteColor()
@@ -223,6 +209,21 @@ class LoginViewController: UIViewController {
     
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func login() {
+        viewModel.login()
+            .on(
+                error: { _ in 
+                    let alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                }, 
+                completed: {
+                    self.presentViewController(TabBarViewController(), animated: false, completion: nil)
+                }
+            )
+            .start()
     }
     
 }

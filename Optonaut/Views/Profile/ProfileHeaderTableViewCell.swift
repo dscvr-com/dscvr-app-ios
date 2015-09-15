@@ -67,6 +67,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         followButtonView.layer.masksToBounds = true
         followButtonView.setTitleColor(BaseColor, forState: .Normal)
         followButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
+        followButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleFollow"))
         contentView.addSubview(followButtonView)
         
         settingsButtonView.backgroundColor = .whiteColor()
@@ -77,6 +78,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         settingsButtonView.setTitle(String.icomoonWithName(.Cog), forState: .Normal)
         settingsButtonView.setTitleColor(BaseColor, forState: .Normal)
         settingsButtonView.titleLabel?.font = .icomoonOfSize(16)
+        settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showSettingsActions"))
         contentView.addSubview(settingsButtonView)
         
         editProfileButtonView.backgroundColor = .whiteColor()
@@ -87,6 +89,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         editProfileButtonView.setTitle("Edit", forState: .Normal)
         editProfileButtonView.setTitleColor(BaseColor, forState: .Normal)
         editProfileButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
+        editProfileButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "editProfile"))
         contentView.addSubview(editProfileButtonView)
         
         followersHeadingView.text = "Followers"
@@ -180,42 +183,31 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         
         fullNameView.rac_text <~ viewModel.fullName
         
-        userNameView.rac_text <~ viewModel.userName.producer .map { "@\($0)" }
+        userNameView.rac_text <~ viewModel.userName.producer.map { "@\($0)" }
         
         textView.rac_text <~ viewModel.text
         
-        viewModel.isFollowed.producer.startWithNext { isFollowed in
-            let title = isFollowed ? "Unfollow" : "Follow"
-            self.followButtonView.setTitle(title, forState: .Normal)
-        }
-        followButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.toggleFollow()
-            return RACSignal.empty()
-        })
+        followButtonView.rac_title <~ viewModel.isFollowed.producer.map { $0 ? "Unfollow" : "Follow" }
         followButtonView.hidden = isMe
         
-        settingsButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.logout()
-            return RACSignal.empty()
-        })
         settingsButtonView.hidden = !isMe
         
-        editProfileButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.editProfile()
-            return RACSignal.empty()
-        })
         editProfileButtonView.hidden = !isMe
         
-        followersCountView.rac_text <~ viewModel.followersCount.producer .map { "\($0)" }
+        followersCountView.rac_text <~ viewModel.followersCount.producer.map { "\($0)" }
         
-        followedCountView.rac_text <~ viewModel.followedCount.producer .map { "\($0)" }
+        followedCountView.rac_text <~ viewModel.followedCount.producer.map { "\($0)" }
     }
     
-    private func editProfile() {
+    func editProfile() {
         navigationController?.pushViewController(EditProfileViewController(), animated: false)
     }
     
-    private func logout() {
+    func toggleFollow() {
+        viewModel.toggleFollow()
+    }
+    
+    func showSettingsActions() {
         let settingsAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         
         settingsAlert.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in

@@ -32,17 +32,7 @@ class NewCommentTableViewCell: UITableViewCell {
         sendButtonView.setTitle("Send", forState: .Normal)
         sendButtonView.setTitleColor(BaseColor, forState: .Normal)
         sendButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
-        sendButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.postComment()
-                .on(
-                    next: self.postCallback,
-                    completed: {
-                        self.contentView.endEditing(true)
-                    }
-                )
-                .start()
-            return RACSignal.empty()
-        })
+        sendButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "postComment"))
         contentView.addSubview(sendButtonView)
         
         contentView.setNeedsUpdateConstraints()
@@ -72,6 +62,17 @@ class NewCommentTableViewCell: UITableViewCell {
         
         sendButtonView.rac_userInteractionEnabled <~ viewModel.isValid.producer.combineLatestWith(viewModel.isPosting.producer).map { $0 && !$1 }
         sendButtonView.rac_alpha <~ viewModel.isValid.producer.map { $0 ? 1 : 0.5 }
+    }
+    
+    func postComment() {
+        viewModel.postComment()
+            .on(
+                next: self.postCallback,
+                completed: {
+                    self.contentView.endEditing(true)
+                }
+            )
+            .start()
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

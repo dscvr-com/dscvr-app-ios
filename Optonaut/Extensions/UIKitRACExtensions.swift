@@ -21,6 +21,8 @@ struct AssociationKey {
     static var placeholder: UInt8 = 9
     static var animating: UInt8 = 10
     static var backgroundColor: UInt8 = 11
+    static var buttonTitle: UInt8 = 12
+    static var buttonTitleColor: UInt8 = 13
 }
 
 enum objc_AssociationPolicy : UInt {
@@ -66,6 +68,22 @@ extension UIButton {
     public var rac_backgroundColor: MutableProperty<UIColor?> {
         return lazyMutableProperty(self, key: &AssociationKey.backgroundColor, setter: { self.backgroundColor = $0 }, getter: { self.backgroundColor })
     }
+    
+    public var rac_titleColor: MutableProperty<UIColor?> {
+        return lazyAssociatedProperty(self, key: &AssociationKey.buttonTitleColor) {
+            let property = MutableProperty<UIColor?>(nil)
+            property.producer.startWithNext { self.setTitleColor($0, forState: .Normal) }
+            return property
+        }
+    }
+    
+    public var rac_title: MutableProperty<String> {
+        return lazyAssociatedProperty(self, key: &AssociationKey.buttonTitle) {
+            let property = MutableProperty<String>("")
+            property.producer.startWithNext { self.setTitle($0, forState: .Normal) }
+            return property
+        }
+    }
 }
 
 extension UIView {
@@ -105,7 +123,6 @@ extension UILabel {
 extension UITextField {
     public var rac_text: MutableProperty<String> {
         return lazyAssociatedProperty(self, key: &AssociationKey.text) {
-            
             self.addTarget(self, action: "changed", forControlEvents: UIControlEvents.EditingChanged)
             
             let property = MutableProperty<String>(self.text ?? "")
@@ -115,7 +132,7 @@ extension UITextField {
     }
     
     func changed() {
-        rac_text.value = self.text!
+        rac_text.value = self.text ?? ""
     }
     
     public var rac_textColor: MutableProperty<UIColor?> {
@@ -129,26 +146,15 @@ extension UITextField {
 
 extension UITextView {
     public var rac_text: MutableProperty<String> {
-        return lazyAssociatedProperty(self, key: &AssociationKey.text) {
-            let property = MutableProperty<String>(self.text ?? "")
-            property.producer.startWithNext { self.text = $0 }
-            return property
-        }
+        return lazyMutableProperty(self, key: &AssociationKey.text, setter: { self.text = $0 }, getter: { self.text })
     }
 }
 
 extension UIActivityIndicatorView {
     public var rac_animating: MutableProperty<Bool> {
         return lazyAssociatedProperty(self, key: &AssociationKey.animating) {
-            
             let property = MutableProperty<Bool>(false)
-            property.producer.startWithNext { animate in
-                if animate {
-                    self.startAnimating()
-                } else {
-                    self.stopAnimating()
-                }
-            }
+            property.producer.startWithNext { $0 ? self.startAnimating() : self.stopAnimating() }
             return property
         }
     }

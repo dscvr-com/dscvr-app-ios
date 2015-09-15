@@ -136,10 +136,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         emailButtonView.contentHorizontalAlignment = .Left
         emailButtonView.setTitleColor(UIColor(0x4d4d4d), forState: .Normal)
         emailButtonView.setTitle("Change", forState: .Normal)
-        emailButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.showEmailAlert()
-            return RACSignal.empty()
-        })
+        emailButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showEmailAlert"))
         view.addSubview(emailButtonView)
         
         passwordIconView.font = .icomoonOfSize(20)
@@ -157,10 +154,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         passwordButtonView.contentHorizontalAlignment = .Left
         passwordButtonView.setTitleColor(UIColor(0x4d4d4d), forState: .Normal)
         passwordButtonView.setTitle("Change", forState: .Normal)
-        passwordButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.showPasswordAlert()
-            return RACSignal.empty()
-        })
+        passwordButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showPasswordAlert"))
         view.addSubview(passwordButtonView)
         
         settingsHeaderView.text = "SETTINGS"

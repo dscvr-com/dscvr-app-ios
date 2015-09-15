@@ -73,27 +73,7 @@ class RequestInviteViewController: UIViewController {
         submitButtonView.layer.masksToBounds = true
         submitButtonView.rac_userInteractionEnabled <~ viewModel.emailValid
         submitButtonView.rac_alpha <~ viewModel.emailValid.producer.map { $0 ? 1 : 0.5 }
-        submitButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.requestInvite()
-                .on(
-                    error: { _ in
-                        let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Maybe you've already requested an invite?", preferredStyle: .Alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-                            self.presentViewController(alert, animated: true, completion: nil)
-                    },
-                    completed: {
-                        self.emailInputView.userInteractionEnabled = false
-                        self.emailInputView.alpha = 0.5
-                        self.submitButtonView.userInteractionEnabled = false
-                        self.submitButtonView.alpha = 0.5
-                        self.titleView.text = "Congratulations"
-                        self.cancelButtonView.setTitle("Back", forState: .Normal)
-                        self.descriptionView.text = "Thanks for your request. We'll be in touch soon. In order to stay up to date you can follow us on Facebook or Twitter. Cheers!"
-                    }
-                )
-                .start()
-            return RACSignal.empty()
-        })
+        submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "requestInvite"))
         formView.addSubview(submitButtonView)
         
         cancelButtonView.backgroundColor = UIColor(0xb5362c)
@@ -102,14 +82,11 @@ class RequestInviteViewController: UIViewController {
         cancelButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
         cancelButtonView.layer.cornerRadius = 5
         cancelButtonView.layer.masksToBounds = true
-        cancelButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.presentViewController(LoginViewController(), animated: false, completion: nil)
-            return RACSignal.empty()
-        })
+        cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showLogin"))
         formView.addSubview(cancelButtonView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
-        loadingView.rac_hidden <~ viewModel.pending.producer .map { !$0 }
+        loadingView.rac_hidden <~ viewModel.pending.producer.map { !$0 }
         view.addSubview(loadingView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
@@ -201,7 +178,9 @@ class RequestInviteViewController: UIViewController {
         
         formViewBottomConstraint?.constant = formBottomOffsetForKeyboardHeight(keyboardHeight, keyboardVisible: keyboardVisible)
         
-        UIView.animateWithDuration(animationDuration, delay: 0, options: [.BeginFromCurrentState, animationCurve],
+        UIView.animateWithDuration(animationDuration,
+            delay: 0,
+            options: [.BeginFromCurrentState, animationCurve],
             animations: {
                 self.view.layoutIfNeeded()
             },
@@ -210,6 +189,31 @@ class RequestInviteViewController: UIViewController {
     
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func requestInvite() {
+        viewModel.requestInvite()
+            .on(
+                error: { _ in
+                    let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Maybe you've already requested an invite?", preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                },
+                completed: {
+                    self.emailInputView.userInteractionEnabled = false
+                    self.emailInputView.alpha = 0.5
+                    self.submitButtonView.userInteractionEnabled = false
+                    self.submitButtonView.alpha = 0.5
+                    self.titleView.text = "Congratulations"
+                    self.cancelButtonView.setTitle("Back", forState: .Normal)
+                    self.descriptionView.text = "Thanks for your request. We'll be in touch soon. In order to stay up to date you can follow us on Facebook or Twitter. Cheers!"
+                }
+            )
+            .start()
+    }
+    
+    func showLogin() {
+        presentViewController(LoginViewController(), animated: false, completion: nil)
     }
     
 }
