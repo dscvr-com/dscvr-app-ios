@@ -19,39 +19,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
-        
-        Fabric.with([Crashlytics.self()])
-        
-        try! DatabaseService.prepare()
-        
-        setupAppearanceDefaults()
-        
-        let window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        self.window = window
-        
-        SessionService.prepare()
-        SessionService.onLogout(performAlways: true) { window.rootViewController = LoginViewController() }
-        
-        if SessionService.isLoggedIn {
-            window.rootViewController = TabBarViewController()
-        } else {
-            window.rootViewController = LoginViewController()
+        prepareAndExecute {
+            if SessionService.isLoggedIn {
+                self.window?.rootViewController = TabBarViewController()
+            } else {
+                self.window?.rootViewController = LoginViewController()
+            }
         }
-        
-        VersionService.onOutdatedApiVersion {
-            let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of Optonaut. Please update to the newest version.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Update", style: .Default, handler: { _ in
-                let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
-                let url = NSURL(string: "itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=\(appId!)&mt=8")
-                UIApplication.sharedApplication().openURL(url!)
-            }))
-            window.rootViewController?.presentViewController(alert, animated: true, completion: nil)
-        }
-        
-        window.makeKeyAndVisible()
-        
-        VersionService.updateToLatest()
         
         return true
     }
@@ -78,6 +52,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+        prepareAndExecute {
+            if SessionService.isLoggedIn {
+                let tabBarViewController = TabBarViewController()
+                
+                switch url.applicationURLData {
+                case .Optograph(let uuid):
+                    let detailsViewController = DetailsTableViewController(optographId: uuid)
+                    tabBarViewController.feedNavViewController.pushViewController(detailsViewController, animated: false)
+                default: ()
+                }
+                
+                self.window?.rootViewController = tabBarViewController
+            } else {
+                self.window?.rootViewController = LoginViewController()
+            }
+        }
+        
+        return true
+    }
+    
+    private func prepareAndExecute(fn: () -> ()) {
+        print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
+        
+        Fabric.with([Crashlytics.self()])
+        
+        try! DatabaseService.prepare()
+        
+        setupAppearanceDefaults()
+        
+        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        
+        SessionService.prepare()
+        SessionService.onLogout(performAlways: true) { self.window?.rootViewController = LoginViewController() }
+        
+        fn()
+        
+        VersionService.onOutdatedApiVersion {
+            let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of Optonaut. Please update to the newest version.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Update", style: .Default, handler: { _ in
+                let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
+                let url = NSURL(string: "itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=\(appId!)&mt=8")
+                UIApplication.sharedApplication().openURL(url!)
+            }))
+            self.window?.rootViewController?.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+        window?.makeKeyAndVisible()
+        
+        VersionService.updateToLatest()
+    }
     
 }
 

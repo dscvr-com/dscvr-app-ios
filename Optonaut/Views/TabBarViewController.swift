@@ -12,18 +12,24 @@ import SQLite
 
 class TabBarViewController: UITabBarController {
     
+    let feedNavViewController = FeedNavViewController()
+    let exploreNavViewController = ExploreNavViewController()
+    let activityNavViewController = ActivityNavViewController()
+    let profileNavViewController = ProfileNavViewController()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // set view controllers
-        let feedVC = FeedNavViewController()
-        let exploreVC = ExploreNavViewController()
-        let activityVC = ActivityNavViewController()
-        let profileVC = ProfileNavViewController()
-        viewControllers = [feedVC, exploreVC, activityVC, profileVC]
+        viewControllers = [
+            feedNavViewController,
+            exploreNavViewController,
+            activityNavViewController,
+            profileNavViewController
+        ]
         
-        feedVC.initNotificationIndicator()
-        activityVC.initNotificationIndicator()
+        feedNavViewController.initNotificationIndicator()
+        activityNavViewController.initNotificationIndicator()
         
         // set bar color
         tabBar.barTintColor = BaseColor
