@@ -89,7 +89,8 @@ class CameraViewController: UIViewController {
         view.addSubview(instructionView)
         
         circleView.layer.cornerRadius = 35
-        viewModel.isRecording.producer.startWithNext { self.circleView.isActive = !$0 }
+        viewModel.isRecording.producer.startWithNext { self.circleView.isDashed = !$0 }
+        viewModel.isCentered.producer.startWithNext { self.circleView.isActive = $0 }
         view.addSubview(circleView)
         
         recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor.hatched : UIColor.whiteColor().hatched }
@@ -453,10 +454,15 @@ private func ==(lhs: Edge, rhs: Edge) -> Bool {
 
 private class DashedCircleView: UIView {
     
-    var isActive = true {
+    var isActive = false {
         didSet {
-            border.lineDashPattern = isActive ? [19, 8] : nil
-            border.strokeColor = isActive ? UIColor.whiteColor().CGColor : BaseColor.CGColor
+            border.strokeColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
+        }
+    }
+    
+    var isDashed = true {
+        didSet {
+            border.lineDashPattern = isDashed ? [19, 8] : nil
         }
     }
     
