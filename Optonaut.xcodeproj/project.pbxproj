@@ -393,6 +393,7 @@
 				8FAB9F0F1B8F01DF00B4C8CB /* Feed */,
 				8FAB9F151B8F01DF00B4C8CB /* Hashtag */,
 				8FAB9F171B8F01DF00B4C8CB /* Login */,
+				8FCADEDE1BAB0AC40018674B /* Onboarding */,
 				8FAB9F1E1B8F01DF00B4C8CB /* Profile */,
 				8FAB9F271B8F01DF00B4C8CB /* Search */,
 			);
@@ -578,6 +579,13 @@
 			name = Services;
 			path = Optonaut/Services;
 			sourceTree = SOURCE_ROOT;
+		};
+		8FCADEDE1BAB0AC40018674B /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
 		};
 		8FCCA0221B3806040091F1B1 = {
 			isa = PBXGroup;

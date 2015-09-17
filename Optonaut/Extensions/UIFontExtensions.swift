@@ -21,18 +21,25 @@ public extension UIFont {
     
     public class func robotoOfSize(fontSize: CGFloat, withType type: FontType) -> UIFont {
         
-        struct Static {
-            static var onceTokens = toDictionary(FontType.allValues) { ($0, 0 as dispatch_once_t) }
+        switch type {
+        case .Regular: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightRegular)
+        case .Medium: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightMedium)
+        case .Light: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightLight)
+        case .Black: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightBlack)
         }
-
-        let name = "Roboto-\(type.rawValue)"
-        if (UIFont.fontNamesForFamilyName(name).count == 0) {
-            dispatch_once(&Static.onceTokens[type]!) {
-                FontLoader.loadFont(name)
-            }
-        }
-
-        return UIFont(name: name, size: fontSize)!
+//
+//        struct Static {
+//            static var onceTokens = toDictionary(FontType.allValues) { ($0, 0 as dispatch_once_t) }
+//        }
+//
+//        let name = "Roboto-\(type.rawValue)"
+//        if (UIFont.fontNamesForFamilyName(name).count == 0) {
+//            dispatch_once(&Static.onceTokens[type]!) {
+//                FontLoader.loadFont(name)
+//            }
+//        }
+//
+//        return UIFont(name: name, size: fontSize)!
     }
     
 }
