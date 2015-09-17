@@ -34,7 +34,7 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         navigationItem.setLeftBarButtonItem(searchButton, animated: false)
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
-            self.viewModel.refreshNotificationSignal.notify()
+            self.viewModel.refreshNotification.notify()
             Async.main(after: 10) { self.refreshControl.endRefreshing() }
         }
         tableView.addSubview(refreshControl)
@@ -61,7 +61,7 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         updateNavbarAppear()
         navigationController?.hidesBarsOnSwipe = true
         
-        viewModel.refreshNotificationSignal.notify()
+        viewModel.refreshNotification.notify()
         
         navigationController?.navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
         navigationController?.navigationBar.titleTextAttributes = [
@@ -122,7 +122,7 @@ extension FeedTableViewController: LoadMore {
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         checkRow(indexPath) {
-            self.viewModel.loadMoreNotificationSignal.notify()
+            self.viewModel.loadMoreNotification.notify()
         }
     }
     

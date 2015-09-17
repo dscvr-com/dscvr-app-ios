@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ExploreTableViewController.swift
 //  Optonaut
 //
 //  Created by Johannes Schickling on 6/17/15.
@@ -14,13 +14,23 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
     private let viewModel = ExploreViewModel()
     private let refreshControl = UIRefreshControl()
     
+    required init() {
+        viewModel.refreshNotification.notify()
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.title = "Explore"
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
-            self.viewModel.refreshNotificationSignal.notify()
+            self.viewModel.refreshNotification.notify()
             Async.main(after: 10) { self.refreshControl.endRefreshing() }
         }
         tableView.addSubview(refreshControl)
@@ -44,7 +54,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        viewModel.refreshNotificationSignal.notify()
+        viewModel.refreshNotification.notify()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -67,7 +77,7 @@ extension ExploreTableViewController: LoadMore {
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         checkRow(indexPath) {
-            self.viewModel.loadMoreNotificationSignal.notify()
+            self.viewModel.loadMoreNotification.notify()
         }
     }
     

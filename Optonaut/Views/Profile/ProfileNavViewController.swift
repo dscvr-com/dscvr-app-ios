@@ -13,16 +13,11 @@ class ProfileNavViewController: NavigationController {
     required init() {
         super.init(nibName: nil, bundle: nil)
         setTabBarIcon(tabBarItem, icon: .User)
+        pushViewController(ProfileTableViewController(personId: SessionService.sessionData!.id), animated: false)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        pushViewController(ProfileTableViewController(personId: SessionService.sessionData!.id), animated: false)
     }
     
 }

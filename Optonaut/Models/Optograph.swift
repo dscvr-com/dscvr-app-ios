@@ -17,7 +17,7 @@ enum OptographAsset {
     case RightImage(NSData)
 }
 
-struct Optograph: DeletableModel {
+struct Optograph: Model {
     
     var id: UUID
     var text: String

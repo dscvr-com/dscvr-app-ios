@@ -46,16 +46,34 @@ func calcTextHeight(text: String, withWidth width: CGFloat) -> CGFloat {
 
 class NotificationSignal {
     
-    private let (signal, sink) = Signal<Void, NoError>.pipe()
+    var producer: SignalProducer<Void, NoError>!
+    private var notifyCallback: (() -> ())?
     
-    func notify() {
-        sendNext(sink, ())
+    init() {
+        producer = SignalProducer({ sink, disposable in
+            self.notifyCallback = {
+                sendNext(sink, ())
+            }
+            disposable.addDisposable {
+                self.notifyCallback = nil
+            }
+        })
     }
     
-    func subscribe(fn: () -> Void) {
-        signal.observe { _ in fn() }
+    func notify() {
+        notifyCallback?()
     }
     
 }
+
+//class NotificationSignal {
+//    
+//    let (signal, sink) =  Signal<Void, NoError>.pipe()
+//    
+//    func notify() {
+//        sendNext(sink, ())
+//    }
+//    
+//}
 
 

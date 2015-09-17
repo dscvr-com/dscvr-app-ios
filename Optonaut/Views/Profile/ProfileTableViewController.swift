@@ -7,21 +7,25 @@
 //
 
 import UIKit
+import Async
 
 class ProfileTableViewController: OptographTableViewController, TransparentNavbar, UniqueView {
     
     private let viewModel: OptographsViewModel
     private let personId: UUID
     
+    let refreshControl = UIRefreshControl()
+    
     // subviews
     private let blankHeaderView = UIView()
-    private var headerTableViewCell: ProfileHeaderTableViewCell!
+    private var headerTableViewCell: ProfileHeaderTableViewCell?
     
     let uniqueIdentifier: String
     
     required init(personId: UUID) {
         self.personId = personId
         viewModel = OptographsViewModel(personId: personId)
+        viewModel.refreshNotification.notify()
         uniqueIdentifier = "profile-\(personId)"
         super.init(nibName: nil, bundle: nil)
     }
@@ -36,12 +40,24 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         tableView.registerClass(ProfileHeaderTableViewCell.self, forCellReuseIdentifier: "profile-header-cell")
         tableView.bounces = false
         
-        viewModel.results.producer.startWithNext { results in
-            self.items = results
-            self.tableView.reloadData()
+        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
+            self.viewModel.refreshNotification.notify()
+            Async.main(after: 10) { self.refreshControl.endRefreshing() }
         }
+        tableView.addSubview(refreshControl)
         
-        viewModel.resultsLoading.value = true
+        viewModel.results.producer
+            .on(
+                next: { results in
+                    self.items = results
+                    self.tableView.reloadData()
+                    self.refreshControl.endRefreshing()
+                },
+                error: { _ in
+                    self.refreshControl.endRefreshing()
+                }
+            )
+            .start()
         
         view.setNeedsUpdateConstraints()
     }
@@ -55,7 +71,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        viewModel.reload()
+        viewModel.refreshNotification.notify()
         
         updateNavbarAppear()
     }
@@ -63,7 +79,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        headerTableViewCell.viewModel.reloadModel()
+        headerTableViewCell?.viewModel.reloadModel()
     }
     
     override func updateViewConstraints() {
@@ -89,6 +105,17 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
             return cell
         } else {
             return super.tableView(tableView, cellForRowAtIndexPath: NSIndexPath(forRow: indexPath.row - 1, inSection: indexPath.section))
+        }
+    }
+    
+}
+
+// MARK: - LoadMore
+extension ProfileTableViewController: LoadMore {
+    
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        checkRow(indexPath) {
+            self.viewModel.loadMoreNotification.notify()
         }
     }
     

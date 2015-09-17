@@ -35,16 +35,14 @@ extension Array where Element: Model {
         append(newModel)
     }
     
-}
-
-protocol DeletableModel: Model {
-    var deleted: Bool { get set }
-}
-
-extension Array where Element: DeletableModel {
-    
-    mutating func filterDeleted(){
-        self = filter { !$0.deleted }
+    func orderedMerge(newModels: Array, withOrder order: NSComparisonResult) -> Array {
+        var newArray = self
+        
+        for newModel in newModels {
+            newArray.orderedInsert(newModel, withOrder: order)
+        }
+        
+        return newArray
     }
     
 }

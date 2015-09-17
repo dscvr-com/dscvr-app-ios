@@ -245,7 +245,7 @@ class DetailsTableViewCell: UITableViewCell {
         actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
             // TODO adjust sharing feature
             if let myWebsite = NSURL(string: "http://share.optonaut.co/\(self.viewModel.optograph.id)") {
-                let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value)."
+                let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value): \(self.viewModel.text.value)"
                 let objectsToShare = [textToShare, myWebsite]
                 let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
                 

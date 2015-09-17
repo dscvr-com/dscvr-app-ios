@@ -8,6 +8,7 @@
 
 import Foundation
 import SQLite
+import ReactiveCocoa
 
 protocol ModelSchema {
     var id: Expression<UUID> { get }
@@ -26,6 +27,16 @@ extension NSDate {
     var datatypeValue: String {
         return self.toRFC3339String()
     }
+}
+
+enum DatabaseQueryType {
+    case One
+    case Many
+}
+
+enum DatabaseQueryError: ErrorType {
+    case NotFound
+    case Nil
 }
 
 class DatabaseService {
@@ -64,6 +75,25 @@ class DatabaseService {
     static func reset() throws {
         try dropAllTables()
         try migrate()
+    }
+    
+    static func query(type: DatabaseQueryType, query: Table) -> SignalProducer<Row, DatabaseQueryError> {
+        return SignalProducer { sink, disposable in
+            switch type {
+            case .One:
+                guard let row = DatabaseService.defaultConnection.pluck(query) else {
+                    sendError(sink, .NotFound)
+                    break
+                }
+                sendNext(sink, row)
+            case .Many:
+                for row in DatabaseService.defaultConnection.prepare(query) {
+                    sendNext(sink, row)
+                }
+            }
+            
+            sendCompleted(sink)
+        }
     }
     
     private static func dropAllTables() throws {

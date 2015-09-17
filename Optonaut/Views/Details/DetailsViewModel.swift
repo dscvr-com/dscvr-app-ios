@@ -174,8 +174,8 @@ class DetailsViewModel {
         location.value = optograph.location.text
         isPublished.value = optograph.isPublished
         
-        previewImage <~ DownloadService.downloadContents(from: "\(S3URL)/original/\(optograph.previewAssetId).jpg", to: "\(StaticPath)/\(optograph.previewAssetId).jpg").take(1).map { UIImage(data: $0)! }
-        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg", to: "\(StaticPath)/\(optograph.person.avatarAssetId).jpg").take(1).map { UIImage(data: $0)! }
+        previewImage <~ DownloadService.downloadContents(from: "\(S3URL)/original/\(optograph.previewAssetId).jpg", to: "\(StaticPath)/\(optograph.previewAssetId).jpg").map { UIImage(data: $0)! }
+        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg", to: "\(StaticPath)/\(optograph.person.avatarAssetId).jpg").map { UIImage(data: $0)! }
 
         let leftProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.leftTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")
         let rightProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.rightTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")
