@@ -27,8 +27,8 @@ class CommentTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         textView.numberOfLines = 0
-        textView.mentionColor = BaseColor
-        textView.hashtagColor = BaseColor
+        textView.mentionColor = UIColor.Accent
+        textView.hashtagColor = UIColor.Accent
         textView.URLEnabled = false
         textView.userInteractionEnabled = true
         textView.font = UIFont.robotoOfSize(13, withType: .Light)

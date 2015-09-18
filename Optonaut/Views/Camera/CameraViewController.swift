@@ -93,7 +93,7 @@ class CameraViewController: UIViewController {
         viewModel.isCentered.producer.startWithNext { self.circleView.isActive = $0 }
         view.addSubview(circleView)
         
-        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor.hatched : UIColor.whiteColor().hatched }
+        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
         recordButtonView.layer.cornerRadius = 35
         viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
             .map { _ in true }
@@ -256,7 +256,7 @@ class CameraViewController: UIViewController {
     
     private func setupBall() {
         ballNode.geometry = SCNSphere(radius: CGFloat(0.04))
-        ballNode.geometry?.firstMaterial?.diffuse.contents = BaseColor
+        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor.Accent
         
         scene.rootNode.addChildNode(ballNode)
     }
@@ -457,7 +457,7 @@ private class DashedCircleView: UIView {
     
     var isActive = false {
         didSet {
-            border.strokeColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
+            border.strokeColor = isActive ? UIColor.Accent.CGColor : UIColor.whiteColor().CGColor
         }
     }
     
@@ -505,8 +505,8 @@ private class ProgressView: UIView {
     }
     var isActive = false {
         didSet {
-            foregroundLine.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
-            trackingPoint.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
+            foregroundLine.backgroundColor = isActive ? UIColor.Accent.CGColor : UIColor.whiteColor().CGColor
+            trackingPoint.backgroundColor = isActive ? UIColor.Accent.CGColor : UIColor.whiteColor().CGColor
         }
     }
     
@@ -600,18 +600,18 @@ private class TiltView: UIView {
         diagonalLine.lineWidth = 2
         layer.addSublayer(diagonalLine)
         
-        verticalLine.strokeColor = BaseColor.CGColor
+        verticalLine.strokeColor = UIColor.Accent.CGColor
         verticalLine.fillColor = UIColor.clearColor().CGColor
         verticalLine.lineWidth = 2
         layer.addSublayer(verticalLine)
         
-        ringSegment.strokeColor = BaseColor.CGColor
+        ringSegment.strokeColor = UIColor.Accent.CGColor
         ringSegment.fillColor = UIColor.clearColor().CGColor
         ringSegment.lineWidth = 2
         layer.addSublayer(ringSegment)
         
         circleSegment.strokeColor = UIColor.clearColor().CGColor
-        circleSegment.fillColor = BaseColor.hatched.CGColor
+        circleSegment.fillColor = UIColor.Accent.hatched2.CGColor
         layer.addSublayer(circleSegment)
     }
     

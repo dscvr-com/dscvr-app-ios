@@ -28,7 +28,7 @@ class ActivityNavViewController: NavigationController, RedNavbar {
         super.viewDidLoad()
         
         navigationBar.translucent = false
-        navigationBar.barTintColor = BaseColor
+        navigationBar.barTintColor = UIColor.Accent
         navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         navigationBar.tintColor = .whiteColor()
         
@@ -59,7 +59,7 @@ class ActivityNavViewController: NavigationController, RedNavbar {
         number.frame = CGRect(x: tabBarItemSize.width * 5/2 + 9, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 17, width: 15, height: 15)
         number.textAlignment = .Center
         number.text = "5"
-        number.textColor = BaseColor
+        number.textColor = UIColor.Accent
         number.font = UIFont.robotoOfSize(9, withType: .Black)
         number.hidden = true
         tabBarController!.view.addSubview(number)

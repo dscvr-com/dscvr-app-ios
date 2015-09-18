@@ -28,7 +28,7 @@ class ForgotPasswordViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = BaseColor
+        view.backgroundColor = UIColor.Accent
         
         titleView.text = "Forgot your password?"
         titleView.textColor = .whiteColor()
@@ -86,7 +86,7 @@ class ForgotPasswordViewController: UIViewController {
         formView.addSubview(cancelButtonView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
-        loadingView.rac_hidden <~ viewModel.pending.producer.map { !$0 }
+        loadingView.rac_hidden <~ viewModel.pending.producer.map(negate)
         view.addSubview(loadingView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))

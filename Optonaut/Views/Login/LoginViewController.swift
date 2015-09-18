@@ -29,7 +29,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = BaseColor
+        view.backgroundColor = UIColor.Accent
         
         logoView.text = String.icomoonWithName(.LogoText)
         logoView.textColor = .whiteColor()
@@ -98,7 +98,7 @@ class LoginViewController: UIViewController {
         view.addSubview(showInviteView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
-        loadingView.rac_hidden <~ viewModel.pending.producer.map { !$0 }
+        loadingView.rac_hidden <~ viewModel.pending.producer.map(negate)
         view.addSubview(loadingView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
@@ -111,6 +111,12 @@ class LoginViewController: UIViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
+        
+        super.viewDidAppear(animated)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -163,11 +169,6 @@ class LoginViewController: UIViewController {
     // needed for vertically centering (respecting keyboard visiblity)
     private func formBottomOffsetForKeyboardHeight(keyboardHeight: CGFloat, keyboardVisible: Bool) -> CGFloat {
         return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2 + 158 / 2
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func showRequestInviteViewController() {

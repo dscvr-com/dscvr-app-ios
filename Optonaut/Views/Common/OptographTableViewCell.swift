@@ -73,8 +73,8 @@ class OptographTableViewCell: UITableViewCell {
         contentView.addSubview(locationView)
         
         textView.numberOfLines = 0
-        textView.mentionColor = BaseColor
-        textView.hashtagColor = BaseColor
+        textView.mentionColor = UIColor.Accent
+        textView.hashtagColor = UIColor.Accent
         textView.URLEnabled = false
         textView.userInteractionEnabled = true
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
@@ -136,7 +136,7 @@ class OptographTableViewCell: UITableViewCell {
         userNameView.rac_text <~ viewModel.userName
         locationView.rac_text <~ viewModel.location
         dateView.rac_text <~ viewModel.timeSinceCreated
-        starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? BaseColor : UIColor(0xe6e6e6) }
+        starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? UIColor.Accent : UIColor(0xe6e6e6) }
         
         textView.rac_text <~ viewModel.text
         textView.handleHashtagTap { [weak self] hashtag in

@@ -30,7 +30,7 @@ class NewCommentTableViewCell: UITableViewCell {
         contentView.addSubview(textInputView)
         
         sendButtonView.setTitle("Send", forState: .Normal)
-        sendButtonView.setTitleColor(BaseColor, forState: .Normal)
+        sendButtonView.setTitleColor(UIColor.Accent, forState: .Normal)
         sendButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
         sendButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "postComment"))
         contentView.addSubview(sendButtonView)

@@ -32,7 +32,7 @@ class TabBarViewController: UITabBarController {
         activityNavViewController.initNotificationIndicator()
         
         // set bar color
-        tabBar.barTintColor = BaseColor
+        tabBar.barTintColor = UIColor.Accent
         tabBar.translucent = false
         
         // set font for bar items

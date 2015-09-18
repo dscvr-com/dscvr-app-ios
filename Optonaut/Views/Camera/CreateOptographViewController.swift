@@ -43,9 +43,9 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         
         pscope.headerLabel.text = "Where are you?"
         pscope.bodyLabel.text = "Please share your location\r\nto tag your Optograph"
-        pscope.unauthorizedButtonColor = BaseColor
-        pscope.permissionButtonTextColor = BaseColor
-        pscope.permissionButtonBorderColor = BaseColor
+        pscope.unauthorizedButtonColor = UIColor.Accent
+        pscope.permissionButtonTextColor = UIColor.Accent
+        pscope.permissionButtonBorderColor = UIColor.Accent
         pscope.permissionLabelColor = UIColor(0x4d4d4d)
         pscope.closeButton.titleLabel?.font = UIFont.icomoonOfSize(30)
         pscope.closeButton.setTitle(String.icomoonWithName(.Cross), forState: .Normal)

@@ -98,8 +98,8 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         
         userNameTakenView.text = "Username taken"
         userNameTakenView.font = UIFont.robotoOfSize(13, withType: .Regular)
-        userNameTakenView.textColor = BaseColor
-        userNameTakenView.rac_hidden <~ viewModel.userNameTaken.producer.map { !$0 }
+        userNameTakenView.textColor = UIColor.Accent
+        userNameTakenView.rac_hidden <~ viewModel.userNameTaken.producer.map(negate)
         
         view.addSubview(userNameTakenView)
         
@@ -191,7 +191,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         view.addSubview(newsletterSwitchView)
         
         imagePickerController.navigationBar.translucent = false
-        imagePickerController.navigationBar.barTintColor = BaseColor
+        imagePickerController.navigationBar.barTintColor = UIColor.Accent
         imagePickerController.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
             NSForegroundColorAttributeName: UIColor.whiteColor(),

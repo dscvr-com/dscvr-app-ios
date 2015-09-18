@@ -41,13 +41,16 @@ class EditProfileViewModel {
         }
         
         userName.producer
+            .filter(isNotEmpty)
             .mapError { _ in ApiError.Nil }
             .on(next: { _ in self.userNameTaken.value = false })
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
             .startWithNext { userName in
                 // nesting needed in order to accept ApiErrors
                 ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: ["user_name": userName])
-                    .startWithError { _ in self.userNameTaken.value = true }
+                    .startWithError { _ in
+                        self.userNameTaken.value = self.person.userName != userName
+                    }
             }
     }
     

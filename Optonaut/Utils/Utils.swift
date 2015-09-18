@@ -66,6 +66,22 @@ class NotificationSignal {
     
 }
 
+func negate(val: Bool) -> Bool {
+    return !val
+}
+
+func isEmpty(val: String) -> Bool {
+    return val.isEmpty
+}
+
+func isNotEmpty(val: String) -> Bool {
+    return !val.isEmpty
+}
+
+func and(a: Bool, _ b: Bool) -> Bool {
+    return a && b
+}
+
 //class NotificationSignal {
 //    
 //    let (signal, sink) =  Signal<Void, NoError>.pipe()

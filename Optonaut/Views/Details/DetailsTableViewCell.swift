@@ -49,7 +49,7 @@ class DetailsTableViewCell: UITableViewCell {
         contentView.addSubview(locationView)
         
         progressView.progressViewStyle = UIProgressViewStyle.Bar
-        progressView.progressTintColor = BaseColor
+        progressView.progressTintColor = UIColor.Accent
         contentView.addSubview(progressView)
         
         avatarImageView.layer.cornerRadius = 15
@@ -111,8 +111,8 @@ class DetailsTableViewCell: UITableViewCell {
         textView.userInteractionEnabled = true
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
         textView.textColor = UIColor(0x4d4d4d)
-        textView.mentionColor = BaseColor
-        textView.hashtagColor = BaseColor
+        textView.mentionColor = UIColor.Accent
+        textView.hashtagColor = UIColor.Accent
         textView.URLEnabled = false
         contentView.addSubview(textView)
         
@@ -205,7 +205,7 @@ class DetailsTableViewCell: UITableViewCell {
         
         dateView.rac_text <~ viewModel.timeSinceCreated
         
-        starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? BaseColor : UIColor(0xe6e6e6) }
+        starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? UIColor.Accent : UIColor(0xe6e6e6) }
         
         starCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0) stars" }
         

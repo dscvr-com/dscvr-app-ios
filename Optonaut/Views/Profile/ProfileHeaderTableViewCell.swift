@@ -62,32 +62,32 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         
         followButtonView.backgroundColor = .whiteColor()
         followButtonView.layer.borderWidth = 1
-        followButtonView.layer.borderColor = BaseColor.CGColor
+        followButtonView.layer.borderColor = UIColor.Accent.CGColor
         followButtonView.layer.cornerRadius = 5
         followButtonView.layer.masksToBounds = true
-        followButtonView.setTitleColor(BaseColor, forState: .Normal)
+        followButtonView.setTitleColor(UIColor.Accent, forState: .Normal)
         followButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
         followButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleFollow"))
         contentView.addSubview(followButtonView)
         
         settingsButtonView.backgroundColor = .whiteColor()
         settingsButtonView.layer.borderWidth = 1
-        settingsButtonView.layer.borderColor = BaseColor.CGColor
+        settingsButtonView.layer.borderColor = UIColor.Accent.CGColor
         settingsButtonView.layer.cornerRadius = 5
         settingsButtonView.layer.masksToBounds = true
         settingsButtonView.setTitle(String.icomoonWithName(.Cog), forState: .Normal)
-        settingsButtonView.setTitleColor(BaseColor, forState: .Normal)
+        settingsButtonView.setTitleColor(UIColor.Accent, forState: .Normal)
         settingsButtonView.titleLabel?.font = .icomoonOfSize(16)
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showSettingsActions"))
         contentView.addSubview(settingsButtonView)
         
         editProfileButtonView.backgroundColor = .whiteColor()
         editProfileButtonView.layer.borderWidth = 1
-        editProfileButtonView.layer.borderColor = BaseColor.CGColor
+        editProfileButtonView.layer.borderColor = UIColor.Accent.CGColor
         editProfileButtonView.layer.cornerRadius = 5
         editProfileButtonView.layer.masksToBounds = true
         editProfileButtonView.setTitle("Edit", forState: .Normal)
-        editProfileButtonView.setTitleColor(BaseColor, forState: .Normal)
+        editProfileButtonView.setTitleColor(UIColor.Accent, forState: .Normal)
         editProfileButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Regular)
         editProfileButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "editProfile"))
         contentView.addSubview(editProfileButtonView)

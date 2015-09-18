@@ -61,10 +61,6 @@ extension UIButton {
         return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.enabled = $0 }, getter: { self.enabled })
     }
     
-    public var rac_userInteractionEnabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.userInteractionEnabled = $0 }, getter: { self.userInteractionEnabled })
-    }
-    
     public var rac_backgroundColor: MutableProperty<UIColor?> {
         return lazyMutableProperty(self, key: &AssociationKey.backgroundColor, setter: { self.backgroundColor = $0 }, getter: { self.backgroundColor })
     }
@@ -94,6 +90,10 @@ extension UIView {
     public var rac_hidden: MutableProperty<Bool> {
         return lazyMutableProperty(self, key: &AssociationKey.hidden, setter: { self.hidden = $0 }, getter: { self.hidden })
     }
+    
+    public var rac_userInteractionEnabled: MutableProperty<Bool> {
+        return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.userInteractionEnabled = $0 }, getter: { self.userInteractionEnabled })
+    }
 }
 
 extension UINavigationItem {
@@ -109,10 +109,6 @@ extension UILabel {
     
     public var rac_enabled: MutableProperty<Bool> {
         return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.enabled = $0 }, getter: { self.enabled })
-    }
-    
-    public var rac_userInteractionEnabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.userInteractionEnabled = $0 }, getter: { self.userInteractionEnabled })
     }
     
     public var rac_textColor: MutableProperty<UIColor> {

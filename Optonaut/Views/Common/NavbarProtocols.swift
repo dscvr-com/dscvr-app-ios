@@ -31,7 +31,7 @@ extension RedNavbar where Self: UIViewController {
 
     func updateNavbarAppear() {
         navigationController?.navigationBar.translucent = false
-        navigationController?.navigationBar.barTintColor = BaseColor
+        navigationController?.navigationBar.barTintColor = UIColor.Accent
         navigationController?.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
