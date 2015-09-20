@@ -18,7 +18,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     let viewModel = CreateOptographViewModel()
     
     // subviews
-    let previewImageView = UIImageView()
+    let previewImageView = PlaceholderImageView()
     let locationView = InsetLabel()
     let descriptionView = ActiveLabel()
     let textInputView = KMPlaceholderTextView()
@@ -95,9 +95,11 @@ class CreateOptographViewController: UIViewController, RedNavbar {
             }
         }
         
+        
+        previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
-        previewImageView.rac_image <~ viewModel.previewImage
+        previewImageView.rac_url <~ viewModel.previewImageUrl
         view.addSubview(previewImageView)
         
         locationView.rac_text <~ viewModel.location

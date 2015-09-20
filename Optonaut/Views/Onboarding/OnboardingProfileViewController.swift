@@ -68,6 +68,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         fullNameInputView.placeholder = "What's your name?"
         fullNameInputView.returnKeyType = .Next
         fullNameInputView.delegate = self
+        fullNameInputView.rac_alpha <~ viewModel.fullNameEnabled.producer.map { $0 ? 1 : 0.5 }
         fullNameInputView.rac_userInteractionEnabled <~ viewModel.fullNameEnabled
         fullNameInputView.rac_hidden <~ viewModel.fullNameEditing.producer.map(negate)
         fullNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.fullName.value = $0 as! String }
@@ -88,6 +89,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         userNameInputView.autocapitalizationType = .None
         userNameInputView.returnKeyType = .Done
         userNameInputView.delegate = self
+        userNameInputView.rac_alpha <~ viewModel.userNameEnabled.producer.map { $0 ? 1 : 0.5 }
         userNameInputView.rac_userInteractionEnabled <~ viewModel.userNameEnabled
         userNameInputView.rac_hidden <~ viewModel.userNameEditing.producer.map(negate)
         userNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.userName.value = $0 as! String }

@@ -92,6 +92,7 @@ public enum Icomoon: String {
     case PaperPlane = "\u{e614}"
     case VCard = "\u{e615}"
     case DotsVertical = "\u{e616}"
+    case LnrCheck = "\u{e617}"
     case LnrFacebook = "\u{e618}"
     case LnrHeart = "\u{e61a}"
     case LnrPlusBold = "\u{e61b}"

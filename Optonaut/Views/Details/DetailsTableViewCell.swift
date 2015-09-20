@@ -16,9 +16,9 @@ class DetailsTableViewCell: UITableViewCell {
     weak var navigationController: NavigationController?
     
     // subviews
-    private let previewImageView = UIImageView()
+    private let previewImageView = PlaceholderImageView()
     private let locationView = InsetLabel()
-    private let avatarImageView = UIImageView()
+    private let avatarImageView = PlaceholderImageView()
     private let progressView = UIProgressView()
     private let fullNameView = UILabel()
     private let userNameView = UILabel()
@@ -36,6 +36,7 @@ class DetailsTableViewCell: UITableViewCell {
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        previewImageView.placeholderImage = UIImage(named: "optograph-details-placeholder")!
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
         previewImageView.userInteractionEnabled = true
@@ -52,6 +53,7 @@ class DetailsTableViewCell: UITableViewCell {
         progressView.progressTintColor = UIColor.Accent
         contentView.addSubview(progressView)
         
+        avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
@@ -184,7 +186,7 @@ class DetailsTableViewCell: UITableViewCell {
     }
     
     func bindViewModel() {
-        previewImageView.rac_image <~ viewModel.previewImage
+        previewImageView.rac_url <~ viewModel.previewImageUrl
         
         locationView.rac_text <~ viewModel.location
         
@@ -197,7 +199,7 @@ class DetailsTableViewCell: UITableViewCell {
                 self.progressView.setProgress(progress, animated: true)
             }
         
-        avatarImageView.rac_image <~ viewModel.avatarImage
+        avatarImageView.rac_url <~ viewModel.avatarImageUrl
         
         fullNameView.rac_text <~ viewModel.fullName
         

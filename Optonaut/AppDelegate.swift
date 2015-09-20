@@ -21,8 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         prepareAndExecute {
             if SessionService.isLoggedIn {
-//                self.window?.rootViewController = TabBarViewController()
-                self.window?.rootViewController = OnboardingInfoViewController()
+                self.window?.rootViewController = TabBarViewController()
+//                self.window?.rootViewController = OnboardingInfoViewController()
 //                self.window?.rootViewController = OnboardingProfileViewController()
 //                self.window?.rootViewController = OnboardingHashtagViewController()
             } else {

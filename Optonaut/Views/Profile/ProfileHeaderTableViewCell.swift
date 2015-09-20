@@ -16,12 +16,12 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     var viewModel: ProfileViewModel!
     
     // subviews
-    private let avatarBackgroundImageView = UIImageView()
+    private let avatarBackgroundImageView = PlaceholderImageView()
     private let avatarBackgroundBlurView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .Dark)
         return UIVisualEffectView(effect: blurEffect)
     }()
-    private let avatarImageView = UIImageView()
+    private let avatarImageView = PlaceholderImageView()
     private let fullNameView = UILabel()
     private let userNameView = UILabel()
     private let textView = UILabel()
@@ -38,10 +38,12 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         avatarBackgroundImageView.addSubview(avatarBackgroundBlurView)
+        avatarBackgroundImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         avatarBackgroundImageView.clipsToBounds = true
         avatarBackgroundImageView.contentMode = .ScaleAspectFill
         contentView.addSubview(avatarBackgroundImageView)
         
+        avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 42
         avatarImageView.clipsToBounds = true
         contentView.addSubview(avatarImageView)
@@ -177,9 +179,9 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         
         let isMe = SessionService.sessionData!.id == personId
         
-        avatarBackgroundImageView.rac_image <~ viewModel.avatarImage
+        avatarBackgroundImageView.rac_url <~ viewModel.avatarImageUrl
         
-        avatarImageView.rac_image <~ viewModel.avatarImage
+        avatarImageView.rac_url <~ viewModel.avatarImageUrl
         
         fullNameView.rac_text <~ viewModel.fullName
         

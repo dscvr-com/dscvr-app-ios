@@ -20,7 +20,7 @@ class ProfileViewModel {
     let followersCount = MutableProperty<Int>(0)
     let followedCount = MutableProperty<Int>(0)
     let isFollowed = MutableProperty<Bool>(false)
-    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
+    let avatarImageUrl = MutableProperty<String>("")
     
     private var person = Person.newInstance()
     
@@ -85,8 +85,7 @@ class ProfileViewModel {
         followersCount.value = person.followersCount
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed
-        
-        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(person.avatarAssetId).jpg", to: "\(StaticPath)/\(person.avatarAssetId).jpg").map { UIImage(data: $0)! }
+        avatarImageUrl.value = "\(S3URL)/400x400/\(person.avatarAssetId).jpg"
     }
     
     private func saveModel() {

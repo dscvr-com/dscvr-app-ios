@@ -20,8 +20,8 @@ class DetailsViewModel {
     let commentsCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
-    let previewImage = MutableProperty<UIImage>(UIImage(named: "optograph-details-placeholder")!)
-    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
+    let previewImageUrl = MutableProperty<String>("")
+    let avatarImageUrl = MutableProperty<String>("")
     let fullName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let personId = MutableProperty<UUID>("")
@@ -173,9 +173,8 @@ class DetailsViewModel {
         text.value = optograph.text
         location.value = optograph.location.text
         isPublished.value = optograph.isPublished
-        
-        previewImage <~ DownloadService.downloadContents(from: "\(S3URL)/original/\(optograph.previewAssetId).jpg", to: "\(StaticPath)/\(optograph.previewAssetId).jpg").map { UIImage(data: $0)! }
-        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg", to: "\(StaticPath)/\(optograph.person.avatarAssetId).jpg").map { UIImage(data: $0)! }
+        previewImageUrl.value = "\(S3URL)/original/\(optograph.previewAssetId).jpg"
+        avatarImageUrl.value = "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg"
 
         let leftProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.leftTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")
         let rightProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.rightTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")

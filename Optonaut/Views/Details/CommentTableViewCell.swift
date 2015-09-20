@@ -18,7 +18,7 @@ class CommentTableViewCell: UITableViewCell {
     
     // subviews
     private let textView = ActiveLabel()
-    private let avatarImageView = UIImageView()
+    private let avatarImageView = PlaceholderImageView()
     private let fullNameView = UILabel()
     private let userNameView = UILabel()
     private let dateView = UILabel()
@@ -35,6 +35,7 @@ class CommentTableViewCell: UITableViewCell {
         textView.textColor = UIColor(0x4d4d4d)
         contentView.addSubview(textView)
         
+        avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
@@ -98,7 +99,7 @@ class CommentTableViewCell: UITableViewCell {
             }
         }
         
-        avatarImageView.rac_image <~ viewModel.avatarImage
+        avatarImageView.rac_url <~ viewModel.avatarImageUrl
         fullNameView.rac_text <~ viewModel.fullName
         userNameView.rac_text <~ viewModel.userName
         dateView.rac_text <~ viewModel.timeSinceCreated

@@ -41,8 +41,8 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         
         viewModel.results.producer
             .on(
-                next: { results in
-                    self.items = results
+                next: { items in
+                    self.items = items
                     self.tableView.reloadData()
                     self.refreshControl.endRefreshing()
                 },

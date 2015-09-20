@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import WebImage
 
 struct AssociationKey {
     static var hidden: UInt8 = 1
@@ -23,6 +24,7 @@ struct AssociationKey {
     static var backgroundColor: UInt8 = 11
     static var buttonTitle: UInt8 = 12
     static var buttonTitleColor: UInt8 = 13
+    static var imageUrl: UInt8 = 14
 }
 
 enum objc_AssociationPolicy : UInt {
@@ -50,9 +52,18 @@ func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: T
     }
 }
 
-extension UIImageView {
-    public var rac_image: MutableProperty<UIImage> {
-        return lazyMutableProperty(self, key: &AssociationKey.image, setter: { self.image = $0 }, getter: { self.image ?? UIImage() })
+extension PlaceholderImageView {
+
+    var rac_url: MutableProperty<String> {
+        return lazyAssociatedProperty(self, key: &AssociationKey.imageUrl) {
+            let property = MutableProperty<String>("")
+            property.producer.startWithNext { urlStr in
+                if let url = NSURL(string: urlStr) {
+                    self.sd_setImageWithURL(url, placeholderImage: self.placeholderImage)
+                }
+            }
+            return property
+        }
     }
 }
 

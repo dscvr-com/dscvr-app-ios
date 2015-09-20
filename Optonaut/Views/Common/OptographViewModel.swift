@@ -17,9 +17,9 @@ class OptographViewModel {
     let personId: ConstantProperty<UUID>
     let text: ConstantProperty<String>
     let location: ConstantProperty<String>
+    let previewImageUrl: ConstantProperty<String>
+    let avatarImageUrl: ConstantProperty<String>
     
-    let previewImage = MutableProperty<UIImage>(UIImage(named: "optograph-placeholder")!)
-    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let isStarred = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let commentCount = MutableProperty<Int>(0)
@@ -31,14 +31,13 @@ class OptographViewModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        previewImage <~ DownloadService.downloadContents(from: "\(S3URL)/original/\(optograph.previewAssetId).jpg", to: "\(StaticPath)/\(optograph.previewAssetId).jpg").map { UIImage(data: $0)! }
-        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg", to: "\(StaticPath)/\(optograph.person.avatarAssetId).jpg").map { UIImage(data: $0)! }
-        
         fullName = ConstantProperty(optograph.person.fullName)
         userName = ConstantProperty("@\(optograph.person.userName)")
         personId = ConstantProperty(optograph.person.id)
         text = ConstantProperty(optograph.text)
         location = ConstantProperty(optograph.location.text)
+        previewImageUrl = ConstantProperty("\(S3URL)/original/\(optograph.previewAssetId).jpg")
+        avatarImageUrl = ConstantProperty("\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg")
         
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount

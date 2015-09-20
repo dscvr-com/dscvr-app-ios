@@ -18,12 +18,12 @@ class OptographTableViewCell: UITableViewCell {
     var viewModel: OptographViewModel!
     
     // subviews
-    let avatarImageView = UIImageView()
+    let avatarImageView = PlaceholderImageView()
     let fullNameView = UILabel()
     let userNameView = UILabel()
     let dateView = UILabel()
     let starButtonView = UIButton()
-    let previewImageView = UIImageView()
+    let previewImageView = PlaceholderImageView()
     let locationView = InsetLabel()
     let textView = ActiveLabel()
     let lineView = UIView()
@@ -33,6 +33,7 @@ class OptographTableViewCell: UITableViewCell {
         
         contentView.backgroundColor = .whiteColor()
         
+        avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
@@ -60,6 +61,7 @@ class OptographTableViewCell: UITableViewCell {
         starButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleStar"))
         contentView.addSubview(starButtonView)
         
+        previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
         previewImageView.userInteractionEnabled = true
@@ -130,8 +132,8 @@ class OptographTableViewCell: UITableViewCell {
     func bindViewModel(optograph: Optograph) {
         viewModel = OptographViewModel(optograph: optograph)
         
-        previewImageView.rac_image <~ viewModel.previewImage
-        avatarImageView.rac_image <~ viewModel.avatarImage
+        previewImageView.rac_url <~ viewModel.previewImageUrl
+        avatarImageView.rac_url <~ viewModel.avatarImageUrl
         fullNameView.rac_text <~ viewModel.fullName
         userNameView.rac_text <~ viewModel.userName
         locationView.rac_text <~ viewModel.location

@@ -78,6 +78,7 @@ class RoundedTextField: UITextField {
         
         backgroundLayer.backgroundColor = UIColor.clearColor().CGColor
         backgroundLayer.cornerRadius = 5
+        backgroundLayer.transform = CATransform3DMakeScale(-1, 1, 1)
         layer.addSublayer(backgroundLayer)
         
         lineLayer.lineWidth = 1

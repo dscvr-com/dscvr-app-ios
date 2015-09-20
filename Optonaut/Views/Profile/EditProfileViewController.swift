@@ -17,7 +17,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     let viewModel = EditProfileViewModel()
     
     // subviews
-    let avatarImageView = UIImageView()
+    let avatarImageView = PlaceholderImageView()
     let fullNameIconView = UILabel()
     let fullNameInputView = BottomLineTextField()
     let userNameIconView = UILabel()
@@ -63,11 +63,12 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         
         navigationItem.title = "Edit Profile"
         
+        avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 30
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "updateImage"))
-        avatarImageView.rac_image <~ viewModel.avatarImage
+        avatarImageView.rac_url <~ viewModel.avatarImageUrl
         view.addSubview(avatarImageView)
         
         fullNameIconView.font = .icomoonOfSize(20)

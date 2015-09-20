@@ -10,10 +10,11 @@ import Foundation
 import ReactiveCocoa
 import ObjectMapper
 import Async
+import WebImage
 
 class CreateOptographViewModel {
     
-    let previewImage = MutableProperty<UIImage>(UIImage(named: "optograph-details-placeholder")!)
+    let previewImageUrl = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     let text = MutableProperty<String>("")
     let pending = MutableProperty<Bool>(true)
@@ -31,8 +32,8 @@ class CreateOptographViewModel {
             })
             .mapError { _ in ApiError.Nil }
             .map { (lat, lon) in ["latitude": lat, "longitude": lon] }
-            .flatMap(.Latest) { parameters in ApiService<LocationMappable>.post("locations/lookup", parameters: parameters) }
-            .startWithNext { locationData in self.location.value = locationData.text }
+            .flatMap(.Latest) { ApiService<LocationMappable>.post("locations/lookup", parameters: $0) }
+            .startWithNext { self.location.value = $0.text }
         
         text.producer.startWithNext { self.optograph.text = $0 }
         location.producer.startWithNext { self.optograph.location.text = $0 }
@@ -46,7 +47,8 @@ class CreateOptographViewModel {
             data.writeToFile("\(StaticPath)/\(optograph.rightTextureAssetId).jpg", atomically: true)
         case .PreviewImage(let data):
             data.writeToFile("\(StaticPath)/\(optograph.previewAssetId).jpg", atomically: true)
-            previewImage.value = UIImage(data: data)!
+            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: "\(S3URL)/original/\(optograph.previewAssetId).jpg", toDisk: true)
+            previewImageUrl.value = "\(S3URL)/original/\(optograph.previewAssetId).jpg"
         }
     }
     
