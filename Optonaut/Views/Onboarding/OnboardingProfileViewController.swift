@@ -35,7 +35,15 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         
         view.backgroundColor = .whiteColor()
         
-        headlineView.text = "FIRST CREATE YOUR PROFILE"
+    
+        viewModel.state.producer.startWithNext { state in
+            switch state {
+            case .Avatar: self.headlineView.text = "FIRST UPLOAD A PICTURE OF YOU"
+            case .FullName: self.headlineView.text = "PLEASE ENTER YOUR NAME"
+            case .UserName: self.headlineView.text = "NOW CHOOSE YOUR USERNAME"
+            case .Done: self.headlineView.text = "WELL DONE"
+            }
+        }
         headlineView.textColor = UIColor.Accent
         headlineView.textAlignment = .Center
         headlineView.font = UIFont.robotoOfSize(16, withType: .Bold)
@@ -68,7 +76,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         fullNameInputView.placeholder = "What's your name?"
         fullNameInputView.returnKeyType = .Next
         fullNameInputView.delegate = self
-        fullNameInputView.rac_alpha <~ viewModel.fullNameEnabled.producer.map { $0 ? 1 : 0.5 }
+        fullNameInputView.rac_alpha <~ viewModel.fullNameEnabled.producer.map { $0 ? 1 : 0.3 }
         fullNameInputView.rac_userInteractionEnabled <~ viewModel.fullNameEnabled
         fullNameInputView.rac_hidden <~ viewModel.fullNameEditing.producer.map(negate)
         fullNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.fullName.value = $0 as! String }
@@ -89,7 +97,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         userNameInputView.autocapitalizationType = .None
         userNameInputView.returnKeyType = .Done
         userNameInputView.delegate = self
-        userNameInputView.rac_alpha <~ viewModel.userNameEnabled.producer.map { $0 ? 1 : 0.5 }
+        userNameInputView.rac_alpha <~ viewModel.userNameEnabled.producer.map { $0 ? 1 : (self.viewModel.fullNameEnabled.value ? 0.3 : 0.2) }
         userNameInputView.rac_userInteractionEnabled <~ viewModel.userNameEnabled
         userNameInputView.rac_hidden <~ viewModel.userNameEditing.producer.map(negate)
         userNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.userName.value = $0 as! String }
@@ -132,21 +140,21 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     
     override func updateViewConstraints() {
         
-        let contentHeight: CGFloat = 400
-        let statusBarOffset: CGFloat = 20
+        let contentHeight: CGFloat = 350
+        let statusBarOffset: CGFloat = 80
         let buttonOffset: CGFloat = 106
         let topOffset = (view.bounds.height - statusBarOffset - buttonOffset - contentHeight) / 2 + statusBarOffset + 5
         
         headlineView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        headlineView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: topOffset)
+        headlineView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: topOffset / 2)
         
         uploadButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        uploadButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: headlineView, withOffset: 30)
+        uploadButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: topOffset)
         uploadButtonView.autoSetDimension(.Height, toSize: 180)
         uploadButtonView.autoSetDimension(.Width, toSize: 180)
         
         avatarImageView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        avatarImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: headlineView, withOffset: 40)
+        avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: topOffset)
         avatarImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: uploadButtonView)
         avatarImageView.autoMatchDimension(.Height, toDimension: .Height, ofView: uploadButtonView)
         

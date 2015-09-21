@@ -107,7 +107,7 @@ class OnboardingHashtagViewController: UIViewController {
     }
     
     func showFeed() {
-        
+        presentViewController(TabBarViewController(), animated: false, completion: nil)
     }
     
 }
@@ -154,7 +154,7 @@ extension OnboardingHashtagViewController: UICollectionViewDataSource {
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        viewModel.results.value[indexPath.row].isSelected = !viewModel.results.value[indexPath.row].isSelected
+        viewModel.results.value[indexPath.row].isFollowed = !viewModel.results.value[indexPath.row].isFollowed
     }
     
 }

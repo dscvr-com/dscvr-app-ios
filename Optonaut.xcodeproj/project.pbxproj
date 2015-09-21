@@ -122,6 +122,8 @@
 		8FE09F5B1BADD22200EA105D /* WebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE09F5A1BADD22200EA105D /* WebImage.framework */; };
 		8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */; settings = {ASSET_TAGS = (); }; };
 		8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */; settings = {ASSET_TAGS = (); }; };
+		8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F631BAF680A00EA105D /* Hashtag.swift */; settings = {ASSET_TAGS = (); }; };
+		8FE09F661BAF681900EA105D /* HashtagTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F651BAF681900EA105D /* HashtagTable.swift */; settings = {ASSET_TAGS = (); }; };
 		8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEA6F201BA5969700153677 /* DatabaseService.swift */; settings = {ASSET_TAGS = (); }; };
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
@@ -268,6 +270,8 @@
 		8FE09F5A1BADD22200EA105D /* WebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebImage.framework; path = Carthage/Build/iOS/WebImage.framework; sourceTree = "<group>"; };
 		8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
 		8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotificationUtils.swift; sourceTree = "<group>"; };
+		8FE09F631BAF680A00EA105D /* Hashtag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hashtag.swift; sourceTree = "<group>"; };
+		8FE09F651BAF681900EA105D /* HashtagTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashtagTable.swift; sourceTree = "<group>"; };
 		8FEA6F201BA5969700153677 /* DatabaseService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		A571CC5F1B91D7B400124FD2 /* pipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pipeline.cpp; sourceTree = "<group>"; };
@@ -380,6 +384,7 @@
 			isa = PBXGroup;
 			children = (
 				8F900B3C1B839D0C0085566C /* CommentTable.swift */,
+				8FE09F651BAF681900EA105D /* HashtagTable.swift */,
 				8F900B441B839D7A0085566C /* LocationTable.swift */,
 				8F900B3E1B839D0C0085566C /* OptographTable.swift */,
 				8F900B3F1B839D0C0085566C /* PersonTable.swift */,
@@ -393,6 +398,7 @@
 				8F4CE79F1B6CEEC700BD8A71 /* Model.swift */,
 				8F5FDA001B3EECB0007E073C /* Activity.swift */,
 				8FB6347F1B79AF9F00B48158 /* Comment.swift */,
+				8FE09F631BAF680A00EA105D /* Hashtag.swift */,
 				8F7738131B380F5D001F642B /* Optograph.swift */,
 				8F900B461B839E690085566C /* Location.swift */,
 				8F7738141B380F5D001F642B /* Person.swift */,
@@ -883,10 +889,12 @@
 				8FAB9F471B8F01DF00B4C8CB /* FeedTableViewController.swift in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagViewController.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
+				8FE09F661BAF681900EA105D /* HashtagTable.swift in Sources */,
 				A5C1C0181B7E19E200DCD598 /* monoStitcher.cpp in Sources */,
 				8FAB9F5A1B8F01DF00B4C8CB /* TabBarViewController.swift in Sources */,
 				A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */,
 				8FAB9F371B8F01DF00B4C8CB /* OptographViewModel.swift in Sources */,
+				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,
 				8FAB9F511B8F01DF00B4C8CB /* RequestInviteViewModel.swift in Sources */,

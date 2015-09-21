@@ -46,12 +46,14 @@ class DatabaseService {
     private static let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/db.sqlite3"
     private static let migrations = [
         CommentMigration,
+        HashtagMigration,
         LocationMigration,
         OptographMigration,
         PersonMigration,
     ]
     private static let tables = [
         CommentTable,
+        HashtagTable,
         LocationTable,
         OptographTable,
         PersonTable,

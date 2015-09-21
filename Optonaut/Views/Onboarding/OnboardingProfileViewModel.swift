@@ -10,6 +10,13 @@ import Foundation
 import ReactiveCocoa
 import SQLite
 
+enum OnboardingProfileState {
+    case Avatar
+    case FullName
+    case UserName
+    case Done
+}
+
 class OnboardingProfileViewModel {
     
     let fullName = MutableProperty<String>("")
@@ -24,6 +31,7 @@ class OnboardingProfileViewModel {
     let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let avatarUploaded = MutableProperty<Bool>(false)
     let dataComplete = MutableProperty<Bool>(false)
+    let state = MutableProperty<OnboardingProfileState>(.Avatar)
     
     private var person = Person.newInstance()
     
@@ -46,6 +54,17 @@ class OnboardingProfileViewModel {
             .combineLatestWith(userName.producer.map(isNotEmpty)).map(and)
             .combineLatestWith(userNameTaken.producer.map(negate)).map(and)
             .combineLatestWith(avatarUploaded.producer).map(and)
+            .on(next: { completed in
+                if completed {
+                    self.state.value = .Done
+                } else if !self.fullNameEnabled.value {
+                    self.state.value = .Avatar
+                } else if !self.userNameEnabled.value {
+                    self.state.value = .FullName
+                } else {
+                    self.state.value = .UserName
+                }
+            })
 
         fullNameEnabled <~ avatarUploaded.producer
         

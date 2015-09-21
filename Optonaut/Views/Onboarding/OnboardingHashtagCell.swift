@@ -34,7 +34,7 @@ class OnboardingHashtagCell: UICollectionViewCell {
         nameView.font = UIFont.robotoOfSize(14, withType: .Bold)
         contentView.addSubview(nameView)
         
-        checkView.rac_hidden <~ viewModel.isSelected.producer.map(negate)
+        checkView.rac_hidden <~ viewModel.isFollowed.producer.map(negate)
         checkView.text = String.icomoonWithName(.LnrCheck)
         checkView.font = UIFont.icomoonOfSize(35)
         checkView.textColor = .Accent

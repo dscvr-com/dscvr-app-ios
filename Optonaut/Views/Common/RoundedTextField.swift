@@ -22,10 +22,12 @@ class RoundedTextField: UITextField {
     private let backgroundLayer = CALayer()
     private let messageView = UILabel()
     
+    private var isEditing = false
+    
     var indicated = false {
         didSet {
             backgroundLayer.backgroundColor = indicated ? UIColor.LightGrey.hatched1.CGColor : UIColor.clearColor().CGColor
-            lineLayer.strokeColor = indicated ? UIColor.Accent.CGColor : UIColor.Grey.CGColor
+            updateLine()
             updatePlaceholder()
         }
     }
@@ -95,6 +97,10 @@ class RoundedTextField: UITextField {
         attributedPlaceholder = NSAttributedString(string: placeholder ?? "", attributes: attributes)
     }
     
+    private func updateLine() {
+        lineLayer.strokeColor = indicated || isEditing ? UIColor.Accent.CGColor : UIColor.Grey.CGColor
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -113,11 +119,13 @@ class RoundedTextField: UITextField {
     }
     
     func beginEditing() {
-        lineLayer.strokeColor = UIColor.Accent.CGColor
+        isEditing = true
+        updateLine()
     }
     
     func endEditing() {
-        lineLayer.strokeColor = UIColor.LightGrey.CGColor
+        isEditing = false
+        updateLine()
     }
     
 }

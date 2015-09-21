@@ -16,10 +16,6 @@ enum EnvType {
     case Production
 }
 
-//let Env = EnvType.Development
-let Env = EnvType.Staging
-//let Env = EnvType.Production
-
 var S3URL: String {
     switch Env {
     case .Development: return "http://optonaut-ios-beta-dev.s3.amazonaws.com"
