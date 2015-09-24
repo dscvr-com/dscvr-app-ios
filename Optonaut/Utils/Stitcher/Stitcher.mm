@@ -3,6 +3,7 @@
 #import <Foundation/foundation.h>
 #include <vector>
 #include <string>
+#define OPTONAUT_TARGET_PHONE
 
 #include "pipeline.hpp"
 #include "intrinsics.hpp"
@@ -131,7 +132,7 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
     self->isDebug = false,
-    self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::RecorderGraph::ModeTruncated, true);
+    self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::RecorderGraph::ModeNoBot, true);
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *tempDirectory = [[paths objectAtIndex:0] stringByAppendingString:@"/tmp/"];
@@ -156,7 +157,7 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     oImage->dataRef = ImageBufferToImageRef(image);
     oImage->intrinsics = intrinsics;
     oImage->id = counter++;
-    GLK4ToCVMat(extrinsics, oImage->extrinsics);
+    GLK4ToCVMat(extrinsics, oImage->originalExtrinsics);
     oImage->source = "Camera";
     
     if(isDebug) {

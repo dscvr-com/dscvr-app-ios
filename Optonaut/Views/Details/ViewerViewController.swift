@@ -59,6 +59,9 @@ class ViewerViewController: UIViewController  {
         
         let leftImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")!)
         let leftSphereGeometry = SCNSphere(radius: 5.0)
+        //TODO
+        leftSphereGeometry.geodesic = true
+       // leftSphereGeometry.segmentCount = 128
         leftSphereGeometry.firstMaterial?.diffuse.contents = leftImage!
         leftSphereGeometry.firstMaterial?.doubleSided = true
         let leftSphereNode = SCNNode(geometry: leftSphereGeometry)
@@ -67,6 +70,8 @@ class ViewerViewController: UIViewController  {
         
         let rightImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")!)
         let rightSphereGeometry = SCNSphere(radius: 5.0)
+        rightSphereGeometry.geodesic = true
+       // rightSphereGeometry.segmentCount = 128
         rightSphereGeometry.firstMaterial?.diffuse.contents = rightImage!
         rightSphereGeometry.firstMaterial?.doubleSided = true
         let rightSphereNode = SCNNode(geometry: rightSphereGeometry)

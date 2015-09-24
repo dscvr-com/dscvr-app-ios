@@ -360,9 +360,8 @@ class CameraViewController: UIViewController {
                 }
             }
 
-            if self.viewModel.isRecording.value {
-                debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
-            }
+            //We always need debug data, even when not recording - the aligner is not paused when idle.
+            debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
         }
     }
     
@@ -399,7 +398,8 @@ class CameraViewController: UIViewController {
             sendNext(sink, OptographAsset.RightImage(rightImageData!))
             
             if SessionService.sessionData!.debuggingEnabled {
-                self.debugHelper?.upload().startWithCompleted { sendCompleted(sink) }
+                //self.debugHelper?.upload().startWithCompleted { sendCompleted(sink) }
+                sendCompleted(sink)
             } else {
                 sendCompleted(sink)
             }
