@@ -14,7 +14,7 @@ class ExploreNavViewController: NavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        setTabBarIcon(tabBarItem, icon: .Compass)
+        setTabBarIcon(tabBarItem, icon: .Share)
         pushViewController(ExploreTableViewController(), animated: false)
     }
     

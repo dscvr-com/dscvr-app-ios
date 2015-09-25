@@ -11,7 +11,7 @@ import ObjectMapper
 struct Person: Model {
     var id: UUID
     var email: String
-    var fullName: String
+    var displayName: String
     var userName: String
     var text: String
     var followersCount: Int
@@ -25,7 +25,7 @@ struct Person: Model {
         return Person(
             id: uuid(),
             email: "",
-            fullName: "",
+            displayName: "",
             userName: "",
             text: "",
             followersCount: 0,
@@ -47,7 +47,7 @@ extension Person: Mappable {
     mutating func mapping(map: Map) {
         id                  <- map["id"]
         email               <- map["email"]
-        fullName            <- map["full_name"]
+        displayName         <- map["display_name"]
         userName            <- map["user_name"]
         text                <- map["text"]
         followersCount      <- map["followers_count"]
@@ -66,7 +66,7 @@ extension Person: SQLiteModel {
         return Person(
             id: row[PersonSchema.id],
             email: row[PersonSchema.email],
-            fullName: row[PersonSchema.fullName],
+            displayName: row[PersonSchema.displayName],
             userName: row[PersonSchema.userName],
             text: row[PersonSchema.text],
             followersCount: row[PersonSchema.followersCount],
@@ -82,7 +82,7 @@ extension Person: SQLiteModel {
         return [
             PersonSchema.id <-- id,
             PersonSchema.email <-- email,
-            PersonSchema.fullName <-- fullName,
+            PersonSchema.displayName <-- displayName,
             PersonSchema.userName <-- userName,
             PersonSchema.text <-- text,
             PersonSchema.followersCount <-- followersCount,

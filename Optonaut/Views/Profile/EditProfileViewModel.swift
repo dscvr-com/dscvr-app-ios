@@ -12,7 +12,7 @@ import SQLite
 
 class EditProfileViewModel {
     
-    let fullName = MutableProperty<String>("")
+    let displayName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let userNameTaken = MutableProperty<Bool>(false)
     let text = MutableProperty<String>("")
@@ -60,7 +60,7 @@ class EditProfileViewModel {
         }
         
         let parameters = [
-            "full_name": fullName.value,
+            "full_name": displayName.value,
             "user_name": userName.value,
             "text": text.value,
             "wants_newsletter": wantsNewsletter.value,
@@ -108,7 +108,7 @@ class EditProfileViewModel {
     
     private func updateProperties() {
         email.value = person.email
-        fullName.value = person.fullName
+        displayName.value = person.displayName
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
         text.value = person.text
@@ -117,7 +117,7 @@ class EditProfileViewModel {
     
     private func updateModel() {
         person.email = email.value
-        person.fullName = fullName.value
+        person.displayName = displayName.value
         person.userName = userName.value
         person.wantsNewsletter = wantsNewsletter.value
         person.text = text.value

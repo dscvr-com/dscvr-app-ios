@@ -55,7 +55,7 @@ class ForgotPasswordViewController: UIViewController {
         emailInputView.font = .robotoOfSize(15, withType: .Regular)
         emailInputView.textColor = .whiteColor()
         emailInputView.textAlignment = .Center
-        emailInputView.layer.cornerRadius = 5
+        emailInputView.layer.cornerRadius = 6
         emailInputView.clipsToBounds = true
         emailInputView.autocorrectionType = .No
         emailInputView.autocapitalizationType = .None
@@ -69,7 +69,7 @@ class ForgotPasswordViewController: UIViewController {
         submitButtonView.setTitle("Reset Password", forState: .Normal)
         submitButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         submitButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
-        submitButtonView.layer.cornerRadius = 5
+        submitButtonView.layer.cornerRadius = 6
         submitButtonView.layer.masksToBounds = true
         submitButtonView.rac_userInteractionEnabled <~ viewModel.emailValid
         submitButtonView.rac_alpha <~ viewModel.emailValid.producer.map { $0 ? 1 : 0.5 }
@@ -80,7 +80,7 @@ class ForgotPasswordViewController: UIViewController {
         cancelButtonView.setTitle("Cancel", forState: .Normal)
         cancelButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         cancelButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
-        cancelButtonView.layer.cornerRadius = 5
+        cancelButtonView.layer.cornerRadius = 6
         cancelButtonView.layer.masksToBounds = true
         cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "sendEmail"))
         formView.addSubview(cancelButtonView)

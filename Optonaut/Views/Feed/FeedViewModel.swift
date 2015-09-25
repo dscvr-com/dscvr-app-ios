@@ -32,31 +32,31 @@ class FeedViewModel: NSObject {
             .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
 //            .order(CommentSchema.createdAt.asc)
         
-        refreshNotification.producer
-            .mapError { _ in DatabaseQueryError.Nil }
-            .flatMap(.Latest) { _ in
-                DatabaseService.query(.Many, query: query)
-                    .observeOn(QueueScheduler(queue: queue))
-                    .map { row -> Optograph in
-                        let person = Person.fromSQL(row)
-                        let location = Location.fromSQL(row)
-                        var optograph = Optograph.fromSQL(row)
-                        
-                        optograph.person = person
-                        optograph.location = location
-                        
-                        return optograph
-                    }
-                    .collect()
-                    .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
-                    .startOn(QueueScheduler(queue: queue))
-            }
-            .observeOn(UIScheduler())
-            .startWithNext { optographs in
-                self.results.value = optographs
-                // needed since Optograph could have been deleted in the meantime
-                self.results.value = self.results.value.filter { !$0.deleted }
-            }
+//        refreshNotification.producer
+//            .mapError { _ in DatabaseQueryError.Nil }
+//            .flatMap(.Latest) { _ in
+//                DatabaseService.query(.Many, query: query)
+//                    .observeOn(QueueScheduler(queue: queue))
+//                    .map { row -> Optograph in
+//                        let person = Person.fromSQL(row)
+//                        let location = Location.fromSQL(row)
+//                        var optograph = Optograph.fromSQL(row)
+//                        
+//                        optograph.person = person
+//                        optograph.location = location
+//                        
+//                        return optograph
+//                    }
+//                    .collect()
+//                    .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
+//                    .startOn(QueueScheduler(queue: queue))
+//            }
+//            .observeOn(UIScheduler())
+//            .startWithNext { optographs in
+//                self.results.value = optographs
+//                // needed since Optograph could have been deleted in the meantime
+//                self.results.value = self.results.value.filter { !$0.deleted }
+//            }
         
         refreshNotification.producer
             .mapError { _ in ApiError.Nil }
@@ -74,7 +74,7 @@ class FeedViewModel: NSObject {
             }
             .observeOn(UIScheduler())
             .on(next: { optographs in
-                self.newResultsAvailable.value = self.results.value.first?.id != optographs.first?.id
+                self.newResultsAvailable.value = self.results.value.first?.id != optographs.first?.id || self.newResultsAvailable.value
                 self.results.value = optographs
             })
             .start()

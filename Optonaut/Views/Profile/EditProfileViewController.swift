@@ -18,8 +18,8 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     
     // subviews
     let avatarImageView = PlaceholderImageView()
-    let fullNameIconView = UILabel()
-    let fullNameInputView = BottomLineTextField()
+    let displayNameIconView = UILabel()
+    let displayNameInputView = BottomLineTextField()
     let userNameIconView = UILabel()
     let userNameInputView = BottomLineTextField()
     let userNameTakenView = UILabel()
@@ -71,17 +71,17 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
         view.addSubview(avatarImageView)
         
-        fullNameIconView.font = .icomoonOfSize(20)
-        fullNameIconView.text = .icomoonWithName(.VCard)
-        fullNameIconView.textColor = UIColor(0xe5e5e5)
-        view.addSubview(fullNameIconView)
+        displayNameIconView.font = .icomoonOfSize(20)
+        displayNameIconView.text = .icomoonWithName(.VCard)
+        displayNameIconView.textColor = UIColor(0xe5e5e5)
+        view.addSubview(displayNameIconView)
         
-        fullNameInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
-        fullNameInputView.textColor = UIColor(0x4d4d4d)
-        fullNameInputView.autocorrectionType = .No
-        fullNameInputView.rac_text <~ viewModel.fullName
-        fullNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.fullName.value = $0 as! String }
-        view.addSubview(fullNameInputView)
+        displayNameInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
+        displayNameInputView.textColor = UIColor(0x4d4d4d)
+        displayNameInputView.autocorrectionType = .No
+        displayNameInputView.rac_text <~ viewModel.displayName
+        displayNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.displayName.value = $0 as! String }
+        view.addSubview(displayNameInputView)
         
         userNameIconView.font = .icomoonOfSize(20)
         userNameIconView.text = .icomoonWithName(.Email)
@@ -208,21 +208,21 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         avatarImageView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 60, height: 60))
         
-        fullNameIconView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 5)
-        fullNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        fullNameIconView.autoSetDimension(.Width, toSize: 20)
+        displayNameIconView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 5)
+        displayNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        displayNameIconView.autoSetDimension(.Width, toSize: 20)
         
-        fullNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: fullNameIconView)
-        fullNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameIconView, withOffset: 15)
-        fullNameInputView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -20)
+        displayNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: displayNameIconView)
+        displayNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: displayNameIconView, withOffset: 15)
+        displayNameInputView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -20)
         
-        userNameIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameInputView, withOffset: 30)
+        userNameIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: displayNameInputView, withOffset: 30)
         userNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         userNameIconView.autoSetDimension(.Width, toSize: 20)
         
         userNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: userNameIconView)
         userNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: userNameIconView, withOffset: 15)
-        userNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
+        userNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: displayNameInputView)
         
         userNameTakenView.autoPinEdge(.Top, toEdge: .Top, ofView: userNameIconView, withOffset: 2)
         userNameTakenView.autoPinEdge(.Right, toEdge: .Right, ofView: userNameInputView)
@@ -268,7 +268,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         
         debugLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -1)
         debugLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: debugIconView, withOffset: 15)
-        debugLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
+        debugLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: displayNameInputView)
         
         debugSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -4)
         debugSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
@@ -279,7 +279,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
 
         newsletterLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -1)
         newsletterLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: newsletterIconView, withOffset: 15)
-        newsletterLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
+        newsletterLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: displayNameInputView)
 
         newsletterSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -4)
         newsletterSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)

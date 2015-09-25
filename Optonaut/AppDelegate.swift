@@ -12,8 +12,8 @@ import Fabric
 import Crashlytics
 import PureLayout
 
-//let Env = EnvType.Development
-let Env = EnvType.Staging
+let Env = EnvType.Development
+//let Env = EnvType.Staging
 //let Env = EnvType.Production
 
 @UIApplicationMain
@@ -89,9 +89,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupAppearanceDefaults()
         
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        let frame = UIScreen.mainScreen().bounds
+        window = UIWindow(frame: frame)
         
-        window?.backgroundColor = .whiteColor()
+        window?.backgroundColor = .blackColor()
         
         SessionService.prepare()
         SessionService.onLogout(performAlways: true) { self.window?.rootViewController = LoginViewController() }

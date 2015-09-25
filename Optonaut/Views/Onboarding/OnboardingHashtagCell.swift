@@ -25,7 +25,7 @@ class OnboardingHashtagCell: UICollectionViewCell {
         imageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         imageView.contentMode = .ScaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 5
+        imageView.layer.cornerRadius = 6
         contentView.addSubview(imageView)
         
         nameView.rac_text <~ viewModel.name.producer.map { "#\($0)" }

@@ -13,13 +13,16 @@ class NewCommentViewModel {
     
     let optographId: ConstantProperty<UUID>
     let text = MutableProperty<String>("")
-    let isValid = MutableProperty<Bool>(false)
+    let postingEnabled = MutableProperty<Bool>(false)
     let isPosting = MutableProperty<Bool>(false)
+    let commentsCount = MutableProperty<Int>(0)
     
-    init(optographId: UUID) {
+    init(optographId: UUID, commentsCount: Int) {
         self.optographId = ConstantProperty(optographId)
+        self.commentsCount.value = commentsCount
         
-        text.producer.map { !$0.isEmpty }.startWithNext { self.isValid.value = $0 }
+        postingEnabled <~ text.producer.map(isNotEmpty)
+            .combineLatestWith(isPosting.producer.map(negate)).map(and)
     }
     
     func postComment() -> SignalProducer<Comment, ApiError> {
@@ -27,6 +30,7 @@ class NewCommentViewModel {
             .on(
                 started: {
                     self.isPosting.value = true
+                    self.commentsCount.value++
                 },
                 next: { comment in
                     try! comment.person.insertOrReplace()
@@ -35,6 +39,9 @@ class NewCommentViewModel {
                 completed: {
                     self.text.value = ""
                     self.isPosting.value = false
+                },
+                error: { _ in
+                    self.commentsCount.value--
                 }
         )
     }

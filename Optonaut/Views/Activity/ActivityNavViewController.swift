@@ -17,7 +17,7 @@ class ActivityNavViewController: NavigationController, RedNavbar {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        setTabBarIcon(tabBarItem, icon: .Bell)
+//        setTabBarIcon(tabBarItem, icon: .Bell)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -50,7 +50,7 @@ class ActivityNavViewController: NavigationController, RedNavbar {
         let circle = CALayer()
         circle.frame = CGRect(x: tabBarItemSize.width * 5/2 + 9, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 17, width: 15, height: 15)
         circle.backgroundColor = UIColor.whiteColor().CGColor
-        circle.cornerRadius = 7.5
+        circle.cornerRadius = 6.5
         circle.opacity = 0.6
         circle.hidden = true
         tabBarController!.view.layer.addSublayer(circle)

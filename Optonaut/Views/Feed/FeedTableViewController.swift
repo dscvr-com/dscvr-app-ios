@@ -10,7 +10,7 @@ import UIKit
 import ReactiveCocoa
 import Async
 
-class FeedTableViewController: OptographTableViewController, RedNavbar {
+class FeedTableViewController: OptographTableViewController, BlackNavbar {
     
     let viewModel = FeedViewModel()
     let refreshControl = UIRefreshControl()
@@ -33,11 +33,14 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         searchButton.action = "pushSearch"
         navigationItem.setLeftBarButtonItem(searchButton, animated: false)
         
+        refreshControl.tintColor = .whiteColor()
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
             self.viewModel.refreshNotification.notify()
             Async.main(after: 10) { self.refreshControl.endRefreshing() }
         }
-        tableView.addSubview(refreshControl)
+        
+        tableView.backgroundColor = .blackColor()
+        tableView.insertSubview(refreshControl, atIndex: 0)
         
         viewModel.results.producer
             .on(
@@ -59,28 +62,28 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         super.viewWillAppear(animated)
         
         updateNavbarAppear()
-        navigationController?.hidesBarsOnSwipe = true
         
         viewModel.refreshNotification.notify()
-        
-        navigationController?.navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
-        navigationController?.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: UIFont.icomoonOfSize(50),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
-        ]
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        TabbarOverlayService.hidden = false
+        TabbarOverlayService.contentOffsetTop = 0
+        
         tabBarController?.delegate = self
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        TabbarOverlayService.scrollOffsetTop = tableView.contentOffset.y + 20
+        TabbarOverlayService.scrollOffsetBottom = tableView.contentSize.height - tableView.contentOffset.y - tableView.frame.height
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        navigationController?.hidesBarsOnSwipe = false
-        navigationController?.setNavigationBarHidden(false, animated: true)
         
         tabBarController?.delegate = nil
     }
@@ -89,6 +92,11 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        TabbarOverlayService.scrollOffsetTop = scrollView.contentOffset.y + 20
+        TabbarOverlayService.scrollOffsetBottom = scrollView.contentSize.height - scrollView.contentOffset.y - scrollView.frame.height
     }
     
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -110,8 +118,8 @@ extension FeedTableViewController: UITabBarControllerDelegate {
     
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
         if viewController == navigationController {
-            tableView.setContentOffset(CGPointZero, animated: true)
-            navigationController?.setNavigationBarHidden(false, animated: true)
+            tableView.setContentOffset(CGPoint(x: 0, y: -22), animated: true)
+//            navigationController?.setNavigationBarHidden(false, animated: true)
         }
     }
     

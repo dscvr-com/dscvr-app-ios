@@ -22,8 +22,7 @@ class DetailsViewModel {
     let timeSinceCreated = MutableProperty<String>("")
     let previewImageUrl = MutableProperty<String>("")
     let avatarImageUrl = MutableProperty<String>("")
-    let fullName = MutableProperty<String>("")
-    let userName = MutableProperty<String>("")
+    let displayName = MutableProperty<String>("")
     let personId = MutableProperty<UUID>("")
     let text = MutableProperty<String>("")
     let location = MutableProperty<String>("")
@@ -167,8 +166,7 @@ class DetailsViewModel {
         commentsCount.value = optograph.commentsCount
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = optograph.createdAt.longDescription
-        fullName.value = optograph.person.fullName
-        userName.value = "@\(optograph.person.userName)"
+        displayName.value = optograph.person.displayName
         personId.value = optograph.person.id
         text.value = optograph.text
         location.value = optograph.location.text

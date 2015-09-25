@@ -111,6 +111,8 @@
 		8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7411B8E3D7900656D99 /* LocationService.swift */; };
 		8FB3B7441B8E3DAA00656D99 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */; };
 		8FB634801B79AF9F00B48158 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6347F1B79AF9F00B48158 /* Comment.swift */; };
+		8FB885471BB29AF3008EB8CE /* optonaut-app.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FB885461BB299AB008EB8CE /* optonaut-app.ttf */; };
+		8FB885491BB2AE07008EB8CE /* SmallRoundedTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB885481BB2AE07008EB8CE /* SmallRoundedTextField.swift */; settings = {ASSET_TAGS = (); }; };
 		8FBDE25E1BA2E187008E66FC /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B551B8479250085566C /* Crashlytics.framework */; };
 		8FBDE25F1BA2E187008E66FC /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B561B8479250085566C /* Fabric.framework */; };
 		8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FBDE8B11B5D186800C78486 /* Device.framework */; };
@@ -118,6 +120,8 @@
 		8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCADEDF1BAB1A080018674B /* OnboardingInfoViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
 		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
+		8FDA90E41BB32FC000D72F6C /* TabbarOverlayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA90E31BB32FC000D72F6C /* TabbarOverlayService.swift */; settings = {ASSET_TAGS = (); }; };
+		8FDA90E61BB42D4700D72F6C /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA90E51BB42D4700D72F6C /* Icon.swift */; settings = {ASSET_TAGS = (); }; };
 		8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */; };
 		8FE09F5B1BADD22200EA105D /* WebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE09F5A1BADD22200EA105D /* WebImage.framework */; };
 		8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */; settings = {ASSET_TAGS = (); }; };
@@ -257,6 +261,8 @@
 		8FB3B7411B8E3D7900656D99 /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
 		8FB6347F1B79AF9F00B48158 /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		8FB885461BB299AB008EB8CE /* optonaut-app.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "optonaut-app.ttf"; sourceTree = "<group>"; };
+		8FB885481BB2AE07008EB8CE /* SmallRoundedTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmallRoundedTextField.swift; sourceTree = "<group>"; };
 		8FBDE8B11B5D186800C78486 /* Device.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Device.framework; path = Carthage/Build/iOS/Device.framework; sourceTree = "<group>"; };
 		8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KMPlaceholderTextView.framework; path = Carthage/Build/iOS/KMPlaceholderTextView.framework; sourceTree = "<group>"; };
 		8FCADEDF1BAB1A080018674B /* OnboardingInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingInfoViewController.swift; sourceTree = "<group>"; };
@@ -266,6 +272,8 @@
 		8FCCA0451B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FCCA0461B3806040091F1B1 /* OptonautTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptonautTests.swift; sourceTree = "<group>"; };
 		8FCCA0511B3806680091F1B1 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8FDA90E31BB32FC000D72F6C /* TabbarOverlayService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabbarOverlayService.swift; sourceTree = "<group>"; };
+		8FDA90E51BB42D4700D72F6C /* Icon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
 		8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
 		8FE09F5A1BADD22200EA105D /* WebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebImage.framework; path = Carthage/Build/iOS/WebImage.framework; sourceTree = "<group>"; };
 		8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
@@ -371,6 +379,7 @@
 		8F4C6E301B4A70CD007508ED /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				8FB885461BB299AB008EB8CE /* optonaut-app.ttf */,
 				8F4C6E311B4A70CD007508ED /* icomoon.ttf */,
 				8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */,
 				8F4C6E371B4A70CD007508ED /* Roboto-Light.ttf */,
@@ -459,6 +468,7 @@
 				8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */,
 				8FAB9EFE1B8F01DF00B4C8CB /* OptographViewModel.swift */,
 				8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */,
+				8FB885481BB2AE07008EB8CE /* SmallRoundedTextField.swift */,
 				8F0B17851BAC193000FAF649 /* RoundedTextField.swift */,
 			);
 			path = Common;
@@ -592,6 +602,7 @@
 				8FB3B7411B8E3D7900656D99 /* LocationService.swift */,
 				8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */,
 				8F1E0AC31B98251A002E2FB5 /* SessionService.swift */,
+				8FDA90E31BB32FC000D72F6C /* TabbarOverlayService.swift */,
 				8F1E0AC51B98304F002E2FB5 /* VersionService.swift */,
 			);
 			name = Services;
@@ -721,6 +732,7 @@
 		8FFCE4B61B4DBF1900832C88 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				8FDA90E51BB42D4700D72F6C /* Icon.swift */,
 				8FE09F5E1BAEFD7100EA105D /* CWStatusBarNotification */,
 				8FD7F85C1B5924D5001680AA /* Stitcher */,
 			);
@@ -815,6 +827,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FB885471BB29AF3008EB8CE /* optonaut-app.ttf in Resources */,
 				A5C1C0171B7E19E200DCD598 /* lib in Resources */,
 				8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */,
 				8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */,
@@ -902,10 +915,12 @@
 				8FAB9F451B8F01DF00B4C8CB /* ExploreViewModel.swift in Sources */,
 				8FAB9F3E1B8F01DF00B4C8CB /* DetailsTableViewCell.swift in Sources */,
 				8F900B471B839E690085566C /* Location.swift in Sources */,
+				8FB885491BB2AE07008EB8CE /* SmallRoundedTextField.swift in Sources */,
 				8F1287E91BA8A9730098ED24 /* NSURLExtensions.swift in Sources */,
 				8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */,
+				8FDA90E61BB42D4700D72F6C /* Icon.swift in Sources */,
 				8FAB9F561B8F01DF00B4C8CB /* ProfileHeaderTableViewCell.swift in Sources */,
 				8F0B17861BAC193000FAF649 /* RoundedTextField.swift in Sources */,
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
@@ -927,6 +942,7 @@
 				8FAB9F3F1B8F01DF00B4C8CB /* DetailsViewModel.swift in Sources */,
 				8F0B17841BAC084F00FAF649 /* OnboardingProfileViewModel.swift in Sources */,
 				8FAB9F801B8F03E800B4C8CB /* UIKitExtensions.swift in Sources */,
+				8FDA90E41BB32FC000D72F6C /* TabbarOverlayService.swift in Sources */,
 				A5C1C0161B7E19E200DCD598 /* image.cpp in Sources */,
 				A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */,
 				8FAB9F4B1B8F01DF00B4C8CB /* HashtagTableViewController.swift in Sources */,
@@ -1102,7 +1118,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 57;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1122,7 +1138,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "$(PROFILE_UDID)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1138,7 +1154,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 57;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1155,7 +1171,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "$(PROFILE_UDID)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

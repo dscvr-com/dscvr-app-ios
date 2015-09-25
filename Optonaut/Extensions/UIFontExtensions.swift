@@ -14,8 +14,9 @@ public enum FontType: String {
     case Light = "Light"
     case Black = "Black"
     case Bold = "Bold"
+    case SemiBold = "SemiBold"
     
-    static let allValues = [Regular, Medium, Light, Black, Bold]
+    static let allValues = [Regular, Medium, Light, Black, Bold, SemiBold]
 }
 
 public extension UIFont {
@@ -28,6 +29,7 @@ public extension UIFont {
         case .Light: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightLight)
         case .Black: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightBlack)
         case .Bold: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightBold)
+        case .SemiBold: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightSemibold)
         }
 //
 //        struct Static {

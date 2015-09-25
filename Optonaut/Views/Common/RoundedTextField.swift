@@ -10,13 +10,13 @@ import Foundation
 import UIKit
 import HexColor
 
-enum MessageType {
-    case Success(String)
-    case Warning(String)
-    case Nil
-}
-
 class RoundedTextField: UITextField {
+
+    enum MessageType {
+        case Success(String)
+        case Warning(String)
+        case Nil
+    }
     
     private let lineLayer = CAShapeLayer()
     private let backgroundLayer = CALayer()
@@ -79,7 +79,7 @@ class RoundedTextField: UITextField {
         addSubview(messageView)
         
         backgroundLayer.backgroundColor = UIColor.clearColor().CGColor
-        backgroundLayer.cornerRadius = 5
+        backgroundLayer.cornerRadius = 6
         backgroundLayer.transform = CATransform3DMakeScale(-1, 1, 1)
         layer.addSublayer(backgroundLayer)
         

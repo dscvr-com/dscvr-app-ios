@@ -31,7 +31,7 @@ extension UIColor {
     
     static var Grey: UIColor {
         get {
-            return UIColor.blackColor().alpha(0.25)
+            return UIColor.DarkGrey.alpha(0.25)
         }
     }
     
@@ -54,6 +54,6 @@ extension UIColor {
     }
 }
 
-func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icomoon) {
-    tabBarItem.title = String.icomoonWithName(icon)
+func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icon) {
+    tabBarItem.title = String.iconWithName(icon)
 }

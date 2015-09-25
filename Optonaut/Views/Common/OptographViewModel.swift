@@ -12,9 +12,7 @@ import ReactiveCocoa
 
 class OptographViewModel {
     
-    let fullName: ConstantProperty<String>
-    let userName: ConstantProperty<String>
-    let personId: ConstantProperty<UUID>
+    let displayName: ConstantProperty<String>
     let text: ConstantProperty<String>
     let location: ConstantProperty<String>
     let previewImageUrl: ConstantProperty<String>
@@ -22,8 +20,6 @@ class OptographViewModel {
     
     let isStarred = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
-    let commentCount = MutableProperty<Int>(0)
-    let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
     
     var optograph: Optograph
@@ -31,9 +27,7 @@ class OptographViewModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        fullName = ConstantProperty(optograph.person.fullName)
-        userName = ConstantProperty("@\(optograph.person.userName)")
-        personId = ConstantProperty(optograph.person.id)
+        displayName = ConstantProperty(optograph.person.displayName)
         text = ConstantProperty(optograph.text)
         location = ConstantProperty(optograph.location.text)
         previewImageUrl = ConstantProperty("\(S3URL)/original/\(optograph.previewAssetId).jpg")

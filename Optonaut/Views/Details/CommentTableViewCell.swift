@@ -19,20 +19,21 @@ class CommentTableViewCell: UITableViewCell {
     // subviews
     private let textView = ActiveLabel()
     private let avatarImageView = PlaceholderImageView()
-    private let fullNameView = UILabel()
-    private let userNameView = UILabel()
+    private let displayNameView = UILabel()
     private let dateView = UILabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        contentView.backgroundColor = .blackColor()
+        
         textView.numberOfLines = 0
-        textView.mentionColor = UIColor.Accent
+        textView.mentionEnabled = false
         textView.hashtagColor = UIColor.Accent
         textView.URLEnabled = false
         textView.userInteractionEnabled = true
-        textView.font = UIFont.robotoOfSize(13, withType: .Light)
-        textView.textColor = UIColor(0x4d4d4d)
+        textView.font = UIFont.robotoOfSize(12, withType: .Light)
+        textView.textColor = .whiteColor()
         contentView.addSubview(textView)
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
@@ -42,19 +43,13 @@ class CommentTableViewCell: UITableViewCell {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(avatarImageView)
         
-        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        fullNameView.textColor = UIColor(0x4d4d4d)
-        fullNameView.userInteractionEnabled = true
-        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(fullNameView)
+        displayNameView.font = UIFont.robotoOfSize(12, withType: .Medium)
+        displayNameView.textColor = .whiteColor()
+        displayNameView.userInteractionEnabled = true
+        displayNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        contentView.addSubview(displayNameView)
         
-        userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
-        userNameView.textColor = UIColor(0xb3b3b3)
-        userNameView.userInteractionEnabled = true
-        userNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(userNameView)
-        
-        dateView.font = UIFont.robotoOfSize(12, withType: .Light)
+        dateView.font = UIFont.robotoOfSize(11, withType: .Light)
         dateView.textColor = UIColor(0xb3b3b3)
         contentView.addSubview(dateView)
         
@@ -68,18 +63,15 @@ class CommentTableViewCell: UITableViewCell {
     override func updateConstraints() {
         avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 15)
         avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+        avatarImageView.autoSetDimensionsToSize(CGSize(width: 29, height: 29))
         
-        fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
-        fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        displayNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 0)
+        displayNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
-        userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 4)
+        dateView.autoPinEdge(.Top, toEdge: .Top, ofView: displayNameView, withOffset: 1)
+        dateView.autoPinEdge(.Left, toEdge: .Right, ofView: displayNameView, withOffset: 4)
         
-        dateView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 15)
-        dateView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        
-        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 3)
+        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: displayNameView, withOffset: 1)
         textView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         
@@ -100,8 +92,7 @@ class CommentTableViewCell: UITableViewCell {
         }
         
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
-        fullNameView.rac_text <~ viewModel.fullName
-        userNameView.rac_text <~ viewModel.userName
+        displayNameView.rac_text <~ viewModel.displayName
         dateView.rac_text <~ viewModel.timeSinceCreated
     }
     

@@ -23,7 +23,7 @@ class HatchedButton: UIButton {
         setTitleColor(UIColor.Accent, forState: .Normal)
         titleLabel?.font = UIFont.robotoOfSize(16, withType: .Bold)
         backgroundColor = UIColor.LightGrey.hatched1
-        layer.cornerRadius = 5
+        layer.cornerRadius = 6
         clipsToBounds = true
         
         addTarget(self, action: "buttonTouched", forControlEvents: .TouchDown)

@@ -11,7 +11,7 @@ import SQLite
 struct PersonSchemaType: ModelSchema {
     let id = Expression<UUID>("person_id")
     let email = Expression<String>("person_email")
-    let fullName = Expression<String>("person_full_name")
+    let displayName = Expression<String>("person_full_name")
     let userName = Expression<String>("person_user_name")
     let text = Expression<String>("person_text")
     let followersCount = Expression<Int>("person_followers_count")
@@ -29,7 +29,7 @@ func PersonMigration() -> String {
     return PersonTable.create { t in
         t.column(PersonSchema.id, primaryKey: true)
         t.column(PersonSchema.email)
-        t.column(PersonSchema.fullName)
+        t.column(PersonSchema.displayName)
         t.column(PersonSchema.userName)
         t.column(PersonSchema.text)
         t.column(PersonSchema.followersCount)

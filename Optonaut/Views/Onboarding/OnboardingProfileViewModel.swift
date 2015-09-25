@@ -19,10 +19,10 @@ enum OnboardingProfileState {
 
 class OnboardingProfileViewModel {
     
-    let fullName = MutableProperty<String>("")
-    let fullNameEditing = MutableProperty<Bool>(true)
-    let fullNameEnabled = MutableProperty<Bool>(false)
-    let fullNameIndicated = MutableProperty<Bool>(false)
+    let displayName = MutableProperty<String>("")
+    let displayNameEditing = MutableProperty<Bool>(true)
+    let displayNameEnabled = MutableProperty<Bool>(false)
+    let displayNameIndicated = MutableProperty<Bool>(false)
     let userName = MutableProperty<String>("")
     let userNameEditing = MutableProperty<Bool>(true)
     let userNameEnabled = MutableProperty<Bool>(false)
@@ -48,8 +48,8 @@ class OnboardingProfileViewModel {
                     .startWithError { _ in self.userNameTaken.value = true }
             }
         
-        dataComplete <~ fullName.producer.map(isNotEmpty)
-            .combineLatestWith(fullNameEditing.producer.map(negate)).map(and)
+        dataComplete <~ displayName.producer.map(isNotEmpty)
+            .combineLatestWith(displayNameEditing.producer.map(negate)).map(and)
             .combineLatestWith(userNameEditing.producer.map(negate)).map(and)
             .combineLatestWith(userName.producer.map(isNotEmpty)).map(and)
             .combineLatestWith(userNameTaken.producer.map(negate)).map(and)
@@ -57,7 +57,7 @@ class OnboardingProfileViewModel {
             .on(next: { completed in
                 if completed {
                     self.state.value = .Done
-                } else if !self.fullNameEnabled.value {
+                } else if !self.displayNameEnabled.value {
                     self.state.value = .Avatar
                 } else if !self.userNameEnabled.value {
                     self.state.value = .FullName
@@ -66,13 +66,13 @@ class OnboardingProfileViewModel {
                 }
             })
 
-        fullNameEnabled <~ avatarUploaded.producer
+        displayNameEnabled <~ avatarUploaded.producer
         
-        fullNameIndicated <~ fullNameEnabled.producer
-            .combineLatestWith(fullName.producer.map(isEmpty)).map(and)
+        displayNameIndicated <~ displayNameEnabled.producer
+            .combineLatestWith(displayName.producer.map(isEmpty)).map(and)
         
         userNameEnabled <~ avatarUploaded.producer
-            .combineLatestWith(fullName.producer.map(isNotEmpty)).map(and)
+            .combineLatestWith(displayName.producer.map(isNotEmpty)).map(and)
         
         userNameIndicated <~ userNameEnabled.producer
             .combineLatestWith(userName.producer.map(isEmpty)).map(and)
@@ -84,13 +84,13 @@ class OnboardingProfileViewModel {
         }
         
         let parameters = [
-            "full_name": fullName.value,
+            "full_name": displayName.value,
             "user_name": userName.value,
         ] as [String: AnyObject]
         
         return ApiService.put("persons/me", parameters: parameters)
             .on(completed: {
-                self.person.fullName = self.fullName.value
+                self.person.displayName = self.displayName.value
                 self.person.userName = self.userName.value
                 self.saveModel()
             })

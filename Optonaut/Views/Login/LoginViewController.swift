@@ -49,7 +49,7 @@ class LoginViewController: UIViewController {
         emailOrUserNameInputView.font = .robotoOfSize(15, withType: .Regular)
         emailOrUserNameInputView.textColor = .whiteColor()
         emailOrUserNameInputView.textAlignment = .Center
-        emailOrUserNameInputView.layer.cornerRadius = 5
+        emailOrUserNameInputView.layer.cornerRadius = 6
         emailOrUserNameInputView.clipsToBounds = true
         emailOrUserNameInputView.autocorrectionType = .No
         emailOrUserNameInputView.autocapitalizationType = .None
@@ -64,7 +64,7 @@ class LoginViewController: UIViewController {
         passwordInputView.font = .robotoOfSize(15, withType: .Regular)
         passwordInputView.textColor = .whiteColor()
         passwordInputView.textAlignment = .Center
-        passwordInputView.layer.cornerRadius = 5
+        passwordInputView.layer.cornerRadius = 6
         passwordInputView.clipsToBounds = true
         passwordInputView.secureTextEntry = true
         passwordInputView.returnKeyType = .Go
@@ -76,7 +76,7 @@ class LoginViewController: UIViewController {
         submitButtonView.setTitle("Login", forState: .Normal)
         submitButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         submitButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
-        submitButtonView.layer.cornerRadius = 5
+        submitButtonView.layer.cornerRadius = 6
         submitButtonView.layer.masksToBounds = true
         submitButtonView.rac_userInteractionEnabled <~ viewModel.allowed
         submitButtonView.rac_alpha <~ viewModel.allowed.producer.map { $0 ? 1 : 0.5 }

@@ -9,7 +9,7 @@
 import UIKit
 import Async
 
-class ProfileTableViewController: OptographTableViewController, TransparentNavbar, UniqueView {
+class ProfileTableViewController: OptographTableViewController, BlackNavbar, UniqueView {
     
     private let viewModel: OptographsViewModel
     private let personId: UUID
@@ -38,13 +38,14 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         super.viewDidLoad()
         
         tableView.registerClass(ProfileHeaderTableViewCell.self, forCellReuseIdentifier: "profile-header-cell")
-        tableView.bounces = false
+        
+        tableView.backgroundColor = .blackColor()
+        tableView.addSubview(refreshControl)
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
             self.viewModel.refreshNotification.notify()
             Async.main(after: 10) { self.refreshControl.endRefreshing() }
         }
-        tableView.addSubview(refreshControl)
         
         viewModel.results.producer
             .on(
@@ -66,6 +67,9 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         super.viewDidLayoutSubviews()
         
         tableView.contentInset = UIEdgeInsetsZero
+        
+        TabbarOverlayService.scrollOffsetTop = tableView.contentOffset.y + 20
+        TabbarOverlayService.scrollOffsetBottom = tableView.contentSize.height - tableView.contentOffset.y - tableView.frame.height
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -79,6 +83,9 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        TabbarOverlayService.hidden = false
+        TabbarOverlayService.contentOffsetTop = 0
+        
         headerTableViewCell?.viewModel.reloadModel()
     }
     
@@ -88,9 +95,14 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         super.updateViewConstraints()
     }
     
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        TabbarOverlayService.scrollOffsetTop = scrollView.contentOffset.y + 20
+        TabbarOverlayService.scrollOffsetBottom = scrollView.contentSize.height - scrollView.contentOffset.y - scrollView.frame.height
+    }
+    
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if indexPath.row == 0 {
-            return 280
+            return 200
         } else {
             return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
         }

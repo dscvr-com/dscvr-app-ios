@@ -537,7 +537,7 @@ private class ProgressView: UIView {
         foregroundLine.cornerRadius = 1
         layer.addSublayer(foregroundLine)
         
-        trackingPoint.cornerRadius = 7
+        trackingPoint.cornerRadius = 6
         layer.addSublayer(trackingPoint)
     }
     

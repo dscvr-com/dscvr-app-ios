@@ -16,110 +16,98 @@ class DetailsTableViewCell: UITableViewCell {
     weak var navigationController: NavigationController?
     
     // subviews
-    private let previewImageView = PlaceholderImageView()
-    private let locationView = InsetLabel()
-    private let avatarImageView = PlaceholderImageView()
-    private let progressView = UIProgressView()
-    private let fullNameView = UILabel()
-    private let userNameView = UILabel()
+    private let wrapperView = UIView()
+    private let barView = UIView()
     private let dateView = UILabel()
-    private let actionButtonView = UIButton()
     private let starButtonView = UIButton()
-    private let starCountView = UILabel()
-    private let commentIconView = UILabel()
-    private let commentCountView = UILabel()
-    private let viewIconView = UILabel()
-    private let viewsCountView = UILabel()
+    private let starsCountView = UILabel()
+    private let previewImageView = PlaceholderImageView()
+    private let locationView = UILabel()
+    private let displayNameView = UILabel()
+    private let avatarImageView = PlaceholderImageView()
     private let textView = ActiveLabel()
-    private let lineView = UIView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        previewImageView.placeholderImage = UIImage(named: "optograph-details-placeholder")!
+        contentView.backgroundColor = .blackColor()
+        
+        wrapperView.layer.cornerRadius = 6
+        wrapperView.clipsToBounds = true
+        wrapperView.backgroundColor = .whiteColor()
+        contentView.addSubview(wrapperView)
+        
+        previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
         previewImageView.userInteractionEnabled = true
-        previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushViewer"))
-        contentView.addSubview(previewImageView)
+        previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
+        wrapperView.addSubview(previewImageView)
         
-        locationView.font = UIFont.robotoOfSize(12, withType: .Regular)
-        locationView.textColor = .whiteColor()
-        locationView.backgroundColor = UIColor(0x0).alpha(0.4)
-        locationView.edgeInsets = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
-        contentView.addSubview(locationView)
-        
-        progressView.progressViewStyle = UIProgressViewStyle.Bar
-        progressView.progressTintColor = UIColor.Accent
-        contentView.addSubview(progressView)
+        wrapperView.addSubview(barView)
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(avatarImageView)
+        barView.addSubview(avatarImageView)
         
-        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        fullNameView.textColor = UIColor(0x4d4d4d)
-        fullNameView.userInteractionEnabled = true
-        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(fullNameView)
-        
-        userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
-        userNameView.textColor = UIColor(0xb3b3b3)
-        userNameView.userInteractionEnabled = true
-        userNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(userNameView)
-        
-        dateView.font = UIFont.robotoOfSize(12, withType: .Light)
-        dateView.textColor = UIColor(0xb3b3b3)
-        contentView.addSubview(dateView)
-        
-        actionButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
-        actionButtonView.setTitle(String.icomoonWithName(.DotsVertical), forState: .Normal)
-        actionButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
-        actionButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showActions"))
-        contentView.addSubview(actionButtonView)
-        
-        starButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
-        starButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
+        starButtonView.titleLabel?.font = UIFont.iconOfSize(17)
+        starButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
         starButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleStar"))
-        contentView.addSubview(starButtonView)
+        barView.addSubview(starButtonView)
         
-        starCountView.font = UIFont.robotoOfSize(12, withType: .Light)
-        starCountView.textColor = UIColor(0xb3b3b3)
-        contentView.addSubview(starCountView)
+        starsCountView.font = UIFont.robotoOfSize(12, withType: .SemiBold)
+        starsCountView.textColor = .Grey
+        barView.addSubview(starsCountView)
         
-        commentIconView.font = UIFont.icomoonOfSize(20)
-        commentIconView.text = String.icomoonWithName(.CommentOutlined)
-        commentIconView.textColor = UIColor(0xe6e6e6)
-        contentView.addSubview(commentIconView)
+        displayNameView.font = UIFont.robotoOfSize(12, withType: .SemiBold)
+        displayNameView.textColor = .Grey
+        displayNameView.textAlignment = .Right
+        displayNameView.userInteractionEnabled = true
+        displayNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        barView.addSubview(displayNameView)
         
-        commentCountView.font = UIFont.robotoOfSize(12, withType: .Light)
-        commentCountView.textColor = UIColor(0xb3b3b3)
-        contentView.addSubview(commentCountView)
+        dateView.font = UIFont.robotoOfSize(10.2, withType: .Regular)
+        dateView.textColor = .Grey
+        dateView.textAlignment = .Right
+        barView.addSubview(dateView)
         
-        viewIconView.font = UIFont.icomoonOfSize(20)
-        viewIconView.text = String.icomoonWithName(.Eye)
-        viewIconView.textColor = UIColor(0xe6e6e6)
-        contentView.addSubview(viewIconView)
+        locationView.font = UIFont.robotoOfSize(14, withType: .SemiBold)
+        locationView.textColor = .DarkGrey
+        barView.addSubview(locationView)
         
-        viewsCountView.font = UIFont.robotoOfSize(12, withType: .Light)
-        viewsCountView.textColor = UIColor(0xb3b3b3)
-        contentView.addSubview(viewsCountView)
+//        previewImageView.placeholderImage = UIImage(named: "optograph-details-placeholder")!
+//        previewImageView.contentMode = .ScaleAspectFill
+//        previewImageView.clipsToBounds = true
+//        previewImageView.userInteractionEnabled = true
+//        previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushViewer"))
+//        contentView.addSubview(previewImageView)
+        
+//        locationView.font = UIFont.robotoOfSize(12, withType: .Regular)
+//        locationView.textColor = .whiteColor()
+//        locationView.backgroundColor = UIColor(0x0).alpha(0.4)
+//        contentView.addSubview(locationView)
+        
+//        progressView.progressViewStyle = UIProgressViewStyle.Bar
+//        progressView.progressTintColor = UIColor.Accent
+//        contentView.addSubview(progressView)
+        
+//        actionButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
+//        actionButtonView.setTitle(String.icomoonWithName(.DotsVertical), forState: .Normal)
+//        actionButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
+//        actionButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showActions"))
+//        contentView.addSubview(actionButtonView)
         
         textView.numberOfLines = 0
         textView.userInteractionEnabled = true
-        textView.font = UIFont.robotoOfSize(13, withType: .Light)
-        textView.textColor = UIColor(0x4d4d4d)
-        textView.mentionColor = UIColor.Accent
-        textView.hashtagColor = UIColor.Accent
+        textView.font = UIFont.robotoOfSize(13, withType: .Regular)
+        textView.textColor = .DarkGrey
+        textView.mentionEnabled = false
+        textView.hashtagColor = .Accent
         textView.URLEnabled = false
-        contentView.addSubview(textView)
-        
-        lineView.backgroundColor = UIColor(0xe5e5e5)
-        contentView.addSubview(lineView)
+        wrapperView.addSubview(textView)
         
         contentView.setNeedsUpdateConstraints()
     }
@@ -129,58 +117,95 @@ class DetailsTableViewCell: UITableViewCell {
     }
     
     override func updateConstraints() {
-        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView)
+        wrapperView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView)
+        wrapperView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView)
+        wrapperView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView)
+        wrapperView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView, withOffset: -20)
+        
+        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: wrapperView)
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
-        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: contentView, withMultiplier: 0.84)
+        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: contentView, withMultiplier: 7 / 8)
         
-        locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
-        locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
+        barView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView)
+        barView.autoPinEdge(.Left, toEdge: .Left, ofView: wrapperView)
+        barView.autoPinEdge(.Right, toEdge: .Right, ofView: wrapperView)
+        barView.autoSetDimension(.Height, toSize: 42)
         
-        avatarImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 15)
-        avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
-        avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+        starButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView)
+        starButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: barView, withOffset: 15) // 4pt extra for heart border
         
-        progressView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView)
-        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
+        starsCountView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView)
+        starsCountView.autoPinEdge(.Left, toEdge: .Right, ofView: starButtonView, withOffset: 3)
         
-        fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
-        fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        locationView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView)
+        locationView.autoAlignAxis(.Vertical, toSameAxisOfView: barView)
         
-        userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 4)
+        avatarImageView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView)
+        avatarImageView.autoPinEdge(.Right, toEdge: .Right, ofView: barView, withOffset: -7)
+        avatarImageView.autoSetDimensionsToSize(CGSize(width: 29, height: 29))
         
-        dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
-        dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        displayNameView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView, withOffset: -6)
+        displayNameView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -7)
         
-        actionButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
-        actionButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+        dateView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView, withOffset: 6)
+        dateView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -7)
         
-        starButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 12)
-        starButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+        textView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: wrapperView, withOffset: -18)
+        textView.autoPinEdge(.Left, toEdge: .Left, ofView: wrapperView, withOffset: 18)
+        textView.autoPinEdge(.Right, toEdge: .Right, ofView: wrapperView, withOffset: -18)
         
-        starCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starButtonView, withOffset: 8)
-        starCountView.autoPinEdge(.Left, toEdge: .Right, ofView: starButtonView, withOffset: 5)
-        
-        commentIconView.autoPinEdge(.Top, toEdge: .Top, ofView: starButtonView, withOffset: 4)
-        commentIconView.autoPinEdge(.Left, toEdge: .Right, ofView: starCountView, withOffset: 19)
-
-        commentCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starCountView)
-        commentCountView.autoPinEdge(.Left, toEdge: .Right, ofView: commentIconView, withOffset: 7)
-        
-        viewIconView.autoPinEdge(.Top, toEdge: .Top, ofView: starButtonView, withOffset: 7)
-        viewIconView.autoPinEdge(.Left, toEdge: .Right, ofView: commentCountView, withOffset: 19)
-
-        viewsCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starCountView)
-        viewsCountView.autoPinEdge(.Left, toEdge: .Right, ofView: viewIconView, withOffset: 7)
-        
-        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: starButtonView, withOffset: 12)
-        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 15)
-        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15)
-        
-        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textView, withOffset: 14)
-        lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        lineView.autoSetDimension(.Height, toSize: 1)
+//        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView)
+//        previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
+//        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: contentView, withMultiplier: 7/8)
+//        
+//        locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
+//        locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
+//        
+//        avatarImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 15)
+//        avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
+//        avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+//        
+//        progressView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView)
+//        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
+//        
+//        displayNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
+//        displayNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+//        
+//        userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
+//        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: displayNameView, withOffset: 4)
+//        
+//        dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
+//        dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+//        
+//        actionButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
+//        actionButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+//        
+//        starButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 12)
+//        starButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+//        
+//        starCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starButtonView, withOffset: 8)
+//        starCountView.autoPinEdge(.Left, toEdge: .Right, ofView: starButtonView, withOffset: 5)
+//        
+//        commentIconView.autoPinEdge(.Top, toEdge: .Top, ofView: starButtonView, withOffset: 4)
+//        commentIconView.autoPinEdge(.Left, toEdge: .Right, ofView: starCountView, withOffset: 19)
+//
+//        commentCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starCountView)
+//        commentCountView.autoPinEdge(.Left, toEdge: .Right, ofView: commentIconView, withOffset: 7)
+//        
+//        viewIconView.autoPinEdge(.Top, toEdge: .Top, ofView: starButtonView, withOffset: 7)
+//        viewIconView.autoPinEdge(.Left, toEdge: .Right, ofView: commentCountView, withOffset: 19)
+//
+//        viewsCountView.autoPinEdge(.Top, toEdge: .Top, ofView: starCountView)
+//        viewsCountView.autoPinEdge(.Left, toEdge: .Right, ofView: viewIconView, withOffset: 7)
+//        
+//        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: starButtonView, withOffset: 12)
+//        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 15)
+//        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15)
+//        
+//        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textView, withOffset: 14)
+//        lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
+//        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+//        lineView.autoSetDimension(.Height, toSize: 1)
         
         super.updateConstraints()
     }
@@ -188,43 +213,36 @@ class DetailsTableViewCell: UITableViewCell {
     func bindViewModel() {
         previewImageView.rac_url <~ viewModel.previewImageUrl
         
-        locationView.rac_text <~ viewModel.location
+        locationView.rac_text <~ viewModel.location.producer.map { $0.firstWord ?? "" } // TODO remove firstWord
         
-        progressView.rac_hidden <~ viewModel.downloadProgress.producer.observeOn(QueueScheduler.mainQueueScheduler).map { $0 == 1 }
+//        progressView.rac_hidden <~ viewModel.downloadProgress.producer.observeOn(QueueScheduler.mainQueueScheduler).map { $0 == 1 }
         
-        viewModel.downloadProgress.producer
-            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)))
-            .observeOn(UIScheduler())
-            .startWithNext { progress in
-                self.progressView.setProgress(progress, animated: true)
-            }
+//        viewModel.downloadProgress.producer
+//            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)))
+//            .observeOn(UIScheduler())
+//            .startWithNext { progress in
+//                self.progressView.setProgress(progress, animated: true)
+//            }
         
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
         
-        fullNameView.rac_text <~ viewModel.fullName
-        
-        userNameView.rac_text <~ viewModel.userName
+        displayNameView.rac_text <~ viewModel.displayName
         
         dateView.rac_text <~ viewModel.timeSinceCreated
         
         starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? UIColor.Accent : UIColor(0xe6e6e6) }
         
-        starCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0) stars" }
+        starsCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
         
-        commentCountView.rac_text <~ viewModel.commentsCount.producer.map { "\($0) comments" }
-        
-        viewsCountView.rac_text <~ viewModel.viewsCount.producer.map { "\($0) views" }
+//        commentCountView.rac_text <~ viewModel.commentsCount.producer.map { "\($0) comments" }
+//        
+//        viewsCountView.rac_text <~ viewModel.viewsCount.producer.map { "\($0) views" }
         
         textView.rac_text <~ viewModel.text
-        textView.handleHashtagTap { hashtag in
-            self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
+        textView.handleHashtagTap { [weak self] hashtag in
+            self?.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
-        textView.handleMentionTap { userName in
-            ApiService<Person>.get("persons/user-name/\(userName)")
-                .startWithNext { person in
-                    self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
-                }
-        }
+        textView.mentionEnabled = false
     }
     
     func showActions() {
@@ -247,7 +265,7 @@ class DetailsTableViewCell: UITableViewCell {
         actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
             // TODO adjust sharing feature
             if let myWebsite = NSURL(string: "http://share.optonaut.co/\(self.viewModel.optograph.id)") {
-                let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value): \(self.viewModel.text.value)"
+                let textToShare = "Check out this Optograph of \(self.viewModel.displayName.value): \(self.viewModel.text.value)"
                 let objectsToShare = [textToShare, myWebsite]
                 let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
                 

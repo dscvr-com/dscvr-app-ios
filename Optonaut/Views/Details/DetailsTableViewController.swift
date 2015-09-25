@@ -11,13 +11,15 @@ import Crashlytics
 import Async
 import CoreMotion
 
-class DetailsTableViewController: UIViewController, TransparentNavbar {
+class DetailsTableViewController: UIViewController, BlackNavbar {
     
     private let viewModel: DetailsViewModel
     
     private let motionManager = CMMotionManager()
     
     // subviews
+    private let topBarView = UIView()
+    private let backButtonView = UIButton()
     private let tableView = UITableView()
     
     required init(optographId: UUID) {
@@ -38,18 +40,27 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = ""
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .Plain, target: nil, action: nil)
+        topBarView.backgroundColor = .blackColor()
+        view.addSubview(topBarView)
+        
+        backButtonView.setTitle(String.iconWithName(.Back), forState: .Normal)
+        backButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+        backButtonView.titleLabel?.font = UIFont.iconOfSize(20)
+        backButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "popViewController"))
+        topBarView.addSubview(backButtonView)
         
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .None
-        tableView.bounces = false
         
         tableView.registerClass(DetailsTableViewCell.self, forCellReuseIdentifier: "details-cell")
         tableView.registerClass(CommentTableViewCell.self, forCellReuseIdentifier: "comment-cell")
         tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
-        view.addSubview(tableView)
+        
+        tableView.contentInset = UIEdgeInsets(top: 42, left: 0, bottom: 15, right: 0)
+        tableView.contentOffset = CGPoint(x: 0, y: -42)
+        tableView.backgroundColor = .blackColor()
+        view.insertSubview(tableView, atIndex: 0)
         
         viewModel.comments.producer.startWithNext { [weak self] _ in
             self?.tableView.reloadData()
@@ -63,6 +74,14 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     }
     
     override func updateViewConstraints() {
+        topBarView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
+        topBarView.autoPinEdge(.Left, toEdge: .Left, ofView: view)
+        topBarView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
+        topBarView.autoSetDimension(.Height, toSize: 42)
+        
+        backButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 10)
+        backButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: topBarView)
+        
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
@@ -70,6 +89,9 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        TabbarOverlayService.hidden = false
+        TabbarOverlayService.contentOffsetTop = 42
         
         motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
             if let accelerometerData = accelerometerData {
@@ -109,7 +131,8 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        tableView.contentInset = UIEdgeInsetsZero
+        TabbarOverlayService.scrollOffsetTop = tableView.contentOffset.y + 62
+        TabbarOverlayService.scrollOffsetBottom = tableView.contentSize.height - tableView.contentOffset.y - tableView.frame.height
     }
     
     func keyboardWillShowNotification(notification: NSNotification) {
@@ -129,7 +152,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
         let animationCurve = UIViewAnimationOptions.init(rawValue: UInt(rawAnimationCurve))
         let animationDuration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
         
-        let indexPath = NSIndexPath(forRow: viewModel.comments.value.count + 1, inSection: 0)
+        let indexPath = NSIndexPath(forRow: 1, inSection: 0)
         
         // needs to be executed after table is refreshed
         Async.main {
@@ -137,7 +160,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
                 delay: 0,
                 options: [.BeginFromCurrentState, animationCurve],
                 animations: {
-                    self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+                    self.tableView.contentInset = UIEdgeInsets(top: 42, left: 0, bottom: keyboardHeight + 15, right: 0)
                     self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: false)
                 },
                 completion: nil)
@@ -146,6 +169,15 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func popViewController() {
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        TabbarOverlayService.scrollOffsetTop = scrollView.contentOffset.y + 62
+        TabbarOverlayService.scrollOffsetBottom = scrollView.contentSize.height - scrollView.contentOffset.y - scrollView.frame.height + 15
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
@@ -162,17 +194,18 @@ extension DetailsTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if indexPath.row == 0 {
-            let textHeight = calcTextHeight(viewModel.optograph.text, withWidth: view.frame.width - 38)
-            let imageHeight = view.frame.width * 0.84
-            let restHeight = CGFloat(130) // includes avatar, name, like-bar, bottom line and spacing
-            return imageHeight + restHeight + textHeight
-        } else if indexPath.row <= viewModel.comments.value.count {
-            let textWidth = view.frame.width - 38 - 41
-            let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row - 1].text, withWidth: textWidth)
-            let restHeight = CGFloat(40) // includes name and spacing
-            return restHeight + textHeight
+            let imageHeight = view.frame.width * 7 / 8
+            let barHeight: CGFloat = 42
+            let textHeight = calcTextHeight(viewModel.optograph.text, withWidth: view.frame.width - 38, andFont: .robotoOfSize(13, withType: .Regular)) + 24
+            let spacing: CGFloat = 20
+            return imageHeight + barHeight + textHeight + spacing
+        } else if indexPath.row == 1 {
+            return 40
         } else {
-            return 60
+            let textWidth = view.frame.width - 38 - 41
+            let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row - 2].text, withWidth: textWidth, andFont: .robotoOfSize(12, withType: .Light))
+            let restHeight: CGFloat = 30 // includes name and spacing
+            return restHeight + textHeight
         }
     }
     
@@ -188,17 +221,17 @@ extension DetailsTableViewController: UITableViewDataSource {
             cell.navigationController = navigationController as? NavigationController
             cell.bindViewModel()
             return cell
-        } else if indexPath.row <= viewModel.comments.value.count {
-            let cell = self.tableView.dequeueReusableCellWithIdentifier("comment-cell") as! CommentTableViewCell
-            cell.navigationController = navigationController as? NavigationController
-            cell.bindViewModel(viewModel.comments.value[indexPath.row - 1])
-            return cell
-        } else {
+        } else if indexPath.row == 1 {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
-            cell.bindViewModel(viewModel.optograph.id)
+            cell.bindViewModel(viewModel.optograph.id, commentsCount: viewModel.commentsCount.value)
             cell.postCallback = { [weak self] comment in
                 self?.viewModel.insertNewComment(comment)
             }
+            return cell
+        } else {
+            let cell = self.tableView.dequeueReusableCellWithIdentifier("comment-cell") as! CommentTableViewCell
+            cell.navigationController = navigationController as? NavigationController
+            cell.bindViewModel(viewModel.comments.value[indexPath.row - 2])
             return cell
         }
     }

@@ -22,8 +22,8 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     private let headlineView = UILabel()
     private let uploadButtonView = HatchedButton()
     private let avatarImageView = UIImageView()
-    private let fullNameView = UILabel()
-    private let fullNameInputView = RoundedTextField()
+    private let displayNameView = UILabel()
+    private let displayNameInputView = RoundedTextField()
     private let userNameView = UILabel()
     private let userNameInputView = RoundedTextField()
     private let termsView = UILabel()
@@ -64,24 +64,24 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "uploadImage"))
         view.addSubview(avatarImageView)
         
-        fullNameView.rac_text <~ viewModel.fullName
-        fullNameView.rac_hidden <~ viewModel.fullNameEditing
-        fullNameView.textColor = .DarkGrey
-        fullNameView.font = UIFont.robotoOfSize(16, withType: .Bold)
-        fullNameView.textAlignment = .Center
-        fullNameView.userInteractionEnabled = true
-        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "editFullName"))
-        view.addSubview(fullNameView)
+        displayNameView.rac_text <~ viewModel.displayName
+        displayNameView.rac_hidden <~ viewModel.displayNameEditing
+        displayNameView.textColor = .DarkGrey
+        displayNameView.font = UIFont.robotoOfSize(16, withType: .Bold)
+        displayNameView.textAlignment = .Center
+        displayNameView.userInteractionEnabled = true
+        displayNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "editFullName"))
+        view.addSubview(displayNameView)
         
-        fullNameInputView.placeholder = "What's your name?"
-        fullNameInputView.returnKeyType = .Next
-        fullNameInputView.delegate = self
-        fullNameInputView.rac_alpha <~ viewModel.fullNameEnabled.producer.map { $0 ? 1 : 0.3 }
-        fullNameInputView.rac_userInteractionEnabled <~ viewModel.fullNameEnabled
-        fullNameInputView.rac_hidden <~ viewModel.fullNameEditing.producer.map(negate)
-        fullNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.fullName.value = $0 as! String }
-        viewModel.fullNameIndicated.producer.startWithNext { self.fullNameInputView.indicated = $0 }
-        view.addSubview(fullNameInputView)
+        displayNameInputView.placeholder = "What's your name?"
+        displayNameInputView.returnKeyType = .Next
+        displayNameInputView.delegate = self
+        displayNameInputView.rac_alpha <~ viewModel.displayNameEnabled.producer.map { $0 ? 1 : 0.3 }
+        displayNameInputView.rac_userInteractionEnabled <~ viewModel.displayNameEnabled
+        displayNameInputView.rac_hidden <~ viewModel.displayNameEditing.producer.map(negate)
+        displayNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.displayName.value = $0 as! String }
+        viewModel.displayNameIndicated.producer.startWithNext { self.displayNameInputView.indicated = $0 }
+        view.addSubview(displayNameInputView)
         
         userNameView.rac_text <~ viewModel.userName.producer.map { "@\($0)" }
         userNameView.rac_hidden <~ viewModel.userNameEditing
@@ -97,7 +97,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         userNameInputView.autocapitalizationType = .None
         userNameInputView.returnKeyType = .Done
         userNameInputView.delegate = self
-        userNameInputView.rac_alpha <~ viewModel.userNameEnabled.producer.map { $0 ? 1 : (self.viewModel.fullNameEnabled.value ? 0.3 : 0.2) }
+        userNameInputView.rac_alpha <~ viewModel.userNameEnabled.producer.map { $0 ? 1 : (self.viewModel.displayNameEnabled.value ? 0.3 : 0.2) }
         userNameInputView.rac_userInteractionEnabled <~ viewModel.userNameEnabled
         userNameInputView.rac_hidden <~ viewModel.userNameEditing.producer.map(negate)
         userNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.userName.value = $0 as! String }
@@ -158,20 +158,20 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         avatarImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: uploadButtonView)
         avatarImageView.autoMatchDimension(.Height, toDimension: .Height, ofView: uploadButtonView)
         
-        fullNameInputView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        fullNameInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: uploadButtonView, withOffset: 30)
-        fullNameInputView.autoSetDimension(.Width, toSize: 240)
+        displayNameInputView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        displayNameInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: uploadButtonView, withOffset: 30)
+        displayNameInputView.autoSetDimension(.Width, toSize: 240)
         
-        fullNameView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        fullNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: uploadButtonView, withOffset: 60)
-        fullNameView.autoSetDimension(.Width, toSize: 240)
+        displayNameView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        displayNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: uploadButtonView, withOffset: 60)
+        displayNameView.autoSetDimension(.Width, toSize: 240)
         
         userNameInputView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        userNameInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameInputView, withOffset: 40)
+        userNameInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: displayNameInputView, withOffset: 40)
         userNameInputView.autoSetDimension(.Width, toSize: 240)
         
         userNameView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        userNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 10)
+        userNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: displayNameView, withOffset: 10)
         userNameView.autoSetDimension(.Width, toSize: 240)
         
         termsView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
@@ -229,8 +229,8 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     }
     
     func editFullName() {
-        viewModel.fullNameEditing.value = true
-        fullNameInputView.becomeFirstResponder()
+        viewModel.displayNameEditing.value = true
+        displayNameInputView.becomeFirstResponder()
     }
     
     func editUserName() {
@@ -265,8 +265,8 @@ extension OnboardingProfileViewController: UIImagePickerControllerDelegate {
 extension OnboardingProfileViewController: UITextFieldDelegate {
     
     func textFieldDidEndEditing(textField: UITextField) {
-        if textField == fullNameInputView {
-            viewModel.fullNameEditing.value = viewModel.fullName.value.isEmpty
+        if textField == displayNameInputView {
+            viewModel.displayNameEditing.value = viewModel.displayName.value.isEmpty
         }
         
         if textField == userNameInputView {
@@ -275,7 +275,7 @@ extension OnboardingProfileViewController: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
-        if textField == fullNameInputView {
+        if textField == displayNameInputView {
             Async.main {
                 self.editUserName()
             }

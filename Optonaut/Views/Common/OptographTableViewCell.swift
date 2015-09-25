@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 import HexColor
-import ActiveLabel
 
 class OptographTableViewCell: UITableViewCell {
     
@@ -18,75 +17,68 @@ class OptographTableViewCell: UITableViewCell {
     var viewModel: OptographViewModel!
     
     // subviews
-    let avatarImageView = PlaceholderImageView()
-    let fullNameView = UILabel()
-    let userNameView = UILabel()
+    let wrapperView = UIView()
+    let barView = UIView()
     let dateView = UILabel()
     let starButtonView = UIButton()
+    let starsCountView = UILabel()
     let previewImageView = PlaceholderImageView()
-    let locationView = InsetLabel()
-    let textView = ActiveLabel()
-    let lineView = UIView()
+    let locationView = UILabel()
+    let displayNameView = UILabel()
+    let avatarImageView = PlaceholderImageView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        contentView.backgroundColor = .whiteColor()
+        contentView.backgroundColor = .blackColor()
         
-        avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
-        avatarImageView.layer.cornerRadius = 15
-        avatarImageView.clipsToBounds = true
-        avatarImageView.userInteractionEnabled = true
-        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(avatarImageView)
-        
-        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        fullNameView.textColor = UIColor(0x4d4d4d)
-        fullNameView.userInteractionEnabled = true
-        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(fullNameView)
-        
-        userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
-        userNameView.textColor = UIColor(0xb3b3b3)
-        userNameView.userInteractionEnabled = true
-        userNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(userNameView)
-        
-        dateView.font = UIFont.robotoOfSize(12, withType: .Light)
-        dateView.textColor = UIColor(0xb3b3b3)
-        contentView.addSubview(dateView)
-        
-        starButtonView.titleLabel?.font = UIFont.icomoonOfSize(24)
-        starButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
-        starButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleStar"))
-        contentView.addSubview(starButtonView)
+        wrapperView.layer.cornerRadius = 6
+        wrapperView.clipsToBounds = true
+        wrapperView.backgroundColor = .whiteColor()
+        contentView.addSubview(wrapperView)
         
         previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
         previewImageView.userInteractionEnabled = true
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
-        contentView.addSubview(previewImageView)
+        wrapperView.addSubview(previewImageView)
         
-        locationView.font = UIFont.robotoOfSize(12, withType: .Regular)
-        locationView.textColor = .whiteColor()
-        locationView.backgroundColor = UIColor(0x0).alpha(0.4)
-        locationView.edgeInsets = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
-        contentView.addSubview(locationView)
+        wrapperView.addSubview(barView)
         
-        textView.numberOfLines = 0
-        textView.mentionColor = UIColor.Accent
-        textView.hashtagColor = UIColor.Accent
-        textView.URLEnabled = false
-        textView.userInteractionEnabled = true
-        textView.font = UIFont.robotoOfSize(13, withType: .Light)
-        textView.textColor = UIColor(0x4d4d4d)
-        contentView.addSubview(textView)
+        avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
+        avatarImageView.layer.cornerRadius = 15
+        avatarImageView.clipsToBounds = true
+        avatarImageView.userInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        barView.addSubview(avatarImageView)
         
-        lineView.backgroundColor = UIColor(0xe5e5e5)
-        contentView.addSubview(lineView)
+        starButtonView.titleLabel?.font = UIFont.iconOfSize(17)
+        starButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
+        starButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleStar"))
+        barView.addSubview(starButtonView)
         
-        contentView.setNeedsUpdateConstraints()
+        starsCountView.font = UIFont.robotoOfSize(12, withType: .SemiBold)
+        starsCountView.textColor = .Grey
+        barView.addSubview(starsCountView)
+        
+        displayNameView.font = UIFont.robotoOfSize(12, withType: .SemiBold)
+        displayNameView.textColor = .Grey
+        displayNameView.textAlignment = .Right
+        displayNameView.userInteractionEnabled = true
+        displayNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        barView.addSubview(displayNameView)
+        
+        dateView.font = UIFont.robotoOfSize(10.2, withType: .Regular)
+        dateView.textColor = .Grey
+        dateView.textAlignment = .Right
+        barView.addSubview(dateView)
+        
+        locationView.font = UIFont.robotoOfSize(14, withType: .SemiBold)
+        locationView.textColor = .DarkGrey
+        barView.addSubview(locationView)
+        
+        barView.setNeedsUpdateConstraints()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -94,37 +86,38 @@ class OptographTableViewCell: UITableViewCell {
     }
     
     override func updateConstraints() {
-        avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 15)
-        avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+        wrapperView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView)
+        wrapperView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView)
+        wrapperView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView)
+        wrapperView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView, withOffset: -8)
         
-        fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
-        fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
-        
-        userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 4)
-        
-        dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
-        dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
-        
-        starButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 12)
-        starButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15) // 4pt extra for heart border
-        
-        previewImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 14)
+        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: wrapperView)
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
-        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: contentView, withMultiplier: 0.45)
+        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: contentView, withMultiplier: 3 / 4)
         
-        locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
-        locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
+        barView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: wrapperView)
+        barView.autoPinEdge(.Left, toEdge: .Left, ofView: wrapperView, withOffset: 7)
+        barView.autoPinEdge(.Right, toEdge: .Right, ofView: wrapperView, withOffset: -7)
+        barView.autoSetDimension(.Height, toSize: 42)
         
-        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
-        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+        starButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView)
+        starButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: barView, withOffset: 4) // 4pt extra for heart border
         
-        lineView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textView, withOffset: 14)
-        lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        lineView.autoSetDimension(.Height, toSize: 1)
+        starsCountView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView)
+        starsCountView.autoPinEdge(.Left, toEdge: .Right, ofView: starButtonView, withOffset: 3)
+        
+        locationView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView)
+        locationView.autoAlignAxis(.Vertical, toSameAxisOfView: barView)
+        
+        avatarImageView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView)
+        avatarImageView.autoPinEdge(.Right, toEdge: .Right, ofView: barView)
+        avatarImageView.autoSetDimensionsToSize(CGSize(width: 29, height: 29))
+        
+        displayNameView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView, withOffset: -6)
+        displayNameView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -7)
+        
+        dateView.autoAlignAxis(.Horizontal, toSameAxisOfView: barView, withOffset: 6)
+        dateView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -7)
         
         super.updateConstraints()
     }
@@ -134,21 +127,11 @@ class OptographTableViewCell: UITableViewCell {
         
         previewImageView.rac_url <~ viewModel.previewImageUrl
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
-        fullNameView.rac_text <~ viewModel.fullName
-        userNameView.rac_text <~ viewModel.userName
-        locationView.rac_text <~ viewModel.location
+        displayNameView.rac_text <~ viewModel.displayName
+        locationView.rac_text <~ viewModel.location.producer.map { $0.firstWord ?? "" } // TODO remove firstWord
         dateView.rac_text <~ viewModel.timeSinceCreated
+        starsCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
         starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? UIColor.Accent : UIColor(0xe6e6e6) }
-        
-        textView.rac_text <~ viewModel.text
-        textView.handleHashtagTap { [weak self] hashtag in
-            self?.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
-        }
-        textView.handleMentionTap { userName in
-            ApiService<Person>.get("persons/user-name/\(userName)").startWithNext { [weak self] person in
-                self?.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
-            }
-        }
     }
     
     func pushDetails() {
@@ -156,7 +139,7 @@ class OptographTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        navigationController?.pushViewController(ProfileTableViewController(personId: viewModel.personId.value), animated: true)
+        navigationController?.pushViewController(ProfileTableViewController(personId: viewModel.optograph.person.id), animated: true)
     }
     
     func toggleStar() {
