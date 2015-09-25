@@ -302,6 +302,7 @@
 		A5C1C0111B7E19E200DCD598 /* support.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = support.hpp; sourceTree = "<group>"; };
 		A5C1C0121B7E19E200DCD598 /* thresholdSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = thresholdSeamer.hpp; sourceTree = "<group>"; };
 		A5C1C01E1B7E525200DCD598 /* intrinsics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = intrinsics.hpp; sourceTree = "<group>"; };
+		A5C6E3791BB5BDD20040C991 /* asyncStreamWrapper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncStreamWrapper.hpp; sourceTree = "<group>"; };
 		A5DA67081B9CA08F00D9F3EE /* recorderGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderGraph.hpp; sourceTree = "<group>"; };
 		A5DA670A1B9CA29A00D9F3EE /* recorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderController.hpp; sourceTree = "<group>"; };
 		A5DA670C1B9CD52D00D9F3EE /* trivialAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = trivialAligner.hpp; sourceTree = "<group>"; };
@@ -685,6 +686,7 @@
 		8FD7F85C1B5924D5001680AA /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				A5C6E3791BB5BDD20040C991 /* asyncStreamWrapper.hpp */,
 				A59E32EA1BB423DA003D166B /* bundleAligner.hpp */,
 				A59E32EB1BB423DA003D166B /* drawing.hpp */,
 				A59E32EC1BB423DA003D166B /* pairwiseCorrelator.hpp */,
