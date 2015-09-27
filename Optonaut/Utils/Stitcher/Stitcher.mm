@@ -122,6 +122,7 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     cv::Mat intrinsics;
     std::string debugPath;
     bool isDebug;
+    NSString* tempPath;
 }
 
 + (NSString*)GetVersion {
@@ -135,17 +136,17 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::RecorderGraph::ModeTruncated, true);
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *tempDirectory = [[paths objectAtIndex:0] stringByAppendingString:@"/tmp/"];
+    self->tempPath = [[paths objectAtIndex:0] stringByAppendingString:@"/tmp/"];
     
     counter = 0;
     
     BOOL isDir;
     NSFileManager *fileManager= [NSFileManager defaultManager];
-    if(![fileManager fileExistsAtPath:tempDirectory isDirectory:&isDir])
-        if(![fileManager createDirectoryAtPath:tempDirectory withIntermediateDirectories:YES attributes:nil error:NULL])
-            NSLog(@"Error: Create temp folder failed: %@", tempDirectory);
+    if(![fileManager fileExistsAtPath:self->tempPath isDirectory:&isDir])
+        if(![fileManager createDirectoryAtPath:self->tempPath withIntermediateDirectories:YES attributes:nil error:NULL])
+            NSLog(@"Error: Create temp folder failed: %@", self->tempPath);
     
-    optonaut::Pipeline::tempDirectory = std::string([tempDirectory UTF8String]);
+    optonaut::Pipeline::tempDirectory = std::string([self->tempPath UTF8String]);
 
     return self;
 }
@@ -245,5 +246,13 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 }
 - (uint32_t)GetImagesToRecordCount {
     return pipe->GetImagesToRecordCount();
+}
+- (void)Finish {
+    pipe->Finish();
+}
+- (void)Dispose {
+    pipe->Dispose();
+    [[NSFileManager defaultManager] removeItemAtPath:self->tempPath error:nil];
+    delete pipe;
 }
 @end
