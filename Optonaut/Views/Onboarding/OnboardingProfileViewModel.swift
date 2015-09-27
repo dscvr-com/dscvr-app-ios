@@ -10,87 +10,109 @@ import Foundation
 import ReactiveCocoa
 import SQLite
 
-enum OnboardingProfileState {
-    case Avatar
-    case FullName
-    case UserName
-    case Done
-}
 
 class OnboardingProfileViewModel {
     
-    let fullName = MutableProperty<String>("")
-    let fullNameEditing = MutableProperty<Bool>(true)
-    let fullNameEnabled = MutableProperty<Bool>(false)
-    let fullNameIndicated = MutableProperty<Bool>(false)
-    let userName = MutableProperty<String>("")
-    let userNameEditing = MutableProperty<Bool>(true)
-    let userNameEnabled = MutableProperty<Bool>(false)
-    let userNameIndicated = MutableProperty<Bool>(false)
-    let userNameTaken = MutableProperty<Bool>(false)
+    enum OnboardingProfileNextStep: Int {
+        case Avatar = 0
+        case DisplayName = 1
+        case UserName = 2
+        case Done = 3
+    }
+    
+    let nextStep = MutableProperty<OnboardingProfileNextStep>(.Avatar)
     let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let avatarUploaded = MutableProperty<Bool>(false)
-    let dataComplete = MutableProperty<Bool>(false)
-    let state = MutableProperty<OnboardingProfileState>(.Avatar)
+    let displayName = MutableProperty<String>("")
+    let displayNameStatus = MutableProperty<RoundedTextField.Status>(.Disabled)
+    let userName = MutableProperty<String>("")
+    let userNameStatus = MutableProperty<RoundedTextField.Status>(.Disabled)
     
     private var person = Person.newInstance()
     
     init() {
+        avatarUploaded.producer
+            .startWithNext { success in
+                if success {
+                    self.nextStep.value = OnboardingProfileNextStep(rawValue: max(self.nextStep.value.rawValue, OnboardingProfileNextStep.DisplayName.rawValue))!
+                } else {
+                    self.nextStep.value = .Avatar
+                }
+            }
+        
+        displayName.producer
+            .startWithNext { val in
+                if val.isEmpty {
+                    self.nextStep.value = OnboardingProfileNextStep(rawValue: min(self.nextStep.value.rawValue, OnboardingProfileNextStep.DisplayName.rawValue))!
+                } else {
+                    self.nextStep.value = OnboardingProfileNextStep(rawValue: max(self.nextStep.value.rawValue, OnboardingProfileNextStep.UserName.rawValue))!
+                }
+            }
+        
+        var checkUserNameDisposable: Disposable?
+        
         userName.producer
+            .skipRepeats()
+            .on(next: { userName in
+                self.userNameStatus.value = .Warning("Checking username...")
+                self.nextStep.value = OnboardingProfileNextStep(rawValue: min(self.nextStep.value.rawValue, OnboardingProfileNextStep.UserName.rawValue))!
+            })
             .filter(isNotEmpty)
             .skipRepeats()
             .mapError { _ in ApiError.Nil }
-            .on(next: { _ in self.userNameTaken.value = false })
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
             .startWithNext { userName in
+                checkUserNameDisposable?.dispose()
                 // nesting needed in order to accept ApiErrors
-                ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: ["user_name": userName])
-                    .startWithError { _ in self.userNameTaken.value = true }
+                checkUserNameDisposable = ApiService<EmptyResponse>
+                    .post("persons/me/check-user-name", parameters: ["user_name": userName])
+                    .on(
+                        completed: {
+                            self.nextStep.value = .Done
+                        },
+                        error: { _ in
+                            self.nextStep.value = OnboardingProfileNextStep(rawValue: min(self.nextStep.value.rawValue, OnboardingProfileNextStep.UserName.rawValue))!
+                            self.userNameStatus.value = .Warning("This username is already taken. Please try another one.")
+                        }
+                    )
+                    .start()
             }
         
-        dataComplete <~ fullName.producer.map(isNotEmpty)
-            .combineLatestWith(fullNameEditing.producer.map(negate)).map(and)
-            .combineLatestWith(userNameEditing.producer.map(negate)).map(and)
-            .combineLatestWith(userName.producer.map(isNotEmpty)).map(and)
-            .combineLatestWith(userNameTaken.producer.map(negate)).map(and)
-            .combineLatestWith(avatarUploaded.producer).map(and)
-            .on(next: { completed in
-                if completed {
-                    self.state.value = .Done
-                } else if !self.fullNameEnabled.value {
-                    self.state.value = .Avatar
-                } else if !self.userNameEnabled.value {
-                    self.state.value = .FullName
-                } else {
-                    self.state.value = .UserName
-                }
-            })
-
-        fullNameEnabled <~ avatarUploaded.producer
-        
-        fullNameIndicated <~ fullNameEnabled.producer
-            .combineLatestWith(fullName.producer.map(isEmpty)).map(and)
-        
-        userNameEnabled <~ avatarUploaded.producer
-            .combineLatestWith(fullName.producer.map(isNotEmpty)).map(and)
-        
-        userNameIndicated <~ userNameEnabled.producer
-            .combineLatestWith(userName.producer.map(isEmpty)).map(and)
+        nextStep.producer
+            .skipRepeats()
+            .startWithNext { state in
+            switch state {
+            case .Avatar:
+                self.displayNameStatus.value = .Disabled
+                self.userNameStatus.value = .Disabled
+                break
+            case .DisplayName:
+                self.displayNameStatus.value = .Indicated
+                self.userNameStatus.value = .Disabled
+            case .UserName:
+                self.displayNameStatus.value = .Normal
+                self.userNameStatus.value = .Indicated
+            case .Done:
+                self.displayNameStatus.value = .Normal
+                self.userNameStatus.value = .Normal
+            }
+        }
     }
     
     func updateData() -> SignalProducer<EmptyResponse, ApiError> {
-        if userNameTaken.value {
+        if case .Done = nextStep.value {
+        } else {
             return SignalProducer(error: ApiError(endpoint: "", timeout: false, status: 400, message: "Username taken", error: nil))
         }
         
         let parameters = [
-            "full_name": fullName.value,
+            "display_name": displayName.value,
             "user_name": userName.value,
         ] as [String: AnyObject]
         
         return ApiService.put("persons/me", parameters: parameters)
             .on(completed: {
-                self.person.fullName = self.fullName.value
+                self.person.displayName = self.displayName.value
                 self.person.userName = self.userName.value
                 self.saveModel()
             })
@@ -114,6 +136,7 @@ class OnboardingProfileViewModel {
                 },
                 error: { _ in
                     self.avatarUploaded.value = false
+                    self.avatarImage.value = UIImage(named: "avatar-placeholder")!
                 }
             )
     }

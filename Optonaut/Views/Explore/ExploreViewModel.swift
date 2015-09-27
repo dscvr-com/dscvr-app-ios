@@ -27,7 +27,7 @@ class ExploreViewModel {
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(OptographTable[OptographSchema.isStaffPick])
         
-        refreshNotification.producer
+        refreshNotification.signal
             .mapError { _ in DatabaseQueryError.Nil }
             .flatMap(.Latest) { _ in
                 DatabaseService.query(.Many, query: query)
@@ -47,13 +47,13 @@ class ExploreViewModel {
                     .startOn(QueueScheduler(queue: queue))
             }
             .observeOn(UIScheduler())
-            .startWithNext { optographs in
+            .observeNext { optographs in
                 self.results.value = optographs
                 // needed since Optograph could have been deleted in the meantime
                 self.results.value = self.results.value.filter { !$0.deleted }
             }
         
-        refreshNotification.producer
+        refreshNotification.signal
             .mapError { _ in ApiError.Nil }
             .flatMap(.Latest) { _ in
                 ApiService<Optograph>.get("optographs")
@@ -68,11 +68,11 @@ class ExploreViewModel {
                     .startOn(QueueScheduler(queue: queue))
             }
             .observeOn(UIScheduler())
-            .startWithNext { optographs in
+            .observeNext { optographs in
                 self.results.value = optographs
             }
         
-        loadMoreNotification.producer
+        loadMoreNotification.signal
             .mapError { _ in ApiError.Nil }
             .map { _ in self.results.value.last }
             .ignoreNil()
@@ -89,7 +89,7 @@ class ExploreViewModel {
                     .startOn(QueueScheduler(queue: queue))
             }
             .observeOn(UIScheduler())
-            .startWithNext { optographs in
+            .observeNext { optographs in
                 self.results.value = optographs
             }
     }

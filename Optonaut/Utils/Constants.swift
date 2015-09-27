@@ -10,6 +10,8 @@ import Foundation
 import UIKit
 import Device
 
+let OnboardingVersion: Int = 1
+
 enum EnvType {
     case Development
     case Staging
@@ -30,7 +32,6 @@ let StaticPath: String = {
     try! NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
     return path
 }()
-
 
 let CameraIntrinsics: [Double] = {
     switch UIDevice.currentDevice().deviceType {

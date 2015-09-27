@@ -22,7 +22,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         return UIVisualEffectView(effect: blurEffect)
     }()
     private let avatarImageView = PlaceholderImageView()
-    private let fullNameView = UILabel()
+    private let displayNameView = UILabel()
     private let userNameView = UILabel()
     private let textView = UILabel()
     private let followButtonView = UIButton()
@@ -48,9 +48,9 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         avatarImageView.clipsToBounds = true
         contentView.addSubview(avatarImageView)
         
-        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        fullNameView.textColor = .whiteColor()
-        contentView.addSubview(fullNameView)
+        displayNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        displayNameView.textColor = .whiteColor()
+        contentView.addSubview(displayNameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = .whiteColor()
@@ -132,13 +132,13 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         avatarImageView.autoAlignAxisToSuperviewAxis(.Vertical)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 84, height: 84))
         
-        fullNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 17)
-        fullNameView.autoAlignAxisToSuperviewAxis(.Vertical)
+        displayNameView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 17)
+        displayNameView.autoAlignAxisToSuperviewAxis(.Vertical)
         
-        userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: fullNameView, withOffset: -2)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 5)
+        userNameView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: displayNameView, withOffset: -2)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: displayNameView, withOffset: 5)
         
-        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameView, withOffset: 5)
+        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: displayNameView, withOffset: 5)
         textView.autoPinEdge(.Left, toEdge: .Left,  ofView: contentView, withOffset: 19)
         textView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
         
@@ -183,7 +183,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
         
-        fullNameView.rac_text <~ viewModel.fullName
+        displayNameView.rac_text <~ viewModel.displayName
         
         userNameView.rac_text <~ viewModel.userName.producer.map { "@\($0)" }
         

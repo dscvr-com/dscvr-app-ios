@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8F004A9C1BAD801800E6F017 /* OnboardingHashtagsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagsViewModel.swift */; settings = {ASSET_TAGS = (); }; };
-		8F004A9E1BAD87EF00E6F017 /* OnboardingHashtagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9D1BAD87EF00E6F017 /* OnboardingHashtagViewModel.swift */; settings = {ASSET_TAGS = (); }; };
+		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; settings = {ASSET_TAGS = (); }; };
 		8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0B177F1BAB6D2C00FAF649 /* OnboardingProfileViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		8F0B17821BAC068000FAF649 /* HatchedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0B17811BAC068000FAF649 /* HatchedButton.swift */; settings = {ASSET_TAGS = (); }; };
 		8F0B17841BAC084F00FAF649 /* OnboardingProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0B17831BAC084F00FAF649 /* OnboardingProfileViewModel.swift */; settings = {ASSET_TAGS = (); }; };
@@ -20,7 +19,7 @@
 		8F2214C31B976E6100E693CE /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* StringExtension.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
-		8F3D2D651BAC66F80022587C /* OnboardingHashtagViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E311B4A70CD007508ED /* icomoon.ttf */; };
 		8F4C6E4A1B4A70CD007508ED /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E371B4A70CD007508ED /* Roboto-Light.ttf */; };
 		8F4C6E4C1B4A70CD007508ED /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E391B4A70CD007508ED /* Roboto-Medium.ttf */; };
@@ -28,7 +27,6 @@
 		8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
 		8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9D81B3B0080007E073C /* Result.framework */; };
 		8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA001B3EECB0007E073C /* Activity.swift */; };
-		8F6B531B1BAD5BD20005B60B /* OnboardingHashtagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6B531A1BAD5BD20005B60B /* OnboardingHashtagCell.swift */; settings = {ASSET_TAGS = (); }; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* Person.swift */; };
 		8F86D4F31B9A1858009F91EB /* ActiveLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */; };
@@ -111,6 +109,16 @@
 		8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7411B8E3D7900656D99 /* LocationService.swift */; };
 		8FB3B7441B8E3DAA00656D99 /* DownloadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */; };
 		8FB634801B79AF9F00B48158 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6347F1B79AF9F00B48158 /* Comment.swift */; };
+		8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */; };
+		8FBC86971BB723E600539D4E /* SF-UI-Display-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86921BB723DA00539D4E /* SF-UI-Display-Semibold.otf */; };
+		8FBC86981BB723E600539D4E /* SF-UI-Display-Ultralight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86931BB723DA00539D4E /* SF-UI-Display-Ultralight.otf */; };
+		8FBC86991BB723E600539D4E /* SF-UI-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86941BB723DA00539D4E /* SF-UI-Text-Regular.otf */; };
+		8FBC869A1BB723E600539D4E /* SF-UI-Text-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86951BB723DA00539D4E /* SF-UI-Text-Semibold.otf */; };
+		8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC869B1BB72A2600539D4E /* SF-UI-Display-Light.otf */; };
+		8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC869D1BB72AE900539D4E /* SF-UI-Display-Thin.otf */; };
+		8FBC86A01BB7D84900539D4E /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FBC869F1BB7D84900539D4E /* Icon.swift */; settings = {ASSET_TAGS = (); }; };
+		8FBC86A21BB7D86B00539D4E /* icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86A11BB7D86400539D4E /* icons.ttf */; };
+		8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FBC86A31BB7E1AD00539D4E /* OnboardingVRViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		8FBDE25E1BA2E187008E66FC /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B551B8479250085566C /* Crashlytics.framework */; };
 		8FBDE25F1BA2E187008E66FC /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B561B8479250085566C /* Fabric.framework */; };
 		8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FBDE8B11B5D186800C78486 /* Device.framework */; };
@@ -118,6 +126,8 @@
 		8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCADEDF1BAB1A080018674B /* OnboardingInfoViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		8FCCA0471B3806040091F1B1 /* OptonautTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0461B3806040091F1B1 /* OptonautTests.swift */; };
 		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
+		8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD5886F1BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD588711BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */; };
 		8FE09F5B1BADD22200EA105D /* WebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE09F5A1BADD22200EA105D /* WebImage.framework */; };
 		8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */; settings = {ASSET_TAGS = (); }; };
@@ -150,8 +160,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8F004A9B1BAD801800E6F017 /* OnboardingHashtagsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagsViewModel.swift; sourceTree = "<group>"; };
-		8F004A9D1BAD87EF00E6F017 /* OnboardingHashtagViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagViewModel.swift; sourceTree = "<group>"; };
+		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
 		8F0B177F1BAB6D2C00FAF649 /* OnboardingProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingProfileViewController.swift; sourceTree = "<group>"; };
 		8F0B17811BAC068000FAF649 /* HatchedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HatchedButton.swift; sourceTree = "<group>"; };
 		8F0B17831BAC084F00FAF649 /* OnboardingProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingProfileViewModel.swift; sourceTree = "<group>"; };
@@ -163,7 +172,7 @@
 		8F2214C21B976E6100E693CE /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
-		8F3D2D641BAC66F80022587C /* OnboardingHashtagViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagViewController.swift; sourceTree = "<group>"; };
+		8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewController.swift; sourceTree = "<group>"; };
 		8F4C6E311B4A70CD007508ED /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		8F4C6E371B4A70CD007508ED /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Light.ttf"; sourceTree = "<group>"; };
 		8F4C6E391B4A70CD007508ED /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
@@ -171,7 +180,6 @@
 		8F4CE79F1B6CEEC700BD8A71 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		8F5FD9D81B3B0080007E073C /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
 		8F5FDA001B3EECB0007E073C /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
-		8F6B531A1BAD5BD20005B60B /* OnboardingHashtagCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagCell.swift; sourceTree = "<group>"; };
 		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F7738141B380F5D001F642B /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
@@ -258,6 +266,16 @@
 		8FB3B7411B8E3D7900656D99 /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		8FB3B7431B8E3DAA00656D99 /* DownloadService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadService.swift; sourceTree = "<group>"; };
 		8FB6347F1B79AF9F00B48158 /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Regular.otf"; sourceTree = "<group>"; };
+		8FBC86921BB723DA00539D4E /* SF-UI-Display-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Semibold.otf"; sourceTree = "<group>"; };
+		8FBC86931BB723DA00539D4E /* SF-UI-Display-Ultralight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Ultralight.otf"; sourceTree = "<group>"; };
+		8FBC86941BB723DA00539D4E /* SF-UI-Text-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-Regular.otf"; sourceTree = "<group>"; };
+		8FBC86951BB723DA00539D4E /* SF-UI-Text-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-Semibold.otf"; sourceTree = "<group>"; };
+		8FBC869B1BB72A2600539D4E /* SF-UI-Display-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Light.otf"; sourceTree = "<group>"; };
+		8FBC869D1BB72AE900539D4E /* SF-UI-Display-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Thin.otf"; sourceTree = "<group>"; };
+		8FBC869F1BB7D84900539D4E /* Icon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
+		8FBC86A11BB7D86400539D4E /* icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icons.ttf; sourceTree = "<group>"; };
+		8FBC86A31BB7E1AD00539D4E /* OnboardingVRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingVRViewController.swift; sourceTree = "<group>"; };
 		8FBDE8B11B5D186800C78486 /* Device.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Device.framework; path = Carthage/Build/iOS/Device.framework; sourceTree = "<group>"; };
 		8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KMPlaceholderTextView.framework; path = Carthage/Build/iOS/KMPlaceholderTextView.framework; sourceTree = "<group>"; };
 		8FCADEDF1BAB1A080018674B /* OnboardingInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingInfoViewController.swift; sourceTree = "<group>"; };
@@ -267,6 +285,8 @@
 		8FCCA0451B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FCCA0461B3806040091F1B1 /* OptonautTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptonautTests.swift; sourceTree = "<group>"; };
 		8FCCA0511B3806680091F1B1 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8FD5886F1BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagInfoViewController.swift; sourceTree = "<group>"; };
+		8FD588711BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSummaryViewController.swift; sourceTree = "<group>"; };
 		8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Black.ttf"; sourceTree = "<group>"; };
 		8FE09F5A1BADD22200EA105D /* WebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebImage.framework; path = Carthage/Build/iOS/WebImage.framework; sourceTree = "<group>"; };
 		8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
@@ -380,10 +400,18 @@
 			isa = PBXGroup;
 			children = (
 				8F4C6E311B4A70CD007508ED /* icomoon.ttf */,
+				8FBC86A11BB7D86400539D4E /* icons.ttf */,
 				8FE07EAC1B6BA6FD00A56609 /* Roboto-Black.ttf */,
 				8F4C6E371B4A70CD007508ED /* Roboto-Light.ttf */,
 				8F4C6E391B4A70CD007508ED /* Roboto-Medium.ttf */,
 				8F4C6E3B1B4A70CD007508ED /* Roboto-Regular.ttf */,
+				8FBC869B1BB72A2600539D4E /* SF-UI-Display-Light.otf */,
+				8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */,
+				8FBC86921BB723DA00539D4E /* SF-UI-Display-Semibold.otf */,
+				8FBC869D1BB72AE900539D4E /* SF-UI-Display-Thin.otf */,
+				8FBC86931BB723DA00539D4E /* SF-UI-Display-Ultralight.otf */,
+				8FBC86941BB723DA00539D4E /* SF-UI-Text-Regular.otf */,
+				8FBC86951BB723DA00539D4E /* SF-UI-Text-Semibold.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -609,13 +637,14 @@
 		8FCADEDE1BAB0AC40018674B /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				8FD5886F1BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift */,
+				8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */,
+				8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */,
+				8FD588711BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift */,
 				8FCADEDF1BAB1A080018674B /* OnboardingInfoViewController.swift */,
 				8F0B177F1BAB6D2C00FAF649 /* OnboardingProfileViewController.swift */,
 				8F0B17831BAC084F00FAF649 /* OnboardingProfileViewModel.swift */,
-				8F6B531A1BAD5BD20005B60B /* OnboardingHashtagCell.swift */,
-				8F3D2D641BAC66F80022587C /* OnboardingHashtagViewController.swift */,
-				8F004A9B1BAD801800E6F017 /* OnboardingHashtagsViewModel.swift */,
-				8F004A9D1BAD87EF00E6F017 /* OnboardingHashtagViewModel.swift */,
+				8FBC86A31BB7E1AD00539D4E /* OnboardingVRViewController.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -736,6 +765,7 @@
 		8FFCE4B61B4DBF1900832C88 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				8FBC869F1BB7D84900539D4E /* Icon.swift */,
 				8FE09F5E1BAEFD7100EA105D /* CWStatusBarNotification */,
 				8FD7F85C1B5924D5001680AA /* Stitcher */,
 			);
@@ -830,6 +860,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FBC86A21BB7D86B00539D4E /* icons.ttf in Resources */,
+				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
+				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
+				8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */,
+				8FBC86971BB723E600539D4E /* SF-UI-Display-Semibold.otf in Resources */,
+				8FBC86981BB723E600539D4E /* SF-UI-Display-Ultralight.otf in Resources */,
+				8FBC86991BB723E600539D4E /* SF-UI-Text-Regular.otf in Resources */,
+				8FBC869A1BB723E600539D4E /* SF-UI-Text-Semibold.otf in Resources */,
 				A5C1C0171B7E19E200DCD598 /* lib in Resources */,
 				8FE07EAD1B6BA79600A56609 /* Roboto-Black.ttf in Resources */,
 				8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */,
@@ -902,7 +940,8 @@
 			files = (
 				8F900B451B839D7A0085566C /* LocationTable.swift in Sources */,
 				8FAB9F471B8F01DF00B4C8CB /* FeedTableViewController.swift in Sources */,
-				8F3D2D651BAC66F80022587C /* OnboardingHashtagViewController.swift in Sources */,
+				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
+				8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8FE09F661BAF681900EA105D /* HashtagTable.swift in Sources */,
 				A5C1C0181B7E19E200DCD598 /* monoStitcher.cpp in Sources */,
@@ -926,6 +965,7 @@
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,
 				8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */,
+				8FBC86A01BB7D84900539D4E /* Icon.swift in Sources */,
 				8FAB9F4A1B8F01DF00B4C8CB /* SearchViewModel.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* CreateOptographViewModel.swift in Sources */,
 				8FAB9F461B8F01DF00B4C8CB /* FeedNavViewController.swift in Sources */,
@@ -937,7 +977,7 @@
 				8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */,
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
 				8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */,
-				8F004A9C1BAD801800E6F017 /* OnboardingHashtagsViewModel.swift in Sources */,
+				8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
 				8FAB9F3F1B8F01DF00B4C8CB /* DetailsViewModel.swift in Sources */,
 				8F0B17841BAC084F00FAF649 /* OnboardingProfileViewModel.swift in Sources */,
@@ -949,6 +989,7 @@
 				8FAB9F861B8F047700B4C8CB /* ApiService.swift in Sources */,
 				A59E32F41BB423DA003D166B /* ringwiseStitcher.cpp in Sources */,
 				8FAB9F2D1B8F01DF00B4C8CB /* ActivityViewModel.swift in Sources */,
+				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				8FAB9F581B8F01DF00B4C8CB /* ProfileTableViewController.swift in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
 				8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */,
@@ -963,13 +1004,11 @@
 				8FAB9F421B8F01DF00B4C8CB /* ViewerViewController.swift in Sources */,
 				8FAB9F8A1B8F05BD00B4C8CB /* IcomoonExtension.swift in Sources */,
 				8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */,
-				8F6B531B1BAD5BD20005B60B /* OnboardingHashtagCell.swift in Sources */,
 				8FAB9F341B8F01DF00B4C8CB /* NavbarProtocols.swift in Sources */,
 				8FAB9F491B8F01DF00B4C8CB /* SearchTableViewController.swift in Sources */,
 				8FAB9F2E1B8F01DF00B4C8CB /* CameraViewController.swift in Sources */,
 				8FAB9F481B8F01DF00B4C8CB /* FeedViewModel.swift in Sources */,
 				8F900B401B839D0C0085566C /* CommentTable.swift in Sources */,
-				8F004A9E1BAD87EF00E6F017 /* OnboardingHashtagViewModel.swift in Sources */,
 				8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				8FAB9F501B8F01DF00B4C8CB /* RequestInviteViewController.swift in Sources */,
@@ -988,6 +1027,7 @@
 				8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
 				8FAB9F351B8F01DF00B4C8CB /* OptographTableViewCell.swift in Sources */,
+				8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */,
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityTableViewCell.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
@@ -1118,7 +1158,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1154,7 +1194,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
