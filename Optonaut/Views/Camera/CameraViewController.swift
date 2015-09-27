@@ -33,7 +33,7 @@ class CameraViewController: UIViewController {
     }()
     
     // stitcher pointer and variables
-    private let stitcher = IosPipeline()
+    private var stitcher = IosPipeline()
     private var frameCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
@@ -56,6 +56,7 @@ class CameraViewController: UIViewController {
     
     // ball
     private let ballNode = SCNNode()
+    private var ballSpeed = GLKVector3Make(0, 0, 0)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -263,12 +264,32 @@ class CameraViewController: UIViewController {
     
     private func updateBallPosition() {
         
+        let maxSpeed = Float(0.008)
+        let accelleration = Float(0.1)
+        
         let vec = GLKVector3Make(0, 0, -1)
-        let res = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
+        let target = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
         
         //print("Ball pos: \(res.x), \(res.y), \(res.z)")
+        let ball = SCNVector3ToGLKVector3(ballNode.position)
         
-        ballNode.position = SCNVector3FromGLKVector3(res)
+        if ball.x == 0 && ball.y == 0 && ball.z == 0 {
+            ballNode.position = SCNVector3FromGLKVector3(target)
+        } else {
+            var newSpeed = GLKVector3Subtract(target, ball)
+            
+            let dist = GLKVector3Length(newSpeed)
+            
+            if dist > maxSpeed {
+                newSpeed = GLKVector3MultiplyScalar(GLKVector3Normalize(newSpeed), maxSpeed)
+            }
+            newSpeed = GLKVector3Subtract(newSpeed, ballSpeed)
+            newSpeed = GLKVector3MultiplyScalar(newSpeed, accelleration)
+            newSpeed = GLKVector3Add(newSpeed, ballSpeed)
+            ballSpeed = newSpeed;
+            ballNode.position = SCNVector3FromGLKVector3(GLKVector3Add(ball, ballSpeed))
+        }
+        
     }
     
     private func setupCamera() {
@@ -371,6 +392,7 @@ class CameraViewController: UIViewController {
             return
         }
         
+        stitcher.Finish()
         session.stopRunning()
         
         for child in scene.rootNode.childNodes {
@@ -394,6 +416,8 @@ class CameraViewController: UIViewController {
             let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage!), 0.8)
             self.stitcher.FreeImageBuffer(rightBuffer)
             rightCGImage = nil
+            
+            self.stitcher.Dispose()
 
             sendNext(sink, OptographAsset.RightImage(rightImageData!))
             
@@ -406,6 +430,7 @@ class CameraViewController: UIViewController {
             
             disposable.addDisposable {
                 // TODO @emiswelt! insert code to cancel stitching
+                // TODO @schickling: Just kill the thread. And then call dispose on the stitcher object.
             }
         }
         

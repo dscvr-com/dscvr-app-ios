@@ -276,6 +276,10 @@
 		8FEA6F201BA5969700153677 /* DatabaseService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		A571CC5F1B91D7B400124FD2 /* pipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pipeline.cpp; sourceTree = "<group>"; };
+		A5986B761BB87D6400DD2F4E /* correlation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = correlation.hpp; sourceTree = "<group>"; };
+		A5986B771BB87D6400DD2F4E /* exposureCompensator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = exposureCompensator.hpp; sourceTree = "<group>"; };
+		A5986B781BB87D6400DD2F4E /* graph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = graph.hpp; sourceTree = "<group>"; };
+		A5986B791BB87D6400DD2F4E /* imageCorrespondenceGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageCorrespondenceGraph.hpp; sourceTree = "<group>"; };
 		A59E32EA1BB423DA003D166B /* bundleAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bundleAligner.hpp; sourceTree = "<group>"; };
 		A59E32EB1BB423DA003D166B /* drawing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = drawing.hpp; sourceTree = "<group>"; };
 		A59E32EC1BB423DA003D166B /* pairwiseCorrelator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pairwiseCorrelator.hpp; sourceTree = "<group>"; };
@@ -686,6 +690,10 @@
 		8FD7F85C1B5924D5001680AA /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				A5986B761BB87D6400DD2F4E /* correlation.hpp */,
+				A5986B771BB87D6400DD2F4E /* exposureCompensator.hpp */,
+				A5986B781BB87D6400DD2F4E /* graph.hpp */,
+				A5986B791BB87D6400DD2F4E /* imageCorrespondenceGraph.hpp */,
 				A5C6E3791BB5BDD20040C991 /* asyncStreamWrapper.hpp */,
 				A59E32EA1BB423DA003D166B /* bundleAligner.hpp */,
 				A59E32EB1BB423DA003D166B /* drawing.hpp */,

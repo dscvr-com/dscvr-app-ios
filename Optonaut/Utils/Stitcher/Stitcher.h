@@ -56,5 +56,7 @@ struct ImageBuffer {
 - (GLKVector3)GetAngularDistanceToBall;
 - (uint32_t)GetRecordedImagesCount;
 - (uint32_t)GetImagesToRecordCount;
+- (void)Finish;
+- (void)Dispose;
 
 @end
