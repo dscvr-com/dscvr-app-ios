@@ -90,7 +90,7 @@ class ViewerViewController: UIViewController  {
         leftScnView.delegate = self
         
         if enableDistortion {
-//            leftScnView.technique = createDistortionTechnique("displacement_left")
+            leftScnView.technique = createDistortionTechnique("displacement_left")
         }
         view.addSubview(leftScnView)
         
@@ -103,12 +103,12 @@ class ViewerViewController: UIViewController  {
         rightScnView.delegate = self
         
         if enableDistortion {
-//            rightScnView.technique = createDistortionTechnique("displacement_right")
+            rightScnView.technique = createDistortionTechnique("displacement_right")
         }
         
         view.addSubview(rightScnView)
         
-        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+        motionManager.deviceMotionUpdateInterval = 1.0 / 200.0 // MOAR UPDATE SPEED!
         motionManager.startDeviceMotionUpdates()
         
         var popActivated = false // needed when viewer was opened without rotation
@@ -127,13 +127,13 @@ class ViewerViewController: UIViewController  {
         })
     }
     
-//    func createDistortionTechnique(name: String) -> SCNTechnique {
-//        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
-//        let json = NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! NSDictionary
-//        let technique = SCNTechnique(dictionary: json as [NSObject : AnyObject])
-//        
-//        return technique!
-//    }
+    func createDistortionTechnique(name: String) -> SCNTechnique {
+        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
+        let json = try! NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! NSDictionary
+        let technique = SCNTechnique(dictionary: json as! [String : AnyObject])
+        
+        return technique!
+    }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
