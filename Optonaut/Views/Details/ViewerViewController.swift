@@ -117,10 +117,10 @@ class ViewerViewController: UIViewController  {
             if let accelerometerData = accelerometerData {
                 let x = accelerometerData.acceleration.x
                 let y = accelerometerData.acceleration.y
-                if !popActivated && abs(x) > abs(y) + 0.5 {
+                if !popActivated && -x > abs(y) + 0.5 {
                     popActivated = true
                 }
-                if popActivated && abs(y) > abs(x) + 0.5 {
+                if popActivated && abs(y) > -x + 0.5 {
                     self.navigationController?.popViewControllerAnimated(false)
                 }
             }

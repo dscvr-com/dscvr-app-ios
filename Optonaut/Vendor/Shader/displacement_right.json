@@ -1,0 +1,50 @@
+{
+    "passes" : {
+        "displacement_right" : {
+            "outputs" : {
+                "color" : "COLOR"
+            },
+            "inputs" : {
+                "_MainTex" : "COLOR",
+                "_LUTXTexR" : "LUTXTexR",
+                "_LUTYTexR" : "LUTYTexR",
+                "_LUTXTexG" : "LUTXTexG",
+                "_LUTYTexG" : "LUTYTexG",
+                "_LUTXTexB" : "LUTXTexB",
+                "_LUTYTexB" : "LUTYTexB"
+                
+            },
+            "program" : "displacement_right",
+            "draw" : "DRAW_QUAD"
+        }
+    },
+    "sequence" : [
+                  "displacement_right"
+                  ],
+    "symbols" : {
+        "LUTXTexR" : {
+            "image" : "lut/LUT_XR.png",
+            "type" : "sampler2D"
+        },
+        "LUTXTexG" : {
+            "image" : "lut/LUT_XG.png",
+            "type" : "sampler2D"
+        },
+        "LUTXTexB" : {
+            "image" : "lut/LUT_XB.png",
+            "type" : "sampler2D"
+        },
+        "LUTYTexR" : {
+            "image" : "lut/LUT_YR.png",
+            "type" : "sampler2D"
+        },
+        "LUTYTexG" : {
+            "image" : "lut/LUT_YG.png",
+            "type" : "sampler2D"
+        },
+        "LUTYTexB" : {
+            "image" : "lut/LUT_YB.png",
+            "type" : "sampler2D"
+        }
+    }
+}

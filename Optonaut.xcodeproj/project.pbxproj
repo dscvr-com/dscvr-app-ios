@@ -134,6 +134,13 @@
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
 		A571CC611B91D7B400124FD2 /* pipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A571CC5F1B91D7B400124FD2 /* pipeline.cpp */; };
+		A5986B8D1BB931DC00DD2F4E /* displacement_left.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A5986B871BB931DC00DD2F4E /* displacement_left.fsh */; settings = {ASSET_TAGS = (); }; };
+		A5986B8E1BB931DC00DD2F4E /* displacement_left.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5986B881BB931DC00DD2F4E /* displacement_left.vsh */; settings = {ASSET_TAGS = (); }; };
+		A5986B8F1BB931DC00DD2F4E /* displacement_right.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A5986B891BB931DC00DD2F4E /* displacement_right.fsh */; settings = {ASSET_TAGS = (); }; };
+		A5986B901BB931DC00DD2F4E /* displacement_right.json in Resources */ = {isa = PBXBuildFile; fileRef = A5986B8A1BB931DC00DD2F4E /* displacement_right.json */; settings = {ASSET_TAGS = (); }; };
+		A5986B911BB931DC00DD2F4E /* displacement_right.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5986B8B1BB931DC00DD2F4E /* displacement_right.vsh */; settings = {ASSET_TAGS = (); }; };
+		A5986B921BB931DC00DD2F4E /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A5986B8C1BB931DC00DD2F4E /* lut */; settings = {ASSET_TAGS = (); }; };
+		A5986B941BB933C600DD2F4E /* displacement_left.json in Resources */ = {isa = PBXBuildFile; fileRef = A5986B931BB933C600DD2F4E /* displacement_left.json */; settings = {ASSET_TAGS = (); }; };
 		A59E32F41BB423DA003D166B /* ringwiseStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59E32EF1BB423DA003D166B /* ringwiseStitcher.cpp */; settings = {ASSET_TAGS = (); }; };
 		A5C1C0161B7E19E200DCD598 /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0031B7E19E200DCD598 /* image.cpp */; };
 		A5C1C0171B7E19E200DCD598 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5C1C0061B7E19E200DCD598 /* lib */; };
@@ -292,6 +299,13 @@
 		A5986B771BB87D6400DD2F4E /* exposureCompensator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = exposureCompensator.hpp; sourceTree = "<group>"; };
 		A5986B781BB87D6400DD2F4E /* graph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = graph.hpp; sourceTree = "<group>"; };
 		A5986B791BB87D6400DD2F4E /* imageCorrespondenceGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageCorrespondenceGraph.hpp; sourceTree = "<group>"; };
+		A5986B871BB931DC00DD2F4E /* displacement_left.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = displacement_left.fsh; path = Shader/displacement_left.fsh; sourceTree = "<group>"; };
+		A5986B881BB931DC00DD2F4E /* displacement_left.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = displacement_left.vsh; path = Shader/displacement_left.vsh; sourceTree = "<group>"; };
+		A5986B891BB931DC00DD2F4E /* displacement_right.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = displacement_right.fsh; path = Shader/displacement_right.fsh; sourceTree = "<group>"; };
+		A5986B8A1BB931DC00DD2F4E /* displacement_right.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = displacement_right.json; path = Shader/displacement_right.json; sourceTree = "<group>"; };
+		A5986B8B1BB931DC00DD2F4E /* displacement_right.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = displacement_right.vsh; path = Shader/displacement_right.vsh; sourceTree = "<group>"; };
+		A5986B8C1BB931DC00DD2F4E /* lut */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lut; path = Shader/lut; sourceTree = "<group>"; };
+		A5986B931BB933C600DD2F4E /* displacement_left.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = displacement_left.json; path = Shader/displacement_left.json; sourceTree = "<group>"; };
 		A59E32EA1BB423DA003D166B /* bundleAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bundleAligner.hpp; sourceTree = "<group>"; };
 		A59E32EB1BB423DA003D166B /* drawing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = drawing.hpp; sourceTree = "<group>"; };
 		A59E32EC1BB423DA003D166B /* pairwiseCorrelator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pairwiseCorrelator.hpp; sourceTree = "<group>"; };
@@ -761,11 +775,26 @@
 		8FFCE4B61B4DBF1900832C88 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				A5986B7A1BB9319200DD2F4E /* Shader */,
 				8FBC869F1BB7D84900539D4E /* Icon.swift */,
 				8FE09F5E1BAEFD7100EA105D /* CWStatusBarNotification */,
 				8FD7F85C1B5924D5001680AA /* Stitcher */,
 			);
 			path = Vendor;
+			sourceTree = "<group>";
+		};
+		A5986B7A1BB9319200DD2F4E /* Shader */ = {
+			isa = PBXGroup;
+			children = (
+				A5986B931BB933C600DD2F4E /* displacement_left.json */,
+				A5986B871BB931DC00DD2F4E /* displacement_left.fsh */,
+				A5986B881BB931DC00DD2F4E /* displacement_left.vsh */,
+				A5986B891BB931DC00DD2F4E /* displacement_right.fsh */,
+				A5986B8A1BB931DC00DD2F4E /* displacement_right.json */,
+				A5986B8B1BB931DC00DD2F4E /* displacement_right.vsh */,
+				A5986B8C1BB931DC00DD2F4E /* lut */,
+			);
+			name = Shader;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -856,15 +885,22 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5986B921BB931DC00DD2F4E /* lut in Resources */,
+				A5986B941BB933C600DD2F4E /* displacement_left.json in Resources */,
 				8FBC86A21BB7D86B00539D4E /* icons.ttf in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
+				A5986B8E1BB931DC00DD2F4E /* displacement_left.vsh in Resources */,
 				8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */,
 				8FBC86971BB723E600539D4E /* SF-UI-Display-Semibold.otf in Resources */,
 				8FBC86981BB723E600539D4E /* SF-UI-Display-Ultralight.otf in Resources */,
 				8FBC86991BB723E600539D4E /* SF-UI-Text-Regular.otf in Resources */,
+				A5986B8D1BB931DC00DD2F4E /* displacement_left.fsh in Resources */,
+				A5986B911BB931DC00DD2F4E /* displacement_right.vsh in Resources */,
 				8FBC869A1BB723E600539D4E /* SF-UI-Text-Semibold.otf in Resources */,
 				A5C1C0171B7E19E200DCD598 /* lib in Resources */,
+				A5986B8F1BB931DC00DD2F4E /* displacement_right.fsh in Resources */,
+				A5986B901BB931DC00DD2F4E /* displacement_right.json in Resources */,
 				8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */,
 				A5DA67091B9CA08F00D9F3EE /* recorderGraph.hpp in Resources */,
 				8FAB9F5E1B8F02A900B4C8CB /* Assets.xcassets in Resources */,

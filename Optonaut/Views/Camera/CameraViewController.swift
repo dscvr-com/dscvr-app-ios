@@ -358,9 +358,11 @@ class CameraViewController: UIViewController {
             let errorVec = stitcher.GetAngularDistanceToBall()
             
             Async.main {
-                self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
-                self.viewModel.tiltAngle.value = Float(errorVec.z)
-                self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
+                if self.isViewLoaded() {
+                    self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
+                    self.viewModel.tiltAngle.value = Float(errorVec.z)
+                    self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
+                }
             }
             
             updateBallPosition()
