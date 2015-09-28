@@ -221,4 +221,8 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         navigationController?.presentViewController(settingsAlert, animated: true, completion: nil)
     }
     
+    override func setSelected(selected: Bool, animated: Bool) {}
+    
+    override func setHighlighted(highlighted: Bool, animated: Bool) {}
+    
 }
