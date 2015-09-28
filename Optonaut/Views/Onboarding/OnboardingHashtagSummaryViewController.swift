@@ -33,7 +33,7 @@ class OnboardingHashtagSummaryViewController: UIViewController {
         
         headlineTextView.numberOfLines = 1
         headlineTextView.textAlignment = .Center
-        headlineTextView.text = "Great job. That’s it."
+        headlineTextView.text = "Great. All done!"
         headlineTextView.textColor = .whiteColor()
         headlineTextView.font = UIFont.displayOfSize(25, withType: .Thin)
         view.addSubview(headlineTextView)
@@ -50,7 +50,7 @@ class OnboardingHashtagSummaryViewController: UIViewController {
         todoSelectedHashtagsView.font = UIFont.displayOfSize(14, withType: .Semibold)
         view.addSubview(todoSelectedHashtagsView)
         
-        iconTextView.text = "Of course you can follow other hashtags as well. This step was just to get you started.\r\n\r\nHave fun!"
+        iconTextView.text = "Of course you’ll be able to follow other hashtags as well. All you have to do is add them as you go.\r\n\r\nEnjoy!"
         iconTextView.font = UIFont.displayOfSize(20, withType: .Thin)
         iconTextView.numberOfLines = 5
         iconTextView.textAlignment = .Center

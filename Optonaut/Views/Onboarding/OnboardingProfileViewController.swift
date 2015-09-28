@@ -39,7 +39,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
                 case .Avatar: return "Upload your profile picture"
                 case .DisplayName: return "How should we call you?"
                 case .UserName: return "Pick a username"
-                case .Done: return "Looks good. Go ahead"
+                case .Done: return "Looking good!"
                 }
             }
             .startWithNext { self.headlineTextView.text = $0 }

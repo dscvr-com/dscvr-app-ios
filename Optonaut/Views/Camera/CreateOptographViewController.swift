@@ -35,6 +35,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     let textInputView = KMPlaceholderTextView()
     let lineView = UIView()
     
+    var stitcherDisposable: Disposable?
+    
     let assetSignalProducer: SignalProducer<OptographAsset, NoError>
     
     required init(assetSignalProducer: SignalProducer<OptographAsset, NoError>) {
@@ -142,7 +144,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
-        assetSignalProducer
+        stitcherDisposable = assetSignalProducer
             .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)))
             .on(next: { asset in
                 self.viewModel.saveAsset(asset)
@@ -237,6 +239,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     }
     
     func cancel() {
+        stitcherDisposable?.dispose()
         navigationController?.popViewControllerAnimated(false)
     }
     

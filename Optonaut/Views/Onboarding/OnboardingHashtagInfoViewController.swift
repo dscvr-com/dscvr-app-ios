@@ -24,7 +24,7 @@ class OnboardingHashtagInfoViewController: UIViewController {
         
         headlineTextView.numberOfLines = 1
         headlineTextView.textAlignment = .Center
-        headlineTextView.text = "Tell us what you like"
+        headlineTextView.text = "Show us what you like"
         headlineTextView.textColor = .whiteColor()
         headlineTextView.font = UIFont.displayOfSize(25, withType: .Thin)
         view.addSubview(headlineTextView)
@@ -35,9 +35,9 @@ class OnboardingHashtagInfoViewController: UIViewController {
         iconView.font = UIFont.iconOfSize(90)
         view.addSubview(iconView)
         
-        iconTextView.text = "We want to show you exactly that kind\r\nof content you’re interested in.\r\n\r\nIn order to prepare your personalized\r\nfeed, please help us to get to know you."
+        iconTextView.text = "We want to show you exactly that kind\r\nof pictures you’re interested in.\r\n\r\nLet’s set up your personalized feed."
         iconTextView.font = UIFont.displayOfSize(view.frame.width <= 320 ? 18 : 20, withType: .Thin)
-        iconTextView.numberOfLines = 5
+        iconTextView.numberOfLines = 4
         iconTextView.textAlignment = .Center
         iconTextView.textColor = .whiteColor()
         view.addSubview(iconTextView)

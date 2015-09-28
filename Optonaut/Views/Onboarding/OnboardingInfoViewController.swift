@@ -37,7 +37,7 @@ class OnboardingInfoViewController: UIViewController {
         
         iconTextView.numberOfLines = 2
         iconTextView.textAlignment = .Center
-        iconTextView.text = "Take your loved ones with you and explore new beautiful places"
+        iconTextView.text = "Take your loved ones with you and explore beautiful new places"
         iconTextView.textColor = .whiteColor()
         iconTextView.font = UIFont.displayOfSize(20, withType: .Thin)
         view.addSubview(iconTextView)

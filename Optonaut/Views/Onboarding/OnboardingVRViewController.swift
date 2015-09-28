@@ -24,7 +24,7 @@ class OnboardingVRViewController: UIViewController {
         
         headlineTextView.numberOfLines = 3
         headlineTextView.textAlignment = .Center
-        headlineTextView.text = "To view these pictures you will need VR glasses like a Google Cardboard"
+        headlineTextView.text = "To view these pictures you will need VR glasses,\r\nsuch as a Google Cardboard"
         headlineTextView.textColor = .whiteColor()
         headlineTextView.font = UIFont.displayOfSize(25, withType: .Thin)
         view.addSubview(headlineTextView)

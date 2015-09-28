@@ -335,6 +335,7 @@ class CameraViewController: UIViewController {
     }
  
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
+        
         if stitcher.IsFinished() {
             return
         }
@@ -375,6 +376,7 @@ class CameraViewController: UIViewController {
             }
             
             if stitcher.IsFinished() {
+                stitcher.Finish()
                 // needed since processSampleBuffer doesn't run on UI thread
                 Async.main {
                     self.finish()
@@ -391,9 +393,8 @@ class CameraViewController: UIViewController {
         if !stitcher.HasResults() {
             return
         }
-        
-        stitcher.Finish()
         session.stopRunning()
+        
         
         for child in scene.rootNode.childNodes {
             child.removeFromParentNode()
@@ -401,26 +402,28 @@ class CameraViewController: UIViewController {
         
         let assetSignalProducer = SignalProducer<OptographAsset, NoError> { sink, disposable in
 //            let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)
-
 //            sendNext(sink, OptographAsset.PreviewImage(preview!))
-
-            let leftBuffer = self.stitcher.GetLeftResult()
-            var leftCGImage: CGImage? = ImageBufferToCGImage(leftBuffer)
-            let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage!), 0.8)
-            self.stitcher.FreeImageBuffer(leftBuffer)
-            leftCGImage = nil
-            sendNext(sink, OptographAsset.LeftImage(leftImageData!))
-
-            let rightBuffer = self.stitcher.GetRightResult()
-            var rightCGImage: CGImage? = ImageBufferToCGImage(rightBuffer)
-            let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage!), 0.8)
-            self.stitcher.FreeImageBuffer(rightBuffer)
-            rightCGImage = nil
+            
+            if !disposable.disposed {
+                let leftBuffer = self.stitcher.GetLeftResult()
+                var leftCGImage: CGImage? = ImageBufferToCGImage(leftBuffer)
+                let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage!), 0.8)
+                self.stitcher.FreeImageBuffer(leftBuffer)
+                leftCGImage = nil
+                sendNext(sink, OptographAsset.LeftImage(leftImageData!))
+            }
+            
+            if !disposable.disposed {
+                let rightBuffer = self.stitcher.GetRightResult()
+                var rightCGImage: CGImage? = ImageBufferToCGImage(rightBuffer)
+                let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage!), 0.8)
+                self.stitcher.FreeImageBuffer(rightBuffer)
+                rightCGImage = nil
+                sendNext(sink, OptographAsset.RightImage(rightImageData!))
+            }
             
             self.stitcher.Dispose()
 
-            sendNext(sink, OptographAsset.RightImage(rightImageData!))
-            
             if SessionService.sessionData!.debuggingEnabled {
                 //self.debugHelper?.upload().startWithCompleted { sendCompleted(sink) }
                 sendCompleted(sink)
@@ -431,6 +434,7 @@ class CameraViewController: UIViewController {
             disposable.addDisposable {
                 // TODO @emiswelt! insert code to cancel stitching
                 // TODO @schickling: Just kill the thread. And then call dispose on the stitcher object.
+                
             }
         }
         
@@ -439,6 +443,9 @@ class CameraViewController: UIViewController {
     }
     
     func cancel() {
+        session.stopRunning()
+        stitcher.Finish()
+        stitcher.Dispose()
         navigationController?.popViewControllerAnimated(false)
     }
 }
