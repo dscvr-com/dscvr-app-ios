@@ -20,7 +20,7 @@ class DetailsTableViewCell: UITableViewCell {
     private let locationView = InsetLabel()
     private let avatarImageView = PlaceholderImageView()
     private let progressView = UIProgressView()
-    private let fullNameView = UILabel()
+    private let displayNameView = UILabel()
     private let userNameView = UILabel()
     private let dateView = UILabel()
     private let actionButtonView = UIButton()
@@ -60,11 +60,11 @@ class DetailsTableViewCell: UITableViewCell {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(avatarImageView)
         
-        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        fullNameView.textColor = UIColor(0x4d4d4d)
-        fullNameView.userInteractionEnabled = true
-        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(fullNameView)
+        displayNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        displayNameView.textColor = UIColor(0x4d4d4d)
+        displayNameView.userInteractionEnabled = true
+        displayNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        contentView.addSubview(displayNameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = UIColor(0xb3b3b3)
@@ -143,11 +143,11 @@ class DetailsTableViewCell: UITableViewCell {
         progressView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView)
         progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
         
-        fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
-        fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        displayNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
+        displayNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
         userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 4)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: displayNameView, withOffset: 4)
         
         dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
         dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
@@ -201,7 +201,7 @@ class DetailsTableViewCell: UITableViewCell {
         
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
         
-        fullNameView.rac_text <~ viewModel.fullName
+        displayNameView.rac_text <~ viewModel.displayName
         
         userNameView.rac_text <~ viewModel.userName
         
@@ -247,7 +247,7 @@ class DetailsTableViewCell: UITableViewCell {
         actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
             // TODO adjust sharing feature
             if let myWebsite = NSURL(string: "http://share.optonaut.co/\(self.viewModel.optograph.id)") {
-                let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value): \(self.viewModel.text.value)"
+                let textToShare = "Check out this Optograph of \(self.viewModel.displayName.value): \(self.viewModel.text.value)"
                 let objectsToShare = [textToShare, myWebsite]
                 let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
                 

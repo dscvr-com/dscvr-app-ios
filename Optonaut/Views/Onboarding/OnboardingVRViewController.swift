@@ -1,15 +1,15 @@
 //
-//  OnboardingInfoViewController.swift
+//  OnboardingVRViewController.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 9/17/15.
+//  Created by Johannes Schickling on 9/27/15.
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
 import Foundation
 import HexColor
 
-class OnboardingInfoViewController: UIViewController {
+class OnboardingVRViewController: UIViewController {
     
     // subviews
     let headlineTextView = UILabel()
@@ -24,26 +24,33 @@ class OnboardingInfoViewController: UIViewController {
         
         headlineTextView.numberOfLines = 3
         headlineTextView.textAlignment = .Center
-        headlineTextView.text = "Capture and share unique moments in a completely new and immersive way"
+        headlineTextView.text = "To view these pictures you will need VR glasses like a Google Cardboard"
         headlineTextView.textColor = .whiteColor()
-        headlineTextView.font = UIFont.displayOfSize(25, withType: .Regular)
+        headlineTextView.font = UIFont.displayOfSize(25, withType: .Thin)
         view.addSubview(headlineTextView)
         
         iconView.textAlignment = .Center
-        iconView.text = String.iconWithName(.OnboardingInfo)
+        iconView.text = String.iconWithName(.OnboardingVr)
         iconView.textColor = .whiteColor()
         iconView.font = UIFont.iconOfSize(60)
         view.addSubview(iconView)
         
+        let iconTextStr = "You can get your own VR glasses on\r\noptonaut.co/glasses"
+        let normalRange = iconTextStr.NSRangeOfString("You can get your own VR glasses on")
+        let linkRange = iconTextStr.NSRangeOfString("optonaut.co/glasses")
+        let attrString = NSMutableAttributedString(string: iconTextStr)
+        attrString.addAttribute(NSFontAttributeName, value: UIFont.displayOfSize(20, withType: .Thin), range: normalRange!)
+        attrString.addAttribute(NSFontAttributeName, value: UIFont.displayOfSize(20, withType: .Semibold), range: linkRange!)
+        iconTextView.attributedText = attrString
+        iconTextView.userInteractionEnabled = true
+        iconTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "openGlassesPage"))
         iconTextView.numberOfLines = 2
         iconTextView.textAlignment = .Center
-        iconTextView.text = "Take your loved ones with you and explore new beautiful places"
         iconTextView.textColor = .whiteColor()
-        iconTextView.font = UIFont.displayOfSize(20, withType: .Thin)
         view.addSubview(iconTextView)
         
-        nextButtonView.setTitle("Get started", forState: .Normal)
-        nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showVROnboarding"))
+        nextButtonView.setTitle("I got VR glasses", forState: .Normal)
+        nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showProfileOnboarding"))
         view.addSubview(nextButtonView)
         
         view.setNeedsUpdateConstraints()
@@ -65,13 +72,17 @@ class OnboardingInfoViewController: UIViewController {
         nextButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         nextButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -42)
         nextButtonView.autoSetDimension(.Height, toSize: 60)
-        nextButtonView.autoSetDimension(.Width, toSize: 188)
+        nextButtonView.autoSetDimension(.Width, toSize: 235)
         
         super.updateViewConstraints()
     }
     
-    func showVROnboarding() {
-        presentViewController(OnboardingVRViewController(), animated: false, completion: nil)
+    func showProfileOnboarding() {
+        presentViewController(OnboardingProfileViewController(), animated: false, completion: nil)
+    }
+    
+    func openGlassesPage() {
+        UIApplication.sharedApplication().openURL(NSURL(string:"http://optonaut.co/glasses")!)
     }
     
 }

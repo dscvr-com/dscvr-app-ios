@@ -25,6 +25,7 @@ struct AssociationKey {
     static var buttonTitle: UInt8 = 12
     static var buttonTitleColor: UInt8 = 13
     static var imageUrl: UInt8 = 14
+    static var status: UInt8 = 15
 }
 
 enum objc_AssociationPolicy : UInt {
@@ -65,6 +66,14 @@ extension PlaceholderImageView {
             return property
         }
     }
+}
+
+extension RoundedTextField {
+    
+    var rac_status: MutableProperty<RoundedTextField.Status> {
+        return lazyMutableProperty(self, key: &AssociationKey.status, setter: { self.status = $0 }, getter: { self.status })
+    }
+    
 }
 
 extension UIButton {

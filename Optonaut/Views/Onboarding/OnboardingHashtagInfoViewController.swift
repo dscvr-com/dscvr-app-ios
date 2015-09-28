@@ -1,15 +1,15 @@
 //
-//  OnboardingInfoViewController.swift
+//  OnboardingHashtagInfoViewController.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 9/17/15.
+//  Created by Johannes Schickling on 9/27/15.
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
 import Foundation
-import HexColor
+import Device
 
-class OnboardingInfoViewController: UIViewController {
+class OnboardingHashtagInfoViewController: UIViewController {
     
     // subviews
     let headlineTextView = UILabel()
@@ -22,28 +22,28 @@ class OnboardingInfoViewController: UIViewController {
         
         view.backgroundColor = .Accent
         
-        headlineTextView.numberOfLines = 3
+        headlineTextView.numberOfLines = 1
         headlineTextView.textAlignment = .Center
-        headlineTextView.text = "Capture and share unique moments in a completely new and immersive way"
+        headlineTextView.text = "Tell us what you like"
         headlineTextView.textColor = .whiteColor()
-        headlineTextView.font = UIFont.displayOfSize(25, withType: .Regular)
+        headlineTextView.font = UIFont.displayOfSize(25, withType: .Thin)
         view.addSubview(headlineTextView)
         
         iconView.textAlignment = .Center
-        iconView.text = String.iconWithName(.OnboardingInfo)
+        iconView.text = String.iconWithName(.Heart)
         iconView.textColor = .whiteColor()
-        iconView.font = UIFont.iconOfSize(60)
+        iconView.font = UIFont.iconOfSize(90)
         view.addSubview(iconView)
         
-        iconTextView.numberOfLines = 2
+        iconTextView.text = "We want to show you exactly that kind\r\nof content you’re interested in.\r\n\r\nIn order to prepare your personalized\r\nfeed, please help us to get to know you."
+        iconTextView.font = UIFont.displayOfSize(view.frame.width <= 320 ? 18 : 20, withType: .Thin)
+        iconTextView.numberOfLines = 5
         iconTextView.textAlignment = .Center
-        iconTextView.text = "Take your loved ones with you and explore new beautiful places"
         iconTextView.textColor = .whiteColor()
-        iconTextView.font = UIFont.displayOfSize(20, withType: .Thin)
         view.addSubview(iconTextView)
         
-        nextButtonView.setTitle("Get started", forState: .Normal)
-        nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showVROnboarding"))
+        nextButtonView.setTitle("Prepare feed", forState: .Normal)
+        nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showHashtagSelectOnboarding"))
         view.addSubview(nextButtonView)
         
         view.setNeedsUpdateConstraints()
@@ -56,22 +56,22 @@ class OnboardingInfoViewController: UIViewController {
         headlineTextView.autoSetDimension(.Width, toSize: 300)
         
         iconView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        iconView.autoPinEdge(.Bottom, toEdge: .Top, ofView: iconTextView, withOffset: -35)
+        iconView.autoPinEdge(.Bottom, toEdge: .Top, ofView: iconTextView, withOffset: -65)
         
         iconTextView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         iconTextView.autoPinEdge(.Bottom, toEdge: .Top, ofView: nextButtonView, withOffset: -52)
-        iconTextView.autoSetDimension(.Width, toSize: 300)
+        iconTextView.autoSetDimension(.Width, toSize: 320)
         
         nextButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         nextButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -42)
         nextButtonView.autoSetDimension(.Height, toSize: 60)
-        nextButtonView.autoSetDimension(.Width, toSize: 188)
+        nextButtonView.autoSetDimension(.Width, toSize: 235)
         
         super.updateViewConstraints()
     }
     
-    func showVROnboarding() {
-        presentViewController(OnboardingVRViewController(), animated: false, completion: nil)
+    func showHashtagSelectOnboarding() {
+        presentViewController(OnboardingHashtagSelectViewController(), animated: false, completion: nil)
     }
     
 }

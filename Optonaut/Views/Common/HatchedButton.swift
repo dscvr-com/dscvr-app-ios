@@ -10,6 +10,13 @@ import Foundation
 
 class HatchedButton: UIButton {
     
+    var defaultBackgroundColor: UIColor? {
+        didSet {
+            backgroundColor = defaultBackgroundColor ?? UIColor.whiteColor()
+        }
+    }
+    var activeBackgroundColor: UIColor?
+    
     required override init(frame: CGRect) {
         super.init(frame: frame)
         postInit()
@@ -20,24 +27,24 @@ class HatchedButton: UIButton {
     }
     
     private func postInit() {
-        setTitleColor(UIColor.Accent, forState: .Normal)
-        titleLabel?.font = UIFont.robotoOfSize(16, withType: .Bold)
-        backgroundColor = UIColor.LightGrey.hatched1
-        layer.cornerRadius = 5
+        
+        layer.cornerRadius = 17.5
         clipsToBounds = true
+        titleLabel?.font = UIFont.displayOfSize(24, withType: .Semibold)
+        setTitleColor(.Accent, forState: .Normal)
+        
+        backgroundColor = defaultBackgroundColor ?? UIColor.whiteColor()
         
         addTarget(self, action: "buttonTouched", forControlEvents: .TouchDown)
         addTarget(self, action: "buttonUntouched", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
     
     func buttonTouched() {
-        backgroundColor = UIColor.Accent
-        setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        backgroundColor = activeBackgroundColor ?? UIColor.whiteColor().alpha(0.5)
     }
     
     func buttonUntouched() {
-        backgroundColor = UIColor.LightGrey.hatched1
-        setTitleColor(UIColor.Accent, forState: .Normal)
+        backgroundColor = defaultBackgroundColor ?? UIColor.whiteColor()
     }
     
 }

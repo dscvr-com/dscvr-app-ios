@@ -33,6 +33,11 @@ struct SessionData {
             NSUserDefaults.standardUserDefaults().setBool(debuggingEnabled, forKey: "session_person_debugging_enabled")
         }
     }
+    var onboardingVersion: Int {
+        willSet {
+            NSUserDefaults.standardUserDefaults().setInteger(onboardingVersion, forKey: "session_person_onboarding_version")
+        }
+    }
 }
 
 class SessionService {
@@ -44,17 +49,23 @@ class SessionService {
                 NSUserDefaults.standardUserDefaults().setObject(newValue.token, forKey: "session_person_token")
                 NSUserDefaults.standardUserDefaults().setObject(newValue.password, forKey: "session_person_password")
                 NSUserDefaults.standardUserDefaults().setBool(newValue.debuggingEnabled, forKey: "session_person_debugging_enabled")
+                NSUserDefaults.standardUserDefaults().setInteger(newValue.onboardingVersion, forKey: "session_person_onboarding_version")
             } else {
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_id")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_token")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_password")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_debugging_enabled")
+                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_onboarding_version")
             }
         }
     }
     
     static var isLoggedIn: Bool {
         return sessionData != nil
+    }
+    
+    static var needsOnboarding: Bool {
+        return sessionData?.onboardingVersion < OnboardingVersion
     }
     
     private static var logoutCallbacks: [(performAlways: Bool, fn: () -> ())] = []
@@ -65,8 +76,15 @@ class SessionService {
         let token = NSUserDefaults.standardUserDefaults().objectForKey("session_person_token") as? String
         let password = NSUserDefaults.standardUserDefaults().objectForKey("session_person_password") as? String
         let debuggingEnabled = NSUserDefaults.standardUserDefaults().boolForKey("session_person_debugging_enabled")
+        let onboardingVersion = NSUserDefaults.standardUserDefaults().integerForKey("session_person_onboarding_version")
         if let id = id, token = token, password = password {
-            sessionData = SessionData(id: id, token: token, password: password, debuggingEnabled: debuggingEnabled)
+            sessionData = SessionData(
+                id: id,
+                token: token,
+                password: password,
+                debuggingEnabled: debuggingEnabled,
+                onboardingVersion: onboardingVersion
+            )
         } else {
             return
         }
@@ -89,7 +107,13 @@ class SessionService {
         
         return ApiService<LoginMappable>.post("persons/login", parameters: parameters)
             .on(next: { loginData in
-                sessionData = SessionData(id: loginData.id, token: loginData.token, password: password, debuggingEnabled: false)
+                sessionData = SessionData(
+                    id: loginData.id,
+                    token: loginData.token,
+                    password: password,
+                    debuggingEnabled: false,
+                    onboardingVersion: loginData.onboardingVersion
+                )
             })
             .flatMap(.Latest) { _ in SignalProducer.empty }
     }
@@ -111,11 +135,13 @@ class SessionService {
 struct LoginMappable: Mappable {
     var token: String = ""
     var id: UUID = ""
+    var onboardingVersion: Int = 0
     
     init?(_ map: Map) {}
     
     mutating func mapping(map: Map) {
-        token   <- map["token"]
-        id      <- map["id"]
+        token                   <- map["token"]
+        id                      <- map["id"]
+        onboardingVersion       <- map["onboarding_version"]
     }
 }

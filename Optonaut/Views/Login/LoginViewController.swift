@@ -221,7 +221,11 @@ class LoginViewController: UIViewController {
                     self.presentViewController(alert, animated: true, completion: nil)
                 }, 
                 completed: {
-                    self.presentViewController(TabBarViewController(), animated: false, completion: nil)
+                    if SessionService.needsOnboarding {
+                        self.presentViewController(OnboardingInfoViewController(), animated: false, completion: nil)
+                    } else {
+                        self.presentViewController(TabBarViewController(), animated: false, completion: nil)
+                    }
                 }
             )
             .start()

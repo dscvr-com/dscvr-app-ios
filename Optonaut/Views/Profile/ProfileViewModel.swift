@@ -14,7 +14,7 @@ import Crashlytics
 
 class ProfileViewModel {
     
-    let fullName = MutableProperty<String>("")
+    let displayName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let text = MutableProperty<String>("")
     let followersCount = MutableProperty<Int>(0)
@@ -79,7 +79,7 @@ class ProfileViewModel {
     }
     
     private func updateProperties() {
-        fullName.value = person.fullName
+        displayName.value = person.displayName
         userName.value = person.userName
         text.value = person.text
         followersCount.value = person.followersCount

@@ -24,14 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         prepareAndExecute {
-            if SessionService.isLoggedIn {
-                self.window?.rootViewController = TabBarViewController()
-//                self.window?.rootViewController = OnboardingInfoViewController()
-//                self.window?.rootViewController = OnboardingProfileViewController()
-//                self.window?.rootViewController = OnboardingHashtagViewController()
-            } else {
-                self.window?.rootViewController = LoginViewController()
-            }
+            self.window?.rootViewController = TabBarViewController()
         }
         
         return true
@@ -61,20 +54,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
         prepareAndExecute {
-            if SessionService.isLoggedIn {
-                let tabBarViewController = TabBarViewController()
-                
-                switch url.applicationURLData {
-                case .Optograph(let uuid):
-                    let detailsViewController = DetailsTableViewController(optographId: uuid)
-                    tabBarViewController.feedNavViewController.pushViewController(detailsViewController, animated: false)
-                default: ()
-                }
-                
-                self.window?.rootViewController = tabBarViewController
-            } else {
-                self.window?.rootViewController = LoginViewController()
+            let tabBarViewController = TabBarViewController()
+            
+            if case .Optograph(let uuid) = url.applicationURLData {
+                let detailsViewController = DetailsTableViewController(optographId: uuid)
+                tabBarViewController.feedNavViewController.pushViewController(detailsViewController, animated: false)
             }
+            
+            self.window?.rootViewController = tabBarViewController
         }
         
         return true
@@ -96,7 +83,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SessionService.prepare()
         SessionService.onLogout(performAlways: true) { self.window?.rootViewController = LoginViewController() }
         
-        fn()
+        if SessionService.isLoggedIn {
+            if SessionService.needsOnboarding {
+                window?.rootViewController = OnboardingInfoViewController()
+            } else {
+                fn()
+            }
+        } else {
+            window?.rootViewController = LoginViewController()
+        }
         
         VersionService.onOutdatedApiVersion {
             let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of Optonaut. Please update to the newest version.", preferredStyle: .Alert)

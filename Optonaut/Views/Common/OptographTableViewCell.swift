@@ -19,7 +19,7 @@ class OptographTableViewCell: UITableViewCell {
     
     // subviews
     let avatarImageView = PlaceholderImageView()
-    let fullNameView = UILabel()
+    let displayNameView = UILabel()
     let userNameView = UILabel()
     let dateView = UILabel()
     let starButtonView = UIButton()
@@ -40,11 +40,11 @@ class OptographTableViewCell: UITableViewCell {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(avatarImageView)
         
-        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        fullNameView.textColor = UIColor(0x4d4d4d)
-        fullNameView.userInteractionEnabled = true
-        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(fullNameView)
+        displayNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        displayNameView.textColor = UIColor(0x4d4d4d)
+        displayNameView.userInteractionEnabled = true
+        displayNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        contentView.addSubview(displayNameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = UIColor(0xb3b3b3)
@@ -98,11 +98,11 @@ class OptographTableViewCell: UITableViewCell {
         avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
         
-        fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
-        fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        displayNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
+        displayNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
         userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 4)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: displayNameView, withOffset: 4)
         
         dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
         dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
@@ -134,7 +134,7 @@ class OptographTableViewCell: UITableViewCell {
         
         previewImageView.rac_url <~ viewModel.previewImageUrl
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
-        fullNameView.rac_text <~ viewModel.fullName
+        displayNameView.rac_text <~ viewModel.displayName
         userNameView.rac_text <~ viewModel.userName
         locationView.rac_text <~ viewModel.location
         dateView.rac_text <~ viewModel.timeSinceCreated

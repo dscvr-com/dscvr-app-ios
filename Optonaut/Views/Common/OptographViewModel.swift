@@ -12,7 +12,7 @@ import ReactiveCocoa
 
 class OptographViewModel {
     
-    let fullName: ConstantProperty<String>
+    let displayName: ConstantProperty<String>
     let userName: ConstantProperty<String>
     let personId: ConstantProperty<UUID>
     let text: ConstantProperty<String>
@@ -31,7 +31,7 @@ class OptographViewModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        fullName = ConstantProperty(optograph.person.fullName)
+        displayName = ConstantProperty(optograph.person.displayName)
         userName = ConstantProperty("@\(optograph.person.userName)")
         personId = ConstantProperty(optograph.person.id)
         text = ConstantProperty(optograph.text)

@@ -13,7 +13,7 @@ class CommentViewModel {
     
     let text: ConstantProperty<String>
     let avatarImageUrl: ConstantProperty<String>
-    let fullName: ConstantProperty<String>
+    let displayName: ConstantProperty<String>
     let userName: ConstantProperty<String>
     let personId: ConstantProperty<UUID>
     let timeSinceCreated = MutableProperty<String>("")
@@ -21,7 +21,7 @@ class CommentViewModel {
     init(comment: Comment) {
         text = ConstantProperty(comment.text)
         avatarImageUrl = ConstantProperty("\(S3URL)/400x400/\(comment.person.avatarAssetId).jpg")
-        fullName = ConstantProperty(comment.person.fullName)
+        displayName = ConstantProperty(comment.person.displayName)
         userName = ConstantProperty("@\(comment.person.userName)")
         personId = ConstantProperty(comment.person.id)
         timeSinceCreated.value = comment.createdAt.shortDescription
