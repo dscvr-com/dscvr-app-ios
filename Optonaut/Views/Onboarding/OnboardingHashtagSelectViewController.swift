@@ -19,6 +19,7 @@ class OnboardingHashtagSelectViewController: UIViewController {
         return UIVisualEffectView(effect: blurEffect)
     }()
     private let imageView = PlaceholderImageView()
+    private let loadingInidicatorView = UIActivityIndicatorView()
     private let skipButtonView = HatchedButton()
     private let heartButtonView = HatchedButton()
     
@@ -50,11 +51,17 @@ class OnboardingHashtagSelectViewController: UIViewController {
             .map { "\(S3URL)/hashtag-preview/\($0.previewAssetId).jpg" }
         view.addSubview(imageView)
         
+        loadingInidicatorView.rac_animating <~ viewModel.loading
+        loadingInidicatorView.activityIndicatorViewStyle = .White
+        view.addSubview(loadingInidicatorView)
+        
         skipButtonView.defaultBackgroundColor = .Accent
         skipButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         skipButtonView.setTitle(String.iconWithName(.Cross), forState: .Normal)
         skipButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         skipButtonView.layer.cornerRadius = 30
+        skipButtonView.rac_alpha <~ viewModel.loading.producer.map { $0 ? 0.3 : 1 }
+        skipButtonView.rac_userInteractionEnabled <~ viewModel.loading
         skipButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "skipHashtag"))
         view.addSubview(skipButtonView)
         
@@ -63,6 +70,8 @@ class OnboardingHashtagSelectViewController: UIViewController {
         heartButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
         heartButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         heartButtonView.layer.cornerRadius = 30
+        heartButtonView.rac_alpha <~ viewModel.loading.producer.map { $0 ? 0.3 : 1 }
+        heartButtonView.rac_userInteractionEnabled <~ viewModel.loading
         heartButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "followHashtag"))
         view.addSubview(heartButtonView)
         
@@ -90,6 +99,9 @@ class OnboardingHashtagSelectViewController: UIViewController {
         imageView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
         imageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
         imageView.autoPinEdge(.Bottom, toEdge: .Top, ofView: skipButtonView, withOffset: -42)
+        
+        loadingInidicatorView.autoAlignAxis(.Vertical, toSameAxisOfView: imageView)
+        loadingInidicatorView.autoAlignAxis(.Horizontal, toSameAxisOfView: imageView)
         
         skipButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view, withOffset: -40)
         skipButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -42)

@@ -18,6 +18,7 @@ class CreateOptographViewModel {
     let location = MutableProperty<String>("")
     let text = MutableProperty<String>("")
     let hashtagString = MutableProperty<String>("")
+    let hashtagStringValid = MutableProperty<Bool>(true)
     let pending = MutableProperty<Bool>(true)
     let publishLater: MutableProperty<Bool>
     let cameraPreviewEnabled = MutableProperty<Bool>(true)
@@ -38,8 +39,27 @@ class CreateOptographViewModel {
             .startWithNext { self.location.value = $0.text }
         
         text.producer.startWithNext { self.optograph.text = $0 }
-        hashtagString.producer.startWithNext { self.optograph.hashtagString = $0 }
         location.producer.startWithNext { self.optograph.location.text = $0 }
+        
+        let hashtagRegex = try! NSRegularExpression(pattern: "(#[\\\\u4e00-\\\\u9fa5a-zA-Z0-9]+)\\w*", options: [.CaseInsensitive])
+        
+        hashtagStringValid <~ hashtagString.producer
+            .map { str in
+                return !hashtagRegex.matchesInString(str, options: [], range: NSRange(location: 0, length: str.characters.count)).isEmpty
+            }
+        
+        hashtagStringValid.producer
+            .filter(identity)
+            .startWithNext { _ in
+                let str = self.hashtagString.value
+                let nsStr = str as NSString
+                self.optograph.hashtagString = hashtagRegex
+                    .matchesInString(str, options: [], range: NSRange(location: 0, length: str.characters.count))
+                    .map { nsStr.substringWithRange($0.range) }
+                    .map { $0.lowercaseString }
+                    .map { $0.substringFromIndex($0.startIndex.advancedBy(1)) }
+                    .joinWithSeparator(",")
+            }
     }
     
     func saveAsset(asset: OptographAsset) {

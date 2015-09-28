@@ -14,7 +14,7 @@ class TabBarViewController: UITabBarController {
     
     let feedNavViewController = FeedNavViewController()
     let exploreNavViewController = ExploreNavViewController()
-    let activityNavViewController = ActivityNavViewController()
+//    let activityNavViewController = ActivityNavViewController()
     let profileNavViewController = ProfileNavViewController()
     
     override func viewDidLoad() {
@@ -24,12 +24,12 @@ class TabBarViewController: UITabBarController {
         viewControllers = [
             feedNavViewController,
             exploreNavViewController,
-            activityNavViewController,
+//            activityNavViewController,
             profileNavViewController
         ]
         
         feedNavViewController.initNotificationIndicator()
-        activityNavViewController.initNotificationIndicator()
+//        activityNavViewController.initNotificationIndicator()
         
         // set bar color
         tabBar.barTintColor = UIColor.Accent

@@ -123,6 +123,7 @@ class SessionService {
             fn()
         }
         
+        sessionData = nil
         logoutCallbacks = logoutCallbacks.filter { (performAlways, _) in performAlways }
     }
     

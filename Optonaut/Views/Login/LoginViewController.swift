@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import Async
 
 class LoginViewController: UIViewController {
     
@@ -243,7 +244,9 @@ extension LoginViewController: UITextFieldDelegate {
         
         if textField == passwordInputView {
             view.endEditing(true)
-            submitButtonView.sendActionsForControlEvents(.TouchUpInside)
+            Async.main {
+                self.login()
+            }
         }
         
         return true

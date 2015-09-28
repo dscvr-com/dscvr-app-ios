@@ -15,6 +15,7 @@ class OnboardingHashtagSelectViewModel {
     private var skippedResults: [Hashtag] = []
     let selectedHashtags = MutableProperty<[Hashtag]>([])
     let currentHashtag = MutableProperty<Hashtag?>(nil)
+    let loading = MutableProperty<Bool>(true)
     
     init() {
         ApiService<Hashtag>.get("hashtags/popular")
@@ -23,6 +24,7 @@ class OnboardingHashtagSelectViewModel {
                 self.results.value = hashtags.filter { !$0.isFollowed }
                 self.selectedHashtags.value = hashtags.filter { $0.isFollowed }
                 self.advance()
+                self.loading.value = false
             }
     }
     
@@ -41,10 +43,12 @@ class OnboardingHashtagSelectViewModel {
             return
         }
         
+        self.loading.value = true
         ApiService<Hashtag>.post("hashtags/\(hashtag.id)/follow")
             .startWithCompleted {
                 self.selectedHashtags.value.append(self.currentHashtag.value!)
                 self.advance()
+                self.loading.value = false
             }
     }
     

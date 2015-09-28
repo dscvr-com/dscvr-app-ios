@@ -209,7 +209,7 @@ class DetailsTableViewCell: UITableViewCell {
         
         starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? UIColor.Accent : UIColor(0xe6e6e6) }
         
-        starCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0) stars" }
+        starCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0) likes" }
         
         commentCountView.rac_text <~ viewModel.commentsCount.producer.map { "\($0) comments" }
         
@@ -273,8 +273,9 @@ class DetailsTableViewCell: UITableViewCell {
     
     func pushViewer() {
         if viewModel.downloadProgress.value == 1 {
-            navigationController?.pushViewController(ViewerViewController(orientation: .LandscapeLeft, optograph: viewModel.optograph), animated: false)
-            viewModel.increaseViewsCount()
+            let alert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
         }
     }
     
