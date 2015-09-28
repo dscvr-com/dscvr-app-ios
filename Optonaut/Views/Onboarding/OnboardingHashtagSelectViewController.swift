@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactiveCocoa
+import WebImage
 
 class OnboardingHashtagSelectViewController: UIViewController {
     
@@ -32,9 +33,6 @@ class OnboardingHashtagSelectViewController: UIViewController {
         backgroundImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         backgroundImageView.clipsToBounds = true
         backgroundImageView.contentMode = .ScaleAspectFill
-        backgroundImageView.rac_url <~ viewModel.currentHashtag.producer
-            .ignoreNil()
-            .map { "\(S3URL)/hashtag-preview/\($0.previewAssetId).jpg" }
         view.addSubview(backgroundImageView)
         
         headlineTextView.textAlignment = .Center
@@ -46,10 +44,24 @@ class OnboardingHashtagSelectViewController: UIViewController {
         imageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         imageView.contentMode = .ScaleAspectFill
         imageView.clipsToBounds = true
-        imageView.rac_url <~ viewModel.currentHashtag.producer
+        view.addSubview(imageView)
+        
+        viewModel.currentHashtag.producer
             .ignoreNil()
             .map { "\(S3URL)/hashtag-preview/\($0.previewAssetId).jpg" }
-        view.addSubview(imageView)
+            .startWithNext { url in
+                SDWebImageDownloader.sharedDownloader().downloadImageWithURL(NSURL(string: url)!,
+                    options: [],
+                    progress: { _ in
+                        self.viewModel.loading.value = true
+                    },
+                    completed: { (image, _, _, _) in
+                        self.viewModel.loading.value = false
+                        self.imageView.image = image
+                        self.backgroundImageView.image = image
+                })
+            }
+        
         
         loadingInidicatorView.rac_animating <~ viewModel.loading
         loadingInidicatorView.activityIndicatorViewStyle = .White
@@ -61,7 +73,7 @@ class OnboardingHashtagSelectViewController: UIViewController {
         skipButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         skipButtonView.layer.cornerRadius = 30
         skipButtonView.rac_alpha <~ viewModel.loading.producer.map { $0 ? 0.3 : 1 }
-        skipButtonView.rac_userInteractionEnabled <~ viewModel.loading
+        skipButtonView.rac_userInteractionEnabled <~ viewModel.loading.producer.map(negate)
         skipButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "skipHashtag"))
         view.addSubview(skipButtonView)
         
@@ -71,7 +83,7 @@ class OnboardingHashtagSelectViewController: UIViewController {
         heartButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         heartButtonView.layer.cornerRadius = 30
         heartButtonView.rac_alpha <~ viewModel.loading.producer.map { $0 ? 0.3 : 1 }
-        heartButtonView.rac_userInteractionEnabled <~ viewModel.loading
+        heartButtonView.rac_userInteractionEnabled <~ viewModel.loading.producer.map(negate)
         heartButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "followHashtag"))
         view.addSubview(heartButtonView)
         
