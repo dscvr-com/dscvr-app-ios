@@ -120,7 +120,8 @@ class ViewerViewController: UIViewController  {
                 if !popActivated && -x > abs(y) + 0.5 {
                     popActivated = true
                 }
-                if popActivated && abs(y) > -x + 0.5 {
+                if (popActivated && abs(y) > -x + 0.5) || x > abs(y) {
+                    //TODO: Show TURN YOUR PHONE here (its flipped, so left and right are switched)
                     self.navigationController?.popViewControllerAnimated(false)
                 }
             }
