@@ -135,7 +135,7 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     self->isDebug = false,
     self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::RecorderGraph::ModeTruncated, true);
     
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     self->tempPath = [[paths objectAtIndex:0] stringByAppendingString:@"/tmp/"];
     
     counter = 0;
@@ -253,6 +253,5 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 - (void)Dispose {
     pipe->Dispose();
     [[NSFileManager defaultManager] removeItemAtPath:self->tempPath error:nil];
-    delete pipe;
 }
 @end
