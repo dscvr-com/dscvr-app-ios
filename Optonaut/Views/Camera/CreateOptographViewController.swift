@@ -12,10 +12,21 @@ import KMPlaceholderTextView
 import Crashlytics
 import ActiveLabel
 import PermissionScope
+import AVFoundation
 
 class CreateOptographViewController: UIViewController, RedNavbar {
     
     let viewModel = CreateOptographViewModel()
+    
+    // camera
+    private let session = AVCaptureSession()
+    private let sessionQueue: dispatch_queue_t = {
+        let queue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
+        let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
+        dispatch_set_target_queue(queue, high)
+        return queue
+    }()
+    private var previewLayer: AVCaptureVideoPreviewLayer?
     
     // subviews
     let previewImageView = PlaceholderImageView()
@@ -95,7 +106,6 @@ class CreateOptographViewController: UIViewController, RedNavbar {
             }
         }
         
-        
         previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
@@ -123,6 +133,13 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         lineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(lineView)
         
+        // layer for preview
+        previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer!.videoGravity = AVLayerVideoGravityResizeAspectFill
+        view.layer.addSublayer(previewLayer!)
+        
+        setupCamera()
+        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
         assetSignalProducer
@@ -141,10 +158,16 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         view.setNeedsUpdateConstraints()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        previewLayer?.frame = previewImageView.frame
+    }
+    
     override func updateViewConstraints() {
         previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 0.45)
+        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
         
         locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
         locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
@@ -171,6 +194,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        session.startRunning()
+        
         navigationController?.interactivePopGestureRecognizer?.enabled = false
     }
     
@@ -178,6 +203,37 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         super.viewDidDisappear(animated)
         
         navigationController?.interactivePopGestureRecognizer?.enabled = true
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        session.stopRunning()
+    }
+    
+    private func setupCamera() {
+        session.sessionPreset = AVCaptureSessionPresetHigh
+        
+        let videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else {
+            return
+        }
+        
+        session.beginConfiguration()
+        
+        if session.canAddInput(videoDeviceInput) {
+            session.addInput(videoDeviceInput)
+        }
+        
+        let videoDeviceOutput = AVCaptureVideoDataOutput()
+        videoDeviceOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
+        videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
+        
+        if session.canAddOutput(videoDeviceOutput) {
+            session.addOutput(videoDeviceOutput)
+        }
+        
+        session.commitConfiguration()
     }
     
     func cancel() {
