@@ -33,7 +33,7 @@ class OnboardingHashtagSelectViewController: UIViewController {
         backgroundImageView.contentMode = .ScaleAspectFill
         backgroundImageView.rac_url <~ viewModel.currentHashtag.producer
             .ignoreNil()
-            .map { "\(S3URL)/400x400/\($0.previewAssetId).jpg" }
+            .map { "\(S3URL)/hashtag-preview/\($0.previewAssetId).jpg" }
         view.addSubview(backgroundImageView)
         
         headlineTextView.textAlignment = .Center
@@ -44,17 +44,10 @@ class OnboardingHashtagSelectViewController: UIViewController {
         
         imageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         imageView.contentMode = .ScaleAspectFill
-        imageView.rac_url <~ viewModel.currentHashtag.producer
-            .ignoreNil()
-            .map { "\(S3URL)/400x400/\($0.previewAssetId).jpg" }
-        view.addSubview(imageView)
-        
-        imageView.placeholderImage = UIImage(named: "optograph-placeholder")!
-        imageView.contentMode = .ScaleAspectFill
         imageView.clipsToBounds = true
         imageView.rac_url <~ viewModel.currentHashtag.producer
             .ignoreNil()
-            .map { "\(S3URL)/400x400/\($0.previewAssetId).jpg" }
+            .map { "\(S3URL)/hashtag-preview/\($0.previewAssetId).jpg" }
         view.addSubview(imageView)
         
         skipButtonView.defaultBackgroundColor = .Accent

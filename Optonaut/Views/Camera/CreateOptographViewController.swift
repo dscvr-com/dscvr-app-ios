@@ -142,7 +142,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         view.addSubview(locationView)
         
         hashtagInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
-        hashtagInputView.placeholder = "Provide at least one hashtag. Example: #nature #mountains"
+        hashtagInputView.placeholder = "Provide at least one hashtag.\r\nExample: #nature #mountains"
         hashtagInputView.placeholderColor = UIColor(0xcfcfcf)
         hashtagInputView.textColor = UIColor(0x4d4d4d)
         hashtagInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.hashtagString.value = $0 as! String }
