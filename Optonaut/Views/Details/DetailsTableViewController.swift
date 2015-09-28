@@ -75,7 +75,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
             if let accelerometerData = accelerometerData {
                 let x = accelerometerData.acceleration.x
                 let y = accelerometerData.acceleration.y
-                if self.viewModel.downloadProgress.value == 1 && abs(x) > abs(y) + 0.5 {
+                if self.viewModel.downloadProgress.value == 1 && -x > abs(y) + 0.5 {
                     self.motionManager.stopAccelerometerUpdates()
                     let orientation: UIInterfaceOrientation = x > 0 ? .LandscapeLeft : .LandscapeRight
                     self.pushViewer(orientation)
