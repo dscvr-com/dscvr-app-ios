@@ -17,7 +17,6 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     let refreshControl = UIRefreshControl()
     
     // subviews
-    private let blankHeaderView = UIView()
     private var headerTableViewCell: ProfileHeaderTableViewCell?
     
     let uniqueIdentifier: String
@@ -92,7 +91,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         if indexPath.row == 0 {
             return 280
         } else {
-            return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
+            return super.tableView(tableView, heightForRowAtIndexPath: NSIndexPath(forRow: indexPath.row - 1, inSection: indexPath.section))
         }
     }
     
@@ -106,6 +105,10 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         } else {
             return super.tableView(tableView, cellForRowAtIndexPath: NSIndexPath(forRow: indexPath.row - 1, inSection: indexPath.section))
         }
+    }
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return items.count + 1
     }
     
 }

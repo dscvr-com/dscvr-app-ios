@@ -18,7 +18,7 @@ class LoginViewController: UIViewController {
     let emailOrUserNameInputView = UITextField()
     let passwordInputView = UITextField()
     let submitButtonView = UIButton()
-    let forgotPasswordView = UILabel()
+//    let forgotPasswordView = UILabel()
     let showInviteView = UILabel()
     let loadingView = UIView()
     
@@ -84,12 +84,12 @@ class LoginViewController: UIViewController {
         submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "login"))
         formView.addSubview(submitButtonView)
         
-        forgotPasswordView.textColor = .whiteColor()
-        forgotPasswordView.text = "Forgot your password?"
-        forgotPasswordView.font = .robotoOfSize(13, withType: .Regular)
-        forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showForgotPasswordViewController"))
-        forgotPasswordView.userInteractionEnabled = true
-        view.addSubview(forgotPasswordView)
+//        forgotPasswordView.textColor = .whiteColor()
+//        forgotPasswordView.text = "Forgot your password?"
+//        forgotPasswordView.font = .robotoOfSize(13, withType: .Regular)
+//        forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showForgotPasswordViewController"))
+//        forgotPasswordView.userInteractionEnabled = true
+//        view.addSubview(forgotPasswordView)
         
         showInviteView.textColor = .whiteColor()
         showInviteView.text = "Request Invite"
@@ -153,8 +153,8 @@ class LoginViewController: UIViewController {
             submitButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
             submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            forgotPasswordView.autoPinEdge(.Top, toEdge: .Bottom, ofView: formView, withOffset: 23)
-            forgotPasswordView.autoAlignAxisToSuperviewAxis(.Vertical)
+//            forgotPasswordView.autoPinEdge(.Top, toEdge: .Bottom, ofView: formView, withOffset: 23)
+//            forgotPasswordView.autoAlignAxisToSuperviewAxis(.Vertical)
             
             showInviteView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -28)
             showInviteView.autoAlignAxisToSuperviewAxis(.Vertical)

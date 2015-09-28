@@ -12,9 +12,9 @@ import Fabric
 import Crashlytics
 import PureLayout
 
-let Env = EnvType.Development
+//let Env = EnvType.Development
 //let Env = EnvType.Staging
-//let Env = EnvType.Production
+let Env = EnvType.Production
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
