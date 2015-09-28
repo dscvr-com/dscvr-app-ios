@@ -17,6 +17,8 @@ enum OptographAsset {
     case RightImage(NSData)
 }
 
+typealias HashtagStrings = Array<String>
+
 struct Optograph: Model {
     
     var id: UUID
@@ -34,6 +36,7 @@ struct Optograph: Model {
     var leftTextureAssetId: UUID
     var rightTextureAssetId: UUID
     var isStaffPick: Bool
+    var hashtagString: String
     
     static func newInstance() -> Optograph {
         return Optograph(
@@ -51,7 +54,8 @@ struct Optograph: Model {
             previewAssetId: uuid(),
             leftTextureAssetId: uuid(),
             rightTextureAssetId: uuid(),
-            isStaffPick: false
+            isStaffPick: false,
+            hashtagString: ""
         )
     }
     
@@ -109,6 +113,7 @@ extension Optograph: Mappable {
         leftTextureAssetId  <- map["left_texture_asset_id"]
         rightTextureAssetId <- map["right_texture_asset_id"]
         isStaffPick         <- map["is_staff_pick"]
+        hashtagString       <- map["hashtag_string"]
     }
     
 }
@@ -131,7 +136,8 @@ extension Optograph: SQLiteModel {
             previewAssetId: row[OptographSchema.previewAssetId],
             leftTextureAssetId: row[OptographSchema.leftTextureAssetId],
             rightTextureAssetId: row[OptographSchema.rightTextureAssetId],
-            isStaffPick: row[OptographSchema.isStaffPick]
+            isStaffPick: row[OptographSchema.isStaffPick],
+            hashtagString: row[OptographSchema.hashtagString]
         )
     }
     
@@ -152,6 +158,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.leftTextureAssetId <-- leftTextureAssetId,
             OptographSchema.rightTextureAssetId <-- rightTextureAssetId,
             OptographSchema.isStaffPick <-- isStaffPick,
+            OptographSchema.hashtagString <-- hashtagString,
         ]
     }
     

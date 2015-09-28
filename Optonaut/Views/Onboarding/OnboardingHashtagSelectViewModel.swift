@@ -12,6 +12,7 @@ import ReactiveCocoa
 class OnboardingHashtagSelectViewModel {
     
     private let results = MutableProperty<[Hashtag]>([])
+    private var skippedResults: [Hashtag] = []
     let selectedHashtags = MutableProperty<[Hashtag]>([])
     let currentHashtag = MutableProperty<Hashtag?>(nil)
     
@@ -26,6 +27,10 @@ class OnboardingHashtagSelectViewModel {
     }
     
     private func advance() {
+        if results.value.isEmpty && !skippedResults.isEmpty {
+            results.value = skippedResults
+            skippedResults.removeAll()
+        }
         if !results.value.isEmpty {
             currentHashtag.value = results.value.removeFirst()
         }
@@ -44,6 +49,10 @@ class OnboardingHashtagSelectViewModel {
     }
     
     func skipHashtag() {
+        guard let hashtag = currentHashtag.value else {
+            return
+        }
+        skippedResults.append(hashtag)
         self.advance()
     }
     

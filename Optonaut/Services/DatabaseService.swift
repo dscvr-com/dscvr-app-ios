@@ -21,11 +21,14 @@ protocol SQLiteModel {
 }
 
 extension NSDate {
+    class var declaredDatatype: String {
+        return String.declaredDatatype
+    }
     class func fromDatatypeValue(stringValue: String) -> NSDate {
         return NSDate.fromRFC3339String(stringValue)!
     }
     var datatypeValue: String {
-        return self.toRFC3339String()
+        return toRFC3339String()
     }
 }
 

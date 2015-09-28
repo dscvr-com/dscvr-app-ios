@@ -17,8 +17,10 @@ class CreateOptographViewModel {
     let previewImageUrl = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     let text = MutableProperty<String>("")
+    let hashtagString = MutableProperty<String>("")
     let pending = MutableProperty<Bool>(true)
     let publishLater: MutableProperty<Bool>
+    let cameraPreviewEnabled = MutableProperty<Bool>(true)
     
     private var optograph = Optograph.newInstance() 
     
@@ -36,6 +38,7 @@ class CreateOptographViewModel {
             .startWithNext { self.location.value = $0.text }
         
         text.producer.startWithNext { self.optograph.text = $0 }
+        hashtagString.producer.startWithNext { self.optograph.hashtagString = $0 }
         location.producer.startWithNext { self.optograph.location.text = $0 }
     }
     

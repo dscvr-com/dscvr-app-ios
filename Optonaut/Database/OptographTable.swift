@@ -24,6 +24,7 @@ struct OptographSchemaType: ModelSchema {
     let leftTextureAssetId = Expression<UUID>("optograph_left_texture_asset_id")
     let rightTextureAssetId = Expression<UUID>("optograph_right_texture_asset_id")
     let isStaffPick = Expression<Bool>("optograph_is_staff_pick")
+    let hashtagString = Expression<String>("optograph_hashtag_string")
 }
 
 let OptographSchema = OptographSchemaType()
@@ -46,5 +47,6 @@ func OptographMigration() -> String {
         t.column(OptographSchema.leftTextureAssetId)
         t.column(OptographSchema.rightTextureAssetId)
         t.column(OptographSchema.isStaffPick)
+        t.column(OptographSchema.hashtagString)
     }
 }

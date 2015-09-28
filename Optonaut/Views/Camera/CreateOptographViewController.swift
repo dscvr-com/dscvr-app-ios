@@ -26,13 +26,16 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         dispatch_set_target_queue(queue, high)
         return queue
     }()
+    private let stillImageOutput = AVCaptureStillImageOutput()
     private var previewLayer: AVCaptureVideoPreviewLayer?
     
     // subviews
     let previewImageView = PlaceholderImageView()
+    let cameraButtonView = HatchedButton()
     let locationView = InsetLabel()
     let descriptionView = ActiveLabel()
     let textInputView = KMPlaceholderTextView()
+    let hashtagInputView = KMPlaceholderTextView()
     let lineView = UIView()
     
     var stitcherDisposable: Disposable?
@@ -112,7 +115,23 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
         previewImageView.rac_url <~ viewModel.previewImageUrl
+        previewImageView.rac_hidden <~ viewModel.cameraPreviewEnabled
         view.addSubview(previewImageView)
+        
+        previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer!.videoGravity = AVLayerVideoGravityResizeAspectFill
+        viewModel.cameraPreviewEnabled.producer.startWithNext { enabled in
+            self.previewLayer?.opacity = enabled ? 1 : 0
+        }
+        view.layer.addSublayer(previewLayer!)
+        
+        cameraButtonView.setTitle(String.icomoonWithName(.Camera), forState: .Normal)
+        cameraButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+        cameraButtonView.defaultBackgroundColor = .Accent
+        cameraButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
+        cameraButtonView.layer.cornerRadius = 30
+        cameraButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleCamera"))
+        view.addSubview(cameraButtonView)
         
         locationView.rac_text <~ viewModel.location
         locationView.rac_hidden <~ viewModel.location.producer.map { $0.isEmpty }
@@ -121,6 +140,16 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         locationView.backgroundColor = UIColor(0x0).alpha(0.4)
         locationView.edgeInsets = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
         view.addSubview(locationView)
+        
+        hashtagInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
+        hashtagInputView.placeholder = "Provide at least one hashtag. Example: #nature #mountains"
+        hashtagInputView.placeholderColor = UIColor(0xcfcfcf)
+        hashtagInputView.textColor = UIColor(0x4d4d4d)
+        hashtagInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.hashtagString.value = $0 as! String }
+        hashtagInputView.textContainer.lineFragmentPadding = 0 // remove left padding
+        hashtagInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
+        textInputView.keyboardType = .Twitter
+        view.addSubview(hashtagInputView)
         
         textInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
         textInputView.placeholder = "Enter a description here..."
@@ -134,11 +163,6 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         
         lineView.backgroundColor = UIColor(0xe5e5e5)
         view.addSubview(lineView)
-        
-        // layer for preview
-        previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer!.videoGravity = AVLayerVideoGravityResizeAspectFill
-        view.layer.addSublayer(previewLayer!)
         
         setupCamera()
         
@@ -171,10 +195,20 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
         previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
         
+        cameraButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -20)
+        cameraButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: previewImageView, withOffset: -20)
+        cameraButtonView.autoSetDimension(.Width, toSize: 60)
+        cameraButtonView.autoSetDimension(.Height, toSize: 60)
+        
         locationView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -13)
         locationView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
         
-        textInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 20)
+        hashtagInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 20)
+        hashtagInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        hashtagInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+        hashtagInputView.autoSetDimension(.Height, toSize: 50)
+        
+        textInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: hashtagInputView, withOffset: 20)
         textInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         textInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         textInputView.autoSetDimension(.Height, toSize: 100)
@@ -190,6 +224,9 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+        
         updateNavbarAppear()
     }
     
@@ -204,6 +241,9 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     override func viewWillDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+        
         navigationController?.interactivePopGestureRecognizer?.enabled = true
     }
     
@@ -211,6 +251,15 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         super.viewDidDisappear(animated)
         
         session.stopRunning()
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
+        view.frame.origin.y = -keyboardHeight + 120
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        view.frame.origin.y = 0
     }
     
     private func setupCamera() {
@@ -235,6 +284,11 @@ class CreateOptographViewController: UIViewController, RedNavbar {
             session.addOutput(videoDeviceOutput)
         }
         
+        stillImageOutput.outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
+        if session.canAddOutput(stillImageOutput) {
+            session.addOutput(stillImageOutput)
+        }
+        
         session.commitConfiguration()
     }
     
@@ -244,6 +298,9 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     }
     
     func post() {
+        if viewModel.previewImageUrl.value.isEmpty {
+            return
+        }
         
         Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Posting"])
         
@@ -251,6 +308,22 @@ class CreateOptographViewController: UIViewController, RedNavbar {
             self.navigationController?.pushViewController(DetailsTableViewController(optographId: optograph.id), animated: false)
             self.navigationController?.viewControllers.removeAtIndex(1)
         }
+    }
+    
+    func toggleCamera() {
+        if viewModel.cameraPreviewEnabled.value {
+            if let videoConnection = stillImageOutput.connectionWithMediaType(AVMediaTypeVideo) {
+                stillImageOutput.captureStillImageAsynchronouslyFromConnection(videoConnection) {
+                    (imageDataSampleBuffer, error) -> Void in
+                    let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imageDataSampleBuffer)
+                    let previewImage = OptographAsset.PreviewImage(imageData)
+                    self.viewModel.saveAsset(previewImage)
+                }
+            }
+        } else {
+            
+        }
+        viewModel.cameraPreviewEnabled.value = !viewModel.cameraPreviewEnabled.value
     }
     
     func dismissKeyboard() {
