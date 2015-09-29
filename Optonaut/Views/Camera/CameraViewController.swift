@@ -117,6 +117,7 @@ class CameraViewController: UIViewController {
         }
         
         setupCamera()
+      
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -318,6 +319,24 @@ class CameraViewController: UIViewController {
         }
         
         session.commitConfiguration()
+        
+        setFocusMode(videoDevice, mode: AVCaptureFocusMode.ContinuousAutoFocus)
+        
+        //Locks the focus as soon as the user starts recording.
+        //We do this to avoid re-focusing during recording, which breaks the Optograph
+        viewModel.isRecording.producer.startWithNext {
+            if $0 {
+                self.setFocusMode(videoDevice, mode: AVCaptureFocusMode.Locked)
+            } else {
+                self.setFocusMode(videoDevice, mode: AVCaptureFocusMode.ContinuousAutoFocus)
+            }
+        }
+    }
+    
+    private func setFocusMode(videoDevice: AVCaptureDevice, mode: AVCaptureFocusMode) {
+        try! videoDevice.lockForConfiguration()
+        videoDevice.focusMode = mode
+        videoDevice.unlockForConfiguration()
     }
     
     private func authorizeCamera() {
