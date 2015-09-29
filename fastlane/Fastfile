@@ -14,6 +14,11 @@ platform :ios do
     increment_version_number
   end
 
+  desc "Snapshot"
+  lane :snapshot do
+    snapshot
+  end
+
   desc "Submit a new Beta Build to Crashlytics"
   desc "This will also make sure the profile is up to date"
   lane :beta do
