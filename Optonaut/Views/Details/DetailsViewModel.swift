@@ -141,11 +141,20 @@ class DetailsViewModel {
     }
     
     func delete() -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.delete("optographs/\(optograph.id)")
-            .on(completed: {
+        if optograph.isPublished {
+            return ApiService<EmptyResponse>.delete("optographs/\(optograph.id)")
+                .on(completed: {
+                    self.optograph.deleted = true
+                    try! self.optograph.insertOrReplace()
+                })
+        } else {
+            return SignalProducer<EmptyResponse, ApiError> { sink, disposable in
+                disposable.addDisposable {}
                 self.optograph.deleted = true
                 try! self.optograph.insertOrReplace()
-            })
+                sendCompleted(sink)
+            }
+        }
     }
     
     private func updateModel() {

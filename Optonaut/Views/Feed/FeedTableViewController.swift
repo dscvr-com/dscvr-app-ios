@@ -21,15 +21,11 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         
         navigationItem.title = String.icomoonWithName(.LogoText)
         
-        switch UIDevice.currentDevice().deviceType {
-        case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
-            let cameraButton = UIBarButtonItem()
-            cameraButton.image = UIImage.icomoonWithName(.Camera, textColor: .whiteColor(), size: CGSize(width: 24, height: 17))
-            cameraButton.target = self
-            cameraButton.action = "pushCamera"
-            navigationItem.setRightBarButtonItem(cameraButton, animated: false)
-        default: break
-        }
+        let cameraButton = UIBarButtonItem()
+        cameraButton.image = UIImage.icomoonWithName(.Camera, textColor: .whiteColor(), size: CGSize(width: 24, height: 17))
+        cameraButton.target = self
+        cameraButton.action = "pushCamera"
+        navigationItem.setRightBarButtonItem(cameraButton, animated: false)
         
         let searchButton = UIBarButtonItem()
         searchButton.title = String.icomoonWithName(.MagnifyingGlass)
@@ -101,7 +97,14 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     }
     
     func pushCamera() {
-        navigationController?.pushViewController(CameraViewController(), animated: false)
+        switch UIDevice.currentDevice().deviceType {
+        case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
+            navigationController?.pushViewController(CameraViewController(), animated: false)
+        default:
+            let alert = UIAlertController(title: "Device not yet supported", message: "Recording isn't available for your device in the current version but will be enabled in a future release.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+        }
     }
     
     func pushSearch() {
