@@ -129,8 +129,7 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     return [NSString stringWithCString:optonaut::Pipeline::version.c_str() encoding: [NSString defaultCStringEncoding]];
 }
 
--(id)init {
-    self = [super init];
+-(id)init {    self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
     self->isDebug = false,
     self->pipe = new optonaut::Pipeline(optonaut::Pipeline::iosBase, optonaut::Pipeline::iosZero, self->intrinsics, optonaut::RecorderGraph::ModeTruncated, true);
@@ -151,7 +150,11 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     return self;
 }
 
+- (bool)IsDisposed {
+    return pipe == NULL;
+}
 - (void)Push:(GLKMatrix4)extrinsics :(ImageBuffer)image {
+    assert(pipe != NULL);
     optonaut::ImageP oImage(new optonaut::Image());
     //Nu-Uh. No more copying. Save some memory. 
     //ImageBufferToCVMat(image, oImage->img);
@@ -168,15 +171,19 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     pipe->Push(oImage);
 }
 - (GLKMatrix4)GetCurrentRotation {
+    assert(pipe != NULL);
     return CVMatToGLK4(pipe->GetCurrentRotation());
 }
 - (GLKMatrix4)GetPreviewRotation {
+    assert(pipe != NULL);
     return CVMatToGLK4(pipe->GetPreviewRotation());
 }
 - (bool)IsPreviewImageAvailable {
+    assert(pipe != NULL);
     return pipe->IsPreviewImageAvailable();
 }
 - (ImageBuffer)GetPreviewImage {
+    assert(pipe != NULL);
     if(isDebug) {
         cv::imwrite(debugPath + "/preview.jpg", pipe->GetPreviewImage()->img);
     }
@@ -186,14 +193,17 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     free(toFree.data);
 }
 - (SelectionPoint*)CurrentPoint {
+    assert(pipe != NULL);
     return ConvertSelectionPoint(pipe->CurrentPoint().closestPoint);
 }
 
 - (SelectionPoint*)PreviousPoint {
+    assert(pipe != NULL);
     return ConvertSelectionPoint(pipe->PreviousPoint().closestPoint);
 }
 
 - (bool)AreAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
+    assert(pipe != NULL);
     optonaut::SelectionPoint convA;
     optonaut::SelectionPoint convB;
     ConvertSelectionPoint(a, &convA);
@@ -206,52 +216,69 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     isDebug = true;
 }
 - (ImageBuffer)GetLeftResult {
+    assert(pipe != NULL);
     return CVMatToImageBuffer(pipe->FinishLeft()->image);
 }
 - (ImageBuffer)GetRightResult {
+    assert(pipe != NULL);
     return CVMatToImageBuffer(pipe->FinishRight()->image);
 }
 
 - (SelectionPointIterator*)GetSelectionPoints {
+    assert(pipe != NULL);
     return [[SelectionPointIterator alloc] init: pipe->GetSelectionPoints()];
 }
 - (void)SetIdle:(bool)isIdle {
+    assert(pipe != NULL);
     pipe->SetIdle(isIdle);
 }
 - (bool)IsIdle {
+    assert(pipe != NULL);
     return pipe->IsIdle();
 }
 - (bool)HasResults {
+    assert(pipe != NULL);
     return pipe->HasResults();
 }
 - (GLKMatrix4)GetBallPosition {
+    assert(pipe != NULL);
     return CVMatToGLK4(pipe->GetBallPosition());
 }
 - (bool)IsFinished {
+    assert(pipe != NULL);
     return pipe->IsFinished();
 }
 - (void)SetPreviewImageEnabled:(bool)enabled {
+    assert(pipe != NULL);
     pipe->SetPreviewImageEnabled(enabled);
 }
 - (double)GetDistanceToBall {
+    assert(pipe != NULL);
     return pipe->GetDistanceToBall();
 }
 - (GLKVector3)GetAngularDistanceToBall {
+    assert(pipe != NULL);
     //Special coord remapping, so we respect the screen coord system.
     const Mat &m = pipe->GetAngularDistanceToBall();
     return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
 }
 - (uint32_t)GetRecordedImagesCount {
+    assert(pipe != NULL);
     return pipe->GetRecordedImagesCount();
 }
 - (uint32_t)GetImagesToRecordCount {
+    assert(pipe != NULL);
     return pipe->GetImagesToRecordCount();
 }
 - (void)Finish {
+    assert(pipe != NULL);
     pipe->Finish();
 }
 - (void)Dispose {
+    assert(pipe != NULL);
     pipe->Dispose();
     [[NSFileManager defaultManager] removeItemAtPath:self->tempPath error:nil];
+    delete pipe;
+    pipe = NULL;
 }
 @end

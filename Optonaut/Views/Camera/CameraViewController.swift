@@ -378,6 +378,11 @@ class CameraViewController: UIViewController {
             
             Async.main {
                 if self.isViewLoaded() {
+                    // This is safe, since the main thread also disposes the stitcher.
+                    if self.stitcher.IsDisposed() || self.stitcher.IsFinished() {
+                        return
+                    }
+                    
                     self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
                     self.viewModel.tiltAngle.value = Float(errorVec.z)
                     self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
@@ -397,7 +402,6 @@ class CameraViewController: UIViewController {
             }
             
             if stitcher.IsFinished() {
-                stitcher.Finish()
                 // needed since processSampleBuffer doesn't run on UI thread
                 Async.main {
                     self.finish()
@@ -410,20 +414,22 @@ class CameraViewController: UIViewController {
     }
     
     func finish() {
-        // TODO remove
-        if !stitcher.HasResults() {
-            return
-        }
         session.stopRunning()
-        
         
         for child in scene.rootNode.childNodes {
             child.removeFromParentNode()
         }
         
+        if !stitcher.HasResults() {
+            // Only possible in debug. We just return to avoid a crash.
+            return
+        }
+        
         let assetSignalProducer = SignalProducer<OptographAsset, NoError> { sink, disposable in
 //            let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)
 //            sendNext(sink, OptographAsset.PreviewImage(preview!))
+            
+            self.stitcher.Finish()
             
             if !disposable.disposed {
                 let leftBuffer = self.stitcher.GetLeftResult()
@@ -444,6 +450,7 @@ class CameraViewController: UIViewController {
             }
             
             self.stitcher.Dispose()
+            print("Stitcher dispose called")
 
             if SessionService.sessionData!.debuggingEnabled {
                 //self.debugHelper?.upload().startWithCompleted { sendCompleted(sink) }
@@ -453,8 +460,9 @@ class CameraViewController: UIViewController {
             }
             
             disposable.addDisposable {
-                // TODO @emiswelt! insert code to cancel stitching
-                // TODO @schickling: Just kill the thread. And then call dispose on the stitcher object.
+                // TODO @EJ: This is a potential racing condition. Stitching runs on another thread...
+                // Just let it finish by now.
+                print("Dispose called")
                 
             }
         }
@@ -467,6 +475,7 @@ class CameraViewController: UIViewController {
         session.stopRunning()
         stitcher.Finish()
         stitcher.Dispose()
+        print("Stitcher dispose called")
         navigationController?.popViewControllerAnimated(false)
     }
 }
