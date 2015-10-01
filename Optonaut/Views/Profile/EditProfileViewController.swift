@@ -164,6 +164,9 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         settingsHeaderView.hidden = true
         view.addSubview(settingsHeaderView)
         
+        // TODO @schickling: Debug is unstable due to racing conditions. Please
+        // remove it entirely from release. Best way would be to check if it's actually release, 
+        // since we need debug for developing.
         debugIconView.font = .icomoonOfSize(20)
         debugIconView.text = .icomoonWithName(.Cog)
         debugIconView.textColor = UIColor(0xe5e5e5)

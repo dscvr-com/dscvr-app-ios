@@ -58,5 +58,6 @@ struct ImageBuffer {
 - (uint32_t)GetImagesToRecordCount;
 - (void)Finish;
 - (void)Dispose;
+- (bool)IsDisposed;
 
 @end

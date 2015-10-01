@@ -15,6 +15,12 @@ class ViewerViewController: UIViewController  {
     let leftCameraNode = SCNNode()
     let rightCameraNode = SCNNode()
     
+    var leftImage: UIImage?
+    var rightImage: UIImage?
+    
+    var leftSphereNode: SCNNode?
+    var rightSphereNode: SCNNode?
+    
     var originalBrightness: CGFloat!
     var enableDistortion = false
     
@@ -57,26 +63,26 @@ class ViewerViewController: UIViewController  {
         
         let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
         
-        let leftImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")!)
+        leftImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")!)
         let leftSphereGeometry = SCNSphere(radius: 5.0)
-        //TODO
+        //TODO Use geodesic sphere, but also map texture correctly. 
        // leftSphereGeometry.geodesic = true
         leftSphereGeometry.segmentCount = 128
         leftSphereGeometry.firstMaterial?.diffuse.contents = leftImage!
         leftSphereGeometry.firstMaterial?.doubleSided = true
-        let leftSphereNode = SCNNode(geometry: leftSphereGeometry)
-        leftSphereNode.transform = transform
-        leftScene.rootNode.addChildNode(leftSphereNode)
+        leftSphereNode = SCNNode(geometry: leftSphereGeometry)
+        leftSphereNode!.transform = transform
+        leftScene.rootNode.addChildNode(leftSphereNode!)
         
-        let rightImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")!)
+        rightImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")!)
         let rightSphereGeometry = SCNSphere(radius: 5.0)
        // rightSphereGeometry.geodesic = true
         rightSphereGeometry.segmentCount = 128
         rightSphereGeometry.firstMaterial?.diffuse.contents = rightImage!
         rightSphereGeometry.firstMaterial?.doubleSided = true
-        let rightSphereNode = SCNNode(geometry: rightSphereGeometry)
-        rightSphereNode.transform = transform
-        rightScene.rootNode.addChildNode(rightSphereNode)
+        rightSphereNode = SCNNode(geometry: rightSphereGeometry)
+        rightSphereNode!.transform = transform
+        rightScene.rootNode.addChildNode(rightSphereNode!)
         
         let width = view.bounds.width
         let height = view.bounds.height
@@ -121,7 +127,6 @@ class ViewerViewController: UIViewController  {
                     popActivated = true
                 }
                 if (popActivated && abs(y) > -x + 0.5) || x > abs(y) {
-                    //TODO: Show TURN YOUR PHONE here (its flipped, so left and right are switched)
                     self.navigationController?.popViewControllerAnimated(false)
                 }
             }
@@ -156,6 +161,15 @@ class ViewerViewController: UIViewController  {
         
         motionManager.stopAccelerometerUpdates()
         motionManager.stopDeviceMotionUpdates()
+        
+        leftImage = nil
+        rightImage = nil
+        
+        leftSphereNode!.removeFromParentNode()
+        rightSphereNode!.removeFromParentNode()
+        
+        leftSphereNode = nil
+        rightSphereNode = nil
         
         super.viewWillDisappear(animated)
     }
