@@ -36,9 +36,9 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     let debugIconView = UILabel()
     let debugLabelView = UILabel()
     let debugSwitchView = UISwitch()
-    let newsletterIconView = UILabel()
-    let newsletterLabelView = UILabel()
-    let newsletterSwitchView = UISwitch()
+//    let newsletterIconView = UILabel()
+//    let newsletterLabelView = UILabel()
+//    let newsletterSwitchView = UISwitch()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -161,35 +161,46 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         settingsHeaderView.text = "SETTINGS"
         settingsHeaderView.textColor = UIColor(0xcfcfcf)
         settingsHeaderView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        settingsHeaderView.hidden = true
         view.addSubview(settingsHeaderView)
         
         debugIconView.font = .icomoonOfSize(20)
         debugIconView.text = .icomoonWithName(.Cog)
         debugIconView.textColor = UIColor(0xe5e5e5)
+        debugIconView.hidden = true
         view.addSubview(debugIconView)
         
         debugLabelView.text = "Debugging"
         debugLabelView.textColor = UIColor(0x4d4d4d)
         debugLabelView.font = .robotoOfSize(15, withType: .Regular)
+        debugLabelView.hidden = true
         view.addSubview(debugLabelView)
         
         debugSwitchView.on = viewModel.debugEnabled.value
         debugSwitchView.addTarget(self, action: "toggleDebug", forControlEvents: .ValueChanged)
+        debugSwitchView.hidden = true
         view.addSubview(debugSwitchView)
         
-        newsletterIconView.font = .icomoonOfSize(20)
-        newsletterIconView.text = .icomoonWithName(.Cog)
-        newsletterIconView.textColor = UIColor(0xe5e5e5)
-        view.addSubview(newsletterIconView)
+        #if DEBUG
+            settingsHeaderView.hidden = false
+            debugIconView.hidden = false
+            debugLabelView.hidden = false
+            debugSwitchView.hidden = false
+        #endif
         
-        newsletterLabelView.text = "Newsletter"
-        newsletterLabelView.textColor = UIColor(0x4d4d4d)
-        newsletterLabelView.font = .robotoOfSize(15, withType: .Regular)
-        view.addSubview(newsletterLabelView)
-        
-        newsletterSwitchView.on = viewModel.wantsNewsletter.value
-        newsletterSwitchView.addTarget(self, action: "toggleNewsletter", forControlEvents: .ValueChanged)
-        view.addSubview(newsletterSwitchView)
+//        newsletterIconView.font = .icomoonOfSize(20)
+//        newsletterIconView.text = .icomoonWithName(.Cog)
+//        newsletterIconView.textColor = UIColor(0xe5e5e5)
+//        view.addSubview(newsletterIconView)
+//        
+//        newsletterLabelView.text = "Newsletter"
+//        newsletterLabelView.textColor = UIColor(0x4d4d4d)
+//        newsletterLabelView.font = .robotoOfSize(15, withType: .Regular)
+//        view.addSubview(newsletterLabelView)
+//        
+//        newsletterSwitchView.on = viewModel.wantsNewsletter.value
+//        newsletterSwitchView.addTarget(self, action: "toggleNewsletter", forControlEvents: .ValueChanged)
+//        view.addSubview(newsletterSwitchView)
         
         imagePickerController.navigationBar.translucent = false
         imagePickerController.navigationBar.barTintColor = UIColor.Accent
@@ -273,16 +284,16 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         debugSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -4)
         debugSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
-        newsletterIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: debugIconView, withOffset: 20)
-        newsletterIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        newsletterIconView.autoSetDimension(.Width, toSize: 20)
-
-        newsletterLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -1)
-        newsletterLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: newsletterIconView, withOffset: 15)
-        newsletterLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: displayNameInputView)
-
-        newsletterSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -4)
-        newsletterSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+//        newsletterIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: debugIconView, withOffset: 20)
+//        newsletterIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+//        newsletterIconView.autoSetDimension(.Width, toSize: 20)
+//
+//        newsletterLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -1)
+//        newsletterLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: newsletterIconView, withOffset: 15)
+//        newsletterLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: displayNameInputView)
+//
+//        newsletterSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -4)
+//        newsletterSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
         super.updateViewConstraints()
     }

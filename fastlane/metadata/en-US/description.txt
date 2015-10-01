@@ -4,7 +4,7 @@ new and immersive way. Record virtual reality panorama pictures in 3D just using
 Bring your loved ones with you on your journeys and let them see the world through your eyes. Explore beautiful new places and refresh your memories of past experiences.
 
 * Record VR photographs using your phone
-* Works with most VR glasses including Google Cardboard, Zeiss VRone and more
+* Works with most VR glasses including Google Cardboard, Zeiss VRone and others
 * Discover unique places you've never seen before
 * Join the community to follow your friends and meet new interesting people
 

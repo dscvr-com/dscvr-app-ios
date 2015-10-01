@@ -21,15 +21,15 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         
         navigationItem.title = String.icomoonWithName(.LogoText)
         
-//        switch UIDevice.currentDevice().deviceType {
-//        case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
+        switch UIDevice.currentDevice().deviceType {
+        case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
             let cameraButton = UIBarButtonItem()
             cameraButton.image = UIImage.icomoonWithName(.Camera, textColor: .whiteColor(), size: CGSize(width: 24, height: 17))
             cameraButton.target = self
             cameraButton.action = "pushCamera"
             navigationItem.setRightBarButtonItem(cameraButton, animated: false)
-//        default: break
-//        }
+        default: break
+        }
         
         let searchButton = UIBarButtonItem()
         searchButton.title = String.icomoonWithName(.MagnifyingGlass)

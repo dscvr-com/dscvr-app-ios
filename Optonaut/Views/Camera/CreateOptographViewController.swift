@@ -149,6 +149,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         hashtagInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         hashtagInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         hashtagInputView.keyboardType = .Twitter
+        hashtagInputView.autocorrectionType = .No
         view.addSubview(hashtagInputView)
         
         textInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
