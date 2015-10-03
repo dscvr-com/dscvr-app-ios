@@ -150,7 +150,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     
     private func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
         if viewModel.downloadProgress.value == 1 {
-            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, showCalibration: true), animated: false)
+            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, showCalibration: false), animated: false)
             viewModel.increaseViewsCount()
         }
     }
