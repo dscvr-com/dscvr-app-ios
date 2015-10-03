@@ -5,6 +5,10 @@ import CoreMotion
 import CoreGraphics
 import Crashlytics
 
+enum ViewerDistortion {
+    case None, VROne, Barrell
+}
+
 class ViewerViewController: UIViewController  {
     
     let orientation: UIInterfaceOrientation
@@ -16,16 +20,13 @@ class ViewerViewController: UIViewController  {
     var rightScene: SCNScene?
     
     var originalBrightness: CGFloat!
-    var enableDistortion = true 
-    
-    let showCalibration: Bool
     
     var leftRenderDelegate: StereoRenderDelegate?
     var rightRenderDelegate: StereoRenderDelegate?
     
-    var angularOffset = 0.0
+    var distortion: ViewerDistortion
     
-    required init(orientation: UIInterfaceOrientation, optograph: Optograph, showCalibration: Bool) {
+    required init(orientation: UIInterfaceOrientation, optograph: Optograph, distortion: ViewerDistortion) {
         
         Answers.logContentViewWithName("Optograph Viewer \(optograph.id)",
             contentType: "OptographViewer",
@@ -34,7 +35,7 @@ class ViewerViewController: UIViewController  {
         
         self.orientation = orientation
         self.optograph = optograph
-        self.showCalibration = showCalibration
+        self.distortion = distortion
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -74,12 +75,17 @@ class ViewerViewController: UIViewController  {
         leftScnView.scene = leftRenderDelegate!.root
         leftScnView.delegate = leftRenderDelegate
         
-        rightScnView.scene = leftRenderDelegate!.root
-        rightScnView.delegate = leftRenderDelegate
+        rightScnView.scene = rightRenderDelegate!.root
+        rightScnView.delegate = rightRenderDelegate
         
-        if enableDistortion {
-            leftScnView.technique = createDistortionTechnique("displacement_left")
-            rightScnView.technique = createDistortionTechnique("displacement_right")
+        switch distortion {
+        case .Barrell:
+            leftScnView.technique = createDistortionTechnique("barrell_displacement")
+            rightScnView.technique = createDistortionTechnique("barrell_displacement")
+        case .VROne:
+            leftScnView.technique = createDistortionTechnique("zeiss_displacement_left")
+            rightScnView.technique = createDistortionTechnique("zeiss_displacement_right")
+        default: break
         }
         
         view.addSubview(rightScnView)
@@ -183,7 +189,7 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         root = SCNScene()
         
         let camera = SCNCamera()
-        let fov = 95 as Double
+        let fov = 85 as Double
         camera.zNear = 0.01
         camera.zFar = 10000
         camera.xFov = fov

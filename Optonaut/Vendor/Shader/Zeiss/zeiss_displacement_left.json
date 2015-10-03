@@ -1,6 +1,6 @@
 {
     "passes" : {
-        "displacement_left" : {
+        "zeiss_displacement_left" : {
             "outputs" : {
                 "color" : "COLOR"
             },
@@ -14,12 +14,12 @@
                 "_LUTYTexB" : "LUTYTexB"
                 
             },
-            "program" : "displacement_left",
+            "program" : "zeiss_displacement_left",
             "draw" : "DRAW_QUAD"
         }
     },
     "sequence" : [
-                  "displacement_left"
+                  "zeiss_displacement_left"
                   ],
     "symbols" : {
         "LUTXTexR" : {

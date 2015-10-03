@@ -133,14 +133,17 @@
 		8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEA6F201BA5969700153677 /* DatabaseService.swift */; settings = {ASSET_TAGS = (); }; };
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
-		A56CA3F71BC05CE80078D7E8 /* displacement_left.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3F21BC05CE80078D7E8 /* displacement_left.fsh */; settings = {ASSET_TAGS = (); }; };
-		A56CA3F81BC05CE80078D7E8 /* displacement_left.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3F31BC05CE80078D7E8 /* displacement_left.vsh */; settings = {ASSET_TAGS = (); }; };
-		A56CA3F91BC05CE80078D7E8 /* displacement_right.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3F41BC05CE80078D7E8 /* displacement_right.fsh */; settings = {ASSET_TAGS = (); }; };
-		A56CA3FA1BC05CE80078D7E8 /* displacement_right.json in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3F51BC05CE80078D7E8 /* displacement_right.json */; settings = {ASSET_TAGS = (); }; };
-		A56CA3FB1BC05CE80078D7E8 /* displacement_right.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3F61BC05CE80078D7E8 /* displacement_right.vsh */; settings = {ASSET_TAGS = (); }; };
-		A56CA3FD1BC05D070078D7E8 /* displacement_left.json in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FC1BC05D070078D7E8 /* displacement_left.json */; settings = {ASSET_TAGS = (); }; };
+		A56CA4061BC070450078D7E8 /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FF1BC070450078D7E8 /* lut */; settings = {ASSET_TAGS = (); }; };
+		A56CA4071BC070450078D7E8 /* zeiss_displacement_left.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4001BC070450078D7E8 /* zeiss_displacement_left.fsh */; settings = {ASSET_TAGS = (); }; };
+		A56CA4081BC070450078D7E8 /* zeiss_displacement_left.json in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4011BC070450078D7E8 /* zeiss_displacement_left.json */; settings = {ASSET_TAGS = (); }; };
+		A56CA4091BC070450078D7E8 /* zeiss_displacement_left.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4021BC070450078D7E8 /* zeiss_displacement_left.vsh */; settings = {ASSET_TAGS = (); }; };
+		A56CA40A1BC070450078D7E8 /* zeiss_displacement_right.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4031BC070450078D7E8 /* zeiss_displacement_right.fsh */; settings = {ASSET_TAGS = (); }; };
+		A56CA40B1BC070450078D7E8 /* zeiss_displacement_right.json in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4041BC070450078D7E8 /* zeiss_displacement_right.json */; settings = {ASSET_TAGS = (); }; };
+		A56CA40C1BC070450078D7E8 /* zeiss_displacement_right.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4051BC070450078D7E8 /* zeiss_displacement_right.vsh */; settings = {ASSET_TAGS = (); }; };
+		A56CA4131BC070AE0078D7E8 /* barrell_displacement.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA40D1BC070AE0078D7E8 /* barrell_displacement.fsh */; settings = {ASSET_TAGS = (); }; };
+		A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */ = {isa = PBXBuildFile; fileRef = A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */; settings = {ASSET_TAGS = (); }; };
+		A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */; settings = {ASSET_TAGS = (); }; };
 		A571CC611B91D7B400124FD2 /* pipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A571CC5F1B91D7B400124FD2 /* pipeline.cpp */; };
-		A5986B921BB931DC00DD2F4E /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A5986B8C1BB931DC00DD2F4E /* lut */; settings = {ASSET_TAGS = (); }; };
 		A59E32F41BB423DA003D166B /* ringwiseStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59E32EF1BB423DA003D166B /* ringwiseStitcher.cpp */; settings = {ASSET_TAGS = (); }; };
 		A5C1C0161B7E19E200DCD598 /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0031B7E19E200DCD598 /* image.cpp */; };
 		A5C1C0171B7E19E200DCD598 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5C1C0061B7E19E200DCD598 /* lib */; };
@@ -294,18 +297,21 @@
 		8FE09F651BAF681900EA105D /* HashtagTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashtagTable.swift; sourceTree = "<group>"; };
 		8FEA6F201BA5969700153677 /* DatabaseService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
-		A56CA3F21BC05CE80078D7E8 /* displacement_left.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = displacement_left.fsh; sourceTree = "<group>"; };
-		A56CA3F31BC05CE80078D7E8 /* displacement_left.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = displacement_left.vsh; sourceTree = "<group>"; };
-		A56CA3F41BC05CE80078D7E8 /* displacement_right.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = displacement_right.fsh; sourceTree = "<group>"; };
-		A56CA3F51BC05CE80078D7E8 /* displacement_right.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = displacement_right.json; sourceTree = "<group>"; };
-		A56CA3F61BC05CE80078D7E8 /* displacement_right.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = displacement_right.vsh; sourceTree = "<group>"; };
-		A56CA3FC1BC05D070078D7E8 /* displacement_left.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = displacement_left.json; sourceTree = "<group>"; };
+		A56CA3FF1BC070450078D7E8 /* lut */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lut; path = Shader/Zeiss/lut; sourceTree = "<group>"; };
+		A56CA4001BC070450078D7E8 /* zeiss_displacement_left.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = zeiss_displacement_left.fsh; path = Shader/Zeiss/zeiss_displacement_left.fsh; sourceTree = "<group>"; };
+		A56CA4011BC070450078D7E8 /* zeiss_displacement_left.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = zeiss_displacement_left.json; path = Shader/Zeiss/zeiss_displacement_left.json; sourceTree = "<group>"; };
+		A56CA4021BC070450078D7E8 /* zeiss_displacement_left.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = zeiss_displacement_left.vsh; path = Shader/Zeiss/zeiss_displacement_left.vsh; sourceTree = "<group>"; };
+		A56CA4031BC070450078D7E8 /* zeiss_displacement_right.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = zeiss_displacement_right.fsh; path = Shader/Zeiss/zeiss_displacement_right.fsh; sourceTree = "<group>"; };
+		A56CA4041BC070450078D7E8 /* zeiss_displacement_right.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = zeiss_displacement_right.json; path = Shader/Zeiss/zeiss_displacement_right.json; sourceTree = "<group>"; };
+		A56CA4051BC070450078D7E8 /* zeiss_displacement_right.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = zeiss_displacement_right.vsh; path = Shader/Zeiss/zeiss_displacement_right.vsh; sourceTree = "<group>"; };
+		A56CA40D1BC070AE0078D7E8 /* barrell_displacement.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.fsh; path = Shader/Cardboard/barrell_displacement.fsh; sourceTree = "<group>"; };
+		A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = barrell_displacement.json; path = Shader/Cardboard/barrell_displacement.json; sourceTree = "<group>"; };
+		A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.vsh; path = Shader/Cardboard/barrell_displacement.vsh; sourceTree = "<group>"; };
 		A571CC5F1B91D7B400124FD2 /* pipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pipeline.cpp; sourceTree = "<group>"; };
 		A5986B761BB87D6400DD2F4E /* correlation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = correlation.hpp; sourceTree = "<group>"; };
 		A5986B771BB87D6400DD2F4E /* exposureCompensator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = exposureCompensator.hpp; sourceTree = "<group>"; };
 		A5986B781BB87D6400DD2F4E /* graph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = graph.hpp; sourceTree = "<group>"; };
 		A5986B791BB87D6400DD2F4E /* imageCorrespondenceGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageCorrespondenceGraph.hpp; sourceTree = "<group>"; };
-		A5986B8C1BB931DC00DD2F4E /* lut */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lut; path = Shader/lut; sourceTree = "<group>"; };
 		A59E32EA1BB423DA003D166B /* bundleAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bundleAligner.hpp; sourceTree = "<group>"; };
 		A59E32EB1BB423DA003D166B /* drawing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = drawing.hpp; sourceTree = "<group>"; };
 		A59E32EC1BB423DA003D166B /* pairwiseCorrelator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pairwiseCorrelator.hpp; sourceTree = "<group>"; };
@@ -786,6 +792,7 @@
 		A56CA3D81BC05C4F0078D7E8 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				A56CA3FE1BC06E920078D7E8 /* Cardboard */,
 				A56CA3D91BC05C570078D7E8 /* Zeiss */,
 			);
 			name = Shaders;
@@ -794,15 +801,25 @@
 		A56CA3D91BC05C570078D7E8 /* Zeiss */ = {
 			isa = PBXGroup;
 			children = (
-				A56CA3F21BC05CE80078D7E8 /* displacement_left.fsh */,
-				A56CA3F31BC05CE80078D7E8 /* displacement_left.vsh */,
-				A56CA3F41BC05CE80078D7E8 /* displacement_right.fsh */,
-				A56CA3F51BC05CE80078D7E8 /* displacement_right.json */,
-				A56CA3F61BC05CE80078D7E8 /* displacement_right.vsh */,
-				A56CA3FC1BC05D070078D7E8 /* displacement_left.json */,
-				A5986B8C1BB931DC00DD2F4E /* lut */,
+				A56CA3FF1BC070450078D7E8 /* lut */,
+				A56CA4001BC070450078D7E8 /* zeiss_displacement_left.fsh */,
+				A56CA4011BC070450078D7E8 /* zeiss_displacement_left.json */,
+				A56CA4021BC070450078D7E8 /* zeiss_displacement_left.vsh */,
+				A56CA4031BC070450078D7E8 /* zeiss_displacement_right.fsh */,
+				A56CA4041BC070450078D7E8 /* zeiss_displacement_right.json */,
+				A56CA4051BC070450078D7E8 /* zeiss_displacement_right.vsh */,
 			);
 			name = Zeiss;
+			sourceTree = "<group>";
+		};
+		A56CA3FE1BC06E920078D7E8 /* Cardboard */ = {
+			isa = PBXGroup;
+			children = (
+				A56CA40D1BC070AE0078D7E8 /* barrell_displacement.fsh */,
+				A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */,
+				A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */,
+			);
+			name = Cardboard;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -893,25 +910,28 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5986B921BB931DC00DD2F4E /* lut in Resources */,
-				A56CA3FD1BC05D070078D7E8 /* displacement_left.json in Resources */,
+				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
+				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
 				8FBC86A21BB7D86B00539D4E /* icons.ttf in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
 				8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */,
+				A56CA4091BC070450078D7E8 /* zeiss_displacement_left.vsh in Resources */,
+				A56CA4081BC070450078D7E8 /* zeiss_displacement_left.json in Resources */,
+				A56CA4131BC070AE0078D7E8 /* barrell_displacement.fsh in Resources */,
+				A56CA40C1BC070450078D7E8 /* zeiss_displacement_right.vsh in Resources */,
+				A56CA40A1BC070450078D7E8 /* zeiss_displacement_right.fsh in Resources */,
 				8FBC86971BB723E600539D4E /* SF-UI-Display-Semibold.otf in Resources */,
-				A56CA3F71BC05CE80078D7E8 /* displacement_left.fsh in Resources */,
-				A56CA3F81BC05CE80078D7E8 /* displacement_left.vsh in Resources */,
+				A56CA4071BC070450078D7E8 /* zeiss_displacement_left.fsh in Resources */,
 				8FBC86981BB723E600539D4E /* SF-UI-Display-Ultralight.otf in Resources */,
-				A56CA3FA1BC05CE80078D7E8 /* displacement_right.json in Resources */,
+				A56CA4061BC070450078D7E8 /* lut in Resources */,
 				8FBC86991BB723E600539D4E /* SF-UI-Text-Regular.otf in Resources */,
 				8FBC869A1BB723E600539D4E /* SF-UI-Text-Semibold.otf in Resources */,
 				A5C1C0171B7E19E200DCD598 /* lib in Resources */,
 				8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */,
-				A56CA3FB1BC05CE80078D7E8 /* displacement_right.vsh in Resources */,
 				A5DA67091B9CA08F00D9F3EE /* recorderGraph.hpp in Resources */,
+				A56CA40B1BC070450078D7E8 /* zeiss_displacement_right.json in Resources */,
 				8FAB9F5E1B8F02A900B4C8CB /* Assets.xcassets in Resources */,
-				A56CA3F91BC05CE80078D7E8 /* displacement_right.fsh in Resources */,
 				A5DA670B1B9CA29A00D9F3EE /* recorderController.hpp in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
