@@ -36,26 +36,25 @@ float mirrored(float coord) {
 // coordinate we are interested in.  This rgb value
 // indicates which pixel (or interpolated pixel) we
 // need to map.
-// NOTE(ej) Due to our viewer orientation, we mirror y here.
 vec2 LUTDistortionR(vec2 coord)
 {
 				vec3 lookupX = texture2D(_LUTXTexR, coord).xyz;
 				vec3 lookupY = texture2D(_LUTYTexR, coord).xyz;
-				return vec2(DecodeFloatRGB(lookupX),mirrored(DecodeFloatRGB(lookupY)));
+				return vec2(mirrored(DecodeFloatRGB(lookupX)),DecodeFloatRGB(lookupY));
 }
 
 vec2 LUTDistortionG(vec2 coord)
 {
 				vec3 lookupX = texture2D(_LUTXTexG, coord).rgb;
 				vec3 lookupY = texture2D(_LUTYTexG, coord).rgb;
-				return vec2(DecodeFloatRGB(lookupX),mirrored(DecodeFloatRGB(lookupY)));
+				return vec2(mirrored(DecodeFloatRGB(lookupX)),DecodeFloatRGB(lookupY));
 }
 
 vec2 LUTDistortionB(vec2 coord)
 {
 				vec3 lookupX = texture2D(_LUTXTexB, coord).rgb;
 				vec3 lookupY = texture2D(_LUTYTexB, coord).rgb;
-				return vec2(DecodeFloatRGB(lookupX),mirrored(DecodeFloatRGB(lookupY)));
+				return vec2(mirrored(DecodeFloatRGB(lookupX)),DecodeFloatRGB(lookupY));
 }
 
 void main() {
@@ -76,7 +75,7 @@ void main() {
 				
 				// since textures are for left eye only, we need to
 				// "mirror" the input coordinate for the right eye.
-				vec2 coord = vec2(uv.x, 1.0 - mirrored(uv.y));
+				vec2 coord = vec2(mirrored(uv.x), 1.0 - uv.y);
     
 				vec2 xyR = LUTDistortionR(coord);
 				if (xyR.x <= 0.0 || xyR.y <= 0.0 || xyR.x >= 1.0 || xyR.y >= 1.0) {

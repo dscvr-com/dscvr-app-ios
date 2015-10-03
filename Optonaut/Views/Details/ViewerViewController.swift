@@ -16,7 +16,7 @@ class ViewerViewController: UIViewController  {
     var rightScene: SCNScene?
     
     var originalBrightness: CGFloat!
-    var enableDistortion = false
+    var enableDistortion = true 
     
     let showCalibration: Bool
     
@@ -44,28 +44,28 @@ class ViewerViewController: UIViewController  {
     }
     
     
-    func createScnView() -> SCNView {
-        let scnView = SCNView()
+    func createScnView(frame: CGRect) -> SCNView {
+        var scnView: SCNView?
+        if #available(iOS 9.0, *) {
+            scnView = SCNView(frame: frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+        } else {
+            scnView = SCNView(frame: frame)        }
         
-        scnView.backgroundColor = .blackColor()
-        scnView.playing = true
+        scnView!.backgroundColor = .blackColor()
+        scnView!.playing = true
         
-        view.addSubview(scnView)
-        
-        return scnView
+        return scnView!
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let leftScnView = createScnView()
-        let rightScnView = createScnView()
-        
         let width = view.frame.width
         let height = view.frame.height
         
-        leftScnView.frame = CGRect(x: 0, y: 0, width: width, height: height / 2)
-        rightScnView.frame = CGRect(x: 0, y: height / 2, width: width, height: height / 2)
+        let leftScnView = createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
+        let rightScnView = createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
+        
         
         leftRenderDelegate = StereoRenderDelegate(isLeft: true, optograph: optograph, motionManager: motionManager, width: leftScnView.frame.width, height: leftScnView.frame.height)
         
@@ -81,6 +81,9 @@ class ViewerViewController: UIViewController  {
             leftScnView.technique = createDistortionTechnique("displacement_left")
             rightScnView.technique = createDistortionTechnique("displacement_right")
         }
+        
+        view.addSubview(rightScnView)
+        view.addSubview(leftScnView)
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60
         motionManager.startDeviceMotionUpdates()
@@ -180,7 +183,7 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         root = SCNScene()
         
         let camera = SCNCamera()
-        let fov = 105 as Double
+        let fov = 95 as Double
         camera.zNear = 0.01
         camera.zFar = 10000
         camera.xFov = fov
