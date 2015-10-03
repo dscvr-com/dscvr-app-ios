@@ -21,10 +21,23 @@ class ViewerViewController: UIViewController  {
     var leftSphereNode: SCNNode?
     var rightSphereNode: SCNNode?
     
+    var leftScene: SCNScene?
+    var rightScene: SCNScene?
+    
     var originalBrightness: CGFloat!
     var enableDistortion = false
     
-    required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
+    let showCalibration: Bool
+    
+    var leftCalibrationText: SCNNode?
+    var rightCalibrationText: SCNNode?
+    
+    var leftRenderDelegate: StereoRenderDelegate?
+    var rightRenderDelegate: StereoRenderDelegate?
+    
+    var angularOffset = 0.0
+    
+    required init(orientation: UIInterfaceOrientation, optograph: Optograph, showCalibration: Bool) {
         
         Answers.logContentViewWithName("Optograph Viewer \(optograph.id)",
             contentType: "OptographViewer",
@@ -33,6 +46,8 @@ class ViewerViewController: UIViewController  {
         
         self.orientation = orientation
         self.optograph = optograph
+        self.showCalibration = showCalibration
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -40,11 +55,39 @@ class ViewerViewController: UIViewController  {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func createSphere(image: UIImage?) -> SCNNode {
+        
+        let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
+        
+        let geometry = SCNSphere(radius: 5.0)
+        geometry.segmentCount = 128
+        geometry.firstMaterial?.diffuse.contents = image!
+        geometry.firstMaterial?.doubleSided = true
+        let node = SCNNode(geometry: geometry)
+        node.transform = transform
+        
+        return node
+    }
+    
+    func createTextNode(text: String) -> SCNNode {
+        
+        let textGeometry = SCNText(string: text, extrusionDepth: 0.001)
+        
+        textGeometry.font = UIFont.displayOfSize(0.3, withType: .Thin)
+        textGeometry.flatness = 0.0005
+        textGeometry.firstMaterial?.diffuse.contents = UIColor.blueColor()
+        
+        let textNode = SCNNode(geometry: textGeometry)
+        return textNode
+    }
+    
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let leftScene = SCNScene()
-        let rightScene = SCNScene()
+        leftScene = SCNScene()
+        rightScene = SCNScene()
         
         let camera = SCNCamera()
         let fov = 105 as Double
@@ -55,34 +98,33 @@ class ViewerViewController: UIViewController  {
         
         leftCameraNode.camera = camera
         leftCameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
-        leftScene.rootNode.addChildNode(leftCameraNode)
+        leftScene!.rootNode.addChildNode(leftCameraNode)
         
         rightCameraNode.camera = camera
         rightCameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
-        rightScene.rootNode.addChildNode(rightCameraNode)
+        rightScene!.rootNode.addChildNode(rightCameraNode)
         
-        let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
+        if showCalibration {
+            leftImage = UIImage(named: "calibration")
+            rightImage = leftImage
+        } else {
+            leftImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")!)
+            rightImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")!)
+        }
         
-        leftImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")!)
-        let leftSphereGeometry = SCNSphere(radius: 5.0)
-        //TODO Use geodesic sphere, but also map texture correctly. 
-       // leftSphereGeometry.geodesic = true
-        leftSphereGeometry.segmentCount = 128
-        leftSphereGeometry.firstMaterial?.diffuse.contents = leftImage!
-        leftSphereGeometry.firstMaterial?.doubleSided = true
-        leftSphereNode = SCNNode(geometry: leftSphereGeometry)
-        leftSphereNode!.transform = transform
-        leftScene.rootNode.addChildNode(leftSphereNode!)
+        leftSphereNode = createSphere(leftImage)
+        leftScene!.rootNode.addChildNode(leftSphereNode!)
         
-        rightImage = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")!)
-        let rightSphereGeometry = SCNSphere(radius: 5.0)
-       // rightSphereGeometry.geodesic = true
-        rightSphereGeometry.segmentCount = 128
-        rightSphereGeometry.firstMaterial?.diffuse.contents = rightImage!
-        rightSphereGeometry.firstMaterial?.doubleSided = true
-        rightSphereNode = SCNNode(geometry: rightSphereGeometry)
-        rightSphereNode!.transform = transform
-        rightScene.rootNode.addChildNode(rightSphereNode!)
+        rightSphereNode = createSphere(rightImage)
+        rightScene!.rootNode.addChildNode(rightSphereNode!)
+        
+        if showCalibration {
+           // leftCalibrationText = createTextNode("")
+           // rightCalibrationText = createTextNode("")
+            
+           // leftScene!.rootNode.addChildNode(leftCalibrationText!)
+           // rightScene!.rootNode.addChildNode(rightCalibrationText!)
+        }
         
         let width = view.bounds.width
         let height = view.bounds.height
@@ -90,10 +132,12 @@ class ViewerViewController: UIViewController  {
         let leftScnView = SCNView()
         leftScnView.frame = CGRect(x: 0, y: 0, width: width, height: height / 2)
         
+        leftRenderDelegate = StereoRenderDelegate(isLeft: true, textNode: leftCalibrationText, cameraNode: leftCameraNode, motionManager: motionManager)
+        
         leftScnView.backgroundColor = .blackColor()
         leftScnView.scene = leftScene
         leftScnView.playing = true
-        leftScnView.delegate = self
+        leftScnView.delegate = leftRenderDelegate
         
         if enableDistortion {
             leftScnView.technique = createDistortionTechnique("displacement_left")
@@ -103,10 +147,12 @@ class ViewerViewController: UIViewController  {
         let rightScnView = SCNView()
         rightScnView.frame = CGRect(x: 0, y: height / 2, width: width, height: height / 2)
         
+        rightRenderDelegate = StereoRenderDelegate(isLeft: false, textNode: rightCalibrationText, cameraNode: rightCameraNode, motionManager: motionManager)
+        
         rightScnView.backgroundColor = .blackColor()
         rightScnView.scene = rightScene
         rightScnView.playing = true
-        rightScnView.delegate = self
+        rightScnView.delegate = rightRenderDelegate
         
         if enableDistortion {
             rightScnView.technique = createDistortionTechnique("displacement_right")
@@ -176,11 +222,59 @@ class ViewerViewController: UIViewController  {
     
 }
 
-// MARK: - SCNSceneRendererDelegate
-extension ViewerViewController: SCNSceneRendererDelegate {
+
+class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     
+    let textNode: SCNNode?
+    let cameraNode: SCNNode
+    let motionManager: CMMotionManager
+    var angularOffset = 0.0
+    let isLeft: Bool
+    
+    init(isLeft: Bool, sphereNode: SCNNode?, cameraNode: SCNNode, motionManager: CMMotionManager) {
+        self.textNode = textNode
+        self.cameraNode = cameraNode
+        self.motionManager = motionManager
+        self.isLeft = isLeft
+        
+        super.init()
+    }
+    
+    func centerSCNText(text: SCNNode) {
+        
+        var v1 = SCNVector3(x: 0,y: 0,z: 0)
+        var v2 = SCNVector3(x: 0,y: 0,z: 0)
+        
+        text.getBoundingBoxMin(&v1, max: &v2)
+        
+        let dx:Float = Float(v1.x - v2.x)/2.0
+        let dy:Float = Float(v1.y - v2.y)
+        text.pivot = SCNMatrix4MakeTranslation(-dx, -dy, 0)
+    }
+
+    
+    func updateTextNode() {
+        
+        let text = String(format: "%.2f", angularOffset * 360 / M_PI)
+        (textNode!.geometry as! SCNText).string = text
+        
+        let transform = textNode!.transform
+        textNode!.transform = SCNMatrix4Identity
+        centerSCNText(textNode!)
+        
+        textNode!.transform = transform
+    }
+    
+    func createTextNodeTransform(sceneRotation: SCNMatrix4) -> SCNMatrix4 {
+        let translation = SCNMatrix4MakeTranslation(0, 0, -1)
+        let rotation = SCNMatrix4MakeRotation(Float(M_PI_2), 0, 0, -1)
+        let transform = SCNMatrix4Mult(rotation, translation)
+        return SCNMatrix4Mult(transform, sceneRotation)
+    }
+
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
-        if let motion = self.motionManager.deviceMotion {
+        
+        if let motion = motionManager.deviceMotion {
             let r = motion.attitude.rotationMatrix
             
             let transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Make(
@@ -189,8 +283,33 @@ extension ViewerViewController: SCNSceneRendererDelegate {
                 Float(r.m31), Float(r.m32), Float(r.m33), 0,
                 0,            0,            0,            1))
             
-            self.leftCameraNode.transform = transform
-            self.rightCameraNode.transform = transform
+            let eyeCorretion = SCNMatrix4MakeRotation(Float(isLeft ? angularOffset : -angularOffset), 0, 0, 1)
+            
+            cameraNode.transform = SCNMatrix4Mult(transform, eyeCorretion)
+            if textNode != nil {
+                textNode!.transform = createTextNodeTransform(cameraNode.transform)
+            }
+        }
+        
+        var ly = 0.0
+        
+        if let accellerometer = motionManager.accelerometerData {
+        
+            if textNode != nil {
+                let y = accellerometer.acceleration.z
+                if ly != y {
+                    if y > 0.2 {
+                        angularOffset = angularOffset + abs(y - 0.2) / 500
+                        updateTextNode()
+                    }
+                    if y < -0.2 {
+                        angularOffset = angularOffset - abs(y + 0.2) / 500
+                        updateTextNode()
+                    }
+                    ly = y
+                }
+
+            }
         }
     }
     
