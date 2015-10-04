@@ -8,6 +8,7 @@
 
 import Foundation
 import HexColor
+import Crashlytics
 
 class OnboardingVRViewController: UIViewController {
     
@@ -83,6 +84,15 @@ class OnboardingVRViewController: UIViewController {
     
     func openGlassesPage() {
         UIApplication.sharedApplication().openURL(NSURL(string:"http://optonaut.co/glasses")!)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Onboarding VR",
+            contentType: "OnboardingVRView",
+            contentId: "",
+            customAttributes: [:])
     }
     
 }

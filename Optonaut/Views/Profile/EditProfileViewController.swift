@@ -9,6 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import HexColor
+import Crashlytics
 
 class EditProfileViewController: UIViewController, RedNavbar, UINavigationControllerDelegate {
     
@@ -303,6 +304,11 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        Answers.logContentViewWithName("Edit Profile",
+            contentType: "EditProfileView",
+            contentId: "",
+            customAttributes: [:])
         
         updateNavbarAppear()
     }

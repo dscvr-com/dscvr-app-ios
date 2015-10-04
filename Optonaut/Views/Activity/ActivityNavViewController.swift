@@ -10,6 +10,7 @@ import Foundation
 
 import UIKit
 import ReactiveCocoa
+import Crashlytics
 
 class ActivityNavViewController: NavigationController, RedNavbar {
     
@@ -72,4 +73,12 @@ class ActivityNavViewController: NavigationController, RedNavbar {
         }
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Activity",
+            contentType: "ActivityView",
+            contentId: "",
+            customAttributes: [:])
+    }
 }

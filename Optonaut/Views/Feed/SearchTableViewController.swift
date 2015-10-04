@@ -8,6 +8,7 @@
 
 import UIKit
 import Alamofire
+import Crashlytics
 
 class SearchTableViewController: OptographTableViewController, RedNavbar {
     
@@ -34,6 +35,11 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Search View",
+            contentType: "SearchTableView",
+            contentId: "",
+            customAttributes: [:])
         
         updateNavbarAppear()
         searchBar.becomeFirstResponder()

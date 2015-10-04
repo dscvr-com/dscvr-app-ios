@@ -10,6 +10,7 @@ import UIKit
 import ReactiveCocoa
 import Async
 import Device
+import Crashlytics
 
 class FeedTableViewController: OptographTableViewController, RedNavbar {
     
@@ -73,6 +74,11 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Feed View",
+            contentType: "FeedTableView",
+            contentId: "",
+            customAttributes: [:])
         
         tabBarController?.delegate = self
     }

@@ -23,11 +23,6 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     required init(optographId: UUID) {
         viewModel = DetailsViewModel(optographId: optographId)
         
-        Answers.logContentViewWithName("Optograph Details \(optographId)",
-            contentType: "OptographDetails",
-            contentId: "optograph-details-\(optographId)",
-            customAttributes: [:])
-        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -70,6 +65,11 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Optograph Details \(viewModel.optograph.id)",
+            contentType: "OptographDetails",
+            contentId: "optograph-details-\(viewModel.optograph.id)",
+            customAttributes: [:])
         
         motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
             if let accelerometerData = accelerometerData {
@@ -150,7 +150,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     
     private func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
         if viewModel.downloadProgress.value == 1 {
-            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph), animated: false)
+            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, distortion: ViewerDistortion.Barrell), animated: false)
             viewModel.increaseViewsCount()
         }
     }

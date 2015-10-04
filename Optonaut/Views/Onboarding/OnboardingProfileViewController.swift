@@ -10,6 +10,7 @@ import Foundation
 import HexColor
 import ReactiveCocoa
 import Async
+import Crashlytics
 
 class OnboardingProfileViewController: UIViewController, UINavigationControllerDelegate {
     
@@ -179,6 +180,15 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Onboarding Profile",
+            contentType: "OnboardingProfileView",
+            contentId: "",
+            customAttributes: [:])
     }
     
     override func viewWillDisappear(animated: Bool) {

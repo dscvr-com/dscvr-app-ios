@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import Crashlytics
 
 class RequestInviteViewController: UIViewController {
     
@@ -93,7 +94,14 @@ class RequestInviteViewController: UIViewController {
         
         view.setNeedsUpdateConstraints()
     }
-    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
+        
+        Answers.logContentViewWithName("Request Invite",
+            contentType: "RequestInviteView",
+            contentId: "",
+            customAttributes: [:])
+    }
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         

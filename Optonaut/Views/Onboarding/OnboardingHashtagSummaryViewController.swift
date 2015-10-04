@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Crashlytics
 
 class OnboardingHashtagSummaryViewController: UIViewController {
     
@@ -97,5 +98,15 @@ class OnboardingHashtagSummaryViewController: UIViewController {
                 SessionService.sessionData?.onboardingVersion = OnboardingVersion
             }
     }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Onboarding Hashtag Summary",
+            contentType: "OnboardingHashtagSummaryView",
+            contentId: "",
+            customAttributes: [:])
+    }
+
     
 }

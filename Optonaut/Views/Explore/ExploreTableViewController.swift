@@ -8,6 +8,7 @@
 
 import UIKit
 import Async
+import Crashlytics
 
 class ExploreTableViewController: OptographTableViewController, RedNavbar {
     
@@ -59,6 +60,12 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        
+        Answers.logContentViewWithName("Explore View",
+            contentType: "ExploreTableView",
+            contentId: "",
+            customAttributes: [:])
         
         updateNavbarAppear()
     }
