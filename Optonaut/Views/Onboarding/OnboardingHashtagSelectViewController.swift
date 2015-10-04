@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import WebImage
+import Crashlytics
 
 class OnboardingHashtagSelectViewController: UIViewController {
     
@@ -136,4 +137,12 @@ class OnboardingHashtagSelectViewController: UIViewController {
         viewModel.skipHashtag()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Onboarding Hashtag",
+            contentType: "OnboardingHashtagSelectView",
+            contentId: "",
+            customAttributes: [:])
+    }
 }

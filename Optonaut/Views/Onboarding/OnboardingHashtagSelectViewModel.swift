@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactiveCocoa
+import Crashlytics
 
 class OnboardingHashtagSelectViewModel {
     
@@ -59,5 +60,5 @@ class OnboardingHashtagSelectViewModel {
         skippedResults.append(hashtag)
         self.advance()
     }
-    
+
 }

@@ -8,6 +8,7 @@
 
 import Foundation
 import Device
+import Crashlytics
 
 class OnboardingHashtagInfoViewController: UIViewController {
     
@@ -72,6 +73,15 @@ class OnboardingHashtagInfoViewController: UIViewController {
     
     func showHashtagSelectOnboarding() {
         presentViewController(OnboardingHashtagSelectViewController(), animated: false, completion: nil)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Onboarding HashtagInfo",
+            contentType: "OnboardingHashtagInfoiew",
+            contentId: "",
+            customAttributes: [:])
     }
     
 }

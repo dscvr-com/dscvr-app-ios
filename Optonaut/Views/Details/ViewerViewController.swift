@@ -28,11 +28,6 @@ class ViewerViewController: UIViewController  {
     
     required init(orientation: UIInterfaceOrientation, optograph: Optograph, distortion: ViewerDistortion) {
         
-        Answers.logContentViewWithName("Optograph Viewer \(optograph.id)",
-            contentType: "OptographViewer",
-            contentId: "optograph-viewer-\(optograph.id)",
-            customAttributes: [:])
-        
         self.orientation = orientation
         self.optograph = optograph
         self.distortion = distortion
@@ -121,6 +116,11 @@ class ViewerViewController: UIViewController  {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        Answers.logContentViewWithName("Optograph Viewer \(optograph.id)",
+            contentType: "OptographViewer",
+            contentId: "optograph-viewer-\(optograph.id)",
+            customAttributes: [:])
+
         tabBarController?.tabBar.hidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
         originalBrightness = UIScreen.mainScreen().brightness

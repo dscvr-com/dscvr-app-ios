@@ -9,6 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import Async
+import Crashlytics
 
 class LoginViewController: UIViewController {
     
@@ -116,6 +117,11 @@ class LoginViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
+        
+        Answers.logContentViewWithName("Login View",
+            contentType: "LoginViewController",
+            contentId: "",
+            customAttributes: [:])
         
         super.viewDidAppear(animated)
     }

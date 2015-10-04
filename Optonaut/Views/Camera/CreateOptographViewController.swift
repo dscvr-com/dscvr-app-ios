@@ -234,6 +234,12 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        Answers.logContentViewWithName("Create Optograph",
+            contentType: "Create Optograph View",
+            contentId: "",
+            customAttributes: [:])
+        
+        
         session.startRunning()
         
         navigationController?.interactivePopGestureRecognizer?.enabled = false
@@ -302,6 +308,11 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         if viewModel.previewImageUrl.value.isEmpty {
             return
         }
+        
+        Answers.logContentViewWithName("Create Optograph Post",
+            contentType: "Create Optograph View Post",
+            contentId: "",
+            customAttributes: [:])
         
         Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Posting"])
         

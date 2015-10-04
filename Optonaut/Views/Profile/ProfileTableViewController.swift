@@ -8,6 +8,7 @@
 
 import UIKit
 import Async
+import Crashlytics
 
 class ProfileTableViewController: OptographTableViewController, TransparentNavbar, UniqueView {
     
@@ -77,6 +78,11 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Profile",
+            contentType: "ProfileView",
+            contentId: "\(personId)",
+            customAttributes: [:])
         
         headerTableViewCell?.viewModel.reloadModel()
     }

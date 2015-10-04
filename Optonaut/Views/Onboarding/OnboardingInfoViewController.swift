@@ -8,6 +8,7 @@
 
 import Foundation
 import HexColor
+import Crashlytics
 
 class OnboardingInfoViewController: UIViewController {
     
@@ -72,6 +73,15 @@ class OnboardingInfoViewController: UIViewController {
     
     func showVROnboarding() {
         presentViewController(OnboardingVRViewController(), animated: false, completion: nil)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Onboarding Info",
+            contentType: "OnboardingInfoView",
+            contentId: "",
+            customAttributes: [:])
     }
     
 }
