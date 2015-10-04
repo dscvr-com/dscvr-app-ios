@@ -211,7 +211,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     }
     
     func openTerms() {
-        UIApplication.sharedApplication().openURL(NSURL(string:"http://optonaut.co/terms")!)
+        UIApplication.sharedApplication().openURL(NSURL(string:"http://optonaut.co/terms/")!)
     }
     
     func showHashtagOnboarding() {
