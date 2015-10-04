@@ -16,13 +16,13 @@ class ViewerViewController: UIViewController  {
     
     let motionManager = CMMotionManager()
     
-    var leftScene: SCNScene?
-    var rightScene: SCNScene?
-    
     var originalBrightness: CGFloat!
     
     var leftRenderDelegate: StereoRenderDelegate?
     var rightRenderDelegate: StereoRenderDelegate?
+    
+    var leftScnView: SCNView?
+    var rightScnView: SCNView?
     
     var distortion: ViewerDistortion
     
@@ -64,32 +64,32 @@ class ViewerViewController: UIViewController  {
         let width = view.frame.width
         let height = view.frame.height
         
-        let leftScnView = createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
-        let rightScnView = createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
+        leftScnView = createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
+        rightScnView = createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
         
-        leftRenderDelegate = StereoRenderDelegate(isLeft: true, optograph: optograph, motionManager: motionManager, width: leftScnView.frame.width, height: leftScnView.frame.height)
+        leftRenderDelegate = StereoRenderDelegate(isLeft: true, optograph: optograph, motionManager: motionManager, width: leftScnView!.frame.width, height: leftScnView!.frame.height)
         
-        rightRenderDelegate = StereoRenderDelegate(isLeft: false, optograph: optograph, motionManager: motionManager, width: rightScnView.frame.width, height: rightScnView.frame.height)
+        rightRenderDelegate = StereoRenderDelegate(isLeft: false, optograph: optograph, motionManager: motionManager, width: rightScnView!.frame.width, height: rightScnView!.frame.height)
             
-        leftScnView.scene = leftRenderDelegate!.root
-        leftScnView.delegate = leftRenderDelegate
+        leftScnView!.scene = leftRenderDelegate!.root
+        leftScnView!.delegate = leftRenderDelegate
         
-        rightScnView.scene = rightRenderDelegate!.root
-        rightScnView.delegate = rightRenderDelegate
+        rightScnView!.scene = rightRenderDelegate!.root
+        rightScnView!.delegate = rightRenderDelegate
         
         switch distortion {
         case .Barrell:
-            leftScnView.technique = createDistortionTechnique("barrell_displacement")
-            rightScnView.technique = createDistortionTechnique("barrell_displacement")
+            leftScnView!.technique = createDistortionTechnique("barrell_displacement")
+            rightScnView!.technique = createDistortionTechnique("barrell_displacement")
         case .VROne:
-            leftScnView.technique = createDistortionTechnique("zeiss_displacement_left")
-            rightScnView.technique = createDistortionTechnique("zeiss_displacement_right")
+            leftScnView!.technique = createDistortionTechnique("zeiss_displacement_left")
+            rightScnView!.technique = createDistortionTechnique("zeiss_displacement_right")
         default: break
         }
         
-        view.addSubview(rightScnView)
-        view.addSubview(leftScnView)
+        view.addSubview(rightScnView!)
+        view.addSubview(leftScnView!)
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60
         motionManager.startDeviceMotionUpdates()
@@ -135,6 +135,15 @@ class ViewerViewController: UIViewController  {
         UIScreen.mainScreen().brightness = originalBrightness
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
+        
+        leftScnView!.playing = false
+        rightScnView!.playing = false
+        
+        leftScnView!.removeFromSuperview()
+        rightScnView!.removeFromSuperview()
+        
+        leftScnView = nil
+        rightScnView = nil
         
         leftRenderDelegate!.dispose()
         rightRenderDelegate!.dispose()
