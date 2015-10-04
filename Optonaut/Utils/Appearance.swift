@@ -16,8 +16,43 @@ func setupAppearanceDefaults() {
     UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
 }
 
-
-let BaseColor = UIColor(0xef4836)
+extension UIColor {
+    static var Accent: UIColor {
+        get {
+            return UIColor(0xef4836)
+        }
+    }
+    
+    static var DarkGrey: UIColor {
+        get {
+            return UIColor(0x333333)
+        }
+    }
+    
+    static var Grey: UIColor {
+        get {
+            return UIColor.blackColor().alpha(0.25)
+        }
+    }
+    
+    static var LightGrey: UIColor {
+        get {
+            return UIColor.blackColor().alpha(0.10)
+        }
+    }
+    
+    static var LightGreyActive: UIColor {
+        get {
+            return UIColor.blackColor().alpha(0.20)
+        }
+    }
+    
+    static var Success: UIColor {
+        get {
+            return UIColor(0x91CB3E)
+        }
+    }
+}
 
 func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icomoon) {
     tabBarItem.title = String.icomoonWithName(icon)

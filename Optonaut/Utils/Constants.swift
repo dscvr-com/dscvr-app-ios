@@ -10,15 +10,13 @@ import Foundation
 import UIKit
 import Device
 
+let OnboardingVersion: Int = 1
+
 enum EnvType {
     case Development
     case Staging
     case Production
 }
-
-//let Env = EnvType.Development
-let Env = EnvType.Staging
-//let Env = EnvType.Production
 
 var S3URL: String {
     switch Env {
@@ -37,9 +35,9 @@ let StaticPath: String = {
 
 let CameraIntrinsics: [Double] = {
     switch UIDevice.currentDevice().deviceType {
-    case .IPhone6: return [6.9034, 0, 1.6875, 0, 6.9034, 3, 0, 0, 1]
-    case .IPhone5S: return [6.9034, 0, 1.6875, 0, 6.9034, 3, 0, 0, 1]
-    case .IPhone5: return [5.49075, 0, 1.276875, 0, 4.1, 2.27, 0, 0, 1]
+    case .IPhone6, .IPhone6S, .IPhone6SPlus: return [5.9266119, 0, 1.6875, 0, 5.9266119, 3, 0, 0, 1]
+    case .IPhone5S: return [5.9266119, 0, 1.6875, 0, 5.9266119, 3, 0, 0, 1]
+    case .IPhone5: return [5.49075, 0, 1.276875, 0, 4.1, 2.27, 0, 0, 1] //TODO: Those are off
     default: return []
     }
 }()

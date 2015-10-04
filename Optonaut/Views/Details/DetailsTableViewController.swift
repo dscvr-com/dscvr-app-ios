@@ -23,11 +23,6 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     required init(optographId: UUID) {
         viewModel = DetailsViewModel(optographId: optographId)
         
-        Answers.logContentViewWithName("Optograph Details \(optographId)",
-            contentType: "OptographDetails",
-            contentId: "optograph-details-\(optographId)",
-            customAttributes: [:])
-        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -51,9 +46,9 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
         tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
         view.addSubview(tableView)
         
-        viewModel.comments.producer.start(next: { [weak self] _ in
+        viewModel.comments.producer.startWithNext { [weak self] _ in
             self?.tableView.reloadData()
-        })
+        }
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
@@ -63,10 +58,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     }
     
     override func updateViewConstraints() {
-        tableView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
-        tableView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view)
-        tableView.autoPinEdge(.Left, toEdge: .Left, ofView: view)
-        tableView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
+        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
     }
@@ -74,11 +66,16 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        Answers.logContentViewWithName("Optograph Details \(viewModel.optograph.id)",
+            contentType: "OptographDetails",
+            contentId: "optograph-details-\(viewModel.optograph.id)",
+            customAttributes: [:])
+        
         motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
             if let accelerometerData = accelerometerData {
                 let x = accelerometerData.acceleration.x
                 let y = accelerometerData.acceleration.y
-                if abs(x) > abs(y) + 0.5 {
+                if self.viewModel.downloadProgress.value == 1 && -x > abs(y) + 0.5 {
                     self.motionManager.stopAccelerometerUpdates()
                     let orientation: UIInterfaceOrientation = x > 0 ? .LandscapeLeft : .LandscapeRight
                     self.pushViewer(orientation)
@@ -153,7 +150,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     
     private func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
         if viewModel.downloadProgress.value == 1 {
-            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph), animated: false)
+            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, distortion: ViewerDistortion.Barrell), animated: false)
             viewModel.increaseViewsCount()
         }
     }

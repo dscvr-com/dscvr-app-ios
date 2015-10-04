@@ -14,25 +14,23 @@ class VersionService {
         let lastVersion = NSUserDefaults.standardUserDefaults().objectForKey("last_release_version") as? String
         let newVersion = NSBundle.mainBundle().releaseVersionNumber
         let lastBuild = NSUserDefaults.standardUserDefaults().objectForKey("last_release_build") as? String
-        let newBuild = NSBundle.mainBundle().releaseBundleNumber
+        let newBuild = NSBundle.mainBundle().releaseBuildNumber
         return lastVersion != newVersion || lastBuild != newBuild
     }()
     
     static func updateToLatest() {
-        if let version = NSBundle.mainBundle().releaseVersionNumber, build = NSBundle.mainBundle().releaseBundleNumber {
+        if let version = NSBundle.mainBundle().releaseVersionNumber, build = NSBundle.mainBundle().releaseBuildNumber {
             NSUserDefaults.standardUserDefaults().setObject(version, forKey: "last_release_version")
             NSUserDefaults.standardUserDefaults().setObject(build, forKey: "last_release_build")
         }
     }
     
     static func onOutdatedApiVersion(errorCallback: () -> ()) {
-            ApiService<EmptyResponse>.checkVersion()
-                .start(
-                    error: { error in
-                        if error.status == 404 {
-                            errorCallback()
-                        }
-                })
+        ApiService<EmptyResponse>.checkVersion().startWithError { error in
+            if error.status == 404 {
+                errorCallback()
+            }
+        }
     }
     
 }
@@ -41,7 +39,7 @@ private extension NSBundle {
     var releaseVersionNumber: String? {
         return self.infoDictionary?["CFBundleShortVersionString"] as? String
     }
-    var releaseBundleNumber: String? {
+    var releaseBuildNumber: String? {
         return self.infoDictionary?["CFBundleVersion"] as? String
     }
 }

@@ -15,16 +15,11 @@ class ExploreNavViewController: NavigationController {
     required init() {
         super.init(nibName: nil, bundle: nil)
         setTabBarIcon(tabBarItem, icon: .Compass)
+        pushViewController(ExploreTableViewController(), animated: false)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        pushViewController(ExploreTableViewController(), animated: false)
     }
     
 }

@@ -17,6 +17,8 @@ extension TransparentNavbar where Self: UIViewController {
     func updateNavbarAppear() {
         navigationController?.navigationBar.translucent = true
         navigationController?.navigationBar.shadowImage = UIImage()
+        
+        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
     }
     
 }
@@ -29,12 +31,14 @@ extension RedNavbar where Self: UIViewController {
 
     func updateNavbarAppear() {
         navigationController?.navigationBar.translucent = false
-        navigationController?.navigationBar.barTintColor = BaseColor
+        navigationController?.navigationBar.barTintColor = UIColor.Accent
         navigationController?.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
             NSForegroundColorAttributeName: UIColor.whiteColor(),
         ]
+        
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
     }
     
 }

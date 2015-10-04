@@ -16,14 +16,13 @@ class DetailsViewModel {
     
     let isStarred = MutableProperty<Bool>(false)
     let isPublished = MutableProperty<Bool>(false)
-    let isPublishing = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let commentsCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
-    let previewImage = MutableProperty<UIImage>(UIImage(named: "optograph-details-placeholder")!)
-    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
-    let fullName = MutableProperty<String>("")
+    let previewImageUrl = MutableProperty<String>("")
+    let avatarImageUrl = MutableProperty<String>("")
+    let displayName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let personId = MutableProperty<UUID>("")
     let text = MutableProperty<String>("")
@@ -41,7 +40,7 @@ class DetailsViewModel {
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(OptographTable[OptographSchema.id] == optographId)
         
-        guard let optograph = DatabaseManager.defaultConnection.pluck(query).map({ row -> Optograph in
+        guard let optograph = DatabaseService.defaultConnection.pluck(query).map({ row -> Optograph in
             let person = Person.fromSQL(row)
             let location = Location.fromSQL(row)
             var optograph = Optograph.fromSQL(row)
@@ -58,12 +57,11 @@ class DetailsViewModel {
         updateProperties()
         
         if !optograph.isPublished {
-            ApiService.get("optographs/\(optographId)")
-                .start(next: { (optograph: Optograph) in
-                    self.optograph = optograph
-                    self.saveModel()
-                    self.updateProperties()
-                })
+            ApiService<Optograph>.get("optographs/\(optographId)").startWithNext { optograph in
+                self.optograph = optograph
+                self.saveModel()
+                self.updateProperties()
+            }
         }
         
         let commentQuery = CommentTable
@@ -71,7 +69,7 @@ class DetailsViewModel {
             .join(PersonTable, on: CommentTable[CommentSchema.personId] == PersonTable[PersonSchema.id])
             .filter(CommentTable[CommentSchema.optographId] == optographId)
         
-        DatabaseManager.defaultConnection.prepare(commentQuery)
+        DatabaseService.defaultConnection.prepare(commentQuery)
             .map { row -> Comment in
                 let person = Person.fromSQL(row)
                 var comment = Comment.fromSQL(row)
@@ -82,15 +80,14 @@ class DetailsViewModel {
             }
             .forEach(insertNewComment)
         
-        ApiService<Comment>.get("optographs/\(optographId)/comments")
-            .start(next: { (var comment) in
-                self.insertNewComment(comment)
-                
-                comment.optograph.id = optographId
-                
-                try! comment.insertOrReplace()
-                try! comment.person.insertOrReplace()
-            })
+        ApiService<Comment>.get("optographs/\(optographId)/comments").startWithNext { (var comment) in
+            self.insertNewComment(comment)
+            
+            comment.optograph.id = optographId
+            
+            try! comment.insertOrReplace()
+            try! comment.person.insertOrReplace()
+        }
     }
     
     func toggleLike() {
@@ -121,30 +118,43 @@ class DetailsViewModel {
     }
     
     func increaseViewsCount() {
-        ApiService<EmptyResponse>.post("optographs/\(optograph.id)/views", parameters: nil)
-            .start(completed: {
-                self.viewsCount.value++
-                self.updateModel()
-                self.saveModel()
-            })
+        ApiService<EmptyResponse>.post("optographs/\(optograph.id)/views", parameters: nil).startWithCompleted {
+            self.viewsCount.value++
+            self.updateModel()
+            self.saveModel()
+        }
     }
     
     func publish() {
-        isPublishing.value = true
-        
         optograph.publish()
             .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
-            .start(completed: {
+            .startWithCompleted {
                 self.isPublished.value = true
                 self.updateModel()
                 self.saveModel()
-                
-                self.isPublishing.value = false
-            })
+            }
     }
     
     func insertNewComment(comment: Comment) {
         comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
+        commentsCount.value = comments.value.count
+    }
+    
+    func delete() -> SignalProducer<EmptyResponse, ApiError> {
+        if optograph.isPublished {
+            return ApiService<EmptyResponse>.delete("optographs/\(optograph.id)")
+                .on(completed: {
+                    self.optograph.deleted = true
+                    try! self.optograph.insertOrReplace()
+                })
+        } else {
+            return SignalProducer<EmptyResponse, ApiError> { sink, disposable in
+                disposable.addDisposable {}
+                self.optograph.deleted = true
+                try! self.optograph.insertOrReplace()
+                sendCompleted(sink)
+            }
+        }
     }
     
     private func updateModel() {
@@ -166,16 +176,15 @@ class DetailsViewModel {
         commentsCount.value = optograph.commentsCount
         viewsCount.value = optograph.viewsCount
         timeSinceCreated.value = optograph.createdAt.longDescription
-        fullName.value = optograph.person.fullName
+        displayName.value = optograph.person.displayName
         userName.value = "@\(optograph.person.userName)"
         personId.value = optograph.person.id
         text.value = optograph.text
         location.value = optograph.location.text
         isPublished.value = optograph.isPublished
-        
-        previewImage <~ DownloadService.downloadContents(from: "\(S3URL)/original/\(optograph.previewAssetId).jpg", to: "\(StaticPath)/\(optograph.previewAssetId).jpg").take(1).map { UIImage(data: $0)! }
-        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg", to: "\(StaticPath)/\(optograph.person.avatarAssetId).jpg").take(1).map { UIImage(data: $0)! }
-        
+        previewImageUrl.value = "\(S3URL)/original/\(optograph.previewAssetId).jpg"
+        avatarImageUrl.value = "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg"
+
         let leftProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.leftTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")
         let rightProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.rightTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")
         downloadProgress <~ leftProgress.combineLatestWith(rightProgress).map { ($0 + $1) / 2 }

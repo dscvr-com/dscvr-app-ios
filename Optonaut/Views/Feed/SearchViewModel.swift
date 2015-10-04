@@ -20,10 +20,18 @@ class SearchViewModel {
             .filter { $0.characters.count > 2 }
             .throttle(0.3, onScheduler: QueueScheduler.mainQueueScheduler)
             .map(escape)
-            .flatMap(.Latest) { keyword in ApiService.get("optographs/search?keyword=\(keyword)") }
-            .start(next: { optograph in
-                self.results.value.append(optograph)
-            })
+            .flatMap(.Latest) { keyword in
+                return ApiService<Optograph>.get("optographs/search?keyword=\(keyword)")
+                    .on(next: { optograph in
+                        try! optograph.insertOrReplace()
+                        try! optograph.location.insertOrReplace()
+                        try! optograph.person.insertOrReplace()
+                    })
+                    .collect()
+            }
+            .startWithNext { optographs in
+                self.results.value = optographs
+            }
     }
     
     private func escape(str: String) -> String {

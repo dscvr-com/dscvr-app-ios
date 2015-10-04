@@ -1,11 +1,13 @@
-New in 0.3.0:
+New in 0.5.0:
 
-- [Change] Hold phone in portrait mode to record optograph
-- [Feature] Offline support for taking Optographs
-- [Feature] Preview image for Optographs
-- [Feature] Download progress for Optographs
-- [Feature] Upload profile pictures
-- [Feature] Forgot password
-- [Fix] Correct order in explore view
-
-PS: Thanks for testing! This helps us a lot!
+- [Feature] Optographs cover now a larger field of view
+- [Feature] Guided recording process
+- [Feature] New onboarding process
+- [Feature] Record preview image for your Optograph
+- [Feature] Share your Optographs with your friends
+- [Feature] In case you don't like one of your Optographs anymore, you can now delete it. Think twice!
+- [Improvement] Feed and Explore view show more relevant content now
+- [Improvement] Offline support for most views
+- [Fix] Memory usage massively improved (oh boy, this was needed)
+- [Fix] Password changing requires you to enter correct current password
+- [Fix] Fixed countless minor issues

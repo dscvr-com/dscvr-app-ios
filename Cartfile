@@ -1,11 +1,12 @@
 github "PureLayout/PureLayout"
-github "Alamofire/Alamofire" "swift-2.0"
+github "Alamofire/Alamofire"
 github "ReactiveCocoa/ReactiveCocoa" "swift2"
-github "Hearst-DD/ObjectMapper" "swift-2.0"
-github "schickling/Device.swift" >= 0.2.0
+github "Hearst-DD/ObjectMapper"
+github "schickling/Device.swift" >= 0.3.0
 github "artman/HexColor" ~> 1.0
 github "stephencelis/SQLite.swift" "swift-2"
 github "duemunk/Async" "feature/Swift_2.0"
-github "MoZhouqi/KMPlaceholderTextView" "swift-2.0"
-github "optonaut/ActiveLabel.swift" >= 0.2.0
-github "nickoneill/PermissionScope" "swift2"
+github "MoZhouqi/KMPlaceholderTextView"
+github "optonaut/ActiveLabel.swift"
+github "nickoneill/PermissionScope"
+github "rs/SDWebImage"

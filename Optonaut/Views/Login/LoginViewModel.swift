@@ -22,24 +22,21 @@ class LoginViewModel {
     
     init() {
         
-        emailOrUserName.producer
-            .start(next: { str in
-                if str.rangeOfString("@") != nil {
-                    self.emailOrUserNameValid.value = isValidEmail(str)
-                } else {
-                    self.emailOrUserNameValid.value = isValidUserName(str)
-                }
-            })
+        emailOrUserName.producer.startWithNext { str in
+            if str.rangeOfString("@") != nil {
+                self.emailOrUserNameValid.value = isValidEmail(str)
+            } else {
+                self.emailOrUserNameValid.value = isValidUserName(str)
+            }
+        }
         
-        password.producer
-            .start(next: { str in
-                self.passwordValid.value = isValidPassword(str)
-            })
+        password.producer.startWithNext { str in
+            self.passwordValid.value = isValidPassword(str)
+        }
         
-        combineLatest([emailOrUserNameValid.producer, passwordValid.producer])
-            .start(next: { bools in
-                self.allowed.value = bools.reduce(true) { $0 && $1 }
-            })
+        combineLatest([emailOrUserNameValid.producer, passwordValid.producer]).startWithNext { bools in
+            self.allowed.value = bools.reduce(true) { $0 && $1 }
+        }
     }
     
     func login() -> SignalProducer<Void, ApiError> {
@@ -69,16 +66,4 @@ class LoginViewModel {
             .flatMap(.Latest) { _ in SignalProducer(value: ()) }
     }
     
-}
-
-private struct LoginMappable: Mappable {
-    var token: String = ""
-    var id: UUID = ""
-    
-    init?(_ map: Map) {}
-    
-    mutating func mapping(map: Map) {
-        token   <- map["token"]
-        id      <- map["id"]
-    }
 }

@@ -16,16 +16,14 @@ class DetailsTableViewCell: UITableViewCell {
     weak var navigationController: NavigationController?
     
     // subviews
-    private let previewImageView = UIImageView()
+    private let previewImageView = PlaceholderImageView()
     private let locationView = InsetLabel()
-    private let avatarImageView = UIImageView()
+    private let avatarImageView = PlaceholderImageView()
     private let progressView = UIProgressView()
-    private let fullNameView = UILabel()
+    private let displayNameView = UILabel()
     private let userNameView = UILabel()
     private let dateView = UILabel()
-    private let shareButtonView = UIButton()
-    private let publishButtonView = UIButton()
-    private let publishingIndicatorView = UIActivityIndicatorView()
+    private let actionButtonView = UIButton()
     private let starButtonView = UIButton()
     private let starCountView = UILabel()
     private let commentIconView = UILabel()
@@ -38,6 +36,7 @@ class DetailsTableViewCell: UITableViewCell {
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        previewImageView.placeholderImage = UIImage(named: "optograph-details-placeholder")!
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
         previewImageView.userInteractionEnabled = true
@@ -51,20 +50,21 @@ class DetailsTableViewCell: UITableViewCell {
         contentView.addSubview(locationView)
         
         progressView.progressViewStyle = UIProgressViewStyle.Bar
-        progressView.progressTintColor = BaseColor
+        progressView.progressTintColor = UIColor.Accent
         contentView.addSubview(progressView)
         
+        avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 15
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(avatarImageView)
         
-        fullNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        fullNameView.textColor = UIColor(0x4d4d4d)
-        fullNameView.userInteractionEnabled = true
-        fullNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(fullNameView)
+        displayNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        displayNameView.textColor = UIColor(0x4d4d4d)
+        displayNameView.userInteractionEnabled = true
+        displayNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        contentView.addSubview(displayNameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
         userNameView.textColor = UIColor(0xb3b3b3)
@@ -76,22 +76,15 @@ class DetailsTableViewCell: UITableViewCell {
         dateView.textColor = UIColor(0xb3b3b3)
         contentView.addSubview(dateView)
         
-        shareButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
-        shareButtonView.setTitle(String.icomoonWithName(.Share), forState: .Normal)
-        shareButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
-        contentView.addSubview(shareButtonView)
-        
-        publishButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
-        publishButtonView.setTitle(String.icomoonWithName(.Retry), forState: .Normal)
-        publishButtonView.setTitleColor(BaseColor, forState: .Normal)
-        contentView.addSubview(publishButtonView)
-        
-        publishingIndicatorView.hidesWhenStopped = true
-        publishingIndicatorView.activityIndicatorViewStyle = .Gray
-        contentView.addSubview(publishingIndicatorView)
+        actionButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
+        actionButtonView.setTitle(String.icomoonWithName(.DotsVertical), forState: .Normal)
+        actionButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
+        actionButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showActions"))
+        contentView.addSubview(actionButtonView)
         
         starButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
         starButtonView.setTitle(String.icomoonWithName(.HeartOutlined), forState: .Normal)
+        starButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleStar"))
         contentView.addSubview(starButtonView)
         
         starCountView.font = UIFont.robotoOfSize(12, withType: .Light)
@@ -120,8 +113,8 @@ class DetailsTableViewCell: UITableViewCell {
         textView.userInteractionEnabled = true
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
         textView.textColor = UIColor(0x4d4d4d)
-        textView.mentionColor = BaseColor
-        textView.hashtagColor = BaseColor
+        textView.mentionColor = UIColor.Accent
+        textView.hashtagColor = UIColor.Accent
         textView.URLEnabled = false
         contentView.addSubview(textView)
         
@@ -150,23 +143,17 @@ class DetailsTableViewCell: UITableViewCell {
         progressView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView)
         progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
         
-        fullNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
-        fullNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
+        displayNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
+        displayNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
         userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
-        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameView, withOffset: 4)
+        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: displayNameView, withOffset: 4)
         
         dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 2)
         dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
         
-        shareButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
-        shareButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        
-        publishButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
-        publishButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        
-        publishingIndicatorView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 16)
-        publishingIndicatorView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -23)
+        actionButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 12)
+        actionButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
         
         starButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: 12)
         starButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
@@ -199,7 +186,7 @@ class DetailsTableViewCell: UITableViewCell {
     }
     
     func bindViewModel() {
-        previewImageView.rac_image <~ viewModel.previewImage
+        previewImageView.rac_url <~ viewModel.previewImageUrl
         
         locationView.rac_text <~ viewModel.location
         
@@ -208,58 +195,25 @@ class DetailsTableViewCell: UITableViewCell {
         viewModel.downloadProgress.producer
             .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)))
             .observeOn(UIScheduler())
-            .start(next: { progress in
+            .startWithNext { progress in
                 self.progressView.setProgress(progress, animated: true)
-            })
+            }
         
-        avatarImageView.rac_image <~ viewModel.avatarImage
+        avatarImageView.rac_url <~ viewModel.avatarImageUrl
         
-        fullNameView.rac_text <~ viewModel.fullName
+        displayNameView.rac_text <~ viewModel.displayName
         
         userNameView.rac_text <~ viewModel.userName
         
         dateView.rac_text <~ viewModel.timeSinceCreated
         
-        shareButtonView.rac_hidden <~ viewModel.isPublished.producer.map { !$0 }
-        shareButtonView.rac_command = RACCommand(signalBlock: { _ in
-            // TODO adjust sharing feature
-            let textToShare = "Check out this Optograph of \(self.viewModel.fullName.value)."
-            
-            if let myWebsite = NSURL(string: "http://www.optonaut.com")
-            {
-                let objectsToShare = [textToShare, myWebsite]
-                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-                
-                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
-                
-                self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
-            }
-            return RACSignal.empty()
-        })
+        starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? UIColor.Accent : UIColor(0xe6e6e6) }
         
-        publishButtonView.rac_hidden <~ viewModel.isPublished.producer.combineLatestWith(viewModel.isPublishing.producer).map { $0 || $1 }
-        publishButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.publish()
-            return RACSignal.empty()
-        })
+        starCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0) likes" }
         
+        commentCountView.rac_text <~ viewModel.commentsCount.producer.map { "\($0) comments" }
         
-        publishingIndicatorView.rac_animating <~ viewModel.isPublishing
-        
-        starButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.toggleLike()
-            return RACSignal.empty()
-        })
-        
-        viewModel.isStarred.producer
-            .map { $0 ? BaseColor : UIColor(0xe6e6e6) }
-            .start(next: { self.starButtonView.setTitleColor($0, forState: .Normal)})
-        
-        starCountView.rac_text <~ viewModel.starsCount.producer .map { "\($0) stars" }
-        
-        commentCountView.rac_text <~ viewModel.commentsCount.producer .map { "\($0) comments" }
-        
-        viewsCountView.rac_text <~ viewModel.viewsCount.producer .map { "\($0) views" }
+        viewsCountView.rac_text <~ viewModel.viewsCount.producer.map { "\($0) views" }
         
         textView.rac_text <~ viewModel.text
         textView.handleHashtagTap { hashtag in
@@ -267,21 +221,61 @@ class DetailsTableViewCell: UITableViewCell {
         }
         textView.handleMentionTap { userName in
             ApiService<Person>.get("persons/user-name/\(userName)")
-                .start(next: { person in
-                    self.navigationController?.pushViewController(ProfileContainerViewController(personId: person.id), animated: true)
-                })
+                .startWithNext { person in
+                    self.navigationController?.pushViewController(ProfileTableViewController(personId: person.id), animated: true)
+                }
         }
     }
     
+    func showActions() {
+        let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        
+        if SessionService.sessionData?.id == viewModel.optograph.person.id {
+            actionAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
+                self.viewModel.delete().startWithCompleted {
+                    self.navigationController?.popViewControllerAnimated(true)
+                }
+            }))
+        }
+        
+        if !viewModel.isPublished.value {
+            actionAlert.addAction(UIAlertAction(title: "Publish", style: .Default, handler: { _ in
+                self.viewModel.publish()
+            }))
+        }
+        
+        actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
+            // TODO adjust sharing feature
+            if let myWebsite = NSURL(string: "http://share.optonaut.co/\(self.viewModel.optograph.id)") {
+                let textToShare = "Check out this Optograph of \(self.viewModel.displayName.value): \(self.viewModel.text.value)"
+                let objectsToShare = [textToShare, myWebsite]
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                
+                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
+                
+                self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
+            }
+        }))
+        
+        actionAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        
+        navigationController?.presentViewController(actionAlert, animated: true, completion: nil)
+    }
+    
+    func toggleStar() {
+        viewModel.toggleLike()
+    }
+    
     func pushProfile() {
-        let profileContainerViewController = ProfileContainerViewController(personId: viewModel.personId.value)
+        let profileContainerViewController = ProfileTableViewController(personId: viewModel.personId.value)
         navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
     
     func pushViewer() {
         if viewModel.downloadProgress.value == 1 {
-            navigationController?.pushViewController(ViewerViewController(orientation: .LandscapeLeft, optograph: viewModel.optograph), animated: false)
-            viewModel.increaseViewsCount()
+            let alert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
         }
     }
     

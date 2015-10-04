@@ -13,26 +13,71 @@ public enum FontType: String {
     case Medium = "Medium"
     case Light = "Light"
     case Black = "Black"
+    case Bold = "Bold"
     
-    static let allValues = [Regular, Medium, Light, Black]
+    static let allValues = [Regular, Medium, Light, Black, Bold]
 }
 
 public extension UIFont {
     
     public class func robotoOfSize(fontSize: CGFloat, withType type: FontType) -> UIFont {
         
+        switch type {
+        case .Regular: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightRegular)
+        case .Medium: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightMedium)
+        case .Light: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightLight)
+        case .Black: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightBlack)
+        case .Bold: return UIFont.systemFontOfSize(fontSize, weight: UIFontWeightBold)
+        }
+    }
+    
+    public enum TextFontType: String {
+        case Regular = "Regular"
+        case Semibold = "Semibold"
+        
+        static let allValues = [Regular, Semibold]
+    }
+    
+    public class func textOfSize(fontSize: CGFloat, withType type: TextFontType) -> UIFont {
         struct Static {
-            static var onceTokens = toDictionary(FontType.allValues) { ($0, 0 as dispatch_once_t) }
+            static var onceTokens = toDictionary(TextFontType.allValues) { ($0, 0 as dispatch_once_t) }
         }
 
-        let name = "Roboto-\(type.rawValue)"
-        if (UIFont.fontNamesForFamilyName(name).count == 0) {
+        let fileName = "SF-UI-Text-\(type.rawValue)"
+        let fontName = "SFUIText-\(type.rawValue)"
+        if (UIFont.fontNamesForFamilyName(fontName).count == 0) {
             dispatch_once(&Static.onceTokens[type]!) {
-                FontLoader.loadFont(name)
+                FontLoader.loadFont(fileName)
             }
         }
 
-        return UIFont(name: name, size: fontSize)!
+        return UIFont(name: fontName, size: fontSize)!
+    }
+    
+    public enum DisplayFontType: String {
+        case Regular = "Regular"
+//        case UltraLight = "Ultralight"
+        case Semibold = "Semibold"
+//        case Light = "Light"
+        case Thin = "Thin"
+        
+        static let allValues = [Regular, Semibold, Thin]
+    }
+    
+    public class func displayOfSize(fontSize: CGFloat, withType type: DisplayFontType) -> UIFont {
+        struct Static {
+            static var onceTokens = toDictionary(DisplayFontType.allValues) { ($0, 0 as dispatch_once_t) }
+        }
+
+        let fileName = "SF-UI-Display-\(type.rawValue)"
+        let fontName = "SFUIDisplay-\(type.rawValue)"
+        if (UIFont.fontNamesForFamilyName(fontName).count == 0) {
+            dispatch_once(&Static.onceTokens[type]!) {
+                FontLoader.loadFont(fileName)
+            }
+        }
+
+        return UIFont(name: fontName, size: fontSize)!
     }
     
 }
@@ -40,7 +85,7 @@ public extension UIFont {
 private class FontLoader {
     class func loadFont(name: String) {
         let bundle = NSBundle(forClass: FontLoader.self)
-        let fontURL = bundle.URLForResource(name, withExtension: "ttf")!
+        let fontURL = bundle.URLForResource(name, withExtension: "otf")!
         let data = NSData(contentsOfURL: fontURL)!
 
         let provider = CGDataProviderCreateWithCFData(data)

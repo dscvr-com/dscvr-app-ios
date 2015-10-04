@@ -19,9 +19,7 @@ class NewCommentViewModel {
     init(optographId: UUID) {
         self.optographId = ConstantProperty(optographId)
         
-        text.producer
-            .map { !$0.isEmpty }
-            .start(next: { self.isValid.value = $0 })
+        text.producer.map { !$0.isEmpty }.startWithNext { self.isValid.value = $0 }
     }
     
     func postComment() -> SignalProducer<Comment, ApiError> {

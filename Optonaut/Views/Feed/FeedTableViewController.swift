@@ -7,6 +7,10 @@
 //
 
 import UIKit
+import ReactiveCocoa
+import Async
+import Device
+import Crashlytics
 
 class FeedTableViewController: OptographTableViewController, RedNavbar {
     
@@ -19,7 +23,7 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         navigationItem.title = String.icomoonWithName(.LogoText)
         
         let cameraButton = UIBarButtonItem()
-        cameraButton.image = UIImage.icomoonWithName(.Camera, textColor: .whiteColor(), size: CGSize(width: 21, height: 17))
+        cameraButton.image = UIImage.icomoonWithName(.Camera, textColor: .whiteColor(), size: CGSize(width: 24, height: 17))
         cameraButton.target = self
         cameraButton.action = "pushCamera"
         navigationItem.setRightBarButtonItem(cameraButton, animated: false)
@@ -31,22 +35,24 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         searchButton.action = "pushSearch"
         navigationItem.setLeftBarButtonItem(searchButton, animated: false)
         
-        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().start(next: { _ in
-            self.viewModel.refreshNotificationSignal.notify()
-        })
+        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
+            self.viewModel.refreshNotification.notify()
+            Async.main(after: 10) { self.refreshControl.endRefreshing() }
+        }
         tableView.addSubview(refreshControl)
         
         viewModel.results.producer
-            .start(
-                next: { results in
-                    self.items = results
+            .on(
+                next: { items in
+                    self.items = items
                     self.tableView.reloadData()
                     self.refreshControl.endRefreshing()
                 },
                 error: { _ in
                     self.refreshControl.endRefreshing()
                 }
-        )
+            )
+            .start()
         
         view.setNeedsUpdateConstraints()
     }
@@ -57,6 +63,8 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         updateNavbarAppear()
         navigationController?.hidesBarsOnSwipe = true
         
+        viewModel.refreshNotification.notify()
+        
         navigationController?.navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.icomoonOfSize(50),
@@ -66,6 +74,11 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Feed View",
+            contentType: "FeedTableView",
+            contentId: "",
+            customAttributes: [:])
         
         tabBarController?.delegate = self
     }
@@ -90,7 +103,14 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     }
     
     func pushCamera() {
-        navigationController?.pushViewController(CameraViewController(), animated: false)
+        switch UIDevice.currentDevice().deviceType {
+        case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
+            navigationController?.pushViewController(CameraViewController(), animated: false)
+        default:
+            let alert = UIAlertController(title: "Device not yet supported", message: "Recording isn't available for your device in the current version but will be enabled in a future release.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+        }
     }
     
     func pushSearch() {
@@ -116,7 +136,7 @@ extension FeedTableViewController: LoadMore {
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         checkRow(indexPath) {
-            self.viewModel.loadMoreNotificationSignal.notify()
+            self.viewModel.loadMoreNotification.notify()
         }
     }
     

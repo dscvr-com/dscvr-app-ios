@@ -27,4 +27,4 @@ version "1.0"
 
 app_identifier "com.optonaut.Optonaut" # The bundle identifier of your app
 apple_id "1013817652" # This is NOT your Apple login ID, but the App ID of your app
-email "optonaut.io@gmail.com" # the login email address
+email "accounts@optonaut.co" # the login email address

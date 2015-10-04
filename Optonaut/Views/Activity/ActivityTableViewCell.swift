@@ -82,8 +82,8 @@ class ActivityTableViewCell: UITableViewCell {
 //        }
         
         viewModel.isRead.producer
-            .map { $0 ? UIColor.clearColor() : BaseColor.alpha(0.1) }
-            .start(next: { self.backgroundColor = $0 })
+            .map { $0 ? UIColor.clearColor() : UIColor.Accent.alpha(0.1) }
+            .startWithNext { self.backgroundColor = $0 }
         
 //        textView.rac_text <~ viewModel.activityType.producer
 //            .map { type in
@@ -96,7 +96,7 @@ class ActivityTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        let profileContainerViewController = ProfileContainerViewController(personId: viewModel.creatorId.value)
+        let profileContainerViewController = ProfileTableViewController(personId: viewModel.creatorId.value)
         navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
     

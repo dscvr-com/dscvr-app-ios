@@ -14,6 +14,7 @@ struct OptographSchemaType: ModelSchema {
     let personId = Expression<UUID>("optograph_person_id")
     let locationId = Expression<UUID>("optograph_location_id")
     let createdAt = Expression<NSDate>("optograph_created_at")
+    let deleted = Expression<Bool>("optograph_deleted")
     let isStarred = Expression<Bool>("optograph_is_starred")
     let starsCount = Expression<Int>("optograph_stars_count")
     let commentsCount = Expression<Int>("optograph_comments_count")
@@ -22,6 +23,8 @@ struct OptographSchemaType: ModelSchema {
     let previewAssetId = Expression<UUID>("optograph_preview_asset_id")
     let leftTextureAssetId = Expression<UUID>("optograph_left_texture_asset_id")
     let rightTextureAssetId = Expression<UUID>("optograph_right_texture_asset_id")
+    let isStaffPick = Expression<Bool>("optograph_is_staff_pick")
+    let hashtagString = Expression<String>("optograph_hashtag_string")
 }
 
 let OptographSchema = OptographSchemaType()
@@ -34,6 +37,7 @@ func OptographMigration() -> String {
         t.column(OptographSchema.personId)
         t.column(OptographSchema.locationId)
         t.column(OptographSchema.createdAt)
+        t.column(OptographSchema.deleted)
         t.column(OptographSchema.isStarred)
         t.column(OptographSchema.starsCount)
         t.column(OptographSchema.commentsCount)
@@ -42,5 +46,7 @@ func OptographMigration() -> String {
         t.column(OptographSchema.previewAssetId)
         t.column(OptographSchema.leftTextureAssetId)
         t.column(OptographSchema.rightTextureAssetId)
+        t.column(OptographSchema.isStaffPick)
+        t.column(OptographSchema.hashtagString)
     }
 }

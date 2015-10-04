@@ -9,6 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import HexColor
+import Crashlytics
 
 class EditProfileViewController: UIViewController, RedNavbar, UINavigationControllerDelegate {
     
@@ -17,9 +18,9 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     let viewModel = EditProfileViewModel()
     
     // subviews
-    let avatarImageView = UIImageView()
-    let fullNameIconView = UILabel()
-    let fullNameInputView = BottomLineTextField()
+    let avatarImageView = PlaceholderImageView()
+    let displayNameIconView = UILabel()
+    let displayNameInputView = BottomLineTextField()
     let userNameIconView = UILabel()
     let userNameInputView = BottomLineTextField()
     let userNameTakenView = UILabel()
@@ -36,9 +37,9 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     let debugIconView = UILabel()
     let debugLabelView = UILabel()
     let debugSwitchView = UISwitch()
-    let newsletterIconView = UILabel()
-    let newsletterLabelView = UILabel()
-    let newsletterSwitchView = UISwitch()
+//    let newsletterIconView = UILabel()
+//    let newsletterLabelView = UILabel()
+//    let newsletterSwitchView = UISwitch()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,24 +64,25 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         
         navigationItem.title = "Edit Profile"
         
+        avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 30
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "updateImage"))
-        avatarImageView.rac_image <~ viewModel.avatarImage
+        avatarImageView.rac_url <~ viewModel.avatarImageUrl
         view.addSubview(avatarImageView)
         
-        fullNameIconView.font = .icomoonOfSize(20)
-        fullNameIconView.text = .icomoonWithName(.VCard)
-        fullNameIconView.textColor = UIColor(0xe5e5e5)
-        view.addSubview(fullNameIconView)
+        displayNameIconView.font = .icomoonOfSize(20)
+        displayNameIconView.text = .icomoonWithName(.VCard)
+        displayNameIconView.textColor = UIColor(0xe5e5e5)
+        view.addSubview(displayNameIconView)
         
-        fullNameInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
-        fullNameInputView.textColor = UIColor(0x4d4d4d)
-        fullNameInputView.autocorrectionType = .No
-        fullNameInputView.rac_text <~ viewModel.fullName
-        fullNameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.fullName.value = $0 as! String })
-        view.addSubview(fullNameInputView)
+        displayNameInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
+        displayNameInputView.textColor = UIColor(0x4d4d4d)
+        displayNameInputView.autocorrectionType = .No
+        displayNameInputView.rac_text <~ viewModel.displayName
+        displayNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.displayName.value = $0 as! String }
+        view.addSubview(displayNameInputView)
         
         userNameIconView.font = .icomoonOfSize(20)
         userNameIconView.text = .icomoonWithName(.Email)
@@ -92,14 +94,14 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         userNameInputView.autocorrectionType = .No
         userNameInputView.autocapitalizationType = .None
         userNameInputView.rac_text <~ viewModel.userName
-        userNameInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.userName.value = $0 as! String })
+        userNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.userName.value = $0 as! String }
         
         view.addSubview(userNameInputView)
         
         userNameTakenView.text = "Username taken"
         userNameTakenView.font = UIFont.robotoOfSize(13, withType: .Regular)
-        userNameTakenView.textColor = BaseColor
-        userNameTakenView.rac_hidden <~ viewModel.userNameTaken.producer.map { !$0 }
+        userNameTakenView.textColor = UIColor.Accent
+        userNameTakenView.rac_hidden <~ viewModel.userNameTaken.producer.map(negate)
         
         view.addSubview(userNameTakenView)
         
@@ -111,7 +113,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         textInputView.font = UIFont.robotoOfSize(15, withType: .Regular)
         textInputView.textColor = UIColor(0x4d4d4d)
         textInputView.rac_text <~ viewModel.text
-        textInputView.rac_textSignal().toSignalProducer().start(next: { self.viewModel.text.value = $0 as! String })
+        textInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.text.value = $0 as! String }
         textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         view.addSubview(textInputView)
@@ -136,10 +138,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         emailButtonView.contentHorizontalAlignment = .Left
         emailButtonView.setTitleColor(UIColor(0x4d4d4d), forState: .Normal)
         emailButtonView.setTitle("Change", forState: .Normal)
-        emailButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.showEmailAlert()
-            return RACSignal.empty()
-        })
+        emailButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showEmailAlert"))
         view.addSubview(emailButtonView)
         
         passwordIconView.font = .icomoonOfSize(20)
@@ -157,47 +156,58 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         passwordButtonView.contentHorizontalAlignment = .Left
         passwordButtonView.setTitleColor(UIColor(0x4d4d4d), forState: .Normal)
         passwordButtonView.setTitle("Change", forState: .Normal)
-        passwordButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.showPasswordAlert()
-            return RACSignal.empty()
-        })
+        passwordButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showPasswordAlert"))
         view.addSubview(passwordButtonView)
         
         settingsHeaderView.text = "SETTINGS"
         settingsHeaderView.textColor = UIColor(0xcfcfcf)
         settingsHeaderView.font = UIFont.robotoOfSize(15, withType: .Medium)
+        settingsHeaderView.hidden = true
         view.addSubview(settingsHeaderView)
         
+        // TODO @schickling: Debug is unstable due to racing conditions. Please
+        // remove it entirely from release. Best way would be to check if it's actually release, 
+        // since we need debug for developing.
         debugIconView.font = .icomoonOfSize(20)
         debugIconView.text = .icomoonWithName(.Cog)
         debugIconView.textColor = UIColor(0xe5e5e5)
+        debugIconView.hidden = true
         view.addSubview(debugIconView)
         
         debugLabelView.text = "Debugging"
         debugLabelView.textColor = UIColor(0x4d4d4d)
         debugLabelView.font = .robotoOfSize(15, withType: .Regular)
+        debugLabelView.hidden = true
         view.addSubview(debugLabelView)
         
         debugSwitchView.on = viewModel.debugEnabled.value
         debugSwitchView.addTarget(self, action: "toggleDebug", forControlEvents: .ValueChanged)
+        debugSwitchView.hidden = true
         view.addSubview(debugSwitchView)
         
-        newsletterIconView.font = .icomoonOfSize(20)
-        newsletterIconView.text = .icomoonWithName(.Cog)
-        newsletterIconView.textColor = UIColor(0xe5e5e5)
-        view.addSubview(newsletterIconView)
+        #if DEBUG
+            settingsHeaderView.hidden = false
+            debugIconView.hidden = false
+            debugLabelView.hidden = false
+            debugSwitchView.hidden = false
+        #endif
         
-        newsletterLabelView.text = "Newsletter"
-        newsletterLabelView.textColor = UIColor(0x4d4d4d)
-        newsletterLabelView.font = .robotoOfSize(15, withType: .Regular)
-        view.addSubview(newsletterLabelView)
-        
-        newsletterSwitchView.on = viewModel.wantsNewsletter.value
-        newsletterSwitchView.addTarget(self, action: "toggleNewsletter", forControlEvents: .ValueChanged)
-        view.addSubview(newsletterSwitchView)
+//        newsletterIconView.font = .icomoonOfSize(20)
+//        newsletterIconView.text = .icomoonWithName(.Cog)
+//        newsletterIconView.textColor = UIColor(0xe5e5e5)
+//        view.addSubview(newsletterIconView)
+//        
+//        newsletterLabelView.text = "Newsletter"
+//        newsletterLabelView.textColor = UIColor(0x4d4d4d)
+//        newsletterLabelView.font = .robotoOfSize(15, withType: .Regular)
+//        view.addSubview(newsletterLabelView)
+//        
+//        newsletterSwitchView.on = viewModel.wantsNewsletter.value
+//        newsletterSwitchView.addTarget(self, action: "toggleNewsletter", forControlEvents: .ValueChanged)
+//        view.addSubview(newsletterSwitchView)
         
         imagePickerController.navigationBar.translucent = false
-        imagePickerController.navigationBar.barTintColor = BaseColor
+        imagePickerController.navigationBar.barTintColor = UIColor.Accent
         imagePickerController.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
             NSForegroundColorAttributeName: UIColor.whiteColor(),
@@ -213,21 +223,21 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         avatarImageView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 60, height: 60))
         
-        fullNameIconView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 5)
-        fullNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        fullNameIconView.autoSetDimension(.Width, toSize: 20)
+        displayNameIconView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 5)
+        displayNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+        displayNameIconView.autoSetDimension(.Width, toSize: 20)
         
-        fullNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: fullNameIconView)
-        fullNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: fullNameIconView, withOffset: 15)
-        fullNameInputView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -20)
+        displayNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: displayNameIconView)
+        displayNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: displayNameIconView, withOffset: 15)
+        displayNameInputView.autoPinEdge(.Right, toEdge: .Left, ofView: avatarImageView, withOffset: -20)
         
-        userNameIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: fullNameInputView, withOffset: 30)
+        userNameIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: displayNameInputView, withOffset: 30)
         userNameIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         userNameIconView.autoSetDimension(.Width, toSize: 20)
         
         userNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: userNameIconView)
         userNameInputView.autoPinEdge(.Left, toEdge: .Right, ofView: userNameIconView, withOffset: 15)
-        userNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
+        userNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: displayNameInputView)
         
         userNameTakenView.autoPinEdge(.Top, toEdge: .Top, ofView: userNameIconView, withOffset: 2)
         userNameTakenView.autoPinEdge(.Right, toEdge: .Right, ofView: userNameInputView)
@@ -273,27 +283,32 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         
         debugLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -1)
         debugLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: debugIconView, withOffset: 15)
-        debugLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
+        debugLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: displayNameInputView)
         
         debugSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: debugIconView, withOffset: -4)
         debugSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
-        newsletterIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: debugIconView, withOffset: 20)
-        newsletterIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-        newsletterIconView.autoSetDimension(.Width, toSize: 20)
-
-        newsletterLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -1)
-        newsletterLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: newsletterIconView, withOffset: 15)
-        newsletterLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: fullNameInputView)
-
-        newsletterSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -4)
-        newsletterSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+//        newsletterIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: debugIconView, withOffset: 20)
+//        newsletterIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
+//        newsletterIconView.autoSetDimension(.Width, toSize: 20)
+//
+//        newsletterLabelView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -1)
+//        newsletterLabelView.autoPinEdge(.Left, toEdge: .Right, ofView: newsletterIconView, withOffset: 15)
+//        newsletterLabelView.autoPinEdge(.Right, toEdge: .Right, ofView: displayNameInputView)
+//
+//        newsletterSwitchView.autoPinEdge(.Top, toEdge: .Top, ofView: newsletterIconView, withOffset: -4)
+//        newsletterSwitchView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         
         super.updateViewConstraints()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        Answers.logContentViewWithName("Edit Profile",
+            contentType: "EditProfileView",
+            contentId: "",
+            customAttributes: [:])
         
         updateNavbarAppear()
     }
@@ -324,7 +339,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     
     func save() {
         viewModel.updateData()
-            .start(
+            .on(
                 error: { _ in
                     NotificationService.push("Profile information invalid.", level: .Error)
                 },
@@ -332,7 +347,8 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
                     self.navigationController?.popViewControllerAnimated(false)
                     NotificationService.push("Profile information updated.", level: .Success)
                 }
-        )
+            )
+            .start()
     }
     
     func showPasswordAlert() {
@@ -345,7 +361,14 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         }
         
         oldPasswordAlert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { _ in
-            self.presentViewController(newPasswordAlert, animated: true, completion: nil)
+            let oldPasswordtextField = oldPasswordAlert.textFields![0] as UITextField
+            if oldPasswordtextField.text == SessionService.sessionData?.password {
+                self.presentViewController(newPasswordAlert, animated: true, completion: nil)
+            } else {
+                oldPasswordAlert.message = "Your current password was wrong. Please try again."
+                oldPasswordtextField.text = ""
+                self.presentViewController(oldPasswordAlert, animated: true, completion: nil)
+            }
         }))
         
         oldPasswordAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
@@ -360,12 +383,9 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
             let newPasswordtextField = newPasswordAlert.textFields![0] as UITextField
             let oldPassword = oldPasswordtextField.text!
             let newPassword = newPasswordtextField.text!
-            self.viewModel.updatePassword(oldPassword, newPassword: newPassword)
-                .start(
-                    completed: {
-                        NotificationService.push("Password changed successfully.", level: .Success)
-                    }
-            )
+            self.viewModel.updatePassword(oldPassword, newPassword: newPassword).startWithCompleted {
+                NotificationService.push("Password changed successfully.", level: .Success)
+            }
         }))
         
         newPasswordAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
@@ -385,14 +405,15 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
             let textField = alert.textFields![0] as UITextField
             let email = textField.text!
             self.viewModel.updateEmail(email)
-                .start(
+                .on(
                     error: { _ in
                         NotificationService.push("Email address already taken. Please try another one.", level: .Error)
                     },
                     completed: {
                         NotificationService.push("Please check your inbox and confirm your new address.", level: .Success)
                     }
-            )
+                )
+                .start()
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
@@ -421,10 +442,9 @@ extension EditProfileViewController: UIImagePickerControllerDelegate {
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)
     
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
-        viewModel.updateAvatar(image)
-            .start(completed: {
-                NotificationService.push("Profile image updated", level: .Success)
-            })
+        viewModel.updateAvatar(image).startWithCompleted {
+            NotificationService.push("Profile image updated", level: .Success)
+        }
     }
     
 }

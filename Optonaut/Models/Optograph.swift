@@ -17,12 +17,15 @@ enum OptographAsset {
     case RightImage(NSData)
 }
 
+typealias HashtagStrings = Array<String>
+
 struct Optograph: Model {
     
     var id: UUID
     var text: String
     var person: Person
     var createdAt: NSDate
+    var deleted: Bool
     var isStarred: Bool
     var starsCount: Int
     var commentsCount: Int
@@ -32,6 +35,8 @@ struct Optograph: Model {
     var previewAssetId: UUID
     var leftTextureAssetId: UUID
     var rightTextureAssetId: UUID
+    var isStaffPick: Bool
+    var hashtagString: String
     
     static func newInstance() -> Optograph {
         return Optograph(
@@ -39,6 +44,7 @@ struct Optograph: Model {
             text: "",
             person: Person.newInstance(),
             createdAt: NSDate(),
+            deleted: false,
             isStarred: false,
             starsCount: 0,
             commentsCount: 0,
@@ -47,7 +53,9 @@ struct Optograph: Model {
             isPublished: false,
             previewAssetId: uuid(),
             leftTextureAssetId: uuid(),
-            rightTextureAssetId: uuid()
+            rightTextureAssetId: uuid(),
+            isStaffPick: false,
+            hashtagString: ""
         )
     }
     
@@ -72,7 +80,7 @@ struct Optograph: Model {
             .on(completed: {
                 self.isPublished = true
                 
-                try! DatabaseManager.defaultConnection.run(
+                try! DatabaseService.defaultConnection.run(
                     OptographTable.filter(OptographSchema.id ==- self.id).update(
                         OptographSchema.isPublished <-- self.isPublished
                     )
@@ -104,6 +112,8 @@ extension Optograph: Mappable {
         previewAssetId      <- map["preview_asset_id"]
         leftTextureAssetId  <- map["left_texture_asset_id"]
         rightTextureAssetId <- map["right_texture_asset_id"]
+        isStaffPick         <- map["is_staff_pick"]
+        hashtagString       <- map["hashtag_string"]
     }
     
 }
@@ -116,6 +126,7 @@ extension Optograph: SQLiteModel {
             text: row[OptographSchema.text],
             person: Person.newInstance(),
             createdAt: row[OptographSchema.createdAt],
+            deleted: row[OptographSchema.deleted],
             isStarred: row[OptographSchema.isStarred],
             starsCount: row[OptographSchema.starsCount],
             commentsCount: row[OptographSchema.commentsCount],
@@ -124,7 +135,9 @@ extension Optograph: SQLiteModel {
             isPublished: row[OptographSchema.isPublished],
             previewAssetId: row[OptographSchema.previewAssetId],
             leftTextureAssetId: row[OptographSchema.leftTextureAssetId],
-            rightTextureAssetId: row[OptographSchema.rightTextureAssetId]
+            rightTextureAssetId: row[OptographSchema.rightTextureAssetId],
+            isStaffPick: row[OptographSchema.isStaffPick],
+            hashtagString: row[OptographSchema.hashtagString]
         )
     }
     
@@ -134,6 +147,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.text <-- text,
             OptographSchema.personId <-- person.id,
             OptographSchema.createdAt <-- createdAt,
+            OptographSchema.deleted <-- deleted,
             OptographSchema.isStarred <-- isStarred,
             OptographSchema.starsCount <-- starsCount,
             OptographSchema.commentsCount <-- commentsCount,
@@ -142,12 +156,14 @@ extension Optograph: SQLiteModel {
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.previewAssetId <-- previewAssetId,
             OptographSchema.leftTextureAssetId <-- leftTextureAssetId,
-            OptographSchema.rightTextureAssetId <-- rightTextureAssetId
+            OptographSchema.rightTextureAssetId <-- rightTextureAssetId,
+            OptographSchema.isStaffPick <-- isStaffPick,
+            OptographSchema.hashtagString <-- hashtagString,
         ]
     }
     
     func insertOrReplace() throws {
-        try DatabaseManager.defaultConnection.run(OptographTable.insert(or: .Replace, toSQL()))
+        try DatabaseService.defaultConnection.run(OptographTable.insert(or: .Replace, toSQL()))
     }
     
 }

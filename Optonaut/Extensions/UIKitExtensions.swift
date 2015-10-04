@@ -30,3 +30,13 @@ extension UIEdgeInsets {
         return UIEdgeInsetsInsetRect(rect, self)
     }
 }
+
+class PlaceholderImageView: UIImageView {
+    var placeholderImage: UIImage = UIImage() {
+        didSet {
+            if image == nil {
+                image = placeholderImage
+            }
+        }
+    }
+}

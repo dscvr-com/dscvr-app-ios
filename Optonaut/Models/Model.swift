@@ -35,4 +35,14 @@ extension Array where Element: Model {
         append(newModel)
     }
     
+    func orderedMerge(newModels: Array, withOrder order: NSComparisonResult) -> Array {
+        var newArray = self
+        
+        for newModel in newModels {
+            newArray.orderedInsert(newModel, withOrder: order)
+        }
+        
+        return newArray
+    }
+    
 }

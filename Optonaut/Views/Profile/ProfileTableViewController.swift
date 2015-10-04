@@ -7,18 +7,26 @@
 //
 
 import UIKit
+import Async
+import Crashlytics
 
-class ProfileTableViewController: OptographTableViewController, TransparentNavbar {
+class ProfileTableViewController: OptographTableViewController, TransparentNavbar, UniqueView {
     
     private let viewModel: OptographsViewModel
+    private let personId: UUID
+    
+    let refreshControl = UIRefreshControl()
     
     // subviews
-    private let blankHeaderView = UIView()
+    private var headerTableViewCell: ProfileHeaderTableViewCell?
     
-    var scrollCallback: ((CGFloat) -> ())?
+    let uniqueIdentifier: String
     
     required init(personId: UUID) {
+        self.personId = personId
         viewModel = OptographsViewModel(personId: personId)
+        viewModel.refreshNotification.notify()
+        uniqueIdentifier = "profile-\(personId)"
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -29,30 +37,54 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.results.producer.start(next: { results in
-            self.items = results
-            self.tableView.reloadData()
-        })
+        tableView.registerClass(ProfileHeaderTableViewCell.self, forCellReuseIdentifier: "profile-header-cell")
+        tableView.bounces = false
         
-        viewModel.resultsLoading.value = true
+        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
+            self.viewModel.refreshNotification.notify()
+            Async.main(after: 10) { self.refreshControl.endRefreshing() }
+        }
+        tableView.addSubview(refreshControl)
         
-//        print(tableView.gestureRecognizers)
+        viewModel.results.producer
+            .on(
+                next: { results in
+                    self.items = results
+                    self.tableView.reloadData()
+                    self.refreshControl.endRefreshing()
+                },
+                error: { _ in
+                    self.refreshControl.endRefreshing()
+                }
+            )
+            .start()
         
-//        blankHeaderView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 280)
-//        tableView.tableHeaderView = blankHeaderView
+        view.setNeedsUpdateConstraints()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-//        tableView.contentInset = UIEdgeInsetsZero
-        tableView.contentInset = UIEdgeInsets(top: 280, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = UIEdgeInsetsZero
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        viewModel.refreshNotification.notify()
+        
         updateNavbarAppear()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Answers.logContentViewWithName("Profile",
+            contentType: "ProfileView",
+            contentId: "\(personId)",
+            customAttributes: [:])
+        
+        headerTableViewCell?.viewModel.reloadModel()
     }
     
     override func updateViewConstraints() {
@@ -61,8 +93,39 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         super.updateViewConstraints()
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        scrollCallback?(tableView.contentOffset.y + 280)
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if indexPath.row == 0 {
+            return 280
+        } else {
+            return super.tableView(tableView, heightForRowAtIndexPath: NSIndexPath(forRow: indexPath.row - 1, inSection: indexPath.section))
+        }
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        if indexPath.row == 0 {
+            let cell = self.tableView.dequeueReusableCellWithIdentifier("profile-header-cell") as! ProfileHeaderTableViewCell
+            headerTableViewCell = cell
+            cell.navigationController = navigationController as? NavigationController
+            cell.bindViewModel(personId)
+            return cell
+        } else {
+            return super.tableView(tableView, cellForRowAtIndexPath: NSIndexPath(forRow: indexPath.row - 1, inSection: indexPath.section))
+        }
+    }
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return items.count + 1
+    }
+    
+}
+
+// MARK: - LoadMore
+extension ProfileTableViewController: LoadMore {
+    
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        checkRow(indexPath) {
+            self.viewModel.loadMoreNotification.notify()
+        }
     }
     
 }

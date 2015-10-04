@@ -10,14 +10,18 @@ import Foundation
 import ReactiveCocoa
 import ObjectMapper
 import Async
+import WebImage
 
 class CreateOptographViewModel {
     
-    let previewImage = MutableProperty<UIImage>(UIImage(named: "optograph-details-placeholder")!)
+    let previewImageUrl = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     let text = MutableProperty<String>("")
+    let hashtagString = MutableProperty<String>("")
+    let hashtagStringValid = MutableProperty<Bool>(true)
     let pending = MutableProperty<Bool>(true)
     let publishLater: MutableProperty<Bool>
+    let cameraPreviewEnabled = MutableProperty<Bool>(true)
     
     private var optograph = Optograph.newInstance() 
     
@@ -31,13 +35,31 @@ class CreateOptographViewModel {
             })
             .mapError { _ in ApiError.Nil }
             .map { (lat, lon) in ["latitude": lat, "longitude": lon] }
-            .flatMap(.Latest) { parameters in ApiService<LocationMappable>.post("locations/lookup", parameters: parameters) }
-            .start(next: { locationData in
-                self.location.value = locationData.text
-            })
+            .flatMap(.Latest) { ApiService<LocationMappable>.post("locations/lookup", parameters: $0) }
+            .startWithNext { self.location.value = $0.text }
         
-        text.producer.start(next: { self.optograph.text = $0 })
-        location.producer.start(next: { self.optograph.location.text = $0 })
+        text.producer.startWithNext { self.optograph.text = $0 }
+        location.producer.startWithNext { self.optograph.location.text = $0 }
+        
+        let hashtagRegex = try! NSRegularExpression(pattern: "(#[\\\\u4e00-\\\\u9fa5a-zA-Z0-9]+)\\w*", options: [.CaseInsensitive])
+        
+        hashtagStringValid <~ hashtagString.producer
+            .map { str in
+                return !hashtagRegex.matchesInString(str, options: [], range: NSRange(location: 0, length: str.characters.count)).isEmpty
+            }
+        
+        hashtagStringValid.producer
+            .filter(identity)
+            .startWithNext { _ in
+                let str = self.hashtagString.value
+                let nsStr = str as NSString
+                self.optograph.hashtagString = hashtagRegex
+                    .matchesInString(str, options: [], range: NSRange(location: 0, length: str.characters.count))
+                    .map { nsStr.substringWithRange($0.range) }
+                    .map { $0.lowercaseString }
+                    .map { $0.substringFromIndex($0.startIndex.advancedBy(1)) }
+                    .joinWithSeparator(",")
+            }
     }
     
     func saveAsset(asset: OptographAsset) {
@@ -48,7 +70,8 @@ class CreateOptographViewModel {
             data.writeToFile("\(StaticPath)/\(optograph.rightTextureAssetId).jpg", atomically: true)
         case .PreviewImage(let data):
             data.writeToFile("\(StaticPath)/\(optograph.previewAssetId).jpg", atomically: true)
-            previewImage.value = UIImage(data: data)!
+            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: "\(S3URL)/original/\(optograph.previewAssetId).jpg", toDisk: true)
+            previewImageUrl.value = "\(S3URL)/original/\(optograph.previewAssetId).jpg"
         }
     }
     

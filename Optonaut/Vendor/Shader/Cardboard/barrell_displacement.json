@@ -1,0 +1,21 @@
+{
+    "passes" : {
+        "barrell_displacement" : {
+            "outputs" : {
+                "color" : "COLOR"
+            },
+            "inputs" : {
+                "_MainTex" : "COLOR"
+                
+            },
+            "program" : "barrell_displacement",
+            "draw" : "DRAW_QUAD"
+        }
+    },
+    "sequence" : [
+                  "barrell_displacement"
+                  ],
+    "symbols" : {
+     
+    }
+}

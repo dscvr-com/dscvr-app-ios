@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import WebImage
 
 struct AssociationKey {
     static var hidden: UInt8 = 1
@@ -21,6 +22,10 @@ struct AssociationKey {
     static var placeholder: UInt8 = 9
     static var animating: UInt8 = 10
     static var backgroundColor: UInt8 = 11
+    static var buttonTitle: UInt8 = 12
+    static var buttonTitleColor: UInt8 = 13
+    static var imageUrl: UInt8 = 14
+    static var status: UInt8 = 15
 }
 
 enum objc_AssociationPolicy : UInt {
@@ -43,19 +48,32 @@ func lazyAssociatedProperty<T: AnyObject>(host: AnyObject, key: UnsafePointer<Vo
 func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: T -> (), getter: () -> T) -> MutableProperty<T> {
     return lazyAssociatedProperty(host, key: key) {
         let property = MutableProperty<T>(getter())
-        property.producer
-            .start(next: {
-                newValue in
-                setter(newValue)
-            })
+        property.producer.startWithNext { setter($0) }
         return property
     }
 }
 
-extension UIImageView {
-    public var rac_image: MutableProperty<UIImage> {
-        return lazyMutableProperty(self, key: &AssociationKey.image, setter: { self.image = $0 }, getter: { self.image ?? UIImage() })
+extension PlaceholderImageView {
+
+    var rac_url: MutableProperty<String> {
+        return lazyAssociatedProperty(self, key: &AssociationKey.imageUrl) {
+            let property = MutableProperty<String>("")
+            property.producer.startWithNext { urlStr in
+                if let url = NSURL(string: urlStr) {
+                    self.sd_setImageWithURL(url, placeholderImage: self.placeholderImage)
+                }
+            }
+            return property
+        }
     }
+}
+
+extension RoundedTextField {
+    
+    var rac_status: MutableProperty<RoundedTextField.Status> {
+        return lazyMutableProperty(self, key: &AssociationKey.status, setter: { self.status = $0 }, getter: { self.status })
+    }
+    
 }
 
 extension UIButton {
@@ -63,12 +81,24 @@ extension UIButton {
         return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.enabled = $0 }, getter: { self.enabled })
     }
     
-    public var rac_userInteractionEnabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.userInteractionEnabled = $0 }, getter: { self.userInteractionEnabled })
-    }
-    
     public var rac_backgroundColor: MutableProperty<UIColor?> {
         return lazyMutableProperty(self, key: &AssociationKey.backgroundColor, setter: { self.backgroundColor = $0 }, getter: { self.backgroundColor })
+    }
+    
+    public var rac_titleColor: MutableProperty<UIColor?> {
+        return lazyAssociatedProperty(self, key: &AssociationKey.buttonTitleColor) {
+            let property = MutableProperty<UIColor?>(nil)
+            property.producer.startWithNext { self.setTitleColor($0, forState: .Normal) }
+            return property
+        }
+    }
+    
+    public var rac_title: MutableProperty<String> {
+        return lazyAssociatedProperty(self, key: &AssociationKey.buttonTitle) {
+            let property = MutableProperty<String>("")
+            property.producer.startWithNext { self.setTitle($0, forState: .Normal) }
+            return property
+        }
     }
 }
 
@@ -79,6 +109,10 @@ extension UIView {
     
     public var rac_hidden: MutableProperty<Bool> {
         return lazyMutableProperty(self, key: &AssociationKey.hidden, setter: { self.hidden = $0 }, getter: { self.hidden })
+    }
+    
+    public var rac_userInteractionEnabled: MutableProperty<Bool> {
+        return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.userInteractionEnabled = $0 }, getter: { self.userInteractionEnabled })
     }
 }
 
@@ -97,10 +131,6 @@ extension UILabel {
         return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.enabled = $0 }, getter: { self.enabled })
     }
     
-    public var rac_userInteractionEnabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.userInteractionEnabled = $0 }, getter: { self.userInteractionEnabled })
-    }
-    
     public var rac_textColor: MutableProperty<UIColor> {
         return lazyMutableProperty(self, key: &AssociationKey.textColor, setter: { self.textColor = $0 }, getter: { self.textColor })
     }
@@ -109,17 +139,16 @@ extension UILabel {
 extension UITextField {
     public var rac_text: MutableProperty<String> {
         return lazyAssociatedProperty(self, key: &AssociationKey.text) {
-            
             self.addTarget(self, action: "changed", forControlEvents: UIControlEvents.EditingChanged)
             
             let property = MutableProperty<String>(self.text ?? "")
-            property.producer.start(next: { self.text = $0 })
+            property.producer.startWithNext { self.text = $0 }
             return property
         }
     }
     
     func changed() {
-        rac_text.value = self.text!
+        rac_text.value = self.text ?? ""
     }
     
     public var rac_textColor: MutableProperty<UIColor?> {
@@ -133,27 +162,15 @@ extension UITextField {
 
 extension UITextView {
     public var rac_text: MutableProperty<String> {
-        return lazyAssociatedProperty(self, key: &AssociationKey.text) {
-            let property = MutableProperty<String>(self.text ?? "")
-            property.producer.start(next: { self.text = $0 })
-            return property
-        }
+        return lazyMutableProperty(self, key: &AssociationKey.text, setter: { self.text = $0 }, getter: { self.text })
     }
 }
 
 extension UIActivityIndicatorView {
     public var rac_animating: MutableProperty<Bool> {
         return lazyAssociatedProperty(self, key: &AssociationKey.animating) {
-            
             let property = MutableProperty<Bool>(false)
-            property.producer
-                .start(next: { animate in
-                    if animate {
-                        self.startAnimating()
-                    } else {
-                        self.stopAnimating()
-                    }
-                })
+            property.producer.startWithNext { $0 ? self.startAnimating() : self.stopAnimating() }
             return property
         }
     }

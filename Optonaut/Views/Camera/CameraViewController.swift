@@ -33,7 +33,7 @@ class CameraViewController: UIViewController {
     }()
     
     // stitcher pointer and variables
-    private let stitcher = IosPipeline()
+    private var stitcher = IosPipeline()
     private var frameCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
@@ -56,12 +56,11 @@ class CameraViewController: UIViewController {
     
     // ball
     private let ballNode = SCNNode()
+    private var ballSpeed = GLKVector3Make(0, 0, 0)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Recording"])
-        
+    
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.frame = view.bounds
@@ -72,13 +71,13 @@ class CameraViewController: UIViewController {
         setupBall()
         setupSelectionPoints()
         
-        viewModel.tiltAngle.producer.start(next: { self.tiltView.angle = $0 })
-        viewModel.distXY.producer.start(next: { self.tiltView.distXY = $0 })
+        viewModel.tiltAngle.producer.startWithNext { self.tiltView.angle = $0 }
+        viewModel.distXY.producer.startWithNext { self.tiltView.distXY = $0 }
         tiltView.innerRadius = 35
         view.addSubview(tiltView)
     
-        viewModel.progress.producer.start(next: { self.progressView.progress = $0 })
-        viewModel.isRecording.producer.start(next: { self.progressView.isActive = $0 })
+        viewModel.progress.producer.startWithNext { self.progressView.progress = $0 }
+        viewModel.isRecording.producer.startWithNext { self.progressView.isActive = $0 }
         view.addSubview(progressView)
         
         instructionView.font = UIFont.robotoOfSize(22, withType: .Medium)
@@ -89,10 +88,11 @@ class CameraViewController: UIViewController {
         view.addSubview(instructionView)
         
         circleView.layer.cornerRadius = 35
-        viewModel.isRecording.producer.start(next: { self.circleView.isActive = !$0 })
+        viewModel.isRecording.producer.startWithNext { self.circleView.isDashed = !$0 }
+        viewModel.isCentered.producer.startWithNext { self.circleView.isActive = $0 }
         view.addSubview(circleView)
         
-        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? BaseColor.hatched : UIColor.whiteColor().hatched }
+        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
         recordButtonView.layer.cornerRadius = 35
         viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
             .map { _ in true }
@@ -107,10 +107,7 @@ class CameraViewController: UIViewController {
         closeButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         closeButtonView.titleLabel?.font = UIFont.robotoOfSize(16, withType: .Regular)
         closeButtonView.alpha = 0.8
-        closeButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.navigationController?.popViewControllerAnimated(false)
-            return RACSignal.empty()
-        })
+        closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         view.addSubview(closeButtonView)
         
         if SessionService.sessionData!.debuggingEnabled {
@@ -118,6 +115,7 @@ class CameraViewController: UIViewController {
         }
         
         setupCamera()
+      
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -157,6 +155,8 @@ class CameraViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Recording"])
         
         tabBarController?.tabBar.hidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -258,19 +258,39 @@ class CameraViewController: UIViewController {
     
     private func setupBall() {
         ballNode.geometry = SCNSphere(radius: CGFloat(0.04))
-        ballNode.geometry?.firstMaterial?.diffuse.contents = BaseColor
+        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor.Accent
         
         scene.rootNode.addChildNode(ballNode)
     }
     
     private func updateBallPosition() {
         
+        let maxSpeed = Float(0.008)
+        let accelleration = Float(0.1)
+        
         let vec = GLKVector3Make(0, 0, -1)
-        let res = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
+        let target = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
         
         //print("Ball pos: \(res.x), \(res.y), \(res.z)")
+        let ball = SCNVector3ToGLKVector3(ballNode.position)
         
-        ballNode.position = SCNVector3FromGLKVector3(res)
+        if ball.x == 0 && ball.y == 0 && ball.z == 0 {
+            ballNode.position = SCNVector3FromGLKVector3(target)
+        } else {
+            var newSpeed = GLKVector3Subtract(target, ball)
+            
+            let dist = GLKVector3Length(newSpeed)
+            
+            if dist > maxSpeed {
+                newSpeed = GLKVector3MultiplyScalar(GLKVector3Normalize(newSpeed), maxSpeed)
+            }
+            newSpeed = GLKVector3Subtract(newSpeed, ballSpeed)
+            newSpeed = GLKVector3MultiplyScalar(newSpeed, accelleration)
+            newSpeed = GLKVector3Add(newSpeed, ballSpeed)
+            ballSpeed = newSpeed;
+            ballNode.position = SCNVector3FromGLKVector3(GLKVector3Add(ball, ballSpeed))
+        }
+        
     }
     
     private func setupCamera() {
@@ -299,6 +319,24 @@ class CameraViewController: UIViewController {
         }
         
         session.commitConfiguration()
+        
+        setFocusMode(videoDevice, mode: AVCaptureFocusMode.ContinuousAutoFocus)
+        
+        //Locks the focus as soon as the user starts recording.
+        //We do this to avoid re-focusing during recording, which breaks the Optograph
+        viewModel.isRecording.producer.startWithNext {
+            if $0 {
+                self.setFocusMode(videoDevice, mode: AVCaptureFocusMode.Locked)
+            } else {
+                self.setFocusMode(videoDevice, mode: AVCaptureFocusMode.ContinuousAutoFocus)
+            }
+        }
+    }
+    
+    private func setFocusMode(videoDevice: AVCaptureDevice, mode: AVCaptureFocusMode) {
+        try! videoDevice.lockForConfiguration()
+        videoDevice.focusMode = mode
+        videoDevice.unlockForConfiguration()
     }
     
     private func authorizeCamera() {
@@ -316,6 +354,7 @@ class CameraViewController: UIViewController {
     }
  
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
+        
         if stitcher.IsFinished() {
             return
         }
@@ -338,9 +377,16 @@ class CameraViewController: UIViewController {
             let errorVec = stitcher.GetAngularDistanceToBall()
             
             Async.main {
-                self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
-                self.viewModel.tiltAngle.value = Float(errorVec.z)
-                self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
+                if self.isViewLoaded() {
+                    // This is safe, since the main thread also disposes the stitcher.
+                    if self.stitcher.IsDisposed() || self.stitcher.IsFinished() {
+                        return
+                    }
+                    
+                    self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
+                    self.viewModel.tiltAngle.value = Float(errorVec.z)
+                    self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
+                }
             }
             
             updateBallPosition()
@@ -362,17 +408,15 @@ class CameraViewController: UIViewController {
                 }
             }
 
-            if self.viewModel.isRecording.value {
-                debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
-            }
+            //We always need debug data, even when not recording - the aligner is not paused when idle.
+            debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
         }
     }
     
     func finish() {
-        // TODO remove
-        if !stitcher.HasResults() {
-            return
-        }
+        
+        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Stitching Start"])
+        
         
         session.stopRunning()
         
@@ -380,42 +424,70 @@ class CameraViewController: UIViewController {
             child.removeFromParentNode()
         }
         
+        if !stitcher.HasResults() {
+            // Only possible in debug. We just return to avoid a crash.
+            return
+        }
+        
         let assetSignalProducer = SignalProducer<OptographAsset, NoError> { sink, disposable in
-            let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)
-
-            sendNext(sink, OptographAsset.PreviewImage(preview!))
-
-            let leftBuffer = self.stitcher.GetLeftResult()
-            var leftCGImage: CGImage? = ImageBufferToCGImage(leftBuffer)
-            let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage!), 0.8)
-            self.stitcher.FreeImageBuffer(leftBuffer)
-            leftCGImage = nil
-            sendNext(sink, OptographAsset.LeftImage(leftImageData!))
-
-            let rightBuffer = self.stitcher.GetRightResult()
-            var rightCGImage: CGImage? = ImageBufferToCGImage(rightBuffer)
-            let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage!), 0.8)
-            self.stitcher.FreeImageBuffer(rightBuffer)
-            rightCGImage = nil
-
-            sendNext(sink, OptographAsset.RightImage(rightImageData!))
+//            let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)
+//            sendNext(sink, OptographAsset.PreviewImage(preview!))
             
+            self.stitcher.Finish()
+            
+            if !disposable.disposed {
+                let leftBuffer = self.stitcher.GetLeftResult()
+                var leftCGImage: CGImage? = ImageBufferToCGImage(leftBuffer)
+                let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage!), 0.8)
+                self.stitcher.FreeImageBuffer(leftBuffer)
+                leftCGImage = nil
+                sendNext(sink, OptographAsset.LeftImage(leftImageData!))
+            }
+            
+            if !disposable.disposed {
+                let rightBuffer = self.stitcher.GetRightResult()
+                var rightCGImage: CGImage? = ImageBufferToCGImage(rightBuffer)
+                let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage!), 0.8)
+                self.stitcher.FreeImageBuffer(rightBuffer)
+                rightCGImage = nil
+                sendNext(sink, OptographAsset.RightImage(rightImageData!))
+            }
+            
+            self.stitcher.Dispose()
+            print("Stitcher dispose called")
+
             if SessionService.sessionData!.debuggingEnabled {
-                self.debugHelper?.upload()
-                    .start(completed: {
-                        sendCompleted(sink)
-                    })
+                //self.debugHelper?.upload().startWithCompleted { sendCompleted(sink) }
+                sendCompleted(sink)
             } else {
                 sendCompleted(sink)
             }
             
+            Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Stitching Finish"])
+            
             disposable.addDisposable {
-                // TODO @emiswelt! insert code to cancel stitching
+                // TODO @EJ: This is a potential racing condition. Stitching runs on another thread...
+                // Just let it finish by now.
+                print("Dispose called")
+                
             }
         }
         
         navigationController!.pushViewController(CreateOptographViewController(assetSignalProducer: assetSignalProducer), animated: false)
-        navigationController!.viewControllers.removeAtIndex(1)
+        navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self
+    }
+    
+    func cancel() {
+        
+        
+        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Cancel"])
+        
+        
+        session.stopRunning()
+        stitcher.Finish()
+        stitcher.Dispose()
+        print("Stitcher dispose called")
+        navigationController?.popViewControllerAnimated(false)
     }
 }
 
@@ -456,10 +528,15 @@ private func ==(lhs: Edge, rhs: Edge) -> Bool {
 
 private class DashedCircleView: UIView {
     
-    var isActive = true {
+    var isActive = false {
         didSet {
-            border.lineDashPattern = isActive ? [19, 8] : nil
-            border.strokeColor = isActive ? UIColor.whiteColor().CGColor : BaseColor.CGColor
+            border.strokeColor = isActive ? UIColor.Accent.CGColor : UIColor.whiteColor().CGColor
+        }
+    }
+    
+    var isDashed = true {
+        didSet {
+            border.lineDashPattern = isDashed ? [19, 8] : nil
         }
     }
     
@@ -501,8 +578,8 @@ private class ProgressView: UIView {
     }
     var isActive = false {
         didSet {
-            foregroundLine.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
-            trackingPoint.backgroundColor = isActive ? BaseColor.CGColor : UIColor.whiteColor().CGColor
+            foregroundLine.backgroundColor = isActive ? UIColor.Accent.CGColor : UIColor.whiteColor().CGColor
+            trackingPoint.backgroundColor = isActive ? UIColor.Accent.CGColor : UIColor.whiteColor().CGColor
         }
     }
     
@@ -596,18 +673,18 @@ private class TiltView: UIView {
         diagonalLine.lineWidth = 2
         layer.addSublayer(diagonalLine)
         
-        verticalLine.strokeColor = BaseColor.CGColor
+        verticalLine.strokeColor = UIColor.Accent.CGColor
         verticalLine.fillColor = UIColor.clearColor().CGColor
         verticalLine.lineWidth = 2
         layer.addSublayer(verticalLine)
         
-        ringSegment.strokeColor = BaseColor.CGColor
+        ringSegment.strokeColor = UIColor.Accent.CGColor
         ringSegment.fillColor = UIColor.clearColor().CGColor
         ringSegment.lineWidth = 2
         layer.addSublayer(ringSegment)
         
         circleSegment.strokeColor = UIColor.clearColor().CGColor
-        circleSegment.fillColor = BaseColor.hatched.CGColor
+        circleSegment.fillColor = UIColor.Accent.hatched2.CGColor
         layer.addSublayer(circleSegment)
     }
     

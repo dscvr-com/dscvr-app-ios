@@ -37,10 +37,9 @@ class ActivityViewModel {
     }
     
     func read() {
-        ApiService<EmptyResponse>.post("activities/\(activity.id)/read", parameters: nil)
-            .start(completed: {
-                self.isRead.value = true
-            })
+        ApiService<EmptyResponse>.post("activities/\(activity.id)/read", parameters: nil).startWithCompleted {
+            self.isRead.value = true
+        }
     }
     
 }

@@ -8,6 +8,8 @@
 
 import UIKit
 import ReactiveCocoa
+import Async
+import Crashlytics
 
 class LoginViewController: UIViewController {
     
@@ -17,7 +19,7 @@ class LoginViewController: UIViewController {
     let emailOrUserNameInputView = UITextField()
     let passwordInputView = UITextField()
     let submitButtonView = UIButton()
-    let forgotPasswordView = UILabel()
+//    let forgotPasswordView = UILabel()
     let showInviteView = UILabel()
     let loadingView = UIView()
     
@@ -29,7 +31,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = BaseColor
+        view.backgroundColor = UIColor.Accent
         
         logoView.text = String.icomoonWithName(.LogoText)
         logoView.textColor = .whiteColor()
@@ -80,27 +82,15 @@ class LoginViewController: UIViewController {
         submitButtonView.layer.masksToBounds = true
         submitButtonView.rac_userInteractionEnabled <~ viewModel.allowed
         submitButtonView.rac_alpha <~ viewModel.allowed.producer.map { $0 ? 1 : 0.5 }
-        submitButtonView.rac_command = RACCommand(signalBlock: { _ in
-            self.viewModel.login()
-                .start(
-                    error: { _ in 
-                        let alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-                        self.presentViewController(alert, animated: true, completion: nil)
-                    }, 
-                    completed: {
-                        self.presentViewController(TabBarViewController(), animated: false, completion: nil)
-                })
-            return RACSignal.empty()
-        })
+        submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "login"))
         formView.addSubview(submitButtonView)
         
-        forgotPasswordView.textColor = .whiteColor()
-        forgotPasswordView.text = "Forgot your password?"
-        forgotPasswordView.font = .robotoOfSize(13, withType: .Regular)
-        forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showForgotPasswordViewController"))
-        forgotPasswordView.userInteractionEnabled = true
-        view.addSubview(forgotPasswordView)
+//        forgotPasswordView.textColor = .whiteColor()
+//        forgotPasswordView.text = "Forgot your password?"
+//        forgotPasswordView.font = .robotoOfSize(13, withType: .Regular)
+//        forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showForgotPasswordViewController"))
+//        forgotPasswordView.userInteractionEnabled = true
+//        view.addSubview(forgotPasswordView)
         
         showInviteView.textColor = .whiteColor()
         showInviteView.text = "Request Invite"
@@ -110,7 +100,7 @@ class LoginViewController: UIViewController {
         view.addSubview(showInviteView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
-        loadingView.rac_hidden <~ viewModel.pending.producer.map { !$0 }
+        loadingView.rac_hidden <~ viewModel.pending.producer.map(negate)
         view.addSubview(loadingView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
@@ -123,6 +113,17 @@ class LoginViewController: UIViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
+        
+        Answers.logContentViewWithName("Login View",
+            contentType: "LoginViewController",
+            contentId: "",
+            customAttributes: [:])
+        
+        super.viewDidAppear(animated)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -158,8 +159,8 @@ class LoginViewController: UIViewController {
             submitButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
             submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            forgotPasswordView.autoPinEdge(.Top, toEdge: .Bottom, ofView: formView, withOffset: 23)
-            forgotPasswordView.autoAlignAxisToSuperviewAxis(.Vertical)
+//            forgotPasswordView.autoPinEdge(.Top, toEdge: .Bottom, ofView: formView, withOffset: 23)
+//            forgotPasswordView.autoAlignAxisToSuperviewAxis(.Vertical)
             
             showInviteView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -28)
             showInviteView.autoAlignAxisToSuperviewAxis(.Vertical)
@@ -175,11 +176,6 @@ class LoginViewController: UIViewController {
     // needed for vertically centering (respecting keyboard visiblity)
     private func formBottomOffsetForKeyboardHeight(keyboardHeight: CGFloat, keyboardVisible: Bool) -> CGFloat {
         return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2 + 158 / 2
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func showRequestInviteViewController() {
@@ -223,6 +219,25 @@ class LoginViewController: UIViewController {
         view.endEditing(true)
     }
     
+    func login() {
+        viewModel.login()
+            .on(
+                error: { _ in 
+                    let alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                }, 
+                completed: {
+                    if SessionService.needsOnboarding {
+                        self.presentViewController(OnboardingInfoViewController(), animated: false, completion: nil)
+                    } else {
+                        self.presentViewController(TabBarViewController(), animated: false, completion: nil)
+                    }
+                }
+            )
+            .start()
+    }
+    
 }
 
 // MARK: - UITextFieldDelegate
@@ -235,7 +250,9 @@ extension LoginViewController: UITextFieldDelegate {
         
         if textField == passwordInputView {
             view.endEditing(true)
-            submitButtonView.sendActionsForControlEvents(.TouchUpInside)
+            Async.main {
+                self.login()
+            }
         }
         
         return true

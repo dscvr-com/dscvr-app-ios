@@ -14,13 +14,13 @@ import Crashlytics
 
 class ProfileViewModel {
     
-    let fullName = MutableProperty<String>("")
+    let displayName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let text = MutableProperty<String>("")
     let followersCount = MutableProperty<Int>(0)
     let followedCount = MutableProperty<Int>(0)
     let isFollowed = MutableProperty<Bool>(false)
-    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
+    let avatarImageUrl = MutableProperty<String>("")
     
     private var person = Person.newInstance()
     
@@ -32,20 +32,19 @@ class ProfileViewModel {
             contentId: "profile-\(id)",
             customAttributes: [:])
         
-        loadModel()
+        reloadModel()
     
-        ApiService.get("persons/\(id)")
-            .start(next: { (person: Person) in
-                self.person = person
-                self.saveModel()
-                self.updateProperties()
-            })
+        ApiService.get("persons/\(id)").startWithNext { (person: Person) in
+            self.person = person
+            self.saveModel()
+            self.updateProperties()
+        }
     }
     
-    func loadModel() {
+    func reloadModel() {
         let query = PersonTable.filter(PersonTable[PersonSchema.id] == person.id)
         
-        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
+        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
             self.person = person
             updateProperties()
         }
@@ -60,10 +59,10 @@ class ProfileViewModel {
                     ? ApiService<EmptyResponse>.delete("persons/\(self.person.id)/follow")
                     : ApiService<EmptyResponse>.post("persons/\(self.person.id)/follow", parameters: nil)
             }
-            .on(started: {
-                self.isFollowed.value = !followedBefore
-            })
-            .start(
+            .on(
+                started: {
+                    self.isFollowed.value = !followedBefore
+                },
                 error: { _ in
                     self.isFollowed.value = followedBefore
                 },
@@ -72,6 +71,7 @@ class ProfileViewModel {
                     self.saveModel()
                 }
             )
+            .start()
     }
     
     private func updateModel() {
@@ -79,14 +79,13 @@ class ProfileViewModel {
     }
     
     private func updateProperties() {
-        fullName.value = person.fullName
+        displayName.value = person.displayName
         userName.value = person.userName
         text.value = person.text
         followersCount.value = person.followersCount
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed
-        
-        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(person.avatarAssetId).jpg", to: "\(StaticPath)/\(person.avatarAssetId).jpg").map { UIImage(data: $0)! }
+        avatarImageUrl.value = "\(S3URL)/400x400/\(person.avatarAssetId).jpg"
     }
     
     private func saveModel() {

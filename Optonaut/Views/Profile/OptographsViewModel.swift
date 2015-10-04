@@ -12,12 +12,14 @@ import SQLite
 
 class OptographsViewModel {
     
-    let id: ConstantProperty<UUID>
     let results = MutableProperty<[Optograph]>([])
-    let resultsLoading = MutableProperty<Bool>(false)
+    
+    let refreshNotification = NotificationSignal()
+    let loadMoreNotification = NotificationSignal()
     
     init(personId: UUID) {
-        id = ConstantProperty(personId)
+        
+        let queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
         
         let query = OptographTable
             .select(*)
@@ -25,41 +27,71 @@ class OptographsViewModel {
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(PersonTable[PersonSchema.id] == personId)
         
-        let optographs = DatabaseManager.defaultConnection.prepare(query).map { row -> Optograph in
-            let person = Person.fromSQL(row)
-            let location = Location.fromSQL(row)
-            var optograph = Optograph.fromSQL(row)
-            
-            optograph.person = person
-            optograph.location = location
-            
-            return optograph
-        }
+        refreshNotification.signal
+            .mapError { _ in DatabaseQueryError.Nil }
+            .flatMap(.Latest) { _ in
+                DatabaseService.query(.Many, query: query)
+                    .observeOn(QueueScheduler(queue: queue))
+                    .map { row -> Optograph in
+                        let person = Person.fromSQL(row)
+                        let location = Location.fromSQL(row)
+                        var optograph = Optograph.fromSQL(row)
+                        
+                        optograph.person = person
+                        optograph.location = location
+                        
+                        return optograph
+                    }
+                    .collect()
+                    .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
+                    .startOn(QueueScheduler(queue: queue))
+            }
+            .observeOn(UIScheduler())
+            .observeNext { optographs in
+                self.results.value = optographs
+                // needed since Optograph could have been deleted in the meantime
+                self.results.value = self.results.value.filter { !$0.deleted }
+            }
         
-        results.value = optographs.sort { $0.createdAt > $1.createdAt }
-        
-        resultsLoading.producer
+        refreshNotification.signal
             .mapError { _ in ApiError.Nil }
-            .filter { $0 }
-            .flatMap(.Latest) { _ in ApiService.get("persons/\(personId)/optographs") }
-            .start(
-                next: processNewOptograph,
-                completed: {
-                    self.resultsLoading.value = false
-                },
-                error: { _ in
-                    self.resultsLoading.value = false
-                }
-        )
+            .flatMap(.Latest) { _ in
+               ApiService<Optograph>.get("persons/\(personId)/optographs")
+                    .observeOn(QueueScheduler(queue: queue))
+                    .on(next: { optograph in
+                        try! optograph.insertOrReplace()
+                        try! optograph.location.insertOrReplace()
+                        try! optograph.person.insertOrReplace()
+                    })
+                    .collect()
+                    .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
+                    .startOn(QueueScheduler(queue: queue))
+            }
+            .observeOn(UIScheduler())
+            .observeNext { optographs in
+                self.results.value = optographs
+            }
         
-    }
-    
-    private func processNewOptograph(optograph: Optograph) {
-        results.value.orderedInsert(optograph, withOrder: .OrderedDescending)
-        
-        try! optograph.insertOrReplace()
-        try! optograph.location.insertOrReplace()
-        try! optograph.person.insertOrReplace()
+        loadMoreNotification.signal
+            .mapError { _ in ApiError.Nil }
+            .map { _ in self.results.value.last }
+            .ignoreNil()
+            .flatMap(.Latest) { oldestResult in
+                ApiService<Optograph>.get("persons/\(personId)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                    .observeOn(QueueScheduler(queue: queue))
+                    .on(next: { optograph in
+                        try! optograph.insertOrReplace()
+                        try! optograph.location.insertOrReplace()
+                        try! optograph.person.insertOrReplace()
+                    })
+                    .collect()
+                    .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
+                    .startOn(QueueScheduler(queue: queue))
+            }
+            .observeOn(UIScheduler())
+            .observeNext { optographs in
+                self.results.value = optographs
+            }
     }
     
 }

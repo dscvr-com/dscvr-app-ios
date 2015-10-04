@@ -12,12 +12,12 @@ import SQLite
 
 class EditProfileViewModel {
     
-    let fullName = MutableProperty<String>("")
+    let displayName = MutableProperty<String>("")
     let userName = MutableProperty<String>("")
     let userNameTaken = MutableProperty<Bool>(false)
     let text = MutableProperty<String>("")
     let email = MutableProperty<String>("")
-    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
+    let avatarImageUrl = MutableProperty<String>("")
     let debugEnabled = MutableProperty<Bool>(false)
     let wantsNewsletter = MutableProperty<Bool>(false)
     
@@ -28,28 +28,30 @@ class EditProfileViewModel {
         
         let query = PersonTable.filter(PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
         
-        if let person = DatabaseManager.defaultConnection.pluck(query).map(Person.fromSQL) {
+        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
             self.person = person
             saveModel()
             updateProperties()
         }
         
-        ApiService<Person>.get("persons/me")
-            .start(next: { person in
-                self.person = person
-                self.saveModel()
-                self.updateProperties()
-            })
+        ApiService<Person>.get("persons/me").startWithNext { person in
+            self.person = person
+            self.saveModel()
+            self.updateProperties()
+        }
         
         userName.producer
+            .filter(isNotEmpty)
             .mapError { _ in ApiError.Nil }
             .on(next: { _ in self.userNameTaken.value = false })
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
-            .start(next: { userName in
+            .startWithNext { userName in
                 // nesting needed in order to accept ApiErrors
                 ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: ["user_name": userName])
-                    .start(error: { _ in self.userNameTaken.value = true })
-            })
+                    .startWithError { _ in
+                        self.userNameTaken.value = self.person.userName != userName
+                    }
+            }
     }
     
     func updateData() -> SignalProducer<EmptyResponse, ApiError> {
@@ -58,7 +60,7 @@ class EditProfileViewModel {
         }
         
         let parameters = [
-            "full_name": fullName.value,
+            "display_name": displayName.value,
             "user_name": userName.value,
             "text": text.value,
             "wants_newsletter": wantsNewsletter.value,
@@ -75,17 +77,20 @@ class EditProfileViewModel {
         let data = UIImageJPEGRepresentation(image, 1)
         let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         
-        avatarImage.value = UIImage(data: data!)!
-        
         return ApiService.post("persons/me/upload-profile-image", parameters: ["avatar_asset": str!])
             .on(next: { person in
                 self.person.avatarAssetId = person.avatarAssetId
+                self.updateProperties()
                 self.saveModel()
             })
     }
     
-    func updatePassword(currentPassword: String, newPassword: String) -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.post("persons/me/change-password", parameters: ["current": currentPassword, "new": newPassword])
+    func updatePassword(currentPassword: String, newPassword: String) -> SignalProducer<LoginMappable, ApiError> {
+        return ApiService<LoginMappable>.post("persons/me/change-password", parameters: ["current": currentPassword, "new": newPassword])
+            .on(next: { loginData in
+                SessionService.sessionData?.token = loginData.token
+                SessionService.sessionData?.password = newPassword
+            })
     }
     
     func updateEmail(email: String) -> SignalProducer<EmptyResponse, ApiError> {
@@ -103,16 +108,16 @@ class EditProfileViewModel {
     
     private func updateProperties() {
         email.value = person.email
-        fullName.value = person.fullName
+        displayName.value = person.displayName
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
         text.value = person.text
-        avatarImage <~ DownloadService.downloadContents(from: "\(S3URL)/400x400/\(person.avatarAssetId).jpg", to: "\(StaticPath)/\(person.avatarAssetId).jpg").map { UIImage(data: $0)! }
+        avatarImageUrl.value = "\(S3URL)/400x400/\(person.avatarAssetId).jpg"
     }
     
     private func updateModel() {
         person.email = email.value
-        person.fullName = fullName.value
+        person.displayName = displayName.value
         person.userName = userName.value
         person.wantsNewsletter = wantsNewsletter.value
         person.text = text.value
