@@ -309,11 +309,6 @@ class CreateOptographViewController: UIViewController, RedNavbar {
             return
         }
         
-        Answers.logContentViewWithName("Create Optograph Post",
-            contentType: "Create Optograph View Post",
-            contentId: "",
-            customAttributes: [:])
-        
         Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Posting"])
         
         viewModel.post().startWithNext { optograph in

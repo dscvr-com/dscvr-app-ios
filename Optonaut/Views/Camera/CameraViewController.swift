@@ -60,9 +60,7 @@ class CameraViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Recording"])
-        
+    
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.frame = view.bounds
@@ -157,11 +155,8 @@ class CameraViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-
-        Answers.logContentViewWithName("Camera View",
-            contentType: "CameraViewController",
-            contentId: "",
-            customAttributes: [:])
+        
+        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Recording"])
         
         tabBarController?.tabBar.hidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -420,10 +415,8 @@ class CameraViewController: UIViewController {
     
     func finish() {
         
-        Answers.logContentViewWithName("Camera View Stitching Start",
-            contentType: "CameraViewStitchingStart",
-            contentId: "StitchingStart",
-            customAttributes: [:])
+        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Stitching Start"])
+        
         
         session.stopRunning()
         
@@ -469,12 +462,8 @@ class CameraViewController: UIViewController {
             } else {
                 sendCompleted(sink)
             }
-        
-            Answers.logContentViewWithName("Camera View Stitching Finish",
-                contentType: "CameraViewStitchingFinish",
-                contentId: "StitchingFinish",
-                customAttributes: [:])
             
+            Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Stitching Finish"])
             
             disposable.addDisposable {
                 // TODO @EJ: This is a potential racing condition. Stitching runs on another thread...
@@ -491,10 +480,8 @@ class CameraViewController: UIViewController {
     func cancel() {
         
         
-        Answers.logContentViewWithName("Camera View Cancel",
-            contentType: "CameraViewCancel",
-            contentId: "Cancel",
-            customAttributes: [:])
+        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Cancel"])
+        
         
         session.stopRunning()
         stitcher.Finish()
