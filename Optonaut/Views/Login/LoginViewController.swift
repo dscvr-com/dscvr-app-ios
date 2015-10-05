@@ -9,7 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import Async
-import Crashlytics
+import Mixpanel
 
 class LoginViewController: UIViewController {
     
@@ -118,10 +118,7 @@ class LoginViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
         
-        Answers.logContentViewWithName("Login View",
-            contentType: "LoginViewController",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.Login")
         
         super.viewDidAppear(animated)
     }
@@ -131,6 +128,12 @@ class LoginViewController: UIViewController {
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.Login")
     }
     
     override func updateViewConstraints() {

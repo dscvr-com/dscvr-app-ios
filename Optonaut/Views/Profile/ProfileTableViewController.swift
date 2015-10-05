@@ -8,7 +8,7 @@
 
 import UIKit
 import Async
-import Crashlytics
+import Mixpanel
 
 class ProfileTableViewController: OptographTableViewController, TransparentNavbar, UniqueView {
     
@@ -79,12 +79,15 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Profile",
-            contentType: "ProfileView",
-            contentId: "\(personId)",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.Profile")
         
         headerTableViewCell?.viewModel.reloadModel()
+    }
+
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.Profile", properties: ["person_id": personId])
     }
     
     override func updateViewConstraints() {

@@ -10,7 +10,7 @@ import SQLite
 
 struct PersonSchemaType: ModelSchema {
     let id = Expression<UUID>("person_id")
-    let email = Expression<String>("person_email")
+    let email = Expression<String?>("person_email")
     let displayName = Expression<String>("person_display_name")
     let userName = Expression<String>("person_user_name")
     let text = Expression<String>("person_text")

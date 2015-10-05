@@ -14,7 +14,7 @@ import ReactiveCocoa
 import Alamofire
 import SceneKit
 import Async
-import Crashlytics
+import Mixpanel
 
 class CameraViewController: UIViewController {
     
@@ -156,7 +156,14 @@ class CameraViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Recording"])
+        Mixpanel.sharedInstance().timeEvent("View.Camera")
+        Mixpanel.sharedInstance().timeEvent("Action.Camera.StartRecording")
+        Mixpanel.sharedInstance().timeEvent("Action.Camera.FinishRecording")
+        Mixpanel.sharedInstance().timeEvent("Action.Camera.CancelRecording")
+        
+        viewModel.isRecording.producer.filter(identity).take(1).startWithNext { _ in
+            Mixpanel.sharedInstance().track("Action.Camera.StartRecording")
+        }
         
         tabBarController?.tabBar.hidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -175,6 +182,12 @@ class CameraViewController: UIViewController {
         motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
         
         session.startRunning()
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.Camera")
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -271,7 +284,6 @@ class CameraViewController: UIViewController {
         let vec = GLKVector3Make(0, 0, -1)
         let target = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
         
-        //print("Ball pos: \(res.x), \(res.y), \(res.z)")
         let ball = SCNVector3ToGLKVector3(ballNode.position)
         
         if ball.x == 0 && ball.y == 0 && ball.z == 0 {
@@ -415,8 +427,8 @@ class CameraViewController: UIViewController {
     
     func finish() {
         
-        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Stitching Start"])
-        
+        Mixpanel.sharedInstance().track("Action.Camera.FinishRecording")
+        Mixpanel.sharedInstance().timeEvent("Action.Camera.Stitching")
         
         session.stopRunning()
         
@@ -463,7 +475,7 @@ class CameraViewController: UIViewController {
                 sendCompleted(sink)
             }
             
-            Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Stitching Finish"])
+            Mixpanel.sharedInstance().track("Action.Camera.Stitching")
             
             disposable.addDisposable {
                 // TODO @EJ: This is a potential racing condition. Stitching runs on another thread...
@@ -479,9 +491,7 @@ class CameraViewController: UIViewController {
     
     func cancel() {
         
-        
-        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Cancel"])
-        
+        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
         
         session.stopRunning()
         stitcher.Finish()

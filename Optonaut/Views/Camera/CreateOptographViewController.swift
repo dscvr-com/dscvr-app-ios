@@ -9,7 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import KMPlaceholderTextView
-import Crashlytics
+import Mixpanel
 import ActiveLabel
 import PermissionScope
 import AVFoundation
@@ -76,8 +76,6 @@ class CreateOptographViewController: UIViewController, RedNavbar {
                 self.navigationController?.popViewControllerAnimated(false)
             }
         )
-        
-        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Preparing"])
         
         view.backgroundColor = .whiteColor()
         
@@ -234,11 +232,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Create Optograph",
-            contentType: "Create Optograph View",
-            contentId: "",
-            customAttributes: [:])
-        
+        Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
+        Mixpanel.sharedInstance().timeEvent("Action.CreateOptograph.Cancel")
         
         session.startRunning()
         
@@ -256,6 +251,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.CreateOptograph")
         
         session.stopRunning()
     }
@@ -300,6 +297,8 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     }
     
     func cancel() {
+        Mixpanel.sharedInstance().track("Action.CreateOptograph.Cancel")
+        
         stitcherDisposable?.dispose()
         navigationController?.popViewControllerAnimated(false)
     }
@@ -308,8 +307,6 @@ class CreateOptographViewController: UIViewController, RedNavbar {
         if viewModel.previewImageUrl.value.isEmpty {
             return
         }
-        
-        Answers.logCustomEventWithName("Camera", customAttributes: ["State": "Posting"])
         
         viewModel.post().startWithNext { optograph in
             self.navigationController?.pushViewController(DetailsTableViewController(optographId: optograph.id), animated: false)

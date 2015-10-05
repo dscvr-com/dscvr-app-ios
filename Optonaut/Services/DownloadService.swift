@@ -9,7 +9,6 @@
 import Foundation
 import ReactiveCocoa
 import Alamofire
-import Crashlytics
 
 class DownloadService: NSObject {
     

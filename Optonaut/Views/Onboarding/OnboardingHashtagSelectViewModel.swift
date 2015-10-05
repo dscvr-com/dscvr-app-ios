@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveCocoa
-import Crashlytics
 
 class OnboardingHashtagSelectViewModel {
     

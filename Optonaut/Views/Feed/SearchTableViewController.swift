@@ -8,7 +8,7 @@
 
 import UIKit
 import Alamofire
-import Crashlytics
+import Mixpanel
 
 class SearchTableViewController: OptographTableViewController, RedNavbar {
     
@@ -36,13 +36,16 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Search View",
-            contentType: "SearchTableView",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.Search")
         
         updateNavbarAppear()
         searchBar.becomeFirstResponder()
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.Search")
     }
     
     override func updateViewConstraints() {

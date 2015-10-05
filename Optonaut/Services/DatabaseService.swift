@@ -67,7 +67,7 @@ class DatabaseService {
         defaultConnection = try Connection(path)
         
         // enable console logging
-        //defaultConnection.trace(print)
+//        defaultConnection.trace { msg in print(msg) }
         
         // reset database if new version available
         if VersionService.isNew {

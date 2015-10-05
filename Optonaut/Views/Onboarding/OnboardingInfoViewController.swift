@@ -7,8 +7,7 @@
 //
 
 import Foundation
-import HexColor
-import Crashlytics
+import Mixpanel
 
 class OnboardingInfoViewController: UIViewController {
     
@@ -78,10 +77,13 @@ class OnboardingInfoViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Onboarding Info",
-            contentType: "OnboardingInfoView",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.OnboardingInfo")
+    }
+
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.OnboardingInfo")
     }
     
 }

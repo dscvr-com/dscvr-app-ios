@@ -11,6 +11,7 @@ import Device
 import Fabric
 import Crashlytics
 import PureLayout
+import Mixpanel
 
 //let Env = EnvType.Development
 //let Env = EnvType.Staging
@@ -71,6 +72,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
         Fabric.with([Crashlytics.self()])
+        
+        if case .Production = Env {
+            Mixpanel.sharedInstanceWithToken("10ba57dae2871ca534c61f0f89bab97d")
+        } else {
+            Mixpanel.sharedInstanceWithToken("544f3d4afdb4836ed2e070e33a328249")
+        }
         
         try! DatabaseService.prepare()
         

@@ -3,7 +3,7 @@ import QuartzCore
 import SceneKit
 import CoreMotion
 import CoreGraphics
-import Crashlytics
+import Mixpanel
 
 enum ViewerDistortion {
     case None, VROne, Barrell
@@ -62,7 +62,6 @@ class ViewerViewController: UIViewController  {
         leftScnView = createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
         rightScnView = createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
-        
         leftRenderDelegate = StereoRenderDelegate(isLeft: true, optograph: optograph, motionManager: motionManager, width: leftScnView!.frame.width, height: leftScnView!.frame.height)
         
         rightRenderDelegate = StereoRenderDelegate(isLeft: false, optograph: optograph, motionManager: motionManager, width: rightScnView!.frame.width, height: rightScnView!.frame.height)
@@ -116,10 +115,7 @@ class ViewerViewController: UIViewController  {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Optograph Viewer \(optograph.id)",
-            contentType: "OptographViewer",
-            contentId: "optograph-viewer-\(optograph.id)",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.Viewer")
 
         tabBarController?.tabBar.hidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -127,6 +123,12 @@ class ViewerViewController: UIViewController  {
         UIScreen.mainScreen().brightness = 1
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = true
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.id])
     }
     
     override func viewWillDisappear(animated: Bool) {

@@ -8,7 +8,7 @@
 
 import UIKit
 import Async
-import Crashlytics
+import Mixpanel
 
 class ExploreTableViewController: OptographTableViewController, RedNavbar {
     
@@ -61,13 +61,15 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        
-        Answers.logContentViewWithName("Explore View",
-            contentType: "ExploreTableView",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.Explore")
         
         updateNavbarAppear()
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.Explore")
     }
     
     override func updateViewConstraints() {

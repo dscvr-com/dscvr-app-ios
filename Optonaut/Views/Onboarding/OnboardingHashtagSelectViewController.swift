@@ -9,7 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import WebImage
-import Crashlytics
+import Mixpanel
 
 class OnboardingHashtagSelectViewController: UIViewController {
     
@@ -140,9 +140,12 @@ class OnboardingHashtagSelectViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Onboarding Hashtag",
-            contentType: "OnboardingHashtagSelectView",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.OnboardingHashtagSelect")
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.OnboardingHashtagSelect")
     }
 }
