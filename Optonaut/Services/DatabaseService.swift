@@ -15,9 +15,23 @@ protocol ModelSchema {
 }
 
 protocol SQLiteModel {
-    static func fromSQL(row: Row) -> Self
+    static func fromSQL(row: SQLiteRow) -> Self
+    static func table() -> SQLiteTable
+    static func schema() -> ModelSchema
     func toSQL() -> [Setter]
-    func insertOrReplace() throws
+    func insertOrUpdate() throws
+}
+
+extension SQLiteModel where Self: Model {
+    
+    func insertOrUpdate() throws {
+        do {
+            try DatabaseService.defaultConnection.run(Self.table().insert(or: .Fail, toSQL()))
+        } catch {
+            try DatabaseService.defaultConnection.run(Self.table().filter(Self.table()[Self.schema().id] ==- self.id).update(toSQL()))
+        }
+    }
+    
 }
 
 extension NSDate {
@@ -116,6 +130,7 @@ class DatabaseService {
 }
 
 typealias SQLiteRow = SQLite.Row
+typealias SQLiteTable = SQLite.Table
 typealias SQLiteSetter = SQLite.Setter
 
 infix operator <-- {

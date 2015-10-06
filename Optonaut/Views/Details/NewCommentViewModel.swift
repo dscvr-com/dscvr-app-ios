@@ -29,8 +29,8 @@ class NewCommentViewModel {
                     self.isPosting.value = true
                 },
                 next: { comment in
-                    try! comment.person.insertOrReplace()
-                    try! comment.insertOrReplace()
+                    try! comment.person.insertOrUpdate()
+                    try! comment.insertOrUpdate()
                 },
                 completed: {
                     self.text.value = ""

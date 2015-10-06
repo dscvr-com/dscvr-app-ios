@@ -120,6 +120,14 @@ extension Optograph: Mappable {
 
 extension Optograph: SQLiteModel {
     
+    static func schema() -> ModelSchema {
+        return OptographSchema
+    }
+    
+    static func table() -> SQLiteTable {
+        return OptographTable
+    }
+    
     static func fromSQL(row: SQLiteRow) -> Optograph {
         return Optograph(
             id: row[OptographSchema.id],
@@ -160,10 +168,6 @@ extension Optograph: SQLiteModel {
             OptographSchema.isStaffPick <-- isStaffPick,
             OptographSchema.hashtagString <-- hashtagString,
         ]
-    }
-    
-    func insertOrReplace() throws {
-        try DatabaseService.defaultConnection.run(OptographTable.insert(or: .Replace, toSQL()))
     }
     
 }

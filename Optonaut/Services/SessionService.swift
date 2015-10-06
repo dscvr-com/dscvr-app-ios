@@ -112,7 +112,7 @@ class SessionService {
             .flatMap(.Latest) { _ in ApiService<Person>.get("persons/me") }
             .on(
                 next: { person in
-                    try! person.insertOrReplace()
+                    try! person.insertOrUpdate()
                     updateMixpanel()
                 },
                 error: { _ in

@@ -46,6 +46,14 @@ extension Comment: Mappable {
 
 extension Comment: SQLiteModel {
     
+    static func schema() -> ModelSchema {
+        return CommentSchema
+    }
+    
+    static func table() -> SQLiteTable {
+        return CommentTable
+    }
+    
     static func fromSQL(row: SQLiteRow) -> Comment {
         return Comment(
             id: row[CommentSchema.id],
@@ -64,10 +72,6 @@ extension Comment: SQLiteModel {
             CommentSchema.personId <-- person.id,
             CommentSchema.optographId <-- optograph.id,
         ]
-    }
-    
-    func insertOrReplace() throws {
-        try DatabaseService.defaultConnection.run(CommentTable.insert(or: .Replace, toSQL()))
     }
     
 }

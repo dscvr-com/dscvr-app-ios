@@ -59,9 +59,9 @@ class ExploreViewModel {
                 ApiService<Optograph>.get("optographs")
                     .observeOn(QueueScheduler(queue: queue))
                     .on(next: { optograph in
-                        try! optograph.insertOrReplace()
-                        try! optograph.location.insertOrReplace()
-                        try! optograph.person.insertOrReplace()
+                        try! optograph.insertOrUpdate()
+                        try! optograph.location.insertOrUpdate()
+                        try! optograph.person.insertOrUpdate()
                     })
                     .collect()
                     .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
@@ -80,9 +80,9 @@ class ExploreViewModel {
                 ApiService<Optograph>.get("optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOn(QueueScheduler(queue: queue))
                     .on(next: { optograph in
-                        try! optograph.insertOrReplace()
-                        try! optograph.location.insertOrReplace()
-                        try! optograph.person.insertOrReplace()
+                        try! optograph.insertOrUpdate()
+                        try! optograph.location.insertOrUpdate()
+                        try! optograph.person.insertOrUpdate()
                     })
                     .collect()
                     .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }

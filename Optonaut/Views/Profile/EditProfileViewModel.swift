@@ -124,7 +124,7 @@ class EditProfileViewModel {
     }
     
     private func saveModel() {
-        try! person.insertOrReplace()
+        try! person.insertOrUpdate()
     }
     
 }

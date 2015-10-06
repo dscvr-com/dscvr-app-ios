@@ -62,6 +62,14 @@ extension Person: Mappable {
 
 extension Person: SQLiteModel {
     
+    static func schema() -> ModelSchema {
+        return PersonSchema
+    }
+    
+    static func table() -> SQLiteTable {
+        return PersonTable
+    }
+    
     static func fromSQL(row: SQLiteRow) -> Person {
         return Person(
             id: row[PersonSchema.id],
@@ -79,7 +87,7 @@ extension Person: SQLiteModel {
     }
     
     func toSQL() -> [SQLiteSetter] {
-        return [
+        var setters = [
             PersonSchema.id <-- id,
             PersonSchema.displayName <-- displayName,
             PersonSchema.userName <-- userName,
@@ -91,22 +99,12 @@ extension Person: SQLiteModel {
             PersonSchema.wantsNewsletter <-- wantsNewsletter,
             PersonSchema.avatarAssetId <-- avatarAssetId
         ]
-    }
-    
-    func insertOrReplace() throws {
-        var setters = toSQL()
         
-        // needed in order to keep the own email address for mixpanel
         if email != nil {
             setters.append(PersonSchema.email <-- email)
-            try DatabaseService.defaultConnection.run(PersonTable.insert(or: .Replace, setters))
-        } else {
-            do {
-                try DatabaseService.defaultConnection.run(PersonTable.insert(or: .Fail, setters))
-            } catch {
-                try DatabaseService.defaultConnection.run(PersonTable.filter(PersonTable[PersonSchema.id] ==- self.id).update(setters))
-            }
         }
+        
+        return setters
     }
     
 }
