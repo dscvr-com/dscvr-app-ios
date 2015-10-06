@@ -249,7 +249,7 @@ class CreateOptographViewController: UIViewController, RedNavbar {
     func cancel() {
         Mixpanel.sharedInstance().track("Action.CreateOptograph.Cancel")
         
-        StitchingService.startStitching()
+        StitchingService.cancelStitching()
         navigationController?.popViewControllerAnimated(false)
     }
     

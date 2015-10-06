@@ -25,7 +25,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         prepareAndExecute {
-            self.window?.rootViewController = TabBarViewController()
+//            self.window?.rootViewController = TabBarViewController()
+            let tabBarViewController = TabBarViewController()
+            tabBarViewController.feedNavViewController.pushViewController(CreateOptographViewController(), animated: false)
+            self.window?.rootViewController = tabBarViewController
         }
         
         return true

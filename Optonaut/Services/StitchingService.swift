@@ -21,58 +21,64 @@ enum StitchingResult {
 
 class StitchingService {
     
-    typealias StitcherSignal = SignalProducer<StitchingResult, StitchingError>
+    typealias StitchingSignal = Signal<StitchingResult, StitchingError>
     
-    private static var activeProcess: StitcherSignal?
+    private static var activeSignal: StitchingSignal?
+    private static var activeSink: (Event<StitchingResult, StitchingError> -> ())?
     
     /// Returns the currently running stitching process, or
     /// nil, if the stitching service is idle.
-    static func getActiveStitchingProcess() -> StitcherSignal {
-        return activeProcess
+    static func getStitchingSignal() -> StitchingSignal? {
+        return activeSignal
     }
     
     /// This function starts a new stitching process.
-    static func startStitching() -> StitcherSignal {
+    static func startStitching() -> StitchingSignal {
         //Todo - make the stitcher support this.
-        activeProcess = SignalProducer { sink, disposable in
-            
-            // find best milestone
-            
-            // stitching in progress
-            sendNext(sink, .Progress(0.7))
-            sendNext(sink, .Progress(0.8))
-            
-            // stitching done
-            sendNext(sink, .LeftImage(UIImage()))
-            sendCompleted(sink)
-        }
         
-        return getActiveSignalProducer()
+        let (signal, sink) = StitchingSignal.pipe()
+        
+        activeSignal = signal
+        activeSink = sink
+        
+        // find best milestone
+        
+        // stitching in progress
+        sendNext(sink, .Progress(0.7))
+        sendNext(sink, .Progress(0.8))
+        
+        // stitching done
+        sendNext(sink, .LeftImage(UIImage()))
+        sendCompleted(sink)
+        
+        return signal
     }
     
     /// This function resumes a stitching process
     /// that was previously suspended.
-    static func resumeStitching() -> StitcherSignal {
-        return getActiveSignalProducer()
+    static func resumeStitching() -> StitchingSignal? {
+        return getStitchingSignal()
     }
     
     /// This function is to be called whenever the app is
     /// brought into the foreground. The purpose is to register the 
     /// background handler.
-    static func onApplicationResuming()  {
+    static func onApplicationResuming() {
         
     }
     
-    //TODO - not sure about this yet.
-    static private func cancelStitching() {
-    
-    }
-    
-    static private func restoreStitcherState() {
+    // TODO - not sure about this yet.
+    static func cancelStitching() {
         
     }
     
-    static private func suspendStitcher() {
+    // TODO: Add interface to start recording and push keyframes
+    
+    private static func restoreStitcherState() {
+        
+    }
+    
+    private static func suspendStitcher() {
         
     }
 }

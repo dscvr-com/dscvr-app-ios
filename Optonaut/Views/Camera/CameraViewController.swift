@@ -485,7 +485,7 @@ class CameraViewController: UIViewController {
             }
         }
         
-        navigationController!.pushViewController(CreateOptographViewController(assetSignalProducer: assetSignalProducer), animated: false)
+        navigationController!.pushViewController(CreateOptographViewController(), animated: false)
         navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self
     }
     
