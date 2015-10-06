@@ -10,7 +10,7 @@ import Foundation
 
 import UIKit
 import ReactiveCocoa
-import Crashlytics
+import Mixpanel
 
 class ActivityNavViewController: NavigationController, RedNavbar {
     
@@ -71,14 +71,5 @@ class ActivityNavViewController: NavigationController, RedNavbar {
             number.hidden = hidden
             number.text = "\(count)"
         }
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        Answers.logContentViewWithName("Activity",
-            contentType: "ActivityView",
-            contentId: "",
-            customAttributes: [:])
     }
 }

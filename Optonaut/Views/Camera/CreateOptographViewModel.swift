@@ -91,8 +91,8 @@ class CreateOptographViewModel {
     private func saveToDatabase() {
         optograph.person.id = SessionService.sessionData!.id
         
-        try! optograph.insertOrReplace()
-        try! optograph.location.insertOrReplace()
+        try! optograph.insertOrUpdate()
+        try! optograph.location.insertOrUpdate()
     }
 }
 

@@ -8,7 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
-import Crashlytics
+import Mixpanel
 
 class RequestInviteViewController: UIViewController {
     
@@ -94,19 +94,24 @@ class RequestInviteViewController: UIViewController {
         
         view.setNeedsUpdateConstraints()
     }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
         
-        Answers.logContentViewWithName("Request Invite",
-            contentType: "RequestInviteView",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.RequestInvite")
     }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.RequestInvite")
     }
     
     override func viewWillDisappear(animated: Bool) {

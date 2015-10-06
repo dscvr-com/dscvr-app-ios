@@ -8,7 +8,7 @@
 
 import Foundation
 import Device
-import Crashlytics
+import Mixpanel
 
 class OnboardingHashtagInfoViewController: UIViewController {
     
@@ -78,10 +78,13 @@ class OnboardingHashtagInfoViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Onboarding HashtagInfo",
-            contentType: "OnboardingHashtagInfoiew",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.OnboardingHashtagInfo")
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.OnboardingHashtagInfo")
     }
     
 }

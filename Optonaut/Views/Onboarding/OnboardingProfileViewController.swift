@@ -10,7 +10,7 @@ import Foundation
 import HexColor
 import ReactiveCocoa
 import Async
-import Crashlytics
+import Mixpanel
 
 class OnboardingProfileViewController: UIViewController, UINavigationControllerDelegate {
     
@@ -32,7 +32,6 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         super.viewDidLoad()
         
         view.backgroundColor = .Accent
-        
     
         viewModel.nextStep.producer
             .map { state in
@@ -185,10 +184,13 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Onboarding Profile",
-            contentType: "OnboardingProfileView",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.OnboardingProfile")
+    }
+
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.OnboardingProfile")
     }
     
     override func viewWillDisappear(animated: Bool) {

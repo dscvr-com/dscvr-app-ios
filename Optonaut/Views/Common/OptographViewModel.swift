@@ -72,7 +72,7 @@ class OptographViewModel {
         optograph.isStarred = isStarred.value
         optograph.starsCount = starsCount.value
         
-        try! optograph.insertOrReplace()
+        try! optograph.insertOrUpdate()
     }
     
 }

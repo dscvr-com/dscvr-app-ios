@@ -10,7 +10,6 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
-import Crashlytics
 
 class ProfileViewModel {
     
@@ -27,18 +26,7 @@ class ProfileViewModel {
     init(id: UUID) {
         person.id = id
         
-        Answers.logContentViewWithName("Profile \(id)",
-            contentType: "Profile",
-            contentId: "profile-\(id)",
-            customAttributes: [:])
-        
         reloadModel()
-    
-        ApiService.get("persons/\(id)").startWithNext { (person: Person) in
-            self.person = person
-            self.saveModel()
-            self.updateProperties()
-        }
     }
     
     func reloadModel() {
@@ -89,7 +77,7 @@ class ProfileViewModel {
     }
     
     private func saveModel() {
-        try! person.insertOrReplace()
+        try! person.insertOrUpdate()
     }
     
 }

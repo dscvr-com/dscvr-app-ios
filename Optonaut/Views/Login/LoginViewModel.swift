@@ -9,7 +9,6 @@
 import Foundation
 import ReactiveCocoa
 import ObjectMapper
-import Crashlytics
 
 class LoginViewModel {
     
@@ -51,18 +50,12 @@ class LoginViewModel {
                 },
                 next: { _ in
                     self.pending.value = false
-                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: true, customAttributes: [:])
                 },
                 error: { _ in
                     self.pending.value = false
-                    Answers.logLoginWithMethod(usesEmail ? "Email" : "Username", success: false, customAttributes: [:])
                 }
             )
             .mapError { _ in ApiError.Nil }
-            .flatMap(.Latest) { _ in ApiService<Person>.get("persons/\(SessionService.sessionData!.id)") }
-            .on(next: { person in
-                try! person.insertOrReplace()
-            })
             .flatMap(.Latest) { _ in SignalProducer(value: ()) }
     }
     

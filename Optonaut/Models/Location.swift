@@ -44,6 +44,14 @@ extension Location: Mappable {
 
 extension Location: SQLiteModel {
     
+    static func schema() -> ModelSchema {
+        return LocationSchema
+    }
+    
+    static func table() -> SQLiteTable {
+        return LocationTable
+    }
+    
     static func fromSQL(row: SQLiteRow) -> Location {
         return Location(
             id: row[LocationSchema.id],
@@ -62,10 +70,6 @@ extension Location: SQLiteModel {
             LocationSchema.latitude <-- latitude,
             LocationSchema.longitude <-- longitude
         ]
-    }
-    
-    func insertOrReplace() throws {
-        try DatabaseService.defaultConnection.run(LocationTable.insert(or: .Replace, toSQL()))
     }
     
 }

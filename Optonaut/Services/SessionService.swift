@@ -9,7 +9,7 @@
 import Foundation
 import ObjectMapper
 import ReactiveCocoa
-import Crashlytics
+import Mixpanel
 
 enum LoginIdentifier {
     case UserName(String)
@@ -85,16 +85,10 @@ class SessionService {
                 debuggingEnabled: debuggingEnabled,
                 onboardingVersion: onboardingVersion
             )
-        } else {
-            return
+            
+            updateMixpanel()
         }
         
-        let query = PersonTable.filter(PersonTable[PersonSchema.id] ==- SessionService.sessionData!.id)
-        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
-            Crashlytics.sharedInstance().setUserIdentifier(person.id)
-            Crashlytics.sharedInstance().setUserEmail(person.email)
-            Crashlytics.sharedInstance().setUserName(person.userName)
-        }
     }
     
     static func login(identifier: LoginIdentifier, password: String) -> SignalProducer<Void, ApiError> {
@@ -115,6 +109,16 @@ class SessionService {
                     onboardingVersion: loginData.onboardingVersion
                 )
             })
+            .flatMap(.Latest) { _ in ApiService<Person>.get("persons/me") }
+            .on(
+                next: { person in
+                    try! person.insertOrUpdate()
+                    updateMixpanel()
+                },
+                error: { _ in
+                    sessionData = nil
+                }
+            )
             .flatMap(.Latest) { _ in SignalProducer.empty }
     }
     
@@ -129,6 +133,21 @@ class SessionService {
     
     static func onLogout(performAlways performAlways: Bool = false, fn: () -> ()) {
         logoutCallbacks.append((performAlways, fn))
+    }
+    
+    private static func updateMixpanel() {
+        let query = PersonTable.filter(PersonTable[PersonSchema.id] ==- SessionService.sessionData!.id)
+        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
+            Mixpanel.sharedInstance().identify(person.id)
+            Mixpanel.sharedInstance().people.set([
+                "$first": person.displayName,
+                "$username": person.userName,
+                "$email": person.email ?? "test",
+                "$created": person.createdAt,
+                "Followers": person.followersCount,
+                "Followed": person.followedCount,
+            ])
+        }
     }
     
 }

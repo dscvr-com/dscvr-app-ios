@@ -23,9 +23,9 @@ class SearchViewModel {
             .flatMap(.Latest) { keyword in
                 return ApiService<Optograph>.get("optographs/search?keyword=\(keyword)")
                     .on(next: { optograph in
-                        try! optograph.insertOrReplace()
-                        try! optograph.location.insertOrReplace()
-                        try! optograph.person.insertOrReplace()
+                        try! optograph.insertOrUpdate()
+                        try! optograph.location.insertOrUpdate()
+                        try! optograph.person.insertOrUpdate()
                     })
                     .collect()
             }

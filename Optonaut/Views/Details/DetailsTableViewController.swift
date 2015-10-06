@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Crashlytics
+import Mixpanel
 import Async
 import CoreMotion
 
@@ -66,10 +66,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Optograph Details \(viewModel.optograph.id)",
-            contentType: "OptographDetails",
-            contentId: "optograph-details-\(viewModel.optograph.id)",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
         motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
             if let accelerometerData = accelerometerData {
@@ -86,6 +83,8 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.id])
         
         self.motionManager.stopAccelerometerUpdates()
     }

@@ -10,7 +10,7 @@ import ObjectMapper
 
 struct Person: Model {
     var id: UUID
-    var email: String
+    var email: String?
     var displayName: String
     var userName: String
     var text: String
@@ -24,7 +24,7 @@ struct Person: Model {
     static func newInstance() -> Person {
         return Person(
             id: uuid(),
-            email: "",
+            email: nil,
             displayName: "",
             userName: "",
             text: "",
@@ -47,7 +47,7 @@ extension Person: Mappable {
     mutating func mapping(map: Map) {
         id                  <- map["id"]
         email               <- map["email"]
-        displayName            <- map["display_name"]
+        displayName         <- map["display_name"]
         userName            <- map["user_name"]
         text                <- map["text"]
         followersCount      <- map["followers_count"]
@@ -61,6 +61,14 @@ extension Person: Mappable {
 }
 
 extension Person: SQLiteModel {
+    
+    static func schema() -> ModelSchema {
+        return PersonSchema
+    }
+    
+    static func table() -> SQLiteTable {
+        return PersonTable
+    }
     
     static func fromSQL(row: SQLiteRow) -> Person {
         return Person(
@@ -79,9 +87,8 @@ extension Person: SQLiteModel {
     }
     
     func toSQL() -> [SQLiteSetter] {
-        return [
+        var setters = [
             PersonSchema.id <-- id,
-            PersonSchema.email <-- email,
             PersonSchema.displayName <-- displayName,
             PersonSchema.userName <-- userName,
             PersonSchema.text <-- text,
@@ -92,10 +99,12 @@ extension Person: SQLiteModel {
             PersonSchema.wantsNewsletter <-- wantsNewsletter,
             PersonSchema.avatarAssetId <-- avatarAssetId
         ]
-    }
-    
-    func insertOrReplace() throws {
-        try DatabaseService.defaultConnection.run(PersonTable.insert(or: .Replace, toSQL()))
+        
+        if email != nil {
+            setters.append(PersonSchema.email <-- email)
+        }
+        
+        return setters
     }
     
 }

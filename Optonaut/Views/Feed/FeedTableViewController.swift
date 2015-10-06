@@ -10,7 +10,7 @@ import UIKit
 import ReactiveCocoa
 import Async
 import Device
-import Crashlytics
+import Mixpanel
 
 class FeedTableViewController: OptographTableViewController, RedNavbar {
     
@@ -75,10 +75,7 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Answers.logContentViewWithName("Feed View",
-            contentType: "FeedTableView",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.Feed")
         
         tabBarController?.delegate = self
     }
@@ -90,6 +87,12 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         navigationController?.setNavigationBarHidden(false, animated: true)
         
         tabBarController?.delegate = nil
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.Feed")
     }
     
     override func updateViewConstraints() {

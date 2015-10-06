@@ -9,8 +9,6 @@
 import ObjectMapper
 import ReactiveCocoa
 
-typealias ImagePair = (left: NSData, right: NSData)
-
 enum OptographAsset {
     case PreviewImage(NSData)
     case LeftImage(NSData)
@@ -31,6 +29,7 @@ struct Optograph: Model {
     var commentsCount: Int
     var viewsCount: Int
     var location: Location
+    var isStitched: Bool
     var isPublished: Bool
     var previewAssetId: UUID
     var leftTextureAssetId: UUID
@@ -50,6 +49,7 @@ struct Optograph: Model {
             commentsCount: 0,
             viewsCount: 0,
             location: Location.newInstance(),
+            isStitched: false,
             isPublished: false,
             previewAssetId: uuid(),
             leftTextureAssetId: uuid(),
@@ -97,6 +97,7 @@ extension Optograph: Mappable {
     
     mutating func mapping(map: Map) {
         if map.mappingType == .FromJSON {
+            isStitched = true
             isPublished = true
         }
         
@@ -120,6 +121,14 @@ extension Optograph: Mappable {
 
 extension Optograph: SQLiteModel {
     
+    static func schema() -> ModelSchema {
+        return OptographSchema
+    }
+    
+    static func table() -> SQLiteTable {
+        return OptographTable
+    }
+    
     static func fromSQL(row: SQLiteRow) -> Optograph {
         return Optograph(
             id: row[OptographSchema.id],
@@ -132,6 +141,7 @@ extension Optograph: SQLiteModel {
             commentsCount: row[OptographSchema.commentsCount],
             viewsCount: row[OptographSchema.viewsCount],
             location: Location.newInstance(),
+            isStitched: row[OptographSchema.isStitched],
             isPublished: row[OptographSchema.isPublished],
             previewAssetId: row[OptographSchema.previewAssetId],
             leftTextureAssetId: row[OptographSchema.leftTextureAssetId],
@@ -160,10 +170,6 @@ extension Optograph: SQLiteModel {
             OptographSchema.isStaffPick <-- isStaffPick,
             OptographSchema.hashtagString <-- hashtagString,
         ]
-    }
-    
-    func insertOrReplace() throws {
-        try DatabaseService.defaultConnection.run(OptographTable.insert(or: .Replace, toSQL()))
     }
     
 }

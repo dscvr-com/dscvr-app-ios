@@ -107,7 +107,7 @@ class EditProfileViewModel {
     }
     
     private func updateProperties() {
-        email.value = person.email
+        email.value = person.email!
         displayName.value = person.displayName
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
@@ -124,7 +124,7 @@ class EditProfileViewModel {
     }
     
     private func saveModel() {
-        try! person.insertOrReplace()
+        try! person.insertOrUpdate()
     }
     
 }

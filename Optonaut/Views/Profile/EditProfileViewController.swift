@@ -9,7 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import HexColor
-import Crashlytics
+import Mixpanel
 
 class EditProfileViewController: UIViewController, RedNavbar, UINavigationControllerDelegate {
     
@@ -305,10 +305,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        Answers.logContentViewWithName("Edit Profile",
-            contentType: "EditProfileView",
-            contentId: "",
-            customAttributes: [:])
+        Mixpanel.sharedInstance().timeEvent("View.EditProfile")
         
         updateNavbarAppear()
     }
@@ -323,6 +320,12 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
         super.viewDidDisappear(animated)
         
         navigationController?.interactivePopGestureRecognizer?.enabled = true
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.EditProfile")
     }
     
     func toggleDebug() {

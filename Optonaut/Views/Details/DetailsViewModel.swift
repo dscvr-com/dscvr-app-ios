@@ -85,8 +85,8 @@ class DetailsViewModel {
             
             comment.optograph.id = optographId
             
-            try! comment.insertOrReplace()
-            try! comment.person.insertOrReplace()
+            try! comment.insertOrUpdate()
+            try! comment.person.insertOrUpdate()
         }
     }
     
@@ -145,13 +145,13 @@ class DetailsViewModel {
             return ApiService<EmptyResponse>.delete("optographs/\(optograph.id)")
                 .on(completed: {
                     self.optograph.deleted = true
-                    try! self.optograph.insertOrReplace()
+                    try! self.optograph.insertOrUpdate()
                 })
         } else {
             return SignalProducer<EmptyResponse, ApiError> { sink, disposable in
                 disposable.addDisposable {}
                 self.optograph.deleted = true
-                try! self.optograph.insertOrReplace()
+                try! self.optograph.insertOrUpdate()
                 sendCompleted(sink)
             }
         }
@@ -165,9 +165,9 @@ class DetailsViewModel {
     }
     
     private func saveModel() {
-        try! optograph.insertOrReplace()
-        try! optograph.location.insertOrReplace()
-        try! optograph.person.insertOrReplace()
+        try! optograph.insertOrUpdate()
+        try! optograph.location.insertOrUpdate()
+        try! optograph.person.insertOrUpdate()
     }
     
     private func updateProperties() {
