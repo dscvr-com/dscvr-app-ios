@@ -21,8 +21,20 @@ enum StitchingResult {
 
 class StitchingService {
     
-    static func startStitching() -> SignalProducer<StitchingResult, StitchingError> {
-        return SignalProducer { sink, disposable in
+    typealias StitcherSignal = SignalProducer<StitchingResult, StitchingError>
+    
+    private static var activeProcess: StitcherSignal?
+    
+    /// Returns the currently running stitching process, or
+    /// nil, if the stitching service is idle.
+    static func getActiveStitchingProcess() -> StitcherSignal {
+        return activeProcess
+    }
+    
+    /// This function starts a new stitching process.
+    static func startStitching() -> StitcherSignal {
+        //Todo - make the stitcher support this.
+        activeProcess = SignalProducer { sink, disposable in
             
             // find best milestone
             
@@ -34,6 +46,33 @@ class StitchingService {
             sendNext(sink, .LeftImage(UIImage()))
             sendCompleted(sink)
         }
+        
+        return getActiveSignalProducer()
     }
     
+    /// This function resumes a stitching process
+    /// that was previously suspended.
+    static func resumeStitching() -> StitcherSignal {
+        return getActiveSignalProducer()
+    }
+    
+    /// This function is to be called whenever the app is
+    /// brought into the foreground. The purpose is to register the 
+    /// background handler.
+    static func onApplicationResuming()  {
+        
+    }
+    
+    //TODO - not sure about this yet.
+    static private func cancelStitching() {
+    
+    }
+    
+    static private func restoreStitcherState() {
+        
+    }
+    
+    static private func suspendStitcher() {
+        
+    }
 }

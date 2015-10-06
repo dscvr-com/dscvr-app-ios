@@ -134,6 +134,7 @@
 		8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEA6F201BA5969700153677 /* DatabaseService.swift */; settings = {ASSET_TAGS = (); }; };
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
+		A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE0181BC45E9A00713340 /* static_timer.cpp */; settings = {ASSET_TAGS = (); }; };
 		A56CA4061BC070450078D7E8 /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FF1BC070450078D7E8 /* lut */; settings = {ASSET_TAGS = (); }; };
 		A56CA4071BC070450078D7E8 /* zeiss_displacement_left.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4001BC070450078D7E8 /* zeiss_displacement_left.fsh */; settings = {ASSET_TAGS = (); }; };
 		A56CA4081BC070450078D7E8 /* zeiss_displacement_left.json in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4011BC070450078D7E8 /* zeiss_displacement_left.json */; settings = {ASSET_TAGS = (); }; };
@@ -300,6 +301,8 @@
 		8FE09F651BAF681900EA105D /* HashtagTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashtagTable.swift; sourceTree = "<group>"; };
 		8FEA6F201BA5969700153677 /* DatabaseService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		A54AE0181BC45E9A00713340 /* static_timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = static_timer.cpp; sourceTree = "<group>"; };
+		A54AE0191BC45E9A00713340 /* static_timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = static_timer.hpp; sourceTree = "<group>"; };
 		A56CA3FF1BC070450078D7E8 /* lut */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lut; path = Shader/Zeiss/lut; sourceTree = "<group>"; };
 		A56CA4001BC070450078D7E8 /* zeiss_displacement_left.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = zeiss_displacement_left.fsh; path = Shader/Zeiss/zeiss_displacement_left.fsh; sourceTree = "<group>"; };
 		A56CA4011BC070450078D7E8 /* zeiss_displacement_left.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = zeiss_displacement_left.json; path = Shader/Zeiss/zeiss_displacement_left.json; sourceTree = "<group>"; };
@@ -732,6 +735,8 @@
 		8FD7F85C1B5924D5001680AA /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				A54AE0181BC45E9A00713340 /* static_timer.cpp */,
+				A54AE0191BC45E9A00713340 /* static_timer.hpp */,
 				A5986B761BB87D6400DD2F4E /* correlation.hpp */,
 				A5986B771BB87D6400DD2F4E /* exposureCompensator.hpp */,
 				A5986B781BB87D6400DD2F4E /* graph.hpp */,
@@ -1008,6 +1013,7 @@
 				A5C1C0181B7E19E200DCD598 /* monoStitcher.cpp in Sources */,
 				8FAB9F5A1B8F01DF00B4C8CB /* TabBarViewController.swift in Sources */,
 				A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */,
+				A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */,
 				8FAB9F371B8F01DF00B4C8CB /* OptographViewModel.swift in Sources */,
 				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
