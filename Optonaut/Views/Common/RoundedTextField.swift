@@ -126,14 +126,18 @@ class RoundedTextField: UITextField {
             default: lineLayer.backgroundColor = baseColor.alpha(1).CGColor
             }
         } else {
-            
+            switch status {
+            case .Disabled: lineLayer.backgroundColor = baseColor.alpha(0.15).CGColor
+            case .Indicated: lineLayer.backgroundColor = baseColor.alpha(0.7).CGColor
+            default: lineLayer.backgroundColor = baseColor.alpha(1).CGColor
+            }
         }
         
         // message
         if case .Light = color {
             messageView.textColor = baseColor
         } else {
-            
+            messageView.textColor = baseColor
         }
         messageView.font = UIFont.displayOfSize(10, withType: .Regular)
         if case .Warning(let message) = status {
@@ -156,10 +160,9 @@ class RoundedTextField: UITextField {
             lineLayer.frame = CGRect(x: 0, y: 34, width: frame.width, height: onePx)
             messageView.frame = CGRect(x: 0, y: 36, width: frame.width, height: 15)
         case .Medium:
-            break
-//            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 50))
-//            lineLayer.frame = CGRect(x: 0, y: 45, width: frame.width, height: 0.5)
-//            messageView.frame = CGRect(x: 0, y: 58, width: frame.width, height: 15)
+            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 17))
+            lineLayer.frame = CGRect(x: 0, y: 27, width: frame.width, height: onePx)
+            messageView.frame = CGRect(x: 0, y: 29, width: frame.width, height: 15)
         case .Small:
             break
 //            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 50))

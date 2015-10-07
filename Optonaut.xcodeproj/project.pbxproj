@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; settings = {ASSET_TAGS = (); }; };
+		8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */; settings = {ASSET_TAGS = (); }; };
 		8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0B177F1BAB6D2C00FAF649 /* OnboardingProfileViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		8F0B17821BAC068000FAF649 /* HatchedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0B17811BAC068000FAF649 /* HatchedButton.swift */; settings = {ASSET_TAGS = (); }; };
 		8F0B17841BAC084F00FAF649 /* OnboardingProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0B17831BAC084F00FAF649 /* OnboardingProfileViewModel.swift */; settings = {ASSET_TAGS = (); }; };
@@ -169,6 +170,7 @@
 
 /* Begin PBXFileReference section */
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
+		8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
 		8F0B177F1BAB6D2C00FAF649 /* OnboardingProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingProfileViewController.swift; sourceTree = "<group>"; };
 		8F0B17811BAC068000FAF649 /* HatchedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HatchedButton.swift; sourceTree = "<group>"; };
 		8F0B17831BAC084F00FAF649 /* OnboardingProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingProfileViewModel.swift; sourceTree = "<group>"; };
@@ -507,6 +509,7 @@
 			isa = PBXGroup;
 			children = (
 				8FAB9EF91B8F01DF00B4C8CB /* BottomLineTextField.swift */,
+				8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */,
 				8F0B17811BAC068000FAF649 /* HatchedButton.swift */,
 				8FAB9EFA1B8F01DF00B4C8CB /* InsetLabel.swift */,
 				8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */,
@@ -1043,6 +1046,7 @@
 				8FAB9F791B8F02D500B4C8CB /* StitcherUtils.swift in Sources */,
 				8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */,
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
+				8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */,
 				8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */,
 				8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,

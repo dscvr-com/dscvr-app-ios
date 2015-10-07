@@ -69,9 +69,23 @@ private func sizeOfAttributeString(str: NSAttributedString, maxWidth: CGFloat) -
 }
 
 public enum Icon: String {
-    case OnboardingInfo = "\u{e600}"
-    case User = "\u{e601}"
-    case OnboardingVr = "\u{e602}"
-    case Heart = "\u{e603}"
-    case Cross = "\u{e604}"
+    case OnboardingVr = "\u{e800}"
+    case OnboardingInfo = "\u{e801}"
+    case Back = "\u{e802}"
+    case CameraAdd = "\u{e803}"
+    case Camera = "\u{e804}"
+    case Cardboard = "\u{e805}"
+    case Check = "\u{e806}"
+    case Comment = "\u{e807}"
+    case Cross = "\u{e808}"
+    case Edit = "\u{e809}"
+    case Feed = "\u{e80a}"
+    case HeartFilled = "\u{e80b}"
+    case Heart = "\u{e80c}"
+    case Location = "\u{e80d}"
+    case MoreOptions = "\u{e80e}"
+    case Profile = "\u{e80f}"
+    case Share = "\u{e810}"
+    case Star = "\u{e811}"
+    case Redo = "\u{e812}"
 }

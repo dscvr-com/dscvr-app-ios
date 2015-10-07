@@ -25,12 +25,7 @@ class CameraViewController: UIViewController {
     
     // camera
     private let session = AVCaptureSession()
-    private let sessionQueue: dispatch_queue_t = {
-        let queue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
-        let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
-        dispatch_set_target_queue(queue, high)
-        return queue
-    }()
+    private let sessionQueue: dispatch_queue_t
     
     // stitcher pointer and variables
     private var stitcher = IosPipeline()
@@ -57,6 +52,18 @@ class CameraViewController: UIViewController {
     // ball
     private let ballNode = SCNNode()
     private var ballSpeed = GLKVector3Make(0, 0, 0)
+    
+    required init() {
+        let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
+        sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
+        dispatch_set_target_queue(sessionQueue, high)
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

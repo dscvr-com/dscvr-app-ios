@@ -25,27 +25,27 @@ extension UIColor {
     
     static var DarkGrey: UIColor {
         get {
-            return UIColor(0x333333)
+            return UIColor(0x707070)
         }
     }
     
     static var Grey: UIColor {
         get {
-            return UIColor.blackColor().alpha(0.25)
+            return UIColor(0xAAAAAA)
         }
     }
     
     static var LightGrey: UIColor {
         get {
-            return UIColor.blackColor().alpha(0.10)
+            return UIColor(0xDDDDDD)
         }
     }
     
-    static var LightGreyActive: UIColor {
-        get {
-            return UIColor.blackColor().alpha(0.20)
-        }
-    }
+//    static var LightGreyActive: UIColor {
+//        get {
+//            return UIColor.blackColor().alpha(0.20)
+//        }
+//    }
     
     static var Success: UIColor {
         get {

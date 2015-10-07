@@ -59,6 +59,17 @@ struct Optograph: Model {
         )
     }
     
+    func saveAsset(asset: OptographAsset) {
+        switch asset {
+        case .LeftImage(let data):
+            data.writeToFile("\(StaticPath)/\(leftTextureAssetId).jpg", atomically: true)
+        case .RightImage(let data):
+            data.writeToFile("\(StaticPath)/\(rightTextureAssetId).jpg", atomically: true)
+        case .PreviewImage(let data):
+            data.writeToFile("\(StaticPath)/\(previewAssetId).jpg", atomically: true)
+        }
+    }
+    
     mutating func publish() -> SignalProducer<Optograph, ApiError> {
         assert(!isPublished)
         

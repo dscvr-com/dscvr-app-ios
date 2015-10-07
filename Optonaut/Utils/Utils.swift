@@ -70,6 +70,10 @@ func and(a: Bool, _ b: Bool) -> Bool {
     return a && b
 }
 
+func or(a: Bool, _ b: Bool) -> Bool {
+    return a || b
+}
+
 //class NotificationSignal {
 //    
 //    let (signal, sink) =  Signal<Void, NoError>.pipe()
