@@ -174,6 +174,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.commentsCount <-- commentsCount,
             OptographSchema.viewsCount <-- viewsCount,
             OptographSchema.locationId <-- location.id,
+            OptographSchema.isStitched <-- isStitched,
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.previewAssetId <-- previewAssetId,
             OptographSchema.leftTextureAssetId <-- leftTextureAssetId,

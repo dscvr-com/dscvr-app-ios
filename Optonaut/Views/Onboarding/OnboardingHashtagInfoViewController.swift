@@ -16,7 +16,7 @@ class OnboardingHashtagInfoViewController: UIViewController {
     let headlineTextView = UILabel()
     let iconView = UILabel()
     let iconTextView = UILabel()
-    let nextButtonView = HatchedButton()
+    let nextButtonView = ActionButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()

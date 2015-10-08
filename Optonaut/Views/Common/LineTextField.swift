@@ -1,5 +1,5 @@
 //
-//  RoundedTextField.swift
+//  LineTextField.swift
 //  Optonaut
 //
 //  Created by Johannes Schickling on 9/18/15.
@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import HexColor
 
-class RoundedTextField: UITextField {
+class LineTextField: UITextField {
     
     static var i = 0
 
@@ -100,7 +100,7 @@ class RoundedTextField: UITextField {
         
         // placeholder
         var attributes: [String: AnyObject] = [
-            NSFontAttributeName: UIFont.robotoOfSize(baseFontSize, withType: .Regular)
+            NSFontAttributeName: UIFont.textOfSize(baseFontSize, withType: .Regular)
         ]
         switch status {
         case .Disabled: attributes[NSForegroundColorAttributeName] = baseColor.alpha(0.15)
@@ -128,7 +128,7 @@ class RoundedTextField: UITextField {
         } else {
             switch status {
             case .Disabled: lineLayer.backgroundColor = baseColor.alpha(0.15).CGColor
-            case .Indicated: lineLayer.backgroundColor = baseColor.alpha(0.7).CGColor
+            case .Indicated: lineLayer.backgroundColor = UIColor.Accent.CGColor
             default: lineLayer.backgroundColor = baseColor.alpha(1).CGColor
             }
         }

@@ -68,9 +68,9 @@ extension PlaceholderImageView {
     }
 }
 
-extension RoundedTextField {
+extension LineTextField {
     
-    var rac_status: MutableProperty<RoundedTextField.Status> {
+    var rac_status: MutableProperty<LineTextField.Status> {
         return lazyMutableProperty(self, key: &AssociationKey.status, setter: { self.status = $0 }, getter: { self.status })
     }
     

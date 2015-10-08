@@ -16,17 +16,17 @@ class CreateOptographViewModel {
     
     let previewImageUrl = MutableProperty<String>("")
     let locationSignal = NotificationSignal()
-    let location = MutableProperty<String>("")
+    let locationName = MutableProperty<String>("")
+    let locationCountry = MutableProperty<String>("")
     let locationFound = MutableProperty<Bool>(false)
     let locationEnabled = MutableProperty<Bool>(false)
+    let locationLoading = MutableProperty<Bool>(true)
     let text = MutableProperty<String>("")
-    let textStatus = MutableProperty<RoundedTextField.Status>(.Disabled)
+    let textEnabled = MutableProperty<Bool>(false)
     let hashtagString = MutableProperty<String>("")
     let hashtagStringValid = MutableProperty<Bool>(false)
-    let hashtagStringStatus = MutableProperty<RoundedTextField.Status>(.Disabled)
-    let publishLater: MutableProperty<Bool>
+    let hashtagStringStatus = MutableProperty<LineTextField.Status>(.Disabled)
     let cameraPreviewEnabled = MutableProperty<Bool>(true)
-    let cameraPreviewBlurred = MutableProperty<Bool>(true)
     let readyToSubmit = MutableProperty<Bool>(false)
     
     var locationPermissionTimer: NSTimer?
@@ -34,9 +34,9 @@ class CreateOptographViewModel {
     var optograph = Optograph.newInstance() 
     
     init() {
-        publishLater = MutableProperty(!Reachability.connectedToNetwork())
-        
         locationEnabled.value = LocationService.enabled
+        
+        locationLoading <~ locationSignal.signal.map { _ in true }
         
         locationSignal.signal
             .mapError { _ in NSError(domain: "", code: 0, userInfo: nil) }
@@ -54,12 +54,15 @@ class CreateOptographViewModel {
             .map { (lat, lon) in ["latitude": lat, "longitude": lon] }
             .flatMap(.Latest) { ApiService<LocationMappable>.post("locations/lookup", parameters: $0) }
             .observeNext { location in
+                self.locationLoading.value = false
                 self.locationFound.value = true
-                self.location.value = location.text
+                self.locationName.value = location.text
+                self.locationCountry.value = location.country
+                self.optograph.location.text = location.text
+                self.optograph.location.country = location.country
             }
         
         text.producer.startWithNext { self.optograph.text = $0 }
-        location.producer.startWithNext { self.optograph.location.text = $0 }
         
         let hashtagRegex = try! NSRegularExpression(pattern: "(#[\\\\u4e00-\\\\u9fa5a-zA-Z0-9]+)\\w*", options: [.CaseInsensitive])
         
@@ -81,13 +84,19 @@ class CreateOptographViewModel {
                     .joinWithSeparator(",")
             }
         
-        hashtagStringStatus <~ previewImageUrl.producer.map(isNotEmpty)
-            .combineLatestWith(locationFound.producer).map(and)
-            .map { $0 ? .Normal : .Disabled }
+        previewImageUrl.producer
+            .filter(isNotEmpty)
+            .take(1)
+            .startWithNext { _ in
+                self.hashtagStringStatus.value = .Indicated
+            }
         
-        textStatus <~ previewImageUrl.producer.map(isNotEmpty)
+        hashtagStringStatus <~ hashtagStringValid.producer
+            .takeWhile { _ in !self.previewImageUrl.value.isEmpty }
+            .map { $0 ? .Normal : .Indicated }
+        
+        textEnabled <~ previewImageUrl.producer.map(isNotEmpty)
             .combineLatestWith(locationFound.producer).map(and)
-            .map { $0 ? .Normal : .Disabled }
     
         readyToSubmit <~ previewImageUrl.producer.map(isNotEmpty)
             .combineLatestWith(locationFound.producer).map(and)
@@ -99,16 +108,11 @@ class CreateOptographViewModel {
         previewImageUrl.value = "\(S3URL)/original/\(optograph.previewAssetId).jpg"
     }
     
-    func post() -> SignalProducer<Optograph, NSError> {
-        saveToDatabase()
+    func post() {
+        optograph.person.id = SessionService.sessionData!.id
         
-        if !publishLater.value {
-            Async.background {
-                self.optograph.publish().start()
-            }
-        }
-        
-        return SignalProducer(value: optograph)
+        try! optograph.insertOrUpdate()
+        try! optograph.location.insertOrUpdate()
     }
     
     func enableLocation() {
@@ -124,21 +128,16 @@ class CreateOptographViewModel {
             locationPermissionTimer = nil
         }
     }
-    
-    private func saveToDatabase() {
-        optograph.person.id = SessionService.sessionData!.id
-        
-        try! optograph.insertOrUpdate()
-        try! optograph.location.insertOrUpdate()
-    }
 }
 
 private struct LocationMappable: Mappable {
     var text = ""
+    var country = ""
     
     init?(_ map: Map) {}
     
     mutating func mapping(map: Map) {
-        text   <- map["text"]
+        text        <- map["text"]
+        country     <- map["country"]
     }
 }

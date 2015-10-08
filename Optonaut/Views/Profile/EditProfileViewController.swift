@@ -11,7 +11,7 @@ import ReactiveCocoa
 import HexColor
 import Mixpanel
 
-class EditProfileViewController: UIViewController, RedNavbar, UINavigationControllerDelegate {
+class EditProfileViewController: UIViewController, RedNavbar {
     
     let imagePickerController = UIImagePickerController()
     
@@ -427,7 +427,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     func updateImage() {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             imagePickerController.sourceType = .PhotoLibrary
-            imagePickerController.allowsEditing = true
+//            imagePickerController.allowsEditing = true
             imagePickerController.delegate = self
             self.presentViewController(imagePickerController, animated: true, completion: nil)
         }
@@ -439,7 +439,7 @@ class EditProfileViewController: UIViewController, RedNavbar, UINavigationContro
     
 }
 
-extension EditProfileViewController: UIImagePickerControllerDelegate {
+extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)

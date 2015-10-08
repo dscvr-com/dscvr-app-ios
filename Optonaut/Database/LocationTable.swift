@@ -11,6 +11,7 @@ import SQLite
 struct LocationSchemaType: ModelSchema {
     let id = Expression<UUID>("location_id")
     let text = Expression<String>("location_text")
+    let country = Expression<String>("location_country")
     let createdAt = Expression<NSDate>("location_created_at")
     let latitude = Expression<Double>("location_latitude")
     let longitude = Expression<Double>("location_longitude")
@@ -23,6 +24,7 @@ func LocationMigration() -> String {
     return LocationTable.create { t in
         t.column(LocationSchema.id, primaryKey: true)
         t.column(LocationSchema.text)
+        t.column(LocationSchema.country)
         t.column(LocationSchema.createdAt)
         t.column(LocationSchema.latitude)
         t.column(LocationSchema.longitude)

@@ -24,9 +24,9 @@ class OnboardingProfileViewModel {
     let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let avatarUploaded = MutableProperty<Bool>(false)
     let displayName = MutableProperty<String>("")
-    let displayNameStatus = MutableProperty<RoundedTextField.Status>(.Disabled)
+    let displayNameStatus = MutableProperty<LineTextField.Status>(.Disabled)
     let userName = MutableProperty<String>("")
-    let userNameStatus = MutableProperty<RoundedTextField.Status>(.Disabled)
+    let userNameStatus = MutableProperty<LineTextField.Status>(.Disabled)
     
     private var person = Person.newInstance()
     

@@ -22,8 +22,8 @@ class OnboardingHashtagSelectViewController: UIViewController {
     }()
     private let imageView = PlaceholderImageView()
     private let loadingInidicatorView = UIActivityIndicatorView()
-    private let skipButtonView = HatchedButton()
-    private let heartButtonView = HatchedButton()
+    private let skipButtonView = ActionButton()
+    private let heartButtonView = ActionButton()
     
     private let viewModel = OnboardingHashtagSelectViewModel()
     

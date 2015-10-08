@@ -1,5 +1,5 @@
 //
-//  HatchedButton.swift
+//  ActionButton.swift
 //  Optonaut
 //
 //  Created by Johannes Schickling on 9/18/15.
@@ -8,14 +8,24 @@
 
 import Foundation
 
-class HatchedButton: UIButton {
+class ActionButton: UIButton {
     
     var defaultBackgroundColor: UIColor? {
         didSet {
-            backgroundColor = defaultBackgroundColor ?? UIColor.whiteColor()
+            updateBackground()
         }
     }
     var activeBackgroundColor: UIColor?
+    
+    var disabledBackgroundColor: UIColor?
+    
+    private var touched = false
+    
+    override var userInteractionEnabled: Bool {
+        didSet {
+            updateBackground()
+        }
+    }
     
     required override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,18 +43,30 @@ class HatchedButton: UIButton {
         titleLabel?.font = UIFont.displayOfSize(24, withType: .Semibold)
         setTitleColor(.Accent, forState: .Normal)
         
-        backgroundColor = defaultBackgroundColor ?? UIColor.whiteColor()
+        updateBackground()
         
         addTarget(self, action: "buttonTouched", forControlEvents: .TouchDown)
         addTarget(self, action: "buttonUntouched", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
     
+    private func updateBackground() {
+        if touched {
+            backgroundColor = activeBackgroundColor ?? UIColor.whiteColor().alpha(0.5)
+        } else if userInteractionEnabled {
+            backgroundColor = defaultBackgroundColor ?? UIColor.whiteColor()
+        } else {
+            backgroundColor = disabledBackgroundColor ?? UIColor.whiteColor()
+        }
+    }
+    
     func buttonTouched() {
-        backgroundColor = activeBackgroundColor ?? UIColor.whiteColor().alpha(0.5)
+        touched = true
+        updateBackground()
     }
     
     func buttonUntouched() {
-        backgroundColor = defaultBackgroundColor ?? UIColor.whiteColor()
+        touched = false
+        updateBackground()
     }
     
 }
