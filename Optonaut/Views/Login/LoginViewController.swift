@@ -28,6 +28,10 @@ class LoginViewController: UIViewController {
     
     let viewModel = LoginViewModel()
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

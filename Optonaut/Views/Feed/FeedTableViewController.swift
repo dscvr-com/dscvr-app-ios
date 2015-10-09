@@ -15,9 +15,13 @@ import Mixpanel
 class FeedTableViewController: OptographTableViewController, NoNavbar {
     
     let viewModel = FeedViewModel()
-    let refreshControl = UIRefreshControl()
     
-    let recordButtonView = ActionButton()
+    private let refreshControl = UIRefreshControl()
+    private let recordButtonView = ActionButton()
+    
+    deinit {
+        logRetain()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

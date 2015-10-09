@@ -46,6 +46,10 @@ class ViewerViewController: UIViewController  {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        logRetain()
+    }
+    
     private func createScnView(frame: CGRect) -> SCNView {
         var scnView: SCNView
         if #available(iOS 9.0, *) {

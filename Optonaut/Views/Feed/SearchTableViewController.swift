@@ -15,6 +15,10 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
     let searchBar = UISearchBar()
     let viewModel = SearchViewModel()
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

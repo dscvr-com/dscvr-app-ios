@@ -27,6 +27,10 @@ class OnboardingHashtagSelectViewController: UIViewController {
     
     private let viewModel = OnboardingHashtagSelectViewModel()
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

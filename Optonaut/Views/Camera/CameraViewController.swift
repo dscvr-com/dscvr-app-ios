@@ -65,7 +65,7 @@ class CameraViewController: UIViewController {
     }
     
     deinit {
-        print("byebye")
+        logRetain()
     }
     
     override func viewDidLoad() {

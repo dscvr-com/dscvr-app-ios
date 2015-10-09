@@ -18,6 +18,10 @@ class OnboardingHashtagInfoViewController: UIViewController {
     let iconTextView = UILabel()
     let nextButtonView = ActionButton()
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

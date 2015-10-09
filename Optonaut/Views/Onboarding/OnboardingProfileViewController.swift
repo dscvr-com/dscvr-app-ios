@@ -28,6 +28,10 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     private let termsView = UILabel()
     private let nextButtonView = ActionButton()
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

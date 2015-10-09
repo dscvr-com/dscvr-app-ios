@@ -41,6 +41,10 @@ class EditProfileViewController: UIViewController, RedNavbar {
 //    let newsletterLabelView = UILabel()
 //    let newsletterSwitchView = UISwitch()
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

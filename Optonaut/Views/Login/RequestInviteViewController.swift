@@ -26,6 +26,10 @@ class RequestInviteViewController: UIViewController {
     
     let viewModel = RequestInviteViewModel()
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

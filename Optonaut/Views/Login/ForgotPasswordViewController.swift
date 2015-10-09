@@ -25,6 +25,10 @@ class ForgotPasswordViewController: UIViewController {
     
     let viewModel = ForgotPasswordViewModel()
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
