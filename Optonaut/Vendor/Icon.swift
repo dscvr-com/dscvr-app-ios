@@ -43,14 +43,20 @@ public extension UIFont {
 }
 
 public extension UIImage {
-    public static func iconWithName(name: Icon, textColor: UIColor, size: CGSize) -> UIImage {
+    public static func iconWithName(name: Icon, textColor: UIColor, fontSize: CGFloat, offset: CGSize = CGSizeZero) -> UIImage {
         let paragraph = NSMutableParagraphStyle()
-        paragraph.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        paragraph.lineBreakMode = .ByWordWrapping
         paragraph.alignment = .Center
-        let attributedString = NSAttributedString(string: String.iconWithName(name) as String, attributes: [NSFontAttributeName: UIFont.iconOfSize(24.0), NSForegroundColorAttributeName: textColor, NSParagraphStyleAttributeName:paragraph])
-        let size = sizeOfAttributeString(attributedString, maxWidth: size.width)
-        UIGraphicsBeginImageContextWithOptions(size, false , 0.0)
-        attributedString.drawInRect(CGRectMake(0, 0, size.width, size.height))
+        let attributes = [
+            NSFontAttributeName: UIFont.iconOfSize(fontSize),
+            NSForegroundColorAttributeName: textColor,
+            NSParagraphStyleAttributeName: paragraph
+        ]
+        let attributedString = NSAttributedString(string: String.iconWithName(name) as String, attributes: attributes)
+        let stringSize = sizeOfAttributeString(attributedString)
+        let size = CGSize(width: stringSize.width + offset.width, height: stringSize.height + offset.height)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        attributedString.drawInRect(CGRect(origin: CGPointZero, size: size))
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return image
@@ -63,9 +69,8 @@ public extension String {
     }
 }
 
-private func sizeOfAttributeString(str: NSAttributedString, maxWidth: CGFloat) -> CGSize {
-    let size = str.boundingRectWithSize(CGSizeMake(maxWidth, 1000), options:(NSStringDrawingOptions.UsesLineFragmentOrigin), context:nil).size
-    return size
+private func sizeOfAttributeString(str: NSAttributedString) -> CGSize {
+    return str.boundingRectWithSize(CGSizeMake(10000, 10000), options:(NSStringDrawingOptions.UsesLineFragmentOrigin), context:nil).size
 }
 
 public enum Icon: String {
@@ -73,7 +78,6 @@ public enum Icon: String {
     case OnboardingInfo = "\u{e801}"
     case Back = "\u{e802}"
     case CameraAdd = "\u{e803}"
-    case Camera = "\u{e804}"
     case Cardboard = "\u{e805}"
     case Check = "\u{e806}"
     case Comment = "\u{e807}"
@@ -81,11 +85,13 @@ public enum Icon: String {
     case Edit = "\u{e809}"
     case Feed = "\u{e80a}"
     case HeartFilled = "\u{e80b}"
-    case Heart = "\u{e80c}"
+    case Compass = "\u{e80c}"
     case Location = "\u{e80d}"
     case MoreOptions = "\u{e80e}"
     case Profile = "\u{e80f}"
     case Share = "\u{e810}"
     case Star = "\u{e811}"
     case Redo = "\u{e812}"
+    case Logo = "\u{e813}"
+    case Heart = "\u{e814}"
 }

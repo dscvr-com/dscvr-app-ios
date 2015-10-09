@@ -12,8 +12,12 @@ import HexColor
 
 func setupAppearanceDefaults() {
     UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
+    
     UINavigationBar.appearance().tintColor = .whiteColor()
-    UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
+    UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics: .Default)
+    
+    let image = UIImage.iconWithName(.Back, textColor: .whiteColor(), fontSize: 24, offset: CGSize(width: 15, height: 0))
+    UIBarButtonItem.appearance().setBackButtonBackgroundImage(image, forState: .Normal, barMetrics: .Default)
 }
 
 extension UIColor {
@@ -54,6 +58,6 @@ extension UIColor {
     }
 }
 
-func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icomoon) {
-    tabBarItem.title = String.icomoonWithName(icon)
+func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icon) {
+    tabBarItem.title = String.iconWithName(icon)
 }

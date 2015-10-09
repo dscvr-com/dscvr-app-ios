@@ -13,7 +13,7 @@ import Mixpanel
 import ActiveLabel
 import AVFoundation
 
-class CreateOptographViewController: UIViewController {
+class CreateOptographViewController: UIViewController, NoNavbar {
     
     private let viewModel = CreateOptographViewModel()
     
@@ -133,7 +133,7 @@ class CreateOptographViewController: UIViewController {
         locationEnableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "enableLocation"))
         view.addSubview(locationEnableView)
         
-        locationTextView.rac_text <~ viewModel.locationName
+        locationTextView.rac_text <~ viewModel.locationText
         locationTextView.rac_hidden <~ viewModel.locationEnabled.producer.map(negate)
         locationTextView.font = UIFont.displayOfSize(16.5, withType: .Semibold)
         locationTextView.textColor = .DarkGrey
@@ -237,7 +237,7 @@ class CreateOptographViewController: UIViewController {
         locationIconView.autoSetDimension(.Height, toSize: 15)
         
         locationWarningView.autoPinEdge(.Top, toEdge: .Top, ofView: locationIconView, withOffset: -2)
-        locationWarningView.autoPinEdge(.Left, toEdge: .Right, ofView: locationIconView, withOffset: 6)
+        locationWarningView.autoPinEdge(.Left, toEdge: .Right, ofView: locationIconView, withOffset: 4)
         
         locationEnableView.autoPinEdge(.Top, toEdge: .Top, ofView: locationWarningView)
         locationEnableView.autoPinEdge(.Left, toEdge: .Right, ofView: locationWarningView, withOffset: 5)
@@ -277,8 +277,7 @@ class CreateOptographViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
+        updateNavbarAppear()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -291,8 +290,6 @@ class CreateOptographViewController: UIViewController {
         reloadLocation()
         
         session.startRunning()
-        
-        navigationController?.interactivePopGestureRecognizer?.enabled = false
     }
     
     override func viewWillDisappear(animated: Bool) {

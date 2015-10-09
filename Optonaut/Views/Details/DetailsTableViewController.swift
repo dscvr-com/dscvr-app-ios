@@ -11,7 +11,7 @@ import Mixpanel
 import Async
 import CoreMotion
 
-class DetailsTableViewController: UIViewController, TransparentNavbar {
+class DetailsTableViewController: UIViewController, NoNavbar {
     
     private let viewModel: DetailsViewModel
     
@@ -34,7 +34,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
         super.viewDidLoad()
         
         navigationItem.title = ""
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .Plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         
         tableView.delegate = self
         tableView.dataSource = self

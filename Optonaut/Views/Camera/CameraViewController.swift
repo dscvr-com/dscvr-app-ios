@@ -756,8 +756,8 @@ private class TiltView: UIView {
         circleSegment.path = circleSegmentPath.CGPath
         
         // Update transparency
-        let visibleLimit = Float(M_PI / 70)
-        let criticalLimit = Float(M_PI / 50)
+        let visibleLimit = Float(M_PI / 90)
+        let criticalLimit = Float(M_PI / 70)
         let distLimit = Float(M_PI / 30)
         if abs(self.angle) < visibleLimit {
             alpha = 0

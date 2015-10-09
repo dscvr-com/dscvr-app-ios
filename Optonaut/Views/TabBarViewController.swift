@@ -38,7 +38,7 @@ class TabBarViewController: UITabBarController {
         // set font for bar items
         let tabBarItemAppearance = UITabBarItem.appearance()
         let attribues = [
-            NSFontAttributeName: UIFont.icomoonOfSize(22),
+            NSFontAttributeName: UIFont.iconOfSize(22),
             NSForegroundColorAttributeName: UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         ]
         tabBarItemAppearance.setTitleTextAttributes(attribues, forState: .Normal)

@@ -98,6 +98,23 @@ struct Optograph: Model {
                 )
             })
     }
+    
+    mutating func delete() -> SignalProducer<EmptyResponse, ApiError> {
+        if isPublished {
+            return ApiService<EmptyResponse>.delete("optographs/\(id)")
+                .on(completed: {
+                    self.deleted = true
+                    try! self.insertOrUpdate()
+                })
+        } else {
+            return SignalProducer<EmptyResponse, ApiError> { sink, disposable in
+                disposable.addDisposable {}
+                self.deleted = true
+                try! self.insertOrUpdate()
+                sendCompleted(sink)
+            }
+        }
+    }
 }
 
 extension Optograph: Mappable {

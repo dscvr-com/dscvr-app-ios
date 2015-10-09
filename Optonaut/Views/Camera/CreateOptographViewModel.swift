@@ -16,7 +16,7 @@ class CreateOptographViewModel {
     
     let previewImageUrl = MutableProperty<String>("")
     let locationSignal = NotificationSignal()
-    let locationName = MutableProperty<String>("")
+    let locationText = MutableProperty<String>("")
     let locationCountry = MutableProperty<String>("")
     let locationFound = MutableProperty<Bool>(false)
     let locationEnabled = MutableProperty<Bool>(false)
@@ -56,7 +56,7 @@ class CreateOptographViewModel {
             .observeNext { location in
                 self.locationLoading.value = false
                 self.locationFound.value = true
-                self.locationName.value = location.text
+                self.locationText.value = location.text
                 self.locationCountry.value = location.country
                 self.optograph.location.text = location.text
                 self.optograph.location.country = location.country

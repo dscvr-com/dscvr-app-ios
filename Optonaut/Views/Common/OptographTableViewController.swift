@@ -17,7 +17,7 @@ class OptographTableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .Plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -33,10 +33,7 @@ class OptographTableViewController: UIViewController {
 extension OptographTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let textHeight = calcTextHeight(items[indexPath.row].text, withWidth: view.frame.width - 38)
-        let imageHeight = view.frame.width * 0.45
-        let restHeight = CGFloat(100) // includes avatar, name, bottom line and spacing
-        return imageHeight + restHeight + textHeight
+        return view.frame.width * 3 / 4 + 94.5
     }
     
 }
