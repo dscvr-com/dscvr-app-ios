@@ -20,5 +20,9 @@ class ProfileNavViewController: NavigationController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        logRetain()
+    }
+    
 }
 

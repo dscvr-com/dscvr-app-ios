@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import ReactiveCocoa
 
-
 func uuid() -> UUID {
     return NSUUID().UUIDString.lowercaseString
 }

@@ -34,6 +34,10 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

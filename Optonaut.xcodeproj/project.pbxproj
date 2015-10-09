@@ -128,6 +128,7 @@
 		8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCA0511B3806680091F1B1 /* AppDelegate.swift */; };
 		8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD5886F1BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD588711BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		8FD845B81BC870B90064048D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845B71BC870B90064048D /* Debug.swift */; settings = {ASSET_TAGS = (); }; };
 		8FE09F5B1BADD22200EA105D /* WebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE09F5A1BADD22200EA105D /* WebImage.framework */; };
 		8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */; settings = {ASSET_TAGS = (); }; };
 		8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */; settings = {ASSET_TAGS = (); }; };
@@ -298,6 +299,7 @@
 		8FCCA0511B3806680091F1B1 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8FD5886F1BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagInfoViewController.swift; sourceTree = "<group>"; };
 		8FD588711BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSummaryViewController.swift; sourceTree = "<group>"; };
+		8FD845B71BC870B90064048D /* Debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
 		8FE09F5A1BADD22200EA105D /* WebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebImage.framework; path = Carthage/Build/iOS/WebImage.framework; sourceTree = "<group>"; };
 		8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
 		8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotificationUtils.swift; sourceTree = "<group>"; };
@@ -609,6 +611,7 @@
 			children = (
 				8FAB9F611B8F02D500B4C8CB /* Appearance.swift */,
 				8FAB9F621B8F02D500B4C8CB /* Constants.swift */,
+				8FD845B71BC870B90064048D /* Debug.swift */,
 				8FAB9F661B8F02D500B4C8CB /* NSDateTransform.swift */,
 				8FAB9F671B8F02D500B4C8CB /* Reachability.swift */,
 				8FAB9F6E1B8F02D500B4C8CB /* Utils.swift */,
@@ -1034,6 +1037,7 @@
 				8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */,
+				8FD845B81BC870B90064048D /* Debug.swift in Sources */,
 				8FAB9F561B8F01DF00B4C8CB /* ProfileHeaderTableViewCell.swift in Sources */,
 				8F0B17861BAC193000FAF649 /* LineTextField.swift in Sources */,
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,

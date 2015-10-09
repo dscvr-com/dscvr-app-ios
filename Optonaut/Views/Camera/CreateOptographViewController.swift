@@ -13,7 +13,7 @@ import Mixpanel
 import ActiveLabel
 import AVFoundation
 
-class CreateOptographViewController: UIViewController, NoNavbar {
+class CreateOptographViewController: UIViewController {
     
     private let viewModel = CreateOptographViewModel()
     
@@ -59,10 +59,12 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        logRetain()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationItem.setHidesBackButton(true, animated: false)
         
         view.backgroundColor = .whiteColor()
         
@@ -162,13 +164,13 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         
         locationActivityView.activityIndicatorViewStyle = .Gray
         viewModel.locationLoading.producer.combineLatestWith(viewModel.locationEnabled.producer).map(and)
-            .startWithNext { loading in
+            .startWithNext { [weak self] loading in
                 if loading {
-                    self.locationActivityView.startAnimating()
+                    self?.locationActivityView.startAnimating()
                 } else {
-                    self.locationActivityView.stopAnimating()
+                    self?.locationActivityView.stopAnimating()
                 }
-                self.locationActivityView.hidden = !loading
+                self?.locationActivityView.hidden = !loading
             }
         infoWrapperView.addSubview(locationActivityView)
         
@@ -176,7 +178,9 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         hashtagInputView.color = .Dark
         hashtagInputView.rac_status <~ viewModel.hashtagStringStatus
         hashtagInputView.placeholder = "Hashtags"
-        hashtagInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.hashtagString.value = $0 as! String }
+        hashtagInputView.rac_textSignal().toSignalProducer().startWithNext { [weak self] val in
+            self?.viewModel.hashtagString.value = val as! String
+        }
         hashtagInputView.keyboardType = .Twitter
         hashtagInputView.autocorrectionType = .No
         infoWrapperView.addSubview(hashtagInputView)
@@ -184,16 +188,18 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         textInputView.font = UIFont.textOfSize(14, withType: .Regular)
         textInputView.placeholder = "Tell something about what you see..."
         viewModel.textEnabled.producer
-            .startWithNext { enabled in
-                self.textInputView.userInteractionEnabled = enabled
-                self.textInputView.placeholderColor = enabled ? UIColor.DarkGrey.alpha(0.4) : UIColor.DarkGrey.alpha(0.15)
+            .startWithNext { [weak self] enabled in
+                self?.textInputView.userInteractionEnabled = enabled
+                self?.textInputView.placeholderColor = enabled ? UIColor.DarkGrey.alpha(0.4) : UIColor.DarkGrey.alpha(0.15)
             }
         textInputView.textColor = UIColor(0x4d4d4d)
         textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         textInputView.returnKeyType = .Done
         textInputView.delegate = self
-        textInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.text.value = $0 as! String }
+        textInputView.rac_textSignal().toSignalProducer().startWithNext { [weak self] val in
+            self?.viewModel.text.value = val as! String
+        }
         infoWrapperView.addSubview(textInputView)
         
         view.addSubview(backgroundView)
@@ -289,7 +295,7 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
-        updateNavbarAppear()
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     override func viewDidAppear(animated: Bool) {
