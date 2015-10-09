@@ -11,7 +11,7 @@ import Mixpanel
 import Async
 import CoreMotion
 
-class DetailsTableViewController: UIViewController, TransparentNavbar {
+class DetailsTableViewController: UIViewController, NoNavbar {
     
     private let viewModel: DetailsViewModel
     
@@ -34,7 +34,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
         super.viewDidLoad()
         
         navigationItem.title = ""
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .Plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -149,7 +149,7 @@ class DetailsTableViewController: UIViewController, TransparentNavbar {
     
     private func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
         if viewModel.downloadProgress.value == 1 {
-            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, distortion: ViewerDistortion.VROne), animated: false)
+            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, distortion: .VROne), animated: false)
             viewModel.increaseViewsCount()
         }
     }

@@ -42,3 +42,18 @@ extension RedNavbar where Self: UIViewController {
     }
     
 }
+
+protocol NoNavbar {
+    func updateNavbarAppear()
+}
+
+extension NoNavbar where Self: UIViewController {
+
+    func updateNavbarAppear() {
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.navigationBar.translucent = true
+        navigationController?.navigationBar.shadowImage = UIImage()
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+    }
+    
+}

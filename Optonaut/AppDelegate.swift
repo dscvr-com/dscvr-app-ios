@@ -13,9 +13,9 @@ import Crashlytics
 import PureLayout
 import Mixpanel
 
-//let Env = EnvType.Development
+let Env = EnvType.Development
 //let Env = EnvType.Staging
-let Env = EnvType.Production
+//let Env = EnvType.Production
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -25,10 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         prepareAndExecute {
-//            self.window?.rootViewController = TabBarViewController()
-            let tabBarViewController = TabBarViewController()
-            tabBarViewController.feedNavViewController.pushViewController(CreateOptographViewController(), animated: false)
-            self.window?.rootViewController = tabBarViewController
+            self.window?.rootViewController = TabBarViewController()
         }
         
         return true

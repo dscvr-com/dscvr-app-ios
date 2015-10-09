@@ -79,7 +79,7 @@ class DetailsTableViewCell: UITableViewCell {
         actionButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
         actionButtonView.setTitle(String.icomoonWithName(.DotsVertical), forState: .Normal)
         actionButtonView.setTitleColor(UIColor(0xe6e6e6), forState: .Normal)
-        actionButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showActions"))
+        actionButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTapOptions"))
         contentView.addSubview(actionButtonView)
         
         starButtonView.titleLabel?.font = UIFont.icomoonOfSize(20)
@@ -227,41 +227,6 @@ class DetailsTableViewCell: UITableViewCell {
         }
     }
     
-    func showActions() {
-        let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-        
-        if SessionService.sessionData?.id == viewModel.optograph.person.id {
-            actionAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
-                self.viewModel.delete().startWithCompleted {
-                    self.navigationController?.popViewControllerAnimated(true)
-                }
-            }))
-        }
-        
-        if !viewModel.isPublished.value {
-            actionAlert.addAction(UIAlertAction(title: "Publish", style: .Default, handler: { _ in
-                self.viewModel.publish()
-            }))
-        }
-        
-        actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
-            // TODO adjust sharing feature
-            if let myWebsite = NSURL(string: "http://share.optonaut.co/\(self.viewModel.optograph.id)") {
-                let textToShare = "Check out this Optograph of \(self.viewModel.displayName.value): \(self.viewModel.text.value)"
-                let objectsToShare = [textToShare, myWebsite]
-                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-                
-                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
-                
-                self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
-            }
-        }))
-        
-        actionAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
-        
-        navigationController?.presentViewController(actionAlert, animated: true, completion: nil)
-    }
-    
     func toggleStar() {
         viewModel.toggleLike()
     }
@@ -280,5 +245,15 @@ class DetailsTableViewCell: UITableViewCell {
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}
+    
     override func setHighlighted(highlighted: Bool, animated: Bool) {}
+}
+
+// MARK: - OptographOptions
+extension DetailsTableViewCell: OptographOptions {
+    
+    func didTapOptions() {
+        showOptions(viewModel.optograph)
+    }
+    
 }

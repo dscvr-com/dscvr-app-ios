@@ -12,28 +12,24 @@ import Async
 import Device
 import Mixpanel
 
-class FeedTableViewController: OptographTableViewController, RedNavbar {
+class FeedTableViewController: OptographTableViewController, NoNavbar {
     
     let viewModel = FeedViewModel()
     let refreshControl = UIRefreshControl()
     
+    let recordButtonView = ActionButton()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = String.icomoonWithName(.LogoText)
+        recordButtonView.setTitle(String.iconWithName(.Logo), forState: .Normal)
+        recordButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+        recordButtonView.defaultBackgroundColor = .Accent
+        recordButtonView.titleLabel?.font = UIFont.iconOfSize(20)
+        recordButtonView.layer.cornerRadius = 30
+        recordButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushCamera"))
+        view.addSubview(recordButtonView)
         
-        let cameraButton = UIBarButtonItem()
-        cameraButton.image = UIImage.icomoonWithName(.Camera, textColor: .whiteColor(), size: CGSize(width: 24, height: 17))
-        cameraButton.target = self
-        cameraButton.action = "pushCamera"
-        navigationItem.setRightBarButtonItem(cameraButton, animated: false)
-        
-        let searchButton = UIBarButtonItem()
-        searchButton.title = String.icomoonWithName(.MagnifyingGlass)
-        searchButton.image = UIImage.icomoonWithName(.MagnifyingGlass, textColor: .whiteColor(), size: CGSize(width: 21, height: 17))
-        searchButton.target = self
-        searchButton.action = "pushSearch"
-        navigationItem.setLeftBarButtonItem(searchButton, animated: false)
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
             self.viewModel.refreshNotification.notify()
@@ -61,15 +57,8 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         super.viewWillAppear(animated)
         
         updateNavbarAppear()
-        navigationController?.hidesBarsOnSwipe = true
         
         viewModel.refreshNotification.notify()
-        
-        navigationController?.navigationBar.setTitleVerticalPositionAdjustment(16, forBarMetrics: .Default)
-        navigationController?.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: UIFont.icomoonOfSize(50),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
-        ]
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -83,9 +72,6 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        navigationController?.hidesBarsOnSwipe = false
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        
         tabBarController?.delegate = nil
     }
     
@@ -95,7 +81,20 @@ class FeedTableViewController: OptographTableViewController, RedNavbar {
         Mixpanel.sharedInstance().track("View.Feed")
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.contentInset = UIEdgeInsetsZero
+        tableView.scrollIndicatorInsets = UIEdgeInsetsZero
+    }
+    
     override func updateViewConstraints() {
+        
+        recordButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -20)
+        recordButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
+        recordButtonView.autoSetDimension(.Width, toSize: 60)
+        recordButtonView.autoSetDimension(.Height, toSize: 60)
+        
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()

@@ -21,12 +21,12 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     // subviews
     private let scrollView = UIScrollView()
     private let headlineTextView = UILabel()
-    private let uploadButtonView = HatchedButton()
+    private let uploadButtonView = ActionButton()
     private let avatarImageView = UIImageView()
-    private let displayNameInputView = RoundedTextField()
-    private let userNameInputView = RoundedTextField()
+    private let displayNameInputView = LineTextField()
+    private let userNameInputView = LineTextField()
     private let termsView = UILabel()
-    private let nextButtonView = HatchedButton()
+    private let nextButtonView = ActionButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -212,7 +212,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     func uploadImage() {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             imagePickerController.sourceType = .PhotoLibrary
-            imagePickerController.allowsEditing = true
+//            imagePickerController.allowsEditing = true
             imagePickerController.delegate = self
             self.presentViewController(imagePickerController, animated: true, completion: nil)
         }

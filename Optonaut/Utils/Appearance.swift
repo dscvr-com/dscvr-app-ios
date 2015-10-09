@@ -12,8 +12,12 @@ import HexColor
 
 func setupAppearanceDefaults() {
     UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
+    
     UINavigationBar.appearance().tintColor = .whiteColor()
-    UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics:UIBarMetrics.Default)
+    UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics: .Default)
+    
+    let image = UIImage.iconWithName(.Back, textColor: .whiteColor(), fontSize: 24, offset: CGSize(width: 15, height: 0))
+    UIBarButtonItem.appearance().setBackButtonBackgroundImage(image, forState: .Normal, barMetrics: .Default)
 }
 
 extension UIColor {
@@ -25,27 +29,27 @@ extension UIColor {
     
     static var DarkGrey: UIColor {
         get {
-            return UIColor(0x333333)
+            return UIColor(0x707070)
         }
     }
     
     static var Grey: UIColor {
         get {
-            return UIColor.blackColor().alpha(0.25)
+            return UIColor(0xAAAAAA)
         }
     }
     
     static var LightGrey: UIColor {
         get {
-            return UIColor.blackColor().alpha(0.10)
+            return UIColor(0xDDDDDD)
         }
     }
     
-    static var LightGreyActive: UIColor {
-        get {
-            return UIColor.blackColor().alpha(0.20)
-        }
-    }
+//    static var LightGreyActive: UIColor {
+//        get {
+//            return UIColor.blackColor().alpha(0.20)
+//        }
+//    }
     
     static var Success: UIColor {
         get {
@@ -54,6 +58,6 @@ extension UIColor {
     }
 }
 
-func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icomoon) {
-    tabBarItem.title = String.icomoonWithName(icon)
+func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icon) {
+    tabBarItem.title = String.iconWithName(icon)
 }

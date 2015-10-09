@@ -13,20 +13,20 @@ import SQLite
 
 class OnboardingProfileViewModel {
     
-    enum OnboardingProfileNextStep: Int {
+    enum NextStep: Int {
         case Avatar = 0
         case DisplayName = 1
         case UserName = 2
         case Done = 3
     }
     
-    let nextStep = MutableProperty<OnboardingProfileNextStep>(.Avatar)
+    let nextStep = MutableProperty<NextStep>(.Avatar)
     let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
     let avatarUploaded = MutableProperty<Bool>(false)
     let displayName = MutableProperty<String>("")
-    let displayNameStatus = MutableProperty<RoundedTextField.Status>(.Disabled)
+    let displayNameStatus = MutableProperty<LineTextField.Status>(.Disabled)
     let userName = MutableProperty<String>("")
-    let userNameStatus = MutableProperty<RoundedTextField.Status>(.Disabled)
+    let userNameStatus = MutableProperty<LineTextField.Status>(.Disabled)
     
     private var person = Person.newInstance()
     
@@ -34,7 +34,7 @@ class OnboardingProfileViewModel {
         avatarUploaded.producer
             .startWithNext { success in
                 if success {
-                    self.nextStep.value = OnboardingProfileNextStep(rawValue: max(self.nextStep.value.rawValue, OnboardingProfileNextStep.DisplayName.rawValue))!
+                    self.nextStep.value = NextStep(rawValue: max(self.nextStep.value.rawValue, NextStep.DisplayName.rawValue))!
                 } else {
                     self.nextStep.value = .Avatar
                 }
@@ -43,9 +43,9 @@ class OnboardingProfileViewModel {
         displayName.producer
             .startWithNext { val in
                 if val.isEmpty {
-                    self.nextStep.value = OnboardingProfileNextStep(rawValue: min(self.nextStep.value.rawValue, OnboardingProfileNextStep.DisplayName.rawValue))!
+                    self.nextStep.value = NextStep(rawValue: min(self.nextStep.value.rawValue, NextStep.DisplayName.rawValue))!
                 } else {
-                    self.nextStep.value = OnboardingProfileNextStep(rawValue: max(self.nextStep.value.rawValue, OnboardingProfileNextStep.UserName.rawValue))!
+                    self.nextStep.value = NextStep(rawValue: max(self.nextStep.value.rawValue, NextStep.UserName.rawValue))!
                 }
             }
         
@@ -55,7 +55,7 @@ class OnboardingProfileViewModel {
             .skipRepeats()
             .on(next: { userName in
                 self.userNameStatus.value = .Warning("Checking username...")
-                self.nextStep.value = OnboardingProfileNextStep(rawValue: min(self.nextStep.value.rawValue, OnboardingProfileNextStep.UserName.rawValue))!
+                self.nextStep.value = NextStep(rawValue: min(self.nextStep.value.rawValue, NextStep.UserName.rawValue))!
             })
             .filter(isNotEmpty)
             .skipRepeats()
@@ -71,7 +71,7 @@ class OnboardingProfileViewModel {
                             self.nextStep.value = .Done
                         },
                         error: { _ in
-                            self.nextStep.value = OnboardingProfileNextStep(rawValue: min(self.nextStep.value.rawValue, OnboardingProfileNextStep.UserName.rawValue))!
+                            self.nextStep.value = NextStep(rawValue: min(self.nextStep.value.rawValue, NextStep.UserName.rawValue))!
                             self.userNameStatus.value = .Warning("This username is already taken. Please try another one.")
                         }
                     )

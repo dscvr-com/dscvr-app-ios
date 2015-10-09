@@ -59,6 +59,17 @@ struct Optograph: Model {
         )
     }
     
+    func saveAsset(asset: OptographAsset) {
+        switch asset {
+        case .LeftImage(let data):
+            data.writeToFile("\(StaticPath)/\(leftTextureAssetId).jpg", atomically: true)
+        case .RightImage(let data):
+            data.writeToFile("\(StaticPath)/\(rightTextureAssetId).jpg", atomically: true)
+        case .PreviewImage(let data):
+            data.writeToFile("\(StaticPath)/\(previewAssetId).jpg", atomically: true)
+        }
+    }
+    
     mutating func publish() -> SignalProducer<Optograph, ApiError> {
         assert(!isPublished)
         
@@ -86,6 +97,23 @@ struct Optograph: Model {
                     )
                 )
             })
+    }
+    
+    mutating func delete() -> SignalProducer<EmptyResponse, ApiError> {
+        if isPublished {
+            return ApiService<EmptyResponse>.delete("optographs/\(id)")
+                .on(completed: {
+                    self.deleted = true
+                    try! self.insertOrUpdate()
+                })
+        } else {
+            return SignalProducer<EmptyResponse, ApiError> { sink, disposable in
+                disposable.addDisposable {}
+                self.deleted = true
+                try! self.insertOrUpdate()
+                sendCompleted(sink)
+            }
+        }
     }
 }
 
@@ -163,6 +191,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.commentsCount <-- commentsCount,
             OptographSchema.viewsCount <-- viewsCount,
             OptographSchema.locationId <-- location.id,
+            OptographSchema.isStitched <-- isStitched,
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.previewAssetId <-- previewAssetId,
             OptographSchema.leftTextureAssetId <-- leftTextureAssetId,

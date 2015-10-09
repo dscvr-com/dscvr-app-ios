@@ -19,10 +19,24 @@ class LocationService: NSObject {
     private let locationManager = CLLocationManager()
     private var callback: (Coordinate -> ())?
     
-    override init() {
+    private override init() {
         super.init()
         
         locationManager.delegate = self
+    }
+    
+    static var enabled: Bool {
+        return CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse || CLLocationManager.authorizationStatus() == .AuthorizedAlways
+    }
+    
+    static func askPermission() {
+        switch CLLocationManager.authorizationStatus() {
+        case .NotDetermined:
+            sharedInstance.locationManager.requestWhenInUseAuthorization()
+        case .Denied:
+            UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
+        default: ()
+        }
     }
     
     static func location() -> SignalProducer<Coordinate, NSError> {

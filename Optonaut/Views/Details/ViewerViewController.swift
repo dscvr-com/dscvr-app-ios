@@ -5,29 +5,36 @@ import CoreMotion
 import CoreGraphics
 import Mixpanel
 
-enum ViewerDistortion {
-    case None, VROne, Barrell
+protocol RotationMatrixSource {
+    func getRotationMatrix() -> CMRotationMatrix?
+}
+
+extension CMMotionManager: RotationMatrixSource {
+    func getRotationMatrix() -> CMRotationMatrix? {
+        return deviceMotion?.attitude.rotationMatrix
+    }
 }
 
 class ViewerViewController: UIViewController  {
+
+    enum Distortion {
+        case None, VROne, Barrell
+    }
     
-    let orientation: UIInterfaceOrientation
-    let optograph: Optograph
+    private let orientation: UIInterfaceOrientation
+    private let optograph: Optograph
+    private let distortion: Distortion
     
-    let motionManager = CMMotionManager()
+    private let motionManager = CMMotionManager()
     
-    var originalBrightness: CGFloat!
+    private var originalBrightness: CGFloat!
     
-    var leftRenderDelegate: StereoRenderDelegate?
-    var rightRenderDelegate: StereoRenderDelegate?
+    private var leftRenderDelegate: StereoRenderDelegate!
+    private var rightRenderDelegate: StereoRenderDelegate!
+    private var leftScnView: SCNView!
+    private var rightScnView: SCNView!
     
-    var leftScnView: SCNView?
-    var rightScnView: SCNView?
-    
-    var distortion: ViewerDistortion
-    
-    required init(orientation: UIInterfaceOrientation, optograph: Optograph, distortion: ViewerDistortion) {
-        
+    required init(orientation: UIInterfaceOrientation, optograph: Optograph, distortion: Distortion) {
         self.orientation = orientation
         self.optograph = optograph
         self.distortion = distortion
@@ -39,18 +46,18 @@ class ViewerViewController: UIViewController  {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    func createScnView(frame: CGRect) -> SCNView {
-        var scnView: SCNView?
+    private func createScnView(frame: CGRect) -> SCNView {
+        var scnView: SCNView
         if #available(iOS 9.0, *) {
             scnView = SCNView(frame: frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
         } else {
-            scnView = SCNView(frame: frame)        }
+            scnView = SCNView(frame: frame)
+        }
         
-        scnView!.backgroundColor = .blackColor()
-        scnView!.playing = true
+        scnView.backgroundColor = .blackColor()
+        scnView.playing = true
         
-        return scnView!
+        return scnView
     }
     
     override func viewDidLoad() {
@@ -62,28 +69,27 @@ class ViewerViewController: UIViewController  {
         leftScnView = createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
         rightScnView = createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
-        leftRenderDelegate = StereoRenderDelegate(isLeft: true, optograph: optograph, motionManager: motionManager, width: leftScnView!.frame.width, height: leftScnView!.frame.height)
-        
-        rightRenderDelegate = StereoRenderDelegate(isLeft: false, optograph: optograph, motionManager: motionManager, width: rightScnView!.frame.width, height: rightScnView!.frame.height)
+        leftRenderDelegate = StereoRenderDelegate(eye: .Left, optograph: optograph, rotationMatrixSource: motionManager, width: leftScnView.frame.width, height: leftScnView.frame.height)
+        rightRenderDelegate = StereoRenderDelegate(eye: .Right, optograph: optograph, rotationMatrixSource: motionManager, width: rightScnView.frame.width, height: rightScnView.frame.height)
             
-        leftScnView!.scene = leftRenderDelegate!.root
-        leftScnView!.delegate = leftRenderDelegate
+        leftScnView.scene = leftRenderDelegate.root
+        leftScnView.delegate = leftRenderDelegate
         
-        rightScnView!.scene = rightRenderDelegate!.root
-        rightScnView!.delegate = rightRenderDelegate
+        rightScnView.scene = rightRenderDelegate.root
+        rightScnView.delegate = rightRenderDelegate
         
         switch distortion {
         case .Barrell:
-            leftScnView!.technique = createDistortionTechnique("barrell_displacement")
-            rightScnView!.technique = createDistortionTechnique("barrell_displacement")
+            leftScnView.technique = createDistortionTechnique("barrell_displacement")
+            rightScnView.technique = createDistortionTechnique("barrell_displacement")
         case .VROne:
-            leftScnView!.technique = createDistortionTechnique("zeiss_displacement_left")
-            rightScnView!.technique = createDistortionTechnique("zeiss_displacement_right")
+            leftScnView.technique = createDistortionTechnique("zeiss_displacement_left")
+            rightScnView.technique = createDistortionTechnique("zeiss_displacement_right")
         default: break
         }
         
-        view.addSubview(rightScnView!)
-        view.addSubview(leftScnView!)
+        view.addSubview(rightScnView)
+        view.addSubview(leftScnView)
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60
         motionManager.startDeviceMotionUpdates()
@@ -104,14 +110,6 @@ class ViewerViewController: UIViewController  {
         })
     }
     
-    func createDistortionTechnique(name: String) -> SCNTechnique {
-        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
-        let json = try! NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! NSDictionary
-        let technique = SCNTechnique(dictionary: json as! [String : AnyObject])
-        
-        return technique!
-    }
-    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -128,6 +126,9 @@ class ViewerViewController: UIViewController  {
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
+        motionManager.stopAccelerometerUpdates()
+        motionManager.stopDeviceMotionUpdates()
+        
         Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.id])
     }
     
@@ -138,66 +139,42 @@ class ViewerViewController: UIViewController  {
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
         
-        leftScnView!.playing = false
-        rightScnView!.playing = false
+        leftScnView.playing = false
+        rightScnView.playing = false
         
-        leftScnView!.removeFromSuperview()
-        rightScnView!.removeFromSuperview()
-        
-        leftScnView = nil
-        rightScnView = nil
-        
-        leftRenderDelegate!.dispose()
-        rightRenderDelegate!.dispose()
-        
-        leftRenderDelegate = nil
-        rightRenderDelegate = nil
+        leftRenderDelegate.dispose()
+        rightRenderDelegate.dispose()
         
         super.viewWillDisappear(animated)
     }
+    
+    private func createDistortionTechnique(name: String) -> SCNTechnique {
+        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
+        let json = try! NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! NSDictionary
+        let technique = SCNTechnique(dictionary: json as! [String : AnyObject])
+        
+        return technique!
+    }
 }
-
 
 class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     
+    enum Eye {
+        case Left, Right
+    }
+    
+    let optograph: Optograph
     let cameraNode: SCNNode
     let sphereNode: SCNNode
-    let motionManager: CMMotionManager
-    let isLeft: Bool
-    let optograph: Optograph
-    let root: SCNScene
+    let rotationMatrixSource: RotationMatrixSource
+    let eye: Eye
     let image: UIImage
+    let root = SCNScene()
     
-    static func createSphere(image: UIImage?) -> SCNNode {
-        
-        let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
-        
-        let geometry = SCNSphere(radius: 5.0)
-        geometry.segmentCount = 128
-        geometry.firstMaterial?.diffuse.contents = image!
-        geometry.firstMaterial?.doubleSided = true
-        let node = SCNNode(geometry: geometry)
-        node.transform = transform
-        
-        return node
-    }
-    
-    static func createPlane(image: UIImage?) -> SCNNode {
-        
-        let planeGeometry = SCNPlane(width: 10, height: 10)
-        
-        planeGeometry.firstMaterial?.diffuse.contents = image
-        
-        let textNode = SCNNode(geometry: planeGeometry)
-        return textNode
-    }
-    
-    init(isLeft: Bool, optograph: Optograph, motionManager: CMMotionManager, width: CGFloat, height: CGFloat) {
+    init(eye: Eye, optograph: Optograph, rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat) {
         self.optograph = optograph
-        self.motionManager = motionManager
-        self.isLeft = isLeft
-        
-        root = SCNScene()
+        self.rotationMatrixSource = rotationMatrixSource
+        self.eye = eye
         
         let camera = SCNCamera()
         let fov = 85 as Double
@@ -211,10 +188,9 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         root.rootNode.addChildNode(cameraNode)
         
-        if isLeft {
-            image = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")!)!
-        } else {
-            image = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")!)!
+        switch eye {
+        case .Left: image = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")!)!
+        case .Right: image = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")!)!
         }
         
         sphereNode = StereoRenderDelegate.createSphere(image)
@@ -229,19 +205,37 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     }
 
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
-        
-        if let motion = motionManager.deviceMotion {
-            let r = motion.attitude.rotationMatrix
-            
-            let transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Make(
+        if let r = rotationMatrixSource.getRotationMatrix() {
+            cameraNode.transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Make(
                 Float(r.m11), Float(r.m12), Float(r.m13), 0,
                 Float(r.m21), Float(r.m22), Float(r.m23), 0,
                 Float(r.m31), Float(r.m32), Float(r.m33), 0,
-                0,            0,            0,            1))
-            
-            cameraNode.transform = transform
-            
+                0,            0,            0,            1
+                )
+            )
         }
+    }
+    
+    private static func createSphere(image: UIImage?) -> SCNNode {
+        // rotate sphere to correctly display texture
+        let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
+        
+        let geometry = SCNSphere(radius: 5.0)
+        geometry.segmentCount = 128
+        geometry.firstMaterial?.diffuse.contents = image!
+        geometry.firstMaterial?.doubleSided = true
+        
+        let node = SCNNode(geometry: geometry)
+        node.transform = transform
+        
+        return node
+    }
+    
+    private static func createPlane(image: UIImage?) -> SCNNode {
+        let planeGeometry = SCNPlane(width: 10, height: 10)
+        planeGeometry.firstMaterial?.diffuse.contents = image
+        
+        return SCNNode(geometry: planeGeometry)
     }
     
 }

@@ -16,7 +16,7 @@ class OnboardingHashtagSummaryViewController: UIViewController {
     private let subHeadlineTextView = UILabel()
     private let todoSelectedHashtagsView = UILabel()
     private let iconTextView = UILabel()
-    private let nextButtonView = HatchedButton()
+    private let nextButtonView = ActionButton()
     
     required init(todoSelectedHashtags: String) {
         todoSelectedHashtagsView.text = todoSelectedHashtags
