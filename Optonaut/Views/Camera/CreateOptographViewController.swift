@@ -32,6 +32,7 @@ class CreateOptographViewController: UIViewController, NoNavbar {
     private let enableCameraButtonView = ActionButton()
     private let enableCameraTextView = UILabel()
     private let submitButtonView = ActionButton()
+    private let infoWrapperView = UIView()
     private let locationIconView = UILabel()
     private let locationTextView = UILabel()
     private let locationCountryView = UILabel()
@@ -60,6 +61,8 @@ class CreateOptographViewController: UIViewController, NoNavbar {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationItem.setHidesBackButton(true, animated: false)
         
         view.backgroundColor = .whiteColor()
         
@@ -114,16 +117,19 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "submit"))
         view.addSubview(submitButtonView)
         
+        infoWrapperView.rac_alpha <~ viewModel.previewImageUrl.producer.map(isEmpty).map { $0 ? 0.2 : 1 }
+        view.addSubview(infoWrapperView)
+        
         locationIconView.text = String.iconWithName(.Location)
         locationIconView.font = UIFont.iconOfSize(15)
         locationIconView.rac_textColor <~ viewModel.locationEnabled.producer.map { $0 ? .DarkGrey : .Accent }
-        view.addSubview(locationIconView)
+        infoWrapperView.addSubview(locationIconView)
         
         locationWarningView.text = "Location required"
         locationWarningView.textColor = .Accent
         locationWarningView.font = UIFont.displayOfSize(16.5, withType: .Thin)
         locationWarningView.rac_hidden <~ viewModel.locationEnabled
-        view.addSubview(locationWarningView)
+        infoWrapperView.addSubview(locationWarningView)
         
         locationEnableView.text = "enable now"
         locationEnableView.textColor =  .Accent
@@ -131,19 +137,19 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         locationEnableView.rac_hidden <~ viewModel.locationEnabled
         locationEnableView.userInteractionEnabled = true
         locationEnableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "enableLocation"))
-        view.addSubview(locationEnableView)
+        infoWrapperView.addSubview(locationEnableView)
         
         locationTextView.rac_text <~ viewModel.locationText
         locationTextView.rac_hidden <~ viewModel.locationEnabled.producer.map(negate)
         locationTextView.font = UIFont.displayOfSize(16.5, withType: .Semibold)
         locationTextView.textColor = .DarkGrey
-        view.addSubview(locationTextView)
+        infoWrapperView.addSubview(locationTextView)
         
         locationCountryView.rac_text <~ viewModel.locationCountry
         locationCountryView.rac_hidden <~ viewModel.locationEnabled.producer.map(negate)
         locationCountryView.font = UIFont.displayOfSize(16.5, withType: .Thin)
         locationCountryView.textColor = .DarkGrey
-        view.addSubview(locationCountryView)
+        infoWrapperView.addSubview(locationCountryView)
         
         locationReloadView.text = String.iconWithName(.Redo)
         locationReloadView.textColor = .DarkGrey
@@ -152,18 +158,19 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         locationReloadView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "reloadLocation"))
         locationReloadView.rac_hidden <~ viewModel.locationEnabled.producer.map(negate)
             .combineLatestWith(viewModel.locationLoading.producer).map(or)
-        view.addSubview(locationReloadView)
+        infoWrapperView.addSubview(locationReloadView)
         
         locationActivityView.activityIndicatorViewStyle = .Gray
-        viewModel.locationLoading.producer.startWithNext { loading in
-            if loading {
-                self.locationActivityView.startAnimating()
-            } else {
-                self.locationActivityView.stopAnimating()
+        viewModel.locationLoading.producer.combineLatestWith(viewModel.locationEnabled.producer).map(and)
+            .startWithNext { loading in
+                if loading {
+                    self.locationActivityView.startAnimating()
+                } else {
+                    self.locationActivityView.stopAnimating()
+                }
+                self.locationActivityView.hidden = !loading
             }
-            self.locationActivityView.hidden = !loading
-        }
-        view.addSubview(locationActivityView)
+        infoWrapperView.addSubview(locationActivityView)
         
         hashtagInputView.size = .Medium
         hashtagInputView.color = .Dark
@@ -172,7 +179,7 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         hashtagInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.hashtagString.value = $0 as! String }
         hashtagInputView.keyboardType = .Twitter
         hashtagInputView.autocorrectionType = .No
-        view.addSubview(hashtagInputView)
+        infoWrapperView.addSubview(hashtagInputView)
         
         textInputView.font = UIFont.textOfSize(14, withType: .Regular)
         textInputView.placeholder = "Tell something about what you see..."
@@ -187,7 +194,7 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         textInputView.returnKeyType = .Done
         textInputView.delegate = self
         textInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.text.value = $0 as! String }
-        view.addSubview(textInputView)
+        infoWrapperView.addSubview(textInputView)
         
         view.addSubview(backgroundView)
         
@@ -215,7 +222,7 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         
         cameraPreviewImageBlurView.autoPinEdgesToSuperviewEdges()
         
-        cancelButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: previewImageView, withOffset: 20)
+        cancelButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: previewImageView, withOffset: 30)
         cancelButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 20)
         
         enableCameraButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: previewImageView)
@@ -230,6 +237,11 @@ class CreateOptographViewController: UIViewController, NoNavbar {
         submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: previewImageView, withOffset: -20)
         submitButtonView.autoSetDimension(.Width, toSize: 60)
         submitButtonView.autoSetDimension(.Height, toSize: 60)
+        
+        infoWrapperView.autoPinEdge(.Left, toEdge: .Left, ofView: view)
+        infoWrapperView.autoPinEdge(.Right, toEdge: .Right, ofView: view)
+        infoWrapperView.autoPinEdge(.Top, toEdge: .Top, ofView: locationIconView)
+        infoWrapperView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: textInputView)
         
         locationIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 20)
         locationIconView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)

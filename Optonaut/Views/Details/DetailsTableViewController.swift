@@ -149,7 +149,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     private func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
         if viewModel.downloadProgress.value == 1 {
-            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, distortion: ViewerDistortion.VROne), animated: false)
+            navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, distortion: .VROne), animated: false)
             viewModel.increaseViewsCount()
         }
     }

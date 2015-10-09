@@ -33,8 +33,7 @@ class CameraViewController: UIViewController {
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
     private var debugHelper: CameraDebugService?
-    private var edges = [Edge: SCNNode]()
-    private var previewImage: CGImage?
+    private var edges: [Edge: SCNNode] = [:]
     
     // subviews
     private let tiltView = TiltView()
@@ -65,6 +64,10 @@ class CameraViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        print("byebye")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -78,13 +81,13 @@ class CameraViewController: UIViewController {
         setupBall()
         setupSelectionPoints()
         
-        viewModel.tiltAngle.producer.startWithNext { self.tiltView.angle = $0 }
-        viewModel.distXY.producer.startWithNext { self.tiltView.distXY = $0 }
+        viewModel.tiltAngle.producer.startWithNext { [weak self] val in self?.tiltView.angle = val }
+        viewModel.distXY.producer.startWithNext { [weak self] val in self?.tiltView.distXY = val }
         tiltView.innerRadius = 35
         view.addSubview(tiltView)
     
-        viewModel.progress.producer.startWithNext { self.progressView.progress = $0 }
-        viewModel.isRecording.producer.startWithNext { self.progressView.isActive = $0 }
+        viewModel.progress.producer.startWithNext { [weak self] val in self?.progressView.progress = val }
+        viewModel.isRecording.producer.startWithNext { [weak self] val in self?.progressView.isActive = val }
         view.addSubview(progressView)
         
         instructionView.font = UIFont.robotoOfSize(22, withType: .Medium)
@@ -95,8 +98,8 @@ class CameraViewController: UIViewController {
         view.addSubview(instructionView)
         
         circleView.layer.cornerRadius = 35
-        viewModel.isRecording.producer.startWithNext { self.circleView.isDashed = !$0 }
-        viewModel.isCentered.producer.startWithNext { self.circleView.isActive = $0 }
+        viewModel.isRecording.producer.startWithNext { [weak self] val in self?.circleView.isDashed = !val }
+        viewModel.isCentered.producer.startWithNext { [weak self] val in self?.circleView.isActive = val }
         view.addSubview(circleView)
         
         recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
@@ -122,7 +125,14 @@ class CameraViewController: UIViewController {
         }
         
         setupCamera()
-      
+        
+        // Locks the focus as soon as the user starts recording.
+        // We do this to avoid re-focusing during recording, which breaks the Optograph
+        viewModel.isRecording.producer
+            .map { $0 ? .Locked : .ContinuousAutoFocus }
+            .startWithNext(CameraViewController.setFocusMode)
+        
+        viewModel.isRecording.producer.take(1).startWithCompleted(CameraViewController.lockExposure)
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -130,7 +140,6 @@ class CameraViewController: UIViewController {
     }
     
     private func setupSelectionPoints() {
-        
         let rawPoints = stitcher.GetSelectionPoints()
         var points = [SelectionPoint]()
         
@@ -195,6 +204,12 @@ class CameraViewController: UIViewController {
         super.viewDidDisappear(animated)
         
         Mixpanel.sharedInstance().track("View.Camera")
+        
+        motionManager.stopDeviceMotionUpdates()
+        session.stopRunning()
+        
+        stitcher.Finish()
+        stitcher.Dispose()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -204,11 +219,8 @@ class CameraViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
-        UIScreen.mainScreen().brightness = originalBrightness
         UIApplication.sharedApplication().idleTimerDisabled = false
-        
-        motionManager.stopDeviceMotionUpdates()
-        session.stopRunning()
+        UIScreen.mainScreen().brightness = originalBrightness
     }
     
     override func updateViewConstraints() {
@@ -338,23 +350,19 @@ class CameraViewController: UIViewController {
         }
         
         session.commitConfiguration()
-        
-        setFocusMode(videoDevice, mode: AVCaptureFocusMode.ContinuousAutoFocus)
-        
-        //Locks the focus as soon as the user starts recording.
-        //We do this to avoid re-focusing during recording, which breaks the Optograph
-        viewModel.isRecording.producer.startWithNext {
-            if $0 {
-                self.setFocusMode(videoDevice, mode: AVCaptureFocusMode.Locked)
-            } else {
-                self.setFocusMode(videoDevice, mode: AVCaptureFocusMode.ContinuousAutoFocus)
-            }
-        }
     }
     
-    private func setFocusMode(videoDevice: AVCaptureDevice, mode: AVCaptureFocusMode) {
+    private static func setFocusMode(mode: AVCaptureFocusMode) {
+        let videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
         try! videoDevice.lockForConfiguration()
         videoDevice.focusMode = mode
+        videoDevice.unlockForConfiguration()
+    }
+    
+    private static func lockExposure() {
+        let videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        try! videoDevice.lockForConfiguration()
+        videoDevice.exposureMode = .Locked
         videoDevice.unlockForConfiguration()
     }
     
@@ -415,11 +423,6 @@ class CameraViewController: UIViewController {
             // Take transform from the stitcher. 
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
             
-            if stitcher.IsPreviewImageAvailable() {
-                self.previewImage = RotateCGImage(ImageBufferToCGImage(buf), orientation: .Left)
-                stitcher.SetPreviewImageEnabled(false)
-            }
-            
             if stitcher.IsFinished() {
                 // needed since processSampleBuffer doesn't run on UI thread
                 Async.main {
@@ -437,23 +440,19 @@ class CameraViewController: UIViewController {
         Mixpanel.sharedInstance().track("Action.Camera.FinishRecording")
         Mixpanel.sharedInstance().timeEvent("Action.Camera.Stitching")
         
-        session.stopRunning()
-        
-        for child in scene.rootNode.childNodes {
-            child.removeFromParentNode()
-        }
-        
-        if !stitcher.HasResults() {
-            // Only possible in debug. We just return to avoid a crash.
-            return
-        }
-        
+//        self.stitcher.Finish()
+//        self.stitcher.Dispose()
+//        
+//        if !stitcher.HasResults() {
+//            // Only possible in debug. We just return to avoid a crash.
+//            return
+//        }
+       /*
         let assetSignalProducer = SignalProducer<OptographAsset, NoError> { sink, disposable in
 //            let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)
 //            sendNext(sink, OptographAsset.PreviewImage(preview!))
             
-            self.stitcher.Finish()
-            
+        
             if !disposable.disposed {
                 let leftBuffer = self.stitcher.GetLeftResult()
                 var leftCGImage: CGImage? = ImageBufferToCGImage(leftBuffer)
@@ -491,19 +490,17 @@ class CameraViewController: UIViewController {
                 
             }
         }
-        
+        */
         navigationController!.pushViewController(CreateOptographViewController(), animated: false)
         navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self
     }
     
     func cancel() {
-        
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
         
-        session.stopRunning()
-        stitcher.Finish()
-        stitcher.Dispose()
-        print("Stitcher dispose called")
+//        self.stitcher.Finish()
+//        self.stitcher.Dispose()
+        
         navigationController?.popViewControllerAnimated(false)
     }
 }
