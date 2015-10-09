@@ -93,7 +93,7 @@
 		8FAB9F711B8F02D500B4C8CB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F621B8F02D500B4C8CB /* Constants.swift */; };
 		8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F661B8F02D500B4C8CB /* NSDateTransform.swift */; };
 		8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F671B8F02D500B4C8CB /* Reachability.swift */; };
-		8FAB9F781B8F02D500B4C8CB /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F6B1B8F02D500B4C8CB /* Stitcher.mm */; };
+		8FAB9F781B8F02D500B4C8CB /* Recorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F6B1B8F02D500B4C8CB /* Recorder.mm */; };
 		8FAB9F791B8F02D500B4C8CB /* StitcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F6C1B8F02D500B4C8CB /* StitcherUtils.swift */; };
 		8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F6E1B8F02D500B4C8CB /* Utils.swift */; };
 		8FAB9F7E1B8F03BE00B4C8CB /* UIKitRACExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F7D1B8F03BE00B4C8CB /* UIKitRACExtensions.swift */; };
@@ -136,6 +136,12 @@
 		8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEA6F201BA5969700153677 /* DatabaseService.swift */; settings = {ASSET_TAGS = (); }; };
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
+		A5233DED1BC86CAF00C9EFE5 /* inputImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5233DE71BC86CAF00C9EFE5 /* inputImage.cpp */; settings = {ASSET_TAGS = (); }; };
+		A5233DEE1BC86CAF00C9EFE5 /* recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5233DE91BC86CAF00C9EFE5 /* recorder.cpp */; settings = {ASSET_TAGS = (); }; };
+		A5233DF21BC8733C00C9EFE5 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233DF11BC8733C00C9EFE5 /* Stitcher.mm */; settings = {ASSET_TAGS = (); }; };
+		A5233DF71BC878A400C9EFE5 /* CommonInternal.h in Resources */ = {isa = PBXBuildFile; fileRef = A5233DF61BC878A400C9EFE5 /* CommonInternal.h */; settings = {ASSET_TAGS = (); }; };
+		A5233DFA1BC87ADF00C9EFE5 /* Stores.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233DF91BC87ADF00C9EFE5 /* Stores.mm */; settings = {ASSET_TAGS = (); }; };
+		A5233DFC1BC87B4A00C9EFE5 /* checkpointStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5233DFB1BC87B4A00C9EFE5 /* checkpointStore.cpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE0181BC45E9A00713340 /* static_timer.cpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01F1BC51D4C00713340 /* io.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE01D1BC51D4C00713340 /* io.cpp */; settings = {ASSET_TAGS = (); }; };
 		A56CA4061BC070450078D7E8 /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FF1BC070450078D7E8 /* lut */; settings = {ASSET_TAGS = (); }; };
@@ -148,7 +154,6 @@
 		A56CA4131BC070AE0078D7E8 /* barrell_displacement.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA40D1BC070AE0078D7E8 /* barrell_displacement.fsh */; settings = {ASSET_TAGS = (); }; };
 		A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */ = {isa = PBXBuildFile; fileRef = A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */; settings = {ASSET_TAGS = (); }; };
 		A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */; settings = {ASSET_TAGS = (); }; };
-		A571CC611B91D7B400124FD2 /* pipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A571CC5F1B91D7B400124FD2 /* pipeline.cpp */; };
 		A59E32F41BB423DA003D166B /* ringwiseStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59E32EF1BB423DA003D166B /* ringwiseStitcher.cpp */; settings = {ASSET_TAGS = (); }; };
 		A5C1C0161B7E19E200DCD598 /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0031B7E19E200DCD598 /* image.cpp */; };
 		A5C1C0181B7E19E200DCD598 /* monoStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0071B7E19E200DCD598 /* monoStitcher.cpp */; };
@@ -258,8 +263,8 @@
 		8FAB9F621B8F02D500B4C8CB /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8FAB9F661B8F02D500B4C8CB /* NSDateTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateTransform.swift; sourceTree = "<group>"; };
 		8FAB9F671B8F02D500B4C8CB /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
-		8FAB9F6A1B8F02D500B4C8CB /* Stitcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stitcher.h; sourceTree = "<group>"; };
-		8FAB9F6B1B8F02D500B4C8CB /* Stitcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Stitcher.mm; sourceTree = "<group>"; };
+		8FAB9F6A1B8F02D500B4C8CB /* Recorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Recorder.h; sourceTree = "<group>"; };
+		8FAB9F6B1B8F02D500B4C8CB /* Recorder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Recorder.mm; sourceTree = "<group>"; };
 		8FAB9F6C1B8F02D500B4C8CB /* StitcherUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StitcherUtils.swift; sourceTree = "<group>"; };
 		8FAB9F6E1B8F02D500B4C8CB /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8FAB9F7D1B8F03BE00B4C8CB /* UIKitRACExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitRACExtensions.swift; sourceTree = "<group>"; };
@@ -303,6 +308,19 @@
 		8FE09F651BAF681900EA105D /* HashtagTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashtagTable.swift; sourceTree = "<group>"; };
 		8FEA6F201BA5969700153677 /* DatabaseService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		A5233DE71BC86CAF00C9EFE5 /* inputImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inputImage.cpp; sourceTree = "<group>"; };
+		A5233DE81BC86CAF00C9EFE5 /* inputImage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = inputImage.hpp; sourceTree = "<group>"; };
+		A5233DE91BC86CAF00C9EFE5 /* recorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = recorder.cpp; sourceTree = "<group>"; };
+		A5233DEA1BC86CAF00C9EFE5 /* recorder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorder.hpp; sourceTree = "<group>"; };
+		A5233DEB1BC86CAF00C9EFE5 /* stitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcher.hpp; sourceTree = "<group>"; };
+		A5233DEC1BC86CAF00C9EFE5 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
+		A5233DF01BC8732300C9EFE5 /* Stitcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stitcher.h; sourceTree = "<group>"; };
+		A5233DF11BC8733C00C9EFE5 /* Stitcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Stitcher.mm; sourceTree = "<group>"; };
+		A5233DF31BC8761E00C9EFE5 /* Stores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stores.h; sourceTree = "<group>"; };
+		A5233DF61BC878A400C9EFE5 /* CommonInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonInternal.h; sourceTree = "<group>"; };
+		A5233DF81BC8795200C9EFE5 /* CommonExternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonExternal.h; sourceTree = "<group>"; };
+		A5233DF91BC87ADF00C9EFE5 /* Stores.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Stores.mm; sourceTree = "<group>"; };
+		A5233DFB1BC87B4A00C9EFE5 /* checkpointStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = checkpointStore.cpp; sourceTree = "<group>"; };
 		A54AE0181BC45E9A00713340 /* static_timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = static_timer.cpp; sourceTree = "<group>"; };
 		A54AE0191BC45E9A00713340 /* static_timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = static_timer.hpp; sourceTree = "<group>"; };
 		A54AE01D1BC51D4C00713340 /* io.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = io.cpp; sourceTree = "<group>"; };
@@ -319,7 +337,6 @@
 		A56CA40D1BC070AE0078D7E8 /* barrell_displacement.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.fsh; path = Shader/Cardboard/barrell_displacement.fsh; sourceTree = "<group>"; };
 		A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = barrell_displacement.json; path = Shader/Cardboard/barrell_displacement.json; sourceTree = "<group>"; };
 		A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.vsh; path = Shader/Cardboard/barrell_displacement.vsh; sourceTree = "<group>"; };
-		A571CC5F1B91D7B400124FD2 /* pipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pipeline.cpp; sourceTree = "<group>"; };
 		A5986B761BB87D6400DD2F4E /* correlation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = correlation.hpp; sourceTree = "<group>"; };
 		A5986B771BB87D6400DD2F4E /* exposureCompensator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = exposureCompensator.hpp; sourceTree = "<group>"; };
 		A5986B781BB87D6400DD2F4E /* graph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = graph.hpp; sourceTree = "<group>"; };
@@ -340,7 +357,6 @@
 		A5C1C0061B7E19E200DCD598 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		A5C1C0071B7E19E200DCD598 /* monoStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = monoStitcher.cpp; sourceTree = "<group>"; };
 		A5C1C0081B7E19E200DCD598 /* monoStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = monoStitcher.hpp; sourceTree = "<group>"; };
-		A5C1C0091B7E19E200DCD598 /* pipeline.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pipeline.hpp; sourceTree = "<group>"; };
 		A5C1C00A1B7E19E200DCD598 /* quat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = quat.cpp; sourceTree = "<group>"; };
 		A5C1C00B1B7E19E200DCD598 /* quat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = quat.hpp; sourceTree = "<group>"; };
 		A5C1C00C1B7E19E200DCD598 /* simpleSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simpleSeamer.hpp; sourceTree = "<group>"; };
@@ -622,9 +638,15 @@
 		8FAB9F691B8F02D500B4C8CB /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
-				8FAB9F6A1B8F02D500B4C8CB /* Stitcher.h */,
-				8FAB9F6B1B8F02D500B4C8CB /* Stitcher.mm */,
+				8FAB9F6A1B8F02D500B4C8CB /* Recorder.h */,
+				8FAB9F6B1B8F02D500B4C8CB /* Recorder.mm */,
 				8FAB9F6C1B8F02D500B4C8CB /* StitcherUtils.swift */,
+				A5233DF01BC8732300C9EFE5 /* Stitcher.h */,
+				A5233DF11BC8733C00C9EFE5 /* Stitcher.mm */,
+				A5233DF31BC8761E00C9EFE5 /* Stores.h */,
+				A5233DF61BC878A400C9EFE5 /* CommonInternal.h */,
+				A5233DF81BC8795200C9EFE5 /* CommonExternal.h */,
+				A5233DF91BC87ADF00C9EFE5 /* Stores.mm */,
 			);
 			path = Stitcher;
 			sourceTree = "<group>";
@@ -743,6 +765,12 @@
 		8FD7F85C1B5924D5001680AA /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				A5233DE71BC86CAF00C9EFE5 /* inputImage.cpp */,
+				A5233DE81BC86CAF00C9EFE5 /* inputImage.hpp */,
+				A5233DE91BC86CAF00C9EFE5 /* recorder.cpp */,
+				A5233DEA1BC86CAF00C9EFE5 /* recorder.hpp */,
+				A5233DEB1BC86CAF00C9EFE5 /* stitcher.hpp */,
+				A5233DEC1BC86CAF00C9EFE5 /* stitchingResult.hpp */,
 				A54AE0201BC51E8100713340 /* lib */,
 				A54AE01D1BC51D4C00713340 /* io.cpp */,
 				A54AE01E1BC51D4C00713340 /* io.hpp */,
@@ -750,6 +778,7 @@
 				A54AE0191BC45E9A00713340 /* static_timer.hpp */,
 				A5986B761BB87D6400DD2F4E /* correlation.hpp */,
 				A54AE0241BC531DF00713340 /* checkpointStore.hpp */,
+				A5233DFB1BC87B4A00C9EFE5 /* checkpointStore.cpp */,
 				A5986B771BB87D6400DD2F4E /* exposureCompensator.hpp */,
 				A5986B781BB87D6400DD2F4E /* graph.hpp */,
 				A5986B791BB87D6400DD2F4E /* imageCorrespondenceGraph.hpp */,
@@ -772,7 +801,6 @@
 				A5C1C0061B7E19E200DCD598 /* lib */,
 				A5C1C0071B7E19E200DCD598 /* monoStitcher.cpp */,
 				A5C1C0081B7E19E200DCD598 /* monoStitcher.hpp */,
-				A5C1C0091B7E19E200DCD598 /* pipeline.hpp */,
 				A5C1C00A1B7E19E200DCD598 /* quat.cpp */,
 				A5C1C00B1B7E19E200DCD598 /* quat.hpp */,
 				A5C1C00C1B7E19E200DCD598 /* simpleSeamer.hpp */,
@@ -782,7 +810,6 @@
 				A5C1C0101B7E19E200DCD598 /* support.cpp */,
 				A5C1C0111B7E19E200DCD598 /* support.hpp */,
 				A5C1C0121B7E19E200DCD598 /* thresholdSeamer.hpp */,
-				A571CC5F1B91D7B400124FD2 /* pipeline.cpp */,
 				A5DA67081B9CA08F00D9F3EE /* recorderGraph.hpp */,
 				A5DA670A1B9CA29A00D9F3EE /* recorderController.hpp */,
 				A5DA670C1B9CD52D00D9F3EE /* trivialAligner.hpp */,
@@ -951,6 +978,7 @@
 				8FBC869A1BB723E600539D4E /* SF-UI-Text-Semibold.otf in Resources */,
 				8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */,
 				A56CA40B1BC070450078D7E8 /* zeiss_displacement_right.json in Resources */,
+				A5233DF71BC878A400C9EFE5 /* CommonInternal.h in Resources */,
 				8FAB9F5E1B8F02A900B4C8CB /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1032,6 +1060,7 @@
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
 				8FAB9F451B8F01DF00B4C8CB /* ExploreViewModel.swift in Sources */,
 				8FAB9F3E1B8F01DF00B4C8CB /* DetailsTableViewCell.swift in Sources */,
+				A5233DF21BC8733C00C9EFE5 /* Stitcher.mm in Sources */,
 				8F900B471B839E690085566C /* Location.swift in Sources */,
 				8F1287E91BA8A9730098ED24 /* NSURLExtensions.swift in Sources */,
 				8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */,
@@ -1063,6 +1092,7 @@
 				A5C1C0161B7E19E200DCD598 /* image.cpp in Sources */,
 				A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */,
 				8FAB9F4B1B8F01DF00B4C8CB /* HashtagTableViewController.swift in Sources */,
+				A5233DED1BC86CAF00C9EFE5 /* inputImage.cpp in Sources */,
 				8FAB9F711B8F02D500B4C8CB /* Constants.swift in Sources */,
 				8FAB9F861B8F047700B4C8CB /* ApiService.swift in Sources */,
 				A59E32F41BB423DA003D166B /* ringwiseStitcher.cpp in Sources */,
@@ -1089,25 +1119,27 @@
 				8F900B401B839D0C0085566C /* CommentTable.swift in Sources */,
 				8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
+				A5233DFC1BC87B4A00C9EFE5 /* checkpointStore.cpp in Sources */,
 				8FAB9F501B8F01DF00B4C8CB /* RequestInviteViewController.swift in Sources */,
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
 				8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */,
 				8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */,
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
 				A5C1C01A1B7E19E200DCD598 /* simpleSphereStitcher.cpp in Sources */,
-				A571CC611B91D7B400124FD2 /* pipeline.cpp in Sources */,
 				8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */,
 				8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F900B421B839D0C0085566C /* OptographTable.swift in Sources */,
-				8FAB9F781B8F02D500B4C8CB /* Stitcher.mm in Sources */,
+				8FAB9F781B8F02D500B4C8CB /* Recorder.mm in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
 				8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
 				8FAB9F351B8F01DF00B4C8CB /* OptographTableViewCell.swift in Sources */,
 				8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */,
+				A5233DEE1BC86CAF00C9EFE5 /* recorder.cpp in Sources */,
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityTableViewCell.swift in Sources */,
+				A5233DFA1BC87ADF00C9EFE5 /* Stores.mm in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */,
 				8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */,

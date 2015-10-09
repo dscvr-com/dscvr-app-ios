@@ -28,7 +28,7 @@ class CameraViewController: UIViewController {
     private let sessionQueue: dispatch_queue_t
     
     // stitcher pointer and variables
-    private var stitcher = IosPipeline()
+    private var stitcher = Recorder()
     private var frameCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
