@@ -74,6 +74,7 @@ class StitchingService {
             
             let stitcher = Stitcher()
             stitcher.setProgressCallback({ (progress) -> Bool in
+                print(progress)
                 Async.main {
                     sendNext(sink, .Progress(progress))
                 }
@@ -108,6 +109,7 @@ class StitchingService {
                 activeSink = nil
                 unregisterBackgroundTask()
             }
+            print("Stitching completed")
             sendCompleted(sink)
         }
         
@@ -132,7 +134,7 @@ class StitchingService {
     
     private static func registerBackgroundTask() {
         backgroundTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler {
-            removeUnstitchedRecordings()
+            cancelStitching()
         }
         assert(backgroundTask != UIBackgroundTaskInvalid)
     }
@@ -145,7 +147,8 @@ class StitchingService {
     // Cancels stitching asynchronously. 
     // send completed is called on termination.
     static func cancelStitching() {
-        assert(!isStitching())
+        assert(isStitching())
+        print("Stitching cancel called")
         shallCancel = true;
     }
 }

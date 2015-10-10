@@ -65,6 +65,9 @@ class CameraViewController: UIViewController {
     }
     
     deinit {
+        motionManager.stopDeviceMotionUpdates()
+        stitcher.dispose()
+        
         logRetain()
     }
     
@@ -205,9 +208,6 @@ class CameraViewController: UIViewController {
         
         Mixpanel.sharedInstance().track("View.Camera")
         
-        motionManager.stopDeviceMotionUpdates()
-        
-        stitcher.dispose()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -381,8 +381,7 @@ class CameraViewController: UIViewController {
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
         
         if stitcher.isFinished() {
-            print("Process sample buffer after stitcher finish. This is a racing condition")
-            assert(false)
+            return; //Dirt return here. Recording is running on the main thread.
         }
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
