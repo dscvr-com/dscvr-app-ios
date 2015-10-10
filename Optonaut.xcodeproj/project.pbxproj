@@ -144,6 +144,7 @@
 		A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2D1BC87F7500C9EFE5 /* Stitcher.mm */; settings = {ASSET_TAGS = (); }; };
 		A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */; settings = {ASSET_TAGS = (); }; };
 		A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E301BC87F7500C9EFE5 /* Stores.mm */; settings = {ASSET_TAGS = (); }; };
+		A5233E361BC92D9100C9EFE5 /* progressCallback.hpp in Resources */ = {isa = PBXBuildFile; fileRef = A5233E351BC92D9100C9EFE5 /* progressCallback.hpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE0181BC45E9A00713340 /* static_timer.cpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01F1BC51D4C00713340 /* io.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE01D1BC51D4C00713340 /* io.cpp */; settings = {ASSET_TAGS = (); }; };
 		A56CA4061BC070450078D7E8 /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FF1BC070450078D7E8 /* lut */; settings = {ASSET_TAGS = (); }; };
@@ -326,6 +327,7 @@
 		A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StitcherUtils.swift; path = Optonaut/Stitcher/StitcherUtils.swift; sourceTree = SOURCE_ROOT; };
 		A5233E2F1BC87F7500C9EFE5 /* Stores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stores.h; path = Optonaut/Stitcher/Stores.h; sourceTree = SOURCE_ROOT; };
 		A5233E301BC87F7500C9EFE5 /* Stores.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Stores.mm; path = Optonaut/Stitcher/Stores.mm; sourceTree = SOURCE_ROOT; };
+		A5233E351BC92D9100C9EFE5 /* progressCallback.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = progressCallback.hpp; sourceTree = "<group>"; };
 		A54AE0181BC45E9A00713340 /* static_timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = static_timer.cpp; sourceTree = "<group>"; };
 		A54AE0191BC45E9A00713340 /* static_timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = static_timer.hpp; sourceTree = "<group>"; };
 		A54AE01D1BC51D4C00713340 /* io.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = io.cpp; sourceTree = "<group>"; };
@@ -822,6 +824,7 @@
 				A5DA67081B9CA08F00D9F3EE /* recorderGraph.hpp */,
 				A5DA670A1B9CA29A00D9F3EE /* recorderController.hpp */,
 				A5DA670C1B9CD52D00D9F3EE /* trivialAligner.hpp */,
+				A5233E351BC92D9100C9EFE5 /* progressCallback.hpp */,
 			);
 			name = Stitcher;
 			path = stitcher/src;
@@ -971,6 +974,7 @@
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
 				8FBC86A21BB7D86B00539D4E /* icons.ttf in Resources */,
+				A5233E361BC92D9100C9EFE5 /* progressCallback.hpp in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
 				8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */,

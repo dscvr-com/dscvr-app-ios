@@ -65,6 +65,9 @@ class CameraViewController: UIViewController {
     }
     
     deinit {
+        motionManager.stopDeviceMotionUpdates()
+        stitcher.dispose()
+        
         logRetain()
     }
     
@@ -140,7 +143,7 @@ class CameraViewController: UIViewController {
     }
     
     private func setupSelectionPoints() {
-        let rawPoints = stitcher.GetSelectionPoints()
+        let rawPoints = stitcher.getSelectionPoints()
         var points = [SelectionPoint]()
         
         while rawPoints.HasMore() {
@@ -151,7 +154,7 @@ class CameraViewController: UIViewController {
         for a in points {
             for b in points {
                 
-                if stitcher.AreAdjacent(a, and: b) {
+                if stitcher.areAdjacent(a, and: b) {
                     
                     let edge = Edge(a, b)
                     
@@ -205,11 +208,6 @@ class CameraViewController: UIViewController {
         
         Mixpanel.sharedInstance().track("View.Camera")
         
-        motionManager.stopDeviceMotionUpdates()
-        session.stopRunning()
-        
-        stitcher.Finish()
-        stitcher.Dispose()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -301,7 +299,7 @@ class CameraViewController: UIViewController {
         let accelleration = Float(0.1)
         
         let vec = GLKVector3Make(0, 0, -1)
-        let target = GLKMatrix4MultiplyVector3(stitcher.GetBallPosition(), vec)
+        let target = GLKMatrix4MultiplyVector3(stitcher.getBallPosition(), vec)
         
         let ball = SCNVector3ToGLKVector3(ballNode.position)
         
@@ -382,8 +380,8 @@ class CameraViewController: UIViewController {
  
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
         
-        if stitcher.IsFinished() {
-            return
+        if stitcher.isFinished() {
+            return; //Dirt return here. Recording is running on the main thread.
         }
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
@@ -398,19 +396,19 @@ class CameraViewController: UIViewController {
             buf.width = UInt32(CVPixelBufferGetWidth(pixelBuffer))
             buf.height = UInt32(CVPixelBufferGetHeight(pixelBuffer))
             
-            stitcher.SetIdle(!self.viewModel.isRecording.value)
-            stitcher.Push(r, buf)
+            stitcher.setIdle(!self.viewModel.isRecording.value)
+            stitcher.push(r, buf)
             
-            let errorVec = stitcher.GetAngularDistanceToBall()
+            let errorVec = stitcher.getAngularDistanceToBall()
             
             Async.main {
                 if self.isViewLoaded() {
                     // This is safe, since the main thread also disposes the stitcher.
-                    if self.stitcher.IsDisposed() || self.stitcher.IsFinished() {
+                    if self.stitcher.isDisposed() || self.stitcher.isFinished() {
                         return
                     }
                     
-                    self.viewModel.progress.value = Float(self.stitcher.GetRecordedImagesCount()) / Float(self.stitcher.GetImagesToRecordCount())
+                    self.viewModel.progress.value = Float(self.stitcher.getRecordedImagesCount()) / Float(self.stitcher.getImagesToRecordCount())
                     self.viewModel.tiltAngle.value = Float(errorVec.z)
                     self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
                 }
@@ -421,9 +419,9 @@ class CameraViewController: UIViewController {
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
             // Take transform from the stitcher. 
-            cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.GetCurrentRotation())
+            cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.getCurrentRotation())
             
-            if stitcher.IsFinished() {
+            if stitcher.isFinished() {
                 // needed since processSampleBuffer doesn't run on UI thread
                 Async.main {
                     self.finish()
@@ -438,68 +436,18 @@ class CameraViewController: UIViewController {
     func finish() {
         
         Mixpanel.sharedInstance().track("Action.Camera.FinishRecording")
-        Mixpanel.sharedInstance().timeEvent("Action.Camera.Stitching")
+        session.stopRunning()
+        stitcher.finish()
         
-//        self.stitcher.Finish()
-//        self.stitcher.Dispose()
-//        
-//        if !stitcher.HasResults() {
-//            // Only possible in debug. We just return to avoid a crash.
-//            return
-//        }
-       /*
-        let assetSignalProducer = SignalProducer<OptographAsset, NoError> { sink, disposable in
-//            let preview = UIImageJPEGRepresentation(UIImage(CGImage: self.previewImage!), 0.8)
-//            sendNext(sink, OptographAsset.PreviewImage(preview!))
-            
-        
-            if !disposable.disposed {
-                let leftBuffer = self.stitcher.GetLeftResult()
-                var leftCGImage: CGImage? = ImageBufferToCGImage(leftBuffer)
-                let leftImageData = UIImageJPEGRepresentation(UIImage(CGImage: leftCGImage!), 0.8)
-                self.stitcher.FreeImageBuffer(leftBuffer)
-                leftCGImage = nil
-                sendNext(sink, OptographAsset.LeftImage(leftImageData!))
-            }
-            
-            if !disposable.disposed {
-                let rightBuffer = self.stitcher.GetRightResult()
-                var rightCGImage: CGImage? = ImageBufferToCGImage(rightBuffer)
-                let rightImageData = UIImageJPEGRepresentation(UIImage(CGImage: rightCGImage!), 0.8)
-                self.stitcher.FreeImageBuffer(rightBuffer)
-                rightCGImage = nil
-                sendNext(sink, OptographAsset.RightImage(rightImageData!))
-            }
-            
-            self.stitcher.Dispose()
-            print("Stitcher dispose called")
+        StitchingService.startStitching()
 
-            if SessionService.sessionData!.debuggingEnabled {
-                //self.debugHelper?.upload().startWithCompleted { sendCompleted(sink) }
-                sendCompleted(sink)
-            } else {
-                sendCompleted(sink)
-            }
-            
-            Mixpanel.sharedInstance().track("Action.Camera.Stitching")
-            
-            disposable.addDisposable {
-                // TODO @EJ: This is a potential racing condition. Stitching runs on another thread...
-                // Just let it finish by now.
-                print("Dispose called")
-                
-            }
-        }
-        */
         navigationController!.pushViewController(CreateOptographViewController(), animated: false)
         navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self
     }
     
     func cancel() {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
-        
-//        self.stitcher.Finish()
-//        self.stitcher.Dispose()
+        session.stopRunning()
         
         navigationController?.popViewControllerAnimated(false)
     }
