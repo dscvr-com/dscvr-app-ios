@@ -115,8 +115,11 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     NSString* tempPath;
 }
 
-+ (NSString*)GetVersion {
++ (NSString*)getVersion {
     return [NSString stringWithCString:optonaut::Recorder::version.c_str() encoding: [NSString defaultCStringEncoding]];
+}
++ (void)freeImageBuffer:(ImageBuffer)toFree {
+    free(toFree.data);
 }
 
 -(id)init {
@@ -137,10 +140,10 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     return self;
 }
 
-- (bool)IsDisposed {
+- (bool)isDisposed {
     return pipe == NULL;
 }
-- (void)Push:(GLKMatrix4)extrinsics :(ImageBuffer)image {
+- (void)push:(GLKMatrix4)extrinsics :(ImageBuffer)image {
     assert(pipe != NULL);
     optonaut::InputImageP oImage(new optonaut::InputImage());
 
@@ -151,24 +154,21 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 
     pipe->Push(oImage);
 }
-- (GLKMatrix4)GetCurrentRotation {
+- (GLKMatrix4)getCurrentRotation {
     assert(pipe != NULL);
     return CVMatToGLK4(pipe->GetCurrentRotation());
 }
-- (void)FreeImageBuffer:(ImageBuffer)toFree {
-    free(toFree.data);
-}
-- (SelectionPoint*)CurrentPoint {
+- (SelectionPoint*)currentPoint {
     assert(pipe != NULL);
     return ConvertSelectionPoint(pipe->CurrentPoint().closestPoint);
 }
 
-- (SelectionPoint*)PreviousPoint {
+- (SelectionPoint*)previousPoint {
     assert(pipe != NULL);
     return ConvertSelectionPoint(pipe->PreviousPoint().closestPoint);
 }
 
-- (bool)AreAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
+- (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
     assert(pipe != NULL);
     optonaut::SelectionPoint convA;
     optonaut::SelectionPoint convB;
@@ -176,58 +176,58 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     ConvertSelectionPoint(b, &convB);
     return pipe->AreAdjacent(convA, convB);
 }
-- (void)EnableDebug:(NSString*)path {
+- (void)enableDebug:(NSString*)path {
     assert(false);
     debugPath = std::string([path UTF8String]);
     isDebug = true;
 }
-- (SelectionPointIterator*)GetSelectionPoints {
+- (SelectionPointIterator*)getSelectionPoints {
     assert(pipe != NULL);
     return [[SelectionPointIterator alloc] init: pipe->GetSelectionPoints()];
 }
-- (void)SetIdle:(bool)isIdle {
+- (void)setIdle:(bool)isIdle {
     assert(pipe != NULL);
     pipe->SetIdle(isIdle);
 }
-- (bool)IsIdle {
+- (bool)isIdle {
     assert(pipe != NULL);
     return pipe->IsIdle();
 }
-- (bool)HasResults {
+- (bool)hasResults {
     assert(pipe != NULL);
     return pipe->HasResults();
 }
-- (GLKMatrix4)GetBallPosition {
+- (GLKMatrix4)getBallPosition {
     assert(pipe != NULL);
     return CVMatToGLK4(pipe->GetBallPosition());
 }
-- (bool)IsFinished {
+- (bool)isFinished {
     assert(pipe != NULL);
     return pipe->IsFinished();
 }
-- (double)GetDistanceToBall {
+- (double)getDistanceToBall {
     assert(pipe != NULL);
     return pipe->GetDistanceToBall();
 }
-- (GLKVector3)GetAngularDistanceToBall {
+- (GLKVector3)getAngularDistanceToBall {
     assert(pipe != NULL);
     //Special coord remapping, so we respect the screen coord system.
     const Mat &m = pipe->GetAngularDistanceToBall();
     return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
 }
-- (uint32_t)GetRecordedImagesCount {
+- (uint32_t)getRecordedImagesCount {
     assert(pipe != NULL);
     return pipe->GetRecordedImagesCount();
 }
-- (uint32_t)GetImagesToRecordCount {
+- (uint32_t)getImagesToRecordCount {
     assert(pipe != NULL);
     return pipe->GetImagesToRecordCount();
 }
-- (void)Finish {
+- (void)finish {
     assert(pipe != NULL);
     pipe->Finish();
 }
-- (void)Dispose {
+- (void)dispose {
     assert(pipe != NULL);
     pipe->Dispose();
     [[NSFileManager defaultManager] removeItemAtPath:self->tempPath error:nil];

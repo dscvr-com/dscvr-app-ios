@@ -2,9 +2,10 @@
 #include "CommonExternal.h"
 
 @interface Stitcher : NSObject
-- (struct ImageBuffer)GetLeftResult;
-- (struct ImageBuffer)GetRightResult;
-- (void)Clear;
-- (bool)HasUnstitchedRecordings;
+- (struct ImageBuffer)getLeftResult;
+- (struct ImageBuffer)getRightResult;
+- (void)clear;
+- (bool)hasUnstitchedRecordings;
+- (void)setProgressCallback:(bool(^)(float))progressHandler;
 
 @end

@@ -7,7 +7,7 @@ import Foundation
 import GLKit
 import CoreMotion
 
-let StitcherVersion: String = Recorder.GetVersion()
+let StitcherVersion: String = Recorder.getVersion()
 
 func CMRotationToGLKMatrix4(r: CMRotationMatrix) -> GLKMatrix4{
     return GLKMatrix4Make(Float(r.m11), Float(r.m12), Float(r.m13), 0,
@@ -26,6 +26,12 @@ func CMRotationToDoubleArray(r: CMRotationMatrix) -> [Double] {
 func ImageBufferToCGImage(buf: ImageBuffer) -> CGImage {
     let bitmapContext = CGBitmapContextCreate(buf.data, Int(buf.width), Int(buf.height), 8, Int(buf.width) * 4, CGColorSpaceCreateDeviceRGB(), CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue)
     return CGBitmapContextCreateImage(bitmapContext)!
+}
+
+func ImageBufferToCompressedUIImage(input: ImageBuffer) -> NSData? {
+    let cgImage: CGImage? = ImageBufferToCGImage(input)
+    let uiImage = UIImageJPEGRepresentation(UIImage(CGImage: cgImage!), 0.8)
+    return uiImage
 }
 
 func RotateCGImage(image: CGImage, orientation: UIImageOrientation) -> CGImage {
