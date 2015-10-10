@@ -1,31 +1,21 @@
 //
-//  OptographCellViewModel.swift
+//  OptographInfoViewModel.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 6/24/15.
-//  Copyright (c) 2015 Optonaut. All rights reserved.
+//  Created by Johannes Schickling on 10/10/15.
+//  Copyright © 2015 Optonaut. All rights reserved.
 //
 
-
-import Foundation
 import ReactiveCocoa
 
-class OptographViewModel {
+class OptographInfoViewModel {
     
     let displayName: ConstantProperty<String>
-    let userName: ConstantProperty<String>
-    let personId: ConstantProperty<UUID>
-    let text: ConstantProperty<String>
-    let location: ConstantProperty<String>
-    let previewImageUrl: ConstantProperty<String>
     let avatarImageUrl: ConstantProperty<String>
     let locationText: ConstantProperty<String>
     let locationCountry: ConstantProperty<String>
-    
     let isStarred = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
-    let commentCount = MutableProperty<Int>(0)
-    let viewsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
     
     var optograph: Optograph
@@ -34,15 +24,9 @@ class OptographViewModel {
         self.optograph = optograph
         
         displayName = ConstantProperty(optograph.person.displayName)
-        userName = ConstantProperty("@\(optograph.person.userName)")
-        personId = ConstantProperty(optograph.person.id)
-        text = ConstantProperty(optograph.text)
-        location = ConstantProperty(optograph.location.text)
-        previewImageUrl = ConstantProperty("\(S3URL)/original/\(optograph.previewAssetId).jpg")
         avatarImageUrl = ConstantProperty("\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg")
         locationText = ConstantProperty(optograph.location.text)
         locationCountry = ConstantProperty(optograph.location.country)
-        
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
         timeSinceCreated.value = optograph.createdAt.longDescription

@@ -26,13 +26,15 @@ class CommentTableViewCell: UITableViewCell {
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        backgroundColor = .clearColor()
+        
         textView.numberOfLines = 0
         textView.mentionColor = UIColor.Accent
         textView.hashtagColor = UIColor.Accent
         textView.URLEnabled = false
         textView.userInteractionEnabled = true
         textView.font = UIFont.robotoOfSize(13, withType: .Light)
-        textView.textColor = UIColor(0x4d4d4d)
+        textView.textColor = .whiteColor()
         contentView.addSubview(textView)
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
@@ -43,19 +45,19 @@ class CommentTableViewCell: UITableViewCell {
         contentView.addSubview(avatarImageView)
         
         displayNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-        displayNameView.textColor = UIColor(0x4d4d4d)
+        displayNameView.textColor = .whiteColor()
         displayNameView.userInteractionEnabled = true
         displayNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(displayNameView)
         
         userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
-        userNameView.textColor = UIColor(0xb3b3b3)
+        userNameView.textColor = .whiteColor()
         userNameView.userInteractionEnabled = true
         userNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(userNameView)
         
         dateView.font = UIFont.robotoOfSize(12, withType: .Light)
-        dateView.textColor = UIColor(0xb3b3b3)
+        dateView.textColor = .whiteColor()
         contentView.addSubview(dateView)
         
         contentView.setNeedsUpdateConstraints()

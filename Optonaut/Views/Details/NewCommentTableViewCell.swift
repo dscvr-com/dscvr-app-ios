@@ -23,6 +23,8 @@ class NewCommentTableViewCell: UITableViewCell {
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        backgroundColor = .clearColor()
+        
         textInputView.font = UIFont.robotoOfSize(13, withType: .Light)
         textInputView.textColor = UIColor(0x4d4d4d)
         textInputView.placeholder = "Write a comment"

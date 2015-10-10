@@ -220,11 +220,11 @@ class CreateOptographViewController: UIViewController {
     override func updateViewConstraints() {
         previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
+        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 5 / 4)
         
         cameraPreviewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
         cameraPreviewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        cameraPreviewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
+        cameraPreviewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 5 / 4)
         
         cameraPreviewImageBlurView.autoPinEdgesToSuperviewEdges()
         

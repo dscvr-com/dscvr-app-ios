@@ -33,7 +33,7 @@ class OptographTableViewController: UIViewController {
 extension OptographTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return view.frame.width * 3 / 4 + 94.5
+        return view.frame.width * 5 / 4 + 79
     }
     
 }

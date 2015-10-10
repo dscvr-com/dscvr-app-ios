@@ -6,12 +6,24 @@ import CoreGraphics
 import Mixpanel
 
 protocol RotationMatrixSource {
-    func getRotationMatrix() -> CMRotationMatrix?
+    func getRotationMatrix() -> GLKMatrix4
 }
 
 extension CMMotionManager: RotationMatrixSource {
-    func getRotationMatrix() -> CMRotationMatrix? {
-        return deviceMotion?.attitude.rotationMatrix
+    func getRotationMatrix() -> GLKMatrix4 {
+        guard let r = deviceMotion?.attitude.rotationMatrix else {
+            return GLKMatrix4Make(1, 0, 0, 0,
+                                  0, 0, 1, 0,
+                                  0, 1, 0, 0,
+                                  0, 0, 0, 1)
+        }
+        
+        return GLKMatrix4Make(
+            Float(r.m11), Float(r.m12), Float(r.m13), 0,
+            Float(r.m21), Float(r.m22), Float(r.m23), 0,
+            Float(r.m31), Float(r.m32), Float(r.m33), 0,
+            0,            0,            0,            1
+        )
     }
 }
 
@@ -50,28 +62,14 @@ class ViewerViewController: UIViewController  {
         logRetain()
     }
     
-    private func createScnView(frame: CGRect) -> SCNView {
-        var scnView: SCNView
-        if #available(iOS 9.0, *) {
-            scnView = SCNView(frame: frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
-        } else {
-            scnView = SCNView(frame: frame)
-        }
-        
-        scnView.backgroundColor = .blackColor()
-        scnView.playing = true
-        
-        return scnView
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let width = view.frame.width
         let height = view.frame.height
         
-        leftScnView = createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
-        rightScnView = createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
+        leftScnView = ViewerViewController.createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
+        rightScnView = ViewerViewController.createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
         leftRenderDelegate = StereoRenderDelegate(eye: .Left, optograph: optograph, rotationMatrixSource: motionManager, width: leftScnView.frame.width, height: leftScnView.frame.height)
         rightRenderDelegate = StereoRenderDelegate(eye: .Right, optograph: optograph, rotationMatrixSource: motionManager, width: rightScnView.frame.width, height: rightScnView.frame.height)
@@ -159,6 +157,20 @@ class ViewerViewController: UIViewController  {
         
         return technique!
     }
+    
+    private static func createScnView(frame: CGRect) -> SCNView {
+        var scnView: SCNView
+        if #available(iOS 9.0, *) {
+            scnView = SCNView(frame: frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+        } else {
+            scnView = SCNView(frame: frame)
+        }
+        
+        scnView.backgroundColor = .blackColor()
+        scnView.playing = true
+        
+        return scnView
+    }
 }
 
 class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
@@ -175,13 +187,12 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     let image: UIImage
     let root = SCNScene()
     
-    init(eye: Eye, optograph: Optograph, rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat) {
+    init(eye: Eye, optograph: Optograph, rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double = 85) {
         self.optograph = optograph
         self.rotationMatrixSource = rotationMatrixSource
         self.eye = eye
         
         let camera = SCNCamera()
-        let fov = 85 as Double
         camera.zNear = 0.01
         camera.zFar = 10000
         camera.xFov = fov
@@ -209,15 +220,7 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     }
 
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
-        if let r = rotationMatrixSource.getRotationMatrix() {
-            cameraNode.transform = SCNMatrix4FromGLKMatrix4(GLKMatrix4Make(
-                Float(r.m11), Float(r.m12), Float(r.m13), 0,
-                Float(r.m21), Float(r.m22), Float(r.m23), 0,
-                Float(r.m31), Float(r.m32), Float(r.m33), 0,
-                0,            0,            0,            1
-                )
-            )
-        }
+        cameraNode.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
     }
     
     private static func createSphere(image: UIImage?) -> SCNNode {

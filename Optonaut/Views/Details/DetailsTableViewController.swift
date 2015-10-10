@@ -10,15 +10,53 @@ import Foundation
 import Mixpanel
 import Async
 import CoreMotion
+import SceneKit
+
+class CombinedMotionManager: RotationMatrixSource {
+    private let motionManager: CMMotionManager
+    private var horizontalOffset: Float = 0
+    
+    init(motionManager: CMMotionManager) {
+        self.motionManager = motionManager
+    }
+    
+    func addHorizontalOffset(offset: Float) {
+        horizontalOffset += offset
+    }
+    
+    func getRotationMatrix() -> GLKMatrix4 {
+        guard let r = motionManager.deviceMotion?.attitude.rotationMatrix else {
+            return GLKMatrix4Make(1, 0, 0, 0,
+                                  0, 0, 1, 0,
+                                  0, 1, 0, 0,
+                                  0, 0, 0, 1)
+        }
+        
+        let mat = GLKMatrix4Make(
+            Float(r.m11), Float(r.m12), Float(r.m13), 0,
+            Float(r.m21), Float(r.m22), Float(r.m23), 0,
+            Float(r.m31), Float(r.m32), Float(r.m33), 0,
+            0,            0,            0,            1
+        )
+        
+        let rot = GLKMatrix4MakeZRotation(horizontalOffset / 150)
+        
+        return GLKMatrix4Multiply(rot, mat)
+    }
+}
 
 class DetailsTableViewController: UIViewController, NoNavbar {
     
     private let viewModel: DetailsViewModel
     
-    private let motionManager = CMMotionManager()
+    private var combinedMotionManager = CombinedMotionManager(motionManager: CMMotionManager())
     
     // subviews
-    private let tableView = UITableView()
+    private let tableView = TableView()
+    private let blurView = OffsetBlurView()
+    
+    private var renderDelegate: StereoRenderDelegate!
+    private var scnView: SCNView!
     
     required init(optographId: UUID) {
         viewModel = DetailsViewModel(optographId: optographId)
@@ -40,15 +78,44 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         navigationItem.title = ""
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
         
+        if #available(iOS 9.0, *) {
+            scnView = SCNView(frame: view.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+        } else {
+            scnView = SCNView(frame: view.frame)
+        }
+        
+        scnView.backgroundColor = .blackColor()
+        scnView.playing = true
+        
+        view.addSubview(scnView)
+        
+        viewModel.downloadProgress.producer
+            .filter { $0 == 1 }
+            .startWithNext { [weak self] _ in
+                self?.renderSphere()
+            }
+        
+//        tableView.backgroundColor = UIColor.whiteColor().alpha(0.5)
+        tableView.backgroundColor = .clearColor()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .None
-        tableView.bounces = false
+        tableView.canCancelContentTouches = false
+        tableView.delaysContentTouches = false
+        tableView.exclusiveTouch = false
+        
+        tableView.horizontalScrollDistanceCallback = { [weak self] offset in
+            self?.combinedMotionManager.addHorizontalOffset(offset)
+        }
         
         tableView.registerClass(DetailsTableViewCell.self, forCellReuseIdentifier: "details-cell")
         tableView.registerClass(CommentTableViewCell.self, forCellReuseIdentifier: "comment-cell")
         tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
+        tableView.frame = view.frame
+        tableView.scrollEnabled = true
         view.addSubview(tableView)
+        
+        tableView.backgroundView = blurView
         
         viewModel.comments.producer.startWithNext { [weak self] _ in
             self?.tableView.reloadData()
@@ -56,15 +123,14 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
-        motionManager.accelerometerUpdateInterval = 0.3
-        
-        view.setNeedsUpdateConstraints()
+        combinedMotionManager.motionManager.accelerometerUpdateInterval = 0.3
     }
     
-    override func updateViewConstraints() {
-        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
+    func renderSphere() {
+        renderDelegate = StereoRenderDelegate(eye: .Left, optograph: viewModel.optograph, rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: 85)
         
-        super.updateViewConstraints()
+        scnView.scene = renderDelegate.root
+        scnView.delegate = renderDelegate
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -72,12 +138,13 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
-        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
+        combinedMotionManager.motionManager.startDeviceMotionUpdates()
+        combinedMotionManager.motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
             if let accelerometerData = accelerometerData {
                 let x = accelerometerData.acceleration.x
                 let y = accelerometerData.acceleration.y
                 if self.viewModel.downloadProgress.value == 1 && -x > abs(y) + 0.5 {
-                    self.motionManager.stopAccelerometerUpdates()
+                    self.combinedMotionManager.motionManager.stopAccelerometerUpdates()
                     let orientation: UIInterfaceOrientation = x > 0 ? .LandscapeLeft : .LandscapeRight
                     self.pushViewer(orientation)
                 }
@@ -90,7 +157,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.id])
         
-        self.motionManager.stopAccelerometerUpdates()
+        combinedMotionManager.motionManager.stopAccelerometerUpdates()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -112,15 +179,18 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        tableView.contentInset = UIEdgeInsetsZero
+        let offset = view.frame.height - 78
+        tableView.contentInset = UIEdgeInsets(top: offset, left: 0, bottom: tabBarController!.tabBar.frame.height, right: 0)
+        tableView.contentOffset = CGPoint(x: 0, y: -offset)
+//        tableView.contentOffset = CGPoint(x: 0, y: 75)
     }
     
     func keyboardWillShowNotification(notification: NSNotification) {
-        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: true)
+//        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: true)
     }
     
     func keyboardWillHideNotification(notification: NSNotification) {
-        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: false)
+//        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: false)
     }
     
     func updateBottomLayoutConstraintWithNotification(notification: NSNotification, keyboardVisible: Bool) {
@@ -165,10 +235,7 @@ extension DetailsTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if indexPath.row == 0 {
-            let textHeight = calcTextHeight(viewModel.optograph.text, withWidth: view.frame.width - 38)
-            let imageHeight = view.frame.width * 0.84
-            let restHeight = CGFloat(130) // includes avatar, name, like-bar, bottom line and spacing
-            return imageHeight + restHeight + textHeight
+            return 78
         } else if indexPath.row <= viewModel.comments.value.count {
             let textWidth = view.frame.width - 38 - 41
             let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row - 1].text, withWidth: textWidth)
@@ -208,6 +275,46 @@ extension DetailsTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.comments.value.count + 2
+    }
+    
+}
+
+private class TableView: UITableView {
+    
+    var horizontalScrollDistanceCallback: ((Float) -> ())?
+    
+    private override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesMoved(touches, withEvent: event)
+        
+        if let touch = touches.first {
+            let oldPoint = touch.previousLocationInView(self)
+            let newPoint = touch.locationInView(self)
+            self.horizontalScrollDistanceCallback?(Float(newPoint.x - oldPoint.x))
+        }
+    }
+    
+}
+
+private class OffsetBlurView: UIView {
+    
+    private let blurView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .Dark)
+        return UIVisualEffectView(effect: blurEffect)
+    }()
+    
+    override var frame: CGRect {
+        didSet {
+            blurView.frame = CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height + frame.origin.y)
+        }
+    }
+    
+    init() {
+        super.init(frame: CGRectZero)
+        addSubview(blurView)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
 }
