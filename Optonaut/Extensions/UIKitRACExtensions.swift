@@ -60,7 +60,11 @@ extension PlaceholderImageView {
             let property = MutableProperty<String>("")
             property.producer.startWithNext { urlStr in
                 if let url = NSURL(string: urlStr) {
-                    self.sd_setImageWithURL(url, placeholderImage: self.placeholderImage)
+                    if self.placeholderImage != nil {
+                        self.sd_setImageWithURL(url, placeholderImage: self.placeholderImage)
+                    } else {
+                        self.sd_setImageWithURL(url)
+                    }
                 }
             }
             return property

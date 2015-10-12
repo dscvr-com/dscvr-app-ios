@@ -24,6 +24,9 @@ class DetailsTableViewCell: UITableViewCell {
         
         backgroundColor = .clearColor()
         
+        infoView.deleteCallback = { [weak self] in
+            self?.navigationController?.popViewControllerAnimated(true)
+        }
         contentView.addSubview(infoView)
         
         textView.numberOfLines = 0

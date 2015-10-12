@@ -78,7 +78,6 @@ class StitchingService {
             
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
-//                print(progress)
                 Async.main {
                     sendNext(sink, .Progress(progress))
                 }
@@ -122,9 +121,9 @@ class StitchingService {
     
     static func removeUnstitchedRecordings() {
         assert(!isStitching())
-        assert(hasUnstitchedRecordings())
-        
-        storeRef.clear()
+        if hasUnstitchedRecordings() {
+            storeRef.clear()
+        }
     }
     
     /// This function is to be called whenever the app is

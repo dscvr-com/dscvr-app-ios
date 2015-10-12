@@ -24,7 +24,7 @@ struct Optograph: Model {
     var text: String
     var person: Person
     var createdAt: NSDate
-    var deleted: Bool
+    var deletedAt: NSDate?
     var isStarred: Bool
     var starsCount: Int
     var commentsCount: Int
@@ -56,7 +56,7 @@ struct Optograph: Model {
             text: "",
             person: Person.newInstance(),
             createdAt: NSDate(),
-            deleted: false,
+            deletedAt: nil,
             isStarred: false,
             starsCount: 0,
             commentsCount: 0,
@@ -114,20 +114,21 @@ struct Optograph: Model {
     }
     
     mutating func delete() -> SignalProducer<EmptyResponse, ApiError> {
+        var signalProducer: SignalProducer<EmptyResponse, ApiError>
         if isPublished {
-            return ApiService<EmptyResponse>.delete("optographs/\(id)")
-                .on(completed: {
-                    self.deleted = true
-                    try! self.insertOrUpdate()
-                })
+            signalProducer = ApiService<EmptyResponse>.delete("optographs/\(id)")
         } else {
-            return SignalProducer<EmptyResponse, ApiError> { sink, disposable in
+            signalProducer = SignalProducer { sink, disposable in
                 disposable.addDisposable {}
-                self.deleted = true
-                try! self.insertOrUpdate()
                 sendCompleted(sink)
             }
         }
+        
+        return signalProducer
+            .on(completed: {
+                self.deletedAt = NSDate()
+                try! self.insertOrUpdate()
+            })
     }
 }
 
@@ -147,6 +148,7 @@ extension Optograph: Mappable {
         text                <- map["text"]
         person              <- map["person"]
         createdAt           <- (map["created_at"], NSDateTransform())
+        deletedAt           <- (map["deleted_at"], NSDateTransform())
         isStarred           <- map["is_starred"]
         starsCount          <- map["stars_count"]
         commentsCount       <- map["comments_count"]
@@ -177,7 +179,7 @@ extension Optograph: SQLiteModel {
             text: row[OptographSchema.text],
             person: Person.newInstance(),
             createdAt: row[OptographSchema.createdAt],
-            deleted: row[OptographSchema.deleted],
+            deletedAt: row[OptographSchema.deletedAt],
             isStarred: row[OptographSchema.isStarred],
             starsCount: row[OptographSchema.starsCount],
             commentsCount: row[OptographSchema.commentsCount],
@@ -199,7 +201,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.text <-- text,
             OptographSchema.personId <-- person.id,
             OptographSchema.createdAt <-- createdAt,
-            OptographSchema.deleted <-- deleted,
+            OptographSchema.deletedAt <-- deletedAt,
             OptographSchema.isStarred <-- isStarred,
             OptographSchema.starsCount <-- starsCount,
             OptographSchema.commentsCount <-- commentsCount,
