@@ -26,13 +26,6 @@ var S3URL: String {
     }
 }
 
-let StaticPath: String = {
-    let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
-    let path = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first! + "/\(appId!)/static"
-    try! NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
-    return path
-}()
-
 let CameraIntrinsics: [Double] = {
     switch UIDevice.currentDevice().deviceType {
     case .IPhone6, .IPhone6S, .IPhone6SPlus: return [5.9266119, 0, 1.6875, 0, 5.9266119, 3, 0, 0, 1]

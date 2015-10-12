@@ -12,9 +12,16 @@ import ImageIO
 import MobileCoreServices
 import ReactiveCocoa
 
+
 class CameraDebugService {
     
-    let path = StaticPath + "/debug"
+
+    let path: String = {
+        let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
+        let path = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first! + "/\(appId!)/static/debug"
+        try! NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+        return path
+        }()
     let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)
     
     init() {

@@ -216,7 +216,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     func uploadImage() {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             imagePickerController.sourceType = .PhotoLibrary
-//            imagePickerController.allowsEditing = true
+            imagePickerController.allowsEditing = true
             imagePickerController.delegate = self
             self.presentViewController(imagePickerController, animated: true, completion: nil)
         }
@@ -244,9 +244,10 @@ extension OnboardingProfileViewController: UIImagePickerControllerDelegate {
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)
     
-        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
-        avatarImageView.image = image
-        viewModel.updateAvatar(image).start()
+        let image = info[UIImagePickerControllerEditedImage] as! UIImage
+        let fixedImage = image.fixedOrientation()
+        avatarImageView.image = fixedImage
+        viewModel.updateAvatar(fixedImage).start()
     }
     
 }

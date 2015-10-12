@@ -17,53 +17,76 @@ class NewCommentTableViewCell: UITableViewCell {
     var postCallback: (Comment -> ())?
     
     // subviews
-    private let textInputView = KMPlaceholderTextView()
+    private let textInputView = LineTextField()
+    private let commentsIconView = UILabel()
+    private let commentsCountView = UILabel()
     private let sendButtonView = UIButton()
+    private var sendButtonConstraint = NSLayoutConstraint()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         backgroundColor = .clearColor()
         
-        textInputView.font = UIFont.robotoOfSize(13, withType: .Light)
-        textInputView.textColor = UIColor(0x4d4d4d)
+        textInputView.size = .Medium
         textInputView.placeholder = "Write a comment"
-        textInputView.keyboardType = .Twitter
+//        textInputView.keyboardType = .Twitter
         contentView.addSubview(textInputView)
         
-        sendButtonView.setTitle("Send", forState: .Normal)
-        sendButtonView.setTitleColor(UIColor.Accent, forState: .Normal)
-        sendButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
+        commentsIconView.font = UIFont.iconOfSize(17)
+        commentsIconView.text = String.iconWithName(.Comment)
+        commentsIconView.textColor = .whiteColor()
+        contentView.addSubview(commentsIconView)
+        
+        commentsCountView.font = UIFont.textOfSize(13, withType: .Regular)
+        commentsCountView.textColor = .whiteColor()
+        contentView.addSubview(commentsCountView)
+        
+        sendButtonView.titleLabel?.font = UIFont.iconOfSize(17)
+        sendButtonView.contentHorizontalAlignment = .Right
+        sendButtonView.setTitle(String.iconWithName(.Comment), forState: .Normal)
+        sendButtonView.setTitleColor(.Accent, forState: .Normal)
         sendButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "postComment"))
         contentView.addSubview(sendButtonView)
         
         contentView.setNeedsUpdateConstraints()
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     override func updateConstraints() {
-        sendButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
-        sendButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -9)
+        commentsIconView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 16)
+        commentsIconView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
+        //        commentsIconView.autoSetDimension(.Width, toSize: 30)
+        
+        commentsCountView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 18)
+        commentsCountView.autoPinEdge(.Left, toEdge: .Right, ofView: commentsIconView, withOffset: 6)
+        //        commentsCountView.autoSetDimension(.Width, toSize: 30)
         
         textInputView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
-        textInputView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 9)
-        textInputView.autoPinEdge(.Right, toEdge: .Left, ofView: sendButtonView, withOffset: -10)
-        textInputView.autoSetDimension(.Height, toSize: 32)
+        textInputView.autoPinEdge(.Left, toEdge: .Right, ofView: commentsCountView, withOffset: 20)
+        sendButtonConstraint = textInputView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
+        
+        sendButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 17)
+        sendButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
         
         super.updateConstraints()
     }
     
-    func bindViewModel(optographId: UUID) {
-        viewModel = NewCommentViewModel(optographId: optographId)
+    func bindViewModel(optographId: UUID, commentsCount: Int) {
+        viewModel = NewCommentViewModel(optographId: optographId, commentsCount: commentsCount)
         
         textInputView.rac_text <~ viewModel.text
         textInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.text.value = $0 as! String }
+        textInputView.rac_userInteractionEnabled <~ viewModel.isPosting.producer.map(negate)
+        textInputView.rac_alpha <~ viewModel.isPosting.producer.map { $0 ? 0.5 : 1 }
         
-        sendButtonView.rac_userInteractionEnabled <~ viewModel.isValid.producer.combineLatestWith(viewModel.isPosting.producer).map { $0 && !$1 }
-        sendButtonView.rac_alpha <~ viewModel.isValid.producer.map { $0 ? 1 : 0.5 }
+        commentsCountView.rac_text <~ viewModel.commentsCount.producer.map { "\($0)" }
+        
+        sendButtonView.rac_hidden <~ viewModel.postingEnabled.producer.map(negate)
+        viewModel.postingEnabled.producer.startWithNext { self.sendButtonConstraint.constant = $0 ? -50 : -20 }
     }
     
     func postComment() {

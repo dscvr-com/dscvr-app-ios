@@ -17,6 +17,7 @@ class DetailsTableViewCell: UITableViewCell {
     
     // subviews
     private let infoView = OptographInfoView()
+    private let textView = UILabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -24,6 +25,11 @@ class DetailsTableViewCell: UITableViewCell {
         backgroundColor = .clearColor()
         
         contentView.addSubview(infoView)
+        
+        textView.numberOfLines = 0
+        textView.font = UIFont.textOfSize(14, withType: .Regular)
+        textView.textColor = .whiteColor()
+        contentView.addSubview(textView)
         
         contentView.setNeedsUpdateConstraints()
     }
@@ -38,12 +44,18 @@ class DetailsTableViewCell: UITableViewCell {
         infoView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView)
         infoView.autoSetDimension(.Height, toSize: 75)
         
+        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: infoView, withOffset: 10)
+        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
+        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
+        
         super.updateConstraints()
     }
     
     func bindViewModel() {
         infoView.bindViewModel(viewModel.optograph)
         infoView.navigationController = navigationController
+        
+        textView.rac_text <~ viewModel.text
     }
     
     func toggleStar() {
@@ -56,11 +68,9 @@ class DetailsTableViewCell: UITableViewCell {
     }
     
     func pushViewer() {
-        if viewModel.downloadProgress.value == 1 {
-            let alert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
-        }
+        let alert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+        self.navigationController?.presentViewController(alert, animated: true, completion: nil)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

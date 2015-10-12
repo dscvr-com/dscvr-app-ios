@@ -86,6 +86,8 @@ class SessionService {
                 onboardingVersion: onboardingVersion
             )
             
+            PipelineService.check()
+            
             updateMixpanel()
         }
         

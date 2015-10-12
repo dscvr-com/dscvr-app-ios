@@ -4,27 +4,11 @@ import SceneKit
 import CoreMotion
 import CoreGraphics
 import Mixpanel
+import WebImage
+import ReactiveCocoa
 
 protocol RotationMatrixSource {
     func getRotationMatrix() -> GLKMatrix4
-}
-
-extension CMMotionManager: RotationMatrixSource {
-    func getRotationMatrix() -> GLKMatrix4 {
-        guard let r = deviceMotion?.attitude.rotationMatrix else {
-            return GLKMatrix4Make(1, 0, 0, 0,
-                                  0, 0, 1, 0,
-                                  0, 1, 0, 0,
-                                  0, 0, 0, 1)
-        }
-        
-        return GLKMatrix4Make(
-            Float(r.m11), Float(r.m12), Float(r.m13), 0,
-            Float(r.m21), Float(r.m22), Float(r.m23), 0,
-            Float(r.m31), Float(r.m32), Float(r.m33), 0,
-            0,            0,            0,            1
-        )
-    }
 }
 
 class ViewerViewController: UIViewController  {
@@ -36,8 +20,6 @@ class ViewerViewController: UIViewController  {
     private let orientation: UIInterfaceOrientation
     private let optograph: Optograph
     private let distortion: Distortion
-    
-    private let motionManager = CMMotionManager()
     
     private var originalBrightness: CGFloat!
     
@@ -71,13 +53,18 @@ class ViewerViewController: UIViewController  {
         leftScnView = ViewerViewController.createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
         rightScnView = ViewerViewController.createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
-        leftRenderDelegate = StereoRenderDelegate(eye: .Left, optograph: optograph, rotationMatrixSource: motionManager, width: leftScnView.frame.width, height: leftScnView.frame.height)
-        rightRenderDelegate = StereoRenderDelegate(eye: .Right, optograph: optograph, rotationMatrixSource: motionManager, width: rightScnView.frame.width, height: rightScnView.frame.height)
+        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: MotionService.sharedInstance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: 85)
+        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: MotionService.sharedInstance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: 85)
+        
+        SDWebImageManager.sharedManager().downloadImageForURL(optograph.leftTextureAssetURL)
+            .startWithNext { [weak self] image in self?.leftRenderDelegate.image = image }
+        SDWebImageManager.sharedManager().downloadImageForURL(optograph.rightTextureAssetURL)
+            .startWithNext { [weak self] image in self?.rightRenderDelegate.image = image }
             
-        leftScnView.scene = leftRenderDelegate.root
+        leftScnView.scene = leftRenderDelegate.scene
         leftScnView.delegate = leftRenderDelegate
         
-        rightScnView.scene = rightRenderDelegate.root
+        rightScnView.scene = rightRenderDelegate.scene
         rightScnView.delegate = rightRenderDelegate
         
         switch distortion {
@@ -92,24 +79,6 @@ class ViewerViewController: UIViewController  {
         
         view.addSubview(rightScnView)
         view.addSubview(leftScnView)
-        
-        motionManager.deviceMotionUpdateInterval = 1.0 / 60
-        motionManager.startDeviceMotionUpdates()
-        
-        var popActivated = false // needed when viewer was opened without rotation
-        motionManager.accelerometerUpdateInterval = 0.3
-        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
-            if let accelerometerData = accelerometerData {
-                let x = accelerometerData.acceleration.x
-                let y = accelerometerData.acceleration.y
-                if !popActivated && -x > abs(y) + 0.5 {
-                    popActivated = true
-                }
-                if (popActivated && abs(y) > -x + 0.5) || x > abs(y) {
-                    self.navigationController?.popViewControllerAnimated(false)
-                }
-            }
-        })
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -123,13 +92,21 @@ class ViewerViewController: UIViewController  {
         UIScreen.mainScreen().brightness = 1
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = true
+        
+        MotionService.sharedInstance.motionFast()
+        MotionService.sharedInstance.rotateEnable { [weak self] orientation in
+            if case .Portrait = orientation {
+                print("pop viewer")
+                self?.navigationController?.popViewControllerAnimated(false)
+            }
+        }
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        motionManager.stopAccelerometerUpdates()
-        motionManager.stopDeviceMotionUpdates()
+        MotionService.sharedInstance.motionSlow()
+        MotionService.sharedInstance.rotateDisable()
         
         Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.id])
     }
@@ -140,12 +117,6 @@ class ViewerViewController: UIViewController  {
         UIScreen.mainScreen().brightness = originalBrightness
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
-        
-        leftScnView.playing = false
-        rightScnView.playing = false
-        
-        leftRenderDelegate.dispose()
-        rightRenderDelegate.dispose()
         
         super.viewWillDisappear(animated)
     }
@@ -171,78 +142,4 @@ class ViewerViewController: UIViewController  {
         
         return scnView
     }
-}
-
-class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
-    
-    enum Eye {
-        case Left, Right
-    }
-    
-    let optograph: Optograph
-    let cameraNode: SCNNode
-    let sphereNode: SCNNode
-    let rotationMatrixSource: RotationMatrixSource
-    let eye: Eye
-    let image: UIImage
-    let root = SCNScene()
-    
-    init(eye: Eye, optograph: Optograph, rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double = 85) {
-        self.optograph = optograph
-        self.rotationMatrixSource = rotationMatrixSource
-        self.eye = eye
-        
-        let camera = SCNCamera()
-        camera.zNear = 0.01
-        camera.zFar = 10000
-        camera.xFov = fov
-        camera.yFov = fov * Double(width / height)
-        
-        cameraNode = SCNNode()
-        cameraNode.camera = camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
-        root.rootNode.addChildNode(cameraNode)
-        
-        switch eye {
-        case .Left: image = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")!)!
-        case .Right: image = UIImage(data: NSData(contentsOfFile: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")!)!
-        }
-        
-        sphereNode = StereoRenderDelegate.createSphere(image)
-        root.rootNode.addChildNode(sphereNode)
-        
-        super.init()
-    }
-    
-    func dispose() {
-        sphereNode.removeFromParentNode()
-        cameraNode.removeFromParentNode()
-    }
-
-    func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
-        cameraNode.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
-    }
-    
-    private static func createSphere(image: UIImage?) -> SCNNode {
-        // rotate sphere to correctly display texture
-        let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
-        
-        let geometry = SCNSphere(radius: 5.0)
-        geometry.segmentCount = 128
-        geometry.firstMaterial?.diffuse.contents = image!
-        geometry.firstMaterial?.doubleSided = true
-        
-        let node = SCNNode(geometry: geometry)
-        node.transform = transform
-        
-        return node
-    }
-    
-    private static func createPlane(image: UIImage?) -> SCNNode {
-        let planeGeometry = SCNPlane(width: 10, height: 10)
-        planeGeometry.firstMaterial?.diffuse.contents = image
-        
-        return SCNNode(geometry: planeGeometry)
-    }
-    
 }

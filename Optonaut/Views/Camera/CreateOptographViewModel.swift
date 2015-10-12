@@ -103,9 +103,8 @@ class CreateOptographViewModel {
             .combineLatestWith(hashtagStringValid.producer).map(and)
     }
     
-    func saveAsset(data: NSData) {
-        SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: "\(S3URL)/original/\(optograph.previewAssetId).jpg", toDisk: true)
-        previewImageUrl.value = "\(S3URL)/original/\(optograph.previewAssetId).jpg"
+    func updatePreviewImage() {
+        previewImageUrl.value = optograph.previewAssetURL
     }
     
     func post() {

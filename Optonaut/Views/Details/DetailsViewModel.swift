@@ -27,7 +27,6 @@ class DetailsViewModel {
     let personId = MutableProperty<UUID>("")
     let text = MutableProperty<String>("")
     let location = MutableProperty<String>("")
-    let downloadProgress = MutableProperty<Float>(0)
     let comments = MutableProperty<[Comment]>([])
     
     var optograph: Optograph
@@ -169,12 +168,8 @@ class DetailsViewModel {
         text.value = optograph.text
         location.value = optograph.location.text
         isPublished.value = optograph.isPublished
-        previewImageUrl.value = "\(S3URL)/original/\(optograph.previewAssetId).jpg"
+        previewImageUrl.value = optograph.previewAssetURL
         avatarImageUrl.value = "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg"
-
-        let leftProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.leftTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.leftTextureAssetId).jpg")
-        let rightProgress = DownloadService.downloadProgress(from: "\(S3URL)/original/\(optograph.rightTextureAssetId).jpg", to: "\(StaticPath)/\(optograph.rightTextureAssetId).jpg")
-        downloadProgress <~ leftProgress.combineLatestWith(rightProgress).map { ($0 + $1) / 2 }
     }
     
 }

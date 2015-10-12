@@ -220,11 +220,11 @@ class CreateOptographViewController: UIViewController {
     override func updateViewConstraints() {
         previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 5 / 4)
+        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
         
         cameraPreviewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
         cameraPreviewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        cameraPreviewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 5 / 4)
+        cameraPreviewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
         
         cameraPreviewImageBlurView.autoPinEdgesToSuperviewEdges()
         
@@ -373,6 +373,7 @@ class CreateOptographViewController: UIViewController {
     
     func submit() {
         viewModel.post()
+        PipelineService.check()
         self.navigationController?.popViewControllerAnimated(true)
     }
     
@@ -426,10 +427,10 @@ extension CreateOptographViewController: UIImagePickerControllerDelegate, UINavi
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)
     
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
-        let imageData = UIImageJPEGRepresentation(image, 0.7)!
-        let previewImage = OptographAsset.PreviewImage(imageData)
-        viewModel.optograph.saveAsset(previewImage)
-        viewModel.saveAsset(imageData)
+        let fixedImage = image.fixedOrientation()
+        let imageData = UIImageJPEGRepresentation(fixedImage, 0.7)!
+        viewModel.optograph.saveAsset(.PreviewImage(imageData))
+        viewModel.updatePreviewImage()
     }
     
 }

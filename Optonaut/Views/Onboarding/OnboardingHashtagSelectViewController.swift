@@ -54,19 +54,12 @@ class OnboardingHashtagSelectViewController: UIViewController {
         viewModel.currentHashtag.producer
             .ignoreNil()
             .map { "\(S3URL)/hashtag-preview/\($0.previewAssetId).jpg" }
-            .startWithNext { url in
-                SDWebImageDownloader.sharedDownloader().downloadImageWithURL(NSURL(string: url)!,
-                    options: [],
-                    progress: { _ in
-                        self.viewModel.loading.value = true
-                    },
-                    completed: { (image, _, _, _) in
-                        self.viewModel.loading.value = false
-                        self.imageView.image = image
-                        self.backgroundImageView.image = image
-                })
+            .flatMap(.Latest) { SDWebImageManager.sharedManager().downloadImageForURL($0) }
+            .startWithNext { image in
+                self.viewModel.loading.value = false
+                self.imageView.image = image
+                self.backgroundImageView.image = image
             }
-        
         
         loadingInidicatorView.rac_animating <~ viewModel.loading
         loadingInidicatorView.activityIndicatorViewStyle = .White

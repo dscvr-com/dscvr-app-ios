@@ -19,7 +19,7 @@ class OptographTableViewCellModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        previewImageUrl = ConstantProperty("\(S3URL)/original/\(optograph.previewAssetId).jpg")
+        previewImageUrl = ConstantProperty(optograph.previewAssetURL)
     }
     
 }

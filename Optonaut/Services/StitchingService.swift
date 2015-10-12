@@ -35,11 +35,11 @@ class StitchingService {
     private static var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
     private static var shallCancel = false
     
-    /// Returns the currently running stitching process, or
-    /// nil, if the stitching service is idle.
-    static func getStitchingSignal() -> StitchingSignal? {
-        return activeSignal
-    }
+//    /// Returns the currently running stitching process, or
+//    /// nil, if the stitching service is idle.
+//    static func getStitchingSignal() -> StitchingSignal? {
+//        return activeSignal
+//    }
     
     static func isStitching() -> Bool {
         return activeSignal != nil
@@ -55,10 +55,14 @@ class StitchingService {
     
     /// This function starts a new stitching process.
     static func startStitching() -> StitchingSignal {
+        if isStitching() {
+            return activeSignal!
+        }
+        
         assert(!isStitching())
         assert(hasUnstitchedRecordings())
         
-        shallCancel = false;
+        shallCancel = false
         
         registerBackgroundTask()
         
@@ -73,13 +77,13 @@ class StitchingService {
             Mixpanel.sharedInstance().timeEvent("Action.Camera.Stitching")
             
             let stitcher = Stitcher()
-            stitcher.setProgressCallback({ (progress) -> Bool in
-                print(progress)
+            stitcher.setProgressCallback { progress in
+//                print(progress)
                 Async.main {
                     sendNext(sink, .Progress(progress))
                 }
                 return !shallCancel
-            });
+            }
             
             if !shallCancel {
                 let leftBuffer = stitcher.getLeftResult()
@@ -120,14 +124,14 @@ class StitchingService {
         assert(!isStitching())
         assert(hasUnstitchedRecordings())
         
-        storeRef.clear();
+        storeRef.clear()
     }
     
     /// This function is to be called whenever the app is
     /// brought into the foreground. The purpose is to register the 
     /// background handler when we are still stitching.
     static func onApplicationResuming() {
-        if(isStitching()) {
+        if isStitching() {
             registerBackgroundTask()
         }
     }
@@ -149,6 +153,6 @@ class StitchingService {
     static func cancelStitching() {
         assert(isStitching())
         print("Stitching cancel called")
-        shallCancel = true;
+        shallCancel = true
     }
 }
