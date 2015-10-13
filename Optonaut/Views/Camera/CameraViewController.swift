@@ -26,6 +26,7 @@ class CameraViewController: UIViewController {
     // camera
     private let session = AVCaptureSession()
     private let sessionQueue: dispatch_queue_t
+    private var videoDevice : AVCaptureDevice?
     
     // stitcher pointer and variables
     private var stitcher = Recorder()
@@ -33,7 +34,12 @@ class CameraViewController: UIViewController {
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
     private var debugHelper: CameraDebugService?
+    
+    // lines
     private var edges: [Edge: SCNNode] = [:]
+    private let screenScale : Float
+    private let lineWidth = Float(3)
+
     
     // subviews
     private let tiltView = TiltView()
@@ -45,7 +51,7 @@ class CameraViewController: UIViewController {
     
     // sphere
     private let cameraNode = SCNNode()
-    private let scnView = SCNView()
+    private var scnView : SCNView!
     private let scene = SCNScene()
     
     // ball
@@ -53,9 +59,11 @@ class CameraViewController: UIViewController {
     private var ballSpeed = GLKVector3Make(0, 0, 0)
     
     required init() {
+        
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         dispatch_set_target_queue(sessionQueue, high)
+        screenScale = Float(UIScreen.mainScreen().scale)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -73,6 +81,15 @@ class CameraViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Init scene view here because we need view bounds for the constructor overload
+        // that forces GLES. Please don't use metal. It will fail.
+        if #available(iOS 9.0, *) {
+            scnView = SCNView(frame: view.bounds, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+        } else {
+            scnView = SCNView(frame: view.bounds)
+        }
+
     
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
@@ -131,11 +148,12 @@ class CameraViewController: UIViewController {
         
         // Locks the focus as soon as the user starts recording.
         // We do this to avoid re-focusing during recording, which breaks the Optograph
+        
         viewModel.isRecording.producer
             .map { $0 ? .Locked : .ContinuousAutoFocus }
-            .startWithNext(CameraViewController.setFocusMode)
+            .startWithNext({[weak self] val in self!.setFocusMode(val)})
         
-        viewModel.isRecording.producer.take(1).startWithCompleted(CameraViewController.lockExposure)
+        viewModel.isRecording.producer.take(1).startWithCompleted({[weak self] in self!.lockExposure()})
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -163,6 +181,8 @@ class CameraViewController: UIViewController {
                     let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
                     
                     let edgeNode = createLineNode(posA, posB: posB)
+                    
+                    
                     
                     edges[edge] = edgeNode
                     
@@ -199,8 +219,6 @@ class CameraViewController: UIViewController {
         UIApplication.sharedApplication().idleTimerDisabled = true
         
         motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
-        
-        session.startRunning()
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -318,6 +336,8 @@ class CameraViewController: UIViewController {
             newSpeed = GLKVector3Add(newSpeed, ballSpeed)
             ballSpeed = newSpeed;
             ballNode.position = SCNVector3FromGLKVector3(GLKVector3Add(ball, ballSpeed))
+            
+            //print("New Ball Position: {\(ballNode.position.x), \(ballNode.position.y), \(ballNode.position.z)}");
         }
         
     }
@@ -327,8 +347,8 @@ class CameraViewController: UIViewController {
         
         session.sessionPreset = AVCaptureSessionPresetHigh
         
-        let videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
-        guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else {
+        videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice!) else {
             return
         }
         
@@ -348,20 +368,20 @@ class CameraViewController: UIViewController {
         }
         
         session.commitConfiguration()
+        
+        session.startRunning()
     }
     
-    private static func setFocusMode(mode: AVCaptureFocusMode) {
-        let videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
-        try! videoDevice.lockForConfiguration()
-        videoDevice.focusMode = mode
-        videoDevice.unlockForConfiguration()
+    private func setFocusMode(mode: AVCaptureFocusMode) {
+        try! videoDevice!.lockForConfiguration()
+        videoDevice!.focusMode = mode
+        videoDevice!.unlockForConfiguration()
     }
     
-    private static func lockExposure() {
-        let videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
-        try! videoDevice.lockForConfiguration()
-        videoDevice.exposureMode = .Locked
-        videoDevice.unlockForConfiguration()
+    private func lockExposure() {
+        try! videoDevice!.lockForConfiguration()
+        videoDevice!.exposureMode = .Locked
+        videoDevice!.unlockForConfiguration()
     }
     
     private func authorizeCamera() {
@@ -420,6 +440,7 @@ class CameraViewController: UIViewController {
             
             // Take transform from the stitcher. 
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.getCurrentRotation())
+            //print("New CM Transform {\(cameraNode.transform.m11), \(cameraNode.transform.m12), \(cameraNode.transform.m13), \(cameraNode.transform.m14)} \n {\(cameraNode.transform.m21), \(cameraNode.transform.m22), \(cameraNode.transform.m23), \(cameraNode.transform.m24)} \n {\(cameraNode.transform.m31), \(cameraNode.transform.m32), \(cameraNode.transform.m33), \(cameraNode.transform.m34)} \n {\(cameraNode.transform.m41), \(cameraNode.transform.m42), \(cameraNode.transform.m43), \(cameraNode.transform.m44)}");
             
             if stitcher.isFinished() {
                 // needed since processSampleBuffer doesn't run on UI thread
@@ -433,10 +454,21 @@ class CameraViewController: UIViewController {
         }
     }
     
+    private func stopSession() {
+        session.stopRunning()
+        videoDevice = nil
+        
+        for child in scene.rootNode.childNodes {
+            child.removeFromParentNode()
+        }
+        
+        scnView.removeFromSuperview()
+    }
+    
     func finish() {
         
         Mixpanel.sharedInstance().track("Action.Camera.FinishRecording")
-        session.stopRunning()
+        stopSession()
         stitcher.finish()
         
         StitchingService.startStitching()
@@ -447,7 +479,7 @@ class CameraViewController: UIViewController {
     
     func cancel() {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
-        session.stopRunning()
+        stopSession()
         
         navigationController?.popViewControllerAnimated(false)
     }
@@ -465,7 +497,10 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 extension CameraViewController: SCNSceneRendererDelegate {
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
-        glLineWidth(6)
+        //let timestamp = NSDateFormatter.localizedStringFromDate(NSDate(), dateStyle: .ShortStyle, timeStyle: .LongStyle)
+        
+        //print("[\(timestamp)] Rendering");
+        glLineWidth(lineWidth * screenScale)
     }
     
 }
