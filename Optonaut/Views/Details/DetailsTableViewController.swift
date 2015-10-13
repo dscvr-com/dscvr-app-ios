@@ -41,6 +41,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private var scnView: SCNView!
     
     private var rotationDisposable: Disposable?
+    private var downloadDisposable: Disposable?
     
     required init(optographId: UUID) {
         viewModel = DetailsViewModel(optographId: optographId)
@@ -57,17 +58,20 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     }
     
     private func loadTexture() {
-        let queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
-        SDWebImageManager.sharedManager().downloadImageForURL(viewModel.optograph.leftTextureAssetURL)
-            .observeOn(QueueScheduler(queue: queue))
+        downloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(viewModel.optograph.leftTextureAssetURL)
+            
             .startWithNext { [weak self] image in
-                self?.renderDelegate.image = image
-                self?.scnView.prepareObject(self!.renderDelegate!.scene, shouldAbortBlock: nil)
-                self?.scnView.playing = true
-        }
+                if let _self = self {
+                    _self.renderDelegate.image = image
+                    _self.scnView.prepareObject(_self.renderDelegate!.scene, shouldAbortBlock: nil)
+                    _self.scnView.playing = true
+                }
+            }
+        
     }
     
     private func unloadTexture() {
+        downloadDisposable?.dispose()
         self.renderDelegate.image = nil
     }
     

@@ -14,16 +14,22 @@ extension SDWebImageManager {
     
     func downloadImageForURL(url: String) -> SignalProducer<UIImage, NoError> {
         return SignalProducer { sink, disposable in
-            SDWebImageManager.sharedManager().downloadImageWithURL(
+            let operation = SDWebImageManager.sharedManager().downloadImageWithURL(
                 NSURL(string: url)!,
                 options: [],
                 progress: { _ in },
                 completed: { (image, _, _, _, _) in
-                    if let image = image {
-                        sendNext(sink, image)
+                    if !disposable.disposed {
+                        if let image = image {
+                            sendNext(sink, image)
+                        }
+                        sendCompleted(sink)
                     }
-                    sendCompleted(sink)
             })
+            disposable.addDisposable {
+                operation.cancel()
+            }
+
         }
     }
     
