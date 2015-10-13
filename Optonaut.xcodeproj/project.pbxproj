@@ -40,6 +40,8 @@
 		8F900B451B839D7A0085566C /* LocationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B441B839D7A0085566C /* LocationTable.swift */; };
 		8F900B471B839E690085566C /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F900B461B839E690085566C /* Location.swift */; };
 		8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */; settings = {ASSET_TAGS = (); }; };
+		8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F966E0B1BCCF33900F5F5F8 /* SearchTableViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		8F966E0E1BCCF33900F5F5F8 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F966E0C1BCCF33900F5F5F8 /* SearchViewModel.swift */; settings = {ASSET_TAGS = (); }; };
 		8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */; settings = {ASSET_TAGS = (); }; };
 		8FA2E7B21B55576500407181 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA2E7B11B55576500407181 /* opencv2.framework */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
@@ -73,8 +75,6 @@
 		8FAB9F461B8F01DF00B4C8CB /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */; };
 		8FAB9F471B8F01DF00B4C8CB /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */; };
 		8FAB9F481B8F01DF00B4C8CB /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F121B8F01DF00B4C8CB /* FeedViewModel.swift */; };
-		8FAB9F491B8F01DF00B4C8CB /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F131B8F01DF00B4C8CB /* SearchTableViewController.swift */; };
-		8FAB9F4A1B8F01DF00B4C8CB /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F141B8F01DF00B4C8CB /* SearchViewModel.swift */; };
 		8FAB9F4B1B8F01DF00B4C8CB /* HashtagTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F161B8F01DF00B4C8CB /* HashtagTableViewController.swift */; };
 		8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F181B8F01DF00B4C8CB /* ForgotPasswordViewController.swift */; };
 		8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F191B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift */; };
@@ -218,6 +218,8 @@
 		8F900B551B8479250085566C /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/iOS/Crashlytics.framework; sourceTree = "<group>"; };
 		8F900B561B8479250085566C /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/iOS/Fabric.framework; sourceTree = "<group>"; };
 		8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
+		8F966E0B1BCCF33900F5F5F8 /* SearchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
+		8F966E0C1BCCF33900F5F5F8 /* SearchViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		8FA2E7B11B55576500407181 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Carthage/Build/iOS/opencv2.framework; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
@@ -251,8 +253,6 @@
 		8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
 		8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9F121B8F01DF00B4C8CB /* FeedViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
-		8FAB9F131B8F01DF00B4C8CB /* SearchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
-		8FAB9F141B8F01DF00B4C8CB /* SearchViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F161B8F01DF00B4C8CB /* HashtagTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashtagTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9F181B8F01DF00B4C8CB /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		8FAB9F191B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewModel.swift; sourceTree = "<group>"; };
@@ -585,6 +585,8 @@
 				8FAB9F0C1B8F01DF00B4C8CB /* ExploreNavViewController.swift */,
 				8FAB9F0D1B8F01DF00B4C8CB /* ExploreTableViewController.swift */,
 				8FAB9F0E1B8F01DF00B4C8CB /* ExploreViewModel.swift */,
+				8F966E0B1BCCF33900F5F5F8 /* SearchTableViewController.swift */,
+				8F966E0C1BCCF33900F5F5F8 /* SearchViewModel.swift */,
 			);
 			path = Explore;
 			sourceTree = "<group>";
@@ -595,8 +597,6 @@
 				8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */,
 				8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */,
 				8FAB9F121B8F01DF00B4C8CB /* FeedViewModel.swift */,
-				8FAB9F131B8F01DF00B4C8CB /* SearchTableViewController.swift */,
-				8FAB9F141B8F01DF00B4C8CB /* SearchViewModel.swift */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -1075,6 +1075,7 @@
 				8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8FE09F661BAF681900EA105D /* HashtagTable.swift in Sources */,
+				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
 				A5C1C0181B7E19E200DCD598 /* monoStitcher.cpp in Sources */,
 				8FAB9F5A1B8F01DF00B4C8CB /* TabBarViewController.swift in Sources */,
 				A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */,
@@ -1101,7 +1102,6 @@
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,
 				8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */,
 				8FBC86A01BB7D84900539D4E /* Icon.swift in Sources */,
-				8FAB9F4A1B8F01DF00B4C8CB /* SearchViewModel.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* CreateOptographViewModel.swift in Sources */,
 				8FAB9F461B8F01DF00B4C8CB /* FeedNavViewController.swift in Sources */,
 				8FAB9F321B8F01DF00B4C8CB /* BottomLineTextField.swift in Sources */,
@@ -1134,6 +1134,7 @@
 				8FD845C11BC9BBFF0064048D /* PipelineService.swift in Sources */,
 				8FAB9F541B8F01DF00B4C8CB /* OptographsViewModel.swift in Sources */,
 				8F1E71801BCC188B00F3D6FB /* ProgressView.swift in Sources */,
+				8F966E0E1BCCF33900F5F5F8 /* SearchViewModel.swift in Sources */,
 				8FAB9F7E1B8F03BE00B4C8CB /* UIKitRACExtensions.swift in Sources */,
 				8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */,
 				8FD845C31BCA5AFA0064048D /* StereoRenderDelegate.swift in Sources */,
@@ -1146,7 +1147,6 @@
 				A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */,
 				8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */,
 				8FAB9F341B8F01DF00B4C8CB /* NavbarProtocols.swift in Sources */,
-				8FAB9F491B8F01DF00B4C8CB /* SearchTableViewController.swift in Sources */,
 				8FAB9F2E1B8F01DF00B4C8CB /* CameraViewController.swift in Sources */,
 				8FAB9F481B8F01DF00B4C8CB /* FeedViewModel.swift in Sources */,
 				8F900B401B839D0C0085566C /* CommentTable.swift in Sources */,

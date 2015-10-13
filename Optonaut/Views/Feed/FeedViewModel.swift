@@ -123,26 +123,24 @@ class FeedViewModel: NSObject {
                 self.results.value = results
             }
         
-//        loadMoreNotification.signal
-//            .mapError { _ in ApiError.Nil }
-//            .map { _ in self.results.value.last }
-//            .ignoreNil()
-//            .flatMap(.Latest) { oldestResult in
-//                ApiService<Optograph>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
-//                    .observeOn(QueueScheduler(queue: queue))
-//                    .on(next: { optograph in
-//                        try! optograph.insertOrUpdate()
-//                        try! optograph.location.insertOrUpdate()
-//                        try! optograph.person.insertOrUpdate()
-//                    })
-//                    .collect()
-//                    .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
-//                    .startOn(QueueScheduler(queue: queue))
-//            }
-//            .observeOn(UIScheduler())
-//            .observeNext { optographs in
-//                self.results.value = optographs
-//            }
+        loadMoreNotification.signal
+            .mapError { _ in ApiError.Nil }
+            .map { _ in self.results.value.optographs.last }
+            .ignoreNil()
+            .flatMap(.Latest) { oldestResult in
+                ApiService<Optograph>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                    .observeOn(QueueScheduler(queue: queue))
+                    .on(next: { optograph in
+                        try! optograph.insertOrUpdate()
+                        try! optograph.location.insertOrUpdate()
+                        try! optograph.person.insertOrUpdate()
+                    })
+                    .collect()
+                    .startOn(QueueScheduler(queue: queue))
+            }
+            .observeOn(UIScheduler())
+            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .observeNext { self.results.value = $0 }
         
         refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
         

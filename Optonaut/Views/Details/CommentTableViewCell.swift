@@ -19,8 +19,6 @@ class CommentTableViewCell: UITableViewCell {
     // subviews
     private let textView = ActiveLabel()
     private let avatarImageView = PlaceholderImageView()
-//    private let displayNameView = UILabel()
-//    private let userNameView = UILabel()
     private let dateView = UILabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -44,20 +42,9 @@ class CommentTableViewCell: UITableViewCell {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         contentView.addSubview(avatarImageView)
         
-//        displayNameView.font = UIFont.robotoOfSize(15, withType: .Medium)
-//        displayNameView.textColor = .whiteColor()
-//        displayNameView.userInteractionEnabled = true
-//        displayNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-//        contentView.addSubview(displayNameView)
-        
-//        userNameView.font = UIFont.robotoOfSize(12, withType: .Light)
-//        userNameView.textColor = .whiteColor()
-//        userNameView.userInteractionEnabled = true
-//        userNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-//        contentView.addSubview(userNameView)
-        
         dateView.font = UIFont.robotoOfSize(12, withType: .Light)
         dateView.textColor = .whiteColor()
+        dateView.textAlignment = .Right
         contentView.addSubview(dateView)
         
         contentView.setNeedsUpdateConstraints()
@@ -68,22 +55,21 @@ class CommentTableViewCell: UITableViewCell {
     }
     
     override func updateConstraints() {
-        avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 15)
+        avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 5)
         avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 40, height: 40))
         
-//        displayNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: -2)
-//        displayNameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
-//        
-//        userNameView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView)
-//        userNameView.autoPinEdge(.Left, toEdge: .Right, ofView: displayNameView, withOffset: 4)
+        dateView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
+        dateView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
+        dateView.autoSetDimension(.Width, toSize: 30)
         
-        dateView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 15)
-        dateView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        
-        textView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 3)
-        textView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 11)
-        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
+        if frame.height > 60 {
+            textView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 3)
+        } else {
+            textView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
+        }
+        textView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 20)
+        textView.autoPinEdge(.Right, toEdge: .Left, ofView: dateView, withOffset: -20)
         
         super.updateConstraints()
     }
@@ -102,8 +88,6 @@ class CommentTableViewCell: UITableViewCell {
         }
         
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
-//        displayNameView.rac_text <~ viewModel.displayName
-//        userNameView.rac_text <~ viewModel.userName
         dateView.rac_text <~ viewModel.timeSinceCreated
     }
     

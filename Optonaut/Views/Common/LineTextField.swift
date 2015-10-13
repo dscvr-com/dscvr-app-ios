@@ -164,10 +164,9 @@ class LineTextField: UITextField {
             lineLayer.frame = CGRect(x: 0, y: 27, width: frame.width, height: onePx)
             messageView.frame = CGRect(x: 0, y: 29, width: frame.width, height: 15)
         case .Small:
-            break
-//            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 50))
-//            lineLayer.frame = CGRect(x: 0, y: 45, width: frame.width, height: 0.5)
-//            messageView.frame = CGRect(x: 0, y: 58, width: frame.width, height: 15)
+            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 14))
+            lineLayer.frame = CGRect(x: 0, y: 24, width: frame.width, height: onePx)
+            messageView.frame = CGRect(x: 0, y: 26, width: frame.width, height: 15)
         }
     }
     

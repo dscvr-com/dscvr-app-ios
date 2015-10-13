@@ -34,6 +34,13 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         
         navigationItem.title = "Explore"
         
+        let searchButton = UIBarButtonItem()
+        searchButton.title = String.icomoonWithName(.MagnifyingGlass)
+        searchButton.image = UIImage.icomoonWithName(.MagnifyingGlass, textColor: .whiteColor(), size: CGSize(width: 21, height: 17))
+        searchButton.target = self
+        searchButton.action = "pushSearch"
+        navigationItem.setRightBarButtonItem(searchButton, animated: false)
+        
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
             self.viewModel.refreshNotification.notify()
             Async.main(after: 10) { self.refreshControl.endRefreshing() }
@@ -43,8 +50,18 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         viewModel.results.producer
             .on(
                 next: { results in
-                    self.items = results
-                    self.tableView.reloadData()
+                    self.items = results.optographs
+                    self.tableView.beginUpdates()
+                    if !results.delete.isEmpty {
+                        self.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    }
+                    if !results.update.isEmpty {
+                        self.tableView.reloadRowsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    }
+                    if !results.insert.isEmpty {
+                        self.tableView.insertRowsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    }
+                    self.tableView.endUpdates()
                     self.refreshControl.endRefreshing()
                 },
                 error: { _ in
@@ -80,6 +97,20 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAtIndexPath: indexPath) as! OptographTableViewCell
+        
+        cell.deleteCallback = { [weak self] in
+            self?.viewModel.refreshNotification.notify()
+        }
+        
+        return cell
+    }
+    
+    func pushSearch() {
+        navigationController?.pushViewController(SearchTableViewController(), animated: false)
     }
     
 }

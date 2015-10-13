@@ -26,6 +26,7 @@ class DetailsViewModel {
     let userName = MutableProperty<String>("")
     let personId = MutableProperty<UUID>("")
     let text = MutableProperty<String>("")
+    let hashtags = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     let comments = MutableProperty<[Comment]>([])
     
@@ -166,6 +167,7 @@ class DetailsViewModel {
         userName.value = "@\(optograph.person.userName)"
         personId.value = optograph.person.id
         text.value = optograph.text
+        hashtags.value = optograph.hashtagString
         location.value = optograph.location.text
         isPublished.value = optograph.isPublished
         previewImageUrl.value = optograph.previewAssetURL

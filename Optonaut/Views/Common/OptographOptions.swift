@@ -30,6 +30,15 @@ extension OptographOptions {
                 }))
                 self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
             }))
+        } else {
+            actionAlert.addAction(UIAlertAction(title: "Report", style: .Destructive, handler: { _ in
+                let confirmAlert = UIAlertController(title: "Are you sure?", message: "This action will message one of the moderators.", preferredStyle: .Alert)
+                confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+                confirmAlert.addAction(UIAlertAction(title: "Report", style: .Destructive, handler: { _ in
+                    optograph.report().start()
+                }))
+                self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
+            }))
         }
         
         actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in

@@ -8,12 +8,17 @@
 
 import Foundation
 import CoreMotion
+import ReactiveCocoa
 
 class MotionService: RotationMatrixSource {
+    
+    typealias RotationSignal = Signal<UIInterfaceOrientation, NoError>
     
     static let sharedInstance = MotionService()
     
     private let motionManager = CMMotionManager()
+    
+    var rotationSignal: RotationSignal?
     
     private init() {}
     
@@ -33,38 +38,44 @@ class MotionService: RotationMatrixSource {
         )
     }
     
-    func motionFast() {
+    func motionEnable() {
         motionManager.deviceMotionUpdateInterval = 1 / 60
         motionManager.startDeviceMotionUpdates()
     }
     
-    func motionSlow() {
-        motionManager.deviceMotionUpdateInterval = 2
-        motionManager.startDeviceMotionUpdates()
-    }
-    
-    func motionOff() {
+    func motionDisable() {
         motionManager.stopDeviceMotionUpdates()
     }
     
-    func rotateEnable(callback: UIInterfaceOrientation -> ()) {
+    func rotationEnable() {
+        if rotationSignal != nil {
+            return
+        }
+        
         motionManager.accelerometerUpdateInterval = 0.3
         
-        motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.currentQueue()!, withHandler: { accelerometerData, error in
+        let (signal, sink) = RotationSignal.pipe()
+        
+        rotationSignal = signal
+        
+        let queue = NSOperationQueue()
+        queue.name = "Rotation queue"
+        motionManager.startAccelerometerUpdatesToQueue(queue, withHandler: { accelerometerData, error in
             if let accelerometerData = accelerometerData {
                 let x = accelerometerData.acceleration.x
                 let y = accelerometerData.acceleration.y
                 if -x > abs(y) + 0.5 {
-                    callback(x > 0 ? .LandscapeLeft : .LandscapeRight)
+                    sendNext(sink, x > 0 ? .LandscapeLeft : .LandscapeRight)
                 } else if abs(y) > -x + 0.5 {
-                    callback(.Portrait)
+                    sendNext(sink, .Portrait)
                 }
             }
         })
     }
     
-    func rotateDisable() {
+    func rotationDisable() {
         motionManager.stopAccelerometerUpdates()
+        rotationSignal = nil
     }
     
 }

@@ -18,6 +18,7 @@ class DetailsTableViewCell: UITableViewCell {
     // subviews
     private let infoView = OptographInfoView()
     private let textView = UILabel()
+    private let hashtagsView = ActiveLabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -33,6 +34,13 @@ class DetailsTableViewCell: UITableViewCell {
         textView.font = UIFont.textOfSize(14, withType: .Regular)
         textView.textColor = .whiteColor()
         contentView.addSubview(textView)
+        
+        hashtagsView.numberOfLines = 0
+        hashtagsView.font = UIFont.textOfSize(14, withType: .Semibold)
+        hashtagsView.hashtagColor = .Accent
+        hashtagsView.URLEnabled = false
+        hashtagsView.mentionEnabled = false
+        contentView.addSubview(hashtagsView)
         
         contentView.setNeedsUpdateConstraints()
     }
@@ -51,6 +59,10 @@ class DetailsTableViewCell: UITableViewCell {
         textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
         textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
         
+        hashtagsView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textView, withOffset: 15)
+        hashtagsView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
+        hashtagsView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
+        
         super.updateConstraints()
     }
     
@@ -59,6 +71,12 @@ class DetailsTableViewCell: UITableViewCell {
         infoView.navigationController = navigationController
         
         textView.rac_text <~ viewModel.text
+        hashtagsView.rac_text <~ viewModel.hashtags.producer
+            .map { $0.componentsSeparatedByString(",").map({ "#\($0)" }).joinWithSeparator(" ") }
+        
+        hashtagsView.handleHashtagTap { [weak self] hashtag in
+            self?.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
+        }
     }
     
     func toggleStar() {

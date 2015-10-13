@@ -78,6 +78,7 @@ public enum Icon: String {
     case OnboardingInfo = "\u{e801}"
     case Back = "\u{e802}"
     case CameraAdd = "\u{e803}"
+    case Send = "\u{e804}"
     case Cardboard = "\u{e805}"
     case Check = "\u{e806}"
     case Comment = "\u{e807}"

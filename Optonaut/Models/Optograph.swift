@@ -130,6 +130,10 @@ struct Optograph: Model {
                 try! self.insertOrUpdate()
             })
     }
+    
+    mutating func report() -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.post("optographs/\(id)/report")
+    }
 }
 
 extension Optograph: Mappable {

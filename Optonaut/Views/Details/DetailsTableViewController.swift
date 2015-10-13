@@ -35,9 +35,12 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     // subviews
     private let tableView = TableView()
     private let blurView = OffsetBlurView()
+    private let glassesButtonView = ActionButton()
     
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
+    
+    private var rotationDisposable: Disposable?
     
     required init(optographId: UUID) {
         viewModel = DetailsViewModel(optographId: optographId)
@@ -80,6 +83,15 @@ class DetailsTableViewController: UIViewController, NoNavbar {
                 self?.scnView.playing = true
         }
         
+        glassesButtonView.setTitle(String.iconWithName(.Cardboard), forState: .Normal)
+        glassesButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+        glassesButtonView.defaultBackgroundColor = .Accent
+        glassesButtonView.titleLabel?.font = UIFont.iconOfSize(20)
+        glassesButtonView.layer.cornerRadius = 30
+        glassesButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushViewer"))
+        glassesButtonView.frame = CGRect(x: view.frame.width - 80, y: view.frame.height - 80 - 78 - tabBarController!.tabBar.frame.height, width: 60, height: 60)
+        view.addSubview(glassesButtonView)
+        
         tableView.backgroundColor = .clearColor()
         tableView.delegate = self
         tableView.dataSource = self
@@ -113,13 +125,18 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
-        MotionService.sharedInstance.rotateEnable { [weak self] orientation in
-            switch orientation {
-            case .LandscapeLeft, .LandscapeRight:
-                self?.pushViewer(orientation)
-            default: break
+        MotionService.sharedInstance.rotationEnable()
+        
+        rotationDisposable = MotionService.sharedInstance.rotationSignal?
+            .skipRepeats()
+            .observeOn(UIScheduler())
+            .observeNext { [weak self] orientation in
+                switch orientation {
+                case .LandscapeLeft, .LandscapeRight:
+                    self?.pushViewer(orientation)
+                default: break
+                }
             }
-        }
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -127,17 +144,19 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.id])
         
-        MotionService.sharedInstance.motionSlow()
-        MotionService.sharedInstance.rotateDisable()
+        rotationDisposable?.dispose()
+        
+        MotionService.sharedInstance.motionDisable()
+        MotionService.sharedInstance.rotationDisable()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        MotionService.sharedInstance.motionFast()
+        MotionService.sharedInstance.motionEnable()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
         updateNavbarAppear()
     }
@@ -152,49 +171,29 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        let offset = view.frame.height - 78
-        tableView.contentInset = UIEdgeInsets(top: offset, left: 0, bottom: tabBarController!.tabBar.frame.height, right: 0)
-        tableView.contentOffset = CGPoint(x: 0, y: -offset)
-//        tableView.contentOffset = CGPoint(x: 0, y: 75)
+        tableView.contentOffset = CGPoint(x: 0, y: -(view.frame.height - 78))
+        tableView.contentInset = UIEdgeInsets(top: view.frame.height - 78, left: 0, bottom: tabBarController!.tabBar.frame.height + 10, right: 0)
     }
     
-    func keyboardWillShowNotification(notification: NSNotification) {
-//        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: true)
+    func keyboardWillShow(notification: NSNotification) {
+        let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+//        tableView.contentOffset = CGPoint(x: 0, y: -(view.frame.height - 78))
     }
     
-    func keyboardWillHideNotification(notification: NSNotification) {
-//        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: false)
-    }
-    
-    func updateBottomLayoutConstraintWithNotification(notification: NSNotification, keyboardVisible: Bool) {
-        let userInfo = notification.userInfo!
-        let keyboardEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-        let convertedKeyboardEndFrame = view.convertRect(keyboardEndFrame, fromView: view.window)
-        let keyboardHeight = keyboardVisible ? CGRectGetMaxY(view.bounds) - CGRectGetMinY(convertedKeyboardEndFrame) : 0
-        let rawAnimationCurve = (userInfo[UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).unsignedIntValue << 16
-        let animationCurve = UIViewAnimationOptions.init(rawValue: UInt(rawAnimationCurve))
-        let animationDuration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
-        
-        let indexPath = NSIndexPath(forRow: viewModel.comments.value.count + 1, inSection: 0)
-        
-        // needs to be executed after table is refreshed
-        Async.main {
-            UIView.animateWithDuration(animationDuration,
-                delay: 0,
-                options: [.BeginFromCurrentState, animationCurve],
-                animations: {
-                    self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
-                    self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: false)
-                },
-                completion: nil)
-        }
+    func keyboardWillHide(notification: NSNotification) {
+        tableView.contentInset = UIEdgeInsets(top: view.frame.height - 78, left: 0, bottom: tabBarController!.tabBar.frame.height + 10, right: 0)
     }
     
     func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    private func pushViewer(orientation: UIInterfaceOrientation = .LandscapeLeft) {
+    func pushViewer() {
+        pushViewer(.LandscapeLeft)
+    }
+    
+    func pushViewer(orientation: UIInterfaceOrientation) {
         navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, distortion: .VROne), animated: false)
         viewModel.increaseViewsCount()
     }
@@ -208,16 +207,15 @@ extension DetailsTableViewController: UITableViewDelegate {
         if indexPath.row == 0 {
             let infoHeight = CGFloat(78)
             let textWidth = view.frame.width - 40
-            let textHeight = calcTextHeight(viewModel.text.value, withWidth: textWidth, andFont: UIFont.textOfSize(14, withType: .Regular))
-            let restHeight = CGFloat(20)
-            return textHeight + restHeight + infoHeight
+            let textHeight = calcTextHeight(viewModel.text.value, withWidth: textWidth, andFont: UIFont.textOfSize(14, withType: .Regular)) + 20
+            let hashtagsHeight = calcTextHeight(viewModel.hashtags.value, withWidth: textWidth, andFont: UIFont.textOfSize(14, withType: .Semibold)) + 25
+            return textHeight + hashtagsHeight + infoHeight
         } else if indexPath.row == 1 {
             return 60
         } else {
-            let textWidth = view.frame.width - 38 - 41
-            let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row - 2].text, withWidth: textWidth, andFont: UIFont.textOfSize(13, withType: .Regular))
-            let restHeight = CGFloat(40) // includes name and spacing
-            return restHeight + textHeight
+            let textWidth = view.frame.width - 40 - 40 - 20 - 30 - 20
+            let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row - 2].text, withWidth: textWidth, andFont: UIFont.textOfSize(13, withType: .Regular)) + 15
+            return max(textHeight, 60)
         }
     }
     

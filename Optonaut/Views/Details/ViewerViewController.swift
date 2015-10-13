@@ -28,6 +28,8 @@ class ViewerViewController: UIViewController  {
     private var leftScnView: SCNView!
     private var rightScnView: SCNView!
     
+    private var rotationDisposable: Disposable?
+    
     required init(orientation: UIInterfaceOrientation, optograph: Optograph, distortion: Distortion) {
         self.orientation = orientation
         self.optograph = optograph
@@ -93,22 +95,31 @@ class ViewerViewController: UIViewController  {
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = true
         
-        MotionService.sharedInstance.motionFast()
-        MotionService.sharedInstance.rotateEnable { [weak self] orientation in
-            if case .Portrait = orientation {
-                print("pop viewer")
-                self?.navigationController?.popViewControllerAnimated(false)
+        var popActivated = false // needed when viewer was opened without rotation
+        MotionService.sharedInstance.motionEnable()
+        MotionService.sharedInstance.rotationEnable()
+        
+        rotationDisposable = MotionService.sharedInstance.rotationSignal?
+            .skipRepeats()
+            .observeOn(UIScheduler())
+            .observeNext { [weak self] orientation in
+                switch orientation {
+                case .Portrait:
+                    if popActivated {
+                        self?.navigationController?.popViewControllerAnimated(false)
+                    }
+                default:
+                    popActivated = true
+                }
             }
-        }
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        MotionService.sharedInstance.motionSlow()
-        MotionService.sharedInstance.rotateDisable()
-        
         Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.id])
+        
+        rotationDisposable?.dispose()
     }
     
     override func viewWillDisappear(animated: Bool) {

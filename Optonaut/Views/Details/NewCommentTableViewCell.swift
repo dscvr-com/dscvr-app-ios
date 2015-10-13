@@ -28,9 +28,9 @@ class NewCommentTableViewCell: UITableViewCell {
         
         backgroundColor = .clearColor()
         
-        textInputView.size = .Medium
+        textInputView.size = .Small
+        textInputView.color = .Light
         textInputView.placeholder = "Write a comment"
-//        textInputView.keyboardType = .Twitter
         contentView.addSubview(textInputView)
         
         commentsIconView.font = UIFont.iconOfSize(17)
@@ -42,9 +42,9 @@ class NewCommentTableViewCell: UITableViewCell {
         commentsCountView.textColor = .whiteColor()
         contentView.addSubview(commentsCountView)
         
-        sendButtonView.titleLabel?.font = UIFont.iconOfSize(17)
+        sendButtonView.titleLabel?.font = UIFont.iconOfSize(24)
         sendButtonView.contentHorizontalAlignment = .Right
-        sendButtonView.setTitle(String.iconWithName(.Comment), forState: .Normal)
+        sendButtonView.setTitle(String.iconWithName(.Send), forState: .Normal)
         sendButtonView.setTitleColor(.Accent, forState: .Normal)
         sendButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "postComment"))
         contentView.addSubview(sendButtonView)
@@ -57,19 +57,17 @@ class NewCommentTableViewCell: UITableViewCell {
     }
     
     override func updateConstraints() {
-        commentsIconView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 16)
-        commentsIconView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
-        //        commentsIconView.autoSetDimension(.Width, toSize: 30)
+        commentsIconView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 13)
+        commentsIconView.autoPinEdge(.Right, toEdge: .Left, ofView: commentsCountView, withOffset: -8)
         
-        commentsCountView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 18)
-        commentsCountView.autoPinEdge(.Left, toEdge: .Right, ofView: commentsIconView, withOffset: 6)
-        //        commentsCountView.autoSetDimension(.Width, toSize: 30)
+        commentsCountView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 14)
+        commentsCountView.autoPinEdge(.Right, toEdge: .Left, ofView: contentView, withOffset: 60)
         
-        textInputView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
-        textInputView.autoPinEdge(.Left, toEdge: .Right, ofView: commentsCountView, withOffset: 20)
+        textInputView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 11)
+        textInputView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 80)
         sendButtonConstraint = textInputView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
         
-        sendButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 17)
+        sendButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
         sendButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
         
         super.updateConstraints()
@@ -86,7 +84,7 @@ class NewCommentTableViewCell: UITableViewCell {
         commentsCountView.rac_text <~ viewModel.commentsCount.producer.map { "\($0)" }
         
         sendButtonView.rac_hidden <~ viewModel.postingEnabled.producer.map(negate)
-        viewModel.postingEnabled.producer.startWithNext { self.sendButtonConstraint.constant = $0 ? -50 : -20 }
+        viewModel.postingEnabled.producer.startWithNext { self.sendButtonConstraint.constant = $0 ? -60 : -20 }
     }
     
     func postComment() {
