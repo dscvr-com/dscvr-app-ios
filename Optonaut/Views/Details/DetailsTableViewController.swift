@@ -93,9 +93,11 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         glassesButtonView.defaultBackgroundColor = .Accent
         glassesButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         glassesButtonView.layer.cornerRadius = 30
-        glassesButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushViewer"))
+        glassesButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showRotationAlert"))
         glassesButtonView.frame = CGRect(x: view.frame.width - 80, y: view.frame.height - 80 - 78 - tabBarController!.tabBar.frame.height, width: 60, height: 60)
         view.addSubview(glassesButtonView)
+        
+        print(tabBarController!.tabBar.frame.height)
         
         tableView.backgroundColor = .clearColor()
         tableView.delegate = self
@@ -112,7 +114,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         tableView.registerClass(DetailsTableViewCell.self, forCellReuseIdentifier: "details-cell")
         tableView.registerClass(CommentTableViewCell.self, forCellReuseIdentifier: "comment-cell")
         tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
-        tableView.frame = view.frame
+        tableView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - tabBarController!.tabBar.frame.height)
         tableView.scrollEnabled = true
         view.addSubview(tableView)
         
@@ -181,31 +183,32 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        tableView.contentOffset = CGPoint(x: 0, y: -(view.frame.height - 78))
-        tableView.contentInset = UIEdgeInsets(top: view.frame.height - 78, left: 0, bottom: tabBarController!.tabBar.frame.height + 10, right: 0)
+        tableView.contentOffset = CGPoint(x: 0, y: -(tableView.frame.height - 78))
+        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
     }
     
     func keyboardWillShow(notification: NSNotification) {
         let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
-//        tableView.contentOffset = CGPoint(x: 0, y: -(view.frame.height - 78))
     }
     
     func keyboardWillHide(notification: NSNotification) {
-        tableView.contentInset = UIEdgeInsets(top: view.frame.height - 78, left: 0, bottom: tabBarController!.tabBar.frame.height + 10, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
     }
     
     func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    func pushViewer() {
-        pushViewer(.LandscapeLeft)
-    }
-    
-    func pushViewer(orientation: UIInterfaceOrientation) {
+    private func pushViewer(orientation: UIInterfaceOrientation) {
         navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, distortion: .VROne), animated: false)
         viewModel.increaseViewsCount()
+    }
+    
+    func showRotationAlert() {
+        let alert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+        self.navigationController?.presentViewController(alert, animated: true, completion: nil)
     }
     
 }
@@ -239,13 +242,21 @@ extension DetailsTableViewController: UITableViewDataSource {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("details-cell") as! DetailsTableViewCell
             cell.viewModel = viewModel
             cell.navigationController = navigationController as? NavigationController
+            cell.tapCallback = { [unowned self] comment in
+                let yOffset = max(0, self.view.frame.height - self.tableView.contentSize.height)
+                UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
+                    animations: {
+                        self.tableView.contentOffset = CGPoint(x: 0, y: -yOffset)
+                    },
+                    completion: nil)
+            }
             cell.bindViewModel()
             return cell
         } else if indexPath.row == 1 {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
             cell.bindViewModel(viewModel.optograph.id, commentsCount: viewModel.commentsCount.value)
-            cell.postCallback = { [weak self] comment in
-                self?.viewModel.insertNewComment(comment)
+            cell.postCallback = { [unowned self] comment in
+                self.viewModel.insertNewComment(comment)
             }
             return cell
         } else {
@@ -274,6 +285,14 @@ private class TableView: UITableView {
             let newPoint = touch.locationInView(self)
             self.horizontalScrollDistanceCallback?(Float(newPoint.x - oldPoint.x))
         }
+    }
+    
+    private override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+        // this took a lot of time. don't bother to understand this
+        if frame.height + contentOffset.y - 78 < 80 && point.y < 0 && frame.width - point.x < 100 {
+            return false
+        }
+        return true
     }
     
 }

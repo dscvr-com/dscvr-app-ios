@@ -14,6 +14,7 @@ class DetailsTableViewCell: UITableViewCell {
     
     weak var viewModel: DetailsViewModel!
     weak var navigationController: NavigationController?
+    var tapCallback: (() -> ())?
     
     // subviews
     private let infoView = OptographInfoView()
@@ -41,6 +42,8 @@ class DetailsTableViewCell: UITableViewCell {
         hashtagsView.URLEnabled = false
         hashtagsView.mentionEnabled = false
         contentView.addSubview(hashtagsView)
+        
+        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "triggerTapCallback"))
         
         contentView.setNeedsUpdateConstraints()
     }
@@ -92,6 +95,10 @@ class DetailsTableViewCell: UITableViewCell {
         let alert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
         self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func triggerTapCallback() {
+        tapCallback?()
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

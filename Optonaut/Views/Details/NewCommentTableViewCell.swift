@@ -31,6 +31,8 @@ class NewCommentTableViewCell: UITableViewCell {
         textInputView.size = .Small
         textInputView.color = .Light
         textInputView.placeholder = "Write a comment"
+        textInputView.delegate = self
+        textInputView.returnKeyType = .Send
         contentView.addSubview(textInputView)
         
         commentsIconView.font = UIFont.iconOfSize(17)
@@ -67,7 +69,7 @@ class NewCommentTableViewCell: UITableViewCell {
         textInputView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 80)
         sendButtonConstraint = textInputView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
         
-        sendButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
+        sendButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 8)
         sendButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
         
         super.updateConstraints()
@@ -100,5 +102,16 @@ class NewCommentTableViewCell: UITableViewCell {
     
     override func setSelected(selected: Bool, animated: Bool) {}
     override func setHighlighted(highlighted: Bool, animated: Bool) {}
+    
+}
+
+// MARK: - UITextFieldDelegate
+extension NewCommentTableViewCell: UITextFieldDelegate {
+
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        endEditing(true)
+        postComment()
+        return true
+    }
     
 }
