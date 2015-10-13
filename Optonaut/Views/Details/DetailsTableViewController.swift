@@ -65,6 +65,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
                     _self.renderDelegate.image = image
                     _self.scnView.prepareObject(_self.renderDelegate!.scene, shouldAbortBlock: nil)
                     _self.scnView.playing = true
+                    _self.downloadDisposable = nil
                 }
             }
         
@@ -134,6 +135,22 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
+        loadTexture()
+
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.id])
+        
+        unloadTexture()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        MotionService.sharedInstance.motionEnable()
         MotionService.sharedInstance.rotationEnable()
         
         rotationDisposable = MotionService.sharedInstance.rotationSignal?
@@ -146,28 +163,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
                 default: break
                 }
         }
-        
-        loadTexture()
 
-    }
-    
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.id])
-        
-        rotationDisposable?.dispose()
-        
-        MotionService.sharedInstance.motionDisable()
-        MotionService.sharedInstance.rotationDisable()
-        
-        unloadTexture()
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        MotionService.sharedInstance.motionEnable()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
@@ -177,6 +173,11 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        rotationDisposable?.dispose()
+        
+        MotionService.sharedInstance.motionDisable()
+        MotionService.sharedInstance.rotationDisable()
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)

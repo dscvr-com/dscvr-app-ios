@@ -13,12 +13,11 @@ import ReactiveCocoa
 class MotionService: RotationMatrixSource {
     
     typealias RotationSignal = Signal<UIInterfaceOrientation, NoError>
-    
     static let sharedInstance = MotionService()
-    
     private let motionManager = CMMotionManager()
-    
     var rotationSignal: RotationSignal?
+    private var motionRetatinCounter = 0
+    private var rotationRetainCounter = 0
     
     private init() {}
     
@@ -39,43 +38,59 @@ class MotionService: RotationMatrixSource {
     }
     
     func motionEnable() {
-        motionManager.deviceMotionUpdateInterval = 1 / 60
-        motionManager.startDeviceMotionUpdates()
+        if motionRetatinCounter == 0 {
+            motionManager.deviceMotionUpdateInterval = 1 / 60
+            motionManager.startDeviceMotionUpdates()
+        }
+        motionRetatinCounter++
     }
     
     func motionDisable() {
-        motionManager.stopDeviceMotionUpdates()
+        motionRetatinCounter--
+        if motionRetatinCounter == 0 {
+            motionManager.stopDeviceMotionUpdates()
+        }
+        assert(motionRetatinCounter >= 0)
     }
     
     func rotationEnable() {
-        if rotationSignal != nil {
-            return
-        }
         
-        motionManager.accelerometerUpdateInterval = 0.3
-        
-        let (signal, sink) = RotationSignal.pipe()
-        
-        rotationSignal = signal
-        
-        let queue = NSOperationQueue()
-        queue.name = "Rotation queue"
-        motionManager.startAccelerometerUpdatesToQueue(queue, withHandler: { accelerometerData, error in
-            if let accelerometerData = accelerometerData {
-                let x = accelerometerData.acceleration.x
-                let y = accelerometerData.acceleration.y
-                if -x > abs(y) + 0.5 {
-                    sendNext(sink, x > 0 ? .LandscapeLeft : .LandscapeRight)
-                } else if abs(y) > -x + 0.5 {
-                    sendNext(sink, .Portrait)
-                }
+        if rotationRetainCounter == 0 {
+            if rotationSignal != nil {
+                return
             }
-        })
+            
+            motionManager.accelerometerUpdateInterval = 0.3
+            
+            let (signal, sink) = RotationSignal.pipe()
+            
+            rotationSignal = signal
+            
+            let queue = NSOperationQueue()
+            queue.name = "Rotation queue"
+            motionManager.startAccelerometerUpdatesToQueue(queue, withHandler: { accelerometerData, error in
+                if let accelerometerData = accelerometerData {
+                    let x = accelerometerData.acceleration.x
+                    let y = accelerometerData.acceleration.y
+                    if -x > abs(y) + 0.5 {
+                        sendNext(sink, x > 0 ? .LandscapeLeft : .LandscapeRight)
+                    } else if abs(y) > -x + 0.5 {
+                        sendNext(sink, .Portrait)
+                    }
+                }
+            })
+        }
+        rotationRetainCounter++
     }
     
     func rotationDisable() {
-        motionManager.stopAccelerometerUpdates()
-        rotationSignal = nil
+        rotationRetainCounter--
+        
+        if rotationRetainCounter == 0 {
+            motionManager.stopAccelerometerUpdates()
+            rotationSignal = nil
+        }
+        assert(rotationRetainCounter >= 0)
     }
     
 }
