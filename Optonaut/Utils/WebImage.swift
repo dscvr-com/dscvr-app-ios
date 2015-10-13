@@ -19,7 +19,9 @@ extension SDWebImageManager {
                 options: [],
                 progress: { _ in },
                 completed: { (image, _, _, _, _) in
-                    sendNext(sink, image)
+                    if let image = image {
+                        sendNext(sink, image)
+                    }
                     sendCompleted(sink)
             })
         }

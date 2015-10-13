@@ -11,12 +11,12 @@ import Foundation
 protocol OptographOptions: class {
     var navigationController: NavigationController? { get }
     func didTapOptions()
-    func showOptions(optograph: Optograph)
+    func showOptions(optograph: Optograph, deleteCallback: (() -> ())?)
 }
 
 extension OptographOptions {
     
-    func showOptions(var optograph: Optograph) {
+    func showOptions(var optograph: Optograph, deleteCallback: (() -> ())? = nil) {
         let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         
         if SessionService.sessionData?.id == optograph.person.id {
@@ -25,16 +25,10 @@ extension OptographOptions {
                 confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
                 confirmAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
                     optograph.delete().startWithCompleted {
-                        self.navigationController?.popViewControllerAnimated(true)
+                        deleteCallback?()
                     }
                 }))
                 self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
-            }))
-        }
-        
-        if !optograph.isPublished {
-            actionAlert.addAction(UIAlertAction(title: "Publish", style: .Default, handler: { _ in
-                optograph.publish().start()
             }))
         }
         

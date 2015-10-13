@@ -34,7 +34,6 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
         recordButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushCamera"))
         view.addSubview(recordButtonView)
         
-        
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
             self.viewModel.refreshNotification.notify()
             Async.main(after: 10) { self.refreshControl.endRefreshing() }
@@ -43,9 +42,19 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
         
         viewModel.results.producer
             .on(
-                next: { items in
-                    self.items = items
-                    self.tableView.reloadData()
+                next: { results in
+                    self.items = results.optographs
+                    self.tableView.beginUpdates()
+                    if !results.delete.isEmpty {
+                        self.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    }
+                    if !results.update.isEmpty {
+                        self.tableView.reloadRowsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    }
+                    if !results.insert.isEmpty {
+                        self.tableView.insertRowsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    }
+                    self.tableView.endUpdates()
                     self.refreshControl.endRefreshing()
                 },
                 error: { _ in
@@ -109,7 +118,11 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
     }
     
     func pushCamera() {
-        if !SessionService.sessionData!.debuggingEnabled {
+        if StitchingService.isStitching() {
+            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last Optograph has finished rendering.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+        } else if !SessionService.sessionData!.debuggingEnabled {
             switch UIDevice.currentDevice().deviceType {
             case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
                 navigationController?.pushViewController(CameraViewController(), animated: false)
@@ -128,6 +141,16 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
     
     func pushSearch() {
         navigationController?.pushViewController(SearchTableViewController(), animated: false)
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAtIndexPath: indexPath) as! OptographTableViewCell
+        
+        cell.deleteCallback = { [weak self] in
+            self?.viewModel.refreshNotification.notify()
+        }
+        
+        return cell
     }
     
 }

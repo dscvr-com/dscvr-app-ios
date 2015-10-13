@@ -9,6 +9,7 @@
 import Foundation
 import SQLite
 import Async
+import ReactiveCocoa
 
 class PipelineService {
     
@@ -80,13 +81,14 @@ class PipelineService {
             }
         }
         
-        signal.observeCompleted {
-            optograph.isStitched = true
-            try! optograph.insertOrUpdate()
-            StitchingService.removeUnstitchedRecordings()
-            PipelineService.check()
-            sequentialStitch(optographs)
-        }
+        signal
+            .observeOn(UIScheduler())
+            .observeCompleted {
+                optograph.isStitched = true
+                try! optograph.insertOrUpdate()
+                StitchingService.removeUnstitchedRecordings()
+                PipelineService.check()
+            }
     }
     
     private static func sequentialUpload(var optographs: [Optograph]) {

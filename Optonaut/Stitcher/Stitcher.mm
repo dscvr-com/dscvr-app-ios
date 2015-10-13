@@ -44,7 +44,7 @@ struct StitcherCancellation {
 }
 - (ImageBuffer)getLeftResult {
     
-    optonaut::Stitcher stitcher(Stores::left);
+    optonaut::Stitcher stitcher(4096, 4096, Stores::left);
     
     ImageBuffer result;
     
@@ -54,7 +54,7 @@ struct StitcherCancellation {
     return result;
 }
 - (ImageBuffer)getRightResult {
-    optonaut::Stitcher stitcher(Stores::right);
+    optonaut::Stitcher stitcher(4096, 4096, Stores::right);
     
     ImageBuffer result;
     

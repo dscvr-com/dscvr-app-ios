@@ -50,7 +50,7 @@ class ExploreViewModel {
             .observeNext { optographs in
                 self.results.value = optographs
                 // needed since Optograph could have been deleted in the meantime
-                self.results.value = self.results.value.filter { !$0.deleted }
+//                self.results.value = self.results.value.filter { !$0.deleted }
             }
         
         refreshNotification.signal

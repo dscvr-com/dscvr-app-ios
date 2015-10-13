@@ -12,6 +12,7 @@ import Fabric
 import Crashlytics
 import PureLayout
 import Mixpanel
+import WebImage
 
 let Env = EnvType.Development
 //let Env = EnvType.Staging
@@ -85,6 +86,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         try! DatabaseService.prepare()
         
         setupAppearanceDefaults()
+        
+        SDImageCache.sharedImageCache().shouldDecompressImages = false
+        SDImageCache.sharedImageCache().shouldCacheImagesInMemory = false
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         

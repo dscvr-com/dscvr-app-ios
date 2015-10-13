@@ -87,9 +87,9 @@ extension UIEdgeInsets {
 }
 
 class PlaceholderImageView: UIImageView {
-    var placeholderImage: UIImage = UIImage() {
+    var placeholderImage: UIImage? {
         didSet {
-            if image == nil {
+            if image == nil && placeholderImage != nil {
                 image = placeholderImage
             }
         }

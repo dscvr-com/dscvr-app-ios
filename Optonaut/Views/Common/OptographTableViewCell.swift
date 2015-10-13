@@ -16,15 +16,22 @@ class OptographTableViewCell: UITableViewCell {
     
     weak var navigationController: NavigationController?
     var viewModel: OptographTableViewCellModel!
+    var deleteCallback: (() -> ())? {
+        didSet {
+            infoView.deleteCallback = deleteCallback
+        }
+    }
     
     // subviews
     private let previewImageView = PlaceholderImageView()
     private let infoView = OptographInfoView()
-//    private let bottomBackgroundView = BackgroundView()
     private let blurView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .Dark)
         return UIVisualEffectView(effect: blurEffect)
     }()
+    private let progressView = ProgressView()
+    private let progressTextView = UILabel()
+    private var blurViewHeightConstraint = NSLayoutConstraint()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -38,14 +45,22 @@ class OptographTableViewCell: UITableViewCell {
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
         contentView.addSubview(previewImageView)
         
-//        blurView.alpha = 0.9
         previewImageView.addSubview(blurView)
+        
+        progressTextView.text = "Rendering..."
+        progressTextView.font = UIFont.displayOfSize(14, withType: .Regular)
+        progressTextView.textColor = .whiteColor()
+        previewImageView.addSubview(progressTextView)
+        
+        previewImageView.addSubview(progressView)
         
         contentView.addSubview(infoView)
         
-//        contentView.addSubview(bottomBackgroundView)
-        
         contentView.setNeedsUpdateConstraints()
+    }
+    
+    deinit {
+        print("byebye cell")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -58,16 +73,21 @@ class OptographTableViewCell: UITableViewCell {
         previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: contentView)
         previewImageView.autoSetDimension(.Height, toSize: contentView.frame.width * 5 / 4 + 78)
         
-        blurView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Top)
-        blurView.autoSetDimension(.Height, toSize: 78)
+        progressTextView.autoAlignAxis(.Vertical, toSameAxisOfView: contentView)
+        progressTextView.autoAlignAxis(.Horizontal, toSameAxisOfView: contentView, withOffset: -20)
+        
+        progressView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView)
+        progressView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView)
+        progressView.autoPinEdge(.Bottom, toEdge: .Top, ofView: infoView)
+        progressView.autoSetDimension(.Height, toSize: 4)
         
         infoView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView)
         infoView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView)
         infoView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView)
         infoView.autoSetDimension(.Height, toSize: 78)
         
-//        bottomBackgroundView.autoPinEdge(.Top, toEdge: .Bottom, ofView: infoView)
-//        bottomBackgroundView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Top)
+        blurView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero, excludingEdge: .Top)
+        blurViewHeightConstraint = blurView.autoSetDimension(.Height, toSize: 78)
         
         super.updateConstraints()
     }
@@ -77,12 +97,24 @@ class OptographTableViewCell: UITableViewCell {
         
         previewImageView.rac_url <~ viewModel.previewImageUrl
         
+        viewModel.stitchingProgress.producer.startWithNext { [unowned self] progress in
+            self.progressView.progress = progress
+            self.progressTextView.hidden = progress == 1
+            if progress == 1 {
+                self.blurViewHeightConstraint.constant = 78
+            } else {
+                self.blurViewHeightConstraint.constant = self.contentView.frame.height
+            }
+        }
+        
         infoView.bindViewModel(optograph)
         infoView.navigationController = navigationController
     }
     
     func pushDetails() {
-        navigationController?.pushViewController(DetailsTableViewController(optographId: viewModel.optograph.id), animated: true)
+        if viewModel.optograph.isStitched {
+            navigationController?.pushViewController(DetailsTableViewController(optographId: viewModel.optograph.id), animated: true)
+        }
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

@@ -13,6 +13,8 @@ class OptographInfoView: UIView {
     
     weak var navigationController: NavigationController?
     
+    var deleteCallback: (() -> ())?
+    
     private var viewModel: OptographInfoViewModel!
     
     // subviews
@@ -132,7 +134,8 @@ class OptographInfoView: UIView {
 extension OptographInfoView: OptographOptions {
     
     func didTapOptions() {
-        showOptions(viewModel.optograph)
+        print(deleteCallback)
+        showOptions(viewModel.optograph, deleteCallback: deleteCallback)
     }
     
 }

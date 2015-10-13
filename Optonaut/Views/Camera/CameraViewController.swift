@@ -29,7 +29,7 @@ class CameraViewController: UIViewController {
     private var videoDevice : AVCaptureDevice?
     
     // stitcher pointer and variables
-    private var stitcher = Recorder()
+    private var recorder = Recorder()
     private var frameCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
@@ -43,7 +43,7 @@ class CameraViewController: UIViewController {
     
     // subviews
     private let tiltView = TiltView()
-    private let progressView = ProgressView()
+    private let progressView = CameraProgressView()
     private let instructionView = UILabel()
     private let circleView = DashedCircleView()
     private let recordButtonView = UIButton()
@@ -74,7 +74,7 @@ class CameraViewController: UIViewController {
     
     deinit {
         motionManager.stopDeviceMotionUpdates()
-        stitcher.dispose()
+        recorder.dispose()
         
         logRetain()
     }
@@ -151,9 +151,12 @@ class CameraViewController: UIViewController {
         
         viewModel.isRecording.producer
             .map { $0 ? .Locked : .ContinuousAutoFocus }
-            .startWithNext({[weak self] val in self!.setFocusMode(val)})
+            .startWithNext { [unowned self] val in self.setFocusMode(val) }
         
-        viewModel.isRecording.producer.take(1).startWithCompleted({[weak self] in self!.lockExposure()})
+        viewModel.isRecording.producer
+            .filter(identity)
+            .take(1)
+            .startWithCompleted { [unowned self] in self.lockExposure() }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -161,7 +164,7 @@ class CameraViewController: UIViewController {
     }
     
     private func setupSelectionPoints() {
-        let rawPoints = stitcher.getSelectionPoints()
+        let rawPoints = recorder.getSelectionPoints()
         var points = [SelectionPoint]()
         
         while rawPoints.HasMore() {
@@ -172,7 +175,7 @@ class CameraViewController: UIViewController {
         for a in points {
             for b in points {
                 
-                if stitcher.areAdjacent(a, and: b) {
+                if recorder.areAdjacent(a, and: b) {
                     
                     let edge = Edge(a, b)
                     
@@ -317,7 +320,7 @@ class CameraViewController: UIViewController {
         let accelleration = Float(0.1)
         
         let vec = GLKVector3Make(0, 0, -1)
-        let target = GLKMatrix4MultiplyVector3(stitcher.getBallPosition(), vec)
+        let target = GLKMatrix4MultiplyVector3(recorder.getBallPosition(), vec)
         
         let ball = SCNVector3ToGLKVector3(ballNode.position)
         
@@ -400,7 +403,7 @@ class CameraViewController: UIViewController {
  
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
         
-        if stitcher.isFinished() {
+        if recorder.isFinished() {
             return; //Dirt return here. Recording is running on the main thread.
         }
         
@@ -416,19 +419,19 @@ class CameraViewController: UIViewController {
             buf.width = UInt32(CVPixelBufferGetWidth(pixelBuffer))
             buf.height = UInt32(CVPixelBufferGetHeight(pixelBuffer))
             
-            stitcher.setIdle(!self.viewModel.isRecording.value)
-            stitcher.push(r, buf)
+            recorder.setIdle(!self.viewModel.isRecording.value)
+            recorder.push(r, buf)
             
-            let errorVec = stitcher.getAngularDistanceToBall()
+            let errorVec = recorder.getAngularDistanceToBall()
             
             Async.main {
                 if self.isViewLoaded() {
                     // This is safe, since the main thread also disposes the stitcher.
-                    if self.stitcher.isDisposed() || self.stitcher.isFinished() {
+                    if self.recorder.isDisposed() || self.recorder.isFinished() {
                         return
                     }
                     
-                    self.viewModel.progress.value = Float(self.stitcher.getRecordedImagesCount()) / Float(self.stitcher.getImagesToRecordCount())
+                    self.viewModel.progress.value = Float(self.recorder.getRecordedImagesCount()) / Float(self.recorder.getImagesToRecordCount())
                     self.viewModel.tiltAngle.value = Float(errorVec.z)
                     self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
                 }
@@ -438,11 +441,12 @@ class CameraViewController: UIViewController {
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
-            // Take transform from the stitcher. 
-            cameraNode.transform = SCNMatrix4FromGLKMatrix4(stitcher.getCurrentRotation())
+            // Take transform from the stitcher.
+            cameraNode.transform = SCNMatrix4FromGLKMatrix4(recorder.getCurrentRotation())
+                
             //print("New CM Transform {\(cameraNode.transform.m11), \(cameraNode.transform.m12), \(cameraNode.transform.m13), \(cameraNode.transform.m14)} \n {\(cameraNode.transform.m21), \(cameraNode.transform.m22), \(cameraNode.transform.m23), \(cameraNode.transform.m24)} \n {\(cameraNode.transform.m31), \(cameraNode.transform.m32), \(cameraNode.transform.m33), \(cameraNode.transform.m34)} \n {\(cameraNode.transform.m41), \(cameraNode.transform.m42), \(cameraNode.transform.m43), \(cameraNode.transform.m44)}");
             
-            if stitcher.isFinished() {
+            if recorder.isFinished() {
                 // needed since processSampleBuffer doesn't run on UI thread
                 Async.main {
                     self.finish()
@@ -468,17 +472,17 @@ class CameraViewController: UIViewController {
     func finish() {
         
         Mixpanel.sharedInstance().track("Action.Camera.FinishRecording")
-        stopSession()
-        stitcher.finish()
-        
-        StitchingService.startStitching()
 
+        stopSession()
+        recorder.finish()
+        
         navigationController!.pushViewController(CreateOptographViewController(), animated: false)
         navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self
     }
     
     func cancel() {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
+        
         stopSession()
         
         navigationController?.popViewControllerAnimated(false)
@@ -566,7 +570,7 @@ private class DashedCircleView: UIView {
     
 }
 
-private class ProgressView: UIView {
+private class CameraProgressView: UIView {
     
     var progress: Float = 0 {
         didSet {
