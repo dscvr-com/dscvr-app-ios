@@ -36,7 +36,7 @@ func mergeResults(newOptographs: [Optograph], oldOptographs: [Optograph]) -> Tab
     var exclusiveNewOptographs: [Optograph] = []
     for newOptograph in newOptographs.filter({ $0.deletedAt == nil }) {
         if let index = optographs.indexOf({ $0.id == newOptograph.id }) {
-            if optographs[index].starsCount != newOptograph.starsCount {
+            if optographs[index] != newOptograph {
                 update.append(index)
                 optographs[index] = newOptograph
             }
@@ -82,7 +82,6 @@ class FeedViewModel: NSObject {
 //            .order(CommentSchema.createdAt.asc)
         
         refreshNotification.signal
-            .mapError { _ in DatabaseQueryError.Nil }
             .flatMap(.Latest) { _ in
                 DatabaseService.query(.Many, query: query)
                     .observeOn(QueueScheduler(queue: queue))
@@ -96,6 +95,7 @@ class FeedViewModel: NSObject {
                         
                         return optograph
                     }
+                    .ignoreError()
                     .collect()
                     .startOn(QueueScheduler(queue: queue))
             }
@@ -104,7 +104,6 @@ class FeedViewModel: NSObject {
             .observeNext { self.results.value = $0 }
     
         refreshNotification.signal
-            .mapError { _ in ApiError.Nil }
             .flatMap(.Latest) { _ in
                 ApiService<Optograph>.get("optographs/feed")
                     .observeOn(QueueScheduler(queue: queue))
@@ -113,6 +112,7 @@ class FeedViewModel: NSObject {
                         try! optograph.location.insertOrUpdate()
                         try! optograph.person.insertOrUpdate()
                     })
+                    .ignoreError()
                     .collect()
                     .startOn(QueueScheduler(queue: queue))
             }
@@ -124,7 +124,6 @@ class FeedViewModel: NSObject {
             }
         
         loadMoreNotification.signal
-            .mapError { _ in ApiError.Nil }
             .map { _ in self.results.value.optographs.last }
             .ignoreNil()
             .flatMap(.Latest) { oldestResult in
@@ -135,6 +134,7 @@ class FeedViewModel: NSObject {
                         try! optograph.location.insertOrUpdate()
                         try! optograph.person.insertOrUpdate()
                     })
+                    .ignoreError()
                     .collect()
                     .startOn(QueueScheduler(queue: queue))
             }
@@ -146,6 +146,8 @@ class FeedViewModel: NSObject {
         
         SessionService.onLogout { [weak self] in
             self?.refreshTimer.invalidate()
+            self?.refreshNotification.dispose()
+            self?.loadMoreNotification.dispose()
         }
     }
     

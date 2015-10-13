@@ -51,6 +51,10 @@ class NotificationSignal {
         sendNext(sink, ())
     }
     
+    func dispose() {
+        sendInterrupted(sink)
+    }
+    
 }
 
 func negate(val: Bool) -> Bool {

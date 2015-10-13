@@ -116,7 +116,7 @@ class StitchingService {
                 activeSignal = nil
                 activeSink = nil
             }
-            print("Stitching completed")
+            
             sendCompleted(sink)
         }
         
@@ -155,7 +155,6 @@ class StitchingService {
     // send completed is called on termination.
     static func cancelStitching() {
         assert(isStitching())
-        print("Stitching cancel called")
         shallCancel = true
     }
 }

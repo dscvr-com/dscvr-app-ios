@@ -134,7 +134,6 @@ class OptographInfoView: UIView {
 extension OptographInfoView: OptographOptions {
     
     func didTapOptions() {
-        print(deleteCallback)
         showOptions(viewModel.optograph, deleteCallback: deleteCallback)
     }
     

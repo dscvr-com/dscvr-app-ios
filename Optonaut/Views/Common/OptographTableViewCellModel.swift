@@ -20,9 +20,17 @@ class OptographTableViewCellModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
+        previewImageUrl = ConstantProperty(optograph.previewAssetURL)
+        
         if !optograph.isStitched && StitchingService.hasUnstitchedRecordings() {
             stitchingProgress = MutableProperty(0)
-            stitchingProgress <~ StitchingService.startStitching()
+            let stitchingSignal = StitchingService.startStitching()
+            
+            stitchingSignal.observeCompleted {
+                self.optograph.isStitched = true
+            }
+            
+            stitchingProgress <~ stitchingSignal
                 .map { result -> Float? in
                     if case .Progress(let progress) = result {
                         return progress
@@ -35,8 +43,6 @@ class OptographTableViewCellModel {
         } else {
             stitchingProgress = MutableProperty(1)
         }
-        
-        previewImageUrl = ConstantProperty(optograph.previewAssetURL)
     }
     
 }

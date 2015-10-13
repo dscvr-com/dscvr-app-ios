@@ -39,7 +39,6 @@ class CreateOptographViewModel {
         locationLoading <~ locationSignal.signal.map { _ in true }
         
         locationSignal.signal
-            .mapError { _ in NSError(domain: "", code: 0, userInfo: nil) }
             .map { _ in self.locationEnabled.value }
             .filter(identity)
             .flatMap(.Latest) { _ in
@@ -49,10 +48,16 @@ class CreateOptographViewModel {
                         self.optograph.location.latitude = lat
                         self.optograph.location.longitude = lon
                     })
+                    .ignoreError()
             }
-            .mapError { _ in ApiError.Nil }
             .map { (lat, lon) in ["latitude": lat, "longitude": lon] }
-            .flatMap(.Latest) { ApiService<LocationMappable>.post("locations/lookup", parameters: $0) }
+            .flatMap(.Latest) {
+                ApiService<LocationMappable>.post("locations/lookup", parameters: $0)
+                    .on(error: { _ in
+                        self.locationLoading.value = false
+                    })
+                    .ignoreError()
+            }
             .observeNext { location in
                 self.locationLoading.value = false
                 self.locationFound.value = true
@@ -84,16 +89,16 @@ class CreateOptographViewModel {
                     .joinWithSeparator(",")
             }
         
-        previewImageUrl.producer
-            .filter(isNotEmpty)
-            .take(1)
-            .startWithNext { _ in
-                self.hashtagStringStatus.value = .Indicated
+        hashtagStringStatus <~ locationFound.producer
+            .combineLatestWith(previewImageUrl.producer.map(isNotEmpty)).map(and)
+            .combineLatestWith(hashtagStringValid.producer)
+            .map { (requirements, validHashtag) in
+                if !requirements {
+                    return .Disabled
+                } else {
+                    return validHashtag ? .Normal : .Indicated
+                }
             }
-        
-        hashtagStringStatus <~ hashtagStringValid.producer
-            .takeWhile { _ in !self.previewImageUrl.value.isEmpty }
-            .map { $0 ? .Normal : .Indicated }
         
         textEnabled <~ previewImageUrl.producer.map(isNotEmpty)
             .combineLatestWith(locationFound.producer).map(and)

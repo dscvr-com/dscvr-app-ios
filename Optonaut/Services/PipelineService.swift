@@ -13,7 +13,7 @@ import ReactiveCocoa
 
 class PipelineService {
     
-    private static let queue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
+    private static let queue = dispatch_queue_create("PipelineQueue", DISPATCH_QUEUE_SERIAL)
     
     static func check() {
         Async.customQueue(queue) {

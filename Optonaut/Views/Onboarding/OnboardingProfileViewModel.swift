@@ -49,8 +49,6 @@ class OnboardingProfileViewModel {
                 }
             }
         
-        var checkUserNameDisposable: Disposable?
-        
         userName.producer
             .skipRepeats()
             .on(next: { userName in
@@ -59,23 +57,18 @@ class OnboardingProfileViewModel {
             })
             .filter(isNotEmpty)
             .skipRepeats()
-            .mapError { _ in ApiError.Nil }
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
-            .startWithNext { userName in
-                checkUserNameDisposable?.dispose()
-                // nesting needed in order to accept ApiErrors
-                checkUserNameDisposable = ApiService<EmptyResponse>
-                    .post("persons/me/check-user-name", parameters: ["user_name": userName])
-                    .on(
-                        completed: {
-                            self.nextStep.value = .Done
-                        },
-                        error: { _ in
-                            self.nextStep.value = NextStep(rawValue: min(self.nextStep.value.rawValue, NextStep.UserName.rawValue))!
-                            self.userNameStatus.value = .Warning("This username is already taken. Please try another one.")
-                        }
-                    )
-                    .start()
+            .flatMap(.Latest) { userName in
+                ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: ["user_name": userName])
+                    .transformToBool()
+            }
+            .startWithNext { success in
+                if success {
+                    self.nextStep.value = .Done
+                } else {
+                    self.nextStep.value = NextStep(rawValue: min(self.nextStep.value.rawValue, NextStep.UserName.rawValue))!
+                    self.userNameStatus.value = .Warning("This username is already taken. Please try another one.")
+                }
             }
         
         nextStep.producer

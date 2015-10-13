@@ -35,8 +35,9 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         navigationItem.title = "Explore"
         
         let searchButton = UIBarButtonItem()
-        searchButton.title = String.icomoonWithName(.MagnifyingGlass)
-        searchButton.image = UIImage.icomoonWithName(.MagnifyingGlass, textColor: .whiteColor(), size: CGSize(width: 21, height: 17))
+        searchButton.title = String.iconWithName(.Search)
+        searchButton.setTitleTextAttributes([NSFontAttributeName: UIFont.iconOfSize(19)], forState: .Normal)
+        searchButton.setTitlePositionAdjustment(UIOffset(horizontal: -5, vertical: 0), forBarMetrics: .Default)
         searchButton.target = self
         searchButton.action = "pushSearch"
         navigationItem.setRightBarButtonItem(searchButton, animated: false)

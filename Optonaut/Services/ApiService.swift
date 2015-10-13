@@ -169,6 +169,7 @@ class ApiService<T: Mappable> {
                 request.cancel()
             }
         }
+            .timeoutWithError(ApiError(endpoint: endpoint, timeout: true, status: nil, message: "Timeout", error: nil), afterInterval: 30, onScheduler: QueueScheduler.mainQueueScheduler)
             .on(error: { error in
                 print(error)
                 if error.suspicious {

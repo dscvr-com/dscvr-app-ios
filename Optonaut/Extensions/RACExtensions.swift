@@ -22,4 +22,27 @@ extension SignalType {
             }
         }
     }
+    
+    public func transformToBool() -> Signal<Bool, NoError> {
+        return Signal { observer in
+            self.observe { event in
+                switch event {
+                case .Error(_): sendNext(observer, false)
+                case .Next(_): break
+                case .Completed: sendNext(observer, true)
+                case .Interrupted: sendInterrupted(observer)
+                }
+            }
+        }
+    }
+}
+
+extension SignalProducerType {
+    public func ignoreError() -> SignalProducer<Value, NoError> {
+        return lift { $0.ignoreError() }
+    }
+    
+    public func transformToBool() -> SignalProducer<Bool, NoError> {
+        return lift { $0.transformToBool() }
+    }
 }
