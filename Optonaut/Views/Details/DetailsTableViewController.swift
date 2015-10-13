@@ -56,6 +56,21 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         logRetain()
     }
     
+    private func loadTexture() {
+        let queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
+        SDWebImageManager.sharedManager().downloadImageForURL(viewModel.optograph.leftTextureAssetURL)
+            .observeOn(QueueScheduler(queue: queue))
+            .startWithNext { [weak self] image in
+                self?.renderDelegate.image = image
+                self?.scnView.prepareObject(self!.renderDelegate!.scene, shouldAbortBlock: nil)
+                self?.scnView.playing = true
+        }
+    }
+    
+    private func unloadTexture() {
+        self.renderDelegate.image = nil
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -73,16 +88,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         scnView.backgroundColor = .clearColor()
         
         view.addSubview(scnView)
-        
-        let queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
-        SDWebImageManager.sharedManager().downloadImageForURL(viewModel.optograph.leftTextureAssetURL)
-            .observeOn(QueueScheduler(queue: queue))
-            .startWithNext { [weak self] image in
-                self?.renderDelegate.image = image
-                self?.scnView.prepareObject(self!.renderDelegate!.scene, shouldAbortBlock: nil)
-                self?.scnView.playing = true
-        }
-        
         glassesButtonView.setTitle(String.iconWithName(.Cardboard), forState: .Normal)
         glassesButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         glassesButtonView.defaultBackgroundColor = .Accent
@@ -136,7 +141,10 @@ class DetailsTableViewController: UIViewController, NoNavbar {
                     self?.pushViewer(orientation)
                 default: break
                 }
-            }
+        }
+        
+        loadTexture()
+
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -148,6 +156,8 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         MotionService.sharedInstance.motionDisable()
         MotionService.sharedInstance.rotationDisable()
+        
+        unloadTexture()
     }
     
     override func viewWillAppear(animated: Bool) {
