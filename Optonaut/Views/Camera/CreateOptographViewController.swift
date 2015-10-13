@@ -307,7 +307,9 @@ class CreateOptographViewController: UIViewController {
         // needed if user re-enabled location via Settings.app
         reloadLocation()
         
-        session.startRunning()
+        if viewModel.cameraPreviewEnabled.value {
+            session.startRunning()
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -317,6 +319,10 @@ class CreateOptographViewController: UIViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
         
         navigationController?.interactivePopGestureRecognizer?.enabled = true
+        
+        if viewModel.cameraPreviewEnabled.value {
+            session.stopRunning()
+        }
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -326,8 +332,6 @@ class CreateOptographViewController: UIViewController {
         
         // TODO find better way to do this
         viewModel.locationPermissionTimer?.invalidate()
-        
-        session.stopRunning()
     }
     
     func keyboardWillShow(notification: NSNotification) {
@@ -426,7 +430,6 @@ extension CreateOptographViewController: UITextViewDelegate {
 extension CreateOptographViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        session.stopRunning()
         
         viewModel.cameraPreviewEnabled.value = false
         

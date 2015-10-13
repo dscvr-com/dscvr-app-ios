@@ -64,12 +64,12 @@ class StitchingService {
         
         shallCancel = false
         
-        registerBackgroundTask()
-        
         let (signal, sink) = StitchingSignal.pipe()
         
         activeSignal = signal
         activeSink = sink
+        
+        registerBackgroundTask()
         
         let priority = DISPATCH_QUEUE_PRIORITY_BACKGROUND
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
@@ -112,9 +112,9 @@ class StitchingService {
             //Executing this on the main thread is important
             //to avoid a racing condition with onApplicationResuming
             Async.main {
+                unregisterBackgroundTask()
                 activeSignal = nil
                 activeSink = nil
-                unregisterBackgroundTask()
             }
             print("Stitching completed")
             sendCompleted(sink)
