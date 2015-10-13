@@ -367,7 +367,13 @@ class CreateOptographViewController: UIViewController {
     func cancel() {
         Mixpanel.sharedInstance().track("Action.CreateOptograph.Cancel")
         
-        StitchingService.cancelStitching()
+        if StitchingService.isStitching() {
+            StitchingService.cancelStitching()
+        }
+        // No if here explicitely. If the stitching service has no 
+        // unstitched recordings, it's not allowed in this view. 
+        StitchingService.removeUnstitchedRecordings()
+        
         navigationController?.popViewControllerAnimated(false)
     }
     

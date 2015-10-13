@@ -24,13 +24,17 @@ func CMRotationToDoubleArray(r: CMRotationMatrix) -> [Double] {
 }
 
 func ImageBufferToCGImage(buf: ImageBuffer) -> CGImage {
-    let bitmapContext = CGBitmapContextCreate(buf.data, Int(buf.width), Int(buf.height), 8, Int(buf.width) * 4, CGColorSpaceCreateDeviceRGB(), CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue)
+    let bitmapContext = CGBitmapContextCreateWithData(
+        buf.data, Int(buf.width), Int(buf.height), 8, Int(buf.width) * 4,
+        CGColorSpaceCreateDeviceRGB(),
+        CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue,
+        nil, nil)
     return CGBitmapContextCreateImage(bitmapContext)!
 }
 
 func ImageBufferToCompressedUIImage(input: ImageBuffer) -> NSData? {
-    let cgImage: CGImage? = ImageBufferToCGImage(input)
-    let uiImage = UIImageJPEGRepresentation(UIImage(CGImage: cgImage!), 0.8)
+    let cgImage = ImageBufferToCGImage(input)
+    let uiImage = UIImageJPEGRepresentation(UIImage(CGImage: cgImage), 0.8)
     return uiImage
 }
 

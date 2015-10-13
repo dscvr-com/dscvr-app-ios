@@ -132,9 +132,6 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
                 self.navigationController?.presentViewController(alert, animated: true, completion: nil)
             }
         } else {
-            if StitchingService.hasUnstitchedRecordings() {
-                StitchingService.removeUnstitchedRecordings()
-            }
             navigationController?.pushViewController(CameraViewController(), animated: false)
         }
     }

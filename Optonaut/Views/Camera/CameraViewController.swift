@@ -484,6 +484,9 @@ class CameraViewController: UIViewController {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
         
         stopSession()
+        if StitchingService.hasUnstitchedRecordings() {
+            StitchingService.removeUnstitchedRecordings()
+        }
         
         navigationController?.popViewControllerAnimated(false)
     }

@@ -87,8 +87,10 @@ class StitchingService {
             if !shallCancel {
                 let leftBuffer = stitcher.getLeftResult()
                 if !shallCancel {
-                    let data = ImageBufferToCompressedUIImage(leftBuffer)
-                    sendNext(sink, .LeftImage(data!))
+                    autoreleasepool {
+                        let data = ImageBufferToCompressedUIImage(leftBuffer)
+                        sendNext(sink, .LeftImage(data!))
+                    }
                 }
                 Recorder.freeImageBuffer(leftBuffer)
             }
@@ -96,8 +98,10 @@ class StitchingService {
             if !shallCancel {
                 let rightBuffer = stitcher.getRightResult()
                 if !shallCancel {
-                    let data = ImageBufferToCompressedUIImage(rightBuffer)
-                    sendNext(sink, .RightImage(data!))
+                    autoreleasepool {
+                        let data = ImageBufferToCompressedUIImage(rightBuffer)
+                        sendNext(sink, .RightImage(data!))
+                    }
                 }
                 Recorder.freeImageBuffer(rightBuffer)
             }

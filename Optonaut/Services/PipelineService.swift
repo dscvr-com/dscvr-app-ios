@@ -64,10 +64,17 @@ class PipelineService {
     
     private static func sequentialStitch(var optographs: [Optograph]) {
         guard var optograph = optographs.popLast() else {
+            if StitchingService.hasUnstitchedRecordings() {
+                // This happens when an optograph was recorded, but never
+                // inserted into the DB, for example due to cancel. 
+                // Remove it. 
+                StitchingService.removeUnstitchedRecordings()
+            }
             return
         }
         
         if optograph.isStitched {
+            //TODO: Make this method iterative.
             return sequentialStitch(optographs)
         }
         
