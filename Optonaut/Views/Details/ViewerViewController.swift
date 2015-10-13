@@ -29,6 +29,8 @@ class ViewerViewController: UIViewController  {
     private var rightScnView: SCNView!
     
     private var rotationDisposable: Disposable?
+    private var leftDownloadDisposable: Disposable?
+    private var rightDownloadDisposable: Disposable?
     
     required init(orientation: UIInterfaceOrientation, optograph: Optograph, distortion: Distortion) {
         self.orientation = orientation
@@ -58,10 +60,16 @@ class ViewerViewController: UIViewController  {
         leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: MotionService.sharedInstance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: 85)
         rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: MotionService.sharedInstance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: 85)
         
-        SDWebImageManager.sharedManager().downloadImageForURL(optograph.leftTextureAssetURL)
-            .startWithNext { [weak self] image in self?.leftRenderDelegate.image = image }
-        SDWebImageManager.sharedManager().downloadImageForURL(optograph.rightTextureAssetURL)
-            .startWithNext { [weak self] image in self?.rightRenderDelegate.image = image }
+        leftDownloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(optograph.leftTextureAssetURL)
+            .startWithNext { [weak self] image in
+                self?.leftRenderDelegate.image = image
+                self?.leftDownloadDisposable = nil
+            }
+        rightDownloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(optograph.rightTextureAssetURL)
+            .startWithNext { [weak self] image in
+                self?.rightRenderDelegate.image = image
+                self?.rightDownloadDisposable = nil
+            }
             
         leftScnView.scene = leftRenderDelegate.scene
         leftScnView.delegate = leftRenderDelegate
@@ -128,6 +136,9 @@ class ViewerViewController: UIViewController  {
         UIScreen.mainScreen().brightness = originalBrightness
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
+        
+        leftDownloadDisposable?.dispose()
+        rightDownloadDisposable?.dispose()
         
         super.viewWillDisappear(animated)
     }
