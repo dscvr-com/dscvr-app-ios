@@ -395,11 +395,11 @@ class CameraViewController: UIViewController {
     }
     
     private func lockExposure() {
-        setExposureMode(.Locked)
+        //setExposureMode(.Locked)
     }
     
     private func unLockExposure() {
-        setExposureMode(.ContinuousAutoExposure)
+        //setExposureMode(.ContinuousAutoExposure)
 
     }
     
