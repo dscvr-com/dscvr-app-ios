@@ -50,13 +50,16 @@ class CreateOptographViewModel {
                     })
                     .ignoreError()
             }
-            .map { (lat, lon) in ["latitude": lat, "longitude": lon] }
-            .flatMap(.Latest) {
-                ApiService<LocationMappable>.post("locations/lookup", parameters: $0)
-                    .on(error: { _ in
-                        self.locationLoading.value = false
-                    })
-                    .ignoreError()
+            .flatMap(.Latest) { (lat, lon) -> SignalProducer<LocationMappable, NoError> in
+                if Reachability.connectedToNetwork() {
+                    return ApiService.post("locations/lookup", parameters: ["latitude": lat, "longitude": lon])
+                        .on(error: { _ in
+                            self.locationLoading.value = false
+                        })
+                        .ignoreError()
+                } else {
+                    return SignalProducer(value: LocationMappable(text: "\(lat), \(lon)", country: ""))
+                }
             }
             .observeNext { location in
                 self.locationLoading.value = false
@@ -134,9 +137,13 @@ class CreateOptographViewModel {
     }
 }
 
-private struct LocationMappable: Mappable {
+private struct LocationMappable {
     var text = ""
     var country = ""
+}
+
+
+extension LocationMappable: Mappable {
     
     init?(_ map: Map) {}
     
