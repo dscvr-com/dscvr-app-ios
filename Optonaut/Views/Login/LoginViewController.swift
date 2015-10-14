@@ -16,11 +16,12 @@ class LoginViewController: UIViewController {
     // subviews
     let logoView = UILabel()
     let formView = UIView()
-    let emailOrUserNameInputView = UITextField()
-    let passwordInputView = UITextField()
-    let submitButtonView = UIButton()
+    let emailOrUserNameInputView = LineTextField()
+    let passwordInputView = LineTextField()
+    let submitButtonView = ActionButton()
 //    let forgotPasswordView = UILabel()
-    let showInviteView = UILabel()
+    let signupTextView = UILabel()
+    let signupHelpTextView = UILabel()
     let loadingView = UIView()
     
     var formViewBottomConstraint: NSLayoutConstraint?
@@ -37,55 +38,42 @@ class LoginViewController: UIViewController {
         
         view.backgroundColor = UIColor.Accent
         
-        logoView.text = String.icomoonWithName(.LogoText)
+        logoView.text = String.iconWithName(.LogoText)
         logoView.textColor = .whiteColor()
-        logoView.font = UIFont.icomoonOfSize(60)
+        logoView.font = UIFont.iconOfSize(35)
         view.addSubview(logoView)
         
         view.addSubview(formView)
         
-        let placeholderAttributes = [
-            NSFontAttributeName: UIFont.robotoOfSize(15, withType: .Regular),
-            NSForegroundColorAttributeName: UIColor.whiteColor().alpha(0.8),
-        ]
-        
-        // TODO implement feedback for wrong formatted data
-        emailOrUserNameInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
-        emailOrUserNameInputView.attributedPlaceholder = NSAttributedString(string:"Email or username", attributes: placeholderAttributes)
-        emailOrUserNameInputView.font = .robotoOfSize(15, withType: .Regular)
-        emailOrUserNameInputView.textColor = .whiteColor()
-        emailOrUserNameInputView.textAlignment = .Center
-        emailOrUserNameInputView.layer.cornerRadius = 5
-        emailOrUserNameInputView.clipsToBounds = true
+        emailOrUserNameInputView.placeholder = "Email address or username"
+        emailOrUserNameInputView.size = .Medium
+        emailOrUserNameInputView.color = .Light
         emailOrUserNameInputView.autocorrectionType = .No
         emailOrUserNameInputView.autocapitalizationType = .None
         emailOrUserNameInputView.keyboardType = .EmailAddress
         emailOrUserNameInputView.returnKeyType = .Next
         emailOrUserNameInputView.delegate = self
+        emailOrUserNameInputView.rac_status <~ viewModel.emailOrUserNameStatus
         viewModel.emailOrUserName <~ emailOrUserNameInputView.rac_text
         formView.addSubview(emailOrUserNameInputView)
         
-        passwordInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
-        passwordInputView.attributedPlaceholder = NSAttributedString(string:"Password", attributes: placeholderAttributes)
-        passwordInputView.font = .robotoOfSize(15, withType: .Regular)
-        passwordInputView.textColor = .whiteColor()
-        passwordInputView.textAlignment = .Center
-        passwordInputView.layer.cornerRadius = 5
-        passwordInputView.clipsToBounds = true
+        passwordInputView.placeholder = "Password"
+        passwordInputView.size = .Medium
+        passwordInputView.color = .Light
         passwordInputView.secureTextEntry = true
         passwordInputView.returnKeyType = .Go
         passwordInputView.delegate = self
+        passwordInputView.rac_status <~ viewModel.passwordStatus
         viewModel.password <~ passwordInputView.rac_text
         formView.addSubview(passwordInputView)
         
-        submitButtonView.backgroundColor = UIColor(0xb5362c)
-        submitButtonView.setTitle("Login", forState: .Normal)
-        submitButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        submitButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
-        submitButtonView.layer.cornerRadius = 5
-        submitButtonView.layer.masksToBounds = true
+        submitButtonView.setTitle(String.iconWithName(.Check), forState: .Normal)
+        submitButtonView.setTitleColor(.Accent, forState: .Normal)
+        submitButtonView.defaultBackgroundColor = .whiteColor()
+        submitButtonView.titleLabel?.font = UIFont.iconOfSize(28)
+        submitButtonView.layer.cornerRadius = 30
         submitButtonView.rac_userInteractionEnabled <~ viewModel.allowed
-        submitButtonView.rac_alpha <~ viewModel.allowed.producer.map { $0 ? 1 : 0.5 }
+        submitButtonView.rac_alpha <~ viewModel.allowed.producer.map { $0 ? 1 : 0.2 }
         submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "login"))
         formView.addSubview(submitButtonView)
         
@@ -96,12 +84,17 @@ class LoginViewController: UIViewController {
 //        forgotPasswordView.userInteractionEnabled = true
 //        view.addSubview(forgotPasswordView)
         
-        showInviteView.textColor = .whiteColor()
-        showInviteView.text = "Request Invite"
-        showInviteView.font = .robotoOfSize(15, withType: .Regular)
-        showInviteView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showRequestInviteViewController"))
-        showInviteView.userInteractionEnabled = true
-        view.addSubview(showInviteView)
+        signupHelpTextView.textColor = .whiteColor()
+        signupHelpTextView.text = "Don't have an account yet?"
+        signupHelpTextView.font = .displayOfSize(14, withType: .Thin)
+        view.addSubview(signupHelpTextView)
+        
+        signupTextView.textColor = .whiteColor()
+        signupTextView.text = "Sign up"
+        signupTextView.font = .displayOfSize(18, withType: .Semibold)
+        signupTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showSignup"))
+        signupTextView.userInteractionEnabled = true
+        view.addSubview(signupTextView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
         loadingView.rac_hidden <~ viewModel.pending.producer.map(negate)
@@ -143,34 +136,35 @@ class LoginViewController: UIViewController {
     override func updateViewConstraints() {
         if !didSetConstraints {
             logoView.autoAlignAxisToSuperviewAxis(.Vertical)
-            logoView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -40)
+            logoView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -100)
             
             let formBottomOffset = formBottomOffsetForKeyboardHeight(0, keyboardVisible: false)
             formViewBottomConstraint = formView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: formBottomOffset)
-            formView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-            formView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+            formView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+            formView.autoSetDimension(.Width, toSize: 243)
             formView.autoSetDimension(.Height, toSize: 158)
             
-            emailOrUserNameInputView.autoSetDimension(.Height, toSize: 45)
             emailOrUserNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
             emailOrUserNameInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
             emailOrUserNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            passwordInputView.autoSetDimension(.Height, toSize: 45)
-            passwordInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailOrUserNameInputView, withOffset: 7)
+            passwordInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailOrUserNameInputView, withOffset: 35)
             passwordInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
             passwordInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            submitButtonView.autoSetDimension(.Height, toSize: 45)
-            submitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordInputView, withOffset: 16)
-            submitButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
+            submitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordInputView, withOffset: 30)
             submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
+            submitButtonView.autoSetDimension(.Width, toSize: 60)
+            submitButtonView.autoSetDimension(.Height, toSize: 60)
             
 //            forgotPasswordView.autoPinEdge(.Top, toEdge: .Bottom, ofView: formView, withOffset: 23)
 //            forgotPasswordView.autoAlignAxisToSuperviewAxis(.Vertical)
             
-            showInviteView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -28)
-            showInviteView.autoAlignAxisToSuperviewAxis(.Vertical)
+            signupHelpTextView.autoPinEdge(.Bottom, toEdge: .Top, ofView: signupTextView, withOffset: -5)
+            signupHelpTextView.autoAlignAxisToSuperviewAxis(.Vertical)
+            
+            signupTextView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -36)
+            signupTextView.autoAlignAxisToSuperviewAxis(.Vertical)
             
             loadingView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
             
@@ -182,11 +176,11 @@ class LoginViewController: UIViewController {
     
     // needed for vertically centering (respecting keyboard visiblity)
     private func formBottomOffsetForKeyboardHeight(keyboardHeight: CGFloat, keyboardVisible: Bool) -> CGFloat {
-        return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2 + 158 / 2
+        return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2 + 158 / 2 + 52
     }
     
-    func showRequestInviteViewController() {
-        presentViewController(RequestInviteViewController(), animated: false, completion: nil)
+    func showSignup() {
+        presentViewController(OnboardingInfoViewController(), animated: false, completion: nil)
     }
     
     func showForgotPasswordViewController() {

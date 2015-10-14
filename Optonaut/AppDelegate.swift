@@ -26,7 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         prepareAndExecute {
-            self.window?.rootViewController = TabBarViewController()
+//            self.window?.rootViewController = TabBarViewController()
+            self.window?.rootViewController = OnboardingAccountViewController()
         }
         
         return true

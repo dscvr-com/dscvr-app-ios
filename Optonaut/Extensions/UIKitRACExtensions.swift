@@ -26,6 +26,7 @@ struct AssociationKey {
     static var buttonTitleColor: UInt8 = 13
     static var imageUrl: UInt8 = 14
     static var status: UInt8 = 15
+    static var loading: UInt8 = 16
 }
 
 enum objc_AssociationPolicy : UInt {
@@ -76,6 +77,14 @@ extension LineTextField {
     
     var rac_status: MutableProperty<LineTextField.Status> {
         return lazyMutableProperty(self, key: &AssociationKey.status, setter: { self.status = $0 }, getter: { self.status })
+    }
+    
+}
+
+extension ActionButton {
+    
+    var rac_loading: MutableProperty<Bool> {
+        return lazyMutableProperty(self, key: &AssociationKey.loading, setter: { self.isLoading = $0 }, getter: { self.isLoading })
     }
     
 }

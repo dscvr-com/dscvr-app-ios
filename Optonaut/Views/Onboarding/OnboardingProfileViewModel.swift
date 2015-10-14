@@ -10,7 +10,6 @@ import Foundation
 import ReactiveCocoa
 import SQLite
 
-
 class OnboardingProfileViewModel {
     
     enum NextStep: Int {
@@ -27,10 +26,15 @@ class OnboardingProfileViewModel {
     let displayNameStatus = MutableProperty<LineTextField.Status>(.Disabled)
     let userName = MutableProperty<String>("")
     let userNameStatus = MutableProperty<LineTextField.Status>(.Disabled)
+    let loading = MutableProperty<Bool>(false)
     
-    private var person = Person.newInstance()
+    private var person: Person
     
     init() {
+        
+        let query = PersonTable.filter(PersonTable[PersonSchema.id] ==- SessionService.sessionData!.id)
+        person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
+            
         avatarUploaded.producer
             .startWithNext { success in
                 if success {
@@ -104,26 +108,39 @@ class OnboardingProfileViewModel {
         ] as [String: AnyObject]
         
         return ApiService.put("persons/me", parameters: parameters)
-            .on(completed: {
-                self.person.displayName = self.displayName.value
-                self.person.userName = self.userName.value
-                self.saveModel()
-            })
+            .on(
+                started: {
+                    self.loading.value = true
+                },
+                completed: {
+                    self.loading.value = false
+                    self.person.displayName = self.displayName.value
+                    self.person.userName = self.userName.value
+                    self.saveModel()
+                }
+            )
     }
     
-    func updateAvatar(image: UIImage) -> SignalProducer<Person, ApiError> {
+    func updateAvatar(image: UIImage) -> SignalProducer<EmptyResponse, ApiError> {
         let data = UIImageJPEGRepresentation(image, 1)
         let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         
         avatarImage.value = UIImage(data: data!)!
         
-        return ApiService.post("persons/me/upload-profile-image", parameters: ["avatar_asset": str!])
+        let avatarAssetId = uuid()
+        let parameters = [
+            "avatar_asset": str!,
+            "avatar_asset_id": avatarAssetId,
+        ]
+        return ApiService.post("persons/me/upload-profile-image", parameters: parameters)
             .on(
                 started: {
                     self.avatarUploaded.value = true
+                    self.loading.value = true
                 },
-                next: { person in
-                    self.person.avatarAssetId = person.avatarAssetId
+                completed: { _ in
+                    self.loading.value = false
+                    self.person.avatarAssetId = avatarAssetId
                     self.avatarUploaded.value = true
                     self.saveModel()
                 },

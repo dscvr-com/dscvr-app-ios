@@ -97,4 +97,6 @@ public enum Icon: String {
     case Heart = "\u{e814}"
     case Settings = "\u{e815}"
     case Search = "\u{e816}"
+    case LogoText = "\u{e817}"
+    case Rocket = "\u{e818}"
 }

@@ -35,6 +35,32 @@ extension SignalType {
             }
         }
     }
+    
+    public func completedAsNext() -> Signal<Void, Error> {
+        return Signal { observer in
+            self.observe { event in
+                switch event {
+                case let .Error(err): sendError(observer, err)
+                case .Next(_): break
+                case .Completed: sendNext(observer, ())
+                case .Interrupted: sendInterrupted(observer)
+                }
+            }
+        }
+    }
+    
+    public func nextAsCompleted() -> Signal<Void, Error> {
+        return Signal { observer in
+            self.observe { event in
+                switch event {
+                case let .Error(err): sendError(observer, err)
+                case .Next(_): sendCompleted(observer)
+                case .Completed: sendCompleted(observer)
+                case .Interrupted: sendInterrupted(observer)
+                }
+            }
+        }
+    }
 }
 
 extension SignalProducerType {
@@ -44,5 +70,13 @@ extension SignalProducerType {
     
     public func transformToBool() -> SignalProducer<Bool, NoError> {
         return lift { $0.transformToBool() }
+    }
+    
+    public func completedAsNext() -> SignalProducer<Void, Error> {
+        return lift { $0.completedAsNext() }
+    }
+    
+    public func nextAsCompleted() -> SignalProducer<Void, Error> {
+        return lift { $0.nextAsCompleted() }
     }
 }

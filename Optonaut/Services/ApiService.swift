@@ -160,6 +160,8 @@ class ApiService<T: Mappable> {
                                 let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON invalid", error: error as NSError)
                                 sendError(sink, apiError)
                             }
+                        } else {
+                            sendNext(sink, Mapper<T>().map([:])!)
                         }
                         sendCompleted(sink)
                     }
@@ -169,7 +171,6 @@ class ApiService<T: Mappable> {
                 request.cancel()
             }
         }
-            .timeoutWithError(ApiError(endpoint: endpoint, timeout: true, status: nil, message: "Timeout", error: nil), afterInterval: 30, onScheduler: QueueScheduler.mainQueueScheduler)
             .on(error: { error in
                 print(error)
                 if error.suspicious {

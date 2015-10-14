@@ -22,7 +22,7 @@ class LineTextField: UITextField {
     }
     
     enum Size: CGFloat {
-        case Large = 21
+        case Large = 18
         case Medium = 14
         case Small = 13
     }
@@ -75,6 +75,7 @@ class LineTextField: UITextField {
         backgroundColor = .clearColor()
         clipsToBounds = false
         textAlignment = .Left
+        contentVerticalAlignment = .Top
         
         update()
         
@@ -156,15 +157,15 @@ class LineTextField: UITextField {
         
         switch size {
         case .Large:
-            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 21))
+            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 51))
             lineLayer.frame = CGRect(x: 0, y: 34, width: frame.width, height: onePx)
             messageView.frame = CGRect(x: 0, y: 36, width: frame.width, height: 15)
         case .Medium:
-            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 17))
-            lineLayer.frame = CGRect(x: 0, y: 27, width: frame.width, height: onePx)
-            messageView.frame = CGRect(x: 0, y: 29, width: frame.width, height: 15)
+            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 43))
+            lineLayer.frame = CGRect(x: 0, y: 28, width: frame.width, height: onePx)
+            messageView.frame = CGRect(x: 0, y: 30, width: frame.width, height: 15)
         case .Small:
-            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 14))
+            frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 41))
             lineLayer.frame = CGRect(x: 0, y: 24, width: frame.width, height: onePx)
             messageView.frame = CGRect(x: 0, y: 26, width: frame.width, height: 15)
         }

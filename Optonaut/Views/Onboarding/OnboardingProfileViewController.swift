@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import HexColor
 import ReactiveCocoa
 import Async
 import Mixpanel
@@ -25,7 +24,6 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     private let avatarImageView = UIImageView()
     private let displayNameInputView = LineTextField()
     private let userNameInputView = LineTextField()
-    private let termsView = UILabel()
     private let nextButtonView = ActionButton()
     
     deinit {
@@ -102,34 +100,18 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
 //        }
         view.addSubview(userNameInputView)
         
-        let termsTextStr = "By creating your profile you accept\r\nour terms and conditions"
-        let normalRange = termsTextStr.NSRangeOfString("By creating your profile you accept")
-        let linkRange = termsTextStr.NSRangeOfString("our terms and conditions")
-        let attrString = NSMutableAttributedString(string: termsTextStr)
-        attrString.addAttribute(NSFontAttributeName, value: UIFont.displayOfSize(12, withType: .Thin), range: normalRange!)
-        attrString.addAttribute(NSFontAttributeName, value: UIFont.displayOfSize(12, withType: .Semibold), range: linkRange!)
-        termsView.attributedText = attrString
-        termsView.textColor = .whiteColor()
-        termsView.numberOfLines = 2
-        termsView.textAlignment = .Center
-        termsView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "openTerms"))
-        view.addSubview(termsView)
-        
-        nextButtonView.setTitle("Create profile", forState: .Normal)
+        nextButtonView.rac_loading <~ viewModel.loading
+        nextButtonView.setTitle("Save profile", forState: .Normal)
         nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showHashtagOnboarding"))
         view.addSubview(nextButtonView)
         
         viewModel.nextStep.producer
             .startWithNext { state in
                 if case .Done = state {
-                    self.termsView.alpha = 1
                     self.nextButtonView.alpha = 1
-                    self.termsView.userInteractionEnabled = true
                     self.nextButtonView.userInteractionEnabled = true
                 } else {
-                    self.termsView.alpha = 0.2
                     self.nextButtonView.alpha = 0.2
-                    self.termsView.userInteractionEnabled = false
                     self.nextButtonView.userInteractionEnabled = false
                 }
             }
@@ -165,10 +147,6 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         userNameInputView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         userNameInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: displayNameInputView, withOffset: 40)
         userNameInputView.autoSetDimension(.Width, toSize: 240)
-        
-        termsView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        termsView.autoPinEdge(.Bottom, toEdge: .Top, ofView: nextButtonView, withOffset: -15)
-        termsView.autoSetDimension(.Width, toSize: 300)
         
         nextButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         nextButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -42)
@@ -216,7 +194,6 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     func uploadImage() {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             imagePickerController.sourceType = .PhotoLibrary
-            imagePickerController.allowsEditing = true
             imagePickerController.delegate = self
             self.presentViewController(imagePickerController, animated: true, completion: nil)
         }
@@ -244,7 +221,7 @@ extension OnboardingProfileViewController: UIImagePickerControllerDelegate {
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)
     
-        let image = info[UIImagePickerControllerEditedImage] as! UIImage
+        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
         let fixedImage = image.fixedOrientation()
         avatarImageView.image = fixedImage
         viewModel.updateAvatar(fixedImage).start()

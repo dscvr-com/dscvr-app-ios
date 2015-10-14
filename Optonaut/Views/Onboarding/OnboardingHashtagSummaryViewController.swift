@@ -8,6 +8,7 @@
 
 import Foundation
 import Mixpanel
+import ReactiveCocoa
 
 class OnboardingHashtagSummaryViewController: UIViewController {
     
@@ -17,6 +18,8 @@ class OnboardingHashtagSummaryViewController: UIViewController {
     private let todoSelectedHashtagsView = UILabel()
     private let iconTextView = UILabel()
     private let nextButtonView = ActionButton()
+    
+    private let viewModel = OnboardingHashtagSummaryViewModel()
     
     required init(todoSelectedHashtags: String) {
         todoSelectedHashtagsView.text = todoSelectedHashtags
@@ -62,6 +65,7 @@ class OnboardingHashtagSummaryViewController: UIViewController {
         iconTextView.textColor = .whiteColor()
         view.addSubview(iconTextView)
         
+        nextButtonView.rac_loading <~ viewModel.loading
         nextButtonView.setTitle("Open feed", forState: .Normal)
         nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showFeed"))
         view.addSubview(nextButtonView)
@@ -96,11 +100,9 @@ class OnboardingHashtagSummaryViewController: UIViewController {
     }
     
     func showFeed() {
-        ApiService<EmptyResponse>.put("persons/me", parameters: ["onboarding_version": OnboardingVersion])
-            .startWithCompleted {
-                self.presentViewController(TabBarViewController(), animated: false, completion: nil)
-                SessionService.sessionData?.onboardingVersion = OnboardingVersion
-            }
+        viewModel.updateData().startWithCompleted {
+            self.presentViewController(TabBarViewController(), animated: false, completion: nil)
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
