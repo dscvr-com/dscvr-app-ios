@@ -21,8 +21,6 @@ class ViewerViewController: UIViewController  {
     private let optograph: Optograph
     private let distortion: Distortion
     
-    private var originalBrightness: CGFloat!
-    
     private var leftRenderDelegate: StereoRenderDelegate!
     private var rightRenderDelegate: StereoRenderDelegate!
     private var leftScnView: SCNView!
@@ -98,8 +96,7 @@ class ViewerViewController: UIViewController  {
 
         tabBarController?.tabBar.hidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
-        originalBrightness = UIScreen.mainScreen().brightness
-        UIScreen.mainScreen().brightness = 1
+        ScreenService.sharedInstance.max()
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = true
         
@@ -133,7 +130,7 @@ class ViewerViewController: UIViewController  {
     override func viewWillDisappear(animated: Bool) {
         tabBarController?.tabBar.hidden = false
         navigationController?.setNavigationBarHidden(false, animated: false)
-        UIScreen.mainScreen().brightness = originalBrightness
+        ScreenService.sharedInstance.reset()
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
         
