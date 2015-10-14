@@ -78,7 +78,7 @@ class PipelineService {
             return sequentialStitch(optographs)
         }
         
-        let signal = StitchingService.startStitching()
+        let signal = StitchingService.startStitching(optograph)
         
         signal.observeNext { result in
             switch result {

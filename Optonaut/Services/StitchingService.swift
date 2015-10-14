@@ -34,12 +34,17 @@ class StitchingService {
     private static let storeRef = Stitcher()
     private static var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
     private static var shallCancel = false
+    private static var currentOptograph: UUID?
     
-//    /// Returns the currently running stitching process, or
-//    /// nil, if the stitching service is idle.
-//    static func getStitchingSignal() -> StitchingSignal? {
-//        return activeSignal
-//    }
+    /// Returns the currently running stitching process, or
+    /// nil, if the stitching service is idle.
+    static func getStitchingSignal() -> StitchingSignal? {
+        return activeSignal
+    }
+    
+    static func getCurrentOptographId() -> UUID? {
+        return currentOptograph
+    }
     
     static func isStitching() -> Bool {
         return activeSignal != nil
@@ -54,13 +59,16 @@ class StitchingService {
     }
     
     /// This function starts a new stitching process.
-    static func startStitching() -> StitchingSignal {
+    static func startStitching(optograph: Optograph) -> StitchingSignal {
         if isStitching() {
+            assert(optograph.id == currentOptograph)
             return activeSignal!
         }
         
         assert(!isStitching())
         assert(hasUnstitchedRecordings())
+        
+        currentOptograph = optograph.id
         
         shallCancel = false
         
@@ -115,6 +123,7 @@ class StitchingService {
                 unregisterBackgroundTask()
                 activeSignal = nil
                 activeSink = nil
+                currentOptograph = nil
             }
             
             sendCompleted(sink)
