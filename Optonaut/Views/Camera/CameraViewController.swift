@@ -21,7 +21,6 @@ class CameraViewController: UIViewController {
     private let viewModel = CameraViewModel()
     
     private let motionManager = CMMotionManager()
-    private var originalBrightness: CGFloat!
     
     // camera
     private let session = AVCaptureSession()
@@ -217,8 +216,6 @@ class CameraViewController: UIViewController {
         
         frameCount = 0
         
-        originalBrightness = UIScreen.mainScreen().brightness
-        UIScreen.mainScreen().brightness = 1
         UIApplication.sharedApplication().idleTimerDisabled = true
         
         motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
@@ -239,7 +236,6 @@ class CameraViewController: UIViewController {
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
         UIApplication.sharedApplication().idleTimerDisabled = false
-        UIScreen.mainScreen().brightness = originalBrightness
     }
     
     override func updateViewConstraints() {
@@ -348,7 +344,9 @@ class CameraViewController: UIViewController {
     private func setupCamera() {
         authorizeCamera()
         
-        session.sessionPreset = AVCaptureSessionPresetHigh
+        //session.sessionPreset = AVCaptureSessionPresetHigh
+        session.sessionPreset = AVCaptureSessionPreset1280x720
+        
         
         videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice!) else {
@@ -362,13 +360,20 @@ class CameraViewController: UIViewController {
         }
         
         let videoDeviceOutput = AVCaptureVideoDataOutput()
-        videoDeviceOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
+        videoDeviceOutput.videoSettings = [
+            kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
+        
         videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
+        
         videoDeviceOutput.setSampleBufferDelegate(self, queue: sessionQueue)
         
         if session.canAddOutput(videoDeviceOutput) {
             session.addOutput(videoDeviceOutput)
         }
+        
+        let conn = videoDeviceOutput.connectionWithMediaType(AVMediaTypeVideo)
+        conn.videoOrientation = AVCaptureVideoOrientation.Portrait
+        
         
         session.commitConfiguration()
         
@@ -380,11 +385,19 @@ class CameraViewController: UIViewController {
         videoDevice!.focusMode = mode
         videoDevice!.unlockForConfiguration()
     }
+    private func setExposureMode(mode: AVCaptureExposureMode) {
+        try! videoDevice!.lockForConfiguration()
+        videoDevice!.exposureMode = mode
+        videoDevice!.unlockForConfiguration()
+    }
     
     private func lockExposure() {
-        try! videoDevice!.lockForConfiguration()
-        videoDevice!.exposureMode = .Locked
-        videoDevice!.unlockForConfiguration()
+        setExposureMode(.Locked)
+    }
+    
+    private func unLockExposure() {
+        setExposureMode(.ContinuousAutoExposure)
+
     }
     
     private func authorizeCamera() {
@@ -459,6 +472,10 @@ class CameraViewController: UIViewController {
     }
     
     private func stopSession() {
+        
+        unLockExposure()
+        setFocusMode(.ContinuousAutoFocus)
+        
         session.stopRunning()
         videoDevice = nil
         
