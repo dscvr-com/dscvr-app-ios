@@ -19,7 +19,7 @@ class CameraViewModel {
     let distXY = MutableProperty<Float>(0)
     
     init() {
-        isRecording.producer.startWithNext { isRecording in
+        isRecording.producer.startWithNext { [unowned self] isRecording in
             if isRecording {
                 self.instruction.value = "Follow the red dot"
             } else {
@@ -27,9 +27,13 @@ class CameraViewModel {
             }
         }
         
-        distXY.producer.startWithNext { dist in
+        distXY.producer.startWithNext { [unowned self] dist in
             self.isCentered.value = dist < 0.11
         }
     }
-    
+
+    deinit {
+        logRetain()
+    }
+
 }

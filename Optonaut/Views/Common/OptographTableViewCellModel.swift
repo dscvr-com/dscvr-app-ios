@@ -24,7 +24,7 @@ class OptographTableViewCellModel {
         
         if !optograph.isStitched && StitchingService.hasUnstitchedRecordings() {
             stitchingProgress = MutableProperty(0)
-            let stitchingSignal = StitchingService.startStitching(optograph)
+            let stitchingSignal = PipelineService.statusSignalForOptograph(optograph.id)!
             
             stitchingSignal.observeCompleted {
                 self.optograph.isStitched = true
@@ -32,7 +32,7 @@ class OptographTableViewCellModel {
             
             stitchingProgress <~ stitchingSignal
                 .map { result -> Float? in
-                    if case .Progress(let progress) = result {
+                    if case .Stitching(let progress) = result {
                         return progress
                     } else {
                         return nil

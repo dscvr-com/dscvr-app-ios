@@ -41,15 +41,17 @@ extension OptographOptions {
             }))
         }
         
-        actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
-            if let url = NSURL(string: "http://opto.space/\(optograph.id)") {
-                let textToShare = "Check out awesome this Optograph of \(optograph.person.displayName) on \(url)"
-                let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
-                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
-                
-                self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
-            }
-        }))
+        if optograph.isPublished {
+            actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
+                if let url = NSURL(string: "http://opto.space/\(optograph.id)") {
+                    let textToShare = "Check out this awesome Optograph of \(optograph.person.displayName) on \(url)"
+                    let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
+                    activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
+                    
+                    self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
+                }
+            }))
+        }
         
         actionAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
         

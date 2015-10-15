@@ -150,12 +150,16 @@ class CameraViewController: UIViewController {
         
         viewModel.isRecording.producer
             .map { $0 ? .Locked : .ContinuousAutoFocus }
+<<<<<<< HEAD
             .startWithNext { [unowned self] val in self.setFocusMode(val) }
         
         viewModel.isRecording.producer
             .filter(identity)
             .take(1)
             .startWithCompleted { [unowned self] in self.lockWhiteBalance() }
+=======
+            .startWithNext { [weak self] val in self?.setFocusMode(val) }
+>>>>>>> dev
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -173,9 +177,7 @@ class CameraViewController: UIViewController {
         
         for a in points {
             for b in points {
-                
                 if recorder.areAdjacent(a, and: b) {
-                    
                     let edge = Edge(a, b)
                     
                     let vec = GLKVector3Make(0, 0, -1)
@@ -183,8 +185,6 @@ class CameraViewController: UIViewController {
                     let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
                     
                     let edgeNode = createLineNode(posA, posB: posB)
-                    
-                    
                     
                     edges[edge] = edgeNode
                     
@@ -335,8 +335,6 @@ class CameraViewController: UIViewController {
             newSpeed = GLKVector3Add(newSpeed, ballSpeed)
             ballSpeed = newSpeed;
             ballNode.position = SCNVector3FromGLKVector3(GLKVector3Add(ball, ballSpeed))
-            
-            //print("New Ball Position: {\(ballNode.position.x), \(ballNode.position.y), \(ballNode.position.z)}");
         }
         
     }
@@ -399,6 +397,7 @@ class CameraViewController: UIViewController {
         videoDevice!.unlockForConfiguration()
     }
     
+<<<<<<< HEAD
     private func lockWhiteBalance() {
         try! videoDevice!.lockForConfiguration()
         videoDevice!.whiteBalanceMode = .Locked
@@ -412,6 +411,8 @@ class CameraViewController: UIViewController {
 
     }
     
+=======
+>>>>>>> dev
     private func authorizeCamera() {
         AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: { granted in
             if !granted {
@@ -510,7 +511,10 @@ class CameraViewController: UIViewController {
     
     private func stopSession() {
         
+<<<<<<< HEAD
         unlockWhiteBalance()
+=======
+>>>>>>> dev
         setFocusMode(.ContinuousAutoFocus)
         
         session.stopRunning()

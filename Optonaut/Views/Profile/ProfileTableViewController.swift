@@ -53,8 +53,18 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         viewModel.results.producer
             .on(
                 next: { results in
-                    self.items = results
-                    self.tableView.reloadData()
+                    self.items = results.optographs
+                    self.tableView.beginUpdates()
+                    if !results.delete.isEmpty {
+                        self.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    }
+                    if !results.update.isEmpty {
+                        self.tableView.reloadRowsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    }
+                    if !results.insert.isEmpty {
+                        self.tableView.insertRowsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    }
+                    self.tableView.endUpdates()
                     self.refreshControl.endRefreshing()
                 },
                 error: { _ in

@@ -12,28 +12,23 @@ protocol RotationMatrixSource {
 }
 
 class ViewerViewController: UIViewController  {
-
-    enum Distortion {
-        case None, VROne, Barrell
-    }
     
     private let orientation: UIInterfaceOrientation
     private let optograph: Optograph
-    private let distortion: Distortion
     
     private var leftRenderDelegate: StereoRenderDelegate!
     private var rightRenderDelegate: StereoRenderDelegate!
     private var leftScnView: SCNView!
     private var rightScnView: SCNView!
+    private let separatorLayer = CALayer()
     
     private var rotationDisposable: Disposable?
     private var leftDownloadDisposable: Disposable?
     private var rightDownloadDisposable: Disposable?
     
-    required init(orientation: UIInterfaceOrientation, optograph: Optograph, distortion: Distortion) {
+    required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
         self.orientation = orientation
         self.optograph = optograph
-        self.distortion = distortion
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -75,18 +70,21 @@ class ViewerViewController: UIViewController  {
         rightScnView.scene = rightRenderDelegate.scene
         rightScnView.delegate = rightRenderDelegate
         
-        switch distortion {
-        case .Barrell:
+        switch SessionService.sessionData!.vrGlasses {
+        case .GoogleCardboard:
             leftScnView.technique = createDistortionTechnique("barrell_displacement")
             rightScnView.technique = createDistortionTechnique("barrell_displacement")
         case .VROne:
             leftScnView.technique = createDistortionTechnique("zeiss_displacement_left")
             rightScnView.technique = createDistortionTechnique("zeiss_displacement_right")
-        default: break
         }
         
         view.addSubview(rightScnView)
         view.addSubview(leftScnView)
+        
+        separatorLayer.backgroundColor = UIColor.whiteColor().CGColor
+        separatorLayer.frame = CGRect(x: 0, y: view.frame.height / 2 - 2, width: view.frame.width, height: 4)
+        view.layer.addSublayer(separatorLayer)
     }
     
     override func viewDidAppear(animated: Bool) {

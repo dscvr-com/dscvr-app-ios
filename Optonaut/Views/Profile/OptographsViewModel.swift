@@ -12,7 +12,7 @@ import SQLite
 
 class OptographsViewModel {
     
-    let results = MutableProperty<[Optograph]>([])
+    let results = MutableProperty<TableViewResults>(.empty)
     
     let refreshNotification = NotificationSignal()
     let loadMoreNotification = NotificationSignal()
@@ -28,7 +28,6 @@ class OptographsViewModel {
             .filter(PersonTable[PersonSchema.id] == personId)
         
         refreshNotification.signal
-            .mapError { _ in DatabaseQueryError.Nil }
             .flatMap(.Latest) { _ in
                 DatabaseService.query(.Many, query: query)
                     .observeOn(QueueScheduler(queue: queue))
@@ -42,21 +41,18 @@ class OptographsViewModel {
                         
                         return optograph
                     }
+                    .ignoreError()
                     .collect()
-                    .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
                     .startOn(QueueScheduler(queue: queue))
             }
             .observeOn(UIScheduler())
-            .observeNext { optographs in
-                self.results.value = optographs
-                // needed since Optograph could have been deleted in the meantime
-//                self.results.value = self.results.value.filter { !$0.deleted }
-            }
+            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .observeNext { self.results.value = $0 }
         
         refreshNotification.signal
             .mapError { _ in ApiError.Nil }
             .flatMap(.Latest) { _ in
-               ApiService<Optograph>.get("persons/\(personId)/optographs")
+                ApiService<Optograph>.get("persons/\(personId)/optographs")
                     .observeOn(QueueScheduler(queue: queue))
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
@@ -64,17 +60,15 @@ class OptographsViewModel {
                         try! optograph.person.insertOrUpdate()
                     })
                     .collect()
-                    .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
                     .startOn(QueueScheduler(queue: queue))
             }
             .observeOn(UIScheduler())
-            .observeNext { optographs in
-                self.results.value = optographs
-            }
+            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .observeNext { self.results.value = $0 }
         
         loadMoreNotification.signal
             .mapError { _ in ApiError.Nil }
-            .map { _ in self.results.value.last }
+            .map { _ in self.results.value.optographs.last }
             .ignoreNil()
             .flatMap(.Latest) { oldestResult in
                 ApiService<Optograph>.get("persons/\(personId)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
@@ -85,13 +79,11 @@ class OptographsViewModel {
                         try! optograph.person.insertOrUpdate()
                     })
                     .collect()
-                    .map { self.results.value.orderedMerge($0, withOrder: .OrderedDescending) }
                     .startOn(QueueScheduler(queue: queue))
             }
             .observeOn(UIScheduler())
-            .observeNext { optographs in
-                self.results.value = optographs
-            }
+            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .observeNext { self.results.value = $0 }
     }
     
 }

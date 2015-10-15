@@ -89,6 +89,10 @@ class DetailsViewModel {
             try! comment.person.insertOrUpdate()
         }
     }
+
+    deinit {
+        logRetain()
+    }
     
     func toggleLike() {
         let starredBefore = isStarred.value
