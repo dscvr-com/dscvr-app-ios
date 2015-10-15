@@ -58,6 +58,9 @@ class OnboardingAccountViewController: UIViewController, UINavigationControllerD
         emailInputView.color = .Light
         emailInputView.placeholder = "Email address"
         emailInputView.returnKeyType = .Next
+        emailInputView.autocorrectionType = .No
+        emailInputView.autocapitalizationType = .None
+        emailInputView.keyboardType = .EmailAddress
         emailInputView.delegate = self
         emailInputView.rac_status <~ viewModel.emailStatus
         emailInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.email.value = $0 as! String }
