@@ -7,6 +7,7 @@
 //
 
 import ObjectMapper
+import ReactiveCocoa
 
 struct Person: Model {
     var id: UUID
@@ -35,6 +36,10 @@ struct Person: Model {
             wantsNewsletter: false,
             avatarAssetId: uuid()
         )
+    }
+    
+    func report() -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.post("persons/\(id)/report")
     }
 }
 

@@ -131,7 +131,7 @@ struct Optograph: Model {
             })
     }
     
-    mutating func report() -> SignalProducer<EmptyResponse, ApiError> {
+    func report() -> SignalProducer<EmptyResponse, ApiError> {
         return ApiService<EmptyResponse>.post("optographs/\(id)/report")
     }
 }

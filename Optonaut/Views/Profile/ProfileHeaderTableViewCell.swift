@@ -14,6 +14,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     weak var navigationController: NavigationController?
     
     var viewModel: ProfileViewModel!
+    var isMe: Bool!
     
     // subviews
     private let avatarBackgroundImageView = PlaceholderImageView()
@@ -143,8 +144,8 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         textView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
         
         followButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
-        followButtonView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
-        followButtonView.autoSetDimensionsToSize(CGSize(width: 110, height: 31))
+        followButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: settingsButtonView, withOffset: -3)
+        followButtonView.autoSetDimensionsToSize(CGSize(width: 80, height: 31))
         
         settingsButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarBackgroundImageView, withOffset: 20)
         settingsButtonView.autoPinEdge(.Right, toEdge: .Right,  ofView: contentView, withOffset: -19)
@@ -177,7 +178,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     func bindViewModel(personId: UUID) {
         viewModel = ProfileViewModel(id: personId)
         
-        let isMe = SessionService.sessionData!.id == personId
+        isMe = SessionService.sessionData!.id == personId
         
         avatarBackgroundImageView.rac_url <~ viewModel.avatarImageUrl
         
@@ -191,8 +192,6 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         
         followButtonView.rac_title <~ viewModel.isFollowed.producer.map { $0 ? "Unfollow" : "Follow" }
         followButtonView.hidden = isMe
-        
-        settingsButtonView.hidden = !isMe
         
         editProfileButtonView.hidden = !isMe
         
@@ -212,20 +211,31 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     func showSettingsActions() {
         let settingsSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         
-        settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
-            SessionService.logout()
-        }))
-        
-        settingsSheet.addAction(UIAlertAction(title: "VR Glasses", style: .Default, handler: { _ in
-            let vrGlassesAlert = UIAlertController(title: "Choose your VR glasses", message: "Please select which VR glasses you are using", preferredStyle: .Alert)
-            vrGlassesAlert.addAction(UIAlertAction(title: "Google Cardboard", style: .Default, handler: { _ in
-                SessionService.sessionData!.vrGlasses = .GoogleCardboard
+        if isMe! {
+            settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
+                SessionService.logout()
             }))
-            vrGlassesAlert.addAction(UIAlertAction(title: "Zeiss VROne", style: .Default, handler: { _ in
-                SessionService.sessionData!.vrGlasses = .VROne
+            
+            settingsSheet.addAction(UIAlertAction(title: "VR Glasses", style: .Default, handler: { _ in
+                let vrGlassesAlert = UIAlertController(title: "Choose your VR glasses", message: "Please select which VR glasses you are using", preferredStyle: .Alert)
+                vrGlassesAlert.addAction(UIAlertAction(title: "Google Cardboard", style: .Default, handler: { _ in
+                    SessionService.sessionData!.vrGlasses = .GoogleCardboard
+                }))
+                vrGlassesAlert.addAction(UIAlertAction(title: "Zeiss VROne", style: .Default, handler: { _ in
+                    SessionService.sessionData!.vrGlasses = .VROne
+                }))
+                self.navigationController?.presentViewController(vrGlassesAlert, animated: true, completion: nil)
             }))
-            self.navigationController?.presentViewController(vrGlassesAlert, animated: true, completion: nil)
-        }))
+        } else {
+            settingsSheet.addAction(UIAlertAction(title: "Report user", style: .Destructive, handler: { _ in
+                let confirmAlert = UIAlertController(title: "Are you sure?", message: "This action will message one of the moderators.", preferredStyle: .Alert)
+                confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+                confirmAlert.addAction(UIAlertAction(title: "Report", style: .Destructive, handler: { _ in
+                    self.viewModel.person.report().start()
+                }))
+                self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
+            }))
+        }
         
         settingsSheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
         
