@@ -58,7 +58,7 @@ class CreateOptographViewModel {
                         })
                         .ignoreError()
                 } else {
-                    return SignalProducer(value: LocationMappable(text: "\(lat), \(lon)", country: ""))
+                    return SignalProducer(value: LocationMappable(text: "\(lat.roundToPlaces(1)), \(lon.roundToPlaces(1))", country: ""))
                 }
             }
             .observeNext { location in

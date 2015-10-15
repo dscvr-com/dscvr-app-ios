@@ -20,7 +20,7 @@
 		8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */; settings = {ASSET_TAGS = (); }; };
 		8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */; settings = {ASSET_TAGS = (); }; };
 		8F1E71801BCC188B00F3D6FB /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */; settings = {ASSET_TAGS = (); }; };
-		8F2214C31B976E6100E693CE /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* StringExtension.swift */; };
+		8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* FoundationExtension.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */; settings = {ASSET_TAGS = (); }; };
@@ -122,6 +122,7 @@
 		8FBDE25F1BA2E187008E66FC /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F900B561B8479250085566C /* Fabric.framework */; };
 		8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FBDE8B11B5D186800C78486 /* Device.framework */; };
 		8FC7E3621BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC7E3611BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift */; settings = {ASSET_TAGS = (); }; };
+		8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC7E3631BCF158200E97CC3 /* ScreenService.swift */; settings = {ASSET_TAGS = (); }; };
 		8FC9EC3C1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */; };
 		8FCA92E21BC7180B004913E5 /* OptographOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCA92E11BC7180B004913E5 /* OptographOptions.swift */; settings = {ASSET_TAGS = (); }; };
 		8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCADEDF1BAB1A080018674B /* OnboardingInfoViewController.swift */; settings = {ASSET_TAGS = (); }; };
@@ -197,7 +198,7 @@
 		8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
 		8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RACExtensions.swift; sourceTree = "<group>"; };
 		8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
-		8F2214C21B976E6100E693CE /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
+		8F2214C21B976E6100E693CE /* FoundationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtension.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewController.swift; sourceTree = "<group>"; };
@@ -301,6 +302,7 @@
 		8FBC86A31BB7E1AD00539D4E /* OnboardingVRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingVRViewController.swift; sourceTree = "<group>"; };
 		8FBDE8B11B5D186800C78486 /* Device.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Device.framework; path = Carthage/Build/iOS/Device.framework; sourceTree = "<group>"; };
 		8FC7E3611BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSummaryViewModel.swift; sourceTree = "<group>"; };
+		8FC7E3631BCF158200E97CC3 /* ScreenService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenService.swift; sourceTree = "<group>"; };
 		8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KMPlaceholderTextView.framework; path = Carthage/Build/iOS/KMPlaceholderTextView.framework; sourceTree = "<group>"; };
 		8FCA92E11BC7180B004913E5 /* OptographOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographOptions.swift; sourceTree = "<group>"; };
 		8FCADEDF1BAB1A080018674B /* OnboardingInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingInfoViewController.swift; sourceTree = "<group>"; };
@@ -683,12 +685,12 @@
 		8FAB9F7C1B8F032000B4C8CB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				8F2214C21B976E6100E693CE /* FoundationExtension.swift */,
 				8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */,
 				8FAB9F811B8F041F00B4C8CB /* LoadMoreExtension.swift */,
 				8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */,
 				8F1287E81BA8A9730098ED24 /* NSURLExtensions.swift */,
 				8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */,
-				8F2214C21B976E6100E693CE /* StringExtension.swift */,
 				8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */,
 				8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */,
 				8FAB9F7D1B8F03BE00B4C8CB /* UIKitRACExtensions.swift */,
@@ -709,6 +711,7 @@
 				8F77C5191BC45DE1003B1594 /* StitchingService.swift */,
 				8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */,
 				8F1E0AC31B98251A002E2FB5 /* SessionService.swift */,
+				8FC7E3631BCF158200E97CC3 /* ScreenService.swift */,
 				8F1E0AC51B98304F002E2FB5 /* VersionService.swift */,
 			);
 			name = Services;
@@ -1151,7 +1154,7 @@
 				8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */,
 				8FD845C31BCA5AFA0064048D /* StereoRenderDelegate.swift in Sources */,
 				8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */,
-				8F2214C31B976E6100E693CE /* StringExtension.swift in Sources */,
+				8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */,
 				8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */,
 				8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */,
 				8FAB9F421B8F01DF00B4C8CB /* ViewerViewController.swift in Sources */,
@@ -1177,6 +1180,7 @@
 				8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F900B421B839D0C0085566C /* OptographTable.swift in Sources */,
+				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
 				8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,

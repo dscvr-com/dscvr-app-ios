@@ -373,8 +373,7 @@ class CameraViewController: UIViewController {
         
         let conn = videoDeviceOutput.connectionWithMediaType(AVMediaTypeVideo)
         conn.videoOrientation = AVCaptureVideoOrientation.Portrait
-        
-        
+            
         session.commitConfiguration()
         
         try! videoDevice?.lockForConfiguration()
@@ -459,7 +458,7 @@ class CameraViewController: UIViewController {
                 
                 
                 if exposureDiff != 0 {
-                    var correctedExposureBias = (self.videoDevice?.exposureTargetBias)! + exposureDiff
+                    var correctedExposureBias = (self.videoDevice?.exposureTargetBias)! + (exposureDiff / 2)
                     
                     if let videoDevice = self.videoDevice {
                     

@@ -13,23 +13,33 @@ import ReactiveCocoa
 
 class PipelineService {
     
-    private static let queue = dispatch_queue_create("PipelineQueue", DISPATCH_QUEUE_SERIAL)
+    enum Status {
+        case Stitching(Float)
+        case Publishing(Float)
+    }
+    
+    typealias StatusSignal = Signal<Status, NoError>
+    
+    private static var signals: [UUID: StatusSignal] = [:]
     
     static func check() {
-        Async.customQueue(queue) {
-            sequentialStitch(toStitch())
-            sequentialUpload(toUpload())
+        Async.main {
+            updateOptographs()
         }
     }
     
-    private static func toStitch() -> [Optograph] {
+    static func statusSignalForOptograph(id: UUID) -> StatusSignal? {
+        return signals[id]
+    }
+    
+    private static func updateOptographs() {
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
-            .filter(!OptographTable[OptographSchema.isStitched])
+            .filter(!OptographTable[OptographSchema.isStitched] || !OptographTable[OptographSchema.isPublished])
         
-        return DatabaseService.defaultConnection.prepare(query)
+        let optographs = DatabaseService.defaultConnection.prepare(query)
             .map { row -> Optograph in
                 let person = Person.fromSQL(row)
                 let location = Location.fromSQL(row)
@@ -40,76 +50,71 @@ class PipelineService {
                 
                 return optograph
             }
+            .filter { signals[$0.id] == nil }
+            
+        optographs.forEach { optograph in
+            if !optograph.isStitched {
+                signals[optograph.id] = stitch(optograph)
+            } else {
+                signals[optograph.id] = publish(optograph)
+            }
+        }
+        
+        if optographs.filter({ !$0.isStitched }).isEmpty && StitchingService.hasUnstitchedRecordings() {
+            // This happens when an optograph was recorded, but never
+            // inserted into the DB, for example due to cancel.
+            // So it needs to be removed.
+            StitchingService.removeUnstitchedRecordings()
+        }
     }
     
-    private static func toUpload() -> [Optograph] {
-        let query = OptographTable
-            .select(*)
-            .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
-            .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
-            .filter(OptographTable[OptographSchema.isStitched] && !OptographTable[OptographSchema.isPublished])
+    private static func publish(var optograph: Optograph) -> StatusSignal {
+        let (signal, sink) = StatusSignal.pipe()
         
-        return DatabaseService.defaultConnection.prepare(query)
-            .map { row -> Optograph in
-                let person = Person.fromSQL(row)
-                let location = Location.fromSQL(row)
-                var optograph = Optograph.fromSQL(row)
-                
-                optograph.person = person
-                optograph.location = location
-                
-                return optograph
-            }
+        optograph.publish()
+            .on(
+                started: {
+                    sendNext(sink, .Publishing(0))
+                },
+                completed: {
+                    sendNext(sink, .Publishing(1))
+                    sendCompleted(sink)
+                    signals.removeValueForKey(optograph.id)
+                },
+                error: { _ in
+                    NotificationService.push("Publishing failed...", level: .Warning)
+                }
+            )
+            .start()
+    
+        return signal
     }
     
-    private static func sequentialStitch(var optographs: [Optograph]) {
-        guard var optograph = optographs.popLast() else {
-            if StitchingService.hasUnstitchedRecordings() {
-                // This happens when an optograph was recorded, but never
-                // inserted into the DB, for example due to cancel. 
-                // Remove it. 
-                StitchingService.removeUnstitchedRecordings()
+    private static func stitch(var optograph: Optograph) -> StatusSignal {
+        
+        let (signal, sink) = StatusSignal.pipe()
+        let stitchingSignal = StitchingService.startStitching(optograph)
+        
+        stitchingSignal
+            .observeNext { result in
+                switch result {
+                case .LeftImage(let data): optograph.saveAsset(.LeftImage(data))
+                case .RightImage(let data): optograph.saveAsset(.RightImage(data))
+                case .Progress(let progress): sendNext(sink, .Stitching(min(0.99, progress)))
+                }
             }
-            return
-        }
         
-        if optograph.isStitched {
-            //TODO: Make this method iterative.
-            return sequentialStitch(optographs)
-        }
-        
-        let signal = StitchingService.startStitching(optograph)
-        
-        signal.observeNext { result in
-            switch result {
-            case .LeftImage(let data): optograph.saveAsset(.LeftImage(data))
-            case .RightImage(let data): optograph.saveAsset(.RightImage(data))
-            default: break
-            }
-        }
-        
-        signal
-            .observeOn(UIScheduler())
+        stitchingSignal
             .observeCompleted {
                 optograph.isStitched = true
                 try! optograph.insertOrUpdate()
                 StitchingService.removeUnstitchedRecordings()
+                sendCompleted(sink)
+                signals.removeValueForKey(optograph.id)
                 PipelineService.check()
             }
-    }
-    
-    private static func sequentialUpload(var optographs: [Optograph]) {
-        guard var optograph = optographs.popLast() else {
-            return
-        }
         
-        if optograph.isPublished {
-            return sequentialUpload(optographs)
-        }
-        
-        optograph.publish().startWithCompleted {
-            sequentialUpload(optographs)
-        }
+        return signal
     }
     
 }

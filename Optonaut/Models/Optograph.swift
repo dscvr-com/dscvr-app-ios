@@ -226,6 +226,7 @@ extension Optograph: SQLiteModel {
 extension Optograph: Equatable {}
 
 func ==(lhs: Optograph, rhs: Optograph) -> Bool {
-    return lhs.isStitched == rhs.isStitched &&
-        lhs.starsCount == rhs.starsCount
+    return lhs.isStitched == rhs.isStitched
+        && lhs.starsCount == rhs.starsCount
+        && lhs.isPublished == rhs.isPublished
 }
