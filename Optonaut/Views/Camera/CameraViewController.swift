@@ -150,12 +150,7 @@ class CameraViewController: UIViewController {
         
         viewModel.isRecording.producer
             .map { $0 ? .Locked : .ContinuousAutoFocus }
-            .startWithNext { [unowned self] val in self.setFocusMode(val) }
-        
-        viewModel.isRecording.producer
-            .filter(identity)
-            .take(1)
-            .startWithCompleted { [unowned self] in self.lockExposure() }
+            .startWithNext { [weak self] val in self?.setFocusMode(val) }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -173,9 +168,7 @@ class CameraViewController: UIViewController {
         
         for a in points {
             for b in points {
-                
                 if recorder.areAdjacent(a, and: b) {
-                    
                     let edge = Edge(a, b)
                     
                     let vec = GLKVector3Make(0, 0, -1)
@@ -183,8 +176,6 @@ class CameraViewController: UIViewController {
                     let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
                     
                     let edgeNode = createLineNode(posA, posB: posB)
-                    
-                    
                     
                     edges[edge] = edgeNode
                     
@@ -335,8 +326,6 @@ class CameraViewController: UIViewController {
             newSpeed = GLKVector3Add(newSpeed, ballSpeed)
             ballSpeed = newSpeed;
             ballNode.position = SCNVector3FromGLKVector3(GLKVector3Add(ball, ballSpeed))
-            
-            //print("New Ball Position: {\(ballNode.position.x), \(ballNode.position.y), \(ballNode.position.z)}");
         }
         
     }
@@ -377,7 +366,6 @@ class CameraViewController: UIViewController {
 //        videoDevice?.automaticallyAdjustsVideoHDREnabled = false
 //        videoDevice?.videoHDREnabled = true
         
-        
         session.commitConfiguration()
         
         session.startRunning()
@@ -392,15 +380,6 @@ class CameraViewController: UIViewController {
         try! videoDevice!.lockForConfiguration()
         videoDevice!.exposureMode = mode
         videoDevice!.unlockForConfiguration()
-    }
-    
-    private func lockExposure() {
-        //setExposureMode(.Locked)
-    }
-    
-    private func unLockExposure() {
-        //setExposureMode(.ContinuousAutoExposure)
-
     }
     
     private func authorizeCamera() {
@@ -476,7 +455,6 @@ class CameraViewController: UIViewController {
     
     private func stopSession() {
         
-        unLockExposure()
         setFocusMode(.ContinuousAutoFocus)
         
         session.stopRunning()

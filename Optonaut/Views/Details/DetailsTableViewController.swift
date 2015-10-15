@@ -102,8 +102,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         glassesButtonView.frame = CGRect(x: view.frame.width - 80, y: view.frame.height - 80 - 78 - tabBarController!.tabBar.frame.height, width: 60, height: 60)
         view.addSubview(glassesButtonView)
         
-        print(tabBarController!.tabBar.frame.height)
-        
         tableView.backgroundColor = .clearColor()
         tableView.delegate = self
         tableView.dataSource = self

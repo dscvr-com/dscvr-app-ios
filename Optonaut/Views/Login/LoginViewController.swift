@@ -75,6 +75,7 @@ class LoginViewController: UIViewController {
         submitButtonView.rac_userInteractionEnabled <~ viewModel.allowed
         submitButtonView.rac_alpha <~ viewModel.allowed.producer.map { $0 ? 1 : 0.2 }
         submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "login"))
+        submitButtonView.rac_loading <~ viewModel.pending
         formView.addSubview(submitButtonView)
         
 //        forgotPasswordView.textColor = .whiteColor()

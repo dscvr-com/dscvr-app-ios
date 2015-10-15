@@ -63,6 +63,16 @@ extension SignalType {
     }
 }
 
+public extension SignalType where Value: Equatable {
+    public func equalsTo(value: Value) -> Signal<Bool, Error> {
+        return map({ next in next == value })
+    }
+    
+    public func filter(values: [Value]) -> Signal<Value, Error> {
+        return filter({ value in values.indexOf { $0 == value } != nil })
+    }
+}
+
 extension SignalProducerType {
     public func ignoreError() -> SignalProducer<Value, NoError> {
         return lift { $0.ignoreError() }
@@ -78,5 +88,15 @@ extension SignalProducerType {
     
     public func nextAsCompleted() -> SignalProducer<Void, Error> {
         return lift { $0.nextAsCompleted() }
+    }
+}
+
+public extension SignalProducerType where Value: Equatable {
+    public func equalsTo(value: Value) -> SignalProducer<Bool, Error> {
+        return lift { $0.equalsTo(value) }
+    }
+    
+    public func filter(values: [Value]) -> SignalProducer<Value, Error> {
+        return lift { $0.filter(values) }
     }
 }

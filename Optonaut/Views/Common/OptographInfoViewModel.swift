@@ -10,6 +10,10 @@ import ReactiveCocoa
 
 class OptographInfoViewModel {
     
+    enum Status: Equatable {
+        case Published, Publishing, Stitching, Offline
+    }
+    
     let displayName: ConstantProperty<String>
     let avatarImageUrl: ConstantProperty<String>
     let locationText: ConstantProperty<String>
@@ -17,9 +21,11 @@ class OptographInfoViewModel {
     let isStarred = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
-    let isPublishing: MutableProperty<Bool>
+    let status: MutableProperty<Status>
     
     var optograph: Optograph
+    
+    private var signalDisposable: Disposable?
     
     init(optograph: Optograph) {
         self.optograph = optograph
@@ -31,14 +37,22 @@ class OptographInfoViewModel {
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
         timeSinceCreated.value = optograph.createdAt.longDescription
-        isPublishing = MutableProperty(!optograph.isPublished)
         
-        if !optograph.isPublished {
-            PipelineService.statusSignalForOptograph(optograph.id)?
-                .observeCompleted {
-                    self.isPublishing.value = false
-                }
+        if !optograph.isStitched {
+            status = MutableProperty(.Stitching)
+            updateStatus()
+        } else if optograph.isPublished {
+            status = MutableProperty(.Published)
+        } else if Reachability.connectedToNetwork() {
+            status = MutableProperty(.Publishing)
+            updateStatus()
+        } else {
+            status = MutableProperty(.Offline)
         }
+    }
+
+    deinit {
+        logRetain()
     }
     
     func toggleLike() {
@@ -63,6 +77,29 @@ class OptographInfoViewModel {
                 completed: updateModel
             )
             .start()
+    }
+    
+    func retryPublish() {
+        PipelineService.check()
+        status.value = .Publishing
+        updateStatus()
+    }
+    
+    private func updateStatus() {
+        if let signal = PipelineService.statusSignalForOptograph(optograph.id) {
+            signalDisposable?.dispose()
+            signalDisposable = signal
+                .skipRepeats()
+                .filter([.StitchingFinished, .PublishingFinished])
+                .observeNext { [weak self] status in
+                    switch status {
+                    case .StitchingFinished: self?.status.value = Reachability.connectedToNetwork() ? .Publishing : .Offline
+                    case .PublishingFinished: self?.status.value = .Published
+                    default: break
+                    }
+                print("pub")
+                }
+        }
     }
     
     private func updateModel() {

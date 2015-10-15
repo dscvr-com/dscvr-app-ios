@@ -104,6 +104,7 @@ class FeedViewModel: NSObject {
             .observeNext { self.results.value = $0 }
     
         refreshNotification.signal
+            .takeWhile { _ in Reachability.connectedToNetwork() }
             .flatMap(.Latest) { _ in
                 ApiService<Optograph>.get("optographs/feed")
                     .observeOn(QueueScheduler(queue: queue))

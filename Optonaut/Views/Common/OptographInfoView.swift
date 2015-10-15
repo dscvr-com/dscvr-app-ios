@@ -27,6 +27,7 @@ class OptographInfoView: UIView {
     private let starsCountView = UILabel()
     private let optionsButtonView = UIButton()
     private let publishingView = UIActivityIndicatorView()
+    private let retryButtonView = UIButton()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
@@ -64,6 +65,11 @@ class OptographInfoView: UIView {
         
         starsCountView.font = UIFont.displayOfSize(14, withType: .Thin)
         starsCountView.textColor = .whiteColor()
+        
+        retryButtonView.titleLabel?.font = UIFont.iconOfSize(23.5)
+        retryButtonView.setTitle(String.iconWithName(.Redo), forState: .Normal)
+        retryButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "retryPublish"))
+        addSubview(retryButtonView)
         
         addSubview(publishingView)
 
@@ -105,6 +111,9 @@ class OptographInfoView: UIView {
         starsCountView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
         starsCountView.autoPinEdge(.Right, toEdge: .Left, ofView: starButtonView, withOffset: -10)
         
+        retryButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
+        retryButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -23.5)
+        
         publishingView.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -23.5)
         publishingView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
         
@@ -122,11 +131,32 @@ class OptographInfoView: UIView {
         locationCountryView.rac_text <~ viewModel.locationCountry
         dateView.rac_text <~ viewModel.timeSinceCreated
         starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? .Accent : .Grey }
-        starButtonView.rac_hidden <~ viewModel.isPublishing
         starsCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
-        starsCountView.rac_hidden <~ viewModel.isPublishing
-        publishingView.rac_animating <~ viewModel.isPublishing
-        publishingView.rac_hidden <~ viewModel.isPublishing.producer.map(negate)
+        
+        viewModel.status.producer
+            .skipRepeats()
+            .startWithNext { [unowned self] status in
+                switch status {
+                case .Published:
+                    self.starButtonView.hidden = false
+                    self.starsCountView.hidden = false
+                    self.retryButtonView.hidden = true
+                    self.publishingView.hidden = true
+                    self.publishingView.stopAnimating()
+                case .Publishing, .Stitching:
+                    self.starButtonView.hidden = true
+                    self.starsCountView.hidden = true
+                    self.retryButtonView.hidden = true
+                    self.publishingView.hidden = false
+                    self.publishingView.startAnimating()
+                case .Offline:
+                    self.starButtonView.hidden = true
+                    self.starsCountView.hidden = true
+                    self.retryButtonView.hidden = false
+                    self.publishingView.hidden = true
+                    self.publishingView.stopAnimating()
+                }
+            }
     }
     
     func pushProfile() {
@@ -135,6 +165,15 @@ class OptographInfoView: UIView {
     
     func toggleStar() {
         viewModel.toggleLike()
+    }
+    
+    func retryPublish() {
+        if !Reachability.connectedToNetwork() {
+            NotificationService.push("No internet connection", level: .Warning)
+            return
+        }
+        
+        viewModel.retryPublish()
     }
     
 }

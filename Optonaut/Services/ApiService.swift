@@ -119,6 +119,11 @@ class ApiService<T: Mappable> {
     
     private static func request(endpoint: String, method: Alamofire.Method, queries: [String: String]? = nil, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return SignalProducer { sink, disposable in
+            if !Reachability.connectedToNetwork() {
+                sendError(sink, ApiError(endpoint: endpoint, timeout: false, status: nil, message: "Offline", error: nil))
+                return
+            }
+            
             let mutableURLRequest = buildURLRequest(endpoint, method: method, queries: queries)
             
             if let parameters = parameters {
@@ -137,7 +142,7 @@ class ApiService<T: Mappable> {
                         
                         do {
                             let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
-                            print(json)
+//                            print(json)
                         } catch {}
                         
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode, message: error.description, error: error)
@@ -172,7 +177,7 @@ class ApiService<T: Mappable> {
             }
         }
             .on(error: { error in
-                print(error)
+//                print(error)
                 if error.suspicious {
                     NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])

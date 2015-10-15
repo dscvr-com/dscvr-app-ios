@@ -10,12 +10,24 @@ import Foundation
 import SQLite
 import Async
 import ReactiveCocoa
+    
+func ==(lhs: PipelineService.Status, rhs: PipelineService.Status) -> Bool {
+    switch (lhs, rhs) {
+    case let (.Stitching(lhs), .Stitching(rhs)): return lhs == rhs
+    case let (.Publishing(lhs), .Publishing(rhs)): return lhs == rhs
+    case (.StitchingFinished, .StitchingFinished): return true
+    case (.PublishingFinished, .PublishingFinished): return true
+    default: return false
+    }
+}
 
 class PipelineService {
     
-    enum Status {
+    enum Status: Equatable {
         case Stitching(Float)
+        case StitchingFinished
         case Publishing(Float)
+        case PublishingFinished
     }
     
     typealias StatusSignal = Signal<Status, NoError>
@@ -55,7 +67,7 @@ class PipelineService {
         optographs.forEach { optograph in
             if !optograph.isStitched {
                 signals[optograph.id] = stitch(optograph)
-            } else {
+            } else if Reachability.connectedToNetwork() {
                 signals[optograph.id] = publish(optograph)
             }
         }
@@ -78,11 +90,15 @@ class PipelineService {
                 },
                 completed: {
                     sendNext(sink, .Publishing(1))
-                    sendCompleted(sink)
                     signals.removeValueForKey(optograph.id)
+                    sendNext(sink, .PublishingFinished)
+                    sendCompleted(sink)
                 },
                 error: { _ in
                     NotificationService.push("Publishing failed...", level: .Warning)
+                    signals.removeValueForKey(optograph.id)
+                    sendNext(sink, .PublishingFinished)
+                    sendCompleted(sink)
                 }
             )
             .start()
@@ -109,8 +125,9 @@ class PipelineService {
                 optograph.isStitched = true
                 try! optograph.insertOrUpdate()
                 StitchingService.removeUnstitchedRecordings()
-                sendCompleted(sink)
                 signals.removeValueForKey(optograph.id)
+                sendNext(sink, .StitchingFinished)
+                sendCompleted(sink)
                 PipelineService.check()
             }
         
