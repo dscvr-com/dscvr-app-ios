@@ -210,15 +210,26 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     }
     
     func showSettingsActions() {
-        let settingsAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        let settingsSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         
-        settingsAlert.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
+        settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
             SessionService.logout()
         }))
         
-        settingsAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        settingsSheet.addAction(UIAlertAction(title: "VR Glasses", style: .Default, handler: { _ in
+            let vrGlassesAlert = UIAlertController(title: "Choose your VR glasses", message: "Please select which VR glasses you are using", preferredStyle: .Alert)
+            vrGlassesAlert.addAction(UIAlertAction(title: "Google Cardboard", style: .Default, handler: { _ in
+                SessionService.sessionData!.vrGlasses = .GoogleCardboard
+            }))
+            vrGlassesAlert.addAction(UIAlertAction(title: "Zeiss VROne", style: .Default, handler: { _ in
+                SessionService.sessionData!.vrGlasses = .VROne
+            }))
+            self.navigationController?.presentViewController(vrGlassesAlert, animated: true, completion: nil)
+        }))
         
-        navigationController?.presentViewController(settingsAlert, animated: true, completion: nil)
+        settingsSheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        
+        navigationController?.presentViewController(settingsSheet, animated: true, completion: nil)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

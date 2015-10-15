@@ -204,7 +204,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
-        navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph, distortion: .VROne), animated: false)
+        navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph), animated: false)
         viewModel.increaseViewsCount()
     }
     

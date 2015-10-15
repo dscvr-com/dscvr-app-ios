@@ -97,7 +97,6 @@ class OptographInfoViewModel {
                     case .PublishingFinished: self?.status.value = .Published
                     default: break
                     }
-                print("pub")
                 }
         }
     }

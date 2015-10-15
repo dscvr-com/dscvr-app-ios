@@ -16,6 +16,10 @@ enum LoginIdentifier {
     case Email(String)
 }
 
+enum VRGlasses: Int {
+    case GoogleCardboard, VROne
+}
+
 struct SessionData {
     let id: UUID
     var token: String {
@@ -38,6 +42,11 @@ struct SessionData {
             NSUserDefaults.standardUserDefaults().setInteger(onboardingVersion, forKey: "session_person_onboarding_version")
         }
     }
+    var vrGlasses: VRGlasses {
+        willSet {
+            NSUserDefaults.standardUserDefaults().setInteger(vrGlasses.rawValue, forKey: "session_person_vr_glasses")
+        }
+    }
 }
 
 class SessionService {
@@ -50,12 +59,14 @@ class SessionService {
                 NSUserDefaults.standardUserDefaults().setObject(newValue.password, forKey: "session_person_password")
                 NSUserDefaults.standardUserDefaults().setBool(newValue.debuggingEnabled, forKey: "session_person_debugging_enabled")
                 NSUserDefaults.standardUserDefaults().setInteger(newValue.onboardingVersion, forKey: "session_person_onboarding_version")
+                NSUserDefaults.standardUserDefaults().setInteger(newValue.vrGlasses.rawValue, forKey: "session_person_vr_glasses")
             } else {
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_id")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_token")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_password")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_debugging_enabled")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_onboarding_version")
+                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_vr_glasses")
             }
         }
     }
@@ -77,13 +88,15 @@ class SessionService {
         let password = NSUserDefaults.standardUserDefaults().objectForKey("session_person_password") as? String
         let debuggingEnabled = NSUserDefaults.standardUserDefaults().boolForKey("session_person_debugging_enabled")
         let onboardingVersion = NSUserDefaults.standardUserDefaults().integerForKey("session_person_onboarding_version")
+        let vrGlasses = VRGlasses(rawValue: NSUserDefaults.standardUserDefaults().integerForKey("session_person_vr_glasses"))!
         if let id = id, token = token, password = password {
             sessionData = SessionData(
                 id: id,
                 token: token,
                 password: password,
                 debuggingEnabled: debuggingEnabled,
-                onboardingVersion: onboardingVersion
+                onboardingVersion: onboardingVersion,
+                vrGlasses: vrGlasses
             )
             
             PipelineService.check()
@@ -108,7 +121,8 @@ class SessionService {
                     token: loginData.token,
                     password: password,
                     debuggingEnabled: false,
-                    onboardingVersion: loginData.onboardingVersion
+                    onboardingVersion: loginData.onboardingVersion,
+                    vrGlasses: .GoogleCardboard
                 )
             })
             .flatMap(.Latest) { _ in ApiService<Person>.get("persons/me") }
