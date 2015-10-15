@@ -3,7 +3,7 @@ varying vec2 uv;
 
 vec2 distort(vec2 p)
 {
-    vec3 coefficients = vec3(1.0, 0.22, 0.24);
+    vec3 coefficients = vec3(0.6, 0.12, 0.12);
     float rSq = p.y * p.y + p.x * p.x;
     p = p * (coefficients.x + rSq * coefficients.y + rSq * rSq * coefficients.z);
     return 0.5 * (p + 1.0);
