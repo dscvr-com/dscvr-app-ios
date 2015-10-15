@@ -167,6 +167,10 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     assert(pipe != NULL);
     return ConvertSelectionPoint(pipe->PreviousPoint().closestPoint);
 }
+- (double)getLastExposureDiff {
+    assert(pipe != NULL);
+    return pipe->GetLastExposureDiff();
+}
 
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
     assert(pipe != NULL);

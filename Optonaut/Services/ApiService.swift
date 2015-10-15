@@ -137,7 +137,7 @@ class ApiService<T: Mappable> {
                         
                         do {
                             let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
-                            print(json)
+                            //print(json)
                         } catch {}
                         
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode, message: error.description, error: error)
@@ -172,7 +172,7 @@ class ApiService<T: Mappable> {
             }
         }
             .on(error: { error in
-                print(error)
+                //print(error)
                 if error.suspicious {
                     NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])

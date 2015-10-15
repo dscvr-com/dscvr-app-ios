@@ -374,11 +374,15 @@ class CameraViewController: UIViewController {
         let conn = videoDeviceOutput.connectionWithMediaType(AVMediaTypeVideo)
         conn.videoOrientation = AVCaptureVideoOrientation.Portrait
         
-        videoDevice?.videoHDREnabled = true
-        videoDevice?.automaticallyAdjustsVideoHDREnabled = false
-        
         
         session.commitConfiguration()
+        
+        try! videoDevice?.lockForConfiguration()
+        
+        videoDevice?.automaticallyAdjustsVideoHDREnabled = false
+        videoDevice?.videoHDREnabled = false
+        
+        videoDevice?.unlockForConfiguration()
         
         session.startRunning()
     }
@@ -439,6 +443,7 @@ class CameraViewController: UIViewController {
             recorder.push(r, buf)
             
             let errorVec = recorder.getAngularDistanceToBall()
+            let exposureDiff = Float(recorder.getLastExposureDiff())
             
             Async.main {
                 if self.isViewLoaded() {
@@ -450,6 +455,30 @@ class CameraViewController: UIViewController {
                     self.viewModel.progress.value = Float(self.recorder.getRecordedImagesCount()) / Float(self.recorder.getImagesToRecordCount())
                     self.viewModel.tiltAngle.value = Float(errorVec.z)
                     self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
+                }
+                
+                
+                if exposureDiff != 0 {
+                    var correctedExposureBias = (self.videoDevice?.exposureTargetBias)! + exposureDiff
+                    
+                    if let videoDevice = self.videoDevice {
+                    
+                        let minExposureBias = videoDevice.minExposureTargetBias
+                        let maxExposureBias = videoDevice.maxExposureTargetBias
+                        
+                        if correctedExposureBias > maxExposureBias {
+                            correctedExposureBias = maxExposureBias
+                        }
+                        if correctedExposureBias < minExposureBias {
+                            correctedExposureBias = minExposureBias
+                        }
+                        
+                        print("SET Exposure Bias: \(correctedExposureBias)")
+                        
+                        try! videoDevice.lockForConfiguration()
+                        videoDevice.setExposureTargetBias(correctedExposureBias, completionHandler: nil)
+                        videoDevice.unlockForConfiguration()
+                    }
                 }
             }
             
