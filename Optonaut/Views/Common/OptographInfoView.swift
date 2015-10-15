@@ -26,6 +26,7 @@ class OptographInfoView: UIView {
     private let starButtonView = UIButton()
     private let starsCountView = UILabel()
     private let optionsButtonView = UIButton()
+    private let publishingView = UIActivityIndicatorView()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
@@ -63,6 +64,9 @@ class OptographInfoView: UIView {
         
         starsCountView.font = UIFont.displayOfSize(14, withType: .Thin)
         starsCountView.textColor = .whiteColor()
+        
+        addSubview(publishingView)
+
         addSubview(starsCountView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(23.5)
@@ -101,6 +105,9 @@ class OptographInfoView: UIView {
         starsCountView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
         starsCountView.autoPinEdge(.Right, toEdge: .Left, ofView: starButtonView, withOffset: -10)
         
+        publishingView.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -23.5)
+        publishingView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
+        
         optionsButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
         optionsButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: starButtonView, withOffset: -35)
         
@@ -115,7 +122,11 @@ class OptographInfoView: UIView {
         locationCountryView.rac_text <~ viewModel.locationCountry
         dateView.rac_text <~ viewModel.timeSinceCreated
         starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? .Accent : .Grey }
+        starButtonView.rac_hidden <~ viewModel.isPublishing
         starsCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
+        starsCountView.rac_hidden <~ viewModel.isPublishing
+        publishingView.rac_animating <~ viewModel.isPublishing
+        publishingView.rac_hidden <~ viewModel.isPublishing.producer.map(negate)
     }
     
     func pushProfile() {

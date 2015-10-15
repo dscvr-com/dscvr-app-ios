@@ -28,3 +28,10 @@ extension String {
         return NSMakeRange(start, length)
     }
 }
+
+extension Double {
+    func roundToPlaces(places: Int) -> Double {
+        let divisor = pow(10, Double(places))
+        return round(self * divisor) / divisor
+    }
+}

@@ -17,6 +17,7 @@ class OptographInfoViewModel {
     let isStarred = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
+    let isPublishing: MutableProperty<Bool>
     
     var optograph: Optograph
     
@@ -30,6 +31,14 @@ class OptographInfoViewModel {
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
         timeSinceCreated.value = optograph.createdAt.longDescription
+        isPublishing = MutableProperty(!optograph.isPublished)
+        
+        if !optograph.isPublished {
+            PipelineService.statusSignalForOptograph(optograph.id)?
+                .observeCompleted {
+                    self.isPublishing.value = false
+                }
+        }
     }
     
     func toggleLike() {

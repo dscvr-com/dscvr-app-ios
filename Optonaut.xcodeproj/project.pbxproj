@@ -20,7 +20,7 @@
 		8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */; settings = {ASSET_TAGS = (); }; };
 		8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */; settings = {ASSET_TAGS = (); }; };
 		8F1E71801BCC188B00F3D6FB /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */; settings = {ASSET_TAGS = (); }; };
-		8F2214C31B976E6100E693CE /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* StringExtension.swift */; };
+		8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* FoundationExtension.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */; settings = {ASSET_TAGS = (); }; };
@@ -198,7 +198,7 @@
 		8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
 		8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RACExtensions.swift; sourceTree = "<group>"; };
 		8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
-		8F2214C21B976E6100E693CE /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
+		8F2214C21B976E6100E693CE /* FoundationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtension.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewController.swift; sourceTree = "<group>"; };
@@ -685,12 +685,12 @@
 		8FAB9F7C1B8F032000B4C8CB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				8F2214C21B976E6100E693CE /* FoundationExtension.swift */,
 				8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */,
 				8FAB9F811B8F041F00B4C8CB /* LoadMoreExtension.swift */,
 				8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */,
 				8F1287E81BA8A9730098ED24 /* NSURLExtensions.swift */,
 				8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */,
-				8F2214C21B976E6100E693CE /* StringExtension.swift */,
 				8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */,
 				8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */,
 				8FAB9F7D1B8F03BE00B4C8CB /* UIKitRACExtensions.swift */,
@@ -1154,7 +1154,7 @@
 				8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */,
 				8FD845C31BCA5AFA0064048D /* StereoRenderDelegate.swift in Sources */,
 				8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */,
-				8F2214C31B976E6100E693CE /* StringExtension.swift in Sources */,
+				8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */,
 				8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */,
 				8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */,
 				8FAB9F421B8F01DF00B4C8CB /* ViewerViewController.swift in Sources */,

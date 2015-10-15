@@ -374,8 +374,8 @@ class CameraViewController: UIViewController {
         let conn = videoDeviceOutput.connectionWithMediaType(AVMediaTypeVideo)
         conn.videoOrientation = AVCaptureVideoOrientation.Portrait
         
-        videoDevice?.videoHDREnabled = true
-        videoDevice?.automaticallyAdjustsVideoHDREnabled = false
+//        videoDevice?.automaticallyAdjustsVideoHDREnabled = false
+//        videoDevice?.videoHDREnabled = true
         
         
         session.commitConfiguration()

@@ -16,6 +16,8 @@ class ScreenService {
     private var targetBrightness: CGFloat?
     private var fadeTimer: NSTimer?
     
+    private init() {}
+    
     func max() {
         originalBrightness = UIScreen.mainScreen().brightness
         fadeTimer?.invalidate()
