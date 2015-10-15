@@ -41,7 +41,7 @@
 - (GLKMatrix4)getBallPosition;
 - (bool)isFinished;
 - (double)getDistanceToBall;
-- (double)getLastExposureDiff;
+- (double)getExposureBias;
 - (GLKVector3)getAngularDistanceToBall;
 - (uint32_t)getRecordedImagesCount;
 - (uint32_t)getImagesToRecordCount;
