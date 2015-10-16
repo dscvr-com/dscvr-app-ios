@@ -53,6 +53,7 @@ OrientationEKF::OrientationEKF() :
 
 OrientationEKF::~OrientationEKF()
 {
+    
 }
 
 void OrientationEKF::reset()

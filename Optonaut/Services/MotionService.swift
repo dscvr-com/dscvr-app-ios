@@ -33,7 +33,7 @@ class HeadTrackerRotationSource : RotationMatrixSource {
                     rot,
                     GLKMatrix4Multiply(
                         baseInv,
-                        GLKMatrix4Transpose(headTracker.lastHeadView()))),
+                        GLKMatrix4Invert(headTracker.lastHeadView(), nil))),
                 base)
         } else {
             return GLKMatrix4Make(1, 0, 0, 0,
