@@ -78,11 +78,24 @@ extension UIImage {
 }
 
 extension UIEdgeInsets {
-    var inverse : UIEdgeInsets {
+    var inverse: UIEdgeInsets {
         return UIEdgeInsets(top: -top, left: -left, bottom: -bottom, right: -right)
     }
     func apply(rect: CGRect) -> CGRect {
         return UIEdgeInsetsInsetRect(rect, self)
+    }
+}
+
+extension UITableViewCell {
+    var tableView: UITableView? {
+        get {
+            for var view = self.superview; view != nil; view = view!.superview {
+                if view! is UITableView {
+                    return view as? UITableView
+                }
+            }
+            return nil
+        }
     }
 }
 

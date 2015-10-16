@@ -245,22 +245,12 @@ extension DetailsTableViewController: UITableViewDataSource {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("details-cell") as! DetailsTableViewCell
             cell.viewModel = viewModel
             cell.navigationController = navigationController as? NavigationController
-            cell.tapCallback = { [unowned self] comment in
-                let yOffset = max(0, self.view.frame.height - self.tableView.contentSize.height)
-                UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
-                    animations: {
-                        self.tableView.contentOffset = CGPoint(x: 0, y: -yOffset)
-                    },
-                    completion: nil)
-            }
             cell.bindViewModel()
             return cell
         } else if indexPath.row == 1 {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
             cell.bindViewModel(viewModel.optograph.id, commentsCount: viewModel.commentsCount.value)
-            cell.postCallback = { [unowned self] comment in
-                self.viewModel.insertNewComment(comment)
-            }
+            cell.delegate = self
             return cell
         } else {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("comment-cell") as! CommentTableViewCell
@@ -274,6 +264,14 @@ extension DetailsTableViewController: UITableViewDataSource {
         return viewModel.comments.value.count + 2
     }
     
+}
+
+
+// MARK: - NewCommentTableViewDelegate
+extension DetailsTableViewController: NewCommentTableViewDelegate {
+    func newCommentAdded(comment: Comment) {
+        self.viewModel.insertNewComment(comment)
+    }
 }
 
 private class TableView: UITableView {

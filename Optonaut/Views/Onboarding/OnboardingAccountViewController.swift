@@ -124,7 +124,7 @@ class OnboardingAccountViewController: UIViewController, UINavigationControllerD
         iconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: headlineTextView, withOffset: 60)
         
         emailInputView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        emailInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: iconView, withOffset: 60)
+        emailInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: iconView, withOffset: 40)
         emailInputView.autoSetDimension(.Width, toSize: 240)
         
         passwordInputView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
