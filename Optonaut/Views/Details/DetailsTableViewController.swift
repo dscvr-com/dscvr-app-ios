@@ -41,6 +41,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private let tableView = TableView()
     private let blurView = OffsetBlurView()
     private let glassesButtonView = ActionButton()
+    private let loadingView = UIActivityIndicatorView()
     
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
@@ -60,25 +61,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     deinit {
         logRetain()
-    }
-    
-    private func loadTexture() {
-        downloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(viewModel.optograph.leftTextureAssetURL)
-            
-            .startWithNext { [weak self] image in
-                if let _self = self {
-                    _self.renderDelegate.image = image
-                    _self.scnView.prepareObject(_self.renderDelegate!.scene, shouldAbortBlock: nil)
-                    _self.scnView.playing = true
-                    _self.downloadDisposable = nil
-                }
-            }
-        
-    }
-    
-    private func unloadTexture() {
-        downloadDisposable?.dispose()
-        self.renderDelegate.image = nil
     }
     
     override func viewDidLoad() {
@@ -125,6 +107,11 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         tableView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - tabBarController!.tabBar.frame.height)
         tableView.scrollEnabled = true
         view.addSubview(tableView)
+        
+        loadingView.activityIndicatorViewStyle = .WhiteLarge
+        loadingView.startAnimating()
+        loadingView.frame = CGRect(x: view.frame.width / 2 - 20, y: view.frame.height / 2 - 20 - 78 / 2, width: 40, height: 40)
+        view.addSubview(loadingView)
         
         tableView.backgroundView = blurView
         
@@ -193,6 +180,26 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         tableView.contentOffset = CGPoint(x: 0, y: -(tableView.frame.height - 78))
         tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
+    }
+    
+    private func loadTexture() {
+        downloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(viewModel.optograph.leftTextureAssetURL)
+            .startWithNext { [weak self] image in
+                if let _self = self {
+                    _self.renderDelegate.image = image
+                    _self.scnView.prepareObject(_self.renderDelegate!.scene, shouldAbortBlock: nil)
+                    _self.scnView.playing = true
+                    _self.downloadDisposable = nil
+                    _self.loadingView.stopAnimating()
+                    _self.loadingView.hidden = true
+                    _self.blurView.fullscreen = false
+                }
+            }
+    }
+    
+    private func unloadTexture() {
+        downloadDisposable?.dispose()
+        self.renderDelegate.image = nil
     }
     
     func keyboardWillShow(notification: NSNotification) {
@@ -310,9 +317,15 @@ private class OffsetBlurView: UIView {
         return UIVisualEffectView(effect: blurEffect)
     }()
     
+    var fullscreen = true {
+        didSet {
+            updateBlurViewFrame()
+        }
+    }
+    
     override var frame: CGRect {
         didSet {
-            blurView.frame = CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height + frame.origin.y)
+            updateBlurViewFrame()
         }
     }
     
@@ -323,6 +336,14 @@ private class OffsetBlurView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func updateBlurViewFrame() {
+        if fullscreen {
+            blurView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        } else {
+            blurView.frame = CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height + frame.origin.y)
+        }
     }
     
 }

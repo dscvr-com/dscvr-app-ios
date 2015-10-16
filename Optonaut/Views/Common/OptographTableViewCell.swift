@@ -38,7 +38,7 @@ class OptographTableViewCell: UITableViewCell {
         
         contentView.backgroundColor = .whiteColor()
         
-        previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
+//        previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
         previewImageView.userInteractionEnabled = true

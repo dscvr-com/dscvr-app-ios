@@ -69,8 +69,9 @@ class ViewerViewController: UIViewController  {
         
         switch SessionService.sessionData!.vrGlasses {
         case .GoogleCardboard:
-            leftScnView.technique = createDistortionTechnique("barrell_displacement")
-            rightScnView.technique = createDistortionTechnique("barrell_displacement")
+            break
+//            leftScnView.technique = createDistortionTechnique("barrell_displacement")
+//            rightScnView.technique = createDistortionTechnique("barrell_displacement")
         case .VROne:
             leftScnView.technique = createDistortionTechnique("zeiss_displacement_left")
             rightScnView.technique = createDistortionTechnique("zeiss_displacement_right")

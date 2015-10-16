@@ -10,7 +10,7 @@ import UIKit
 import Async
 import Mixpanel
 
-class ProfileTableViewController: OptographTableViewController, TransparentNavbar, UniqueView {
+class ProfileTableViewController: OptographTableViewController, NoNavbar, UniqueView {
     
     private let viewModel: OptographsViewModel
     private let personId: UUID
