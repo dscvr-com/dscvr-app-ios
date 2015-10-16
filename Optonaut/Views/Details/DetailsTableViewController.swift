@@ -15,6 +15,11 @@ import ReactiveCocoa
 
 class CombinedMotionManager: RotationMatrixSource {
     private var horizontalOffset: Float = 0
+    private let parent: RotationMatrixSource
+    
+    init(parent: RotationMatrixSource) {
+        self.parent = parent
+    }
     
     func addHorizontalOffset(offset: Float) {
         horizontalOffset += offset
@@ -22,7 +27,7 @@ class CombinedMotionManager: RotationMatrixSource {
     
     func getRotationMatrix() -> GLKMatrix4 {
         let offsetRotation = GLKMatrix4MakeZRotation(horizontalOffset / 250)
-        return GLKMatrix4Multiply(offsetRotation, MotionService.sharedInstance.getRotationMatrix())
+        return GLKMatrix4Multiply(offsetRotation, parent.getRotationMatrix())
     }
 }
 
@@ -30,7 +35,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     private let viewModel: DetailsViewModel
     
-    private var combinedMotionManager = CombinedMotionManager()
+    private let combinedMotionManager = CombinedMotionManager(parent: CoreMotionRotationSource.Instance)
     
     // subviews
     private let tableView = TableView()
@@ -150,10 +155,10 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        MotionService.sharedInstance.motionEnable()
-        MotionService.sharedInstance.rotationEnable()
+        CoreMotionRotationSource.Instance.start()
+        RotationService.sharedInstance.rotationEnable()
         
-        rotationDisposable = MotionService.sharedInstance.rotationSignal?
+        rotationDisposable = RotationService.sharedInstance.rotationSignal?
             .skipRepeats()
             .observeOn(UIScheduler())
             .observeNext { [weak self] orientation in
@@ -176,8 +181,8 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         rotationDisposable?.dispose()
         
-        MotionService.sharedInstance.motionDisable()
-        MotionService.sharedInstance.rotationDisable()
+        CoreMotionRotationSource.Instance.stop()
+        RotationService.sharedInstance.rotationDisable()
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)

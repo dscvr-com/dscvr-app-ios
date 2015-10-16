@@ -156,6 +156,14 @@
 		A5233E361BC92D9100C9EFE5 /* progressCallback.hpp in Resources */ = {isa = PBXBuildFile; fileRef = A5233E351BC92D9100C9EFE5 /* progressCallback.hpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE0181BC45E9A00713340 /* static_timer.cpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01F1BC51D4C00713340 /* io.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE01D1BC51D4C00713340 /* io.cpp */; settings = {ASSET_TAGS = (); }; };
+		A568D4951BD12F5A008FF556 /* Sensors in Resources */ = {isa = PBXBuildFile; fileRef = A568D4941BD12F5A008FF556 /* Sensors */; settings = {ASSET_TAGS = (); }; };
+		A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4971BD13348008FF556 /* HeadTracker.mm */; settings = {ASSET_TAGS = (); }; };
+		A568D4C81BD1375D008FF556 /* MagnetSensor.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4C61BD1375D008FF556 /* MagnetSensor.mm */; settings = {ASSET_TAGS = (); }; };
+		A568D4C91BD1375D008FF556 /* HeadTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4C71BD1375D008FF556 /* HeadTracker.mm */; settings = {ASSET_TAGS = (); }; };
+		A568D4D21BD13767008FF556 /* Matrix3x3d.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4CA1BD13767008FF556 /* Matrix3x3d.mm */; settings = {ASSET_TAGS = (); }; };
+		A568D4D31BD13767008FF556 /* OrientationEKF.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4CC1BD13767008FF556 /* OrientationEKF.mm */; settings = {ASSET_TAGS = (); }; };
+		A568D4D41BD13767008FF556 /* SO3Util.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4CE1BD13767008FF556 /* SO3Util.mm */; settings = {ASSET_TAGS = (); }; };
+		A568D4D51BD13767008FF556 /* Vector3d.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4D01BD13767008FF556 /* Vector3d.mm */; settings = {ASSET_TAGS = (); }; };
 		A56CA4061BC070450078D7E8 /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FF1BC070450078D7E8 /* lut */; settings = {ASSET_TAGS = (); }; };
 		A56CA4071BC070450078D7E8 /* zeiss_displacement_left.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4001BC070450078D7E8 /* zeiss_displacement_left.fsh */; settings = {ASSET_TAGS = (); }; };
 		A56CA4081BC070450078D7E8 /* zeiss_displacement_left.json in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4011BC070450078D7E8 /* zeiss_displacement_left.json */; settings = {ASSET_TAGS = (); }; };
@@ -352,6 +360,21 @@
 		A54AE01E1BC51D4C00713340 /* io.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = io.hpp; sourceTree = "<group>"; };
 		A54AE0201BC51E8100713340 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		A54AE0241BC531DF00713340 /* checkpointStore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = checkpointStore.hpp; sourceTree = "<group>"; };
+		A568D4941BD12F5A008FF556 /* Sensors */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sensors; path = "/Users/emi/Projects/Optonaut/app-ios/Optonaut/Vendor/Sensors"; sourceTree = "<absolute>"; };
+		A568D4961BD13171008FF556 /* HeadTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeadTracker.h; path = Optonaut/Vendor/HeadTracker.h; sourceTree = SOURCE_ROOT; };
+		A568D4971BD13348008FF556 /* HeadTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HeadTracker.mm; path = Optonaut/Vendor/HeadTracker.mm; sourceTree = SOURCE_ROOT; };
+		A568D4C41BD1375D008FF556 /* HeadTracker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = HeadTracker.hpp; path = Sensors/HeadTracker.hpp; sourceTree = "<group>"; };
+		A568D4C51BD1375D008FF556 /* MagnetSensor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MagnetSensor.hpp; path = Sensors/MagnetSensor.hpp; sourceTree = "<group>"; };
+		A568D4C61BD1375D008FF556 /* MagnetSensor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MagnetSensor.mm; path = Sensors/MagnetSensor.mm; sourceTree = "<group>"; };
+		A568D4C71BD1375D008FF556 /* HeadTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HeadTracker.mm; path = Sensors/HeadTracker.mm; sourceTree = "<group>"; };
+		A568D4CA1BD13767008FF556 /* Matrix3x3d.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Matrix3x3d.mm; path = Sensors/Internal/Matrix3x3d.mm; sourceTree = "<group>"; };
+		A568D4CB1BD13767008FF556 /* Matrix3x3d.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Matrix3x3d.hpp; path = Sensors/Internal/Matrix3x3d.hpp; sourceTree = "<group>"; };
+		A568D4CC1BD13767008FF556 /* OrientationEKF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OrientationEKF.mm; path = Sensors/Internal/OrientationEKF.mm; sourceTree = "<group>"; };
+		A568D4CD1BD13767008FF556 /* OrientationEKF.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = OrientationEKF.hpp; path = Sensors/Internal/OrientationEKF.hpp; sourceTree = "<group>"; };
+		A568D4CE1BD13767008FF556 /* SO3Util.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SO3Util.mm; path = Sensors/Internal/SO3Util.mm; sourceTree = "<group>"; };
+		A568D4CF1BD13767008FF556 /* SO3Util.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SO3Util.hpp; path = Sensors/Internal/SO3Util.hpp; sourceTree = "<group>"; };
+		A568D4D01BD13767008FF556 /* Vector3d.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Vector3d.mm; path = Sensors/Internal/Vector3d.mm; sourceTree = "<group>"; };
+		A568D4D11BD13767008FF556 /* Vector3d.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Vector3d.hpp; path = Sensors/Internal/Vector3d.hpp; sourceTree = "<group>"; };
 		A56CA3FF1BC070450078D7E8 /* lut */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lut; path = Shader/Zeiss/lut; sourceTree = "<group>"; };
 		A56CA4001BC070450078D7E8 /* zeiss_displacement_left.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = zeiss_displacement_left.fsh; path = Shader/Zeiss/zeiss_displacement_left.fsh; sourceTree = "<group>"; };
 		A56CA4011BC070450078D7E8 /* zeiss_displacement_left.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = zeiss_displacement_left.json; path = Shader/Zeiss/zeiss_displacement_left.json; sourceTree = "<group>"; };
@@ -677,6 +700,8 @@
 				A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */,
 				A5233E2F1BC87F7500C9EFE5 /* Stores.h */,
 				A5233E301BC87F7500C9EFE5 /* Stores.mm */,
+				A568D4961BD13171008FF556 /* HeadTracker.h */,
+				A568D4971BD13348008FF556 /* HeadTracker.mm */,
 			);
 			name = Stitcher;
 			path = Utils/Stitcher;
@@ -869,12 +894,40 @@
 		8FFCE4B61B4DBF1900832C88 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				A568D4C21BD13748008FF556 /* Sensor */,
 				A56CA3D81BC05C4F0078D7E8 /* Shaders */,
 				8FBC869F1BB7D84900539D4E /* Icon.swift */,
 				8FE09F5E1BAEFD7100EA105D /* CWStatusBarNotification */,
 				8FD7F85C1B5924D5001680AA /* Stitcher */,
 			);
 			path = Vendor;
+			sourceTree = "<group>";
+		};
+		A568D4C21BD13748008FF556 /* Sensor */ = {
+			isa = PBXGroup;
+			children = (
+				A568D4C41BD1375D008FF556 /* HeadTracker.hpp */,
+				A568D4C51BD1375D008FF556 /* MagnetSensor.hpp */,
+				A568D4C61BD1375D008FF556 /* MagnetSensor.mm */,
+				A568D4C71BD1375D008FF556 /* HeadTracker.mm */,
+				A568D4C31BD1374E008FF556 /* Internal */,
+			);
+			name = Sensor;
+			sourceTree = "<group>";
+		};
+		A568D4C31BD1374E008FF556 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				A568D4CA1BD13767008FF556 /* Matrix3x3d.mm */,
+				A568D4CB1BD13767008FF556 /* Matrix3x3d.hpp */,
+				A568D4CC1BD13767008FF556 /* OrientationEKF.mm */,
+				A568D4CD1BD13767008FF556 /* OrientationEKF.hpp */,
+				A568D4CE1BD13767008FF556 /* SO3Util.mm */,
+				A568D4CF1BD13767008FF556 /* SO3Util.hpp */,
+				A568D4D01BD13767008FF556 /* Vector3d.mm */,
+				A568D4D11BD13767008FF556 /* Vector3d.hpp */,
+			);
+			name = Internal;
 			sourceTree = "<group>";
 		};
 		A56CA3D81BC05C4F0078D7E8 /* Shaders */ = {
@@ -1006,6 +1059,7 @@
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
 				8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */,
 				A56CA4091BC070450078D7E8 /* zeiss_displacement_left.vsh in Resources */,
+				A568D4951BD12F5A008FF556 /* Sensors in Resources */,
 				A56CA4081BC070450078D7E8 /* zeiss_displacement_left.json in Resources */,
 				A56CA4131BC070AE0078D7E8 /* barrell_displacement.fsh in Resources */,
 				A56CA40C1BC070450078D7E8 /* zeiss_displacement_right.vsh in Resources */,
@@ -1116,6 +1170,7 @@
 				8FBC86A01BB7D84900539D4E /* Icon.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* CreateOptographViewModel.swift in Sources */,
 				8FED44691BCD971200D5982C /* OnboardingAccountViewController.swift in Sources */,
+				A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */,
 				8FAB9F461B8F01DF00B4C8CB /* FeedNavViewController.swift in Sources */,
 				8FAB9F321B8F01DF00B4C8CB /* BottomLineTextField.swift in Sources */,
 				8FAB9F301B8F01DF00B4C8CB /* CreateOptographViewController.swift in Sources */,
@@ -1123,6 +1178,7 @@
 				8FAB9F291B8F01DF00B4C8CB /* ActivitiesViewModel.swift in Sources */,
 				8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */,
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
+				A568D4D21BD13767008FF556 /* Matrix3x3d.mm in Sources */,
 				8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */,
 				8FED446B1BCD972800D5982C /* OnboardingAccountViewModel.swift in Sources */,
 				A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */,
@@ -1141,6 +1197,7 @@
 				8FAB9F861B8F047700B4C8CB /* ApiService.swift in Sources */,
 				A59E32F41BB423DA003D166B /* ringwiseStitcher.cpp in Sources */,
 				8FAB9F2D1B8F01DF00B4C8CB /* ActivityViewModel.swift in Sources */,
+				A568D4C91BD1375D008FF556 /* HeadTracker.mm in Sources */,
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				8FAB9F581B8F01DF00B4C8CB /* ProfileTableViewController.swift in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
@@ -1162,6 +1219,7 @@
 				A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */,
 				8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */,
 				8FAB9F341B8F01DF00B4C8CB /* NavbarProtocols.swift in Sources */,
+				A568D4D41BD13767008FF556 /* SO3Util.mm in Sources */,
 				8FAB9F2E1B8F01DF00B4C8CB /* CameraViewController.swift in Sources */,
 				8FAB9F481B8F01DF00B4C8CB /* FeedViewModel.swift in Sources */,
 				8F900B401B839D0C0085566C /* CommentTable.swift in Sources */,
@@ -1194,8 +1252,10 @@
 				8FD845BD1BC92A600064048D /* OptographInfoView.swift in Sources */,
 				8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */,
 				8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */,
+				A568D4D31BD13767008FF556 /* OrientationEKF.mm in Sources */,
 				8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */,
 				8FAB9F411B8F01DF00B4C8CB /* NewCommentViewModel.swift in Sources */,
+				A568D4C81BD1375D008FF556 /* MagnetSensor.mm in Sources */,
 				8F900B431B839D0C0085566C /* PersonTable.swift in Sources */,
 				8FD845BF1BC92A6F0064048D /* OptographInfoViewModel.swift in Sources */,
 				A54AE01F1BC51D4C00713340 /* io.cpp in Sources */,
@@ -1205,6 +1265,7 @@
 				8FAB9F3A1B8F01DF00B4C8CB /* CommentTableViewCell.swift in Sources */,
 				8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */,
 				8FAB9F2A1B8F01DF00B4C8CB /* ActivityNavViewController.swift in Sources */,
+				A568D4D51BD13767008FF556 /* Vector3d.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
