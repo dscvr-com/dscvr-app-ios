@@ -150,16 +150,12 @@ class CameraViewController: UIViewController {
         
         viewModel.isRecording.producer
             .map { $0 ? .Locked : .ContinuousAutoFocus }
-<<<<<<< HEAD
             .startWithNext { [unowned self] val in self.setFocusMode(val) }
         
         viewModel.isRecording.producer
             .filter(identity)
             .take(1)
-            .startWithCompleted { [unowned self] in self.lockWhiteBalance() }
-=======
-            .startWithNext { [weak self] val in self?.setFocusMode(val) }
->>>>>>> dev
+            .startWithNext { [unowned self] val in self.lockWhiteBalance() }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -378,7 +374,7 @@ class CameraViewController: UIViewController {
         
         videoDevice?.automaticallyAdjustsVideoHDREnabled = false
         videoDevice?.videoHDREnabled = false
-        
+
         videoDevice?.exposureMode = .ContinuousAutoExposure
         
         videoDevice?.unlockForConfiguration()
@@ -397,22 +393,19 @@ class CameraViewController: UIViewController {
         videoDevice!.unlockForConfiguration()
     }
     
-<<<<<<< HEAD
     private func lockWhiteBalance() {
         try! videoDevice!.lockForConfiguration()
-        videoDevice!.whiteBalanceMode = .Locked
+        //videoDevice!.whiteBalanceMode = .Locked
         videoDevice!.unlockForConfiguration()
     }
     
     private func unlockWhiteBalance() {
         try! videoDevice!.lockForConfiguration()
-        videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
+        //videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
         videoDevice!.unlockForConfiguration()
 
     }
     
-=======
->>>>>>> dev
     private func authorizeCamera() {
         AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: { granted in
             if !granted {
@@ -478,13 +471,15 @@ class CameraViewController: UIViewController {
                         exposureBias = minExposureBias
                     }
                     
-                    if exposureBias != videoDevice.exposureTargetBias {
+                    if abs(exposureBias - videoDevice.exposureTargetBias) > 0.1 {
                         try! videoDevice.lockForConfiguration()
                         videoDevice.setExposureTargetBias(exposureBias, completionHandler: { value in print("EV handler set at time \(value)") } )
                         print("EV Exposure set to: \(exposureBias)")
-                        print("EV Exposure is set to: \(videoDevice.exposureTargetBias)")
+                        print("EV Exposure as actually to: \(videoDevice.exposureTargetBias)")
                         videoDevice.unlockForConfiguration()
                     }
+                    print("EV Exposure target offset: \(videoDevice.exposureTargetOffset)")
+                    print("ISO: \(videoDevice.ISO)/\(videoDevice.activeFormat.maxISO) T: \(videoDevice.exposureDuration.seconds)/\(videoDevice.activeFormat.maxExposureDuration.seconds)")
                 }
             }
             
@@ -511,10 +506,7 @@ class CameraViewController: UIViewController {
     
     private func stopSession() {
         
-<<<<<<< HEAD
         unlockWhiteBalance()
-=======
->>>>>>> dev
         setFocusMode(.ContinuousAutoFocus)
         
         session.stopRunning()
