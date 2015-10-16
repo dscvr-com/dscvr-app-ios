@@ -372,7 +372,6 @@
 		A54AE01E1BC51D4C00713340 /* io.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = io.hpp; sourceTree = "<group>"; };
 		A54AE0201BC51E8100713340 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		A54AE0241BC531DF00713340 /* checkpointStore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = checkpointStore.hpp; sourceTree = "<group>"; };
-		A568D4941BD12F5A008FF556 /* Sensors */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sensors; path = "/Users/emi/Projects/Optonaut/app-ios/Optonaut/Vendor/Sensors"; sourceTree = "<absolute>"; };
 		A568D4961BD13171008FF556 /* HeadTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeadTracker.h; path = Optonaut/Vendor/HeadTracker.h; sourceTree = SOURCE_ROOT; };
 		A568D4971BD13348008FF556 /* HeadTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HeadTracker.mm; path = Optonaut/Vendor/HeadTracker.mm; sourceTree = SOURCE_ROOT; };
 		A56CA3FF1BC070450078D7E8 /* lut */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lut; path = Shader/Zeiss/lut; sourceTree = "<group>"; };
