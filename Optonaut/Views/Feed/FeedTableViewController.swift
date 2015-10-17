@@ -122,7 +122,11 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last Optograph has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
             self.navigationController?.presentViewController(alert, animated: true, completion: nil)
-        } else if !SessionService.sessionData!.debuggingEnabled {
+        } else {
+            
+            #if DEBUG
+            navigationController?.pushViewController(CameraViewController(), animated: false)
+            #else
             switch UIDevice.currentDevice().deviceType {
             case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
                 navigationController?.pushViewController(CameraViewController(), animated: false)
@@ -131,9 +135,9 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
                 alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
                 self.navigationController?.presentViewController(alert, animated: true, completion: nil)
             }
-        } else {
-            navigationController?.pushViewController(CameraViewController(), animated: false)
+            #endif
         }
+       
     }
     
     func pushSearch() {

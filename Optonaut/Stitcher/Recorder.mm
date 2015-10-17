@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 #import <GLKit/GLKit.h>
 #import <Foundation/foundation.h>
+#import <AVFoundation/AVFoundation.h>
 #include <vector>
 #include <string>
 #define OPTONAUT_TARGET_PHONE
@@ -143,13 +144,18 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 - (bool)isDisposed {
     return pipe == NULL;
 }
-- (void)push:(GLKMatrix4)extrinsics :(ImageBuffer)image {
+- (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure  :(AVCaptureWhiteBalanceGains)gains{
     assert(pipe != NULL);
     optonaut::InputImageP oImage(new optonaut::InputImage());
 
     oImage->dataRef = ImageBufferToImageRef(image);
     oImage->intrinsics = intrinsics;
     oImage->id = counter++;
+    oImage->exposureInfo.iso = exposure.iso;
+    oImage->exposureInfo.exposureTime = exposure.exposureTime;
+    oImage->exposureInfo.gains.red = gains.redGain;
+    oImage->exposureInfo.gains.blue = gains.blueGain;
+    oImage->exposureInfo.gains.green = gains.greenGain;
     GLK4ToCVMat(extrinsics, oImage->originalExtrinsics);
 
     pipe->Push(oImage);
@@ -167,11 +173,6 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     assert(pipe != NULL);
     return ConvertSelectionPoint(pipe->PreviousPoint().closestPoint);
 }
-- (double)getExposureBias {
-    assert(pipe != NULL);
-    return pipe->GetExposureBias();
-}
-
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
     assert(pipe != NULL);
     optonaut::SelectionPoint convA;
@@ -237,5 +238,20 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     [[NSFileManager defaultManager] removeItemAtPath:self->tempPath error:nil];
     delete pipe;
     pipe = NULL;
+}
+
+- (struct ExposureInfo)getExposureHint {
+    assert(pipe != NULL);
+    
+    cv::Mat extrinsics;
+    optonaut::ExposureInfo info = pipe->GetExposureHint();
+    ExposureInfo converted;
+    converted.iso = info.iso;
+    converted.gains.redGain = info.gains.red;
+    converted.gains.greenGain = info.gains.green;
+    converted.gains.blueGain = info.gains.blue;
+    converted.exposureTime = info.exposureTime;
+    
+    return converted;
 }
 @end

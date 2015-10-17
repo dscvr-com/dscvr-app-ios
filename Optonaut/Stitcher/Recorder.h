@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKit.h>
+#import <AVFoundation/AVFoundation.h>
 #include "CommonExternal.h"
 
 @interface SelectionPoint : NSObject {
@@ -15,6 +16,11 @@
 @property GLKMatrix4 extrinsics;
 @end
 
+struct ExposureInfo {
+    uint32_t iso;
+    double exposureTime;
+    AVCaptureWhiteBalanceGains gains;
+};
 
 @interface SelectionPointIterator : NSObject
 - (bool)HasMore;
@@ -29,7 +35,7 @@
 + (NSString*)getVersion;
 + (void)freeImageBuffer:(struct ImageBuffer)toFree;
 
-- (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image;
+- (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure :(AVCaptureWhiteBalanceGains)gains;
 - (GLKMatrix4)getCurrentRotation;
 - (SelectionPointIterator*)getSelectionPoints;
 - (SelectionPoint*)currentPoint;
@@ -40,13 +46,12 @@
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b;
 - (GLKMatrix4)getBallPosition;
 - (bool)isFinished;
-- (double)getDistanceToBall;
-- (double)getExposureBias;
-- (GLKVector3)getAngularDistanceToBall;
+- (double)getDistanceToBall;- (GLKVector3)getAngularDistanceToBall;
 - (uint32_t)getRecordedImagesCount;
 - (uint32_t)getImagesToRecordCount;
 - (void)finish;
 - (void)dispose;
 - (bool)isDisposed;
+- (struct ExposureInfo)getExposureHint;
 
 @end
