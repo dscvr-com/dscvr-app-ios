@@ -46,9 +46,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
     
-    private var rotationDisposable: Disposable?
-    private var downloadDisposable: Disposable?
-    
     required init(optographId: UUID) {
         viewModel = DetailsViewModel(optographId: optographId)
         
@@ -80,6 +77,29 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         scnView.backgroundColor = .clearColor()
         
         view.addSubview(scnView)
+        
+        let imageSignalProducer = viewModel.textureImageUrl.producer
+            .filter(isNotEmpty)
+            .flatMap(.Latest) { SDWebImageManager.sharedManager().downloadImageForURL($0) }
+        
+        viewModel.viewIsActive.producer.combineLatestWith(imageSignalProducer)
+            .startWithNext { [weak self] (active, image) in
+                guard let strongSelf = self else {
+                    return
+                }
+                
+                if active {
+                    strongSelf.renderDelegate.image = image
+                    strongSelf.scnView.prepareObject(strongSelf.renderDelegate!.scene, shouldAbortBlock: nil)
+                    strongSelf.scnView.playing = true
+                    strongSelf.loadingView.stopAnimating()
+                    strongSelf.loadingView.hidden = true
+                    strongSelf.blurView.fullscreen = false
+                } else {
+                    strongSelf.renderDelegate.image = nil
+                }
+            }
+        
         glassesButtonView.setTitle(String.iconWithName(.Cardboard), forState: .Normal)
         glassesButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         glassesButtonView.defaultBackgroundColor = .Accent
@@ -127,8 +147,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
-        loadTexture()
-
+        viewModel.viewIsActive.value = true
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -136,7 +155,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.id])
         
-        unloadTexture()
+        viewModel.viewIsActive.value = false
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -145,17 +164,12 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         CoreMotionRotationSource.Instance.start()
         RotationService.sharedInstance.rotationEnable()
         
-        rotationDisposable = RotationService.sharedInstance.rotationSignal?
+        RotationService.sharedInstance.rotationSignal?
             .skipRepeats()
+            .filter([.LandscapeLeft, .LandscapeRight])
+            .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
             .observeOn(UIScheduler())
-            .observeNext { [weak self] orientation in
-                switch orientation {
-                case .LandscapeLeft, .LandscapeRight:
-                    self?.pushViewer(orientation)
-                default: break
-                }
-        }
-
+            .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
@@ -165,8 +179,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        rotationDisposable?.dispose()
         
         CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
@@ -180,26 +192,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         tableView.contentOffset = CGPoint(x: 0, y: -(tableView.frame.height - 78))
         tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
-    }
-    
-    private func loadTexture() {
-        downloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(viewModel.optograph.leftTextureAssetURL)
-            .startWithNext { [weak self] image in
-                if let _self = self {
-                    _self.renderDelegate.image = image
-                    _self.scnView.prepareObject(_self.renderDelegate!.scene, shouldAbortBlock: nil)
-                    _self.scnView.playing = true
-                    _self.downloadDisposable = nil
-                    _self.loadingView.stopAnimating()
-                    _self.loadingView.hidden = true
-                    _self.blurView.fullscreen = false
-                }
-            }
-    }
-    
-    private func unloadTexture() {
-        downloadDisposable?.dispose()
-        self.renderDelegate.image = nil
     }
     
     func keyboardWillShow(notification: NSNotification) {

@@ -66,8 +66,8 @@ class FeedViewModel: NSObject {
     let results = MutableProperty<TableViewResults>(.empty)
     let newResultsAvailable = MutableProperty<Bool>(false)
     
-    let refreshNotification = NotificationSignal()
-    let loadMoreNotification = NotificationSignal()
+    let refreshNotification = NotificationSignal<Void>()
+    let loadMoreNotification = NotificationSignal<Void>()
     
     override init() {
         super.init()
@@ -153,7 +153,7 @@ class FeedViewModel: NSObject {
     }
     
     func refresh() {
-        refreshNotification.notify()
+        refreshNotification.notify(())
     }
     
 }

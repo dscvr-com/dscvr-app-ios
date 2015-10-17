@@ -90,7 +90,7 @@ class DetailsTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        let profileContainerViewController = ProfileTableViewController(personId: viewModel.personId.value)
+        let profileContainerViewController = ProfileTableViewController(personId: viewModel.optograph.person.id)
         navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
     

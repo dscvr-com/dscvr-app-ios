@@ -17,20 +17,18 @@ class DetailsViewModel {
     let isStarred = MutableProperty<Bool>(false)
     let isPublished = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
-    let commentsCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
+    let commentsCount = MutableProperty<Int>(0)
     let timeSinceCreated = MutableProperty<String>("")
-    let previewImageUrl = MutableProperty<String>("")
     let avatarImageUrl = MutableProperty<String>("")
-    let displayName = MutableProperty<String>("")
-    let userName = MutableProperty<String>("")
-    let personId = MutableProperty<UUID>("")
+    let textureImageUrl = MutableProperty<String>("")
     let text = MutableProperty<String>("")
     let hashtags = MutableProperty<String>("")
     let location = MutableProperty<String>("")
     let comments = MutableProperty<[Comment]>([])
+    let viewIsActive = MutableProperty<Bool>(false)
     
-    var optograph: Optograph
+    var optograph = Optograph.newInstance()
     
     init(optographId: UUID) {
         
@@ -40,7 +38,7 @@ class DetailsViewModel {
             .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
             .filter(OptographTable[OptographSchema.id] == optographId)
         
-        guard let optograph = DatabaseService.defaultConnection.pluck(query).map({ row -> Optograph in
+        if let optograph = DatabaseService.defaultConnection.pluck(query).map({ row -> Optograph in
             let person = Person.fromSQL(row)
             let location = Location.fromSQL(row)
             var optograph = Optograph.fromSQL(row)
@@ -49,14 +47,15 @@ class DetailsViewModel {
             optograph.location = location
             
             return optograph
-        }) else {
-            fatalError("optograph can not be nil")
+        }) {
+            self.optograph = optograph
+            updateProperties()
+        } else {
+            // optograph opened via share link
+            optograph.isPublished = true
         }
         
-        self.optograph = optograph
-        updateProperties()
-        
-        if !optograph.isPublished {
+        if optograph.isPublished {
             ApiService<Optograph>.get("optographs/\(optographId)").startWithNext { optograph in
                 self.optograph = optograph
                 self.saveModel()
@@ -141,7 +140,7 @@ class DetailsViewModel {
     
     func insertNewComment(comment: Comment) {
         comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
-        commentsCount.value = comments.value.count
+        commentsCount.value++
     }
     
     func delete() -> SignalProducer<EmptyResponse, ApiError> {
@@ -153,6 +152,7 @@ class DetailsViewModel {
         optograph.isStarred = isStarred.value
         optograph.starsCount = starsCount.value
         optograph.viewsCount = viewsCount.value
+        optograph.commentsCount = commentsCount.value
     }
     
     private func saveModel() {
@@ -164,18 +164,15 @@ class DetailsViewModel {
     private func updateProperties() {
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
-        commentsCount.value = optograph.commentsCount
         viewsCount.value = optograph.viewsCount
+        commentsCount.value = optograph.commentsCount
         timeSinceCreated.value = optograph.createdAt.longDescription
-        displayName.value = optograph.person.displayName
-        userName.value = "@\(optograph.person.userName)"
-        personId.value = optograph.person.id
         text.value = optograph.text
         hashtags.value = optograph.hashtagString
         location.value = optograph.location.text
         isPublished.value = optograph.isPublished
-        previewImageUrl.value = optograph.previewAssetURL
         avatarImageUrl.value = "\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg"
+        textureImageUrl.value = optograph.leftTextureAssetURL
     }
     
 }

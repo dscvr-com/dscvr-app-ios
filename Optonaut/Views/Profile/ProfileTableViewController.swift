@@ -25,7 +25,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
     required init(personId: UUID) {
         self.personId = personId
         viewModel = OptographsViewModel(personId: personId)
-        viewModel.refreshNotification.notify()
+        viewModel.refreshNotification.notify(())
         uniqueIdentifier = "profile-\(personId)"
         super.init(nibName: nil, bundle: nil)
     }
@@ -46,7 +46,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer()
             .startWithNext { [weak self] _ in
-                self?.viewModel.refreshNotification.notify()
+                self?.viewModel.refreshNotification.notify(())
                 Async.main(after: 10) { self?.refreshControl.endRefreshing() }
             }
         tableView.addSubview(refreshControl)
@@ -86,7 +86,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        viewModel.refreshNotification.notify()
+        viewModel.refreshNotification.notify(())
         
         updateNavbarAppear()
     }
@@ -142,7 +142,7 @@ extension ProfileTableViewController: LoadMore {
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         checkRow(indexPath) { [weak self] in
-            self?.viewModel.loadMoreNotification.notify()
+            self?.viewModel.loadMoreNotification.notify(())
         }
     }
     

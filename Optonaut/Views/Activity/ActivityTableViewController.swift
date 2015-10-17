@@ -95,7 +95,7 @@ extension ActivityTableViewController: LoadMore {
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         checkRow(indexPath) {
-            self.viewModel.loadMoreNotification.notify()
+            self.viewModel.loadMoreNotification.notify(())
         }
     }
     

@@ -43,12 +43,12 @@ func calcTextHeight(text: String, withWidth width: CGFloat, andFont font: UIFont
     return textRect.height
 }
 
-class NotificationSignal {
+class NotificationSignal<T> {
     
-    let (signal, sink) = Signal<Void, NoError>.pipe()
+    let (signal, sink) = Signal<T, NoError>.pipe()
     
-    func notify() {
-        sendNext(sink, ())
+    func notify(value: T) {
+        sendNext(sink, value)
     }
     
     func dispose() {
@@ -56,6 +56,7 @@ class NotificationSignal {
     }
     
 }
+
 
 func negate(val: Bool) -> Bool {
     return !val
