@@ -61,7 +61,7 @@
 		8FAB9F341B8F01DF00B4C8CB /* NavbarProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */; };
 		8FAB9F351B8F01DF00B4C8CB /* OptographTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */; };
 		8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */; };
-		8FAB9F371B8F01DF00B4C8CB /* 	.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFE1B8F01DF00B4C8CB /* 	.swift */; };
+		8FAB9F371B8F01DF00B4C8CB /* OptographTableViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFE1B8F01DF00B4C8CB /* OptographTableViewCellModel.swift */; };
 		8FAB9F3A1B8F01DF00B4C8CB /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */; };
 		8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */; };
 		8FAB9F3E1B8F01DF00B4C8CB /* DetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */; };
@@ -243,7 +243,7 @@
 		8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavbarProtocols.swift; sourceTree = "<group>"; };
 		8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCell.swift; sourceTree = "<group>"; };
 		8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewController.swift; sourceTree = "<group>"; };
-		8FAB9EFE1B8F01DF00B4C8CB /* 	.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "\t.swift"; sourceTree = "<group>"; };
+		8FAB9EFE1B8F01DF00B4C8CB /* OptographTableViewCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCellModel.swift; sourceTree = "<group>"; };
 		8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
 		8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewCell.swift; sourceTree = "<group>"; };
@@ -559,7 +559,7 @@
 				8FAB9EFA1B8F01DF00B4C8CB /* InsetLabel.swift */,
 				8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */,
 				8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */,
-				8FAB9EFE1B8F01DF00B4C8CB /* 	.swift */,
+				8FAB9EFE1B8F01DF00B4C8CB /* OptographTableViewCellModel.swift */,
 				8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */,
 				8FCA92E11BC7180B004913E5 /* OptographOptions.swift */,
 				8FD845BC1BC92A600064048D /* OptographInfoView.swift */,
@@ -1092,7 +1092,7 @@
 				8FAB9F5A1B8F01DF00B4C8CB /* TabBarViewController.swift in Sources */,
 				A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */,
 				A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */,
-				8FAB9F371B8F01DF00B4C8CB /* 	.swift in Sources */,
+				8FAB9F371B8F01DF00B4C8CB /* OptographTableViewCellModel.swift in Sources */,
 				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,

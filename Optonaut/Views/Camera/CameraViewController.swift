@@ -429,7 +429,7 @@ class CameraViewController: UIViewController {
             recorder.push(r, buf, exposure, wb)
             
             let errorVec = recorder.getAngularDistanceToBall()
-            let exposureHint = recorder.getExposureHint()
+            let exposureHintC = recorder.getExposureHint()
             
             Async.main {
                 if self.isViewLoaded() {
@@ -443,10 +443,19 @@ class CameraViewController: UIViewController {
                     self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
                 }
                 
+                var exposureHint = exposureHintC;
+                
                 if let videoDevice = self.videoDevice {
-                   
                     if exposureHint.iso != 0 {
-                    //TODO: Also lock WB
+
+                        if exposureHint.iso > UInt32(videoDevice.activeFormat.maxISO) {
+                            exposureHint.iso = UInt32(videoDevice.activeFormat.maxISO)
+                        }
+                        if exposureHint.iso < UInt32(videoDevice.activeFormat.minISO) {
+                            exposureHint.iso = UInt32(videoDevice.activeFormat.minISO)
+                        }
+                       
+                        print("Hint: \(exposureHint.iso), Max: \(videoDevice.activeFormat.maxISO)")
                         try! videoDevice.lockForConfiguration()
                         videoDevice.exposureMode = .Custom
                         videoDevice.whiteBalanceMode = .Locked
