@@ -16,7 +16,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
     private let refreshControl = UIRefreshControl()
     
     required init() {
-        viewModel.refreshNotification.notify()
+        viewModel.refreshNotification.notify(())
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -43,7 +43,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         navigationItem.setRightBarButtonItem(searchButton, animated: false)
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
-            self.viewModel.refreshNotification.notify()
+            self.viewModel.refreshNotification.notify(())
             Async.main(after: 10) { self.refreshControl.endRefreshing() }
         }
         tableView.addSubview(refreshControl)
@@ -77,7 +77,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        viewModel.refreshNotification.notify()
+        viewModel.refreshNotification.notify(())
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -104,7 +104,7 @@ class ExploreTableViewController: OptographTableViewController, RedNavbar {
         let cell = super.tableView(tableView, cellForRowAtIndexPath: indexPath) as! OptographTableViewCell
         
         cell.deleteCallback = { [weak self] in
-            self?.viewModel.refreshNotification.notify()
+            self?.viewModel.refreshNotification.notify(())
         }
         
         return cell
@@ -122,7 +122,7 @@ extension ExploreTableViewController: LoadMore {
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         checkRow(indexPath) {
-            self.viewModel.loadMoreNotification.notify()
+            self.viewModel.loadMoreNotification.notify(())
         }
     }
     

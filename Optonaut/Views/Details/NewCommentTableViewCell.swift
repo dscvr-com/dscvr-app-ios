@@ -10,11 +10,15 @@ import Foundation
 import ReactiveCocoa
 import KMPlaceholderTextView
 
+protocol NewCommentTableViewDelegate: class {
+    func newCommentAdded(comment: Comment)
+}
+
 class NewCommentTableViewCell: UITableViewCell {
     
     private var viewModel: NewCommentViewModel!
     
-    var postCallback: (Comment -> ())?
+    weak var delegate: NewCommentTableViewDelegate?
     
     // subviews
     private let textInputView = LineTextField()
@@ -92,7 +96,7 @@ class NewCommentTableViewCell: UITableViewCell {
     func postComment() {
         viewModel.postComment()
             .on(
-                next: self.postCallback,
+                next: self.delegate?.newCommentAdded,
                 completed: {
                     self.contentView.endEditing(true)
                 }

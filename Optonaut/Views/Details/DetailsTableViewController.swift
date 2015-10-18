@@ -15,6 +15,11 @@ import ReactiveCocoa
 
 class CombinedMotionManager: RotationMatrixSource {
     private var horizontalOffset: Float = 0
+    private let parent: RotationMatrixSource
+    
+    init(parent: RotationMatrixSource) {
+        self.parent = parent
+    }
     
     func addHorizontalOffset(offset: Float) {
         horizontalOffset += offset
@@ -22,7 +27,7 @@ class CombinedMotionManager: RotationMatrixSource {
     
     func getRotationMatrix() -> GLKMatrix4 {
         let offsetRotation = GLKMatrix4MakeZRotation(horizontalOffset / 250)
-        return GLKMatrix4Multiply(offsetRotation, MotionService.sharedInstance.getRotationMatrix())
+        return GLKMatrix4Multiply(offsetRotation, parent.getRotationMatrix())
     }
 }
 
@@ -30,18 +35,16 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     private let viewModel: DetailsViewModel
     
-    private var combinedMotionManager = CombinedMotionManager()
+    private let combinedMotionManager = CombinedMotionManager(parent: CoreMotionRotationSource.Instance)
     
     // subviews
     private let tableView = TableView()
     private let blurView = OffsetBlurView()
     private let glassesButtonView = ActionButton()
+    private let loadingView = UIActivityIndicatorView()
     
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
-    
-    private var rotationDisposable: Disposable?
-    private var downloadDisposable: Disposable?
     
     required init(optographId: UUID) {
         viewModel = DetailsViewModel(optographId: optographId)
@@ -55,25 +58,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     deinit {
         logRetain()
-    }
-    
-    private func loadTexture() {
-        downloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(viewModel.optograph.leftTextureAssetURL)
-            
-            .startWithNext { [weak self] image in
-                if let _self = self {
-                    _self.renderDelegate.image = image
-                    _self.scnView.prepareObject(_self.renderDelegate!.scene, shouldAbortBlock: nil)
-                    _self.scnView.playing = true
-                    _self.downloadDisposable = nil
-                }
-            }
-        
-    }
-    
-    private func unloadTexture() {
-        downloadDisposable?.dispose()
-        self.renderDelegate.image = nil
     }
     
     override func viewDidLoad() {
@@ -93,6 +77,29 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         scnView.backgroundColor = .clearColor()
         
         view.addSubview(scnView)
+        
+        let imageSignalProducer = viewModel.textureImageUrl.producer
+            .filter(isNotEmpty)
+            .flatMap(.Latest) { SDWebImageManager.sharedManager().downloadImageForURL($0) }
+        
+        viewModel.viewIsActive.producer.combineLatestWith(imageSignalProducer)
+            .startWithNext { [weak self] (active, image) in
+                guard let strongSelf = self else {
+                    return
+                }
+                
+                if active {
+                    strongSelf.renderDelegate.image = image
+                    strongSelf.scnView.prepareObject(strongSelf.renderDelegate!.scene, shouldAbortBlock: nil)
+                    strongSelf.scnView.playing = true
+                    strongSelf.loadingView.stopAnimating()
+                    strongSelf.loadingView.hidden = true
+                    strongSelf.blurView.fullscreen = false
+                } else {
+                    strongSelf.renderDelegate.image = nil
+                }
+            }
+        
         glassesButtonView.setTitle(String.iconWithName(.Cardboard), forState: .Normal)
         glassesButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         glassesButtonView.defaultBackgroundColor = .Accent
@@ -121,6 +128,11 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         tableView.scrollEnabled = true
         view.addSubview(tableView)
         
+        loadingView.activityIndicatorViewStyle = .WhiteLarge
+        loadingView.startAnimating()
+        loadingView.frame = CGRect(x: view.frame.width / 2 - 20, y: view.frame.height / 2 - 20 - 78 / 2, width: 40, height: 40)
+        view.addSubview(loadingView)
+        
         tableView.backgroundView = blurView
         
         viewModel.comments.producer.startWithNext { [weak self] _ in
@@ -135,8 +147,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
-        loadTexture()
-
+        viewModel.viewIsActive.value = true
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -144,26 +155,21 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.id])
         
-        unloadTexture()
+        viewModel.viewIsActive.value = false
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        MotionService.sharedInstance.motionEnable()
-        MotionService.sharedInstance.rotationEnable()
+        CoreMotionRotationSource.Instance.start()
+        RotationService.sharedInstance.rotationEnable()
         
-        rotationDisposable = MotionService.sharedInstance.rotationSignal?
+        RotationService.sharedInstance.rotationSignal?
             .skipRepeats()
+            .filter([.LandscapeLeft, .LandscapeRight])
+            .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
             .observeOn(UIScheduler())
-            .observeNext { [weak self] orientation in
-                switch orientation {
-                case .LandscapeLeft, .LandscapeRight:
-                    self?.pushViewer(orientation)
-                default: break
-                }
-        }
-
+            .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
@@ -174,10 +180,8 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        rotationDisposable?.dispose()
-        
-        MotionService.sharedInstance.motionDisable()
-        MotionService.sharedInstance.rotationDisable()
+        CoreMotionRotationSource.Instance.stop()
+        RotationService.sharedInstance.rotationDisable()
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
@@ -245,22 +249,12 @@ extension DetailsTableViewController: UITableViewDataSource {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("details-cell") as! DetailsTableViewCell
             cell.viewModel = viewModel
             cell.navigationController = navigationController as? NavigationController
-            cell.tapCallback = { [unowned self] comment in
-                let yOffset = max(0, self.view.frame.height - self.tableView.contentSize.height)
-                UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
-                    animations: {
-                        self.tableView.contentOffset = CGPoint(x: 0, y: -yOffset)
-                    },
-                    completion: nil)
-            }
             cell.bindViewModel()
             return cell
         } else if indexPath.row == 1 {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
             cell.bindViewModel(viewModel.optograph.id, commentsCount: viewModel.commentsCount.value)
-            cell.postCallback = { [unowned self] comment in
-                self.viewModel.insertNewComment(comment)
-            }
+            cell.delegate = self
             return cell
         } else {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("comment-cell") as! CommentTableViewCell
@@ -274,6 +268,14 @@ extension DetailsTableViewController: UITableViewDataSource {
         return viewModel.comments.value.count + 2
     }
     
+}
+
+
+// MARK: - NewCommentTableViewDelegate
+extension DetailsTableViewController: NewCommentTableViewDelegate {
+    func newCommentAdded(comment: Comment) {
+        self.viewModel.insertNewComment(comment)
+    }
 }
 
 private class TableView: UITableView {
@@ -307,9 +309,15 @@ private class OffsetBlurView: UIView {
         return UIVisualEffectView(effect: blurEffect)
     }()
     
+    var fullscreen = true {
+        didSet {
+            updateBlurViewFrame()
+        }
+    }
+    
     override var frame: CGRect {
         didSet {
-            blurView.frame = CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height + frame.origin.y)
+            updateBlurViewFrame()
         }
     }
     
@@ -320,6 +328,14 @@ private class OffsetBlurView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func updateBlurViewFrame() {
+        if fullscreen {
+            blurView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        } else {
+            blurView.frame = CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height + frame.origin.y)
+        }
     }
     
 }

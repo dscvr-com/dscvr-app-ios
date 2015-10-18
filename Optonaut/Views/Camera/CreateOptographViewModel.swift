@@ -15,7 +15,7 @@ import WebImage
 class CreateOptographViewModel {
     
     let previewImageUrl = MutableProperty<String>("")
-    let locationSignal = NotificationSignal()
+    let locationSignal = NotificationSignal<Void>()
     let locationText = MutableProperty<String>("")
     let locationCountry = MutableProperty<String>("")
     let locationFound = MutableProperty<Bool>(false)
@@ -131,7 +131,7 @@ class CreateOptographViewModel {
         let enabled = LocationService.enabled
         if enabled && locationPermissionTimer != nil {
             self.locationEnabled.value = enabled
-            self.locationSignal.notify()
+            self.locationSignal.notify(())
             locationPermissionTimer = nil
         }
     }

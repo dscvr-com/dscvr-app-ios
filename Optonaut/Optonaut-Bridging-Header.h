@@ -4,3 +4,4 @@
 
 #import "Recorder.h"
 #import "Stitcher.h"
+#import "HeadTracker.h"

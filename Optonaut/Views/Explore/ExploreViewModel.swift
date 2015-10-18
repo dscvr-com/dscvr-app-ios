@@ -14,8 +14,8 @@ class ExploreViewModel {
     
     let results = MutableProperty<TableViewResults>(.empty)
     
-    let refreshNotification = NotificationSignal()
-    let loadMoreNotification = NotificationSignal()
+    let refreshNotification = NotificationSignal<Void>()
+    let loadMoreNotification = NotificationSignal<Void>()
     
     init() {
         

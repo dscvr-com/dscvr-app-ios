@@ -1,13 +1,15 @@
-New in 0.5.0:
+New in 1.2.0:
 
-- [Feature] Optographs cover now a larger field of view
-- [Feature] Guided recording process
-- [Feature] New onboarding process
-- [Feature] Record preview image for your Optograph
-- [Feature] Share your Optographs with your friends
-- [Feature] In case you don't like one of your Optographs anymore, you can now delete it. Think twice!
-- [Improvement] Feed and Explore view show more relevant content now
-- [Improvement] Offline support for most views
-- [Fix] Memory usage massively improved (oh boy, this was needed)
-- [Fix] Password changing requires you to enter correct current password
+- [Feature] Redesigned large parts of the app
+- [Feature] In-app signup possible now
+- [Feature] New and simplified Optograph creation process (now more waiting for an Optograph, this works in the background now)
+- [Feature] You can now select your VR Glasses (Google Cardboard and Zeiss VR supported)
+- [Improvement] Optonaut is now a lot more stable and faster
+- [Improvement] Optographs will be automatically uploaded when there is a internet connection
+- [Improvement] Optonaut will drain a lot less memory and battery with this release
+- [Fix] You can now delete your unpublished Optographs if you don't like them
 - [Fix] Fixed countless minor issues
+
+PS: We're really close to officially release the app in the app store. 🎉
+Now is the best time to give us feedback of what you don't like about Optonaut or what you'd like to see in future releases.
+Many thanks for testing!

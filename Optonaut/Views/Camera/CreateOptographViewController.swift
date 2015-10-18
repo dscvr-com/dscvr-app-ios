@@ -392,7 +392,7 @@ class CreateOptographViewController: UIViewController {
     }
     
     func reloadLocation() {
-        viewModel.locationSignal.notify()
+        viewModel.locationSignal.notify(())
     }
     
     func takePicture() {

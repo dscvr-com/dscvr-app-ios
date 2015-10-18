@@ -21,7 +21,7 @@ class ProfileViewModel {
     let isFollowed = MutableProperty<Bool>(false)
     let avatarImageUrl = MutableProperty<String>("")
     
-    private var person = Person.newInstance()
+    var person = Person.newInstance()
     
     init(id: UUID) {
         person.id = id

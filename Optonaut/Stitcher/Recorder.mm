@@ -134,6 +134,9 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     assert(!Stores::left.HasUnstitchedRecording());
     assert(!Stores::right.HasUnstitchedRecording());
     
+    Stores::left.Clear();
+    Stores::right.Clear();
+    
     self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero, self->intrinsics, Stores::left, Stores::right, optonaut::RecorderGraph::ModeTruncated, true);
     
     counter = 0;

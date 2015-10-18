@@ -16,8 +16,8 @@ class ActivitiesViewModel: NSObject {
     let results = MutableProperty<[Activity]>([])
     let unreadCount = MutableProperty<Int>(0)
     
-    let refreshNotification = NotificationSignal()
-    let loadMoreNotification = NotificationSignal()
+    let refreshNotification = NotificationSignal<Void>()
+    let loadMoreNotification = NotificationSignal<Void>()
     
     override init() {
         super.init()
@@ -36,7 +36,7 @@ class ActivitiesViewModel: NSObject {
 //                .startWithNext(next: self.processModel)
 //        }
         
-        refreshNotification.notify()
+        refreshNotification.notify(())
         refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
         
         SessionService.onLogout { [weak self] in
@@ -47,7 +47,7 @@ class ActivitiesViewModel: NSObject {
     }
     
     func refresh() {
-        refreshNotification.notify()
+        refreshNotification.notify(())
     }
     
     private func processModel(activities: [Activity]) {

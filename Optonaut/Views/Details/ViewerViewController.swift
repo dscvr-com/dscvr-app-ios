@@ -7,9 +7,6 @@ import Mixpanel
 import WebImage
 import ReactiveCocoa
 
-protocol RotationMatrixSource {
-    func getRotationMatrix() -> GLKMatrix4
-}
 
 class ViewerViewController: UIViewController  {
     
@@ -50,8 +47,8 @@ class ViewerViewController: UIViewController  {
         leftScnView = ViewerViewController.createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
         rightScnView = ViewerViewController.createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
-        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: MotionService.sharedInstance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: 85)
-        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: MotionService.sharedInstance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: 85)
+        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: 85)
+        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: 85)
         
         leftDownloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(optograph.leftTextureAssetURL)
             .startWithNext { [weak self] image in
@@ -72,8 +69,9 @@ class ViewerViewController: UIViewController  {
         
         switch SessionService.sessionData!.vrGlasses {
         case .GoogleCardboard:
-            leftScnView.technique = createDistortionTechnique("barrell_displacement")
-            rightScnView.technique = createDistortionTechnique("barrell_displacement")
+            break
+//            leftScnView.technique = createDistortionTechnique("barrell_displacement")
+//            rightScnView.technique = createDistortionTechnique("barrell_displacement")
         case .VROne:
             leftScnView.technique = createDistortionTechnique("zeiss_displacement_left")
             rightScnView.technique = createDistortionTechnique("zeiss_displacement_right")
@@ -99,10 +97,10 @@ class ViewerViewController: UIViewController  {
         UIApplication.sharedApplication().idleTimerDisabled = true
         
         var popActivated = false // needed when viewer was opened without rotation
-        MotionService.sharedInstance.motionEnable()
-        MotionService.sharedInstance.rotationEnable()
+        HeadTrackerRotationSource.Instance.start()
+        RotationService.sharedInstance.rotationEnable()
         
-        rotationDisposable = MotionService.sharedInstance.rotationSignal?
+        rotationDisposable = RotationService.sharedInstance.rotationSignal?
             .skipRepeats()
             .observeOn(UIScheduler())
             .observeNext { [weak self] orientation in

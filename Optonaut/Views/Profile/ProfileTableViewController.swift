@@ -10,7 +10,7 @@ import UIKit
 import Async
 import Mixpanel
 
-class ProfileTableViewController: OptographTableViewController, TransparentNavbar, UniqueView {
+class ProfileTableViewController: OptographTableViewController, NoNavbar, UniqueView {
     
     private let viewModel: OptographsViewModel
     private let personId: UUID
@@ -25,7 +25,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     required init(personId: UUID) {
         self.personId = personId
         viewModel = OptographsViewModel(personId: personId)
-        viewModel.refreshNotification.notify()
+        viewModel.refreshNotification.notify(())
         uniqueIdentifier = "profile-\(personId)"
         super.init(nibName: nil, bundle: nil)
     }
@@ -44,31 +44,32 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
         tableView.registerClass(ProfileHeaderTableViewCell.self, forCellReuseIdentifier: "profile-header-cell")
         tableView.bounces = false
         
-        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
-            self.viewModel.refreshNotification.notify()
-            Async.main(after: 10) { self.refreshControl.endRefreshing() }
-        }
+        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer()
+            .startWithNext { [weak self] _ in
+                self?.viewModel.refreshNotification.notify(())
+                Async.main(after: 10) { self?.refreshControl.endRefreshing() }
+            }
         tableView.addSubview(refreshControl)
         
         viewModel.results.producer
             .on(
-                next: { results in
-                    self.items = results.optographs
-                    self.tableView.beginUpdates()
+                next: { [weak self] results in
+                    self?.items = results.optographs
+                    self?.tableView.beginUpdates()
                     if !results.delete.isEmpty {
-                        self.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                        self?.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
                     }
                     if !results.update.isEmpty {
-                        self.tableView.reloadRowsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                        self?.tableView.reloadRowsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
                     }
                     if !results.insert.isEmpty {
-                        self.tableView.insertRowsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                        self?.tableView.insertRowsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
                     }
-                    self.tableView.endUpdates()
-                    self.refreshControl.endRefreshing()
+                    self?.tableView.endUpdates()
+                    self?.refreshControl.endRefreshing()
                 },
-                error: { _ in
-                    self.refreshControl.endRefreshing()
+                error: { [weak self] _ in
+                    self?.refreshControl.endRefreshing()
                 }
             )
             .start()
@@ -85,7 +86,7 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        viewModel.refreshNotification.notify()
+        viewModel.refreshNotification.notify(())
         
         updateNavbarAppear()
     }
@@ -140,8 +141,8 @@ class ProfileTableViewController: OptographTableViewController, TransparentNavba
 extension ProfileTableViewController: LoadMore {
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        checkRow(indexPath) {
-            self.viewModel.loadMoreNotification.notify()
+        checkRow(indexPath) { [weak self] in
+            self?.viewModel.loadMoreNotification.notify(())
         }
     }
     

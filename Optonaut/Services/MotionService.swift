@@ -10,23 +10,67 @@ import Foundation
 import CoreMotion
 import ReactiveCocoa
 
-class MotionService: RotationMatrixSource {
+protocol RotationMatrixSource {
+    func getRotationMatrix() -> GLKMatrix4
+}
+
+class HeadTrackerRotationSource : RotationMatrixSource {
+    private let headTracker = HeadTracker()
+    private var retainCounter = 0
     
-    typealias RotationSignal = Signal<UIInterfaceOrientation, NoError>
-    static let sharedInstance = MotionService()
+    static let Instance = HeadTrackerRotationSource()
+    
+    func getRotationMatrix() -> GLKMatrix4 {
+        if headTracker.isReady() {
+            let rot = GLKMatrix4MakeRotation(Float(M_PI_2), 0, -1, 0)
+            let base = GLKMatrix4Make(0, 1, 0, 0,
+                -1, 0, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1)
+            let baseInv = GLKMatrix4Transpose(base);
+            return GLKMatrix4Multiply(
+                GLKMatrix4Multiply(
+                    rot,
+                    GLKMatrix4Multiply(
+                        baseInv,
+                        GLKMatrix4Invert(headTracker.lastHeadView(), nil))),
+                base)
+        } else {
+            return GLKMatrix4Make(1, 0, 0, 0,
+                0, 0, 1, 0,
+                0, 1, 0, 0,
+                0, 0, 0, 1)
+        }
+    }
+    
+    func start() {
+        if retainCounter == 0 {
+            headTracker.startTracking(.LandscapeRight)
+        }
+        retainCounter++
+    }
+    
+    func stop() {
+        retainCounter--
+        if retainCounter == 0 {
+            headTracker.stopTracking()
+        }
+        assert(retainCounter >= 0)
+    }
+}
+
+class CoreMotionRotationSource : RotationMatrixSource {
     private let motionManager = CMMotionManager()
-    var rotationSignal: RotationSignal?
-    private var motionRetatinCounter = 0
-    private var rotationRetainCounter = 0
+    private var retainCounter = 0
     
-    private init() {}
+    static let Instance = CoreMotionRotationSource()
     
     func getRotationMatrix() -> GLKMatrix4 {
         guard let r = motionManager.deviceMotion?.attitude.rotationMatrix else {
             return GLKMatrix4Make(1, 0, 0, 0,
-                                  0, 0, 1, 0,
-                                  0, 1, 0, 0,
-                                  0, 0, 0, 1)
+                0, 0, 1, 0,
+                0, 1, 0, 0,
+                0, 0, 0, 1)
         }
         
         return GLKMatrix4Make(
@@ -37,25 +81,37 @@ class MotionService: RotationMatrixSource {
         )
     }
     
-    func motionEnable() {
-        if motionRetatinCounter == 0 {
+    func start() {
+        if retainCounter == 0 {
             motionManager.deviceMotionUpdateInterval = 1 / 60
             motionManager.startDeviceMotionUpdates()
         }
-        motionRetatinCounter++
+        retainCounter++
     }
     
-    func motionDisable() {
-        motionRetatinCounter--
-        if motionRetatinCounter == 0 {
+    func stop() {
+        retainCounter--
+        if retainCounter == 0 {
             motionManager.stopDeviceMotionUpdates()
         }
-        assert(motionRetatinCounter >= 0)
+        assert(retainCounter >= 0)
     }
+    
+}
+
+class RotationService {
+    
+    typealias RotationSignal = Signal<UIInterfaceOrientation, NoError>
+    static let sharedInstance = RotationService()
+    private let motionManager = CMMotionManager()
+    var rotationSignal: RotationSignal?
+    private var retainCounter = 0
+    
+    private init() {}
     
     func rotationEnable() {
         
-        if rotationRetainCounter == 0 {
+        if retainCounter == 0 {
             if rotationSignal != nil {
                 return
             }
@@ -80,17 +136,17 @@ class MotionService: RotationMatrixSource {
                 }
             })
         }
-        rotationRetainCounter++
+        retainCounter++
     }
     
     func rotationDisable() {
-        rotationRetainCounter--
+        retainCounter--
         
-        if rotationRetainCounter == 0 {
+        if retainCounter == 0 {
             motionManager.stopAccelerometerUpdates()
             rotationSignal = nil
         }
-        assert(rotationRetainCounter >= 0)
+        assert(retainCounter >= 0)
     }
     
 }

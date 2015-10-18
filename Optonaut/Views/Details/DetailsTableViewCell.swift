@@ -14,7 +14,6 @@ class DetailsTableViewCell: UITableViewCell {
     
     weak var viewModel: DetailsViewModel!
     weak var navigationController: NavigationController?
-    var tapCallback: (() -> ())?
     
     // subviews
     private let infoView = OptographInfoView()
@@ -52,6 +51,10 @@ class DetailsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        logRetain()
+    }
+    
     override func updateConstraints() {
         infoView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView)
         infoView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView)
@@ -87,7 +90,7 @@ class DetailsTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        let profileContainerViewController = ProfileTableViewController(personId: viewModel.personId.value)
+        let profileContainerViewController = ProfileTableViewController(personId: viewModel.optograph.person.id)
         navigationController?.pushViewController(profileContainerViewController, animated: true)
     }
     
@@ -98,7 +101,13 @@ class DetailsTableViewCell: UITableViewCell {
     }
     
     func triggerTapCallback() {
-        tapCallback?()
+        let superView = tableView!.superview!
+        let yOffset = max(0, superView.frame.height - tableView!.contentSize.height)
+        UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
+            animations: {
+                self.tableView!.contentOffset = CGPoint(x: 0, y: -yOffset)
+            },
+            completion: nil)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}
