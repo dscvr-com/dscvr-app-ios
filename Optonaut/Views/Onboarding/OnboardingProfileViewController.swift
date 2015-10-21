@@ -203,10 +203,6 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         view.endEditing(true)
     }
     
-    func openTerms() {
-        UIApplication.sharedApplication().openURL(NSURL(string:"http://optonaut.co/terms/")!)
-    }
-    
     func showHashtagOnboarding() {
         viewModel.updateData().startWithCompleted {
             self.presentViewController(OnboardingHashtagInfoViewController(), animated: false, completion: nil)

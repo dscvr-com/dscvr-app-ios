@@ -33,6 +33,8 @@ class OptographTableViewCell: UITableViewCell {
     private let progressTextView = UILabel()
     private var blurViewHeightConstraint = NSLayoutConstraint()
     
+    private var progressDisposable: Disposable?
+    
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -93,7 +95,8 @@ class OptographTableViewCell: UITableViewCell {
         
         previewImageView.rac_url <~ viewModel.previewImageUrl
         
-        viewModel.stitchingProgress.producer.startWithNext { [unowned self] progress in
+        progressDisposable?.dispose()
+        progressDisposable = viewModel.stitchingProgress.producer.startWithNext { [unowned self] progress in
             self.progressView.progress = progress
             self.progressTextView.hidden = progress == 1
             if progress == 1 {
