@@ -38,9 +38,8 @@ class OptographTableViewCell: UITableViewCell {
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        contentView.backgroundColor = .whiteColor()
+        contentView.backgroundColor = .blackColor()
         
-//        previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
         previewImageView.userInteractionEnabled = true

@@ -60,6 +60,13 @@ extension UIColor {
     }
 }
 
-func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icon) {
+func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icon, withFontSize fontSize: CGFloat) {
     tabBarItem.title = String.iconWithName(icon)
+    
+    let attribues = [
+        NSFontAttributeName: UIFont.iconOfSize(fontSize),
+        NSForegroundColorAttributeName: UIColor.whiteColor(),
+    ]
+    tabBarItem.setTitleTextAttributes(attribues, forState: .Normal)
+    tabBarItem.titlePositionAdjustment = UIOffsetMake(0, -12)
 }

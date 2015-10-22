@@ -12,7 +12,7 @@ class ProfileNavViewController: NavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        setTabBarIcon(tabBarItem, icon: .Profile)
+        setTabBarIcon(tabBarItem, icon: .Profile, withFontSize: 20)
         pushViewController(ProfileTableViewController(personId: SessionService.sessionData!.id), animated: false)
     }
     

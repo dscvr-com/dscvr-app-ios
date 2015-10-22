@@ -19,13 +19,20 @@ struct TableViewResults {
     static let empty = TableViewResults(insert: [], update: [], delete: [], optographs: [])
 }
 
-func mergeResults(newOptographs: [Optograph], oldOptographs: [Optograph]) -> TableViewResults {
+func mergeResults(newOptographs: [Optograph], oldOptographs: [Optograph], deleteOld: Bool = false) -> TableViewResults {
     var optographs = oldOptographs
     
     var delete: [Int] = []
     for deletedOptograph in newOptographs.filter({ $0.deletedAt != nil }) {
         if let index = optographs.indexOf({ $0.id == deletedOptograph.id }) {
             delete.append(index)
+        }
+    }
+    if deleteOld {
+        for (index, optograph) in optographs.enumerate() {
+            if newOptographs.indexOf({ $0.id == optograph.id }) == nil {
+                delete.append(index)
+            }
         }
     }
     for deleteIndex in delete.sort().reverse() {

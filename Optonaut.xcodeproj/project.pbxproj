@@ -152,6 +152,7 @@
 		8FED446B1BCD972800D5982C /* OnboardingAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FED446A1BCD972800D5982C /* OnboardingAccountViewModel.swift */; settings = {ASSET_TAGS = (); }; };
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
+		8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */; settings = {ASSET_TAGS = (); }; };
 		A5233DED1BC86CAF00C9EFE5 /* inputImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5233DE71BC86CAF00C9EFE5 /* inputImage.cpp */; settings = {ASSET_TAGS = (); }; };
 		A5233DEE1BC86CAF00C9EFE5 /* recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5233DE91BC86CAF00C9EFE5 /* recorder.cpp */; settings = {ASSET_TAGS = (); }; };
 		A5233DFC1BC87B4A00C9EFE5 /* checkpointStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5233DFB1BC87B4A00C9EFE5 /* checkpointStore.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -162,7 +163,7 @@
 		A5233E361BC92D9100C9EFE5 /* progressCallback.hpp in Resources */ = {isa = PBXBuildFile; fileRef = A5233E351BC92D9100C9EFE5 /* progressCallback.hpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE0181BC45E9A00713340 /* static_timer.cpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01F1BC51D4C00713340 /* io.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE01D1BC51D4C00713340 /* io.cpp */; settings = {ASSET_TAGS = (); }; };
-		A568D4951BD12F5A008FF556 /* Sensors in Resources */ = {isa = PBXBuildFile; fileRef = A568D4941BD12F5A008FF556 /* Sensors */; settings = {ASSET_TAGS = (); }; };
+		A568D4951BD12F5A008FF556 /* (null) in Resources */ = {isa = PBXBuildFile; settings = {ASSET_TAGS = (); }; };
 		A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4971BD13348008FF556 /* HeadTracker.mm */; settings = {ASSET_TAGS = (); }; };
 		A56CA4061BC070450078D7E8 /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FF1BC070450078D7E8 /* lut */; settings = {ASSET_TAGS = (); }; };
 		A56CA4071BC070450078D7E8 /* zeiss_displacement_left.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA4001BC070450078D7E8 /* zeiss_displacement_left.fsh */; settings = {ASSET_TAGS = (); }; };
@@ -349,6 +350,7 @@
 		8FED44681BCD971200D5982C /* OnboardingAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingAccountViewController.swift; sourceTree = "<group>"; };
 		8FED446A1BCD972800D5982C /* OnboardingAccountViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingAccountViewModel.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHashtagTableViewCell.swift; sourceTree = "<group>"; };
 		A5233DE71BC86CAF00C9EFE5 /* inputImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inputImage.cpp; sourceTree = "<group>"; };
 		A5233DE81BC86CAF00C9EFE5 /* inputImage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = inputImage.hpp; sourceTree = "<group>"; };
 		A5233DE91BC86CAF00C9EFE5 /* recorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = recorder.cpp; sourceTree = "<group>"; };
@@ -616,6 +618,7 @@
 				8FAB9F0D1B8F01DF00B4C8CB /* ExploreTableViewController.swift */,
 				8FAB9F0E1B8F01DF00B4C8CB /* ExploreViewModel.swift */,
 				8F966E0B1BCCF33900F5F5F8 /* SearchTableViewController.swift */,
+				8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */,
 				8F966E0C1BCCF33900F5F5F8 /* SearchViewModel.swift */,
 			);
 			path = Explore;
@@ -1058,7 +1061,7 @@
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
 				8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */,
 				A56CA4091BC070450078D7E8 /* zeiss_displacement_left.vsh in Resources */,
-				A568D4951BD12F5A008FF556 /* Sensors in Resources */,
+				A568D4951BD12F5A008FF556 /* (null) in Resources */,
 				A56CA4081BC070450078D7E8 /* zeiss_displacement_left.json in Resources */,
 				A56CA4131BC070AE0078D7E8 /* barrell_displacement.fsh in Resources */,
 				A56CA40C1BC070450078D7E8 /* zeiss_displacement_right.vsh in Resources */,
@@ -1196,6 +1199,7 @@
 				8FAB9F711B8F02D500B4C8CB /* Constants.swift in Sources */,
 				8FAB9F861B8F047700B4C8CB /* ApiService.swift in Sources */,
 				A59E32F41BB423DA003D166B /* ringwiseStitcher.cpp in Sources */,
+				8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */,
 				8FAB9F2D1B8F01DF00B4C8CB /* ActivityViewModel.swift in Sources */,
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				8FAB9F581B8F01DF00B4C8CB /* ProfileTableViewController.swift in Sources */,

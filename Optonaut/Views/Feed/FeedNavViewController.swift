@@ -14,7 +14,7 @@ class FeedNavViewController: NavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        setTabBarIcon(tabBarItem, icon: .Feed)
+        setTabBarIcon(tabBarItem, icon: .Feed, withFontSize: 23)
     }
     
     required init?(coder aDecoder: NSCoder) {
