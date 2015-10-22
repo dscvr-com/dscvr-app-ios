@@ -171,11 +171,6 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     assert(pipe != NULL);
     return ConvertSelectionPoint(pipe->CurrentPoint().closestPoint);
 }
-
-- (SelectionPoint*)previousPoint {
-    assert(pipe != NULL);
-    return ConvertSelectionPoint(pipe->PreviousPoint().closestPoint);
-}
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
     assert(pipe != NULL);
     optonaut::SelectionPoint convA;

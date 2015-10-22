@@ -17,7 +17,7 @@ enum LoginIdentifier {
 }
 
 enum VRGlasses: Int {
-    case GoogleCardboard, VROne
+    case GoogleCardboard, VROne, None
 }
 
 struct SessionData {
@@ -122,7 +122,7 @@ class SessionService {
                     password: password,
                     debuggingEnabled: false,
                     onboardingVersion: loginData.onboardingVersion,
-                    vrGlasses: .GoogleCardboard
+                    vrGlasses: .None
                 )
             })
             .flatMap(.Latest) { _ in ApiService<Person>.get("persons/me") }

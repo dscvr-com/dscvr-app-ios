@@ -219,7 +219,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
             settingsSheet.addAction(UIAlertAction(title: "VR Glasses", style: .Default, handler: { _ in
                 let vrGlassesAlert = UIAlertController(title: "Choose your VR glasses", message: "Please select which VR glasses you are using", preferredStyle: .Alert)
                 vrGlassesAlert.addAction(UIAlertAction(title: "Google Cardboard", style: .Default, handler: { _ in
-                    SessionService.sessionData!.vrGlasses = .GoogleCardboard
+                    SessionService.sessionData!.vrGlasses = .None
                 }))
                 vrGlassesAlert.addAction(UIAlertAction(title: "Zeiss VROne", style: .Default, handler: { _ in
                     SessionService.sessionData!.vrGlasses = .VROne

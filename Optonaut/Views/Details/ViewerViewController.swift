@@ -47,8 +47,15 @@ class ViewerViewController: UIViewController  {
         leftScnView = ViewerViewController.createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
         rightScnView = ViewerViewController.createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
-        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: 85)
-        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: 85)
+        let fov: Double
+        
+        switch SessionService.sessionData!.vrGlasses {
+        case .VROne: fov = 85
+        default: fov = 65
+        }
+        
+        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: fov)
+        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: fov)
         
         leftDownloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(optograph.leftTextureAssetURL)
             .startWithNext { [weak self] image in
@@ -69,12 +76,12 @@ class ViewerViewController: UIViewController  {
         
         switch SessionService.sessionData!.vrGlasses {
         case .GoogleCardboard:
-            break
-//            leftScnView.technique = createDistortionTechnique("barrell_displacement")
-//            rightScnView.technique = createDistortionTechnique("barrell_displacement")
+            leftScnView.technique = createDistortionTechnique("barrell_displacement")
+            rightScnView.technique = createDistortionTechnique("barrell_displacement")
         case .VROne:
             leftScnView.technique = createDistortionTechnique("zeiss_displacement_left")
             rightScnView.technique = createDistortionTechnique("zeiss_displacement_right")
+        default: break //None
         }
         
         view.addSubview(rightScnView)

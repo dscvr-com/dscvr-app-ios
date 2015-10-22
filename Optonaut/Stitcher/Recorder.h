@@ -39,7 +39,6 @@ struct ExposureInfo {
 - (GLKMatrix4)getCurrentRotation;
 - (SelectionPointIterator*)getSelectionPoints;
 - (SelectionPoint*)currentPoint;
-- (SelectionPoint*)previousPoint;
 - (void)enableDebug:(NSString*)path;
 - (void)setIdle:(bool)isIdle;
 - (bool)isIdle;

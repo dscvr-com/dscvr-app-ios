@@ -22,7 +22,7 @@ class CameraDebugService {
         try! NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
         return path
         }()
-    let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)
+    let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
     
     init() {
         let fileManager = NSFileManager.defaultManager()
@@ -38,41 +38,40 @@ class CameraDebugService {
         let height = CVPixelBufferGetHeight(pixelBuffer)
         let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
         let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
         
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let bitmapInfo = CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue
         let context = CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, colorSpace, bitmapInfo)
         let cgImage = CGBitmapContextCreateImage(context)!
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
     
-        let ratio = Float(width) / Float(height)
-        let smallWidth = 640
-        let smallHeight = Int(Float(smallWidth) / ratio)
-        let smallContext = CGBitmapContextCreate(nil, smallWidth, smallHeight, 8, bytesPerRow, colorSpace, bitmapInfo)
+        //let smallWidth = width / 2
+        //let smallHeight = height / 2
+        //let smallContext = CGBitmapContextCreate(nil, smallWidth, smallHeight, 8, bytesPerRow, colorSpace, bitmapInfo)
         
-        CGContextSetInterpolationQuality(smallContext, .None)
-        CGContextDrawImage(smallContext, CGRect(x: 0, y: 0, width: smallWidth, height: smallHeight), cgImage)
+        //CGContextSetInterpolationQuality(smallContext, .None)
+        //CGContextDrawImage(smallContext, CGRect(x: 0, y: 0, width: smallWidth, height: smallHeight), cgImage)
         
-        let smallCGImage = CGBitmapContextCreateImage(smallContext)!
+        //let smallCGImage = CGBitmapContextCreateImage(smallContext)!
         
         dispatch_async(queue) {
-            self.saveFilesToDisk(smallCGImage, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
+            self.saveFilesToDisk(cgImage, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
         }
     }
     
-    func upload() -> SignalProducer<Float, NSError> {
-        if !Reachability.connectedToNetwork() {
-            return SignalProducer<Float, NSError>(value: 0)
-        }
-        
-        var uploadData: [String: String] = [:]
-        let enumerator = NSFileManager.defaultManager().enumeratorAtPath(path)
-        while let element = enumerator?.nextObject() as? String {
-            uploadData["\(path)/\(element)"] = element
-        }
-        
-        return ApiService<EmptyResponse>.upload("optographs/tmp-\(NSDate().timeIntervalSince1970)/upload-debug", uploadData: uploadData)
-    }
+    //func upload() -> SignalProducer<Float, NSError> {
+    //    if !Reachability.connectedToNetwork() {
+    //        return SignalProducer<Float, NSError>(value: 0)
+    //    }
+    //
+    //    var uploadData: [String: String] = [:]
+    //    let enumerator = NSFileManager.defaultManager().enumeratorAtPath(path)
+    //    while let element = enumerator?.nextObject() as? String {
+    //        uploadData["\(path)/\(element)"] = element
+    //    }
+    //
+    //    return ApiService<EmptyResponse>.upload("optographs/tmp-\(NSDate().timeIntervalSince1970)/upload-debug", uploadData: uploadData)
+    //}
     
     private func saveFilesToDisk(cgImage: CGImage, intrinsics: [Double], extrinsics: [Double], frameCount: Int) {
         // json data file
