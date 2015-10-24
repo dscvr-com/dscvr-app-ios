@@ -231,7 +231,7 @@ extension OnboardingProfileViewController: UITextFieldDelegate {
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if textField == displayNameInputView {
             Async.main {
-                userNameInputView.becomeFirstResponder()
+                self.userNameInputView.becomeFirstResponder()
             }
         }
         

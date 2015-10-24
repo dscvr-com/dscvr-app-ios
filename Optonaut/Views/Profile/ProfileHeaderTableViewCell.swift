@@ -175,10 +175,10 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         super.updateConstraints()
     }
     
-    func bindViewModel(personId: UUID) {
-        viewModel = ProfileViewModel(id: personId)
+    func bindViewModel(personID: UUID) {
+        viewModel = ProfileViewModel(ID:  personID)
         
-        isMe = SessionService.sessionData!.id == personId
+        isMe = SessionService.sessionData!.ID == personID
         
         avatarBackgroundImageView.rac_url <~ viewModel.avatarImageUrl
         

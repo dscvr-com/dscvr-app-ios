@@ -9,7 +9,7 @@
 import SQLite
 
 struct PersonSchemaType: ModelSchema {
-    let id = Expression<UUID>("person_id")
+    let ID = Expression<UUID>("person_id")
     let email = Expression<String?>("person_email")
     let displayName = Expression<String>("person_display_name")
     let userName = Expression<String>("person_user_name")
@@ -19,7 +19,7 @@ struct PersonSchemaType: ModelSchema {
     let isFollowed = Expression<Bool>("person_is_followed")
     let createdAt = Expression<NSDate>("person_created_at")
     let wantsNewsletter = Expression<Bool>("person_wants_newsletter")
-    let avatarAssetId = Expression<UUID>("person_avatar_asset_id")
+    let avatarAssetID = Expression<UUID>("person_avatar_asset_id")
 }
 
 let PersonSchema = PersonSchemaType()
@@ -27,7 +27,7 @@ let PersonTable = Table("person")
 
 func PersonMigration() -> String {
     return PersonTable.create { t in
-        t.column(PersonSchema.id, primaryKey: true)
+        t.column(PersonSchema.ID, primaryKey: true)
         t.column(PersonSchema.email)
         t.column(PersonSchema.displayName)
         t.column(PersonSchema.userName)
@@ -37,6 +37,6 @@ func PersonMigration() -> String {
         t.column(PersonSchema.isFollowed)
         t.column(PersonSchema.createdAt)
         t.column(PersonSchema.wantsNewsletter)
-        t.column(PersonSchema.avatarAssetId)
+        t.column(PersonSchema.avatarAssetID)
     }
 }

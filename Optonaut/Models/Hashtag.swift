@@ -10,18 +10,18 @@ import Foundation
 import ObjectMapper
 
 struct Hashtag: Model {
-    var id: UUID
+    var ID: UUID
     var createdAt: NSDate
     var name: String
-    var previewAssetId: UUID
+    var previewAssetID: UUID
     var isFollowed: Bool
     
     static func newInstance() -> Hashtag {
         return Hashtag(
-            id: uuid(),
+            ID: uuid(),
             createdAt: NSDate(),
             name: "",
-            previewAssetId: uuid(),
+            previewAssetID: uuid(),
             isFollowed: false
         )
     }
@@ -35,9 +35,9 @@ extension Hashtag: Mappable {
     }
     
     mutating func mapping(map: Map) {
-        id                  <- map["id"]
+        ID                  <- map["id"]
         name                <- map["name"]
-        previewAssetId      <- map["preview_asset_id"]
+        previewAssetID      <- map["preview_asset_id"]
         isFollowed          <- map["is_followed"]
     }
     
@@ -55,19 +55,19 @@ extension Hashtag: SQLiteModel {
     
     static func fromSQL(row: SQLiteRow) -> Hashtag {
         return Hashtag(
-            id: row[HashtagSchema.id],
+            ID: row[HashtagSchema.ID],
             createdAt: NSDate(),
             name: row[HashtagSchema.name],
-            previewAssetId: row[HashtagSchema.previewAssetId],
+            previewAssetID: row[HashtagSchema.previewAssetID],
             isFollowed: row[HashtagSchema.isFollowed]
         )
     }
     
     func toSQL() -> [SQLiteSetter] {
         return [
-            HashtagSchema.id <-- id,
+            HashtagSchema.ID <-- ID,
             HashtagSchema.name <-- name,
-            HashtagSchema.previewAssetId <-- previewAssetId,
+            HashtagSchema.previewAssetID <-- previewAssetID,
             HashtagSchema.isFollowed <-- isFollowed,
         ]
     }

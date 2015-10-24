@@ -12,20 +12,20 @@ import SQLite
 
 class OptographsViewModel {
     
-    let results = MutableProperty<TableViewResults>(.empty)
+    let results = MutableProperty<TableViewResults<Optograph>>(.empty())
     
     let refreshNotification = NotificationSignal<Void>()
     let loadMoreNotification = NotificationSignal<Void>()
     
-    init(personId: UUID) {
+    init(personID: UUID) {
         
         let queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
         
         let query = OptographTable
             .select(*)
-            .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
-            .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
-            .filter(PersonTable[PersonSchema.id] == personId)
+            .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
+            .join(LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+            .filter(PersonTable[PersonSchema.ID] == personID)
         
         refreshNotification.signal
             .flatMap(.Latest) { _ in
@@ -46,13 +46,13 @@ class OptographsViewModel {
                     .startOn(QueueScheduler(queue: queue))
             }
             .observeOn(UIScheduler())
-            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
         
         refreshNotification.signal
             .mapError { _ in ApiError.Nil }
             .flatMap(.Latest) { _ in
-                ApiService<Optograph>.get("persons/\(personId)/optographs")
+                ApiService<Optograph>.get("persons/\(personID)/optographs")
                     .observeOn(QueueScheduler(queue: queue))
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
@@ -63,15 +63,15 @@ class OptographsViewModel {
                     .startOn(QueueScheduler(queue: queue))
             }
             .observeOn(UIScheduler())
-            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
         
         loadMoreNotification.signal
             .mapError { _ in ApiError.Nil }
-            .map { _ in self.results.value.optographs.last }
+            .map { _ in self.results.value.models.last }
             .ignoreNil()
             .flatMap(.Latest) { oldestResult in
-                ApiService<Optograph>.get("persons/\(personId)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                ApiService<Optograph>.get("persons/\(personID)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOn(QueueScheduler(queue: queue))
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
@@ -82,7 +82,7 @@ class OptographsViewModel {
                     .startOn(QueueScheduler(queue: queue))
             }
             .observeOn(UIScheduler())
-            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
     }
     

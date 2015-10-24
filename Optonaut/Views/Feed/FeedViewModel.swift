@@ -10,67 +10,70 @@ import Foundation
 import ReactiveCocoa
 import SQLite
 
-struct TableViewResults {
+struct TableViewResults<T: DeletableModel> {
     let insert: [Int]
     let update: [Int]
     let delete: [Int]
-    let optographs: [Optograph]
+    let models: [T]
     
-    static let empty = TableViewResults(insert: [], update: [], delete: [], optographs: [])
-}
-
-func mergeResults(newOptographs: [Optograph], oldOptographs: [Optograph], deleteOld: Bool = false) -> TableViewResults {
-    var optographs = oldOptographs
-    
-    var delete: [Int] = []
-    for deletedOptograph in newOptographs.filter({ $0.deletedAt != nil }) {
-        if let index = optographs.indexOf({ $0.id == deletedOptograph.id }) {
-            delete.append(index)
-        }
+    static func empty() -> TableViewResults<T> {
+        return TableViewResults<T>(insert: [], update: [], delete: [], models: [])
     }
-    if deleteOld {
-        for (index, optograph) in optographs.enumerate() {
-            if newOptographs.indexOf({ $0.id == optograph.id }) == nil {
+    
+    func merge(newModels: [T], deleteOld: Bool) -> TableViewResults<T> {
+        
+        var models = self.models
+        
+        var delete: [Int] = []
+        for deletedModel in newModels.filter({ $0.deletedAt != nil }) {
+            if let index = models.indexOf({ $0.ID == deletedModel.ID }) {
                 delete.append(index)
             }
         }
-    }
-    for deleteIndex in delete.sort().reverse() {
-        optographs.removeAtIndex(deleteIndex)
-    }
-    
-    var update: [Int] = []
-    var exclusiveNewOptographs: [Optograph] = []
-    for newOptograph in newOptographs.filter({ $0.deletedAt == nil }) {
-        if let index = optographs.indexOf({ $0.id == newOptograph.id }) {
-            if optographs[index] != newOptograph {
-                update.append(index)
-                optographs[index] = newOptograph
+        if deleteOld {
+            for (index, model) in models.enumerate() {
+                if newModels.indexOf({ $0.ID == model.ID }) == nil {
+                    delete.append(index)
+                }
             }
-        } else {
-            exclusiveNewOptographs.append(newOptograph)
         }
-    }
-    
-    var insert: [Int] = []
-    for newOptograph in exclusiveNewOptographs.sort({ $0.createdAt > $1.createdAt }) {
-        if let index = optographs.indexOf({ $0.createdAt < newOptograph.createdAt }) {
-            insert.append(index)
-            optographs.insert(newOptograph, atIndex: index)
-        } else {
-            insert.append(optographs.count)
-            optographs.append(newOptograph)
+        for deleteIndex in delete.sort().reverse() {
+            models.removeAtIndex(deleteIndex)
         }
+        
+        var update: [Int] = []
+        var exclusiveNewModels: [T] = []
+        for newModel in newModels.filter({ $0.deletedAt == nil }) {
+            if let index = models.indexOf({ $0.ID == newModel.ID }) {
+                if models[index] != newModel {
+                    update.append(index)
+                    models[index] = newModel
+                }
+            } else {
+                exclusiveNewModels.append(newModel)
+            }
+        }
+        
+        var insert: [Int] = []
+        for newModel in exclusiveNewModels.sort({ $0.createdAt > $1.createdAt }) {
+            if let index = models.indexOf({ $0.createdAt < newModel.createdAt }) {
+                insert.append(index)
+                models.insert(newModel, atIndex: index)
+            } else {
+                insert.append(models.count)
+                models.append(newModel)
+            }
+        }
+        
+        return TableViewResults(insert: insert, update: update, delete: delete, models: models)
     }
-    
-    return TableViewResults(insert: insert, update: update, delete: delete, optographs: optographs)
 }
 
 class FeedViewModel: NSObject {
     
     var refreshTimer: NSTimer!
     
-    let results = MutableProperty<TableViewResults>(.empty)
+    let results = MutableProperty<TableViewResults<Optograph>>(.empty())
     let newResultsAvailable = MutableProperty<Bool>(false)
     
     let refreshNotification = NotificationSignal<Void>()
@@ -79,19 +82,16 @@ class FeedViewModel: NSObject {
     override init() {
         super.init()
         
-        let queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
-        
-        let query = OptographTable
-            .select(*)
-            .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
-            .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
-            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
-//            .order(CommentSchema.createdAt.asc)
+        let query = OptographTable.select(*)
+            .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
+            .join(LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == SessionService.sessionData!.ID)
+            .order(CommentSchema.createdAt.asc)
         
         refreshNotification.signal
             .flatMap(.Latest) { _ in
                 DatabaseService.query(.Many, query: query)
-                    .observeOn(QueueScheduler(queue: queue))
+                    .observeOnUserInteractive()
                     .map { row -> Optograph in
                         let person = Person.fromSQL(row)
                         let location = Location.fromSQL(row)
@@ -104,17 +104,17 @@ class FeedViewModel: NSObject {
                     }
                     .ignoreError()
                     .collect()
-                    .startOn(QueueScheduler(queue: queue))
+                    .startOnUserInteractive()
             }
-            .observeOn(UIScheduler())
-            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .observeOnMain()
+            .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
     
         refreshNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .flatMap(.Latest) { _ in
                 ApiService<Optograph>.get("optographs/feed")
-                    .observeOn(QueueScheduler(queue: queue))
+                    .observeOnUserInteractive()
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
                         try! optograph.location.insertOrUpdate()
@@ -122,21 +122,21 @@ class FeedViewModel: NSObject {
                     })
                     .ignoreError()
                     .collect()
-                    .startOn(QueueScheduler(queue: queue))
+                    .startOnUserInteractive()
             }
-            .observeOn(UIScheduler())
-            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .observeOnMain()
+            .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { results in
-                self.newResultsAvailable.value = self.results.value.optographs.first?.id != results.optographs.first?.id
+                self.newResultsAvailable.value = self.results.value.models.first?.ID != results.models.first?.ID
                 self.results.value = results
             }
         
         loadMoreNotification.signal
-            .map { _ in self.results.value.optographs.last }
+            .map { _ in self.results.value.models.last }
             .ignoreNil()
             .flatMap(.Latest) { oldestResult in
                 ApiService<Optograph>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
-                    .observeOn(QueueScheduler(queue: queue))
+                    .observeOnUserInteractive()
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
                         try! optograph.location.insertOrUpdate()
@@ -144,10 +144,10 @@ class FeedViewModel: NSObject {
                     })
                     .ignoreError()
                     .collect()
-                    .startOn(QueueScheduler(queue: queue))
+                    .startOnUserInteractive()
             }
-            .observeOn(UIScheduler())
-            .map { mergeResults($0, oldOptographs: self.results.value.optographs) }
+            .observeOnMain()
+            .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
         
         refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)

@@ -11,10 +11,11 @@ import SQLite
 import ReactiveCocoa
 
 protocol ModelSchema {
-    var id: Expression<UUID> { get }
+    var ID: Expression<UUID> { get }
 }
 
 protocol SQLiteModel {
+    var ID: UUID { get set }
     static func fromSQL(row: SQLiteRow) -> Self
     static func table() -> SQLiteTable
     static func schema() -> ModelSchema
@@ -22,13 +23,13 @@ protocol SQLiteModel {
     func insertOrUpdate() throws
 }
 
-extension SQLiteModel where Self: Model {
+extension SQLiteModel {
     
     func insertOrUpdate() throws {
         do {
             try DatabaseService.defaultConnection.run(Self.table().insert(or: .Fail, toSQL()))
         } catch {
-            try DatabaseService.defaultConnection.run(Self.table().filter(Self.table()[Self.schema().id] ==- self.id).update(toSQL()))
+            try DatabaseService.defaultConnection.run(Self.table().filter(Self.table()[Self.schema().ID] ==- self.ID).update(toSQL()))
         }
     }
     
@@ -62,6 +63,11 @@ class DatabaseService {
     
     private static let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/db.sqlite3"
     private static let migrations = [
+        ActivityMigration,
+        ActivityResourceStarMigration,
+        ActivityResourceCommentMigration,
+        ActivityResourceViewsMigration,
+        ActivityResourceFollowMigration,
         CommentMigration,
         HashtagMigration,
         LocationMigration,
@@ -69,6 +75,11 @@ class DatabaseService {
         PersonMigration,
     ]
     private static let tables = [
+        ActivityTable,
+        ActivityResourceStarTable,
+        ActivityResourceCommentTable,
+        ActivityResourceViewsTable,
+        ActivityResourceFollowTable,
         CommentTable,
         HashtagTable,
         LocationTable,
@@ -101,17 +112,17 @@ class DatabaseService {
             switch type {
             case .One:
                 guard let row = DatabaseService.defaultConnection.pluck(query) else {
-                    sendError(sink, .NotFound)
+                    sink.sendError(.NotFound)
                     break
                 }
-                sendNext(sink, row)
+                sink.sendNext(row)
             case .Many:
                 for row in DatabaseService.defaultConnection.prepare(query) {
-                    sendNext(sink, row)
+                    sink.sendNext(row)
                 }
             }
             
-            sendCompleted(sink)
+            sink.sendCompleted()
         }
     }
     

@@ -99,4 +99,5 @@ public enum Icon: String {
     case Search = "\u{e816}"
     case LogoText = "\u{e817}"
     case Rocket = "\u{e818}"
+    case Bell = "\u{e819}"
 }

@@ -23,14 +23,14 @@ class ProfileViewModel {
     
     var person = Person.newInstance()
     
-    init(id: UUID) {
-        person.id = id
+    init(ID:  UUID) {
+        person.ID = ID
         
         reloadModel()
     }
     
     func reloadModel() {
-        let query = PersonTable.filter(PersonTable[PersonSchema.id] == person.id)
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] == person.ID)
         
         if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
             self.person = person
@@ -44,8 +44,8 @@ class ProfileViewModel {
         SignalProducer<Bool, ApiError>(value: followedBefore)
             .flatMap(.Latest) { followedBefore in
                 followedBefore
-                    ? ApiService<EmptyResponse>.delete("persons/\(self.person.id)/follow")
-                    : ApiService<EmptyResponse>.post("persons/\(self.person.id)/follow", parameters: nil)
+                    ? ApiService<EmptyResponse>.delete("persons/\(self.person.ID)/follow")
+                    : ApiService<EmptyResponse>.post("persons/\(self.person.ID)/follow", parameters: nil)
             }
             .on(
                 started: {
@@ -73,7 +73,7 @@ class ProfileViewModel {
         followersCount.value = person.followersCount
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed
-        avatarImageUrl.value = "\(S3URL)/400x400/\(person.avatarAssetId).jpg"
+        avatarImageUrl.value = person.avatarAssetURL
     }
     
     private func saveModel() {

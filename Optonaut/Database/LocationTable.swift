@@ -9,7 +9,7 @@
 import SQLite
 
 struct LocationSchemaType: ModelSchema {
-    let id = Expression<UUID>("location_id")
+    let ID = Expression<UUID>("location_id")
     let text = Expression<String>("location_text")
     let country = Expression<String>("location_country")
     let createdAt = Expression<NSDate>("location_created_at")
@@ -22,7 +22,7 @@ let LocationTable = Table("location")
 
 func LocationMigration() -> String {
     return LocationTable.create { t in
-        t.column(LocationSchema.id, primaryKey: true)
+        t.column(LocationSchema.ID, primaryKey: true)
         t.column(LocationSchema.text)
         t.column(LocationSchema.country)
         t.column(LocationSchema.createdAt)

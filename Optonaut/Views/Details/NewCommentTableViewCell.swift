@@ -79,8 +79,8 @@ class NewCommentTableViewCell: UITableViewCell {
         super.updateConstraints()
     }
     
-    func bindViewModel(optographId: UUID, commentsCount: Int) {
-        viewModel = NewCommentViewModel(optographId: optographId, commentsCount: commentsCount)
+    func bindViewModel(optographID: UUID, commentsCount: Int) {
+        viewModel = NewCommentViewModel(optographID: optographID, commentsCount: commentsCount)
         
         textInputView.rac_text <~ viewModel.text
         textInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.text.value = $0 as! String }

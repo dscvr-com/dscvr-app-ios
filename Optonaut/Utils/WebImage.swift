@@ -21,9 +21,9 @@ extension SDWebImageManager {
                 completed: { (image, _, _, _, _) in
                     if !disposable.disposed {
                         if let image = image {
-                            sendNext(sink, image)
+                            sink.sendNext(image)
                         }
-                        sendCompleted(sink)
+                        sink.sendCompleted()
                     }
             })
             disposable.addDisposable {

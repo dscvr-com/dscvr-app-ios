@@ -54,7 +54,7 @@ class OnboardingVRViewController: UIViewController {
         iconTextView.textColor = .whiteColor()
         view.addSubview(iconTextView)
         
-        nextButtonView.setTitle("I got VR glasses", forState: .Normal)
+        nextButtonView.setTitle("I have VR glasses", forState: .Normal)
         nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showProfileOnboarding"))
         view.addSubview(nextButtonView)
         

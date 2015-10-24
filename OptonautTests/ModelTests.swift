@@ -9,12 +9,12 @@
 import XCTest
 
 struct TestModel: Model {
-    var id: UUID
+    var ID:  UUID
     var createdAt: NSDate
     
     init(createdAt: NSDate) {
         self.createdAt = createdAt
-        id = NSUUID().UUIDString
+        ID = NSUUID().UUIDString
     }
 }
 
@@ -43,13 +43,13 @@ class ModelTests: XCTestCase {
     func testOrderedInsertAscendingAtBeginning() {
         let model = TestModel(createdAt: date(0))
         ascendingModels.orderedInsert(model, withOrder: .OrderedAscending)
-        XCTAssertEqual(ascendingModels[0].id, model.id)
+        XCTAssertEqual(ascendingModels[0].ID, model.ID)
     }
 
     func testOrderedInsertAscendingAtEnd() {
         let model = TestModel(createdAt: date(4))
         ascendingModels.orderedInsert(model, withOrder: .OrderedAscending)
-        XCTAssertEqual(ascendingModels[3].id, model.id)
+        XCTAssertEqual(ascendingModels[3].ID, model.ID)
     }
 
     func testOrderedInsertAscendingAtMiddle() {
@@ -57,19 +57,19 @@ class ModelTests: XCTestCase {
         ascendingModels.append(TestModel(createdAt: date(6)))
         let model = TestModel(createdAt: date(5))
         ascendingModels.orderedInsert(model, withOrder: .OrderedAscending)
-        XCTAssertEqual(ascendingModels[4].id, model.id)
+        XCTAssertEqual(ascendingModels[4].ID, model.ID)
     }
 
     func testOrderedInsertDescendingAtBeginning() {
         let model = TestModel(createdAt: date(4))
         descendingModels.orderedInsert(model, withOrder: .OrderedDescending)
-        XCTAssertEqual(descendingModels[0].id, model.id)
+        XCTAssertEqual(descendingModels[0].ID, model.ID)
     }
 
     func testOrderedInsertDescendingAtEnd() {
         let model = TestModel(createdAt: date(0))
         descendingModels.orderedInsert(model, withOrder: .OrderedDescending)
-        XCTAssertEqual(descendingModels[3].id, model.id)
+        XCTAssertEqual(descendingModels[3].ID, model.ID)
     }
 
     func testOrderedInsertDescendingAtMiddle() {
@@ -77,7 +77,7 @@ class ModelTests: XCTestCase {
         descendingModels.insert(TestModel(createdAt: date(4)), atIndex: 1)
         let model = TestModel(createdAt: date(5))
         descendingModels.orderedInsert(model, withOrder: .OrderedDescending)
-        XCTAssertEqual(descendingModels[1].id, model.id)
+        XCTAssertEqual(descendingModels[1].ID, model.ID)
     }
     
     private func date(secondsFromNow: Double) -> NSDate {

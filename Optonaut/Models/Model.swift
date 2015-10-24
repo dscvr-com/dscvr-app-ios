@@ -11,15 +11,19 @@ import Foundation
 typealias UUID = String
 
 protocol Model {
-    var id: UUID { get set }
+    var ID: UUID { get set }
     var createdAt: NSDate { get set }
+}
+
+protocol DeletableModel: Model, Equatable {
+    var deletedAt: NSDate? { get set }
 }
 
 extension Array where Element: Model {
     
     mutating func orderedInsert(newModel: Element, withOrder order: NSComparisonResult) {
         // replace if already in array
-        if let index = indexOf({ $0.id == newModel.id }) {
+        if let index = indexOf({ $0.ID == newModel.ID }) {
             self[index] = newModel
             return
         }

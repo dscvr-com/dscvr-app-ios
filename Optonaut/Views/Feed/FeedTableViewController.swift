@@ -43,7 +43,7 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
         viewModel.results.producer
             .on(
                 next: { results in
-                    self.items = results.optographs
+                    self.items = results.models
                     self.tableView.beginUpdates()
                     if !results.delete.isEmpty {
                         self.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)

@@ -9,10 +9,10 @@
 import SQLite
 
 struct OptographSchemaType: ModelSchema {
-    let id = Expression<UUID>("optograph_id")
+    let ID = Expression<UUID>("optograph_id")
     let text = Expression<String>("optograph_text")
-    let personId = Expression<UUID>("optograph_person_id")
-    let locationId = Expression<UUID>("optograph_location_id")
+    let personID = Expression<UUID>("optograph_person_id")
+    let locationID = Expression<UUID>("optograph_location_id")
     let createdAt = Expression<NSDate>("optograph_created_at")
     let deletedAt = Expression<NSDate?>("optograph_deleted_at")
     let isStarred = Expression<Bool>("optograph_is_starred")
@@ -21,9 +21,9 @@ struct OptographSchemaType: ModelSchema {
     let viewsCount = Expression<Int>("optograph_views_count")
     let isStitched = Expression<Bool>("optograph_is_stitched")
     let isPublished = Expression<Bool>("optograph_is_published")
-    let previewAssetId = Expression<UUID>("optograph_preview_asset_id")
-    let leftTextureAssetId = Expression<UUID>("optograph_left_texture_asset_id")
-    let rightTextureAssetId = Expression<UUID>("optograph_right_texture_asset_id")
+    let previewAssetID = Expression<UUID>("optograph_preview_asset_id")
+    let leftTextureAssetID = Expression<UUID>("optograph_left_texture_asset_id")
+    let rightTextureAssetID = Expression<UUID>("optograph_right_texture_asset_id")
     let isStaffPick = Expression<Bool>("optograph_is_staff_pick")
     let hashtagString = Expression<String>("optograph_hashtag_string")
 }
@@ -33,10 +33,10 @@ let OptographTable = Table("optograph")
 
 func OptographMigration() -> String {
     return OptographTable.create { t in
-        t.column(OptographSchema.id, primaryKey: true)
+        t.column(OptographSchema.ID, primaryKey: true)
         t.column(OptographSchema.text)
-        t.column(OptographSchema.personId)
-        t.column(OptographSchema.locationId)
+        t.column(OptographSchema.personID)
+        t.column(OptographSchema.locationID)
         t.column(OptographSchema.createdAt)
         t.column(OptographSchema.deletedAt)
         t.column(OptographSchema.isStarred)
@@ -45,9 +45,9 @@ func OptographMigration() -> String {
         t.column(OptographSchema.viewsCount)
         t.column(OptographSchema.isStitched)
         t.column(OptographSchema.isPublished)
-        t.column(OptographSchema.previewAssetId)
-        t.column(OptographSchema.leftTextureAssetId)
-        t.column(OptographSchema.rightTextureAssetId)
+        t.column(OptographSchema.previewAssetID)
+        t.column(OptographSchema.leftTextureAssetID)
+        t.column(OptographSchema.rightTextureAssetID)
         t.column(OptographSchema.isStaffPick)
         t.column(OptographSchema.hashtagString)
     }

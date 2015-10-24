@@ -10,7 +10,7 @@ import ObjectMapper
 import ReactiveCocoa
 
 struct Person: Model {
-    var id: UUID
+    var ID: UUID
     var email: String?
     var displayName: String
     var userName: String
@@ -20,11 +20,15 @@ struct Person: Model {
     var isFollowed: Bool
     var createdAt: NSDate
     var wantsNewsletter: Bool
-    var avatarAssetId: UUID
+    var avatarAssetID: UUID
+    
+    var avatarAssetURL: String {
+        return "\(S3URL)/400x400/\(avatarAssetID).jpg"
+    }
     
     static func newInstance() -> Person {
         return Person(
-            id: uuid(),
+            ID: uuid(),
             email: nil,
             displayName: "",
             userName: "",
@@ -34,12 +38,12 @@ struct Person: Model {
             isFollowed: false,
             createdAt: NSDate(),
             wantsNewsletter: false,
-            avatarAssetId: uuid()
+            avatarAssetID: uuid()
         )
     }
     
     func report() -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.post("persons/\(id)/report")
+        return ApiService<EmptyResponse>.post("persons/\(ID)/report")
     }
 }
 
@@ -50,7 +54,7 @@ extension Person: Mappable {
     }
     
     mutating func mapping(map: Map) {
-        id                  <- map["id"]
+        ID                  <- map["id"]
         email               <- map["email"]
         displayName         <- map["display_name"]
         userName            <- map["user_name"]
@@ -60,7 +64,7 @@ extension Person: Mappable {
         isFollowed          <- map["is_followed"]
         createdAt           <- (map["created_at"], NSDateTransform())
         wantsNewsletter     <- map["wants_newsletter"]
-        avatarAssetId       <- map["avatar_asset_id"]
+        avatarAssetID       <- map["avatar_asset_id"]
     }
     
 }
@@ -77,7 +81,7 @@ extension Person: SQLiteModel {
     
     static func fromSQL(row: SQLiteRow) -> Person {
         return Person(
-            id: row[PersonSchema.id],
+            ID: row[PersonSchema.ID],
             email: row[PersonSchema.email],
             displayName: row[PersonSchema.displayName],
             userName: row[PersonSchema.userName],
@@ -87,13 +91,13 @@ extension Person: SQLiteModel {
             isFollowed: row[PersonSchema.isFollowed],
             createdAt: row[PersonSchema.createdAt],
             wantsNewsletter: row[PersonSchema.wantsNewsletter],
-            avatarAssetId: row[PersonSchema.avatarAssetId]
+            avatarAssetID: row[PersonSchema.avatarAssetID]
         )
     }
     
     func toSQL() -> [SQLiteSetter] {
         var setters = [
-            PersonSchema.id <-- id,
+            PersonSchema.ID <-- ID,
             PersonSchema.displayName <-- displayName,
             PersonSchema.userName <-- userName,
             PersonSchema.text <-- text,
@@ -102,7 +106,7 @@ extension Person: SQLiteModel {
             PersonSchema.isFollowed <-- isFollowed,
             PersonSchema.createdAt <-- createdAt,
             PersonSchema.wantsNewsletter <-- wantsNewsletter,
-            PersonSchema.avatarAssetId <-- avatarAssetId
+            PersonSchema.avatarAssetID <-- avatarAssetID
         ]
         
         if email != nil {

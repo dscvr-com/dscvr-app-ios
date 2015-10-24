@@ -44,7 +44,7 @@ class OnboardingHashtagSelectViewModel {
         }
         
         self.loading.value = true
-        ApiService<Hashtag>.post("hashtags/\(hashtag.id)/follow")
+        ApiService<Hashtag>.post("hashtags/\(hashtag.ID)/follow")
             .startWithCompleted {
                 self.selectedHashtags.value.append(self.currentHashtag.value!)
                 self.advance()

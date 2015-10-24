@@ -129,9 +129,9 @@ class RotationService {
                     let x = accelerometerData.acceleration.x
                     let y = accelerometerData.acceleration.y
                     if -x > abs(y) + 0.5 {
-                        sendNext(sink, x > 0 ? .LandscapeLeft : .LandscapeRight)
+                        sink.sendNext(x > 0 ? .LandscapeLeft : .LandscapeRight)
                     } else if abs(y) > -x + 0.5 {
-                        sendNext(sink, .Portrait)
+                        sink.sendNext(.Portrait)
                     }
                 }
             })

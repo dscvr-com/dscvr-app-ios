@@ -19,7 +19,7 @@ extension OptographOptions {
     func showOptions(var optograph: Optograph, deleteCallback: (() -> ())? = nil) {
         let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         
-        if SessionService.sessionData?.id == optograph.person.id {
+        if SessionService.sessionData?.ID == optograph.person.ID {
             actionAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
                 let confirmAlert = UIAlertController(title: "Are you sure?", message: "Do you really want to delete this Optograph? You cannot undo this.", preferredStyle: .Alert)
                 confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
@@ -43,7 +43,7 @@ extension OptographOptions {
         
         if optograph.isPublished {
             actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
-                if let url = NSURL(string: "http://opto.space/\(optograph.id)") {
+                if let url = NSURL(string: "http://opto.space/\(optograph.ID)") {
                     let textToShare = "Check out this awesome Optograph of \(optograph.person.displayName) on \(url)"
                     let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
                     activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]

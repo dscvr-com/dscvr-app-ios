@@ -127,7 +127,7 @@ class ViewerViewController: UIViewController  {
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.id])
+        Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.ID])
         
         rotationDisposable?.dispose()
     }

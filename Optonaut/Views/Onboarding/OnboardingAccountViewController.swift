@@ -216,7 +216,7 @@ extension OnboardingAccountViewController: UITextFieldDelegate {
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if textField == emailInputView {
             Async.main {
-                passwordInputView.becomeFirstResponder()
+                self.passwordInputView.becomeFirstResponder()
             }
         }
         

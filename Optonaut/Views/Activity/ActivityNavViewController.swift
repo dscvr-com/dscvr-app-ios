@@ -18,7 +18,7 @@ class ActivityNavViewController: NavigationController, RedNavbar {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-//        setTabBarIcon(tabBarItem, icon: .Bell)
+        setTabBarIcon(tabBarItem, icon: .Bell, withFontSize: 20)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -52,7 +52,6 @@ class ActivityNavViewController: NavigationController, RedNavbar {
         circle.frame = CGRect(x: tabBarItemSize.width * 5/2 + 9, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 17, width: 15, height: 15)
         circle.backgroundColor = UIColor.whiteColor().CGColor
         circle.cornerRadius = 7.5
-        circle.opacity = 0.6
         circle.hidden = true
         tabBarController!.view.layer.addSublayer(circle)
         
@@ -61,7 +60,7 @@ class ActivityNavViewController: NavigationController, RedNavbar {
         number.textAlignment = .Center
         number.text = "5"
         number.textColor = UIColor.Accent
-        number.font = UIFont.robotoOfSize(9, withType: .Black)
+        number.font = UIFont.displayOfSize(9, withType: .Semibold)
         number.hidden = true
         tabBarController!.view.addSubview(number)
         

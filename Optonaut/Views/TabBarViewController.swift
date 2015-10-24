@@ -14,7 +14,7 @@ class TabBarViewController: UITabBarController {
     
     let feedNavViewController = FeedNavViewController()
     let exploreNavViewController = ExploreNavViewController()
-//    let activityNavViewController = ActivityNavViewController()
+    let activityNavViewController = ActivityNavViewController()
     let profileNavViewController = ProfileNavViewController()
     
     override func viewDidLoad() {
@@ -24,34 +24,41 @@ class TabBarViewController: UITabBarController {
         viewControllers = [
             feedNavViewController,
             exploreNavViewController,
-//            activityNavViewController,
+            activityNavViewController,
             profileNavViewController
         ]
         
         feedNavViewController.initNotificationIndicator()
-//        activityNavViewController.initNotificationIndicator()
+        activityNavViewController.initNotificationIndicator()
+        
+        selectedIndex = 2
         
         // set bar color
         tabBar.barTintColor = UIColor.Accent
         tabBar.translucent = false
         
-        // set font for bar items
-        let tabBarItemAppearance = UITabBarItem.appearance()
-        let attribues = [
-            NSFontAttributeName: UIFont.iconOfSize(22),
-            NSForegroundColorAttributeName: UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        ]
-        tabBarItemAppearance.setTitleTextAttributes(attribues, forState: .Normal)
-        tabBarItemAppearance.titlePositionAdjustment = UIOffsetMake(0, -12)
-        
         // set darker red as selected background color
         let numberOfItems = CGFloat(tabBar.items!.count)
         let tabBarItemSize = CGSize(width: tabBar.frame.width / numberOfItems, height: tabBar.frame.height)
-        tabBar.selectionIndicatorImage = UIImage.imageWithColor(UIColor(0xc93c2f), size: tabBarItemSize).resizableImageWithCapInsets(UIEdgeInsetsZero)
+        tabBar.selectionIndicatorImage = UIImage.imageBarWithColor(.whiteColor(), size: tabBarItemSize)
         
         // remove default border
         tabBar.frame.size.width = self.view.frame.width + 4
         tabBar.frame.origin.x = -2
+    }
+    
+}
+
+private extension UIImage {
+    
+    class func imageBarWithColor(color: UIColor, size: CGSize) -> UIImage {
+        let rect = CGRectMake(0, size.height - 2.5, size.width, 2.5)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        color.setFill()
+        UIRectFill(rect)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
     }
     
 }

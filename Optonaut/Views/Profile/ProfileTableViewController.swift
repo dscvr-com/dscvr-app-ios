@@ -13,7 +13,7 @@ import Mixpanel
 class ProfileTableViewController: OptographTableViewController, NoNavbar, UniqueView {
     
     private let viewModel: OptographsViewModel
-    private let personId: UUID
+    private let personID: UUID
     
     let refreshControl = UIRefreshControl()
     
@@ -22,11 +22,11 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
     
     let uniqueIdentifier: String
     
-    required init(personId: UUID) {
-        self.personId = personId
-        viewModel = OptographsViewModel(personId: personId)
+    required init(personID: UUID) {
+        self.personID = personID
+        viewModel = OptographsViewModel(personID: personID)
         viewModel.refreshNotification.notify(())
-        uniqueIdentifier = "profile-\(personId)"
+        uniqueIdentifier = "profile-\(personID)"
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -54,7 +54,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
         viewModel.results.producer
             .on(
                 next: { [weak self] results in
-                    self?.items = results.optographs
+                    self?.items = results.models
                     self?.tableView.beginUpdates()
                     if !results.delete.isEmpty {
                         self?.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
@@ -102,7 +102,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.Profile", properties: ["person_id": personId])
+        Mixpanel.sharedInstance().track("View.Profile", properties: ["person_id": personID])
     }
     
     override func updateViewConstraints() {
@@ -124,7 +124,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
             let cell = self.tableView.dequeueReusableCellWithIdentifier("profile-header-cell") as! ProfileHeaderTableViewCell
             headerTableViewCell = cell
             cell.navigationController = navigationController as? NavigationController
-            cell.bindViewModel(personId)
+            cell.bindViewModel(personID)
             return cell
         } else {
             return super.tableView(tableView, cellForRowAtIndexPath: NSIndexPath(forRow: indexPath.row - 1, inSection: indexPath.section))

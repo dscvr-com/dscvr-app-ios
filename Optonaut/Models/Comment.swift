@@ -10,7 +10,7 @@ import Foundation
 import ObjectMapper
 
 struct Comment: Model {
-    var id: UUID
+    var ID: UUID
     var text: String
     var createdAt: NSDate
     var person: Person
@@ -18,7 +18,7 @@ struct Comment: Model {
     
     static func newInstance() -> Comment {
         return Comment(
-            id: uuid(),
+            ID:  uuid(),
             text: "",
             createdAt: NSDate(),
             person: Person.newInstance(),
@@ -35,7 +35,7 @@ extension Comment: Mappable {
     }
     
     mutating func mapping(map: Map) {
-        id          <- map["id"]
+        ID          <- map["id"]
         text        <- map["text"]
         person      <- map["person"]
         optograph   <- map["optograph"]
@@ -56,7 +56,7 @@ extension Comment: SQLiteModel {
     
     static func fromSQL(row: SQLiteRow) -> Comment {
         return Comment(
-            id: row[CommentSchema.id],
+            ID: row[CommentSchema.ID],
             text: row[CommentSchema.text],
             createdAt: row[CommentSchema.createdAt],
             person: Person.newInstance(),
@@ -66,11 +66,11 @@ extension Comment: SQLiteModel {
     
     func toSQL() -> [SQLiteSetter] {
         return [
-            CommentSchema.id <-- id,
+            CommentSchema.ID <-- ID,
             CommentSchema.text <-- text,
             CommentSchema.createdAt <-- createdAt,
-            CommentSchema.personId <-- person.id,
-            CommentSchema.optographId <-- optograph.id,
+            CommentSchema.personID <-- person.ID,
+            CommentSchema.optographID <-- optograph.ID,
         ]
     }
     

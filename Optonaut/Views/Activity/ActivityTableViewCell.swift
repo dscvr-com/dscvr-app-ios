@@ -2,7 +2,7 @@
 //  ActivityTableViewCell.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 6/21/15.
+//  Created by Johannes Schickling on 10/24/15.
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
@@ -13,97 +13,75 @@ import ReactiveCocoa
 class ActivityTableViewCell: UITableViewCell {
     
     weak var navigationController: NavigationController?
-    var viewModel: ActivityViewModel!
+    var activity: Activity!
     
     // subviews
-    let avatarImageView = UIImageView()
-//    let textView = TTTAttributedLabel(forAutoLayout: ())
-    let optographImageView = UIImageView()
-    let lineView = UIView()
+    private let isReadView = UIView()
+    private let lineView = UIView()
+    private let textView = UILabel()
+    let causingImageView = PlaceholderImageView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        avatarImageView.layer.cornerRadius = 15
-        avatarImageView.clipsToBounds = true
-        avatarImageView.userInteractionEnabled = true
-        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        contentView.addSubview(avatarImageView)
+        isReadView.backgroundColor = .Accent
+        isReadView.hidden = true
+        isReadView.layer.cornerRadius = 3
+        contentView.addSubview(isReadView)
         
-//        textView.numberOfLines = 2
-//        textView.font = UIFont.robotoOfSize(13, withType: .Regular)
-//        textView.textColor = UIColor(0x4d4d4d)
-//        contentView.addSubview(textView)
+        textView.numberOfLines = 0
+        textView.font = UIFont.displayOfSize(14, withType: .Regular)
+        textView.textColor = .DarkGrey
+        contentView.addSubview(textView)
         
-        optographImageView.userInteractionEnabled = true
-        optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
-        contentView.addSubview(optographImageView)
+        causingImageView.layer.cornerRadius = 20
+        causingImageView.clipsToBounds = true
+        contentView.addSubview(causingImageView)
         
-        lineView.backgroundColor = UIColor(0xe5e5e5)
+        lineView.backgroundColor = UIColor.WhiteGrey
         contentView.addSubview(lineView)
         
         contentView.setNeedsUpdateConstraints()
-    }
-    
-    override func updateConstraints() {
-        avatarImageView.autoAlignAxisToSuperviewAxis(.Horizontal)
-        avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        avatarImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
-        
-//        textView.autoAlignAxisToSuperviewAxis(.Horizontal)
-//        textView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 12)
-//        textView.autoPinEdge(.Right, toEdge: .Left, ofView: optographImageView, withOffset: -12)
-        
-        optographImageView.autoAlignAxisToSuperviewAxis(.Horizontal)
-        optographImageView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        optographImageView.autoSetDimensionsToSize(CGSize(width: 34, height: 22))
-        
-        lineView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView)
-        lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -19)
-        lineView.autoSetDimension(.Height, toSize: 1)
-        
-        super.updateConstraints()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func bindViewModel(activity: Activity) {
-        viewModel = ActivityViewModel(activity: activity)
+    override func updateConstraints() {
         
-//        if let avatarUrl = NSURL(string: viewModel.creatorAvatarUrl.value) {
-//            avatarImageView.sd_setImageWithURL(avatarUrl, placeholderImage: UIImage(named: "avatar-placeholder"))
-//        }
+        isReadView.autoAlignAxisToSuperviewAxis(.Horizontal)
+        isReadView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 8)
+        isReadView.autoSetDimensionsToSize(CGSize(width: 6, height: 6))
         
-//        if let url = viewModel.optographUrl.value, imageUrl = NSURL(string: url) {
-//            optographImageView.sd_setImageWithURL(imageUrl, placeholderImage: UIImage(named: "optograph-placeholder"))
-//        }
+        causingImageView.autoAlignAxisToSuperviewAxis(.Horizontal)
+        causingImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
+        causingImageView.autoSetDimensionsToSize(CGSize(width: 40, height: 40))
         
-        viewModel.isRead.producer
-            .map { $0 ? UIColor.clearColor() : UIColor.Accent.alpha(0.1) }
-            .startWithNext { self.backgroundColor = $0 }
+        textView.autoAlignAxisToSuperviewAxis(.Horizontal)
+        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 80)
+        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -72)
         
-//        textView.rac_text <~ viewModel.activityType.producer
-//            .map { type in
-//                switch type {
-//                case .Like: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) stard your Optograph"
-//                case .Follow: return "\(self.viewModel.timeSinceCreated.value) \(self.viewModel.creatorUserName.value) followed you"
-//                default: return ""
-//                }
-//            }
+        lineView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView)
+        lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
+        lineView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
+        lineView.autoSetDimension(.Height, toSize: 1)
+        
+        super.updateConstraints()
     }
     
-    func pushProfile() {
-        let profileContainerViewController = ProfileTableViewController(personId: viewModel.creatorId.value)
-        navigationController?.pushViewController(profileContainerViewController, animated: true)
+    func update() {
+        textView.text = activity.text
+        isReadView.hidden = activity.isRead
     }
     
-    func pushDetails() {
-        if let id = viewModel.optographId.value {
-            navigationController?.pushViewController(DetailsTableViewController(optographId: id), animated: true)
-        }
+    func read() {
+        ApiService<EmptyResponse>.post("activities/\(activity.ID)/read")
+            .startWithCompleted { [weak self] in
+                self?.activity.isRead = true
+                try! self?.activity.insertOrUpdate()
+                self?.update()
+            }
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

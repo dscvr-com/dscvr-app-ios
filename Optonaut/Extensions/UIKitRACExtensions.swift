@@ -59,15 +59,7 @@ extension PlaceholderImageView {
     var rac_url: MutableProperty<String> {
         return lazyAssociatedProperty(self, key: &AssociationKey.imageUrl) {
             let property = MutableProperty<String>("")
-            property.producer.startWithNext { urlStr in
-                if let url = NSURL(string: urlStr) {
-                    if self.placeholderImage != nil {
-                        self.sd_setImageWithURL(url, placeholderImage: self.placeholderImage)
-                    } else {
-                        self.sd_setImageWithURL(url)
-                    }
-                }
-            }
+            property.producer.startWithNext(self.setImageWithURLString)
             return property
         }
     }

@@ -43,8 +43,8 @@ class LocationService: NSObject {
         return SignalProducer { sink, disposable in
             
             sharedInstance.callback = { coordinate in
-                sendNext(sink, coordinate)
-                sendCompleted(sink)
+                sink.sendNext(coordinate)
+                sink.sendCompleted()
                 self.sharedInstance.locationManager.stopUpdatingLocation()
             }
             

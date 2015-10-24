@@ -46,8 +46,10 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
     
-    required init(optographId: UUID) {
-        viewModel = DetailsViewModel(optographId: optographId)
+    private var rotationAlert: UIAlertController?
+    
+    required init(optographID: UUID) {
+        viewModel = DetailsViewModel(optographID: optographID)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -153,7 +155,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.id])
+        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID])
         
         viewModel.viewIsActive.value = false
     }
@@ -208,14 +210,15 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
+        rotationAlert?.dismissViewControllerAnimated(true, completion: nil)
         navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph), animated: false)
         viewModel.increaseViewsCount()
     }
     
     func showRotationAlert() {
-        let alert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-        self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+        rotationAlert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
+        rotationAlert!.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+        self.navigationController?.presentViewController(rotationAlert!, animated: true, completion: nil)
     }
     
 }
@@ -253,7 +256,7 @@ extension DetailsTableViewController: UITableViewDataSource {
             return cell
         } else if indexPath.row == 1 {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
-            cell.bindViewModel(viewModel.optograph.id, commentsCount: viewModel.commentsCount.value)
+            cell.bindViewModel(viewModel.optograph.ID, commentsCount: viewModel.commentsCount.value)
             cell.delegate = self
             return cell
         } else {

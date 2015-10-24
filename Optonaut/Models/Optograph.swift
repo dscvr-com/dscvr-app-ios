@@ -18,9 +18,9 @@ enum OptographAsset {
 
 typealias HashtagStrings = Array<String>
 
-struct Optograph: Model {
+struct Optograph: DeletableModel {
     
-    var id: UUID
+    var ID: UUID
     var text: String
     var person: Person
     var createdAt: NSDate
@@ -32,27 +32,27 @@ struct Optograph: Model {
     var location: Location
     var isStitched: Bool
     var isPublished: Bool
-    var previewAssetId: UUID
-    var leftTextureAssetId: UUID
-    var rightTextureAssetId: UUID
+    var previewAssetID: UUID
+    var leftTextureAssetID: UUID
+    var rightTextureAssetID: UUID
     var isStaffPick: Bool
     var hashtagString: String
     
     var leftTextureAssetURL: String {
-        return "\(S3URL)/original/\(leftTextureAssetId).jpg"
+        return "\(S3URL)/original/\(leftTextureAssetID).jpg"
     }
     
     var rightTextureAssetURL: String {
-        return "\(S3URL)/original/\(rightTextureAssetId).jpg"
+        return "\(S3URL)/original/\(rightTextureAssetID).jpg"
     }
     
     var previewAssetURL: String {
-        return "\(S3URL)/original/\(previewAssetId).jpg"
+        return "\(S3URL)/original/\(previewAssetID).jpg"
     }
     
     static func newInstance() -> Optograph {
         return Optograph(
-            id: uuid(),
+            ID: uuid(),
             text: "",
             person: Person.newInstance(),
             createdAt: NSDate(),
@@ -64,9 +64,9 @@ struct Optograph: Model {
             location: Location.newInstance(),
             isStitched: false,
             isPublished: false,
-            previewAssetId: uuid(),
-            leftTextureAssetId: uuid(),
-            rightTextureAssetId: uuid(),
+            previewAssetID: uuid(),
+            leftTextureAssetID: uuid(),
+            rightTextureAssetID: uuid(),
             isStaffPick: false,
             hashtagString: ""
         )
@@ -106,7 +106,7 @@ struct Optograph: Model {
                 self.isPublished = true
                 
                 try! DatabaseService.defaultConnection.run(
-                    OptographTable.filter(OptographSchema.id ==- self.id).update(
+                    OptographTable.filter(OptographSchema.ID ==- self.ID).update(
                         OptographSchema.isPublished <-- self.isPublished
                     )
                 )
@@ -116,11 +116,11 @@ struct Optograph: Model {
     mutating func delete() -> SignalProducer<EmptyResponse, ApiError> {
         var signalProducer: SignalProducer<EmptyResponse, ApiError>
         if isPublished {
-            signalProducer = ApiService<EmptyResponse>.delete("optographs/\(id)")
+            signalProducer = ApiService<EmptyResponse>.delete("optographs/\(ID)")
         } else {
             signalProducer = SignalProducer { sink, disposable in
                 disposable.addDisposable {}
-                sendCompleted(sink)
+                sink.sendCompleted()
             }
         }
         
@@ -132,8 +132,15 @@ struct Optograph: Model {
     }
     
     func report() -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.post("optographs/\(id)/report")
+        return ApiService<EmptyResponse>.post("optographs/\(ID)/report")
     }
+}
+
+func ==(lhs: Optograph, rhs: Optograph) -> Bool {
+    return lhs.ID == rhs.ID
+        && lhs.isStitched == rhs.isStitched
+        && lhs.starsCount == rhs.starsCount
+        && lhs.isPublished == rhs.isPublished
 }
 
 extension Optograph: Mappable {
@@ -148,7 +155,7 @@ extension Optograph: Mappable {
             isPublished = true
         }
         
-        id                  <- map["id"]
+        ID                  <- map["id"]
         text                <- map["text"]
         person              <- map["person"]
         createdAt           <- (map["created_at"], NSDateTransform())
@@ -158,9 +165,9 @@ extension Optograph: Mappable {
         commentsCount       <- map["comments_count"]
         viewsCount          <- map["views_count"]
         location            <- map["location"]
-        previewAssetId      <- map["preview_asset_id"]
-        leftTextureAssetId  <- map["left_texture_asset_id"]
-        rightTextureAssetId <- map["right_texture_asset_id"]
+        previewAssetID      <- map["preview_asset_id"]
+        leftTextureAssetID  <- map["left_texture_asset_id"]
+        rightTextureAssetID <- map["right_texture_asset_id"]
         isStaffPick         <- map["is_staff_pick"]
         hashtagString       <- map["hashtag_string"]
     }
@@ -179,7 +186,7 @@ extension Optograph: SQLiteModel {
     
     static func fromSQL(row: SQLiteRow) -> Optograph {
         return Optograph(
-            id: row[OptographSchema.id],
+            ID: row[OptographSchema.ID],
             text: row[OptographSchema.text],
             person: Person.newInstance(),
             createdAt: row[OptographSchema.createdAt],
@@ -191,9 +198,9 @@ extension Optograph: SQLiteModel {
             location: Location.newInstance(),
             isStitched: row[OptographSchema.isStitched],
             isPublished: row[OptographSchema.isPublished],
-            previewAssetId: row[OptographSchema.previewAssetId],
-            leftTextureAssetId: row[OptographSchema.leftTextureAssetId],
-            rightTextureAssetId: row[OptographSchema.rightTextureAssetId],
+            previewAssetID: row[OptographSchema.previewAssetID],
+            leftTextureAssetID: row[OptographSchema.leftTextureAssetID],
+            rightTextureAssetID: row[OptographSchema.rightTextureAssetID],
             isStaffPick: row[OptographSchema.isStaffPick],
             hashtagString: row[OptographSchema.hashtagString]
         )
@@ -201,32 +208,24 @@ extension Optograph: SQLiteModel {
     
     func toSQL() -> [SQLiteSetter] {
         return [
-            OptographSchema.id <-- id,
+            OptographSchema.ID <-- ID,
             OptographSchema.text <-- text,
-            OptographSchema.personId <-- person.id,
+            OptographSchema.personID <-- person.ID,
             OptographSchema.createdAt <-- createdAt,
             OptographSchema.deletedAt <-- deletedAt,
             OptographSchema.isStarred <-- isStarred,
             OptographSchema.starsCount <-- starsCount,
             OptographSchema.commentsCount <-- commentsCount,
             OptographSchema.viewsCount <-- viewsCount,
-            OptographSchema.locationId <-- location.id,
+            OptographSchema.locationID <-- location.ID,
             OptographSchema.isStitched <-- isStitched,
             OptographSchema.isPublished <-- isPublished,
-            OptographSchema.previewAssetId <-- previewAssetId,
-            OptographSchema.leftTextureAssetId <-- leftTextureAssetId,
-            OptographSchema.rightTextureAssetId <-- rightTextureAssetId,
+            OptographSchema.previewAssetID <-- previewAssetID,
+            OptographSchema.leftTextureAssetID <-- leftTextureAssetID,
+            OptographSchema.rightTextureAssetID <-- rightTextureAssetID,
             OptographSchema.isStaffPick <-- isStaffPick,
             OptographSchema.hashtagString <-- hashtagString,
         ]
     }
     
-}
-
-extension Optograph: Equatable {}
-
-func ==(lhs: Optograph, rhs: Optograph) -> Bool {
-    return lhs.isStitched == rhs.isStitched
-        && lhs.starsCount == rhs.starsCount
-        && lhs.isPublished == rhs.isPublished
 }

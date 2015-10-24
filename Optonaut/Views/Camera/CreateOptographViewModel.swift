@@ -116,7 +116,7 @@ class CreateOptographViewModel {
     }
     
     func post() {
-        optograph.person.id = SessionService.sessionData!.id
+        optograph.person.ID = SessionService.sessionData!.ID
         
         try! optograph.insertOrUpdate()
         try! optograph.location.insertOrUpdate()

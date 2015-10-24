@@ -10,16 +10,6 @@ import UIKit
 
 extension UIImage {
     
-    class func imageWithColor(color: UIColor, size: CGSize) -> UIImage {
-        let rect: CGRect = CGRectMake(0, 0, size.width, size.height)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0)
-        color.setFill()
-        UIRectFill(rect)
-        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return image
-    }
-    
     func fixedOrientation() -> UIImage {
         
         if imageOrientation == UIImageOrientation.Up {
@@ -104,6 +94,16 @@ class PlaceholderImageView: UIImageView {
         didSet {
             if image == nil && placeholderImage != nil {
                 image = placeholderImage
+            }
+        }
+    }
+    
+    func setImageWithURLString(urlStr: String) {
+        if let url = NSURL(string: urlStr) {
+            if self.placeholderImage != nil {
+                self.sd_setImageWithURL(url, placeholderImage: self.placeholderImage)
+            } else {
+                self.sd_setImageWithURL(url)
             }
         }
     }

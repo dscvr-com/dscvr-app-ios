@@ -15,6 +15,7 @@ func setupAppearanceDefaults() {
     
     UINavigationBar.appearance().tintColor = .whiteColor()
     UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics: .Default)
+    UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: UIFont.displayOfSize(20, withType: .Regular)]
     
     let image = UIImage.iconWithName(.Back, textColor: .whiteColor(), fontSize: 24, offset: CGSize(width: 15, height: 0))
     UINavigationBar.appearance().backIndicatorImage = image
@@ -47,6 +48,12 @@ extension UIColor {
         }
     }
     
+    static var WhiteGrey: UIColor {
+        get {
+            return UIColor(0xEEEEEE)
+        }
+    }
+    
 //    static var LightGreyActive: UIColor {
 //        get {
 //            return UIColor.blackColor().alpha(0.20)
@@ -68,5 +75,5 @@ func setTabBarIcon(tabBarItem: UITabBarItem, icon: Icon, withFontSize fontSize: 
         NSForegroundColorAttributeName: UIColor.whiteColor(),
     ]
     tabBarItem.setTitleTextAttributes(attribues, forState: .Normal)
-    tabBarItem.titlePositionAdjustment = UIOffsetMake(0, -12)
+    tabBarItem.titlePositionAdjustment = UIOffsetMake(0, -13)
 }

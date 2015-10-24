@@ -26,7 +26,7 @@ class EditProfileViewModel {
     init() {
         debugEnabled.value = SessionService.sessionData!.debuggingEnabled
         
-        let query = PersonTable.filter(PersonTable[PersonSchema.id] == SessionService.sessionData!.id)
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] == SessionService.sessionData!.ID)
         
         if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
             self.person = person
@@ -79,7 +79,7 @@ class EditProfileViewModel {
         
         return ApiService.post("persons/me/upload-profile-image", parameters: ["avatar_asset": str!])
             .on(next: { person in
-                self.person.avatarAssetId = person.avatarAssetId
+                self.person.avatarAssetID = person.avatarAssetID
                 self.updateProperties()
                 self.saveModel()
             })
@@ -112,7 +112,7 @@ class EditProfileViewModel {
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
         text.value = person.text
-        avatarImageUrl.value = "\(S3URL)/400x400/\(person.avatarAssetId).jpg"
+        avatarImageUrl.value = person.avatarAssetURL
     }
     
     private func updateModel() {

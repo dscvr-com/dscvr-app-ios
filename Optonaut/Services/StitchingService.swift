@@ -30,7 +30,7 @@ class StitchingService {
     typealias StitchingSignal = Signal<StitchingResult, StitchingError>
     
     private static var activeSignal: StitchingSignal?
-    private static var activeSink: (Event<StitchingResult, StitchingError> -> ())?
+    private static var activeSink: Observer<StitchingResult, StitchingError>?
     private static let storeRef = Stitcher()
     private static var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
     private static var shallCancel = false
@@ -61,14 +61,14 @@ class StitchingService {
     /// This function starts a new stitching process.
     static func startStitching(optograph: Optograph) -> StitchingSignal {
         if isStitching() {
-            assert(optograph.id == currentOptograph)
+            assert(optograph.ID == currentOptograph)
             return activeSignal!
         }
         
         assert(!isStitching())
         assert(hasUnstitchedRecordings())
         
-        currentOptograph = optograph.id
+        currentOptograph = optograph.ID
         
         shallCancel = false
         
@@ -87,7 +87,7 @@ class StitchingService {
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
                 Async.main {
-                    sendNext(sink, .Progress(progress))
+                    sink.sendNext(.Progress(progress))
                 }
                 return !shallCancel
             }
@@ -97,7 +97,7 @@ class StitchingService {
                 if !shallCancel {
                     autoreleasepool {
                         let data = ImageBufferToCompressedUIImage(leftBuffer)
-                        sendNext(sink, .LeftImage(data!))
+                        sink.sendNext(.LeftImage(data!))
                     }
                 }
                 Recorder.freeImageBuffer(leftBuffer)
@@ -108,7 +108,7 @@ class StitchingService {
                 if !shallCancel {
                     autoreleasepool {
                         let data = ImageBufferToCompressedUIImage(rightBuffer)
-                        sendNext(sink, .RightImage(data!))
+                        sink.sendNext(.RightImage(data!))
                     }
                 }
                 Recorder.freeImageBuffer(rightBuffer)
@@ -126,7 +126,7 @@ class StitchingService {
                 currentOptograph = nil
             }
             
-            sendCompleted(sink)
+            sink.sendCompleted()
         }
         
         return signal

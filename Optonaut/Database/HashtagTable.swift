@@ -9,9 +9,9 @@
 import SQLite
 
 struct HashtagSchemaType: ModelSchema {
-    let id = Expression<UUID>("hashtag_id")
+    let ID = Expression<UUID>("hashtag_id")
     let name = Expression<String>("hashtag_name")
-    let previewAssetId = Expression<UUID>("hashtag_preview_asset_id")
+    let previewAssetID = Expression<UUID>("hashtag_preview_asset_id")
     let isFollowed = Expression<Bool>("hashtag_is_followed")
 }
 
@@ -20,9 +20,9 @@ let HashtagTable = Table("hashtag")
 
 func HashtagMigration() -> String {
     return HashtagTable.create { t in
-        t.column(HashtagSchema.id, primaryKey: true)
+        t.column(HashtagSchema.ID, primaryKey: true)
         t.column(HashtagSchema.name)
-        t.column(HashtagSchema.previewAssetId)
+        t.column(HashtagSchema.previewAssetID)
         t.column(HashtagSchema.isFollowed)
     }
 }

@@ -32,7 +32,7 @@ class OnboardingProfileViewModel {
     
     init() {
         
-        let query = PersonTable.filter(PersonTable[PersonSchema.id] ==- SessionService.sessionData!.id)
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- SessionService.sessionData!.ID)
         person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
             
         avatarUploaded.producer
@@ -127,10 +127,10 @@ class OnboardingProfileViewModel {
         
         avatarImage.value = UIImage(data: data!)!
         
-        let avatarAssetId = uuid()
+        let avatarAssetID = uuid()
         let parameters = [
             "avatar_asset": str!,
-            "avatar_asset_id": avatarAssetId,
+            "avatar_asset_id": avatarAssetID,
         ]
         return ApiService.post("persons/me/upload-profile-image", parameters: parameters)
             .on(
@@ -140,7 +140,7 @@ class OnboardingProfileViewModel {
                 },
                 completed: { _ in
                     self.loading.value = false
-                    self.person.avatarAssetId = avatarAssetId
+                    self.person.avatarAssetID = avatarAssetID
                     self.avatarUploaded.value = true
                     self.saveModel()
                 },

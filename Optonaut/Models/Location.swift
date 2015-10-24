@@ -9,7 +9,7 @@
 import ObjectMapper
 
 struct Location: Model {
-    var id: UUID
+    var ID: UUID
     var text: String
     var country: String
     var createdAt: NSDate
@@ -18,7 +18,7 @@ struct Location: Model {
     
     static func newInstance() -> Location {
         return Location(
-            id: uuid(),
+            ID: uuid(),
             text: "",
             country: "",
             createdAt: NSDate(),
@@ -36,7 +36,7 @@ extension Location: Mappable {
     }
     
     mutating func mapping(map: Map) {
-        id              <- map["id"]
+        ID              <- map["id"]
         text            <- map["text"]
         country         <- map["country"]
         createdAt       <- (map["created_at"], NSDateTransform())
@@ -57,7 +57,7 @@ extension Location: SQLiteModel {
     
     static func fromSQL(row: SQLiteRow) -> Location {
         return Location(
-            id: row[LocationSchema.id],
+            ID: row[LocationSchema.ID],
             text: row[LocationSchema.text],
             country: row[LocationSchema.country],
             createdAt: row[LocationSchema.createdAt],
@@ -68,7 +68,7 @@ extension Location: SQLiteModel {
     
     func toSQL() -> [SQLiteSetter] {
         return [
-            LocationSchema.id <-- id,
+            LocationSchema.ID <-- ID,
             LocationSchema.text <-- text,
             LocationSchema.country <-- country,
             LocationSchema.createdAt <-- createdAt,

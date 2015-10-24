@@ -40,15 +40,15 @@ class PipelineService {
         }
     }
     
-    static func statusSignalForOptograph(id: UUID) -> StatusSignal? {
-        return signals[id]
+    static func statusSignalForOptograph(ID:  UUID) -> StatusSignal? {
+        return signals[ID]
     }
     
     private static func updateOptographs() {
         let query = OptographTable
             .select(*)
-            .join(PersonTable, on: OptographTable[OptographSchema.personId] == PersonTable[PersonSchema.id])
-            .join(LocationTable, on: LocationTable[LocationSchema.id] == OptographTable[OptographSchema.locationId])
+            .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
+            .join(LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(!OptographTable[OptographSchema.isStitched] || !OptographTable[OptographSchema.isPublished])
         
         let optographs = DatabaseService.defaultConnection.prepare(query)
@@ -62,13 +62,13 @@ class PipelineService {
                 
                 return optograph
             }
-            .filter { signals[$0.id] == nil }
+            .filter { signals[$0.ID] == nil }
             
         optographs.forEach { optograph in
             if !optograph.isStitched {
-                signals[optograph.id] = stitch(optograph)
+                signals[optograph.ID] = stitch(optograph)
             } else if Reachability.connectedToNetwork() {
-                signals[optograph.id] = publish(optograph)
+                signals[optograph.ID] = publish(optograph)
             }
         }
         
@@ -86,19 +86,19 @@ class PipelineService {
         optograph.publish()
             .on(
                 started: {
-                    sendNext(sink, .Publishing(0))
+                    sink.sendNext(.Publishing(0))
                 },
                 completed: {
-                    sendNext(sink, .Publishing(1))
-                    signals.removeValueForKey(optograph.id)
-                    sendNext(sink, .PublishingFinished)
-                    sendCompleted(sink)
+                    sink.sendNext(.Publishing(1))
+                    signals.removeValueForKey(optograph.ID)
+                    sink.sendNext(.PublishingFinished)
+                    sink.sendCompleted()
                 },
                 error: { _ in
                     NotificationService.push("Publishing failed...", level: .Warning)
-                    signals.removeValueForKey(optograph.id)
-                    sendNext(sink, .PublishingFinished)
-                    sendCompleted(sink)
+                    signals.removeValueForKey(optograph.ID)
+                    sink.sendNext(.PublishingFinished)
+                    sink.sendCompleted()
                 }
             )
             .start()
@@ -116,7 +116,7 @@ class PipelineService {
                 switch result {
                 case .LeftImage(let data): optograph.saveAsset(.LeftImage(data))
                 case .RightImage(let data): optograph.saveAsset(.RightImage(data))
-                case .Progress(let progress): sendNext(sink, .Stitching(min(0.99, progress)))
+                case .Progress(let progress): sink.sendNext(.Stitching(min(0.99, progress)))
                 }
             }
         
@@ -125,9 +125,9 @@ class PipelineService {
                 optograph.isStitched = true
                 try! optograph.insertOrUpdate()
                 StitchingService.removeUnstitchedRecordings()
-                signals.removeValueForKey(optograph.id)
-                sendNext(sink, .StitchingFinished)
-                sendCompleted(sink)
+                signals.removeValueForKey(optograph.ID)
+                sink.sendNext(.StitchingFinished)
+                sink.sendCompleted()
                 PipelineService.check()
             }
         

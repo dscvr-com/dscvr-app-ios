@@ -9,15 +9,17 @@
 import Foundation
 import ReactiveCocoa
 
+private let userInteractiveQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
+
 extension SignalType {
     public func ignoreError() -> Signal<Value, NoError> {
         return Signal { observer in
             self.observe { event in
                 switch event {
                 case .Error(_): break
-                case let .Next(val): sendNext(observer, val)
-                case .Completed: sendCompleted(observer)
-                case .Interrupted: sendInterrupted(observer)
+                case let .Next(val): observer.sendNext(val)
+                case .Completed: observer.sendCompleted()
+                case .Interrupted: observer.sendInterrupted()
                 }
             }
         }
@@ -27,10 +29,10 @@ extension SignalType {
         return Signal { observer in
             self.observe { event in
                 switch event {
-                case .Error(_): sendNext(observer, false)
+                case .Error(_): observer.sendNext(false)
                 case .Next(_): break
-                case .Completed: sendNext(observer, true)
-                case .Interrupted: sendInterrupted(observer)
+                case .Completed: observer.sendNext(true)
+                case .Interrupted: observer.sendInterrupted()
                 }
             }
         }
@@ -40,10 +42,10 @@ extension SignalType {
         return Signal { observer in
             self.observe { event in
                 switch event {
-                case let .Error(err): sendError(observer, err)
+                case let .Error(err): observer.sendError(err)
                 case .Next(_): break
-                case .Completed: sendNext(observer, ())
-                case .Interrupted: sendInterrupted(observer)
+                case .Completed: observer.sendNext(())
+                case .Interrupted: observer.sendInterrupted()
                 }
             }
         }
@@ -53,14 +55,23 @@ extension SignalType {
         return Signal { observer in
             self.observe { event in
                 switch event {
-                case let .Error(err): sendError(observer, err)
-                case .Next(_): sendCompleted(observer)
-                case .Completed: sendCompleted(observer)
-                case .Interrupted: sendInterrupted(observer)
+                case let .Error(err): observer.sendError(err)
+                case .Next(_): observer.sendCompleted()
+                case .Completed: observer.sendCompleted()
+                case .Interrupted: observer.sendInterrupted()
                 }
             }
         }
     }
+    
+    public func observeOnUserInteractive() -> Signal<Value, Error> {
+        return observeOn(QueueScheduler(queue: userInteractiveQueue))
+    }
+    
+    public func observeOnMain() -> Signal<Value, Error> {
+        return observeOn(UIScheduler())
+    }
+    
 }
 
 public extension SignalType where Value: Equatable {
@@ -88,6 +99,31 @@ extension SignalProducerType {
     
     public func nextAsCompleted() -> SignalProducer<Void, Error> {
         return lift { $0.nextAsCompleted() }
+    }
+    
+    public func startOnUserInteractive() -> SignalProducer<Value, Error> {
+        return startOn(QueueScheduler(queue: userInteractiveQueue))
+    }
+    
+    public func observeOnUserInteractive() -> SignalProducer<Value, Error> {
+        return lift { $0.observeOnUserInteractive() }
+    }
+    
+    public func startOnMain() -> SignalProducer<Value, Error> {
+        return startOn(UIScheduler())
+    }
+    
+    public func observeOnMain() -> SignalProducer<Value, Error> {
+        return lift { $0.observeOnMain() }
+    }
+    
+    public static func fromValues(values: [Value]) -> SignalProducer<Value, Error> {
+        return SignalProducer { sink, _ in
+            for value in values {
+                sink.sendNext(value)
+            }
+            sink.sendCompleted()
+        }
     }
 }
 

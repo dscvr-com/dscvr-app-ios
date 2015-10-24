@@ -21,7 +21,7 @@ enum VRGlasses: Int {
 }
 
 struct SessionData {
-    let id: UUID
+    let ID: UUID
     var token: String {
         willSet {
             NSUserDefaults.standardUserDefaults().setObject(token, forKey: "session_person_token")
@@ -54,7 +54,7 @@ class SessionService {
     static var sessionData: SessionData? {
         willSet {
             if let newValue = newValue {
-                NSUserDefaults.standardUserDefaults().setObject(newValue.id, forKey: "session_person_id")
+                NSUserDefaults.standardUserDefaults().setObject(newValue.ID, forKey: "session_person_id")
                 NSUserDefaults.standardUserDefaults().setObject(newValue.token, forKey: "session_person_token")
                 NSUserDefaults.standardUserDefaults().setObject(newValue.password, forKey: "session_person_password")
                 NSUserDefaults.standardUserDefaults().setBool(newValue.debuggingEnabled, forKey: "session_person_debugging_enabled")
@@ -83,15 +83,15 @@ class SessionService {
     
     static func prepare() {
         
-        let id = NSUserDefaults.standardUserDefaults().objectForKey("session_person_id") as? UUID
+        let ID = NSUserDefaults.standardUserDefaults().objectForKey("session_person_id") as? UUID
         let token = NSUserDefaults.standardUserDefaults().objectForKey("session_person_token") as? String
         let password = NSUserDefaults.standardUserDefaults().objectForKey("session_person_password") as? String
         let debuggingEnabled = NSUserDefaults.standardUserDefaults().boolForKey("session_person_debugging_enabled")
         let onboardingVersion = NSUserDefaults.standardUserDefaults().integerForKey("session_person_onboarding_version")
-        let vrGlasses = VRGlasses(rawValue: NSUserDefaults.standardUserDefaults().integerForKey("session_person_vr_glasses"))!
-        if let id = id, token = token, password = password {
+        let vrGlasses = VRGlasses(rawValue: NSUserDefaults.standardUserDefaults().integerForKey("session_person_vr_glasses"))
+        if let ID = ID, token = token, password = password, vrGlasses = vrGlasses {
             sessionData = SessionData(
-                id: id,
+                ID: ID,
                 token: token,
                 password: password,
                 debuggingEnabled: debuggingEnabled,
@@ -117,7 +117,7 @@ class SessionService {
         return ApiService<LoginMappable>.post("persons/login", parameters: parameters)
             .on(next: { loginData in
                 sessionData = SessionData(
-                    id: loginData.id,
+                    ID: loginData.ID,
                     token: loginData.token,
                     password: password,
                     debuggingEnabled: false,
@@ -152,9 +152,9 @@ class SessionService {
     }
     
     private static func updateMixpanel() {
-        let query = PersonTable.filter(PersonTable[PersonSchema.id] ==- SessionService.sessionData!.id)
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- SessionService.sessionData!.ID)
         if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
-            Mixpanel.sharedInstance().identify(person.id)
+            Mixpanel.sharedInstance().identify(person.ID)
             Mixpanel.sharedInstance().people.set([
                 "$first": person.displayName,
                 "$username": person.userName,
@@ -170,14 +170,14 @@ class SessionService {
 
 struct LoginMappable: Mappable {
     var token: String = ""
-    var id: UUID = ""
+    var ID:  UUID = ""
     var onboardingVersion: Int = 0
     
     init?(_ map: Map) {}
     
     mutating func mapping(map: Map) {
         token                   <- map["token"]
-        id                      <- map["id"]
+        ID                      <- map["id"]
         onboardingVersion       <- map["onboarding_version"]
     }
 }

@@ -80,14 +80,14 @@ class ApiService<T: Mappable> {
                     request = upload
                         .validate(statusCode: 200..<300)
                         .response { _, _, _, error in
-                            if let error = error as? NSError {
-                                sendError(sink, error)
+                            if let error = error {
+                                sink.sendError(error)
                             } else {
-                                sendCompleted(sink)
+                                sink.sendCompleted()
                             }
                     }
                 case .Failure(let error):
-                    sendError(sink, error as NSError)
+                    sink.sendError(error as NSError)
                 }
             }
             
@@ -120,7 +120,7 @@ class ApiService<T: Mappable> {
     private static func request(endpoint: String, method: Alamofire.Method, queries: [String: String]? = nil, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return SignalProducer { sink, disposable in
             if !Reachability.connectedToNetwork() {
-                sendError(sink, ApiError(endpoint: endpoint, timeout: false, status: nil, message: "Offline", error: nil))
+                sink.sendError(ApiError(endpoint: endpoint, timeout: false, status: nil, message: "Offline", error: nil))
                 return
             }
             
@@ -135,7 +135,7 @@ class ApiService<T: Mappable> {
             let request = Alamofire.request(mutableURLRequest)
                 .validate()
                 .response { (_, response, data, error) in
-                    if let error = error as? NSError {
+                    if let error = error {
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             SessionService.logout()
                         }
@@ -145,29 +145,29 @@ class ApiService<T: Mappable> {
                         } catch {}
                         
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode, message: error.description, error: error)
-                        sendError(sink, apiError)
+                        sink.sendError(apiError)
                     } else {
                         if let data = data where data.length > 0 {
                             do {
                                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
                                 if let object = Mapper<T>().map(json) {
-                                    sendNext(sink, object)
+                                    sink.sendNext(object)
                                 } else if let array = Mapper<T>().mapArray(json) {
                                     for object in array {
-                                        sendNext(sink, object)
+                                        sink.sendNext(object)
                                     }
                                 } else {
                                     let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON couldn't be mapped to type T", error: nil)
-                                    sendError(sink, apiError)
+                                    sink.sendError(apiError)
                                 }
                             } catch let error {
                                 let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON invalid", error: error as NSError)
-                                sendError(sink, apiError)
+                                sink.sendError(apiError)
                             }
                         } else {
-                            sendNext(sink, Mapper<T>().map([:])!)
+                            sink.sendNext(Mapper<T>().map([:])!)
                         }
-                        sendCompleted(sink)
+                        sink.sendCompleted()
                     }
                 }
             

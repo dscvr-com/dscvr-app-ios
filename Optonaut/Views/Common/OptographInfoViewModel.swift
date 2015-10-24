@@ -31,7 +31,7 @@ class OptographInfoViewModel {
         self.optograph = optograph
         
         displayName = ConstantProperty(optograph.person.displayName)
-        avatarImageUrl = ConstantProperty("\(S3URL)/400x400/\(optograph.person.avatarAssetId).jpg")
+        avatarImageUrl = ConstantProperty(optograph.person.avatarAssetURL)
         locationText = ConstantProperty(optograph.location.text)
         locationCountry = ConstantProperty(optograph.location.country)
         isStarred.value = optograph.isStarred
@@ -62,8 +62,8 @@ class OptographInfoViewModel {
         SignalProducer<Bool, ApiError>(value: starredBefore)
             .flatMap(.Latest) { followedBefore in
                 starredBefore
-                    ? ApiService<EmptyResponse>.delete("optographs/\(self.optograph.id)/star")
-                    : ApiService<EmptyResponse>.post("optographs/\(self.optograph.id)/star", parameters: nil)
+                    ? ApiService<EmptyResponse>.delete("optographs/\(self.optograph.ID)/star")
+                    : ApiService<EmptyResponse>.post("optographs/\(self.optograph.ID)/star", parameters: nil)
             }
             .on(
                 started: {
@@ -86,7 +86,7 @@ class OptographInfoViewModel {
     }
     
     private func updateStatus() {
-        if let signal = PipelineService.statusSignalForOptograph(optograph.id) {
+        if let signal = PipelineService.statusSignalForOptograph(optograph.ID) {
             signalDisposable?.dispose()
             signalDisposable = signal
                 .skipRepeats()

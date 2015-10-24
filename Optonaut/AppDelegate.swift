@@ -64,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let tabBarViewController = TabBarViewController()
             
             if case .Optograph(let uuid) = url.applicationURLData {
-                let detailsViewController = DetailsTableViewController(optographId: uuid)
+                let detailsViewController = DetailsTableViewController(optographID: uuid)
                 tabBarViewController.feedNavViewController.pushViewController(detailsViewController, animated: false)
             }
             

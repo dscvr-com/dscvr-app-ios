@@ -38,7 +38,7 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
             .on(
                 next: { results in
                     let itemsWasEmpty = self.items.isEmpty
-                    self.items = results.optographs
+                    self.items = results.models
                     
                     if itemsWasEmpty || self.items.isEmpty {
                         self.tableView.reloadData()
@@ -131,7 +131,7 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if searchBar.text!.isEmpty {
+        if searchBar.text!.isEmpty && indexPath.row > 0 {
             let hashtag = "#" + hashtags[indexPath.row - 1].name
             searchBar.text = hashtag
             viewModel.searchText.value = hashtag

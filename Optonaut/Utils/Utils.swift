@@ -48,11 +48,11 @@ class NotificationSignal<T> {
     let (signal, sink) = Signal<T, NoError>.pipe()
     
     func notify(value: T) {
-        sendNext(sink, value)
+        sink.sendNext(value)
     }
     
     func dispose() {
-        sendInterrupted(sink)
+        sink.sendInterrupted()
     }
     
 }
@@ -83,7 +83,7 @@ func or(a: Bool, _ b: Bool) -> Bool {
 //    let (signal, sink) =  Signal<Void, NoError>.pipe()
 //    
 //    func notify() {
-//        sendNext(sink, ())
+//        sink.sendNext(())
 //    }
 //    
 //}

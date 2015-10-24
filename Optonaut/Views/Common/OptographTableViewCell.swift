@@ -111,7 +111,7 @@ class OptographTableViewCell: UITableViewCell {
     
     func pushDetails() {
         if viewModel.optograph.isStitched {
-            navigationController?.pushViewController(DetailsTableViewController(optographId: viewModel.optograph.id), animated: true)
+            navigationController?.pushViewController(DetailsTableViewController(optographID: viewModel.optograph.ID), animated: true)
         }
     }
     
