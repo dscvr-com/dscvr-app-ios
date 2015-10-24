@@ -71,6 +71,12 @@ class SessionService {
         }
     }
     
+    static var deviceToken: String? {
+        didSet {
+            updateDeviceToken()
+        }
+    }
+    
     static var isLoggedIn: Bool {
         return sessionData != nil
     }
@@ -124,6 +130,7 @@ class SessionService {
                     onboardingVersion: loginData.onboardingVersion,
                     vrGlasses: .None
                 )
+                updateDeviceToken()
             })
             .flatMap(.Latest) { _ in ApiService<Person>.get("persons/me") }
             .on(
@@ -163,6 +170,13 @@ class SessionService {
                 "Followers": person.followersCount,
                 "Followed": person.followedCount,
             ])
+        }
+    }
+    
+    private static func updateDeviceToken() {
+        if let deviceToken = deviceToken where isLoggedIn {
+            ApiService<EmptyResponse>.post("persons/me/update-device-token", parameters: ["token": deviceToken])
+                .start()
         }
     }
     
