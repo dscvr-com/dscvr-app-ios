@@ -81,7 +81,9 @@ class ViewerViewController: UIViewController  {
         case .VROne:
             leftScnView.technique = createDistortionTechnique("zeiss_displacement_left")
             rightScnView.technique = createDistortionTechnique("zeiss_displacement_right")
-        default: break //None
+        default:
+            leftScnView.technique = createDistortionTechnique("barrell_displacement")
+            rightScnView.technique = createDistortionTechnique("barrell_displacement")
         }
         
         view.addSubview(rightScnView)

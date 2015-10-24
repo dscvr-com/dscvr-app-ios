@@ -161,6 +161,8 @@
 		A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */; settings = {ASSET_TAGS = (); }; };
 		A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E301BC87F7500C9EFE5 /* Stores.mm */; settings = {ASSET_TAGS = (); }; };
 		A5233E361BC92D9100C9EFE5 /* progressCallback.hpp in Resources */ = {isa = PBXBuildFile; fileRef = A5233E351BC92D9100C9EFE5 /* progressCallback.hpp */; settings = {ASSET_TAGS = (); }; };
+		A52BDC711BDA5EC100CCC4A2 /* dynamicSeamer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52BDC6C1BDA5EC100CCC4A2 /* dynamicSeamer.cpp */; settings = {ASSET_TAGS = (); }; };
+		A52BDC721BDA5EC100CCC4A2 /* progressCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52BDC6D1BDA5EC100CCC4A2 /* progressCallback.cpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE0181BC45E9A00713340 /* static_timer.cpp */; settings = {ASSET_TAGS = (); }; };
 		A54AE01F1BC51D4C00713340 /* io.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A54AE01D1BC51D4C00713340 /* io.cpp */; settings = {ASSET_TAGS = (); }; };
 		A568D4951BD12F5A008FF556 /* (null) in Resources */ = {isa = PBXBuildFile; settings = {ASSET_TAGS = (); }; };
@@ -368,6 +370,11 @@
 		A5233E2F1BC87F7500C9EFE5 /* Stores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stores.h; path = Optonaut/Stitcher/Stores.h; sourceTree = SOURCE_ROOT; };
 		A5233E301BC87F7500C9EFE5 /* Stores.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Stores.mm; path = Optonaut/Stitcher/Stores.mm; sourceTree = SOURCE_ROOT; };
 		A5233E351BC92D9100C9EFE5 /* progressCallback.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = progressCallback.hpp; sourceTree = "<group>"; };
+		A52BDC6C1BDA5EC100CCC4A2 /* dynamicSeamer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicSeamer.cpp; sourceTree = "<group>"; };
+		A52BDC6D1BDA5EC100CCC4A2 /* progressCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = progressCallback.cpp; sourceTree = "<group>"; };
+		A52BDC6E1BDA5EC100CCC4A2 /* functional.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = functional.hpp; sourceTree = "<group>"; };
+		A52BDC6F1BDA5EC100CCC4A2 /* ringProcessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ringProcessor.hpp; sourceTree = "<group>"; };
+		A52BDC701BDA5EC100CCC4A2 /* dynamicSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dynamicSeamer.hpp; sourceTree = "<group>"; };
 		A54AE0181BC45E9A00713340 /* static_timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = static_timer.cpp; sourceTree = "<group>"; };
 		A54AE0191BC45E9A00713340 /* static_timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = static_timer.hpp; sourceTree = "<group>"; };
 		A54AE01D1BC51D4C00713340 /* io.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = io.cpp; sourceTree = "<group>"; };
@@ -857,6 +864,11 @@
 		8FD7F85C1B5924D5001680AA /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				A52BDC6C1BDA5EC100CCC4A2 /* dynamicSeamer.cpp */,
+				A52BDC6D1BDA5EC100CCC4A2 /* progressCallback.cpp */,
+				A52BDC6E1BDA5EC100CCC4A2 /* functional.hpp */,
+				A52BDC6F1BDA5EC100CCC4A2 /* ringProcessor.hpp */,
+				A52BDC701BDA5EC100CCC4A2 /* dynamicSeamer.hpp */,
 				A5233DE71BC86CAF00C9EFE5 /* inputImage.cpp */,
 				A5233DE81BC86CAF00C9EFE5 /* inputImage.hpp */,
 				A5233DE91BC86CAF00C9EFE5 /* recorder.cpp */,
@@ -1220,6 +1232,7 @@
 				8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */,
 				8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */,
 				8FAB9F421B8F01DF00B4C8CB /* ViewerViewController.swift in Sources */,
+				A52BDC711BDA5EC100CCC4A2 /* dynamicSeamer.cpp in Sources */,
 				8FAB9F8A1B8F05BD00B4C8CB /* IcomoonExtension.swift in Sources */,
 				A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */,
 				8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */,
@@ -1244,6 +1257,7 @@
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F900B421B839D0C0085566C /* OptographTable.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
+				A52BDC721BDA5EC100CCC4A2 /* progressCallback.cpp in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
 				8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
