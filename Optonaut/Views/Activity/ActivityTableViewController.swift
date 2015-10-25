@@ -78,6 +78,12 @@ class ActivityTableViewController: UIViewController, RedNavbar {
         updateNavbarAppear()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewModel.refreshNotification.notify(())
+    }
+    
 }
 
 
@@ -94,9 +100,13 @@ extension ActivityTableViewController: UITableViewDelegate {
         let visibleCells = tableView.visibleCells as! [ActivityTableViewCell]
         let unreadActivities = visibleCells.map({ $0.activity }).filter({ !$0.isRead })
         
+        if unreadActivities.isEmpty {
+            return
+        }
+        
         SignalProducer<Activity!, NoError>.fromValues(unreadActivities)
             .observeOnUserInteractive()
-            .flatMap(.Concat) {
+            .flatMap(.Merge) {
                 ApiService<EmptyResponse>.post("activities/\($0.ID)/read")
                     .ignoreError()
                     .startOnUserInteractive()
@@ -128,8 +138,7 @@ extension ActivityTableViewController: UITableViewDataSource {
             fatalError()
         }
         
-        cell.activity = activity
-        cell.update()
+        cell.update(activity)
         cell.navigationController = navigationController as? NavigationController
         return cell
     }

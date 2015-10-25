@@ -23,8 +23,6 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
         optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
         optographImageView.contentMode = .ScaleAspectFill
         contentView.addSubview(optographImageView)
-        
-        contentView.setNeedsUpdateConstraints()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -40,11 +38,16 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
         super.updateConstraints()
     }
     
-    override func update() {
-        causingImageView.setImageWithURLString(activity.activityResourceComment!.causingPerson.avatarAssetURL)
-        optographImageView.setImageWithURLString(activity.activityResourceComment!.optograph.previewAssetURL)
+    override func update(activity: Activity) {
+        if self.activity == nil || self.activity.activityResourceComment!.causingPerson.avatarAssetURL != activity.activityResourceComment!.causingPerson.avatarAssetURL {
+            causingImageView.setImageWithURLString(activity.activityResourceComment!.causingPerson.avatarAssetURL)
+        }
         
-        super.update()
+        if self.activity == nil || self.activity.activityResourceComment!.optograph.previewAssetURL != activity.activityResourceComment!.optograph.previewAssetURL {
+            optographImageView.setImageWithURLString(activity.activityResourceComment!.optograph.previewAssetURL)
+        }
+        
+        super.update(activity)
     }
     
     func pushProfile() {

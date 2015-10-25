@@ -25,12 +25,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        let settings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
-        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
-        UIApplication.sharedApplication().registerForRemoteNotifications()
-        
         prepareAndExecute {
-            self.window?.rootViewController = TabBarViewController()
+            let tabBarViewController = TabBarViewController()
+            
+            if let notification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
+                Mixpanel.sharedInstance().track("Launch.Notification")
+                self.application(application, didReceiveRemoteNotification: notification)
+                tabBarViewController.selectedIndex = 2
+            }
+            
+            self.window?.rootViewController = tabBarViewController
         }
         
         return true
@@ -87,6 +91,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         SessionService.deviceToken = tokenString
+    }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject: AnyObject]) {
+        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {
+            tabBarViewController.activityNavViewController.activityTableViewController.viewModel.refreshNotification.notify(())
+        }
     }
     
     private func prepareAndExecute(fn: () -> ()) {

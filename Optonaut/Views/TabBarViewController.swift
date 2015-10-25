@@ -31,8 +31,6 @@ class TabBarViewController: UITabBarController {
         feedNavViewController.initNotificationIndicator()
         activityNavViewController.initNotificationIndicator()
         
-        selectedIndex = 2
-        
         // set bar color
         tabBar.barTintColor = UIColor.Accent
         tabBar.translucent = false
@@ -45,6 +43,10 @@ class TabBarViewController: UITabBarController {
         // remove default border
         tabBar.frame.size.width = self.view.frame.width + 4
         tabBar.frame.origin.x = -2
+        
+        let settings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
+        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
+        UIApplication.sharedApplication().registerForRemoteNotifications()
     }
     
 }

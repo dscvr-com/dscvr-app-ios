@@ -15,12 +15,18 @@ class ActivitiesViewModel: NSObject {
     var refreshTimer: NSTimer!
     
     let results = MutableProperty<TableViewResults<Activity>>(.empty())
-    let unreadCount = MutableProperty<Int>(0)
+    let unreadCount: MutableProperty<Int>
     
     let refreshNotification = NotificationSignal<Void>()
     let loadMoreNotification = NotificationSignal<Void>()
     
     override init() {
+        unreadCount = MutableProperty(UIApplication.sharedApplication().applicationIconBadgeNumber)
+        
+        unreadCount.producer.startWithNext { count in
+            UIApplication.sharedApplication().applicationIconBadgeNumber = count
+        }
+        
         super.init()
         
 //        let query = ActivityTable.select(*)

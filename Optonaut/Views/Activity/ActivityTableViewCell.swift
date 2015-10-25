@@ -70,17 +70,22 @@ class ActivityTableViewCell: UITableViewCell {
         super.updateConstraints()
     }
     
-    func update() {
+    func update(activity: Activity) {
         textView.text = activity.text
         isReadView.hidden = activity.isRead
+        
+        self.activity = activity
     }
     
     func read() {
         ApiService<EmptyResponse>.post("activities/\(activity.ID)/read")
             .startWithCompleted { [weak self] in
-                self?.activity.isRead = true
-                try! self?.activity.insertOrUpdate()
-                self?.update()
+                guard let strongSelf = self else {
+                    return
+                }
+                strongSelf.activity.isRead = true
+                try! strongSelf.activity.insertOrUpdate()
+                strongSelf.update(strongSelf.activity)
             }
     }
     

@@ -19,6 +19,7 @@ class ActivityNavViewController: NavigationController, RedNavbar {
     required init() {
         super.init(nibName: nil, bundle: nil)
         setTabBarIcon(tabBarItem, icon: .Bell, withFontSize: 20)
+        pushViewController(activityTableViewController, animated: false)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -32,8 +33,6 @@ class ActivityNavViewController: NavigationController, RedNavbar {
         navigationBar.barTintColor = UIColor.Accent
         navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         navigationBar.tintColor = .whiteColor()
-        
-        pushViewController(activityTableViewController, animated: false)
         
         view.setNeedsUpdateConstraints()
     }

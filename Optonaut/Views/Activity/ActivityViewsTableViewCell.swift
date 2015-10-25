@@ -20,8 +20,6 @@ class ActivityViewsTableViewCell: ActivityTableViewCell {
         optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
         optographImageView.contentMode = .ScaleAspectFill
         contentView.addSubview(optographImageView)
-        
-        contentView.setNeedsUpdateConstraints()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -37,10 +35,12 @@ class ActivityViewsTableViewCell: ActivityTableViewCell {
         super.updateConstraints()
     }
     
-    override func update() {
-        optographImageView.setImageWithURLString(activity.activityResourceViews!.optograph.previewAssetURL)
+    override func update(activity: Activity) {
+        if self.activity == nil || self.activity.activityResourceViews!.optograph.previewAssetURL != activity.activityResourceViews!.optograph.previewAssetURL {
+            optographImageView.setImageWithURLString(activity.activityResourceViews!.optograph.previewAssetURL)
+        }
         
-        super.update()
+        super.update(activity)
     }
     
     func pushDetails() {

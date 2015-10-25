@@ -16,23 +16,18 @@ class ActivityFollowTableViewCell: ActivityTableViewCell {
         
         causingImageView.userInteractionEnabled = true
         causingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
-        
-        contentView.setNeedsUpdateConstraints()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func updateConstraints() {
+    override func update(activity: Activity) {
+        if self.activity == nil || self.activity.activityResourceFollow!.causingPerson.avatarAssetURL != activity.activityResourceFollow!.causingPerson.avatarAssetURL {
+            causingImageView.setImageWithURLString(activity.activityResourceFollow!.causingPerson.avatarAssetURL)
+        }
         
-        super.updateConstraints()
-    }
-    
-    override func update() {
-        causingImageView.setImageWithURLString(activity.activityResourceFollow!.causingPerson.avatarAssetURL)
-        
-        super.update()
+        super.update(activity)
     }
     
     func pushProfile() {
