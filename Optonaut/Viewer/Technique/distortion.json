@@ -1,0 +1,32 @@
+{
+    "passes" : {
+        "distortion" : {
+            "outputs" : {
+                "color" : "COLOR"
+            },
+            "inputs" : {
+                "_MainTex" : "COLOR"
+                
+            },
+            "node" : "self",
+            "program" : "distortion",
+            "draw" : "DRAW_NODE"
+        }
+    },
+    "sequence" : [
+                  "distortion"
+                  ],
+    "symbols" : {
+        
+        "aPosition" : {
+            "semantic": "vertex"
+        },
+        "aTextureCoord" : {
+            "semantic": "texcoord"
+        }
+        
+        "uTextureCoordScale" : {
+            "type": "float"
+        }
+    }
+}

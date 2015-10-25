@@ -30,12 +30,8 @@ GLKMatrix4 CVMatToGLK4(const cv::Mat &m) {
 }
 
 void GLK4ToCVMat(GLKMatrix4 m, cv::Mat &output) {
-    double data[16] = { m.m00, m.m01, m.m02, m.m03,
-        m.m10, m.m11, m.m12, m.m13,
-        m.m20, m.m21, m.m22, m.m23,
-        m.m30, m.m31, m.m32, m.m33 };
-  
-    output = cv::Mat(4, 4, CV_64F, data).clone();
+    Mat tmp = cv::Mat(4, 4, CV_32F, m.m);
+    tmp.convertTo(output, CV_64F);
 }
 
 GLKVector3 CVMatToGLK3Vec(const cv::Mat &m) {
