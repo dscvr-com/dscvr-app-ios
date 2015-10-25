@@ -27,6 +27,7 @@ class DetailsViewModel {
     let location = MutableProperty<String>("")
     let comments = MutableProperty<[Comment]>([])
     let viewIsActive = MutableProperty<Bool>(false)
+    let optographReloaded: MutableProperty<Void>
     
     var optograph = Optograph.newInstance()
     
@@ -49,15 +50,18 @@ class DetailsViewModel {
             return optograph
         }) {
             self.optograph = optograph
+            optographReloaded = MutableProperty()
             updateProperties()
         } else {
             // optograph opened via share link
             optograph.isPublished = true
+            optographReloaded = MutableProperty()
         }
         
         if optograph.isPublished {
             ApiService<Optograph>.get("optographs/\(optographID)").startWithNext { optograph in
                 self.optograph = optograph
+                self.optographReloaded.value = ()
                 self.saveModel()
                 self.updateProperties()
             }

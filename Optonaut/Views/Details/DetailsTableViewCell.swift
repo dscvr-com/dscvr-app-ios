@@ -73,8 +73,13 @@ class DetailsTableViewCell: UITableViewCell {
     }
     
     func bindViewModel() {
-        infoView.bindViewModel(viewModel.optograph)
         infoView.navigationController = navigationController
+        
+        viewModel.optographReloaded.producer.startWithNext { [weak self] in
+            if let strongSelf = self {
+                strongSelf.infoView.bindViewModel(strongSelf.viewModel.optograph)
+            }
+        }
         
         textView.rac_text <~ viewModel.text
         hashtagsView.rac_text <~ viewModel.hashtags.producer
