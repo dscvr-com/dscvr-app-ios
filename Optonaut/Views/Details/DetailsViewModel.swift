@@ -91,6 +91,8 @@ class DetailsViewModel {
             try! comment.insertOrUpdate()
             try! comment.person.insertOrUpdate()
         }
+        
+        commentsCount <~ comments.producer.map { $0.count }
     }
 
     deinit {
@@ -144,7 +146,6 @@ class DetailsViewModel {
     
     func insertNewComment(comment: Comment) {
         comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
-        commentsCount.value++
     }
     
     func delete() -> SignalProducer<EmptyResponse, ApiError> {

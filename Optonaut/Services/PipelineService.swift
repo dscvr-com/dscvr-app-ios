@@ -31,8 +31,9 @@ class PipelineService {
     }
     
     typealias StatusSignal = Signal<Status, NoError>
+    private typealias StatusSignalPair = (signal: StatusSignal, disposable: Disposable)
     
-    private static var signals: [UUID: StatusSignal] = [:]
+    private static var signals: [UUID: StatusSignalPair] = [:]
     
     static func check() {
         Async.main {
@@ -40,8 +41,13 @@ class PipelineService {
         }
     }
     
-    static func statusSignalForOptograph(ID:  UUID) -> StatusSignal? {
-        return signals[ID]
+    static func statusSignalForOptograph(ID: UUID) -> StatusSignal? {
+        return signals[ID]?.signal
+    }
+    
+    static func stop(ID: UUID) {
+        signals[ID]?.disposable.dispose()
+        signals[ID] = nil
     }
     
     private static func updateOptographs() {
@@ -80,10 +86,10 @@ class PipelineService {
         }
     }
     
-    private static func publish(var optograph: Optograph) -> StatusSignal {
+    private static func publish(var optograph: Optograph) -> StatusSignalPair {
         let (signal, sink) = StatusSignal.pipe()
         
-        optograph.publish()
+        let disposable = optograph.publish()
             .on(
                 started: {
                     sink.sendNext(.Publishing(0))
@@ -103,10 +109,10 @@ class PipelineService {
             )
             .start()
     
-        return signal
+        return (signal, disposable)
     }
     
-    private static func stitch(var optograph: Optograph) -> StatusSignal {
+    private static func stitch(var optograph: Optograph) -> StatusSignalPair {
         
         let (signal, sink) = StatusSignal.pipe()
         let stitchingSignal = StitchingService.startStitching(optograph)
@@ -131,7 +137,11 @@ class PipelineService {
                 PipelineService.check()
             }
         
-        return signal
+        let disposable = ActionDisposable {
+            StitchingService.cancelStitching()
+        }
+        
+        return (signal, disposable)
     }
     
 }

@@ -44,7 +44,7 @@ class ApiService<T: Mappable> {
     }
     
     static func checkVersion() -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.get("info")
+        return ApiService<EmptyResponse>.get("public/info")
     }
     
     static func get(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
@@ -141,7 +141,7 @@ class ApiService<T: Mappable> {
                         }
                         
                         do {
-                            let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
+                            let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
                         } catch {}
                         
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode, message: error.description, error: error)

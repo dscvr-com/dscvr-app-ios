@@ -56,10 +56,22 @@ class LineTextField: UITextField {
         }
     }
     
+    var previousText: String?
+    
+    override var text: String? {
+        didSet {
+            previousText = oldValue
+        }
+    }
+    
+    override var attributedText: NSAttributedString? {
+        didSet {
+//            previousText = oldValue
+        }
+    }
+    
     private let lineLayer = CALayer()
     private let messageView = UILabel()
-    
-    private var isEditing = false
     
     required override init(frame: CGRect) {
         super.init(frame: frame)
@@ -80,6 +92,7 @@ class LineTextField: UITextField {
         update()
         
         addTarget(self, action: "beginEditing", forControlEvents: .EditingDidBegin)
+        addTarget(self, action: "changed", forControlEvents: .EditingChanged)
         addTarget(self, action: "endEditing", forControlEvents: .EditingDidEnd)
         
         messageView.textAlignment = .Right
@@ -172,12 +185,10 @@ class LineTextField: UITextField {
     }
     
     func beginEditing() {
-        isEditing = true
         update()
     }
     
     func endEditing() {
-        isEditing = false
         update()
     }
     

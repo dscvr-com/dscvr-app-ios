@@ -16,6 +16,9 @@ class ActivityViewsTableViewCell: ActivityTableViewCell {
     required init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        causingImageView.image = UIImage.emoji("🌟", fontSize: 24)
+        causingImageView.contentMode = .Center
+        
         optographImageView.userInteractionEnabled = true
         optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
         optographImageView.contentMode = .ScaleAspectFill
@@ -47,4 +50,23 @@ class ActivityViewsTableViewCell: ActivityTableViewCell {
         navigationController?.pushViewController(DetailsTableViewController(optographID: activity.activityResourceViews!.optograph.ID), animated: true)
     }
     
+}
+
+private extension UIImage {
+    static func emoji(str: String, fontSize: CGFloat) -> UIImage {
+        let attributes = [
+            NSFontAttributeName: UIFont.iconOfSize(fontSize),
+        ]
+        let attributedString = NSAttributedString(string: str, attributes: attributes)
+        let size = sizeOfAttributeString(attributedString)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        attributedString.drawInRect(CGRect(origin: CGPointZero, size: size))
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    }
+}
+
+private func sizeOfAttributeString(str: NSAttributedString) -> CGSize {
+    return str.boundingRectWithSize(CGSizeMake(10000, 10000), options:(NSStringDrawingOptions.UsesLineFragmentOrigin), context:nil).size
 }

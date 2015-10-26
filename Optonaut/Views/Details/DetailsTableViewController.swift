@@ -141,6 +141,12 @@ class DetailsTableViewController: UIViewController, NoNavbar {
             self?.tableView.reloadData()
         }
         
+        viewModel.optographReloaded.producer.startWithNext { [weak self] in
+            if self?.viewModel.optograph.deletedAt != nil {
+                self?.navigationController?.popViewControllerAnimated(false)
+            }
+        }
+        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
     }
     

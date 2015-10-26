@@ -24,6 +24,7 @@ extension OptographOptions {
                 let confirmAlert = UIAlertController(title: "Are you sure?", message: "Do you really want to delete this Optograph? You cannot undo this.", preferredStyle: .Alert)
                 confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
                 confirmAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
+                    PipelineService.stop(optograph.ID)
                     optograph.delete().startWithCompleted {
                         deleteCallback?()
                     }

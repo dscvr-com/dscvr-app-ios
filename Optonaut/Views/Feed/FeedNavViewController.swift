@@ -37,12 +37,12 @@ class FeedNavViewController: NavigationController {
         let numberOfItems = CGFloat(tabBar.items!.count)
         let tabBarItemSize = CGSize(width: tabBar.frame.width / numberOfItems, height: tabBar.frame.height)
         
-        let circle = CALayer()
-        circle.frame = CGRect(x: tabBarItemSize.width / 2 + 13, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 12, width: 6, height: 6)
-        circle.backgroundColor = UIColor.whiteColor().CGColor
-        circle.cornerRadius = 3
+        let circle = UIView()
+        circle.frame = CGRect(x: tabBarItemSize.width / 2 + 13, y: tabBarItemSize.height / 2 - 12, width: 6, height: 6)
+        circle.backgroundColor = UIColor.whiteColor()
+        circle.layer.cornerRadius = 3
         circle.hidden = true
-        tabBarController!.view.layer.addSublayer(circle)
+        tabBar.addSubview(circle)
         
         feedTableViewController.viewModel.newResultsAvailable.producer.startWithNext { circle.hidden = !$0 }
     }

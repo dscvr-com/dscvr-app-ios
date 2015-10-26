@@ -183,6 +183,8 @@ class CreateOptographViewController: UIViewController {
         }
         hashtagInputView.keyboardType = .Twitter
         hashtagInputView.autocorrectionType = .No
+        hashtagInputView.delegate = self
+        hashtagInputView.addTarget(self, action: "textFieldChanged", forControlEvents: .EditingChanged)
         infoWrapperView.addSubview(hashtagInputView)
         
         textInputView.font = UIFont.textOfSize(14, withType: .Regular)
@@ -411,9 +413,39 @@ class CreateOptographViewController: UIViewController {
         view.endEditing(true)
     }
     
+    func textFieldChanged() {
+        prependHashtag()
+    }
+    
 }
 
 // MARK: - UITextFieldDelegate
+extension CreateOptographViewController: UITextFieldDelegate {
+    
+    private func prependHashtag() {
+        let text = hashtagInputView.text ?? ""
+        let previousText = hashtagInputView.previousText ?? ""
+        
+        if (text.isEmpty || text.characters.last == " ") && text.characters.count >= previousText.characters.count {
+            hashtagInputView.text = text + "#"
+        }
+    }
+    
+    func textFieldDidBeginEditing(textField: UITextField) {
+        prependHashtag()
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        if hashtagInputView.text == "#" {
+            hashtagInputView.text = ""
+            hashtagInputView.previousText = ""
+        }
+    }
+    
+}
+
+
+// MARK: - UITextViewDelegate
 extension CreateOptographViewController: UITextViewDelegate {
 
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {

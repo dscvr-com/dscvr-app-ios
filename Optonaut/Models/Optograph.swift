@@ -110,6 +110,9 @@ struct Optograph: DeletableModel {
                         OptographSchema.isPublished <-- self.isPublished
                     )
                 )
+                }, interrupted: {
+                    
+                    print("test")
             })
     }
     

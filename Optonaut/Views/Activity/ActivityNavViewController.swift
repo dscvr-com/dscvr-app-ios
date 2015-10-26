@@ -47,27 +47,21 @@ class ActivityNavViewController: NavigationController, RedNavbar {
         let numberOfItems = CGFloat(tabBar.items!.count)
         let tabBarItemSize = CGSize(width: tabBar.frame.width / numberOfItems, height: tabBar.frame.height)
         
-        let circle = CALayer()
-        circle.frame = CGRect(x: tabBarItemSize.width * 5/2 + 9, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 17, width: 15, height: 15)
-        circle.backgroundColor = UIColor.whiteColor().CGColor
-        circle.cornerRadius = 7.5
+        let circle = UILabel()
+        circle.frame = CGRect(x: tabBarItemSize.width * 5/2 + 8, y: tabBarItemSize.height / 2 - 18, width: 14, height: 14)
+        circle.backgroundColor = .whiteColor()
+        circle.font = UIFont.displayOfSize(9, withType: .Regular)
+        circle.textAlignment = .Center
+        circle.textColor = .Accent
+        circle.layer.cornerRadius = 8
+        circle.clipsToBounds = true
         circle.hidden = true
-        tabBarController!.view.layer.addSublayer(circle)
-        
-        let number = UILabel()
-        number.frame = CGRect(x: tabBarItemSize.width * 5/2 + 9, y: tabBarController!.view.frame.height - tabBarItemSize.height / 2 - 17, width: 15, height: 15)
-        number.textAlignment = .Center
-        number.text = "5"
-        number.textColor = UIColor.Accent
-        number.font = UIFont.displayOfSize(9, withType: .Semibold)
-        number.hidden = true
-        tabBarController!.view.addSubview(number)
+        tabBar.addSubview(circle)
         
         activityTableViewController.viewModel.unreadCount.producer.startWithNext { count in
             let hidden = count <= 0
             circle.hidden = hidden
-            number.hidden = hidden
-            number.text = "\(count)"
+            circle.text = "\(count)"
         }
     }
 }
