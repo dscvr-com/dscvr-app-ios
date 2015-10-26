@@ -31,14 +31,15 @@ class ViewerViewController: UIViewController  {
         self.optograph = optograph
         
         
-        screen = ScreenParams.iPhone6
+        screen = ScreenParams.iPhone5
         // Default cardboard
-        // let headset = CardboardParams()
+        //headset = CardboardParams()
         
         // VRO
-        headset = CardboardFactory.CardboardParamsFromBase64("Cg1DYXJsIFplaXNzIEFHEgZWUiBPTkUdUI0XPSW28309KhAAAEhCAABIQgAASEIAAEhCWAE1KVwPPToIzczMPQAAgD9QAGAA")
+        // headset = CardboardFactory.Ca rdboardParamsFromBase64("Cg1DYXJsIFplaXNzIEFHEgZWUiBPTkUdUI0XPSW28309KhAAAEhCAABIQgAASEIAAEhCWAE1KVwPPToIzczMPQAAgD9QAGAA")
         // 1+1
-        // headset = CardboardFactory.CardboardParamsFromBase64("CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM")
+        
+        headset = CardboardFactory.CardboardParamsFromBase64("CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM=")
         
         super.init(nibName: nil, bundle: nil)
     }

@@ -33,13 +33,13 @@ class DistortionProgram {
         print("EyeOffset")
         print(eyeOffset)
         
+        let factor = distortion.distortInverse(1)
+        print("dFactor")
+        print(factor)
         
         technique.setValue(NSValue(CGSize: coefficients), forKey: "coefficients")
         technique.setValue(NSValue(CGSize: eyeOffset), forKey: "eye_offset")
-        technique.setValue(NSNumber(float: 1), forKey: "texture_scale")
-
-        
-        
+        technique.setValue(NSNumber(float: factor), forKey: "texture_scale")
     }
     
     convenience init(params: CardboardParams, screen: ScreenParams, eye: Eye) {
@@ -48,7 +48,7 @@ class DistortionProgram {
         print(params)
         
         
-        let metersPerTanAngle = params.screenToLensDistance
+        let metersPerTanAngle = screen.widthMeters
     
         var xEyeOffsetTanAngleScreen = (params.getYEyeOffsetMeters(screen)) / metersPerTanAngle
         
@@ -57,6 +57,9 @@ class DistortionProgram {
         if eye == .Right {
             yEyeOffsetTanAngleScreen = (screen.heightMeters / Float(2.0)) - yEyeOffsetTanAngleScreen
         }
+        
+        xEyeOffsetTanAngleScreen -= 0.5
+        xEyeOffsetTanAngleScreen *= 2
         
         self.init(distortion: Distortion(coefficients: params.distortionCoefficients), eyeOffsetX: xEyeOffsetTanAngleScreen, eyeOffsetY: yEyeOffsetTanAngleScreen)
     }

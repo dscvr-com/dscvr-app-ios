@@ -4,5 +4,5 @@ uniform float uTextureCoordScale;
 
 void main() {
     gl_Position = aPosition;
-    uv = (aPosition.xy * uTextureCoordScale + 1.0) * 0.5;
+    uv = ((aPosition.xy + 1.0) * 0.5);
 }
