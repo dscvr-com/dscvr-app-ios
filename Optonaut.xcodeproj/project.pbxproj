@@ -195,13 +195,13 @@
 		A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00A1B7E19E200DCD598 /* quat.cpp */; };
 		A5C1C01A1B7E19E200DCD598 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00D1B7E19E200DCD598 /* simpleSphereStitcher.cpp */; };
 		A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0101B7E19E200DCD598 /* support.cpp */; };
-		A5E8F8F01BDCF24C009974E4 /* Distortion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */; settings = {ASSET_TAGS = (); }; };
-		A5E8F8F21BDCF695009974E4 /* DistortionProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */; settings = {ASSET_TAGS = (); }; };
-		A5E8F8F41BDCF806009974E4 /* DistortionMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */; settings = {ASSET_TAGS = (); }; };
-		A5E8F8F61BDD068E009974E4 /* DistortionRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8F51BDD068E009974E4 /* DistortionRenderer.swift */; settings = {ASSET_TAGS = (); }; };
-		A5E8F8F91BDD156D009974E4 /* distortion.json in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8F81BDD156D009974E4 /* distortion.json */; settings = {ASSET_TAGS = (); }; };
-		A5E8F8FB1BDD15AA009974E4 /* distortion.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */; settings = {ASSET_TAGS = (); }; };
-		A5E8F8FD1BDD15B3009974E4 /* distortion.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */; settings = {ASSET_TAGS = (); }; };
+		A5E8F8F01BDCF24C009974E4 /* Distortion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */; };
+		A5E8F8F21BDCF695009974E4 /* DistortionProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */; };
+		A5E8F8F41BDCF806009974E4 /* DistortionMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */; };
+		A5E8F8F91BDD156D009974E4 /* distortion.json in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8F81BDD156D009974E4 /* distortion.json */; };
+		A5E8F8FB1BDD15AA009974E4 /* distortion.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */; };
+		A5E8F8FD1BDD15B3009974E4 /* distortion.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */; };
+		A5F8F7661BDE315D00CAD4E6 /* GoogleCardboardParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5F8F7651BDE315D00CAD4E6 /* GoogleCardboardParser.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -461,10 +461,10 @@
 		A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distortion.swift; sourceTree = "<group>"; };
 		A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionProgram.swift; sourceTree = "<group>"; };
 		A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionMesh.swift; sourceTree = "<group>"; };
-		A5E8F8F51BDD068E009974E4 /* DistortionRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionRenderer.swift; sourceTree = "<group>"; };
 		A5E8F8F81BDD156D009974E4 /* distortion.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = distortion.json; sourceTree = "<group>"; };
 		A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.fsh; sourceTree = "<group>"; };
 		A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.vsh; sourceTree = "<group>"; };
+		A5F8F7651BDE315D00CAD4E6 /* GoogleCardboardParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleCardboardParser.framework; path = Carthage/Build/iOS/GoogleCardboardParser.framework; sourceTree = "<group>"; };
 		A5FE6B691B8A630A005B0E0E /* aligner.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = aligner.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -473,6 +473,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5F8F7661BDE315D00CAD4E6 /* GoogleCardboardParser.framework in Frameworks */,
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
 				8FBDE25E1BA2E187008E66FC /* Crashlytics.framework in Frameworks */,
 				8FBDE25F1BA2E187008E66FC /* Fabric.framework in Frameworks */,
@@ -505,6 +506,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A5F8F7651BDE315D00CAD4E6 /* GoogleCardboardParser.framework */,
 				8F6084831BC27DD400ADAFFC /* Mixpanel.framework */,
 				8FE09F5A1BADD22200EA105D /* WebImage.framework */,
 				8F86D4F61B9B9664009F91EB /* PureLayout.framework */,
@@ -1035,7 +1037,6 @@
 				A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */,
 				A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */,
 				A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */,
-				A5E8F8F51BDD068E009974E4 /* DistortionRenderer.swift */,
 			);
 			path = Viewer;
 			sourceTree = "<group>";
@@ -1195,6 +1196,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ActiveLabel.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WebImage.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Mixpanel.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/GoogleCardboardParser.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -1262,7 +1264,6 @@
 				8FD845B81BC870B90064048D /* Debug.swift in Sources */,
 				8FAB9F561B8F01DF00B4C8CB /* ProfileHeaderTableViewCell.swift in Sources */,
 				8F0B17861BAC193000FAF649 /* LineTextField.swift in Sources */,
-				A5E8F8F61BDD068E009974E4 /* DistortionRenderer.swift in Sources */,
 				8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */,
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,

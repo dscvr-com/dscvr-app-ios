@@ -9,6 +9,7 @@
 import Foundation
 import SceneKit
 
+// UGLY and Unused. And also untested. 
 class DistortionMesh {
     static let BytesPerFloat = sizeof(CFloat)
     static let BytesPerShort = sizeof(CShort)

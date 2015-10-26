@@ -1,12 +1,8 @@
-attribute vec2 aPosition;
-attribute vec2 aTextureCoord;
-
-varying vec2 vTextureCoord;
-
+attribute vec4 aPosition;
+varying vec2 uv;
 uniform float uTextureCoordScale;
 
 void main() {
-    gl_Position = vec4(aPosition, 0.0, 1.0);
-    vTextureCoord = aTextureCoord.xy * uTextureCoordScale;    
+    gl_Position = aPosition;
+    uv = (aPosition.xy * uTextureCoordScale + 1.0) * 0.5;
 }
-

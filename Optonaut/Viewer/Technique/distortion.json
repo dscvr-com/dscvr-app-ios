@@ -5,27 +5,26 @@
                 "color" : "COLOR"
             },
             "inputs" : {
-                "_MainTex" : "COLOR"
-                
+                "uMainTex" : "COLOR",
+                "uCoefficients": "coefficients",
+                "uEyeOffset": "eye_offset",
+                "uTextureCoordScale": "texture_scale"
             },
-            "node" : "self",
             "program" : "distortion",
-            "draw" : "DRAW_NODE"
+            "draw" : "DRAW_QUAD"
         }
     },
     "sequence" : [
                   "distortion"
                   ],
     "symbols" : {
-        
-        "aPosition" : {
-            "semantic": "vertex"
+        "coefficients" : {
+            "type": "vec2"
         },
-        "aTextureCoord" : {
-            "semantic": "texcoord"
-        }
-        
-        "uTextureCoordScale" : {
+        "eye_offset" : {
+            "type": "vec2"
+        },
+        "texture_scale" : {
             "type": "float"
         }
     }

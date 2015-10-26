@@ -8,14 +8,61 @@
 
 import Foundation
 import SceneKit
+import GoogleCardboardParser
 
+enum Eye {
+    case Left
+    case Right
+}
+
+// TODO: Param for flipping 180
 class DistortionProgram {
-    private let textureCoordScaleUniform = "uTextureCoordScale"
-    private let technique: SCNTechnique
+    let technique: SCNTechnique
+    private let coefficients: CGSize
+    private let eyeOffset: CGSize
 
-    init(textureScoordScale: Float) {
+    
+    init(distortion: Distortion, eyeOffsetX: Float, eyeOffsetY: Float) {
         technique = DistortionProgram.techniqueFromName("distortion")
-        technique.setValue(NSNumber(float: textureScoordScale), forKey: textureCoordScaleUniform)
+        
+        coefficients = CGSize(width: CGFloat(distortion.coefficients[0]), height: CGFloat(distortion.coefficients[1]))
+        eyeOffset = CGSize(width: CGFloat(eyeOffsetX), height: CGFloat(eyeOffsetY))
+        
+        print("Coefficients")
+        print(coefficients)
+        print("EyeOffset")
+        print(eyeOffset)
+        
+        
+        technique.setValue(NSValue(CGSize: coefficients), forKey: "coefficients")
+        technique.setValue(NSValue(CGSize: eyeOffset), forKey: "eye_offset")
+        technique.setValue(NSNumber(float: 1), forKey: "texture_scale")
+
+        
+        
+    }
+    
+    convenience init(params: CardboardParams, screen: ScreenParams, eye: Eye) {
+        
+        print(screen)
+        print(params)
+        
+        
+        let metersPerTanAngle = params.screenToLensDistance
+    
+        var xEyeOffsetTanAngleScreen = (params.getYEyeOffsetMeters(screen)) / metersPerTanAngle
+        
+        var yEyeOffsetTanAngleScreen = (screen.heightMeters / Float(2.0) - params.interLensDistance / Float(2.0)) / metersPerTanAngle
+        
+        if eye == .Right {
+            yEyeOffsetTanAngleScreen = (screen.heightMeters / Float(2.0)) - yEyeOffsetTanAngleScreen
+        }
+        
+        self.init(distortion: Distortion(coefficients: params.distortionCoefficients), eyeOffsetX: xEyeOffsetTanAngleScreen, eyeOffsetY: yEyeOffsetTanAngleScreen)
+    }
+
+    func toRadians(deg: Float) -> Float {
+        return deg / Float(180) * Float(M_PI)
     }
     
     static func techniqueFromName(name: String) -> SCNTechnique {
