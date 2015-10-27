@@ -31,14 +31,14 @@ class ViewerViewController: UIViewController  {
         self.optograph = optograph
         
         
-        screen = ScreenParams.iPhone5
+        screen = ScreenParams.iPhone6
         // Default cardboard
         //headset = CardboardParams()
         
         // VRO
-        // headset = CardboardFactory.Ca rdboardParamsFromBase64("Cg1DYXJsIFplaXNzIEFHEgZWUiBPTkUdUI0XPSW28309KhAAAEhCAABIQgAASEIAAEhCWAE1KVwPPToIzczMPQAAgD9QAGAA")
+        // headset = CardboardFactory.CardboardParamsFromBase64("Cg1DYXJsIFplaXNzIEFHEgZWUiBPTkUdUI0XPSW28309KhAAAEhCAABIQgAASEIAAEhCWAE1KVwPPToIzczMPQAAgD9QAGAA")
+       
         // 1+1
-        
         headset = CardboardFactory.CardboardParamsFromBase64("CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM=")
         
         super.init(nibName: nil, bundle: nil)
@@ -61,14 +61,11 @@ class ViewerViewController: UIViewController  {
         leftScnView = ViewerViewController.createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
         rightScnView = ViewerViewController.createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
-        if headset.leftEyeMaxFov.left != headset.leftEyeMaxFov.right {
-            Answers.logCustomEventWithName("Error", customAttributes: ["type": "viewer", "error": "Got cardboard viewer with assymetric FOV. Please implement custom frustum."])
-        }
+        let leftProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Left)
+        let rightProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Right)
         
-        let fov: Double = Double(headset.leftEyeMaxFov.left) * Double(2)
-        
-        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: fov)
-        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: fov)
+        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov)
+        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov)
         
         leftDownloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(optograph.leftTextureAssetURL)
             .startWithNext { [weak self] image in
@@ -87,9 +84,6 @@ class ViewerViewController: UIViewController  {
         rightScnView.scene = rightRenderDelegate.scene
         rightScnView.delegate = rightRenderDelegate
 
-        
-        let leftProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Left)
-        let rightProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Right)
         
         leftScnView.technique = leftProgram.technique
         rightScnView.technique = rightProgram.technique

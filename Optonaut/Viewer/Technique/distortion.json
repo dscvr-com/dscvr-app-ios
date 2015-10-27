@@ -8,7 +8,9 @@
                 "uMainTex" : "COLOR",
                 "uCoefficients": "coefficients",
                 "uEyeOffset": "eye_offset",
-                "uTextureCoordScale": "texture_scale"
+                "uTextureCoordScale": "texture_scale",
+                "uVignetteX": "vignette_x",
+                "uVignetteY": "vignette_y"
             },
             "program" : "distortion",
             "draw" : "DRAW_QUAD"
@@ -25,6 +27,12 @@
             "type": "vec2"
         },
         "texture_scale" : {
+            "type": "float"
+        },
+        "vignette_x" : {
+            "type": "float"
+        },
+        "vignette_y" : {
             "type": "float"
         }
     }

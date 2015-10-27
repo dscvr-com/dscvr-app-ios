@@ -18,11 +18,12 @@ enum Eye {
 // TODO: Param for flipping 180
 class DistortionProgram {
     let technique: SCNTechnique
+    let fov: FieldOfView
     private let coefficients: CGSize
     private let eyeOffset: CGSize
 
     
-    init(distortion: Distortion, eyeOffsetX: Float, eyeOffsetY: Float) {
+    init(distortion: Distortion, fov: FieldOfView, eyeOffsetX: Float, eyeOffsetY: Float) {
         technique = DistortionProgram.techniqueFromName("distortion")
         
         coefficients = CGSize(width: CGFloat(distortion.coefficients[0]), height: CGFloat(distortion.coefficients[1]))
@@ -33,13 +34,27 @@ class DistortionProgram {
         print("EyeOffset")
         print(eyeOffset)
         
-        let factor = distortion.distortInverse(1)
+        let factor = distortion.distortInverse(0.9)
         print("dFactor")
         print(factor)
         
         technique.setValue(NSValue(CGSize: coefficients), forKey: "coefficients")
         technique.setValue(NSValue(CGSize: eyeOffset), forKey: "eye_offset")
         technique.setValue(NSNumber(float: factor), forKey: "texture_scale")
+        technique.setValue(NSNumber(float: 0.05), forKey: "vignette_x")
+        technique.setValue(NSNumber(float: 0.02), forKey: "vignette_y")
+        
+        self.fov = fov
+    }
+    
+    static func truncateFov(originalFov: Float, offset: Float) -> Float {
+        
+        if offset <= 0 {
+            return originalFov
+        }
+        
+        
+        return toDegrees(toRadians(originalFov) - asin(sin(toRadians(originalFov)) * offset))
     }
     
     convenience init(params: CardboardParams, screen: ScreenParams, eye: Eye) {
@@ -47,25 +62,37 @@ class DistortionProgram {
         print(screen)
         print(params)
         
+        //TODO: update frustum to fit those params. 
+        //Shouldnt be that hard. just get the right texture crop
         
-        let metersPerTanAngle = screen.widthMeters
-    
-        var xEyeOffsetTanAngleScreen = (params.getYEyeOffsetMeters(screen)) / metersPerTanAngle
+        var xEyeOffsetTanAngleScreen = (params.getYEyeOffsetMeters(screen) - screen.widthMeters / Float(2)) / screen.widthMeters
         
-        var yEyeOffsetTanAngleScreen = (screen.heightMeters / Float(2.0) - params.interLensDistance / Float(2.0)) / metersPerTanAngle
+        var yEyeOffsetTanAngleScreen = (screen.heightMeters / Float(4.0) - params.interLensDistance / Float(2.0)) / screen.heightMeters
         
         if eye == .Right {
-            yEyeOffsetTanAngleScreen = (screen.heightMeters / Float(2.0)) - yEyeOffsetTanAngleScreen
+            yEyeOffsetTanAngleScreen = -yEyeOffsetTanAngleScreen
         }
         
-        xEyeOffsetTanAngleScreen -= 0.5
         xEyeOffsetTanAngleScreen *= 2
+        yEyeOffsetTanAngleScreen *= -2
         
-        self.init(distortion: Distortion(coefficients: params.distortionCoefficients), eyeOffsetX: xEyeOffsetTanAngleScreen, eyeOffsetY: yEyeOffsetTanAngleScreen)
-    }
+        let fovLeft = DistortionProgram.truncateFov(params.leftEyeMaxFov.left, offset: -xEyeOffsetTanAngleScreen)
+        let fovRight = DistortionProgram.truncateFov(params.leftEyeMaxFov.right, offset: xEyeOffsetTanAngleScreen)
+        let fovTop = DistortionProgram.truncateFov(params.leftEyeMaxFov.top, offset: -yEyeOffsetTanAngleScreen)
+        let fovBottom = DistortionProgram.truncateFov(params.leftEyeMaxFov.bottom, offset: yEyeOffsetTanAngleScreen)
+        
 
-    func toRadians(deg: Float) -> Float {
+        let newFov = FieldOfView(angles: [fovLeft, fovRight, fovTop, fovBottom])
+        
+        self.init(distortion: Distortion(coefficients: params.distortionCoefficients), fov: newFov, eyeOffsetX: xEyeOffsetTanAngleScreen, eyeOffsetY: yEyeOffsetTanAngleScreen)
+    }
+    
+    static func toRadians(deg: Float) -> Float {
         return deg / Float(180) * Float(M_PI)
+    }
+    
+    static func toDegrees(rad: Float) -> Float {
+        return rad * Float(180) / Float(M_PI)
     }
     
     static func techniqueFromName(name: String) -> SCNTechnique {
