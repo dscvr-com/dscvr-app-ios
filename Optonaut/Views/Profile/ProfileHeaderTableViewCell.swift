@@ -215,17 +215,6 @@ class ProfileHeaderTableViewCell: UITableViewCell {
             settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
                 SessionService.logout()
             }))
-            
-            settingsSheet.addAction(UIAlertAction(title: "VR Glasses", style: .Default, handler: { _ in
-                let vrGlassesAlert = UIAlertController(title: "Choose your VR glasses", message: "Please select which VR glasses you are using", preferredStyle: .Alert)
-                vrGlassesAlert.addAction(UIAlertAction(title: "Google Cardboard", style: .Default, handler: { _ in
-                    SessionService.sessionData!.vrGlasses = .None
-                }))
-                vrGlassesAlert.addAction(UIAlertAction(title: "Zeiss VROne", style: .Default, handler: { _ in
-                    SessionService.sessionData!.vrGlasses = .VROne
-                }))
-                self.navigationController?.presentViewController(vrGlassesAlert, animated: true, completion: nil)
-            }))
         } else {
             settingsSheet.addAction(UIAlertAction(title: "Report user", style: .Destructive, handler: { _ in
                 let confirmAlert = UIAlertController(title: "Are you sure?", message: "This action will message one of the moderators.", preferredStyle: .Alert)

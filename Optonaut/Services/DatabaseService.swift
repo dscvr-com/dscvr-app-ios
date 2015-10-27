@@ -26,11 +26,24 @@ protocol SQLiteModel {
 extension SQLiteModel {
     
     func insertOrUpdate() throws {
+        let setters = toSQL()
+        let table = Self.table()
         do {
-            try DatabaseService.defaultConnection.run(Self.table().insert(or: .Fail, toSQL()))
+            try DatabaseService.defaultConnection.run(table.insert(or: .Fail, setters))
         } catch {
-            try DatabaseService.defaultConnection.run(Self.table().filter(Self.table()[Self.schema().ID] ==- self.ID).update(toSQL()))
+            let rowsChanged = try DatabaseService.defaultConnection.run(table.filter(table[Self.schema().ID] ==- ID).update(setters))
+            if rowsChanged != 1 {
+                throw DatabaseQueryError.NotFound
+            }
         }
+    }
+    
+    func insertOrIgnore() {
+        let setters = toSQL()
+        let table = Self.table()
+        do {
+            try DatabaseService.defaultConnection.run(table.insert(or: .Fail, setters))
+        } catch {}
     }
     
 }
@@ -92,7 +105,7 @@ class DatabaseService {
         defaultConnection = try Connection(path)
         
         // enable console logging
-//        defaultConnection.trace { msg in print(msg) }
+//        defaultConnection.trace { msg in print("\(msg)\n") }
         
         // reset database if new version available
         if VersionService.isNew {

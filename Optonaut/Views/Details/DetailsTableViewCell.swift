@@ -18,7 +18,7 @@ class DetailsTableViewCell: UITableViewCell {
     // subviews
     private let infoView = OptographInfoView()
     private let textView = UILabel()
-    private let hashtagsView = ActiveLabel()
+    private let hashtagsView = SubActiveLabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -41,8 +41,6 @@ class DetailsTableViewCell: UITableViewCell {
         hashtagsView.URLEnabled = false
         hashtagsView.mentionEnabled = false
         contentView.addSubview(hashtagsView)
-        
-        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "triggerTapCallback"))
         
         contentView.setNeedsUpdateConstraints()
     }
@@ -105,16 +103,6 @@ class DetailsTableViewCell: UITableViewCell {
         self.navigationController?.presentViewController(alert, animated: true, completion: nil)
     }
     
-    func triggerTapCallback() {
-        let superView = tableView!.superview!
-        let yOffset = max(0, superView.frame.height - tableView!.contentSize.height)
-        UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
-            animations: {
-                self.tableView!.contentOffset = CGPoint(x: 0, y: -yOffset)
-            },
-            completion: nil)
-    }
-    
     override func setSelected(selected: Bool, animated: Bool) {}
     
     override func setHighlighted(highlighted: Bool, animated: Bool) {}
@@ -127,4 +115,11 @@ extension DetailsTableViewCell: OptographOptions {
         showOptions(viewModel.optograph)
     }
     
+}
+
+private class SubActiveLabel: ActiveLabel {
+    // needed to make elements tapable above scene background
+    override func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOfGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
+    }
 }

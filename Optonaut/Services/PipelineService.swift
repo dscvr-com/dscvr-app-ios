@@ -132,6 +132,7 @@ class PipelineService {
                 try! optograph.insertOrUpdate()
                 StitchingService.removeUnstitchedRecordings()
                 signals.removeValueForKey(optograph.ID)
+                sink.sendNext(.Stitching(1))
                 sink.sendNext(.StitchingFinished)
                 sink.sendCompleted()
                 PipelineService.check()

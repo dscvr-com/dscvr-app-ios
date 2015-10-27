@@ -19,8 +19,8 @@ class ViewerViewController: UIViewController  {
     private var leftScnView: SCNView!
     private var rightScnView: SCNView!
     private let separatorLayer = CALayer()
-    private var headset: CardboardParams!
-    private var screen: ScreenParams!
+    private var headset: CardboardParams
+    private let screen: ScreenParams
     
     private var leftProgram: DistortionProgram!
     private var rightProgram: DistortionProgram!
@@ -29,10 +29,12 @@ class ViewerViewController: UIViewController  {
     private var leftDownloadDisposable: Disposable?
     private var rightDownloadDisposable: Disposable?
     
+    private let settingsButtonView = UIButton()
+    private var glassesSelectionView: GlassesSelectionView?
+    
     required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
         self.orientation = orientation
         self.optograph = optograph
-        
         
         // Please set this to meaningful default values.
         screen = ScreenParams.iPhone6
@@ -100,8 +102,15 @@ class ViewerViewController: UIViewController  {
         view.addSubview(leftScnView)
         
         separatorLayer.backgroundColor = UIColor.whiteColor().CGColor
-        separatorLayer.frame = CGRect(x: 0, y: view.frame.height / 2 - 2, width: view.frame.width, height: 4)
+        separatorLayer.frame = CGRect(x: 50, y: view.frame.height / 2 - 2, width: view.frame.width - 50, height: 4)
         view.layer.addSublayer(separatorLayer)
+        
+        settingsButtonView.frame = CGRect(x: 10, y: view.frame.height / 2 - 15, width: 30, height: 30)
+        settingsButtonView.setTitle(String.iconWithName(.Settings), forState: .Normal)
+        settingsButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+        settingsButtonView.titleLabel?.font = UIFont.iconOfSize(20)
+        settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))
+        view.addSubview(settingsButtonView)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -134,15 +143,14 @@ class ViewerViewController: UIViewController  {
             }
     }
     
-    func setViewerParameters(headset: CardboardParams, screen: ScreenParams) {
+    func setViewerParameters(headset: CardboardParams) {
         self.headset = headset
-        self.screen = screen
         
-        self.leftProgram.setParameters(headset, screen: screen, eye: Eye.Left)
-        self.rightProgram.setParameters(headset, screen: screen, eye: Eye.Right)
+        leftProgram.setParameters(headset, screen: screen, eye: .Left)
+        rightProgram.setParameters(headset, screen: screen, eye: .Right)
         
-        self.leftRenderDelegate.fov = self.leftProgram.fov
-        self.rightRenderDelegate.fov = self.rightProgram.fov
+        leftRenderDelegate.fov = leftProgram.fov
+        rightRenderDelegate.fov = rightProgram.fov
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -186,5 +194,108 @@ class ViewerViewController: UIViewController  {
         scnView.playing = true
         
         return scnView
+    }
+    
+    func showGlassesSelection() {
+        glassesSelectionView = GlassesSelectionView()
+        glassesSelectionView!.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+        glassesSelectionView!.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+        glassesSelectionView!.glasses = "Google Cardboard"
+        
+        glassesSelectionView!.closeCallback = { [weak self] in
+            self?.glassesSelectionView?.removeFromSuperview()
+        }
+        
+        view.addSubview(glassesSelectionView!)
+    }
+}
+
+private class GlassesSelectionView: UIView {
+    
+    private let blurView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .Dark)
+        return UIVisualEffectView(effect: blurEffect)
+    }()
+    
+    private let cancelButtonView = UIButton()
+    private let titleTextView = UILabel()
+    private let glassesIconView = UILabel()
+    private let glassesTextView = UILabel()
+    private let qrcodeIconView = UILabel()
+    private let qrcodeTextView = UILabel()
+    
+    var closeCallback: (() -> ())?
+    
+    var glasses: String? {
+        didSet {
+            glassesTextView.text = glasses
+        }
+    }
+    
+    init () {
+        super.init(frame: CGRectZero)
+        
+        addSubview(blurView)
+        
+        cancelButtonView.setTitle(String.iconWithName(.Cross), forState: .Normal)
+        cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+        cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
+        cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        addSubview(cancelButtonView)
+        
+        titleTextView.text = "Choose your VR glasses"
+        titleTextView.textColor = .whiteColor()
+        titleTextView.textAlignment = .Center
+        titleTextView.font = UIFont.displayOfSize(35, withType: .Thin)
+        addSubview(titleTextView)
+        
+        glassesIconView.text = String.iconWithName(.Cardboard)
+        glassesIconView.textColor = .whiteColor()
+        glassesIconView.textAlignment = .Center
+        glassesIconView.font = UIFont.iconOfSize(73)
+        addSubview(glassesIconView)
+        
+        glassesTextView.font = UIFont.displayOfSize(15, withType: .Semibold)
+        glassesTextView.textColor = .whiteColor()
+        glassesTextView.textAlignment = .Center
+        addSubview(glassesTextView)
+        
+        qrcodeIconView.text = String.iconWithName(.Qrcode)
+        qrcodeIconView.font = UIFont.iconOfSize(50)
+        qrcodeIconView.textColor = .whiteColor()
+        qrcodeIconView.textAlignment = .Center
+        addSubview(qrcodeIconView)
+        
+        qrcodeTextView.font = UIFont.displayOfSize(15, withType: .Semibold)
+        qrcodeTextView.textColor = .whiteColor()
+        qrcodeTextView.text = "Scan QR code"
+        qrcodeTextView.textAlignment = .Center
+        addSubview(qrcodeTextView)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    private override func layoutSubviews() {
+        blurView.frame = bounds
+        
+        cancelButtonView.frame = CGRect(x: bounds.width - 50, y: 20, width: 30, height: 30)
+        
+        titleTextView.frame = CGRect(x: 0, y: bounds.height * 0.25 - 19, width: bounds.width, height: 38)
+        
+        glassesIconView.frame = CGRect(x: bounds.width * 0.37 - 37, y: bounds.height * 0.5, width: 74, height: 50)
+        glassesTextView.frame = CGRect(x: bounds.width * 0.37 - 100, y: bounds.height * 0.5 + 70, width: 200, height: 20)
+        
+        qrcodeIconView.frame = CGRect(x: bounds.width * 0.63 - 37, y: bounds.height * 0.5, width: 74, height: 50)
+        qrcodeTextView.frame = CGRect(x: bounds.width * 0.63 - 100, y: bounds.height * 0.5 + 70, width: 200, height: 20)
+        
+        super.layoutSubviews()
+        
+    }
+    
+    @objc func cancel() {
+        closeCallback?()
     }
 }

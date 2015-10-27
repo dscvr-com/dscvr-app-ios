@@ -217,7 +217,6 @@ class CameraViewController: UIViewController {
             Mixpanel.sharedInstance().track("Action.Camera.StartRecording")
         }
         
-        tabBarController?.tabBar.hidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
@@ -242,7 +241,6 @@ class CameraViewController: UIViewController {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        tabBarController?.tabBar.hidden = false
         navigationController?.setNavigationBarHidden(false, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         

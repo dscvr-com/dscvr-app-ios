@@ -147,7 +147,9 @@ class DetailsTableViewController: UIViewController, NoNavbar {
             }
         }
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        tapGestureRecognizer.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGestureRecognizer)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -217,7 +219,9 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
         rotationAlert?.dismissViewControllerAnimated(true, completion: nil)
-        navigationController?.pushViewController(ViewerViewController(orientation: orientation, optograph: viewModel.optograph), animated: false)
+        let viewerViewController = ViewerViewController(orientation: orientation, optograph: viewModel.optograph)
+        viewerViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(viewerViewController, animated: false)
         viewModel.increaseViewsCount()
     }
     
@@ -231,6 +235,18 @@ class DetailsTableViewController: UIViewController, NoNavbar {
 
 // MARK: - UITableViewDelegate
 extension DetailsTableViewController: UITableViewDelegate {
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+//        let superView = tableView!.superview!
+        if indexPath.row == 0 {
+            let yOffset = max(0, tableView.frame.height - tableView.contentSize.height)
+            UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
+                animations: {
+                    self.tableView.contentOffset = CGPoint(x: 0, y: -yOffset)
+                },
+                completion: nil)
+        }
+    }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if indexPath.row == 0 {
