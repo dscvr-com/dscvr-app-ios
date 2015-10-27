@@ -1,0 +1,39 @@
+{
+    "passes" : {
+        "distortion" : {
+            "outputs" : {
+                "color" : "COLOR"
+            },
+            "inputs" : {
+                "uMainTex" : "COLOR",
+                "uCoefficients": "coefficients",
+                "uEyeOffset": "eye_offset",
+                "uTextureCoordScale": "texture_scale",
+                "uVignetteX": "vignette_x",
+                "uVignetteY": "vignette_y"
+            },
+            "program" : "distortion",
+            "draw" : "DRAW_QUAD"
+        }
+    },
+    "sequence" : [
+                  "distortion"
+                  ],
+    "symbols" : {
+        "coefficients" : {
+            "type": "vec2"
+        },
+        "eye_offset" : {
+            "type": "vec2"
+        },
+        "texture_scale" : {
+            "type": "float"
+        },
+        "vignette_x" : {
+            "type": "float"
+        },
+        "vignette_y" : {
+            "type": "float"
+        }
+    }
+}

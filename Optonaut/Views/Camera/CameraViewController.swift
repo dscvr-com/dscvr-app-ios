@@ -27,6 +27,9 @@ class CameraViewController: UIViewController {
     private let sessionQueue: dispatch_queue_t
     private var videoDevice : AVCaptureDevice?
     
+    private var lastExposureInfo = ExposureInfo()
+    private var lastAwbGains = AVCaptureWhiteBalanceGains()
+    
     // stitcher pointer and variables
     private var recorder = Recorder()
     private var frameCount = 0
@@ -152,6 +155,10 @@ class CameraViewController: UIViewController {
             .map { $0 ? .Locked : .ContinuousAutoFocus }
             .startWithNext { [unowned self] val in self.setFocusMode(val) }
         
+        viewModel.isRecording.producer
+            .take(1)
+            .startWithNext { [unowned self] val in self.setExposureMode(.Locked) }
+        
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
@@ -162,6 +169,13 @@ class CameraViewController: UIViewController {
         videoDevice!.focusMode = mode
         videoDevice!.unlockForConfiguration()
     }
+    
+    private func setExposureMode(mode: AVCaptureExposureMode) {
+        try! videoDevice!.lockForConfiguration()
+        videoDevice!.exposureMode = mode
+        videoDevice!.unlockForConfiguration()
+    }
+
     
     private func setupSelectionPoints() {
         let rawPoints = recorder.getSelectionPoints()
@@ -419,16 +433,11 @@ class CameraViewController: UIViewController {
             
             recorder.setIdle(!self.viewModel.isRecording.value)
             
-            var exposure = ExposureInfo()
-            exposure.iso = UInt32(videoDevice!.ISO)
-            exposure.exposureTime = videoDevice!.exposureDuration.seconds
             
-            let wb = videoDevice!.deviceWhiteBalanceGains
-            
-            recorder.push(r, buf, exposure, wb)
+            recorder.push(r, buf, lastExposureInfo, lastAwbGains)
             
             let errorVec = recorder.getAngularDistanceToBall()
-            let exposureHintC = recorder.getExposureHint()
+            // let exposureHintC = recorder.getExposureHint()
             
             Async.main {
                 if self.isViewLoaded() {
@@ -442,34 +451,48 @@ class CameraViewController: UIViewController {
                     self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
                 }
                 
-                var exposureHint = exposureHintC;
+                // TODO: Re-enable this code as soon as apple fixes
+                // the memory leak in AVCaptureDevice.ISO and stuff.
                 
-                if let videoDevice = self.videoDevice {
-                    if exposureHint.iso != 0 {
-
-                        if exposureHint.iso > UInt32(videoDevice.activeFormat.maxISO) {
-                            exposureHint.iso = UInt32(videoDevice.activeFormat.maxISO)
-                        }
-                        if exposureHint.iso < UInt32(videoDevice.activeFormat.minISO) {
-                            exposureHint.iso = UInt32(videoDevice.activeFormat.minISO)
-                        }
-                       
-                        print("Hint: \(exposureHint.iso), Max: \(videoDevice.activeFormat.maxISO)")
-                        try! videoDevice.lockForConfiguration()
-                        videoDevice.exposureMode = .Custom
-                        videoDevice.whiteBalanceMode = .Locked
-
-                        videoDevice.setExposureModeCustomWithDuration(
-                            CMTimeMakeWithSeconds(exposureHint.exposureTime, 10000),
-                            ISO: Float(exposureHint.iso), completionHandler: nil)
-                        
-                        videoDevice.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(exposureHint.gains, completionHandler: nil)
-                        
-                        
-                        videoDevice.unlockForConfiguration()
-                    }
-                  
-                }
+//                var exposureHint = exposureHintC;
+//                
+//                if let videoDevice = self.videoDevice {
+//                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
+//                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
+//                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
+//                }
+//                
+//                if let videoDevice = self.videoDevice {
+//                    
+//                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
+//                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
+//                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
+//                    
+//                    if exposureHint.iso != 0 {
+//
+//                        if exposureHint.iso > UInt32(videoDevice.activeFormat.maxISO) {
+//                            exposureHint.iso = UInt32(videoDevice.activeFormat.maxISO)
+//                        }
+//                        if exposureHint.iso < UInt32(videoDevice.activeFormat.minISO) {
+//                            exposureHint.iso = UInt32(videoDevice.activeFormat.minISO)
+//                        }
+//                       
+//                        print("Hint: \(exposureHint.iso), Max: \(videoDevice.activeFormat.maxISO)")
+//                        try! videoDevice.lockForConfiguration()
+//                        videoDevice.exposureMode = .Custom
+//                        videoDevice.whiteBalanceMode = .Locked
+//
+//                        videoDevice.setExposureModeCustomWithDuration(
+//                            CMTimeMakeWithSeconds(exposureHint.exposureTime, 10000),
+//                            ISO: Float(exposureHint.iso), completionHandler: nil)
+//                        
+//                        videoDevice.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(exposureHint.gains, completionHandler: nil)
+//                        
+//                        
+//                        videoDevice.unlockForConfiguration()
+//                    }
+//                  
+//                }
             }
             
             updateBallPosition()

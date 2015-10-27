@@ -8,6 +8,7 @@
 
 import Foundation
 import SceneKit
+import GoogleCardboardParser
 
 class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     
@@ -22,14 +23,25 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     private let sphereNode: SCNNode
     private let rotationMatrixSource: RotationMatrixSource
     
-    init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double) {
+    init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: FieldOfView) {
         self.rotationMatrixSource = rotationMatrixSource
         
+        print(fov)
+        
+        let zNear = Float(0.01)
+        let zFar = Float(10000)
+        let fovLeft = sin(DistortionProgram.toRadians(fov.left)) * zNear
+        let fovRight = sin(DistortionProgram.toRadians(fov.right)) * zNear
+        let fovTop = sin(DistortionProgram.toRadians(fov.top)) * zNear
+        let fovBottom = sin(DistortionProgram.toRadians(fov.bottom)) * zNear
+        
+        let projection = GLKMatrix4MakeFrustum(-fovLeft, fovRight, -fovBottom, fovTop, zNear, zFar)
+        
+        print(projection.m)
+        
         let camera = SCNCamera()
-        camera.zNear = 0.01
-        camera.zFar = 10000
-        camera.xFov = fov
-        camera.yFov = fov * Double(width / height)
+        camera.setProjectionTransform(SCNMatrix4FromGLKMatrix4(projection))
+        
         
         cameraNode = SCNNode()
         cameraNode.camera = camera
@@ -41,7 +53,16 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         
         super.init()
     }
-
+    
+    convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double) {
+        let xFov = Float(fov)
+        let yFov = xFov * Float(height / width)
+        let angles: [Float] = [xFov / Float(2.0), xFov / Float(2.0), yFov / Float(2.0), yFov / Float(2.0)]
+        let newFov = FieldOfView(angles: angles)
+        
+        self.init(rotationMatrixSource: rotationMatrixSource, width: width, height: height, fov: newFov)
+    }
+    
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         cameraNode.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
     }

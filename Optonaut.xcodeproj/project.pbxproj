@@ -195,6 +195,13 @@
 		A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00A1B7E19E200DCD598 /* quat.cpp */; };
 		A5C1C01A1B7E19E200DCD598 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00D1B7E19E200DCD598 /* simpleSphereStitcher.cpp */; };
 		A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0101B7E19E200DCD598 /* support.cpp */; };
+		A5E8F8F01BDCF24C009974E4 /* Distortion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */; };
+		A5E8F8F21BDCF695009974E4 /* DistortionProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */; };
+		A5E8F8F41BDCF806009974E4 /* DistortionMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */; };
+		A5E8F8F91BDD156D009974E4 /* distortion.json in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8F81BDD156D009974E4 /* distortion.json */; };
+		A5E8F8FB1BDD15AA009974E4 /* distortion.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */; };
+		A5E8F8FD1BDD15B3009974E4 /* distortion.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */; };
+		A5F8F7661BDE315D00CAD4E6 /* GoogleCardboardParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5F8F7651BDE315D00CAD4E6 /* GoogleCardboardParser.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -451,6 +458,13 @@
 		A5DA670A1B9CA29A00D9F3EE /* recorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderController.hpp; sourceTree = "<group>"; };
 		A5DA670C1B9CD52D00D9F3EE /* trivialAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = trivialAligner.hpp; sourceTree = "<group>"; };
 		A5DF584E1B81FC4A000DA118 /* asyncAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncAligner.hpp; sourceTree = "<group>"; };
+		A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distortion.swift; sourceTree = "<group>"; };
+		A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionProgram.swift; sourceTree = "<group>"; };
+		A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionMesh.swift; sourceTree = "<group>"; };
+		A5E8F8F81BDD156D009974E4 /* distortion.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = distortion.json; sourceTree = "<group>"; };
+		A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.fsh; sourceTree = "<group>"; };
+		A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.vsh; sourceTree = "<group>"; };
+		A5F8F7651BDE315D00CAD4E6 /* GoogleCardboardParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleCardboardParser.framework; path = Carthage/Build/iOS/GoogleCardboardParser.framework; sourceTree = "<group>"; };
 		A5FE6B691B8A630A005B0E0E /* aligner.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = aligner.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -459,6 +473,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5F8F7661BDE315D00CAD4E6 /* GoogleCardboardParser.framework in Frameworks */,
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
 				8FBDE25E1BA2E187008E66FC /* Crashlytics.framework in Frameworks */,
 				8FBDE25F1BA2E187008E66FC /* Fabric.framework in Frameworks */,
@@ -491,6 +506,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A5F8F7651BDE315D00CAD4E6 /* GoogleCardboardParser.framework */,
 				8F6084831BC27DD400ADAFFC /* Mixpanel.framework */,
 				8FE09F5A1BADD22200EA105D /* WebImage.framework */,
 				8F86D4F61B9B9664009F91EB /* PureLayout.framework */,
@@ -865,6 +881,7 @@
 				8FAB9F691B8F02D500B4C8CB /* Stitcher */,
 				8FAB9F5F1B8F02D500B4C8CB /* Utils */,
 				8FAB9EEC1B8F01DF00B4C8CB /* Views */,
+				A5E8F8EE1BDCF225009974E4 /* Viewer */,
 				8FFCE4B61B4DBF1900832C88 /* Vendor */,
 				8FCCA02E1B3806040091F1B1 /* Supporting Files */,
 			);
@@ -1013,6 +1030,27 @@
 			name = Cardboard;
 			sourceTree = "<group>";
 		};
+		A5E8F8EE1BDCF225009974E4 /* Viewer */ = {
+			isa = PBXGroup;
+			children = (
+				A5E8F8F71BDD155A009974E4 /* Technique */,
+				A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */,
+				A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */,
+				A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */,
+			);
+			path = Viewer;
+			sourceTree = "<group>";
+		};
+		A5E8F8F71BDD155A009974E4 /* Technique */ = {
+			isa = PBXGroup;
+			children = (
+				A5E8F8F81BDD156D009974E4 /* distortion.json */,
+				A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */,
+				A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */,
+			);
+			path = Technique;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1104,8 +1142,10 @@
 			files = (
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
+				A5E8F8FD1BDD15B3009974E4 /* distortion.vsh in Resources */,
 				8FBC86A21BB7D86B00539D4E /* icons.ttf in Resources */,
 				A5233E361BC92D9100C9EFE5 /* progressCallback.hpp in Resources */,
+				A5E8F8FB1BDD15AA009974E4 /* distortion.fsh in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
 				8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */,
@@ -1117,6 +1157,7 @@
 				A56CA40A1BC070450078D7E8 /* zeiss_displacement_right.fsh in Resources */,
 				8FBC86971BB723E600539D4E /* SF-UI-Display-Semibold.otf in Resources */,
 				A56CA4071BC070450078D7E8 /* zeiss_displacement_left.fsh in Resources */,
+				A5E8F8F91BDD156D009974E4 /* distortion.json in Resources */,
 				8FBC86981BB723E600539D4E /* SF-UI-Display-Ultralight.otf in Resources */,
 				A56CA4061BC070450078D7E8 /* lut in Resources */,
 				8FBC86991BB723E600539D4E /* SF-UI-Text-Regular.otf in Resources */,
@@ -1156,6 +1197,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ActiveLabel.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WebImage.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Mixpanel.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/GoogleCardboardParser.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -1193,12 +1235,14 @@
 				8F5335B21BDBE0910058961A /* ActivityFollowTableViewCell.swift in Sources */,
 				8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
+				A5E8F8F21BDCF695009974E4 /* DistortionProgram.swift in Sources */,
 				8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8FE09F661BAF681900EA105D /* HashtagTable.swift in Sources */,
 				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
 				A5C1C0181B7E19E200DCD598 /* monoStitcher.cpp in Sources */,
 				8FAB9F5A1B8F01DF00B4C8CB /* TabBarViewController.swift in Sources */,
+				A5E8F8F01BDCF24C009974E4 /* Distortion.swift in Sources */,
 				A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */,
 				A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */,
 				8FAB9F371B8F01DF00B4C8CB /* OptographTableViewCellModel.swift in Sources */,
@@ -1304,6 +1348,7 @@
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F900B421B839D0C0085566C /* OptographTable.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
+				A5E8F8F41BDCF806009974E4 /* DistortionMesh.swift in Sources */,
 				A52BDC721BDA5EC100CCC4A2 /* progressCallback.cpp in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
 				8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */,
