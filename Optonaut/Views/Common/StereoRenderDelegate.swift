@@ -19,15 +19,39 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         }
     }
 
-    private let cameraNode: SCNNode
+    private var cameraNode: SCNNode!
     private let sphereNode: SCNNode
     private let rotationMatrixSource: RotationMatrixSource
+    private var _fov: FieldOfView!
     
+    var fov: FieldOfView {
+        get {
+            return _fov
+        }
+        set {
+            _fov = fov
+            cameraNode.camera = StereoRenderDelegate.setupCamera(fov)
+        }
+    }
+
     init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: FieldOfView) {
         self.rotationMatrixSource = rotationMatrixSource
         
-        print(fov)
+        cameraNode = SCNNode()
         
+        cameraNode.camera = StereoRenderDelegate.setupCamera(fov)
+        _fov = fov
+        
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
+        scene.rootNode.addChildNode(cameraNode)
+        
+        sphereNode = StereoRenderDelegate.createSphere()
+        scene.rootNode.addChildNode(sphereNode)
+        
+        super.init()
+    }
+    
+    private static func setupCamera(fov: FieldOfView) -> SCNCamera {
         let zNear = Float(0.01)
         let zFar = Float(10000)
         let fovLeft = sin(DistortionProgram.toRadians(fov.left)) * zNear
@@ -37,21 +61,10 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         
         let projection = GLKMatrix4MakeFrustum(-fovLeft, fovRight, -fovBottom, fovTop, zNear, zFar)
         
-        print(projection.m)
-        
         let camera = SCNCamera()
         camera.setProjectionTransform(SCNMatrix4FromGLKMatrix4(projection))
         
-        
-        cameraNode = SCNNode()
-        cameraNode.camera = camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
-        scene.rootNode.addChildNode(cameraNode)
-        
-        sphereNode = StereoRenderDelegate.createSphere()
-        scene.rootNode.addChildNode(sphereNode)
-        
-        super.init()
+        return camera
     }
     
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double) {

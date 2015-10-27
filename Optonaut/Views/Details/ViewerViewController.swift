@@ -19,8 +19,11 @@ class ViewerViewController: UIViewController  {
     private var leftScnView: SCNView!
     private var rightScnView: SCNView!
     private let separatorLayer = CALayer()
-    private let headset: CardboardParams
-    private let screen: ScreenParams
+    private var headset: CardboardParams!
+    private var screen: ScreenParams!
+    
+    private var leftProgram: DistortionProgram!
+    private var rightProgram: DistortionProgram!
     
     private var rotationDisposable: Disposable?
     private var leftDownloadDisposable: Disposable?
@@ -31,15 +34,9 @@ class ViewerViewController: UIViewController  {
         self.optograph = optograph
         
         
+        // Please set this to meaningful default values.
         screen = ScreenParams.iPhone6
-        // Default cardboard
-        //headset = CardboardParams()
-        
-        // VRO
-        // headset = CardboardFactory.CardboardParamsFromBase64("Cg1DYXJsIFplaXNzIEFHEgZWUiBPTkUdUI0XPSW28309KhAAAEhCAABIQgAASEIAAEhCWAE1KVwPPToIzczMPQAAgD9QAGAA")
-       
-        // 1+1
-        headset = CardboardFactory.CardboardParamsFromBase64("CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM=")
+        headset = CardboardParams()
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -61,8 +58,8 @@ class ViewerViewController: UIViewController  {
         leftScnView = ViewerViewController.createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
         rightScnView = ViewerViewController.createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
-        let leftProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Left)
-        let rightProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Right)
+        leftProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Left)
+        rightProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Right)
         
         leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov)
         rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov)
@@ -84,7 +81,6 @@ class ViewerViewController: UIViewController  {
         rightScnView.scene = rightRenderDelegate.scene
         rightScnView.delegate = rightRenderDelegate
 
-        
         leftScnView.technique = leftProgram.technique
         rightScnView.technique = rightProgram.technique
         
@@ -136,6 +132,17 @@ class ViewerViewController: UIViewController  {
                     popActivated = true
                 }
             }
+    }
+    
+    func setViewerParameters(headset: CardboardParams, screen: ScreenParams) {
+        self.headset = headset
+        self.screen = screen
+        
+        self.leftProgram.setParameters(headset, screen: screen, eye: Eye.Left)
+        self.rightProgram.setParameters(headset, screen: screen, eye: Eye.Right)
+        
+        self.leftRenderDelegate.fov = self.leftProgram.fov
+        self.rightRenderDelegate.fov = self.rightProgram.fov
     }
     
     override func viewDidDisappear(animated: Bool) {
