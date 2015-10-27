@@ -819,17 +819,16 @@ private class TiltView: UIView {
         circleSegment.path = circleSegmentPath.CGPath
         
         // Update transparency
-        //let visibleLimit = Float(M_PI / 90)
-        //let criticalLimit = Float(M_PI / 70)
-        //let distLimit = Float(M_PI / 30)
-        //if abs(self.angle) < visibleLimit {
-        //    alpha = 0
-        //} else {
-        //    alpha = min(0.8, CGFloat(0.8 * (1 - (criticalLimit - visibleLimit) / (abs(self.angle) - visibleLimit))))
-        //    alpha = min(alpha, CGFloat((distLimit - self.distXY) / distLimit + 1))
-        //    alpha = max(alpha, 0)
-        //}
-        alpha = 1
+        let visibleLimit = Float(M_PI / 90)
+        let criticalLimit = Float(M_PI / 70)
+        let distLimit = Float(M_PI / 30)
+        if abs(self.angle) < visibleLimit {
+            alpha = 0
+        } else {
+            alpha = min(0.8, CGFloat(0.8 * (1 - (criticalLimit - visibleLimit) / (abs(self.angle) - visibleLimit))))
+            alpha = min(alpha, CGFloat((distLimit - self.distXY) / distLimit + 1))
+            alpha = max(alpha, 0)
+        }
     }
     
     private override func layoutSubviews() {
