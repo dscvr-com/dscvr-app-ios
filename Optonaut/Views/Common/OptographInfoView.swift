@@ -19,15 +19,17 @@ class OptographInfoView: UIView {
     
     // subviews
     private let avatarImageView = PlaceholderImageView()
-    private let locationIconView = UILabel()
+//    private let locationIconView = UILabel()
     private let locationTextView = UILabel()
     private let locationCountryView = UILabel()
-    private let dateView = UILabel()
+//    private let dateView = UILabel()
     private let starButtonView = UIButton()
     private let starsCountView = UILabel()
     private let optionsButtonView = UIButton()
     private let publishingView = UIActivityIndicatorView()
     private let retryButtonView = UIButton()
+    
+    private var constraintsApplied = false
     
     override init (frame: CGRect) {
         super.init(frame: frame)
@@ -41,22 +43,24 @@ class OptographInfoView: UIView {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         addSubview(avatarImageView)
         
-        locationIconView.text = String.iconWithName(.Location)
-        locationIconView.font = UIFont.iconOfSize(15)
-        locationIconView.textColor = .whiteColor()
-        addSubview(locationIconView)
+//        locationIconView.text = String.iconWithName(.Location)
+//        locationIconView.font = UIFont.iconOfSize(13)
+//        locationIconView.textColor = .whiteColor()
+//        addSubview(locationIconView)
         
-        locationTextView.font = UIFont.displayOfSize(16.5, withType: .Semibold)
+        locationTextView.font = UIFont.displayOfSize(14.5, withType: .Semibold)
         locationTextView.textColor = .whiteColor()
+        locationTextView.adjustsFontSizeToFitWidth = true
         addSubview(locationTextView)
         
-        locationCountryView.font = UIFont.displayOfSize(16.5, withType: .Thin)
+        locationCountryView.font = UIFont.displayOfSize(13, withType: .Thin)
         locationCountryView.textColor = .whiteColor()
+        locationCountryView.adjustsFontSizeToFitWidth = true
         addSubview(locationCountryView)
         
-        dateView.font = UIFont.displayOfSize(13, withType: .Thin)
-        dateView.textColor = .whiteColor()
-        addSubview(dateView)
+//        dateView.font = UIFont.displayOfSize(12, withType: .Thin)
+//        dateView.textColor = .whiteColor()
+//        addSubview(dateView)
         
         starButtonView.titleLabel?.font = UIFont.iconOfSize(23.5)
         starButtonView.setTitle(String.iconWithName(.HeartFilled), forState: .Normal)
@@ -86,24 +90,38 @@ class OptographInfoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        logRetain()
+    }
+    
     override func updateConstraints() {
+        super.updateConstraints()
+        
         avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: self, withOffset: 19)
         avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 20)
         avatarImageView.autoSetDimensionsToSize(CGSize(width: 40, height: 40))
         
-        locationIconView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 5)
-        locationIconView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 12)
-        locationIconView.autoSetDimension(.Width, toSize: 15)
-        locationIconView.autoSetDimension(.Height, toSize: 15)
+        //        locationIconView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 5)
+        //        locationIconView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 12)
+        //        locationIconView.autoSetDimension(.Width, toSize: 15)
+        //        locationIconView.autoSetDimension(.Height, toSize: 15)
         
-        locationTextView.autoPinEdge(.Top, toEdge: .Top, ofView: locationIconView, withOffset: -2)
-        locationTextView.autoPinEdge(.Left, toEdge: .Right, ofView: locationIconView, withOffset: 4)
+        locationTextView.autoPinEdge(.Top, toEdge: .Top, ofView: avatarImageView, withOffset: 4)
+        locationTextView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 12)
+        //            locationTextView.autoPinEdge(.Right, toEdge: .Left, ofView: optionsButtonView, withOffset: 12)
+        // TODO fix this line. worst code ever. hate!
+        locationTextView.autoSetDimension(.Width, toSize: UIScreen.mainScreen().bounds.width - 72 - 115)
         
-        locationCountryView.autoPinEdge(.Top, toEdge: .Top, ofView: locationTextView)
-        locationCountryView.autoPinEdge(.Left, toEdge: .Right, ofView: locationTextView, withOffset: 5)
+        //        locationTextView.autoPinEdge(.Top, toEdge: .Top, ofView: locationIconView, withOffset: -2)
+        //        locationTextView.autoPinEdge(.Left, toEdge: .Right, ofView: locationIconView, withOffset: 4)
         
-        dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 1)
-        dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 15)
+        //        locationCountryView.autoPinEdge(.Top, toEdge: .Top, ofView: locationTextView)
+        //        locationCountryView.autoPinEdge(.Left, toEdge: .Right, ofView: locationTextView, withOffset: 5)
+        locationCountryView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: -1)
+        locationCountryView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 12)
+        
+        //        dateView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: avatarImageView, withOffset: 1)
+        //        dateView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 15)
         
         starButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
         starButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -23.5) // 3.5pt extra for heart border
@@ -118,9 +136,8 @@ class OptographInfoView: UIView {
         publishingView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
         
         optionsButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
-        optionsButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: starButtonView, withOffset: -35)
+        optionsButtonView.autoPinEdge(.Right, toEdge: .Left, ofView: starButtonView, withOffset: -31)
         
-        super.updateConstraints()
     }
     
     func bindViewModel(optograph: Optograph) {
@@ -129,7 +146,7 @@ class OptographInfoView: UIView {
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
         locationTextView.rac_text <~ viewModel.locationText
         locationCountryView.rac_text <~ viewModel.locationCountry
-        dateView.rac_text <~ viewModel.timeSinceCreated
+        //        dateView.rac_text <~ viewModel.timeSinceCreated
         starButtonView.rac_titleColor <~ viewModel.isStarred.producer.map { $0 ? .Accent : .Grey }
         starsCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
         
@@ -156,7 +173,7 @@ class OptographInfoView: UIView {
                     self.publishingView.hidden = true
                     self.publishingView.stopAnimating()
                 }
-            }
+        }
     }
     
     func pushProfile() {
