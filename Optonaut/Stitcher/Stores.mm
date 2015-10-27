@@ -5,7 +5,7 @@ optonaut::CheckpointStore MakeStore(std::string path) {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *tempPath = [[paths objectAtIndex:0] stringByAppendingString:@"/tmp/"];
     
-    return optonaut::CheckpointStore(std::string([tempPath UTF8String]) + path + "/");
+    return optonaut::CheckpointStore(std::string([tempPath UTF8String]) + path + "/", std::string([tempPath UTF8String]) + "shared/");
 }
 
 optonaut::CheckpointStore Stores::left = MakeStore("left");
