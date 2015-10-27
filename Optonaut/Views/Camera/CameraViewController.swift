@@ -157,7 +157,10 @@ class CameraViewController: UIViewController {
         
         viewModel.isRecording.producer
             .take(1)
-            .startWithNext { [unowned self] val in self.setExposureMode(.Locked) }
+            .startWithNext { [unowned self] val in
+                self.setExposureMode(.Locked)
+                self.setWhitebalanceMode(.Locked)
+        }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -173,6 +176,12 @@ class CameraViewController: UIViewController {
     private func setExposureMode(mode: AVCaptureExposureMode) {
         try! videoDevice!.lockForConfiguration()
         videoDevice!.exposureMode = mode
+        videoDevice!.unlockForConfiguration()
+    }
+    
+    private func setWhitebalanceMode(mode: AVCaptureWhiteBalanceMode) {
+        try! videoDevice!.lockForConfiguration()
+        videoDevice!.whiteBalanceMode = mode
         videoDevice!.unlockForConfiguration()
     }
 
