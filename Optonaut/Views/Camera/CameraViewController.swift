@@ -157,7 +157,10 @@ class CameraViewController: UIViewController {
         
         viewModel.isRecording.producer
             .take(1)
-            .startWithNext { [unowned self] val in self.setExposureMode(.Locked) }
+            .startWithNext { [unowned self] val in
+                self.setExposureMode(.Locked)
+                self.setWhitebalanceMode(.Locked)
+        }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -173,6 +176,12 @@ class CameraViewController: UIViewController {
     private func setExposureMode(mode: AVCaptureExposureMode) {
         try! videoDevice!.lockForConfiguration()
         videoDevice!.exposureMode = mode
+        videoDevice!.unlockForConfiguration()
+    }
+    
+    private func setWhitebalanceMode(mode: AVCaptureWhiteBalanceMode) {
+        try! videoDevice!.lockForConfiguration()
+        videoDevice!.whiteBalanceMode = mode
         videoDevice!.unlockForConfiguration()
     }
 
@@ -808,17 +817,16 @@ private class TiltView: UIView {
         circleSegment.path = circleSegmentPath.CGPath
         
         // Update transparency
-        //let visibleLimit = Float(M_PI / 90)
-        //let criticalLimit = Float(M_PI / 70)
-        //let distLimit = Float(M_PI / 30)
-        //if abs(self.angle) < visibleLimit {
-        //    alpha = 0
-        //} else {
-        //    alpha = min(0.8, CGFloat(0.8 * (1 - (criticalLimit - visibleLimit) / (abs(self.angle) - visibleLimit))))
-        //    alpha = min(alpha, CGFloat((distLimit - self.distXY) / distLimit + 1))
-        //    alpha = max(alpha, 0)
-        //}
-        alpha = 1
+        let visibleLimit = Float(M_PI / 90)
+        let criticalLimit = Float(M_PI / 70)
+        let distLimit = Float(M_PI / 30)
+        if abs(self.angle) < visibleLimit {
+            alpha = 0
+        } else {
+            alpha = min(0.8, CGFloat(0.8 * (1 - (criticalLimit - visibleLimit) / (abs(self.angle) - visibleLimit))))
+            alpha = min(alpha, CGFloat((distLimit - self.distXY) / distLimit + 1))
+            alpha = max(alpha, 0)
+        }
     }
     
     private override func layoutSubviews() {
