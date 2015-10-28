@@ -49,7 +49,7 @@ class ViewerViewController: UIViewController  {
         default: fatalError("device not supported")
         }
         
-        headset = CardboardFactory.CardboardParamsFromBase64(SessionService.sessionData!.vrGlasses)!
+        headset = try! CardboardFactory.CardboardParamsFromBase64(SessionService.sessionData!.vrGlasses)!
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -191,7 +191,7 @@ class ViewerViewController: UIViewController  {
         glassesSelectionView = GlassesSelectionView()
         glassesSelectionView!.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         glassesSelectionView!.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-        glassesSelectionView!.glasses = CardboardFactory.CardboardParamsFromBase64(SessionService.sessionData!.vrGlasses)!.model
+        glassesSelectionView!.glasses = try! CardboardFactory.CardboardParamsFromBase64(SessionService.sessionData!.vrGlasses)!.model
         
         glassesSelectionView!.closeCallback = { [weak self] in
             self?.glassesSelectionView?.removeFromSuperview()
@@ -395,9 +395,11 @@ extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
                     self?.updateLoading(true)
                 }
                 
-                CardboardFactory.CardboardParamsFromUrl("http://\(code)") { [weak self] params in
+                CardboardFactory.CardboardParamsFromUrl("http://\(code)") { [weak self] (params, error) in
                     
                     guard let params = params else {
+                        print(error)
+                        
                         self?.loading = false
                         self?.captureSession?.startRunning()
                         
