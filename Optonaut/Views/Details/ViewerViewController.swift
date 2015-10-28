@@ -395,7 +395,9 @@ extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
                     self?.updateLoading(true)
                 }
                 
-                CardboardFactory.CardboardParamsFromUrl("http://\(code)") { [weak self] (params, error) in
+                let shortUrl = code.containsString("http://") ? code : "http://\(code)"
+                
+                CardboardFactory.CardboardParamsFromUrl(shortUrl) { [weak self] (params, error) in
                     
                     guard let params = params else {
                         print(error)
