@@ -25,6 +25,7 @@
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */; };
 		8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4B6F971BE004B9005D2D68 /* ProtocolBuffers.framework */; };
+		8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4B6FA11BE0F2A5005D2D68 /* CardboardParams.framework */; };
 		8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E311B4A70CD007508ED /* icomoon.ttf */; };
 		8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
 		8F53359A1BDBA3ED0058961A /* ActivityTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5335991BDBA3ED0058961A /* ActivityTable.swift */; };
@@ -202,7 +203,6 @@
 		A5E8F8F91BDD156D009974E4 /* distortion.json in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8F81BDD156D009974E4 /* distortion.json */; };
 		A5E8F8FB1BDD15AA009974E4 /* distortion.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */; };
 		A5E8F8FD1BDD15B3009974E4 /* distortion.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */; };
-		A5F8F7661BDE315D00CAD4E6 /* GoogleCardboardParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5F8F7651BDE315D00CAD4E6 /* GoogleCardboardParser.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -234,6 +234,7 @@
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewController.swift; sourceTree = "<group>"; };
 		8F4B6F971BE004B9005D2D68 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
+		8F4B6FA11BE0F2A5005D2D68 /* CardboardParams.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CardboardParams.framework; path = Carthage/Build/iOS/CardboardParams.framework; sourceTree = "<group>"; };
 		8F4C6E311B4A70CD007508ED /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		8F4CE79F1B6CEEC700BD8A71 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		8F5335991BDBA3ED0058961A /* ActivityTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityTable.swift; sourceTree = "<group>"; };
@@ -476,7 +477,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5F8F7661BDE315D00CAD4E6 /* GoogleCardboardParser.framework in Frameworks */,
+				8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */,
 				8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */,
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
 				8FBDE25E1BA2E187008E66FC /* Crashlytics.framework in Frameworks */,
@@ -510,6 +511,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F4B6FA11BE0F2A5005D2D68 /* CardboardParams.framework */,
 				8F4B6F971BE004B9005D2D68 /* ProtocolBuffers.framework */,
 				A5F8F7651BDE315D00CAD4E6 /* GoogleCardboardParser.framework */,
 				8F6084831BC27DD400ADAFFC /* Mixpanel.framework */,
@@ -1203,7 +1205,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ActiveLabel.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WebImage.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Mixpanel.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/GoogleCardboardParser.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/CardboardParams.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
 			);
 			name = Carthage;

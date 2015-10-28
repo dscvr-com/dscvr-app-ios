@@ -5,10 +5,10 @@ github "Hearst-DD/ObjectMapper"
 github "schickling/Device.swift" >= 0.3.0
 github "artman/HexColor" ~> 1.0
 github "stephencelis/SQLite.swift" "master"
-github "duemunk/Async" "feature/Swift_2.1"
+github "duemunk/Async"
 github "MoZhouqi/KMPlaceholderTextView"
 github "optonaut/ActiveLabel.swift"
 github "rs/SDWebImage" "master"
 github "mixpanel/mixpanel-iphone"
 github "alexeyxo/protobuf-swift" "ProtoBuf3.0-Swift2.0"
-github "optonaut/GoogleCardboardParser.swift"
+github "optonaut/CardboardParams.swift"

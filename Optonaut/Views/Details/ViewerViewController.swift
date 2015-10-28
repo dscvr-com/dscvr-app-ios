@@ -8,7 +8,7 @@ import Mixpanel
 import WebImage
 import ReactiveCocoa
 import Crashlytics
-import GoogleCardboardParser
+import CardboardParams
 import Async
 
 class ViewerViewController: UIViewController  {
@@ -42,15 +42,18 @@ class ViewerViewController: UIViewController  {
         // Please set this to meaningful default values.
         
         switch UIDevice.currentDevice().deviceType {
-        case .IPhone4S: screen = ScreenParams.iPhone4
-        case .IPhone5: screen = ScreenParams.iPhone5
-        case .IPhone5S, .IPhone5C: screen = ScreenParams.iPhone5s
-        case .IPhone6, .IPhone6S: screen = ScreenParams.iPhone6
-        case .IPhone6Plus, .IPhone6SPlus: screen = ScreenParams.iPhone6Plus
+        case .IPhone4S: screen = ScreenParams(device: .IPhone4S)
+        case .IPhone5: screen = ScreenParams(device: .IPhone5)
+        case .IPhone5C: screen = ScreenParams(device: .IPhone5C)
+        case .IPhone5S: screen = ScreenParams(device: .IPhone5S)
+        case .IPhone6: screen = ScreenParams(device: .IPhone6)
+        case .IPhone6Plus: screen = ScreenParams(device: .IPhone6Plus)
+        case .IPhone6S: screen = ScreenParams(device: .IPhone6S)
+        case .IPhone6SPlus: screen = ScreenParams(device: .IPhone6SPlus)
         default: fatalError("device not supported")
         }
-        
-        headset = try! CardboardFactory.CardboardParamsFromBase64(SessionService.sessionData!.vrGlasses)
+       
+        headset = CardboardParams.fromBase64(SessionService.sessionData!.vrGlasses).value!
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -194,7 +197,7 @@ class ViewerViewController: UIViewController  {
         glassesSelectionView = GlassesSelectionView()
         glassesSelectionView!.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         glassesSelectionView!.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-        glassesSelectionView!.glasses = try! CardboardFactory.CardboardParamsFromBase64(SessionService.sessionData!.vrGlasses).model
+        glassesSelectionView!.glasses = CardboardParams.fromBase64(SessionService.sessionData!.vrGlasses).value!.model
         
         glassesSelectionView!.closeCallback = { [weak self] in
             self?.glassesSelectionView?.removeFromSuperview()
@@ -400,26 +403,25 @@ extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
                 
                 let shortUrl = code.containsString("http://") ? code : "http://\(code)"
                 
-                CardboardFactory.CardboardParamsFromUrl(shortUrl) { [weak self] (params, error) in
+                CardboardParams.fromUrl(shortUrl) { [weak self] result in
                     
-                    guard let params = params else {
+                    switch result {
+                    case let .Success(params):
+                        Async.main {
+                            self?.paramsCallback?(params)
+                            SessionService.sessionData!.vrGlasses = params.compressedRepresentation.base64EncodedStringWithOptions([])
+                            self?.cancel()
+                        }
+                    case let .Failure(error):
                         print(error)
-                        
                         self?.loading = false
                         self?.captureSession?.startRunning()
                         
                         Async.main { [weak self] in
                             self?.updateLoading(false)
                         }
-                        
-                        return
                     }
                     
-                    Async.main {
-                        self?.paramsCallback?(params)
-                        SessionService.sessionData!.vrGlasses = params.compressedRepresentation.base64EncodedStringWithOptions([])
-                        self?.cancel()
-                    }
                 }
             }
         }
