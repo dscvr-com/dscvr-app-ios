@@ -8,7 +8,7 @@
 
 import Foundation
 import SceneKit
-import GoogleCardboardParser
+import CardboardParams
 
 class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     

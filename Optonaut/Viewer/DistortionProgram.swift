@@ -8,7 +8,7 @@
 
 import Foundation
 import SceneKit
-import GoogleCardboardParser
+import CardboardParams
 
 enum Eye {
     case Left
