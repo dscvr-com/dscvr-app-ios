@@ -42,6 +42,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private let blurView = OffsetBlurView()
     private let glassesButtonView = ActionButton()
     private let loadingView = UIActivityIndicatorView()
+    private let imageManager = SDWebImageManager()
     
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
@@ -82,13 +83,16 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         let imageSignalProducer = viewModel.textureImageUrl.producer
             .filter(isNotEmpty)
-            .flatMap(.Latest) { SDWebImageManager.sharedManager().downloadImageForURL($0) }
+            .flatMap(.Latest) { self.imageManager.downloadImageForURL($0) }
         
         viewModel.viewIsActive.producer.combineLatestWith(imageSignalProducer)
             .startWithNext { [weak self] (active, image) in
                 guard let strongSelf = self else {
                     return
                 }
+                print("state:")
+                print(active)
+                print(image)
                 
                 if active {
                     strongSelf.renderDelegate.image = image
@@ -190,6 +194,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
+        imageManager.cancelAll()
         CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
         

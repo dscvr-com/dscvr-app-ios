@@ -156,6 +156,7 @@ class CameraViewController: UIViewController {
             .startWithNext { [unowned self] val in self.setFocusMode(val) }
         
         viewModel.isRecording.producer
+            .filter { $0 }
             .take(1)
             .startWithNext { [unowned self] val in
                 self.setExposureMode(.Locked)

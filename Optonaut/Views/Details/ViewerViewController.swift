@@ -33,6 +33,7 @@ class ViewerViewController: UIViewController  {
     
     private let settingsButtonView = UIButton()
     private var glassesSelectionView: GlassesSelectionView?
+    private let imageManager = SDWebImageManager()
     
     required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
         self.orientation = orientation
@@ -77,12 +78,12 @@ class ViewerViewController: UIViewController  {
         leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov)
         rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov)
         
-        leftDownloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(optograph.leftTextureAssetURL)
+        leftDownloadDisposable = imageManager.downloadImageForURL(optograph.leftTextureAssetURL)
             .startWithNext { [weak self] image in
                 self?.leftRenderDelegate.image = image
                 self?.leftDownloadDisposable = nil
             }
-        rightDownloadDisposable = SDWebImageManager.sharedManager().downloadImageForURL(optograph.rightTextureAssetURL)
+        rightDownloadDisposable = imageManager.downloadImageForURL(optograph.rightTextureAssetURL)
             .startWithNext { [weak self] image in
                 self?.rightRenderDelegate.image = image
                 self?.rightDownloadDisposable = nil
@@ -166,6 +167,8 @@ class ViewerViewController: UIViewController  {
         ScreenService.sharedInstance.reset()
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
+        
+        imageManager.cancelAll()
         
         leftDownloadDisposable?.dispose()
         rightDownloadDisposable?.dispose()

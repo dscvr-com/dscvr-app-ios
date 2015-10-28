@@ -40,12 +40,6 @@ class DistortionProgram {
     
     func setParameters(params: CardboardParams, screen: ScreenParams, eye: Eye) {
         
-        print(screen)
-        print(params)
-        
-        //TODO: update frustum to fit those params. 
-        //Shouldnt be that hard. just get the right texture crop
-        
         var xEyeOffsetTanAngleScreen = (params.getYEyeOffsetMeters(screen) - screen.widthMeters / Float(2)) / screen.widthMeters
         
         var yEyeOffsetTanAngleScreen = (screen.heightMeters / Float(4.0) - params.interLensDistance / Float(2.0)) / screen.heightMeters
