@@ -16,10 +16,6 @@ enum LoginIdentifier {
     case Email(String)
 }
 
-enum VRGlasses: Int {
-    case GoogleCardboard, VROne, None
-}
-
 struct SessionData {
     let ID: UUID
     var token: String {
@@ -42,9 +38,9 @@ struct SessionData {
             NSUserDefaults.standardUserDefaults().setInteger(onboardingVersion, forKey: "session_person_onboarding_version")
         }
     }
-    var vrGlasses: VRGlasses {
+    var vrGlasses: String {
         willSet {
-            NSUserDefaults.standardUserDefaults().setInteger(vrGlasses.rawValue, forKey: "session_person_vr_glasses")
+            NSUserDefaults.standardUserDefaults().setObject(vrGlasses, forKey: "session_person_vr_glasses")
         }
     }
 }
@@ -59,7 +55,7 @@ class SessionService {
                 NSUserDefaults.standardUserDefaults().setObject(newValue.password, forKey: "session_person_password")
                 NSUserDefaults.standardUserDefaults().setBool(newValue.debuggingEnabled, forKey: "session_person_debugging_enabled")
                 NSUserDefaults.standardUserDefaults().setInteger(newValue.onboardingVersion, forKey: "session_person_onboarding_version")
-                NSUserDefaults.standardUserDefaults().setInteger(newValue.vrGlasses.rawValue, forKey: "session_person_vr_glasses")
+                NSUserDefaults.standardUserDefaults().setObject(newValue.vrGlasses, forKey: "session_person_vr_glasses")
             } else {
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_id")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_token")
@@ -94,7 +90,7 @@ class SessionService {
         let password = NSUserDefaults.standardUserDefaults().objectForKey("session_person_password") as? String
         let debuggingEnabled = NSUserDefaults.standardUserDefaults().boolForKey("session_person_debugging_enabled")
         let onboardingVersion = NSUserDefaults.standardUserDefaults().integerForKey("session_person_onboarding_version")
-        let vrGlasses = VRGlasses(rawValue: NSUserDefaults.standardUserDefaults().integerForKey("session_person_vr_glasses"))
+        let vrGlasses = NSUserDefaults.standardUserDefaults().objectForKey("session_person_vr_glasses") as? String
         if let ID = ID, token = token, password = password, vrGlasses = vrGlasses {
             sessionData = SessionData(
                 ID: ID,
@@ -128,7 +124,7 @@ class SessionService {
                     password: password,
                     debuggingEnabled: false,
                     onboardingVersion: loginData.onboardingVersion,
-                    vrGlasses: .None
+                    vrGlasses: "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"
                 )
                 updateDeviceToken()
             })

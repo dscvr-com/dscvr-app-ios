@@ -2,12 +2,14 @@ import UIKit
 import QuartzCore
 import SceneKit
 import CoreMotion
+import Device
 import CoreGraphics
 import Mixpanel
 import WebImage
 import ReactiveCocoa
 import Crashlytics
 import GoogleCardboardParser
+import Async
 
 class ViewerViewController: UIViewController  {
     
@@ -37,8 +39,17 @@ class ViewerViewController: UIViewController  {
         self.optograph = optograph
         
         // Please set this to meaningful default values.
-        screen = ScreenParams.iPhone6
-        headset = CardboardParams()
+        
+        switch UIDevice.currentDevice().deviceType {
+        case .IPhone4S: screen = ScreenParams.iPhone4
+        case .IPhone5: screen = ScreenParams.iPhone5
+        case .IPhone5S, .IPhone5C: screen = ScreenParams.iPhone5s
+        case .IPhone6, .IPhone6S: screen = ScreenParams.iPhone6
+        case .IPhone6Plus, .IPhone6SPlus: screen = ScreenParams.iPhone6Plus
+        default: fatalError("device not supported")
+        }
+        
+        headset = CardboardFactory.CardboardParamsFromBase64(SessionService.sessionData!.vrGlasses)!
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -85,18 +96,6 @@ class ViewerViewController: UIViewController  {
 
         leftScnView.technique = leftProgram.technique
         rightScnView.technique = rightProgram.technique
-        
-        //switch SessionService.sessionData!.vrGlasses {
-        //case .GoogleCardboard:
-        //    leftScnView.technique = createDistortionTechnique("barrell_displacement")
-        //    rightScnView.technique = createDistortionTechnique("barrell_displacement")
-        //case .VROne:
-        //    leftScnView.technique = createDistortionTechnique("zeiss_displacement_left")
-        //    rightScnView.technique = createDistortionTechnique("zeiss_displacement_right")
-        //default:
-        //    leftScnView.technique = createDistortionTechnique("barrell_displacement")
-        //    rightScnView.technique = createDistortionTechnique("barrell_displacement")
-        //}
         
         view.addSubview(rightScnView)
         view.addSubview(leftScnView)
@@ -174,14 +173,6 @@ class ViewerViewController: UIViewController  {
         super.viewWillDisappear(animated)
     }
     
-    private func createDistortionTechnique(name: String) -> SCNTechnique {
-        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
-        let json = try! NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! NSDictionary
-        let technique = SCNTechnique(dictionary: json as! [String : AnyObject])
-        
-        return technique!
-    }
-    
     private static func createScnView(frame: CGRect) -> SCNView {
         var scnView: SCNView
         if #available(iOS 9.0, *) {
@@ -200,10 +191,14 @@ class ViewerViewController: UIViewController  {
         glassesSelectionView = GlassesSelectionView()
         glassesSelectionView!.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         glassesSelectionView!.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-        glassesSelectionView!.glasses = "Google Cardboard"
+        glassesSelectionView!.glasses = CardboardFactory.CardboardParamsFromBase64(SessionService.sessionData!.vrGlasses)!.model
         
         glassesSelectionView!.closeCallback = { [weak self] in
             self?.glassesSelectionView?.removeFromSuperview()
+        }
+        
+        glassesSelectionView!.paramsCallback = { [weak self] params in
+            self?.setViewerParameters(params)
         }
         
         view.addSubview(glassesSelectionView!)
@@ -223,8 +218,16 @@ private class GlassesSelectionView: UIView {
     private let glassesTextView = UILabel()
     private let qrcodeIconView = UILabel()
     private let qrcodeTextView = UILabel()
+    private var previewLayer: AVCaptureVideoPreviewLayer?
+    private let loadingIndicatorView = UIActivityIndicatorView()
+    
+    private var loading: Bool = false
     
     var closeCallback: (() -> ())?
+    var paramsCallback: (CardboardParams -> ())?
+    
+    var captureSession: AVCaptureSession?
+    var code: String?
     
     var glasses: String? {
         didSet {
@@ -253,24 +256,55 @@ private class GlassesSelectionView: UIView {
         glassesIconView.textColor = .whiteColor()
         glassesIconView.textAlignment = .Center
         glassesIconView.font = UIFont.iconOfSize(73)
+        glassesIconView.userInteractionEnabled = true
+        glassesIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         addSubview(glassesIconView)
         
         glassesTextView.font = UIFont.displayOfSize(15, withType: .Semibold)
         glassesTextView.textColor = .whiteColor()
         glassesTextView.textAlignment = .Center
+        glassesTextView.userInteractionEnabled = true
+        glassesTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         addSubview(glassesTextView)
         
         qrcodeIconView.text = String.iconWithName(.Qrcode)
         qrcodeIconView.font = UIFont.iconOfSize(50)
         qrcodeIconView.textColor = .whiteColor()
         qrcodeIconView.textAlignment = .Center
+        qrcodeIconView.userInteractionEnabled = true
+        qrcodeIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "scan"))
         addSubview(qrcodeIconView)
         
         qrcodeTextView.font = UIFont.displayOfSize(15, withType: .Semibold)
         qrcodeTextView.textColor = .whiteColor()
         qrcodeTextView.text = "Scan QR code"
         qrcodeTextView.textAlignment = .Center
+        qrcodeTextView.userInteractionEnabled = true
+        qrcodeTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "scan"))
         addSubview(qrcodeTextView)
+        
+        loadingIndicatorView.activityIndicatorViewStyle = .WhiteLarge
+        addSubview(loadingIndicatorView)
+    }
+    
+    deinit {
+        logRetain()
+    }
+    
+    private func updateLoading(loading: Bool) {
+        titleTextView.hidden = loading
+        glassesIconView.hidden = loading
+        glassesTextView.hidden = loading
+        qrcodeIconView.hidden = loading
+        qrcodeTextView.hidden = loading
+        previewLayer?.hidden = loading
+        loadingIndicatorView.hidden = !loading
+        
+        if loading {
+            loadingIndicatorView.startAnimating()
+        } else {
+            loadingIndicatorView.stopAnimating()
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -291,11 +325,96 @@ private class GlassesSelectionView: UIView {
         qrcodeIconView.frame = CGRect(x: bounds.width * 0.63 - 37, y: bounds.height * 0.5, width: 74, height: 50)
         qrcodeTextView.frame = CGRect(x: bounds.width * 0.63 - 100, y: bounds.height * 0.5 + 70, width: 200, height: 20)
         
+        loadingIndicatorView.frame = CGRect(x: bounds.width * 0.5 - 20, y: bounds.height * 0.5 - 20, width: 40, height: 40)
+        
         super.layoutSubviews()
         
     }
     
+    private func setupCamera() {
+        captureSession = AVCaptureSession()
+        
+        let videoCaptureDevice: AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        
+        guard let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice) else {
+            return
+        }
+        
+        if captureSession!.canAddInput(videoInput) {
+            captureSession!.addInput(videoInput)
+        } else {
+            print("Could not add video input")
+        }
+        
+        let metadataOutput = AVCaptureMetadataOutput()
+        if captureSession!.canAddOutput(metadataOutput) {
+            captureSession!.addOutput(metadataOutput)
+            
+            let queue = dispatch_queue_create("qr_scan_queue", DISPATCH_QUEUE_SERIAL)
+            metadataOutput.setMetadataObjectsDelegate(self, queue: queue)
+            metadataOutput.metadataObjectTypes = [AVMetadataObjectTypeQRCode, AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeDataMatrixCode]
+        } else {
+            print("Could not add metadata output")
+        }
+        
+        previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        previewLayer!.videoGravity = AVLayerVideoGravityResizeAspectFill
+        previewLayer!.transform = CATransform3DMakeRotation(CGFloat(-M_PI_2), 0, 0, 1)
+        previewLayer!.frame = CGRect(x: 70, y: 0, width: bounds.width - 150, height: bounds.height)
+        layer.addSublayer(previewLayer!)
+        
+        captureSession!.startRunning()
+    }
+    
     @objc func cancel() {
+        captureSession?.stopRunning()
         closeCallback?()
+    }
+    
+    @objc func scan() {
+        setupCamera()
+    }
+}
+
+extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
+    @objc func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
+        if loading {
+            return
+        }
+        
+        for metadata in metadataObjects {
+            let readableObject = metadata as! AVMetadataMachineReadableCodeObject
+            let code = readableObject.stringValue
+            
+            if !code.isEmpty {
+                
+                loading = true
+                captureSession?.stopRunning()
+                
+                Async.main { [weak self] in
+                    self?.updateLoading(true)
+                }
+                
+                CardboardFactory.CardboardParamsFromUrl("http://\(code)") { [weak self] params in
+                    
+                    guard let params = params else {
+                        self?.loading = false
+                        self?.captureSession?.startRunning()
+                        
+                        Async.main { [weak self] in
+                            self?.updateLoading(false)
+                        }
+                        
+                        return
+                    }
+                    
+                    Async.main {
+                        self?.paramsCallback?(params)
+                        SessionService.sessionData!.vrGlasses = params.compressedRepresentation.base64EncodedStringWithOptions([])
+                        self?.cancel()
+                    }
+                }
+            }
+        }
     }
 }
