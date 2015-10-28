@@ -158,6 +158,13 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
         viewModel.viewIsActive.value = true
+        
+        RotationService.sharedInstance.rotationSignal?
+            .skipRepeats()
+            .filter([.LandscapeLeft, .LandscapeRight])
+            .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
+            .observeOn(UIScheduler())
+            .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -173,13 +180,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         CoreMotionRotationSource.Instance.start()
         RotationService.sharedInstance.rotationEnable()
-        
-        RotationService.sharedInstance.rotationSignal?
-            .skipRepeats()
-            .filter([.LandscapeLeft, .LandscapeRight])
-            .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
-            .observeOn(UIScheduler())
-            .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
