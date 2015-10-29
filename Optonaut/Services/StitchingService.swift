@@ -83,6 +83,7 @@ class StitchingService {
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
             
             Mixpanel.sharedInstance().track("Action.Stitching.Start")
+            Mixpanel.sharedInstance().timeEvent("Action.Stitching.Finish")
             
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
