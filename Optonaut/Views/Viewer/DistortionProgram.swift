@@ -66,15 +66,8 @@ class DistortionProgram {
         coefficients = CGSize(width: CGFloat(distortion.coefficients[0]), height: CGFloat(distortion.coefficients[1]))
         eyeOffset = CGSize(width: CGFloat(eyeOffsetX), height: CGFloat(eyeOffsetY))
         
-        print("Coefficients")
-        print(coefficients)
-        print("EyeOffset")
-        print(eyeOffset)
-        
         let factor = distortion.distortInverse(1)
-        print("dFactor")
-        print(factor)
-        
+
         technique.setValue(NSValue(CGSize: coefficients), forKey: "coefficients")
         technique.setValue(NSValue(CGSize: eyeOffset), forKey: "eye_offset")
         technique.setValue(NSNumber(float: factor), forKey: "texture_scale")

@@ -27,11 +27,14 @@ class DetailsViewModel {
     let location = MutableProperty<String>("")
     let comments = MutableProperty<[Comment]>([])
     let viewIsActive = MutableProperty<Bool>(false)
+    let isLoading = MutableProperty<Bool>(true)
     let optographReloaded: MutableProperty<Void>
     
     var optograph = Optograph.newInstance()
     
     init(optographID: UUID) {
+        
+        logInit()
         
         let query = OptographTable
             .select(*)

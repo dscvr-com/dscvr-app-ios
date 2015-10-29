@@ -18,10 +18,14 @@ extension SDWebImageManager {
                 NSURL(string: url)!,
                 options: [],
                 progress: { _ in },
-                completed: { (image, _, _, _, _) in
+                completed: { (image, error, _, _, _) in
                     if !disposable.disposed {
                         if let image = image {
                             sink.sendNext(image)
+                        }
+                        if let error = error {
+                            print("SDWebImageManager Download Error")
+                            print(error)
                         }
                         sink.sendCompleted()
                     }

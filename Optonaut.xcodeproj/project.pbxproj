@@ -82,7 +82,6 @@
 		8FAB9F3F1B8F01DF00B4C8CB /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F071B8F01DF00B4C8CB /* DetailsViewModel.swift */; };
 		8FAB9F401B8F01DF00B4C8CB /* NewCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */; };
 		8FAB9F411B8F01DF00B4C8CB /* NewCommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */; };
-		8FAB9F421B8F01DF00B4C8CB /* ViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F0A1B8F01DF00B4C8CB /* ViewerViewController.swift */; };
 		8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F0C1B8F01DF00B4C8CB /* ExploreNavViewController.swift */; };
 		8FAB9F441B8F01DF00B4C8CB /* ExploreTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F0D1B8F01DF00B4C8CB /* ExploreTableViewController.swift */; };
 		8FAB9F451B8F01DF00B4C8CB /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F0E1B8F01DF00B4C8CB /* ExploreViewModel.swift */; };
@@ -197,12 +196,14 @@
 		A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00A1B7E19E200DCD598 /* quat.cpp */; };
 		A5C1C01A1B7E19E200DCD598 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C00D1B7E19E200DCD598 /* simpleSphereStitcher.cpp */; };
 		A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C0101B7E19E200DCD598 /* support.cpp */; };
-		A5E8F8F01BDCF24C009974E4 /* Distortion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */; };
-		A5E8F8F21BDCF695009974E4 /* DistortionProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */; };
-		A5E8F8F41BDCF806009974E4 /* DistortionMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */; };
-		A5E8F8F91BDD156D009974E4 /* distortion.json in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8F81BDD156D009974E4 /* distortion.json */; };
-		A5E8F8FB1BDD15AA009974E4 /* distortion.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */; };
-		A5E8F8FD1BDD15B3009974E4 /* distortion.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */; };
+		A5DE71E91BE28A7400316F82 /* Distortion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E01BE28A7400316F82 /* Distortion.swift */; };
+		A5DE71EA1BE28A7400316F82 /* DistortionMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E11BE28A7400316F82 /* DistortionMesh.swift */; };
+		A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E21BE28A7400316F82 /* DistortionProgram.swift */; };
+		A5DE71EC1BE28A7400316F82 /* DistortionRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E31BE28A7400316F82 /* DistortionRenderer.swift */; };
+		A5DE71ED1BE28A7400316F82 /* distortion.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A5DE71E51BE28A7400316F82 /* distortion.fsh */; };
+		A5DE71EE1BE28A7400316F82 /* distortion.json in Resources */ = {isa = PBXBuildFile; fileRef = A5DE71E61BE28A7400316F82 /* distortion.json */; };
+		A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5DE71E71BE28A7400316F82 /* distortion.vsh */; };
+		A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -295,7 +296,6 @@
 		8FAB9F071B8F01DF00B4C8CB /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentTableViewCell.swift; sourceTree = "<group>"; };
 		8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentViewModel.swift; sourceTree = "<group>"; };
-		8FAB9F0A1B8F01DF00B4C8CB /* ViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewerViewController.swift; sourceTree = "<group>"; };
 		8FAB9F0C1B8F01DF00B4C8CB /* ExploreNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreNavViewController.swift; sourceTree = "<group>"; };
 		8FAB9F0D1B8F01DF00B4C8CB /* ExploreTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9F0E1B8F01DF00B4C8CB /* ExploreViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreViewModel.swift; sourceTree = "<group>"; };
@@ -461,13 +461,15 @@
 		A5DA67081B9CA08F00D9F3EE /* recorderGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderGraph.hpp; sourceTree = "<group>"; };
 		A5DA670A1B9CA29A00D9F3EE /* recorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderController.hpp; sourceTree = "<group>"; };
 		A5DA670C1B9CD52D00D9F3EE /* trivialAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = trivialAligner.hpp; sourceTree = "<group>"; };
+		A5DE71E01BE28A7400316F82 /* Distortion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distortion.swift; sourceTree = "<group>"; };
+		A5DE71E11BE28A7400316F82 /* DistortionMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionMesh.swift; sourceTree = "<group>"; };
+		A5DE71E21BE28A7400316F82 /* DistortionProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionProgram.swift; sourceTree = "<group>"; };
+		A5DE71E31BE28A7400316F82 /* DistortionRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionRenderer.swift; sourceTree = "<group>"; };
+		A5DE71E51BE28A7400316F82 /* distortion.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.fsh; sourceTree = "<group>"; };
+		A5DE71E61BE28A7400316F82 /* distortion.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = distortion.json; sourceTree = "<group>"; };
+		A5DE71E71BE28A7400316F82 /* distortion.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.vsh; sourceTree = "<group>"; };
+		A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewerViewController.swift; sourceTree = "<group>"; };
 		A5DF584E1B81FC4A000DA118 /* asyncAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncAligner.hpp; sourceTree = "<group>"; };
-		A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distortion.swift; sourceTree = "<group>"; };
-		A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionProgram.swift; sourceTree = "<group>"; };
-		A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionMesh.swift; sourceTree = "<group>"; };
-		A5E8F8F81BDD156D009974E4 /* distortion.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = distortion.json; sourceTree = "<group>"; };
-		A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.fsh; sourceTree = "<group>"; };
-		A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.vsh; sourceTree = "<group>"; };
 		A5F8F7651BDE315D00CAD4E6 /* GoogleCardboardParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleCardboardParser.framework; path = Carthage/Build/iOS/GoogleCardboardParser.framework; sourceTree = "<group>"; };
 		A5FE6B691B8A630A005B0E0E /* aligner.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = aligner.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -610,6 +612,7 @@
 				8FCADEDE1BAB0AC40018674B /* Onboarding */,
 				8FAB9F1E1B8F01DF00B4C8CB /* Profile */,
 				8FAB9F271B8F01DF00B4C8CB /* Search */,
+				A5DE71DF1BE28A7400316F82 /* Viewer */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -672,7 +675,6 @@
 				8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */,
 				8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */,
 				8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */,
-				8FAB9F0A1B8F01DF00B4C8CB /* ViewerViewController.swift */,
 			);
 			path = Details;
 			sourceTree = "<group>";
@@ -888,7 +890,6 @@
 				8FAB9F691B8F02D500B4C8CB /* Stitcher */,
 				8FAB9F5F1B8F02D500B4C8CB /* Utils */,
 				8FAB9EEC1B8F01DF00B4C8CB /* Views */,
-				A5E8F8EE1BDCF225009974E4 /* Viewer */,
 				8FFCE4B61B4DBF1900832C88 /* Vendor */,
 				8FCCA02E1B3806040091F1B1 /* Supporting Files */,
 			);
@@ -1038,23 +1039,25 @@
 			name = Cardboard;
 			sourceTree = "<group>";
 		};
-		A5E8F8EE1BDCF225009974E4 /* Viewer */ = {
+		A5DE71DF1BE28A7400316F82 /* Viewer */ = {
 			isa = PBXGroup;
 			children = (
-				A5E8F8F71BDD155A009974E4 /* Technique */,
-				A5E8F8EF1BDCF24C009974E4 /* Distortion.swift */,
-				A5E8F8F11BDCF695009974E4 /* DistortionProgram.swift */,
-				A5E8F8F31BDCF806009974E4 /* DistortionMesh.swift */,
+				A5DE71E01BE28A7400316F82 /* Distortion.swift */,
+				A5DE71E11BE28A7400316F82 /* DistortionMesh.swift */,
+				A5DE71E21BE28A7400316F82 /* DistortionProgram.swift */,
+				A5DE71E31BE28A7400316F82 /* DistortionRenderer.swift */,
+				A5DE71E41BE28A7400316F82 /* Technique */,
+				A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */,
 			);
 			path = Viewer;
 			sourceTree = "<group>";
 		};
-		A5E8F8F71BDD155A009974E4 /* Technique */ = {
+		A5DE71E41BE28A7400316F82 /* Technique */ = {
 			isa = PBXGroup;
 			children = (
-				A5E8F8F81BDD156D009974E4 /* distortion.json */,
-				A5E8F8FA1BDD15AA009974E4 /* distortion.fsh */,
-				A5E8F8FC1BDD15B3009974E4 /* distortion.vsh */,
+				A5DE71E51BE28A7400316F82 /* distortion.fsh */,
+				A5DE71E61BE28A7400316F82 /* distortion.json */,
+				A5DE71E71BE28A7400316F82 /* distortion.vsh */,
 			);
 			path = Technique;
 			sourceTree = "<group>";
@@ -1150,22 +1153,22 @@
 			files = (
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
-				A5E8F8FD1BDD15B3009974E4 /* distortion.vsh in Resources */,
+				A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */,
 				8FBC86A21BB7D86B00539D4E /* icons.ttf in Resources */,
 				A5233E361BC92D9100C9EFE5 /* progressCallback.hpp in Resources */,
-				A5E8F8FB1BDD15AA009974E4 /* distortion.fsh in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
+				A5DE71EE1BE28A7400316F82 /* distortion.json in Resources */,
 				8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */,
 				A56CA4091BC070450078D7E8 /* zeiss_displacement_left.vsh in Resources */,
 				A568D4951BD12F5A008FF556 /* (null) in Resources */,
+				A5DE71ED1BE28A7400316F82 /* distortion.fsh in Resources */,
 				A56CA4081BC070450078D7E8 /* zeiss_displacement_left.json in Resources */,
 				A56CA4131BC070AE0078D7E8 /* barrell_displacement.fsh in Resources */,
 				A56CA40C1BC070450078D7E8 /* zeiss_displacement_right.vsh in Resources */,
 				A56CA40A1BC070450078D7E8 /* zeiss_displacement_right.fsh in Resources */,
 				8FBC86971BB723E600539D4E /* SF-UI-Display-Semibold.otf in Resources */,
 				A56CA4071BC070450078D7E8 /* zeiss_displacement_left.fsh in Resources */,
-				A5E8F8F91BDD156D009974E4 /* distortion.json in Resources */,
 				8FBC86981BB723E600539D4E /* SF-UI-Display-Ultralight.otf in Resources */,
 				A56CA4061BC070450078D7E8 /* lut in Resources */,
 				8FBC86991BB723E600539D4E /* SF-UI-Text-Regular.otf in Resources */,
@@ -1244,14 +1247,13 @@
 				8F5335B21BDBE0910058961A /* ActivityFollowTableViewCell.swift in Sources */,
 				8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
-				A5E8F8F21BDCF695009974E4 /* DistortionProgram.swift in Sources */,
+				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
 				8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8FE09F661BAF681900EA105D /* HashtagTable.swift in Sources */,
 				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
 				A5C1C0181B7E19E200DCD598 /* monoStitcher.cpp in Sources */,
 				8FAB9F5A1B8F01DF00B4C8CB /* TabBarViewController.swift in Sources */,
-				A5E8F8F01BDCF24C009974E4 /* Distortion.swift in Sources */,
 				A5C1C0191B7E19E200DCD598 /* quat.cpp in Sources */,
 				A54AE01A1BC45E9A00713340 /* static_timer.cpp in Sources */,
 				8FAB9F371B8F01DF00B4C8CB /* OptographTableViewCellModel.swift in Sources */,
@@ -1293,6 +1295,7 @@
 				8FED446B1BCD972800D5982C /* OnboardingAccountViewModel.swift in Sources */,
 				A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */,
 				8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */,
+				A5DE71EA1BE28A7400316F82 /* DistortionMesh.swift in Sources */,
 				8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
 				8FAB9F3F1B8F01DF00B4C8CB /* DetailsViewModel.swift in Sources */,
@@ -1302,6 +1305,7 @@
 				8FAB9F801B8F03E800B4C8CB /* UIKitExtensions.swift in Sources */,
 				A5C1C0161B7E19E200DCD598 /* image.cpp in Sources */,
 				8F5335B01BDBE0840058961A /* ActivityViewsTableViewCell.swift in Sources */,
+				A5DE71E91BE28A7400316F82 /* Distortion.swift in Sources */,
 				A5C1C01B1B7E19E200DCD598 /* support.cpp in Sources */,
 				8F5335AC1BDBCB610058961A /* ActivityTableViewCell.swift in Sources */,
 				8FAB9F4B1B8F01DF00B4C8CB /* HashtagTableViewController.swift in Sources */,
@@ -1330,7 +1334,6 @@
 				8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */,
 				8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */,
 				8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */,
-				8FAB9F421B8F01DF00B4C8CB /* ViewerViewController.swift in Sources */,
 				A52BDC711BDA5EC100CCC4A2 /* dynamicSeamer.cpp in Sources */,
 				8FAB9F8A1B8F05BD00B4C8CB /* IcomoonExtension.swift in Sources */,
 				A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */,
@@ -1341,6 +1344,7 @@
 				8FC7E3781BD15B9D00E97CC3 /* MagnetSensor.mm in Sources */,
 				8F900B401B839D0C0085566C /* CommentTable.swift in Sources */,
 				8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */,
+				A5DE71EC1BE28A7400316F82 /* DistortionRenderer.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				A5233DFC1BC87B4A00C9EFE5 /* checkpointStore.cpp in Sources */,
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,
@@ -1357,7 +1361,6 @@
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F900B421B839D0C0085566C /* OptographTable.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
-				A5E8F8F41BDCF806009974E4 /* DistortionMesh.swift in Sources */,
 				A52BDC721BDA5EC100CCC4A2 /* progressCallback.cpp in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
 				8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */,
@@ -1382,6 +1385,7 @@
 				8FAB9F441B8F01DF00B4C8CB /* ExploreTableViewController.swift in Sources */,
 				8FC7E3751BD15B9D00E97CC3 /* OrientationEKF.mm in Sources */,
 				8F7738161B380F5D001F642B /* Person.swift in Sources */,
+				A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,
 				8FAB9F3A1B8F01DF00B4C8CB /* CommentTableViewCell.swift in Sources */,
 				8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */,

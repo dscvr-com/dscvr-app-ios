@@ -42,16 +42,19 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private let blurView = OffsetBlurView()
     private let glassesButtonView = ActionButton()
     private let loadingView = UIActivityIndicatorView()
-    private let imageManager = SDWebImageManager()
     
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
+    
+    private let imageManager = SDWebImageManager()
+    private var imageDownloadDisposable: Disposable?
     
     private var rotationAlert: UIAlertController?
     
     required init(optographID: UUID) {
         viewModel = DetailsViewModel(optographID: optographID)
-        
+        imageManager.imageCache.maxMemoryCountLimit = 0
+        logInit()
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -61,6 +64,28 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     deinit {
         logRetain()
+    }
+    
+    private func startDownloadImage() {
+        self.viewModel.isLoading.value = true
+        if imageDownloadDisposable != nil {
+            imageDownloadDisposable?.dispose()
+        }
+        imageDownloadDisposable = self.imageManager.downloadImageForURL(viewModel.textureImageUrl.value).startWithNext { [weak self] image in
+            if let strongSelf = self  {
+                if strongSelf.viewModel.viewIsActive.value {
+                    strongSelf.renderDelegate.image = image
+                    strongSelf.scnView.prepareObject(strongSelf.renderDelegate!.scene, shouldAbortBlock: nil)
+                    strongSelf.scnView.playing = true
+                    strongSelf.loadingView.stopAnimating()
+                    strongSelf.loadingView.hidden = true
+                    strongSelf.blurView.fullscreen = false
+                    strongSelf.viewModel.isLoading.value  = false
+                    strongSelf.imageDownloadDisposable = nil
+                    strongSelf.imageManager.imageCache.clearMemory()
+                }
+            }
+        }
     }
     
     override func viewDidLoad() {
@@ -80,31 +105,24 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         scnView.backgroundColor = .clearColor()
         
         view.addSubview(scnView)
-        
-        let imageSignalProducer = viewModel.textureImageUrl.producer
-            .filter(isNotEmpty)
-            .flatMap(.Latest) { self.imageManager.downloadImageForURL($0) }
-        
-        viewModel.viewIsActive.producer.combineLatestWith(imageSignalProducer)
-            .startWithNext { [weak self] (active, image) in
-                guard let strongSelf = self else {
-                    return
+
+        viewModel.textureImageUrl.producer.combineLatestWith(viewModel.viewIsActive.producer)
+            .filter { (_, active) in return active }
+            .map { (url, _) in return url }
+            .startWithNext { [weak self] _ in
+                if let strongSelf = self {
+                    strongSelf.startDownloadImage()
                 }
-                print("state:")
-                print(active)
-                print(image)
-                
-                if active {
-                    strongSelf.renderDelegate.image = image
-                    strongSelf.scnView.prepareObject(strongSelf.renderDelegate!.scene, shouldAbortBlock: nil)
-                    strongSelf.scnView.playing = true
-                    strongSelf.loadingView.stopAnimating()
-                    strongSelf.loadingView.hidden = true
-                    strongSelf.blurView.fullscreen = false
-                } else {
+            }
+        
+        viewModel.viewIsActive.producer.skipRepeats()
+        .startWithNext { [weak self] active in
+            if let strongSelf = self  {
+                if !active {
                     strongSelf.renderDelegate.image = nil
                 }
             }
+        }
         
         glassesButtonView.setTitle(String.iconWithName(.Cardboard), forState: .Normal)
         glassesButtonView.setTitleColor(.whiteColor(), forState: .Normal)
@@ -163,12 +181,24 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         viewModel.viewIsActive.value = true
         
-        RotationService.sharedInstance.rotationSignal?
-            .skipRepeats()
-            .filter([.LandscapeLeft, .LandscapeRight])
-            .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
-            .observeOn(UIScheduler())
-            .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
+        if let rotationSignal = RotationService.sharedInstance.rotationSignal {
+                self.viewModel.isLoading.producer.startWithSignal{ isLoadingSignal, disposable in
+                    
+                    isLoadingSignal.combineLatestWith(rotationSignal)
+                    //.filter { (isLoading, _) in return !isLoading } // Uncomment this line to only allow invoking the viewer when loading is finished
+                    .map { (_, rotation) in return rotation }
+                    .skipRepeats()
+                    .filter([.LandscapeLeft, .LandscapeRight])
+                    .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
+                    .take(1)
+                    .observeOn(UIScheduler())
+                    .observeNext {
+                        [weak self] orientation in
+                        print(orientation.isLandscape)
+                        self?.pushViewer(orientation)
+                }
+            }
+        }
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -176,7 +206,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID])
         
-        viewModel.viewIsActive.value = false
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -194,7 +223,9 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        imageManager.cancelAll()
+        viewModel.viewIsActive.value = false
+        imageDownloadDisposable?.dispose()
+        imageDownloadDisposable = nil
         CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
         

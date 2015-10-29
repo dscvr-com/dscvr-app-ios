@@ -38,6 +38,7 @@ class ViewerViewController: UIViewController  {
     required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
         self.orientation = orientation
         self.optograph = optograph
+        imageManager.imageCache.maxMemoryCountLimit = 0
         
         // Please set this to meaningful default values.
         
@@ -54,6 +55,8 @@ class ViewerViewController: UIViewController  {
         }
        
         headset = CardboardParams.fromBase64(SessionService.sessionData!.vrGlasses).value!
+        
+        print("Headset: \(headset.vendor) \(headset.model)")
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -80,17 +83,6 @@ class ViewerViewController: UIViewController  {
         
         leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov)
         rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov)
-        
-        leftDownloadDisposable = imageManager.downloadImageForURL(optograph.leftTextureAssetURL)
-            .startWithNext { [weak self] image in
-                self?.leftRenderDelegate.image = image
-                self?.leftDownloadDisposable = nil
-            }
-        rightDownloadDisposable = imageManager.downloadImageForURL(optograph.rightTextureAssetURL)
-            .startWithNext { [weak self] image in
-                self?.rightRenderDelegate.image = image
-                self?.rightDownloadDisposable = nil
-            }
             
         leftScnView.scene = leftRenderDelegate.scene
         leftScnView.delegate = leftRenderDelegate
@@ -144,6 +136,30 @@ class ViewerViewController: UIViewController  {
                     popActivated = true
                 }
             }
+        
+        
+        if leftDownloadDisposable != nil {
+            leftDownloadDisposable?.dispose()
+            leftDownloadDisposable = nil
+        }
+        if rightDownloadDisposable != nil {
+            rightDownloadDisposable?.dispose()
+            rightDownloadDisposable = nil
+        }
+        
+        leftDownloadDisposable = imageManager.downloadImageForURL(optograph.leftTextureAssetURL)
+            .startWithNext { [weak self] image in
+                self?.leftRenderDelegate.image = image
+                self?.leftDownloadDisposable = nil
+                self?.imageManager.imageCache.clearMemory()
+        }
+        rightDownloadDisposable = imageManager.downloadImageForURL(optograph.rightTextureAssetURL)
+            .startWithNext { [weak self] image in
+                self?.rightRenderDelegate.image = image
+                self?.rightDownloadDisposable = nil
+                self?.imageManager.imageCache.clearMemory()
+
+        }
     }
     
     func setViewerParameters(headset: CardboardParams) {
@@ -171,10 +187,10 @@ class ViewerViewController: UIViewController  {
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
         
-        imageManager.cancelAll()
-        
         leftDownloadDisposable?.dispose()
+        leftDownloadDisposable = nil
         rightDownloadDisposable?.dispose()
+        rightDownloadDisposable = nil
         
         super.viewWillDisappear(animated)
     }
@@ -342,6 +358,10 @@ private class GlassesSelectionView: UIView {
         
         let videoCaptureDevice: AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
         
+        videoCaptureDevice.lockForConfiguration()
+        videoCaptureDevice.focusMode = .ContinuousAutoFocus
+        videoCaptureDevice.unlockForConfiguration()
+        
         guard let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice) else {
             return
         }
@@ -408,8 +428,8 @@ extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
                     switch result {
                     case let .Success(params):
                         Async.main {
-                            self?.paramsCallback?(params)
                             SessionService.sessionData!.vrGlasses = params.compressedRepresentation.base64EncodedStringWithOptions([])
+                            self?.paramsCallback?(params)
                             self?.cancel()
                         }
                     case let .Failure(error):

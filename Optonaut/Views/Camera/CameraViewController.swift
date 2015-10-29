@@ -176,7 +176,11 @@ class CameraViewController: UIViewController {
     
     private func setExposureMode(mode: AVCaptureExposureMode) {
         try! videoDevice!.lockForConfiguration()
-        videoDevice!.exposureMode = mode
+        if mode == AVCaptureExposureMode.Custom {
+            videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: Float(videoDevice!.ISO), completionHandler: nil)
+        } else {
+            videoDevice!.exposureMode = mode
+        }
         videoDevice!.unlockForConfiguration()
     }
     
@@ -397,7 +401,7 @@ class CameraViewController: UIViewController {
     
         if videoDevice!.activeFormat.videoHDRSupported.boolValue {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
-            videoDevice!.videoHDREnabled = true
+            videoDevice!.videoHDREnabled = false
         }
 
         videoDevice!.exposureMode = .ContinuousAutoExposure
