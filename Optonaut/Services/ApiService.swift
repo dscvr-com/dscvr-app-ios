@@ -44,7 +44,7 @@ class ApiService<T: Mappable> {
     }
     
     static func checkVersion() -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.get("public/info")
+        return ApiService<EmptyResponse>.get("info")
     }
     
     static func get(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {

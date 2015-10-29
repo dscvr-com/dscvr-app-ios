@@ -159,7 +159,7 @@ class CameraViewController: UIViewController {
             .filter { $0 }
             .take(1)
             .startWithNext { [unowned self] val in
-                self.setExposureMode(.Locked)
+                self.setExposureMode(.Custom)
                 self.setWhitebalanceMode(.Locked)
         }
         
