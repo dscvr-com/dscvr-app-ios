@@ -25,6 +25,8 @@ class OnboardingVRViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        Mixpanel.sharedInstance().track("View.OnboardingVR")
+        
         view.backgroundColor = .Accent
         
         headlineTextView.numberOfLines = 3
@@ -97,13 +99,13 @@ class OnboardingVRViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Mixpanel.sharedInstance().timeEvent("View.OnboardingVR")
+        Mixpanel.sharedInstance().timeEvent("View.OnboardingVR.Duration")
     }
 
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.OnboardingVR")
+        Mixpanel.sharedInstance().track("View.OnboardingVR.Duration")
     }
     
 }

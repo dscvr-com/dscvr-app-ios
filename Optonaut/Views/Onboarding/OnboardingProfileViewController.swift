@@ -33,6 +33,8 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        Mixpanel.sharedInstance().track("View.OnboardingProfile")
+        
         view.backgroundColor = .Accent
     
         viewModel.nextStep.producer
@@ -166,13 +168,13 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Mixpanel.sharedInstance().timeEvent("View.OnboardingProfile")
+        Mixpanel.sharedInstance().timeEvent("View.OnboardingProfile.Duration")
     }
 
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.OnboardingProfile")
+        Mixpanel.sharedInstance().track("View.OnboardingProfile.Duration")
     }
     
     override func viewWillDisappear(animated: Bool) {
