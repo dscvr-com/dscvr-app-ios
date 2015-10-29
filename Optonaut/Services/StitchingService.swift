@@ -82,7 +82,7 @@ class StitchingService {
         let priority = DISPATCH_QUEUE_PRIORITY_BACKGROUND
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
             
-            Mixpanel.sharedInstance().timeEvent("Action.Camera.Stitching")
+            Mixpanel.sharedInstance().track("Action.Stitching.Start")
             
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
@@ -114,7 +114,7 @@ class StitchingService {
                 Recorder.freeImageBuffer(rightBuffer)
             }
             
-            Mixpanel.sharedInstance().track("Action.Camera.Stitching")
+            Mixpanel.sharedInstance().track("Action.Stitching.Finish")
             
             
             //Executing this on the main thread is important
@@ -164,6 +164,7 @@ class StitchingService {
     // send completed is called on termination.
     static func cancelStitching() {
         assert(isStitching())
+        Mixpanel.sharedInstance().track("Action.Stitching.Cancel")
         shallCancel = true
     }
 }

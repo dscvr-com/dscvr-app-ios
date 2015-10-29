@@ -304,7 +304,6 @@ class CreateOptographViewController: UIViewController {
         super.viewDidAppear(animated)
         
         Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
-        Mixpanel.sharedInstance().timeEvent("Action.CreateOptograph.Cancel")
         
         // needed if user re-enabled location via Settings.app
         reloadLocation()
@@ -384,6 +383,7 @@ class CreateOptographViewController: UIViewController {
     }
     
     func submit() {
+        Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
         viewModel.post()
         PipelineService.check()
         self.navigationController?.popViewControllerAnimated(true)

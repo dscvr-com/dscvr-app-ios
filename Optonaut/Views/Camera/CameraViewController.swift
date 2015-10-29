@@ -223,9 +223,6 @@ class CameraViewController: UIViewController {
         super.viewDidAppear(animated)
         
         Mixpanel.sharedInstance().timeEvent("View.Camera")
-        Mixpanel.sharedInstance().timeEvent("Action.Camera.StartRecording")
-        Mixpanel.sharedInstance().timeEvent("Action.Camera.FinishRecording")
-        Mixpanel.sharedInstance().timeEvent("Action.Camera.CancelRecording")
         
         viewModel.isRecording.producer.filter(identity).take(1).startWithNext { _ in
             Mixpanel.sharedInstance().track("Action.Camera.StartRecording")
