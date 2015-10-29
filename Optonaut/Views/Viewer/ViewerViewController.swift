@@ -358,7 +358,7 @@ private class GlassesSelectionView: UIView {
         
         let videoCaptureDevice: AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
         
-        videoCaptureDevice.lockForConfiguration()
+        try! videoCaptureDevice.lockForConfiguration()
         videoCaptureDevice.focusMode = .ContinuousAutoFocus
         videoCaptureDevice.unlockForConfiguration()
         
