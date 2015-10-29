@@ -7,19 +7,22 @@
 //
 
 import UIKit
+import ReactiveCocoa
 
 class HashtagTableViewController: OptographTableViewController, RedNavbar, UniqueView {
     
     private let viewModel = SearchViewModel()
     
-    private let hashtag: String
+    private let hashtagStr: String
+    private let isFollowed = MutableProperty<Bool>(false)
+    private var hashtag: Hashtag?
     
     let uniqueIdentifier: String
     
     required init(hashtag: String) {
         uniqueIdentifier = "hashtag-\(hashtag)"
         
-        self.hashtag = hashtag
+        hashtagStr = hashtag
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -30,9 +33,24 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar, Uniqu
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "#\(hashtag)"
+        let hashtagView = NavHashtagView()
+        hashtagView.hashtag = hashtagStr
+        hashtagView.userInteractionEnabled = true
+        hashtagView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleFollow"))
         
-        viewModel.searchText.value = hashtag
+        isFollowed.producer.startWithNext { [weak hashtagView] val in
+            hashtagView?.isFollowed = val
+        }
+        
+        navigationItem.titleView = hashtagView
+        
+        ApiService<Hashtag>.get("hashtags/name/\(hashtagStr)")
+            .startWithNext { [weak self] hashtag in
+                self?.hashtag = hashtag
+                self?.isFollowed.value = hashtag.isFollowed
+            }
+        
+        viewModel.searchText.value = "#\(hashtagStr)"
         
         viewModel.results.producer
             .on(
@@ -66,6 +84,91 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar, Uniqu
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         super.updateViewConstraints()
+    }
+    
+    func toggleFollow() {
+        guard let hashtag = hashtag else {
+            return
+        }
+        
+        let followedBefore = isFollowed.value
+        
+        SignalProducer<Bool, ApiError>(value: followedBefore)
+            .flatMap(.Latest) { followedBefore in
+                followedBefore
+                    ? ApiService<EmptyResponse>.delete("hashtags/\(hashtag.ID)/follow")
+                    : ApiService<EmptyResponse>.post("hashtags/\(hashtag.ID)/follow", parameters: nil)
+            }
+            .on(
+                started: {
+                    self.isFollowed.value = !followedBefore
+                },
+                error: { _ in
+                    self.isFollowed.value = followedBefore
+                }
+            )
+            .start()
+    }
+    
+}
+
+private class NavHashtagView: UIView {
+    
+    var isFollowed = false {
+        didSet {
+            iconView.text = isFollowed ? String.iconWithName(.Check) : String.iconWithName(.Plus)
+            backgroundColor = isFollowed ? .whiteColor() : .Accent
+            iconView.textColor = isFollowed ? .Accent : .whiteColor()
+            titleView.textColor = isFollowed ? .Accent : .whiteColor()
+            layer.borderWidth = isFollowed ? 0 : 1
+        }
+    }
+    var hashtag = "" {
+        didSet {
+            let str = "#\(hashtag)"
+            titleView.text = str
+            
+            let strBoundingBox = (str as NSString).sizeWithAttributes([NSFontAttributeName: UIFont.displayOfSize(15, withType: .Regular)])
+            frame = CGRect(x: 0, y: 0, width: strBoundingBox.width + 52, height: 31)
+            updateConstraintsIfNeeded()
+        }
+    }
+    
+    private let iconView = UILabel()
+    private let titleView = UILabel()
+    
+    override init (frame: CGRect) {
+        super.init(frame: frame)
+        
+        clipsToBounds = true
+        layer.cornerRadius = 14
+        layer.borderColor = UIColor.whiteColor().CGColor
+        
+        iconView.font = UIFont.iconOfSize(12)
+        iconView.textColor = .whiteColor()
+        addSubview(iconView)
+        
+        titleView.font = UIFont.displayOfSize(15, withType: .Regular)
+        titleView.textColor = .whiteColor()
+        addSubview(titleView)
+    }
+    
+    convenience init () {
+        self.init(frame: CGRectZero)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private override func updateConstraints() {
+        iconView.autoAlignAxisToSuperviewAxis(.Horizontal)
+        iconView.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 17)
+        
+        titleView.autoAlignAxisToSuperviewAxis(.Horizontal)
+        titleView.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -17)
+        
+        super.updateConstraints()
     }
     
 }
