@@ -131,11 +131,9 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if searchBar.text!.isEmpty && indexPath.row > 0 {
-            let hashtag = "#" + hashtags[indexPath.row - 1].name
-            searchBar.text = hashtag
-            viewModel.searchText.value = hashtag
-            tableView.reloadData()
+        if indexPath.row > 0 {
+            let hashtag = hashtags[indexPath.row - 1].name
+            navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
     }
     

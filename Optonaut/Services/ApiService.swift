@@ -39,12 +39,12 @@ class ApiService<T: Mappable> {
         switch Env {
         case .Development: return "optonaut.ngrok.io"
         case .Staging: return "api-staging.optonaut.co"
-        case .Production: return "api-v6-production.optonaut.co"
+        case .Production: return "api-v7-production.optonaut.co"
         }
     }
     
     static func checkVersion() -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.get("info")
+        return ApiService<EmptyResponse>.get("public/info")
     }
     
     static func get(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
@@ -177,7 +177,7 @@ class ApiService<T: Mappable> {
         }
             .on(error: { error in
                 if error.suspicious {
-                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+//                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
                 }
             })
