@@ -39,7 +39,7 @@ class ApiService<T: Mappable> {
         switch Env {
         case .Development: return "optonaut.ngrok.io"
         case .Staging: return "api-staging.optonaut.co"
-        case .Production: return "api-v6-production.optonaut.co"
+        case .Production: return "api-v7-production.optonaut.co"
         }
     }
     
