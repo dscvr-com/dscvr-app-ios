@@ -204,7 +204,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID])
+        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID, "optograph_description" : viewModel.optograph.text])
         
     }
     

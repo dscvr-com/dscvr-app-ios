@@ -175,7 +175,7 @@ class ViewerViewController: UIViewController  {
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.ID])
+        Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.ID, "optograph_description" : optograph.text])
         
         rotationDisposable?.dispose()
         RotationService.sharedInstance.rotationDisable()
@@ -309,6 +309,8 @@ private class GlassesSelectionView: UIView {
         
         loadingIndicatorView.activityIndicatorViewStyle = .WhiteLarge
         addSubview(loadingIndicatorView)
+        
+        Mixpanel.sharedInstance().track("View.CardboardSelection")
     }
     
     deinit {
@@ -431,6 +433,10 @@ extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
                     case let .Success(params):
                         Async.main {
                             SessionService.sessionData!.vrGlasses = params.compressedRepresentation.base64EncodedStringWithOptions([])
+                            
+                            let cardboardDescription = "\(params.vendor) \(params.model)"
+                            Mixpanel.sharedInstance().track("View.CardboardSelection.Scanned", properties: ["cardboard": cardboardDescription])
+                            Mixpanel.sharedInstance().people.set(["Last scanned Cardboard": cardboardDescription])
                             self?.paramsCallback?(params)
                             self?.cancel()
                         }

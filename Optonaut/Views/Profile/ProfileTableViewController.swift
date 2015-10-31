@@ -102,7 +102,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.Profile", properties: ["person_id": personID])
+        Mixpanel.sharedInstance().track("View.Profile", properties: ["person_id": personID, "person_name" : headerTableViewCell!.viewModel.person.displayName])
     }
     
     override func updateViewConstraints() {
