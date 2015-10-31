@@ -178,6 +178,8 @@ class ViewerViewController: UIViewController  {
         Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.ID])
         
         rotationDisposable?.dispose()
+        RotationService.sharedInstance.rotationDisable()
+        HeadTrackerRotationSource.Instance.stop()
     }
     
     override func viewWillDisappear(animated: Bool) {

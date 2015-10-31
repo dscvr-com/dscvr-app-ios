@@ -7,6 +7,7 @@
 #define __CardboardSDK_iOS__Matrix3x3d__
 
 #include "Vector3d.hpp"
+#include <iostream>
 
 #import <GLKit/GLKit.h>
 
@@ -55,11 +56,11 @@ class Matrix3x3d
 
     GLKMatrix3 getGLKMatrix();
 
+    friend std::ostream& operator<<(std::ostream& os, const Matrix3x3d& m);
     
   private:
     double _m[9];
 };
-
 }
 
 #endif

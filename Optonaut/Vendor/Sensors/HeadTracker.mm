@@ -157,8 +157,11 @@ void HeadTracker::startTracking(UIInterfaceOrientation orientation)
         // note core motion uses units of G while the EKF uses ms^-2
         const float kG = 9.81f;
         _tracker->processAcceleration(GLKVector3Make(kG*acceleration.x, kG*acceleration.y, kG*acceleration.z), motion.timestamp);
+        //std::cout << "Acc: x " << acceleration.x << " y " << acceleration.y << " z "  << acceleration.z << std::endl;
         _tracker->processGyro(GLKVector3Make(rotationRate.x, rotationRate.y, rotationRate.z), motion.timestamp);
         _lastGyroEventTimestamp = motion.timestamp;
+        
+        //std::cout << "Gyro: x " << rotationRate.x << " y " << rotationRate.y << " z "  << rotationRate.z << std::endl;
     }];
   #endif
     

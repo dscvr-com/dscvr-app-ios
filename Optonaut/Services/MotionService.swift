@@ -21,6 +21,7 @@ class HeadTrackerRotationSource : RotationMatrixSource {
     static let Instance = HeadTrackerRotationSource()
     
     func getRotationMatrix() -> GLKMatrix4 {
+
         if headTracker.isReady() {
             let rot = GLKMatrix4MakeRotation(Float(M_PI_2), 0, -1, 0)
             let base = GLKMatrix4Make(0, 1, 0, 0,
@@ -41,6 +42,8 @@ class HeadTrackerRotationSource : RotationMatrixSource {
                 0, 1, 0, 0,
                 0, 0, 0, 1)
         }
+        
+
     }
     
     func start() {
@@ -66,13 +69,13 @@ class CoreMotionRotationSource : RotationMatrixSource {
     static let Instance = CoreMotionRotationSource()
     
     func getRotationMatrix() -> GLKMatrix4 {
+        
         guard let r = motionManager.deviceMotion?.attitude.rotationMatrix else {
             return GLKMatrix4Make(1, 0, 0, 0,
                 0, 0, 1, 0,
                 0, 1, 0, 0,
                 0, 0, 0, 1)
         }
-        
         return GLKMatrix4Make(
             Float(r.m11), Float(r.m12), Float(r.m13), 0,
             Float(r.m21), Float(r.m22), Float(r.m23), 0,

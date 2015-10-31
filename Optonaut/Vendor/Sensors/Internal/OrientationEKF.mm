@@ -9,7 +9,7 @@
 
 #include <cmath>
 #include <algorithm>
-
+#include <iostream>
 
 namespace CardboardSDK
 {
@@ -130,6 +130,7 @@ GLKMatrix4 OrientationEKF::getPredictedGLMatrix(double secondsAfterLastGyroEvent
     Matrix3x3d so3PredictedMotion;
     SO3Util::so3FromMu(&pmu, &so3PredictedMotion);
     Matrix3x3d so3PredictedState;
+    //std::cout << "sensor: " << _so3SensorFromWorld << " motion: " << so3PredictedMotion << " state: " << so3PredictedState << std::endl;
     Matrix3x3d::mult(&so3PredictedMotion, &_so3SensorFromWorld, &so3PredictedState);
     return glMatrixFromSo3(&so3PredictedState);
 }

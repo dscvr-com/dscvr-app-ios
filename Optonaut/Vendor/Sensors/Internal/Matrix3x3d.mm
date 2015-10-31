@@ -223,5 +223,18 @@ GLKMatrix3 Matrix3x3d::getGLKMatrix()
                           _m[3], _m[4], _m[5],
                           _m[6], _m[7], _m[8]);
 }
-
+    
+std::ostream& operator<<(std::ostream& os, const Matrix3x3d& m)
+{
+    os << "[";
+    
+    for(int i = 0; i < 9; i++) {
+        os << m._m[i];
+        if(i != 8)
+            os << ", ";
+    }
+    
+    os << "]";
+    return os;
+}
 }
