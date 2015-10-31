@@ -8,6 +8,7 @@
                 "uMainTex" : "COLOR",
                 "uCoefficients": "coefficients",
                 "uEyeOffset": "eye_offset",
+                "uViewportOffset": "viewport_offset",
                 "uTextureCoordScale": "texture_scale",
                 "uVignetteX": "vignette_x",
                 "uVignetteY": "vignette_y"
@@ -24,6 +25,9 @@
             "type": "vec2"
         },
         "eye_offset" : {
+            "type": "vec2"
+        },
+        "viewport_offset" : {
             "type": "vec2"
         },
         "texture_scale" : {

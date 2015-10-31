@@ -1,8 +1,9 @@
 attribute vec4 aPosition;
-varying vec2 uv;
+varying vec2 xy;
 uniform float uTextureCoordScale;
+uniform vec2 uViewportOffset;
 
 void main() {
     gl_Position = aPosition;
-    uv = ((aPosition.xy + 1.0) * 0.5);
+    xy = aPosition.xy * uTextureCoordScale + uViewportOffset * 0.5 * uTextureCoordScale;
 }

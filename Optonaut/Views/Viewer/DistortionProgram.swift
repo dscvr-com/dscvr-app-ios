@@ -64,12 +64,17 @@ class DistortionProgram {
     
     func setParameters(distortion: Distortion, fov: FieldOfView, eyeOffsetX: Float, eyeOffsetY: Float) {
         coefficients = CGSize(width: CGFloat(distortion.coefficients[0]), height: CGFloat(distortion.coefficients[1]))
+        //coefficients = CGSize(width: 0, height: 0)
         eyeOffset = CGSize(width: CGFloat(eyeOffsetX), height: CGFloat(eyeOffsetY))
         
         let factor = distortion.distortInverse(1)
-
+        let viewportOffset = CGSize(width: CGFloat(distortion.distortInverse(eyeOffsetX)), height: CGFloat(distortion.distortInverse(eyeOffsetY)))
+        
+        print("Texture Scale \(factor)")
+        
         technique.setValue(NSValue(CGSize: coefficients), forKey: "coefficients")
         technique.setValue(NSValue(CGSize: eyeOffset), forKey: "eye_offset")
+        technique.setValue(NSValue(CGSize: viewportOffset), forKey: "viewport_offset")
         technique.setValue(NSNumber(float: factor), forKey: "texture_scale")
         technique.setValue(NSNumber(float: 0.05), forKey: "vignette_x")
         technique.setValue(NSNumber(float: 0.02), forKey: "vignette_y")

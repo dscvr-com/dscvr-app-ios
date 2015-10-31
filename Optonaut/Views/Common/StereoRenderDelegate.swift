@@ -23,6 +23,7 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     private let sphereNode: SCNNode
     private let rotationMatrixSource: RotationMatrixSource
     private var _fov: FieldOfView!
+    private let cameraOffset: Float
     
     var fov: FieldOfView {
         get {
@@ -34,8 +35,9 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         }
     }
 
-    init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: FieldOfView) {
+    init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: FieldOfView, cameraOffset: Float) {
         self.rotationMatrixSource = rotationMatrixSource
+        self.cameraOffset = cameraOffset
         
         cameraNode = SCNNode()
         
@@ -44,6 +46,8 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         scene.rootNode.addChildNode(cameraNode)
+        
+        cameraNode.pivot = SCNMatrix4MakeTranslation(0, cameraOffset, 0)
         
         sphereNode = StereoRenderDelegate.createSphere()
         scene.rootNode.addChildNode(sphereNode)
@@ -54,6 +58,10 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     private static func setupCamera(fov: FieldOfView) -> SCNCamera {
         let zNear = Float(0.01)
         let zFar = Float(10000)
+        
+        print("Fov:")
+        print(fov)
+        
         let fovLeft = sin(DistortionProgram.toRadians(fov.left)) * zNear
         let fovRight = sin(DistortionProgram.toRadians(fov.right)) * zNear
         let fovTop = sin(DistortionProgram.toRadians(fov.top)) * zNear
@@ -73,7 +81,7 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         let angles: [Float] = [xFov / Float(2.0), xFov / Float(2.0), yFov / Float(2.0), yFov / Float(2.0)]
         let newFov = FieldOfView(angles: angles)
         
-        self.init(rotationMatrixSource: rotationMatrixSource, width: width, height: height, fov: newFov)
+        self.init(rotationMatrixSource: rotationMatrixSource, width: width, height: height, fov: newFov, cameraOffset: Float(0))
     }
     
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
@@ -83,7 +91,6 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     private static func createSphere() -> SCNNode {
         // rotate sphere to correctly display texture
         let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
-        
         let geometry = SCNSphere(radius: 5.0)
         geometry.segmentCount = 128
         geometry.firstMaterial?.doubleSided = true
