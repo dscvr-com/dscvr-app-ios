@@ -129,16 +129,16 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
                 cameraViewController.hidesBottomBarWhenPushed = true
                 navigationController?.pushViewController(cameraViewController, animated: false)
             #else
-                switch UIDevice.currentDevice().deviceType {
-                case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
+//                switch UIDevice.currentDevice().deviceType {
+//                case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
                     let cameraViewController = CameraViewController()
                     cameraViewController.hidesBottomBarWhenPushed = true
                     navigationController?.pushViewController(cameraViewController, animated: false)
-                default:
-                    let alert = UIAlertController(title: "Device not yet supported", message: "Recording isn't available for your device in the current version but will be enabled in a future release.", preferredStyle: .Alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-                    self.navigationController?.presentViewController(alert, animated: true, completion: nil)
-                }
+//                default:
+//                    let alert = UIAlertController(title: "Device not yet supported", message: "Recording isn't available for your device in the current version but will be enabled in a future release.", preferredStyle: .Alert)
+//                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+//                    self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+//                }
             #endif
         }
        

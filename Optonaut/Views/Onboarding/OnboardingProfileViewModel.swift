@@ -55,12 +55,18 @@ class OnboardingProfileViewModel {
         
         userName.producer
             .skipRepeats()
-            .on(next: { userName in
-                self.userNameStatus.value = .Warning("Checking username...")
+            .on(next: { _ in
                 self.nextStep.value = NextStep(rawValue: min(self.nextStep.value.rawValue, NextStep.UserName.rawValue))!
             })
             .filter(isNotEmpty)
-            .skipRepeats()
+            .on(next: { userName in
+                if isValidUserName(userName) {
+                    self.userNameStatus.value = .Warning("Checking username...")
+                } else {
+                    self.userNameStatus.value = .Warning("Invalid username")
+                }
+            })
+            .filter(isValidUserName)
             .throttle(0.1, onScheduler: QueueScheduler.mainQueueScheduler)
             .flatMap(.Latest) { userName in
                 ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: ["user_name": userName])
@@ -117,6 +123,9 @@ class OnboardingProfileViewModel {
                     self.person.displayName = self.displayName.value
                     self.person.userName = self.userName.value
                     self.saveModel()
+                },
+                error: { _ in
+                    self.loading.value = false
                 }
             )
     }
