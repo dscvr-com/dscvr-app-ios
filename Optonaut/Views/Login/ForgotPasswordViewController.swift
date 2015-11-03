@@ -12,12 +12,13 @@ import ReactiveCocoa
 class ForgotPasswordViewController: UIViewController {
     
     // subviews
+    let cancelButtonView = UIButton()
     let titleView = UILabel()
     let descriptionView = UILabel()
     let formView = UIView()
-    let emailInputView = UITextField()
-    let submitButtonView = UIButton()
-    let cancelButtonView = UIButton()
+    let emailInputView = LineTextField()
+    let submitButtonView = ActionButton()
+    let backButtonView = ActionButton()
     let loadingView = UIView()
     
     var formViewBottomConstraint: NSLayoutConstraint?
@@ -34,60 +35,60 @@ class ForgotPasswordViewController: UIViewController {
         
         view.backgroundColor = UIColor.Accent
         
+        cancelButtonView.setTitle(String.iconWithName(.Cross), forState: .Normal)
+        cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+        cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
+        cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        view.addSubview(cancelButtonView)
+        
         titleView.text = "Forgot your password?"
         titleView.textColor = .whiteColor()
-        titleView.font = .robotoOfSize(18, withType: .Medium)
+        titleView.font = .displayOfSize(18, withType: .Regular)
         view.addSubview(titleView)
         
         descriptionView.text = "Don't worry. Please enter your email address and we will send you an email with a link to reset your password."
         descriptionView.textColor = .whiteColor()
-        descriptionView.font = .robotoOfSize(15, withType: .Light)
+        descriptionView.font = .displayOfSize(15, withType: .Thin)
         descriptionView.textAlignment = .Center
         descriptionView.numberOfLines = 0
         view.addSubview(descriptionView)
         
         view.addSubview(formView)
         
-        let placeholderAttributes = [
-            NSFontAttributeName: UIFont.robotoOfSize(15, withType: .Regular),
-            NSForegroundColorAttributeName: UIColor.whiteColor().alpha(0.8),
-        ]
-        
         // TODO implement feedback for wrong formatted data
-        emailInputView.backgroundColor = UIColor.whiteColor().alpha(0.3)
-        emailInputView.attributedPlaceholder = NSAttributedString(string:"Email", attributes: placeholderAttributes)
-        emailInputView.font = .robotoOfSize(15, withType: .Regular)
-        emailInputView.textColor = .whiteColor()
-        emailInputView.textAlignment = .Center
-        emailInputView.layer.cornerRadius = 5
-        emailInputView.clipsToBounds = true
+        emailInputView.placeholder = "Email address"
+        emailInputView.size = .Medium
+        emailInputView.color = .Light
         emailInputView.autocorrectionType = .No
         emailInputView.autocapitalizationType = .None
         emailInputView.keyboardType = .EmailAddress
         emailInputView.returnKeyType = .Go
         emailInputView.delegate = self
+        emailInputView.rac_status <~ viewModel.emailStatus
+        emailInputView.rac_hidden <~ viewModel.sent
         viewModel.email <~ emailInputView.rac_text
         formView.addSubview(emailInputView)
         
-        submitButtonView.backgroundColor = UIColor(0xb5362c)
-        submitButtonView.setTitle("Reset Password", forState: .Normal)
-        submitButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        submitButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
-        submitButtonView.layer.cornerRadius = 5
-        submitButtonView.layer.masksToBounds = true
-        submitButtonView.rac_userInteractionEnabled <~ viewModel.emailValid
-        submitButtonView.rac_alpha <~ viewModel.emailValid.producer.map { $0 ? 1 : 0.5 }
+        submitButtonView.setTitle(String.iconWithName(.Check), forState: .Normal)
+        submitButtonView.setTitleColor(.Accent, forState: .Normal)
+        submitButtonView.defaultBackgroundColor = .whiteColor()
+        submitButtonView.titleLabel?.font = UIFont.iconOfSize(28)
+        submitButtonView.layer.cornerRadius = 30
+        submitButtonView.rac_userInteractionEnabled <~ viewModel.emailStatus.producer.equalsTo(.Normal)
+        submitButtonView.rac_alpha <~ viewModel.emailStatus.producer.equalsTo(.Normal).map { $0 ? 1 : 0.2 }
         submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "sendEmail"))
+        submitButtonView.rac_loading <~ viewModel.pending
+        submitButtonView.rac_hidden <~ viewModel.sent
         formView.addSubview(submitButtonView)
         
-        cancelButtonView.backgroundColor = UIColor(0xb5362c)
-        cancelButtonView.setTitle("Cancel", forState: .Normal)
-        cancelButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        cancelButtonView.titleLabel?.font = .robotoOfSize(15, withType: .Medium)
-        cancelButtonView.layer.cornerRadius = 5
-        cancelButtonView.layer.masksToBounds = true
-        cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "sendEmail"))
-        formView.addSubview(cancelButtonView)
+        backButtonView.setTitle("Back", forState: .Normal)
+        backButtonView.setTitleColor(.Accent, forState: .Normal)
+        backButtonView.defaultBackgroundColor = .whiteColor()
+//        backButtonView.titleLabel?.font = UIFont.displayOfSize(20, withType: .Semibold)
+//        backButtonView.layer.cornerRadius = 30
+        backButtonView.rac_hidden <~ viewModel.sent.producer.map(negate)
+        backButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        formView.addSubview(backButtonView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
         loadingView.rac_hidden <~ viewModel.pending.producer.map(negate)
@@ -115,33 +116,35 @@ class ForgotPasswordViewController: UIViewController {
     override func updateViewConstraints() {
         if !didSetConstraints {
             
+            cancelButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 30)
+            cancelButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
+            
             titleView.autoPinEdge(.Bottom, toEdge: .Top, ofView: descriptionView, withOffset: -15)
             titleView.autoAlignAxisToSuperviewAxis(.Vertical)
             
-            descriptionView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -36)
-            descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-            descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
+            descriptionView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -70)
+            descriptionView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 30)
+            descriptionView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -30)
             
             let formBottomOffset = formBottomOffsetForKeyboardHeight(0, keyboardVisible: false)
             formViewBottomConstraint = formView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: formBottomOffset)
-            formView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
-            formView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
-            formView.autoSetDimension(.Height, toSize: 158)
+            formView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+            formView.autoSetDimension(.Width, toSize: 243)
+            formView.autoSetDimension(.Height, toSize: 115)
             
-            emailInputView.autoSetDimension(.Height, toSize: 45)
             emailInputView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
             emailInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
             emailInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
-            submitButtonView.autoSetDimension(.Height, toSize: 45)
-            submitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailInputView, withOffset: 16)
-            submitButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
+            submitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailInputView, withOffset: 30)
             submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
+            submitButtonView.autoSetDimension(.Width, toSize: 60)
+            submitButtonView.autoSetDimension(.Height, toSize: 60)
             
-            cancelButtonView.autoSetDimension(.Height, toSize: 45)
-            cancelButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: submitButtonView, withOffset: 7)
-            cancelButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
-            cancelButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
+            backButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
+            backButtonView.autoAlignAxisToSuperviewAxis(.Vertical)
+            backButtonView.autoSetDimension(.Width, toSize: 160)
+            backButtonView.autoSetDimension(.Height, toSize: 60)
             
             loadingView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
             
@@ -153,7 +156,7 @@ class ForgotPasswordViewController: UIViewController {
     
     // needed for vertically centering (respecting keyboard visiblity)
     private func formBottomOffsetForKeyboardHeight(keyboardHeight: CGFloat, keyboardVisible: Bool) -> CGFloat {
-        return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2.5 + 158 / 2
+        return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2.5 + 115 / 2
     }
     
     override func didReceiveMemoryWarning() {
@@ -196,25 +199,22 @@ class ForgotPasswordViewController: UIViewController {
     func sendEmail() {
         viewModel.sendEmail()
             .on(
-                error: { _ in
-                    let alert = UIAlertController(title: "Something went wrong", message: "The request was unsuccessful. Please try again.", preferredStyle: .Alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-                    self.presentViewController(alert, animated: true, completion: nil)
+                error: { [weak self] _ in
+                    self?.viewModel.emailStatus.value = .Warning("We couldn't find that email address...")
+//                    let alert = UIAlertController(title: "Something went wrong", message: ".", preferredStyle: .Alert)
+//                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+//                    self.presentViewController(alert, animated: true, completion: nil)
+                    
                 },
-                completed: {
-                    self.emailInputView.userInteractionEnabled = false
-                    self.emailInputView.alpha = 0.5
-                    self.submitButtonView.userInteractionEnabled = false
-                    self.submitButtonView.alpha = 0.5
-                    self.titleView.text = "Check your inbox"
-                    self.cancelButtonView.setTitle("Back", forState: .Normal)
-                    self.descriptionView.text = "We sent you an email with a link to reset your password by choosing a new one."
+                completed: { [weak self] in
+                    self?.titleView.text = "Check your inbox"
+                    self?.descriptionView.text = "We sent you an email with a link to reset your password by choosing a new one."
                 }
             )
             .start()
     }
     
-    func showLogin() {
+    func cancel() {
         presentViewController(LoginViewController(), animated: false, completion: nil)
     }
     
@@ -227,7 +227,7 @@ extension ForgotPasswordViewController: UITextFieldDelegate {
         
         if textField == emailInputView {
             view.endEditing(true)
-            submitButtonView.sendActionsForControlEvents(.TouchUpInside)
+            sendEmail()
         }
         
         return true

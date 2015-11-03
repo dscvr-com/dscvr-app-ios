@@ -19,7 +19,7 @@ class LoginViewController: UIViewController {
     let emailOrUserNameInputView = LineTextField()
     let passwordInputView = LineTextField()
     let submitButtonView = ActionButton()
-//    let forgotPasswordView = UILabel()
+    let forgotPasswordView = UILabel()
     let signupTextView = UILabel()
     let signupHelpTextView = UILabel()
     let loadingView = UIView()
@@ -67,6 +67,15 @@ class LoginViewController: UIViewController {
         viewModel.password <~ passwordInputView.rac_text
         formView.addSubview(passwordInputView)
         
+        forgotPasswordView.textColor = .whiteColor()
+        forgotPasswordView.text = "Forgot?"
+        forgotPasswordView.font = .displayOfSize(13, withType: .Semibold)
+        forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showForgotPasswordViewController"))
+        forgotPasswordView.userInteractionEnabled = true
+        forgotPasswordView.rac_userInteractionEnabled <~ viewModel.passwordStatus.producer.equalsTo(.Disabled).map(negate)
+        forgotPasswordView.rac_alpha <~ viewModel.passwordStatus.producer.equalsTo(.Disabled).map { $0 ? 0.15 : 1 }
+        view.addSubview(forgotPasswordView)
+        
         submitButtonView.setTitle(String.iconWithName(.Check), forState: .Normal)
         submitButtonView.setTitleColor(.Accent, forState: .Normal)
         submitButtonView.defaultBackgroundColor = .whiteColor()
@@ -77,13 +86,6 @@ class LoginViewController: UIViewController {
         submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "login"))
         submitButtonView.rac_loading <~ viewModel.pending
         formView.addSubview(submitButtonView)
-        
-//        forgotPasswordView.textColor = .whiteColor()
-//        forgotPasswordView.text = "Forgot your password?"
-//        forgotPasswordView.font = .robotoOfSize(13, withType: .Regular)
-//        forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showForgotPasswordViewController"))
-//        forgotPasswordView.userInteractionEnabled = true
-//        view.addSubview(forgotPasswordView)
         
         signupHelpTextView.textColor = .whiteColor()
         signupHelpTextView.text = "Don't have an account yet?"
@@ -153,13 +155,13 @@ class LoginViewController: UIViewController {
             passwordInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
             passwordInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             
+            forgotPasswordView.autoPinEdge(.Right, toEdge: .Right, ofView: passwordInputView, withOffset: 0)
+            forgotPasswordView.autoAlignAxis(.Horizontal, toSameAxisOfView: passwordInputView)
+            
             submitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordInputView, withOffset: 30)
             submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
             submitButtonView.autoSetDimension(.Width, toSize: 60)
             submitButtonView.autoSetDimension(.Height, toSize: 60)
-            
-//            forgotPasswordView.autoPinEdge(.Top, toEdge: .Bottom, ofView: formView, withOffset: 23)
-//            forgotPasswordView.autoAlignAxisToSuperviewAxis(.Vertical)
             
             signupHelpTextView.autoPinEdge(.Bottom, toEdge: .Top, ofView: signupTextView, withOffset: -5)
             signupHelpTextView.autoAlignAxisToSuperviewAxis(.Vertical)

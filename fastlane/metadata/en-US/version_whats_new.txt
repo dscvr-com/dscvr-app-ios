@@ -1,4 +1,4 @@
-New in 1.3.0:
+New in 1.3.1:
 
 - [Feature] Push notifications for activities such as likes, comments and views
 - [Feature] You can now follow and unfollow hashtags in order to change your feed
@@ -7,5 +7,5 @@ New in 1.3.0:
 - [Improvement] The app is a lot more stable in general now
 - [Fixed] Location overlapped UI elements
 - [Fixed] Opening a shared Optograph no longer crashes the app
-- [Fixed] Optograph rendering occured for other Optographs in your feed
+- [Fixed] Optograph rendering occurred for other Optographs in your feed
 - [Fixed] Countless minor issues

@@ -12,13 +12,12 @@ import ReactiveCocoa
 class ForgotPasswordViewModel {
     
     let email = MutableProperty<String>("")
-    let emailValid = MutableProperty<Bool>(false)
+    let emailStatus = MutableProperty<LineTextField.Status>(.Indicated)
     let pending = MutableProperty<Bool>(false)
+    let sent = MutableProperty<Bool>(false)
     
     init() {
-        email.producer.startWithNext { str in
-            self.emailValid.value = isValidEmail(str)
-        }
+        emailStatus <~ email.producer.map(isValidEmail).map { $0 ? .Normal : .Indicated }
     }
     
     func sendEmail() -> SignalProducer<EmptyResponse, ApiError> {
@@ -29,6 +28,7 @@ class ForgotPasswordViewModel {
             .on(
                 completed: { _ in
                     self.pending.value = false
+                    self.sent.value = true
                 },
                 error: { _ in
                     self.pending.value = false

@@ -14,7 +14,7 @@ class LineTextField: UITextField {
     
     static var i = 0
 
-    enum Status {
+    enum Status: Equatable {
         case Normal
         case Disabled
         case Indicated
@@ -192,4 +192,14 @@ class LineTextField: UITextField {
         update()
     }
     
+}
+
+func ==(lhs: LineTextField.Status, rhs: LineTextField.Status) -> Bool {
+    switch (lhs, rhs) {
+    case let (.Warning(lhs), .Warning(rhs)): return lhs == rhs
+    case (.Normal, .Normal): return true
+    case (.Disabled, .Disabled): return true
+    case (.Indicated, .Indicated): return true
+    default: return false
+    }
 }

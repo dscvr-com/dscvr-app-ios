@@ -93,8 +93,6 @@
 		8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F191B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift */; };
 		8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1A1B8F01DF00B4C8CB /* LoginViewController.swift */; };
 		8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1B1B8F01DF00B4C8CB /* LoginViewModel.swift */; };
-		8FAB9F501B8F01DF00B4C8CB /* RequestInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1C1B8F01DF00B4C8CB /* RequestInviteViewController.swift */; };
-		8FAB9F511B8F01DF00B4C8CB /* RequestInviteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1D1B8F01DF00B4C8CB /* RequestInviteViewModel.swift */; };
 		8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */; };
 		8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */; };
 		8FAB9F541B8F01DF00B4C8CB /* OptographsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F211B8F01DF00B4C8CB /* OptographsViewModel.swift */; };
@@ -307,8 +305,6 @@
 		8FAB9F191B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F1A1B8F01DF00B4C8CB /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		8FAB9F1B1B8F01DF00B4C8CB /* LoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
-		8FAB9F1C1B8F01DF00B4C8CB /* RequestInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestInviteViewController.swift; sourceTree = "<group>"; };
-		8FAB9F1D1B8F01DF00B4C8CB /* RequestInviteViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestInviteViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F211B8F01DF00B4C8CB /* OptographsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographsViewModel.swift; sourceTree = "<group>"; };
@@ -717,8 +713,6 @@
 				8FAB9F191B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift */,
 				8FAB9F1A1B8F01DF00B4C8CB /* LoginViewController.swift */,
 				8FAB9F1B1B8F01DF00B4C8CB /* LoginViewModel.swift */,
-				8FAB9F1C1B8F01DF00B4C8CB /* RequestInviteViewController.swift */,
-				8FAB9F1D1B8F01DF00B4C8CB /* RequestInviteViewModel.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -1261,7 +1255,6 @@
 				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,
-				8FAB9F511B8F01DF00B4C8CB /* RequestInviteViewModel.swift in Sources */,
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
 				8F5335A01BDBA5EA0058961A /* ActivityResourceViewsTable.swift in Sources */,
 				8FAB9F451B8F01DF00B4C8CB /* ExploreViewModel.swift in Sources */,
@@ -1348,7 +1341,6 @@
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				A5233DFC1BC87B4A00C9EFE5 /* checkpointStore.cpp in Sources */,
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,
-				8FAB9F501B8F01DF00B4C8CB /* RequestInviteViewController.swift in Sources */,
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
 				A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */,
 				8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */,
