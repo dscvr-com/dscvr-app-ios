@@ -435,7 +435,7 @@ extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
                             SessionService.sessionData!.vrGlasses = params.compressedRepresentation.base64EncodedStringWithOptions([])
                             
                             let cardboardDescription = "\(params.vendor) \(params.model)"
-                            Mixpanel.sharedInstance().track("View.CardboardSelection.Scanned", properties: ["cardboard": cardboardDescription])
+                            Mixpanel.sharedInstance().track("View.CardboardSelection.Scanned", properties: ["cardboard": cardboardDescription, "url" : shortUrl])
                             Mixpanel.sharedInstance().people.set(["Last scanned Cardboard": cardboardDescription])
                             self?.paramsCallback?(params)
                             self?.cancel()
