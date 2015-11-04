@@ -39,8 +39,8 @@ class ActivityViewsTableViewCell: ActivityTableViewCell {
     }
     
     override func update(activity: Activity) {
-        if self.activity == nil || self.activity.activityResourceViews!.optograph.previewAssetURL != activity.activityResourceViews!.optograph.previewAssetURL {
-            optographImageView.setImageWithURLString(activity.activityResourceViews!.optograph.previewAssetURL)
+        if self.activity == nil {
+            optographImageView.setImageWithURLString(ImageURL(activity.activityResourceViews!.optograph.previewAssetID, width: 32, height: 40))
         }
         
         super.update(activity)

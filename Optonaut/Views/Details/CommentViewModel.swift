@@ -20,7 +20,7 @@ class CommentViewModel {
     
     init(comment: Comment) {
         text = ConstantProperty(comment.text)
-        avatarImageUrl = ConstantProperty(comment.person.avatarAssetURL)
+        avatarImageUrl = ConstantProperty(ImageURL(comment.person.avatarAssetID, width: 40, height: 40))
         displayName = ConstantProperty(comment.person.displayName)
         userName = ConstantProperty("@\(comment.person.userName)")
         personID = ConstantProperty(comment.person.ID)

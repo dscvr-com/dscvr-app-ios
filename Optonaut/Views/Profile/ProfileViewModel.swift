@@ -73,7 +73,7 @@ class ProfileViewModel {
         followersCount.value = person.followersCount
         followedCount.value = person.followedCount
         isFollowed.value = person.isFollowed
-        avatarImageUrl.value = person.avatarAssetURL
+        avatarImageUrl.value = ImageURL(person.avatarAssetID, width: 84, height: 84)
     }
     
     private func saveModel() {

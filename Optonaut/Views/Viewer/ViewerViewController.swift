@@ -147,13 +147,13 @@ class ViewerViewController: UIViewController  {
             rightDownloadDisposable = nil
         }
         
-        leftDownloadDisposable = imageManager.downloadImageForURL(optograph.leftTextureAssetURL)
+        leftDownloadDisposable = imageManager.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))
             .startWithNext { [weak self] image in
                 self?.leftRenderDelegate.image = image
                 self?.leftDownloadDisposable = nil
                 self?.imageManager.imageCache.clearMemory()
         }
-        rightDownloadDisposable = imageManager.downloadImageForURL(optograph.rightTextureAssetURL)
+        rightDownloadDisposable = imageManager.downloadImageForURL(ImageURL(optograph.rightTextureAssetID))
             .startWithNext { [weak self] image in
                 self?.rightRenderDelegate.image = image
                 self?.rightDownloadDisposable = nil

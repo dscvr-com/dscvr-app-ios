@@ -112,7 +112,7 @@ class CreateOptographViewModel {
     }
     
     func updatePreviewImage() {
-        previewImageUrl.value = optograph.previewAssetURL
+        previewImageUrl.value = ImageURL(optograph.previewAssetID)
     }
     
     func post() {

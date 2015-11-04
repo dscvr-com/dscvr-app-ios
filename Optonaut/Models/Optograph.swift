@@ -38,18 +38,6 @@ struct Optograph: DeletableModel {
     var isStaffPick: Bool
     var hashtagString: String
     
-    var leftTextureAssetURL: String {
-        return "\(S3URL)/original/\(leftTextureAssetID).jpg"
-    }
-    
-    var rightTextureAssetURL: String {
-        return "\(S3URL)/original/\(rightTextureAssetID).jpg"
-    }
-    
-    var previewAssetURL: String {
-        return "\(S3URL)/original/\(previewAssetID).jpg"
-    }
-    
     static func newInstance() -> Optograph {
         return Optograph(
             ID: uuid(),
@@ -75,20 +63,20 @@ struct Optograph: DeletableModel {
     func saveAsset(asset: OptographAsset) {
         switch asset {
         case .LeftImage(let data):
-            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: leftTextureAssetURL, toDisk: true)
+            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(leftTextureAssetID), toDisk: true)
         case .RightImage(let data):
-            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: rightTextureAssetURL, toDisk: true)
+            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID), toDisk: true)
         case .PreviewImage(let data):
-            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: previewAssetURL, toDisk: true)
+            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID), toDisk: true)
         }
     }
     
     mutating func publish() -> SignalProducer<Optograph, ApiError> {
         assert(!isPublished)
         
-        return SDWebImageManager.sharedManager().downloadDataForURL(leftTextureAssetURL)
-            .combineLatestWith(SDWebImageManager.sharedManager().downloadDataForURL(rightTextureAssetURL))
-            .combineLatestWith(SDWebImageManager.sharedManager().downloadDataForURL(previewAssetURL))
+        return SDWebImageManager.sharedManager().downloadDataForURL(ImageURL(leftTextureAssetID))
+            .combineLatestWith(SDWebImageManager.sharedManager().downloadDataForURL(ImageURL(rightTextureAssetID)))
+            .combineLatestWith(SDWebImageManager.sharedManager().downloadDataForURL(ImageURL(previewAssetID)))
             .map { ($0.0, $0.1, $1) }
             .map { (left, right, preview) -> [String: AnyObject] in
                 var parameters = Mapper().toJSON(self)

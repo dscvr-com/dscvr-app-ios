@@ -73,15 +73,20 @@ class EditProfileViewModel {
             })
     }
     
-    func updateAvatar(image: UIImage) -> SignalProducer<Person, ApiError> {
+    func updateAvatar(image: UIImage) -> SignalProducer<EmptyResponse, ApiError> {
         let data = UIImageJPEGRepresentation(image, 1)
         let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        let avatarAssetID = uuid()
+        let parameters = [
+            "avatar_asset": str!,
+            "avatar_asset_id": avatarAssetID,
+        ]
         
-        return ApiService.post("persons/me/upload-profile-image", parameters: ["avatar_asset": str!])
-            .on(next: { person in
-                self.person.avatarAssetID = person.avatarAssetID
-                self.updateProperties()
-                self.saveModel()
+        return ApiService<EmptyResponse>.post("persons/me/upload-profile-image", parameters: parameters)
+            .on(completed: { [weak self] _ in
+                self?.person.avatarAssetID = avatarAssetID
+                self?.updateProperties()
+                self?.saveModel()
             })
     }
     
@@ -112,7 +117,7 @@ class EditProfileViewModel {
         userName.value = person.userName
         wantsNewsletter.value = person.wantsNewsletter
         text.value = person.text
-        avatarImageUrl.value = person.avatarAssetURL
+        avatarImageUrl.value = ImageURL(person.avatarAssetID, width: 60, height: 60)
     }
     
     private func updateModel() {

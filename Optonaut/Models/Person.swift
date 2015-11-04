@@ -22,10 +22,6 @@ struct Person: Model {
     var wantsNewsletter: Bool
     var avatarAssetID: UUID
     
-    var avatarAssetURL: String {
-        return "\(S3URL)/400x400/\(avatarAssetID).jpg"
-    }
-    
     static func newInstance() -> Person {
         return Person(
             ID: uuid(),

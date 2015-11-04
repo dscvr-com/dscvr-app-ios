@@ -72,7 +72,11 @@ extension Activity: Mappable {
     mutating func mapping(map: Map) {
         let typeTransform = TransformOf<ActivityType, String>(
             fromJSON: { (value: String?) -> ActivityType? in
-                switch value! {
+                guard let value = value else {
+                    return .Nil
+                }
+                
+                switch value {
                 case "star": return .Star
                 case "comment": return .Comment
                 case "views": return .Views
@@ -81,7 +85,7 @@ extension Activity: Mappable {
                 }
             },
             toJSON: { (value: ActivityType?) -> String? in
-                return value!.rawValue
+                return value?.rawValue ?? ""
             }
         )
         

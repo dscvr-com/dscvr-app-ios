@@ -39,12 +39,12 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
     }
     
     override func update(activity: Activity) {
-        if self.activity == nil || self.activity.activityResourceComment!.causingPerson.avatarAssetURL != activity.activityResourceComment!.causingPerson.avatarAssetURL {
-            causingImageView.setImageWithURLString(activity.activityResourceComment!.causingPerson.avatarAssetURL)
+        if self.activity == nil {
+            causingImageView.setImageWithURLString(ImageURL(activity.activityResourceComment!.causingPerson.avatarAssetID, width: 40, height: 40))
         }
         
-        if self.activity == nil || self.activity.activityResourceComment!.optograph.previewAssetURL != activity.activityResourceComment!.optograph.previewAssetURL {
-            optographImageView.setImageWithURLString(activity.activityResourceComment!.optograph.previewAssetURL)
+        if self.activity == nil {
+            optographImageView.setImageWithURLString(ImageURL(activity.activityResourceComment!.optograph.previewAssetID, width: 32, height: 40))
         }
         
         super.update(activity)

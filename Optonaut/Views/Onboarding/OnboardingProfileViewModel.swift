@@ -133,10 +133,10 @@ class OnboardingProfileViewModel {
     func updateAvatar(image: UIImage) -> SignalProducer<EmptyResponse, ApiError> {
         let data = UIImageJPEGRepresentation(image, 1)
         let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        let avatarAssetID = uuid()
         
         avatarImage.value = UIImage(data: data!)!
         
-        let avatarAssetID = uuid()
         let parameters = [
             "avatar_asset": str!,
             "avatar_asset_id": avatarAssetID,

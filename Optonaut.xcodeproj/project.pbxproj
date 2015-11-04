@@ -41,6 +41,7 @@
 		8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5335AD1BDBDE890058961A /* ActivityCommentTableViewCell.swift */; };
 		8F5335B01BDBE0840058961A /* ActivityViewsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5335AF1BDBE0840058961A /* ActivityViewsTableViewCell.swift */; };
 		8F5335B21BDBE0910058961A /* ActivityFollowTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5335B11BDBE0910058961A /* ActivityFollowTableViewCell.swift */; };
+		8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5ACC101BE946EC00DF707C /* ImageURL.swift */; };
 		8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F5FD9D81B3B0080007E073C /* Result.framework */; };
 		8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA001B3EECB0007E073C /* Activity.swift */; };
 		8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6084831BC27DD400ADAFFC /* Mixpanel.framework */; };
@@ -249,6 +250,7 @@
 		8F5335AD1BDBDE890058961A /* ActivityCommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityCommentTableViewCell.swift; sourceTree = "<group>"; };
 		8F5335AF1BDBE0840058961A /* ActivityViewsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityViewsTableViewCell.swift; sourceTree = "<group>"; };
 		8F5335B11BDBE0910058961A /* ActivityFollowTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityFollowTableViewCell.swift; sourceTree = "<group>"; };
+		8F5ACC101BE946EC00DF707C /* ImageURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageURL.swift; sourceTree = "<group>"; };
 		8F5FD9D81B3B0080007E073C /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
 		8F5FDA001B3EECB0007E073C /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		8F6084831BC27DD400ADAFFC /* Mixpanel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mixpanel.framework; path = Carthage/Build/iOS/Mixpanel.framework; sourceTree = "<group>"; };
@@ -748,6 +750,7 @@
 				8FAB9F671B8F02D500B4C8CB /* Reachability.swift */,
 				8FAB9F6E1B8F02D500B4C8CB /* Utils.swift */,
 				8FD845C41BCAA4530064048D /* WebImage.swift */,
+				8F5ACC101BE946EC00DF707C /* ImageURL.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1338,6 +1341,7 @@
 				8F900B401B839D0C0085566C /* CommentTable.swift in Sources */,
 				8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */,
 				A5DE71EC1BE28A7400316F82 /* DistortionRenderer.swift in Sources */,
+				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				A5233DFC1BC87B4A00C9EFE5 /* checkpointStore.cpp in Sources */,
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,

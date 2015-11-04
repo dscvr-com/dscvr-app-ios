@@ -23,8 +23,8 @@ class ActivityFollowTableViewCell: ActivityTableViewCell {
     }
     
     override func update(activity: Activity) {
-        if self.activity == nil || self.activity.activityResourceFollow!.causingPerson.avatarAssetURL != activity.activityResourceFollow!.causingPerson.avatarAssetURL {
-            causingImageView.setImageWithURLString(activity.activityResourceFollow!.causingPerson.avatarAssetURL)
+        if self.activity == nil {
+            causingImageView.setImageWithURLString(ImageURL(activity.activityResourceFollow!.causingPerson.avatarAssetID, width: 40, height: 40))
         }
         
         super.update(activity)

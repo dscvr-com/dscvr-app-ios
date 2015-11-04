@@ -179,8 +179,8 @@ class DetailsViewModel {
         hashtags.value = optograph.hashtagString
         location.value = optograph.location.text
         isPublished.value = optograph.isPublished
-        avatarImageUrl.value = optograph.person.avatarAssetURL
-        textureImageUrl.value = optograph.leftTextureAssetURL
+        avatarImageUrl.value = ImageURL(optograph.person.avatarAssetID, width: 40, height: 40)
+        textureImageUrl.value = ImageURL(optograph.leftTextureAssetID)
     }
     
 }

@@ -447,7 +447,8 @@ extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigati
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)
     
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
-        let fixedImage = image.fixedOrientation()
+        let fixedImage = image.fixedOrientation().centeredCropWithSize(CGSize(width: 1024, height: 1024))
+        avatarImageView.image = fixedImage
         viewModel.updateAvatar(fixedImage).startWithCompleted {
             NotificationService.push("Profile image updated", level: .Success)
         }

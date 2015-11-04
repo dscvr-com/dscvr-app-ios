@@ -39,12 +39,12 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     }
     
     override func update(activity: Activity) {
-        if self.activity == nil || self.activity.activityResourceStar!.causingPerson.avatarAssetURL != activity.activityResourceStar!.causingPerson.avatarAssetURL {
-            causingImageView.setImageWithURLString(activity.activityResourceStar!.causingPerson.avatarAssetURL)
+        if self.activity == nil {
+            causingImageView.setImageWithURLString(ImageURL(activity.activityResourceStar!.causingPerson.avatarAssetID, width: 40, height: 40))
         }
         
-        if self.activity == nil || self.activity.activityResourceStar!.optograph.previewAssetURL != activity.activityResourceStar!.optograph.previewAssetURL {
-            optographImageView.setImageWithURLString(activity.activityResourceStar!.optograph.previewAssetURL)
+        if self.activity == nil {
+            optographImageView.setImageWithURLString(ImageURL(activity.activityResourceStar!.optograph.previewAssetID, width: 32, height: 40))
         }
         
         super.update(activity)

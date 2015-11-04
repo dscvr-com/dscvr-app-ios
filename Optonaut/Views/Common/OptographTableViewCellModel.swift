@@ -20,7 +20,7 @@ class OptographTableViewCellModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        previewImageUrl = ConstantProperty(optograph.previewAssetURL)
+        previewImageUrl = ConstantProperty(ImageURL(optograph.previewAssetID, fullDimension: .Width))
         
         if !optograph.isStitched && StitchingService.hasUnstitchedRecordings() {
             stitchingProgress = MutableProperty(0)

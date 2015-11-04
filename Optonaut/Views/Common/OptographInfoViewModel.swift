@@ -31,7 +31,7 @@ class OptographInfoViewModel {
         self.optograph = optograph
         
         displayName = ConstantProperty(optograph.person.displayName)
-        avatarImageUrl = ConstantProperty(optograph.person.avatarAssetURL)
+        avatarImageUrl = ConstantProperty(ImageURL(optograph.person.avatarAssetID, width: 40, height: 40))
         locationText = ConstantProperty(optograph.location.text)
         locationCountry = ConstantProperty(optograph.location.country)
         isStarred.value = optograph.isStarred

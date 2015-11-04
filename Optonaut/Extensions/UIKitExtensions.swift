@@ -10,6 +10,30 @@ import UIKit
 
 extension UIImage {
     
+    func centeredCropWithSize(targetSize: CGSize) -> UIImage {
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+        
+        let newSize: CGSize
+        
+        if widthRatio < heightRatio {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+            
+        } else {
+            newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
+        }
+        
+        let origin = CGPoint(x: (targetSize.width - newSize.width) / 2, y: (targetSize.height - newSize.height) / 2)
+        let rect = CGRect(origin: origin, size: newSize)
+        
+        UIGraphicsBeginImageContextWithOptions(targetSize, false, scale)
+        drawInRect(rect)
+        let croppedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return croppedImage
+    }
+    
     func fixedOrientation() -> UIImage {
         
         if imageOrientation == UIImageOrientation.Up {
