@@ -30,7 +30,7 @@ GLKMatrix4 CVMatToGLK4(const cv::Mat &m) {
 }
 
 void GLK4ToCVMat(GLKMatrix4 m, cv::Mat &output) {
-    Mat tmp = cv::Mat(4, 4, CV_32F, m.m);
+    cv::Mat tmp = cv::Mat(4, 4, CV_32F, m.m);
     tmp.convertTo(output, CV_64F);
 }
 
@@ -41,7 +41,7 @@ GLKVector3 CVMatToGLK3Vec(const cv::Mat &m) {
 }
 
 void ImageBufferToCVMat(ImageBuffer image, cv::Mat &output) {
-    cv::cvtColor(Mat(image.height, image.width, CV_8UC4, image.data), output, COLOR_RGBA2RGB);
+    cv::cvtColor(cv::Mat(image.height, image.width, CV_8UC4, image.data), output, cv::COLOR_RGBA2RGB);
 }
 
 optonaut::InputImageRef ImageBufferToImageRef(ImageBuffer image) {
