@@ -42,9 +42,9 @@ class OnboardingVRViewController: UIViewController {
         iconView.font = UIFont.iconOfSize(60)
         view.addSubview(iconView)
         
-        let iconTextStr = "You can get your own VR glasses on\r\noptonaut.co/glasses"
+        let iconTextStr = "You can get your own VR glasses on\r\noptonaut.co/vr-glasses"
         let normalRange = iconTextStr.NSRangeOfString("You can get your own VR glasses on")
-        let linkRange = iconTextStr.NSRangeOfString("optonaut.co/glasses")
+        let linkRange = iconTextStr.NSRangeOfString("optonaut.co/vr-glasses")
         let attrString = NSMutableAttributedString(string: iconTextStr)
         attrString.addAttribute(NSFontAttributeName, value: UIFont.displayOfSize(20, withType: .Thin), range: normalRange!)
         attrString.addAttribute(NSFontAttributeName, value: UIFont.displayOfSize(20, withType: .Semibold), range: linkRange!)
@@ -93,7 +93,7 @@ class OnboardingVRViewController: UIViewController {
     }
     
     func openGlassesPage() {
-        UIApplication.sharedApplication().openURL(NSURL(string:"http://optonaut.co/glasses")!)
+        UIApplication.sharedApplication().openURL(NSURL(string:"http://optonaut.co/vr-glasses")!)
     }
     
     override func viewDidAppear(animated: Bool) {
