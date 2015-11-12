@@ -27,6 +27,7 @@ class ActivityTableViewController: UIViewController, RedNavbar {
         tableView.dataSource = self
         tableView.separatorStyle = .None
         
+        tableView.registerClass(PlaceholderTableViewCell.self, forCellReuseIdentifier: "placeholder-cell")
         tableView.registerClass(ActivityStarTableViewCell.self, forCellReuseIdentifier: "star-activity-cell")
         tableView.registerClass(ActivityCommentTableViewCell.self, forCellReuseIdentifier: "comment-activity-cell")
         tableView.registerClass(ActivityViewsTableViewCell.self, forCellReuseIdentifier: "views-activity-cell")
@@ -78,12 +79,20 @@ class ActivityTableViewController: UIViewController, RedNavbar {
         super.viewDidAppear(animated)
         
         updateNavbarAppear()
+        
+        tabBarController?.delegate = self
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
         viewModel.refreshNotification.notify(())
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        tabBarController?.delegate = nil
     }
     
 }
@@ -93,9 +102,13 @@ class ActivityTableViewController: UIViewController, RedNavbar {
 extension ActivityTableViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let textWidth = view.frame.width - 80 - 72
-        let textHeight = calcTextHeight(items[indexPath.row].text, withWidth: textWidth, andFont: UIFont.displayOfSize(14, withType: .Regular)) + 20
-        return max(textHeight, 80)
+        if items.isEmpty {
+            return view.frame.height
+        } else {
+            let textWidth = view.frame.width - 80 - 72
+            let textHeight = calcTextHeight(items[indexPath.row].text, withWidth: textWidth, andFont: UIFont.displayOfSize(14, withType: .Regular)) + 20
+            return max(textHeight, 80)
+        }
     }
     
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -103,7 +116,10 @@ extension ActivityTableViewController: UITableViewDelegate {
     }
     
     @objc func markVisibleAsRead() {
-        let visibleCells = tableView.visibleCells as! [ActivityTableViewCell]
+        guard let visibleCells = tableView.visibleCells as? [ActivityTableViewCell] else {
+            return
+        }
+        
         let unreadActivities = visibleCells.map({ $0.activity }).filter({ !$0.isRead })
         
         if unreadActivities.isEmpty {
@@ -129,28 +145,47 @@ extension ActivityTableViewController: UITableViewDelegate {
 extension ActivityTableViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let activity = items[indexPath.row]
-        let cell: ActivityTableViewCell
-        switch activity.type {
-        case .Star:
-            cell = self.tableView.dequeueReusableCellWithIdentifier("star-activity-cell")! as! ActivityStarTableViewCell
-        case .Comment:
-            cell = self.tableView.dequeueReusableCellWithIdentifier("comment-activity-cell")! as! ActivityCommentTableViewCell
-        case .Views:
-            cell = self.tableView.dequeueReusableCellWithIdentifier("views-activity-cell")! as! ActivityViewsTableViewCell
-        case .Follow:
-            cell = self.tableView.dequeueReusableCellWithIdentifier("follow-activity-cell")! as! ActivityFollowTableViewCell
-        default:
-            fatalError()
+        if items.isEmpty {
+            let cell = tableView.dequeueReusableCellWithIdentifier("placeholder-cell") as! PlaceholderTableViewCell
+            cell.textView.text = "Nothing new yet"
+            cell.iconView.text = String.iconWithName(.Inbox)
+            cell.iconView.textColor = .LightGrey
+            return cell
+        } else {
+            let activity = items[indexPath.row]
+            let cell: ActivityTableViewCell
+            switch activity.type {
+            case .Star:
+                cell = self.tableView.dequeueReusableCellWithIdentifier("star-activity-cell")! as! ActivityStarTableViewCell
+            case .Comment:
+                cell = self.tableView.dequeueReusableCellWithIdentifier("comment-activity-cell")! as! ActivityCommentTableViewCell
+            case .Views:
+                cell = self.tableView.dequeueReusableCellWithIdentifier("views-activity-cell")! as! ActivityViewsTableViewCell
+            case .Follow:
+                cell = self.tableView.dequeueReusableCellWithIdentifier("follow-activity-cell")! as! ActivityFollowTableViewCell
+            default:
+                fatalError()
+            }
+            
+            cell.update(activity)
+            cell.navigationController = navigationController as? NavigationController
+            return cell
         }
-        
-        cell.update(activity)
-        cell.navigationController = navigationController as? NavigationController
-        return cell
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return items.isEmpty ? 1 : items.count
+    }
+    
+}
+
+// MARK: - UITabBarControllerDelegate
+extension ActivityTableViewController: UITabBarControllerDelegate {
+    
+    func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
+        if viewController == navigationController {
+            tableView.setContentOffset(CGPointZero, animated: true)
+        }
     }
     
 }

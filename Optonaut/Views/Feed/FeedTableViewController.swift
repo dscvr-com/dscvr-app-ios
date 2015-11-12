@@ -141,7 +141,6 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
 //                }
             #endif
         }
-       
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -162,7 +161,6 @@ extension FeedTableViewController: UITabBarControllerDelegate {
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
         if viewController == navigationController {
             tableView.setContentOffset(CGPointZero, animated: true)
-            navigationController?.setNavigationBarHidden(false, animated: true)
         }
     }
     

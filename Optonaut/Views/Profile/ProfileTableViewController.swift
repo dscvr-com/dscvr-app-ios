@@ -42,6 +42,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
         super.viewDidLoad()
         
         tableView.registerClass(ProfileHeaderTableViewCell.self, forCellReuseIdentifier: "profile-header-cell")
+        tableView.registerClass(PlaceholderTableViewCell.self, forCellReuseIdentifier: "placeholder-cell")
         tableView.bounces = false
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer()
@@ -97,12 +98,20 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
         Mixpanel.sharedInstance().timeEvent("View.Profile")
         
         headerTableViewCell?.viewModel.reloadModel()
+        
+        tabBarController?.delegate = self
     }
 
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
         Mixpanel.sharedInstance().track("View.Profile", properties: ["person_id": personID, "person_name" : headerTableViewCell!.viewModel.person.displayName])
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        tabBarController?.delegate = nil
     }
     
     override func updateViewConstraints() {
@@ -114,6 +123,8 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if indexPath.row == 0 {
             return 280
+        } else if items.isEmpty {
+            return view.frame.height - 280
         } else {
             return super.tableView(tableView, heightForRowAtIndexPath: NSIndexPath(forRow: indexPath.row - 1, inSection: indexPath.section))
         }
@@ -126,13 +137,47 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
             cell.navigationController = navigationController as? NavigationController
             cell.bindViewModel(personID)
             return cell
+        } else if items.isEmpty {
+            let cell = tableView.dequeueReusableCellWithIdentifier("placeholder-cell") as! PlaceholderTableViewCell
+            cell.textView.text = "Record your first Optograph"
+            cell.iconView.text = String.iconWithName(.Rocket)
+            return cell
         } else {
             return super.tableView(tableView, cellForRowAtIndexPath: NSIndexPath(forRow: indexPath.row - 1, inSection: indexPath.section))
         }
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count + 1
+        return items.isEmpty ? 2 : items.count + 1
+    }
+    
+    func pushCamera() {
+        if StitchingService.isStitching() {
+            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last Optograph has finished rendering.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+        } else {
+            let cameraViewController = CameraViewController()
+            cameraViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(cameraViewController, animated: false)
+        }
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if indexPath.row == 1 && items.isEmpty {
+            pushCamera()
+        }
+    }
+    
+}
+
+// MARK: - UITabBarControllerDelegate
+extension ProfileTableViewController: UITabBarControllerDelegate {
+    
+    func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
+        if viewController == navigationController {
+            tableView.setContentOffset(CGPointZero, animated: true)
+        }
     }
     
 }

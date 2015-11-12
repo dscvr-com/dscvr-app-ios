@@ -116,13 +116,13 @@ class DetailsTableViewController: UIViewController, NoNavbar {
             }
         
         viewModel.viewIsActive.producer.skipRepeats()
-        .startWithNext { [weak self] active in
-            if let strongSelf = self  {
-                if !active {
-                    strongSelf.renderDelegate.image = nil
+            .startWithNext { [weak self] active in
+                if let strongSelf = self  {
+                    if !active {
+                        strongSelf.renderDelegate.image = nil
+                    }
                 }
             }
-        }
         
         glassesButtonView.setTitle(String.iconWithName(.Cardboard), forState: .Normal)
         glassesButtonView.setTitleColor(.whiteColor(), forState: .Normal)
@@ -163,12 +163,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
             self?.tableView.reloadData()
         }
         
-        viewModel.optographReloaded.producer.startWithNext { [weak self] in
-            if self?.viewModel.optograph.deletedAt != nil {
-                self?.navigationController?.popViewControllerAnimated(false)
-            }
-        }
-        
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
@@ -182,9 +176,8 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         viewModel.viewIsActive.value = true
         
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
-                self.viewModel.isLoading.producer.startWithSignal{ isLoadingSignal, disposable in
-                    
-                    isLoadingSignal.combineLatestWith(rotationSignal)
+            self.viewModel.isLoading.producer.startWithSignal { isLoadingSignal, disposable in
+                isLoadingSignal.combineLatestWith(rotationSignal)
                     //.filter { (isLoading, _) in return !isLoading } // Uncomment this line to only allow invoking the viewer when loading is finished
                     .map { (_, rotation) in return rotation }
                     .skipRepeats()
@@ -192,11 +185,13 @@ class DetailsTableViewController: UIViewController, NoNavbar {
                     .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
                     .take(1)
                     .observeOn(UIScheduler())
-                    .observeNext {
-                        [weak self] orientation in
-                        print(orientation.isLandscape)
-                        self?.pushViewer(orientation)
-                }
+                    .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
+            }
+        }
+        
+        viewModel.optographReloaded.producer.startWithNext { [weak self] in
+            if self?.viewModel.optograph.deletedAt != nil {
+                self?.navigationController?.popViewControllerAnimated(false)
             }
         }
     }
@@ -205,7 +200,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         super.viewDidDisappear(animated)
         
         Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID, "optograph_description" : viewModel.optograph.text])
-        
     }
     
     override func viewWillAppear(animated: Bool) {
