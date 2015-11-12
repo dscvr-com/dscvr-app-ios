@@ -30,10 +30,12 @@ class ViewerViewController: UIViewController  {
     private var rotationDisposable: Disposable?
     private var leftDownloadDisposable: Disposable?
     private var rightDownloadDisposable: Disposable?
+    private let imageManager = SDWebImageManager()
     
     private let settingsButtonView = UIButton()
     private var glassesSelectionView: GlassesSelectionView?
-    private let imageManager = SDWebImageManager()
+    private let leftLoadingView = UIActivityIndicatorView()
+    private let rightLoadingView = UIActivityIndicatorView()
     
     required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
         self.orientation = orientation
@@ -100,6 +102,18 @@ class ViewerViewController: UIViewController  {
         separatorLayer.frame = CGRect(x: 50, y: view.frame.height / 2 - 2, width: view.frame.width - 50, height: 4)
         view.layer.addSublayer(separatorLayer)
         
+        leftLoadingView.activityIndicatorViewStyle = .WhiteLarge
+        leftLoadingView.startAnimating()
+        leftLoadingView.hidesWhenStopped = true
+        leftLoadingView.frame = CGRect(x: view.frame.width / 2 - 20, y: view.frame.height / 4 - 20, width: 40, height: 40)
+        view.addSubview(leftLoadingView)
+        
+        rightLoadingView.activityIndicatorViewStyle = .WhiteLarge
+        rightLoadingView.startAnimating()
+        rightLoadingView.hidesWhenStopped = true
+        rightLoadingView.frame = CGRect(x: view.frame.width / 2 - 20, y: view.frame.height * 3 / 4 - 20, width: 40, height: 40)
+        view.addSubview(rightLoadingView)
+        
         settingsButtonView.frame = CGRect(x: 10, y: view.frame.height / 2 - 15, width: 30, height: 30)
         settingsButtonView.setTitle(String.iconWithName(.Settings), forState: .Normal)
         settingsButtonView.setTitleColor(.whiteColor(), forState: .Normal)
@@ -156,13 +170,14 @@ class ViewerViewController: UIViewController  {
                 self?.leftRenderDelegate.image = image
                 self?.leftDownloadDisposable = nil
                 self?.imageManager.imageCache.clearMemory()
+                self?.leftLoadingView.stopAnimating()
         }
         rightDownloadDisposable = imageManager.downloadImageForURL(ImageURL(optograph.rightTextureAssetID))
             .startWithNext { [weak self] image in
                 self?.rightRenderDelegate.image = image
                 self?.rightDownloadDisposable = nil
                 self?.imageManager.imageCache.clearMemory()
-
+                self?.rightLoadingView.stopAnimating()
         }
     }
     
