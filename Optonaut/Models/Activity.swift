@@ -35,7 +35,7 @@ struct Activity: DeletableModel {
         case .Views: return "Congratulations! Your Optograph just hit \(activityResourceViews!.count) views."
         case .Follow:
             if activityResourceFollow!.causingPerson.isFollowed {
-                return "\(activityResourceFollow!.causingPerson.displayName) liked your Optograph."
+                return "\(activityResourceFollow!.causingPerson.displayName) followed you back."
             } else {
                 return "\(activityResourceFollow!.causingPerson.displayName) started following you."
             }

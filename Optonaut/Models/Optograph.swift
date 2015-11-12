@@ -68,6 +68,9 @@ struct Optograph: DeletableModel {
             SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID), toDisk: true)
         case .PreviewImage(let data):
             SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID), toDisk: true)
+            // needs all different sizes
+            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID, fullDimension: .Width), toDisk: true)
+            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID, width: 32, height: 40), toDisk: true)
         }
     }
     
@@ -98,9 +101,6 @@ struct Optograph: DeletableModel {
                         OptographSchema.isPublished <-- self.isPublished
                     )
                 )
-                }, interrupted: {
-                    
-                    print("test")
             })
     }
     

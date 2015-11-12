@@ -71,7 +71,7 @@ struct TableViewResults<T: DeletableModel> {
 
 class FeedViewModel: NSObject {
     
-    var refreshTimer: NSTimer!
+//    private var refreshTimer: NSTimer
     
     let results = MutableProperty<TableViewResults<Optograph>>(.empty())
     let newResultsAvailable = MutableProperty<Bool>(false)
@@ -80,6 +80,9 @@ class FeedViewModel: NSObject {
     let loadMoreNotification = NotificationSignal<Void>()
     
     override init() {
+        
+//        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
+        
         super.init()
         
         let query = OptographTable.select(*)
@@ -150,10 +153,8 @@ class FeedViewModel: NSObject {
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
         
-        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
-        
         SessionService.onLogout { [weak self] in
-            self?.refreshTimer.invalidate()
+//            self?.refreshTimer.invalidate()
             self?.refreshNotification.dispose()
             self?.loadMoreNotification.dispose()
         }

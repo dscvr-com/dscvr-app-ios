@@ -144,7 +144,7 @@ class ApiService<T: Mappable> {
                             let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
                         } catch {}
                         
-                        let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode, message: error.description, error: error)
+                        let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode ?? -1, message: error.description, error: error)
                         sink.sendError(apiError)
                     } else {
                         if let data = data where data.length > 0 {
@@ -178,6 +178,7 @@ class ApiService<T: Mappable> {
             .on(error: { error in
                 if error.suspicious {
 //                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+                    print(error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
                 }
             })

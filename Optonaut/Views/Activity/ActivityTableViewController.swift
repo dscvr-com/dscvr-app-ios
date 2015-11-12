@@ -54,6 +54,8 @@ class ActivityTableViewController: UIViewController, RedNavbar {
                     }
                     self.tableView.endUpdates()
                     self.refreshControl.endRefreshing()
+                    
+                    NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: "markVisibleAsRead", userInfo: nil, repeats: false)
                 },
                 error: { _ in
                     self.refreshControl.endRefreshing()
@@ -97,6 +99,10 @@ extension ActivityTableViewController: UITableViewDelegate {
     }
     
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        markVisibleAsRead()
+    }
+    
+    @objc func markVisibleAsRead() {
         let visibleCells = tableView.visibleCells as! [ActivityTableViewCell]
         let unreadActivities = visibleCells.map({ $0.activity }).filter({ !$0.isRead })
         

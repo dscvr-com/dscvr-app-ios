@@ -28,7 +28,7 @@ class DetailsViewModel {
     let comments = MutableProperty<[Comment]>([])
     let viewIsActive = MutableProperty<Bool>(false)
     let isLoading = MutableProperty<Bool>(true)
-    let optographReloaded: MutableProperty<Void>
+    let optographReloaded = MutableProperty<Void>()
     
     var optograph = Optograph.newInstance()
     
@@ -53,12 +53,10 @@ class DetailsViewModel {
             return optograph
         }) {
             self.optograph = optograph
-            optographReloaded = MutableProperty()
             updateProperties()
         } else {
             // optograph opened via share link
             optograph.isPublished = true
-            optographReloaded = MutableProperty()
         }
         
         if optograph.isPublished {

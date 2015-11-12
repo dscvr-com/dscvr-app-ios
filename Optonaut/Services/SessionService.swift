@@ -20,27 +20,32 @@ struct SessionData {
     let ID: UUID
     var token: String {
         willSet {
-            NSUserDefaults.standardUserDefaults().setObject(token, forKey: "session_person_token")
+            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: "session_person_token")
         }
     }
     var password: String {
         willSet {
-            NSUserDefaults.standardUserDefaults().setObject(password, forKey: "session_person_password")
+            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: "session_person_password")
         }
     }
     var debuggingEnabled: Bool {
         willSet {
-            NSUserDefaults.standardUserDefaults().setBool(debuggingEnabled, forKey: "session_person_debugging_enabled")
+            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: "session_person_debugging_enabled")
         }
     }
     var onboardingVersion: Int {
         willSet {
-            NSUserDefaults.standardUserDefaults().setInteger(onboardingVersion, forKey: "session_person_onboarding_version")
+            NSUserDefaults.standardUserDefaults().setInteger(newValue, forKey: "session_person_onboarding_version")
+        }
+    }
+    var vrGlassesSelected: Bool {
+        willSet {
+            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: "session_person_vr_glasses_selected")
         }
     }
     var vrGlasses: String {
         willSet {
-            NSUserDefaults.standardUserDefaults().setObject(vrGlasses, forKey: "session_person_vr_glasses")
+            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: "session_person_vr_glasses")
         }
     }
 }
@@ -55,6 +60,7 @@ class SessionService {
                 NSUserDefaults.standardUserDefaults().setObject(newValue.password, forKey: "session_person_password")
                 NSUserDefaults.standardUserDefaults().setBool(newValue.debuggingEnabled, forKey: "session_person_debugging_enabled")
                 NSUserDefaults.standardUserDefaults().setInteger(newValue.onboardingVersion, forKey: "session_person_onboarding_version")
+                NSUserDefaults.standardUserDefaults().setBool(newValue.vrGlassesSelected, forKey: "session_person_vr_glasses_selected")
                 NSUserDefaults.standardUserDefaults().setObject(newValue.vrGlasses, forKey: "session_person_vr_glasses")
             } else {
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_id")
@@ -62,6 +68,7 @@ class SessionService {
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_password")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_debugging_enabled")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_onboarding_version")
+                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_vr_glasses_selected")
                 NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_vr_glasses")
             }
         }
@@ -90,6 +97,7 @@ class SessionService {
         let password = NSUserDefaults.standardUserDefaults().objectForKey("session_person_password") as? String
         let debuggingEnabled = NSUserDefaults.standardUserDefaults().boolForKey("session_person_debugging_enabled")
         let onboardingVersion = NSUserDefaults.standardUserDefaults().integerForKey("session_person_onboarding_version")
+        let vrGlassesSelected = NSUserDefaults.standardUserDefaults().boolForKey("session_person_vr_glasses_selected")
         let vrGlasses = NSUserDefaults.standardUserDefaults().objectForKey("session_person_vr_glasses") as? String
         if let ID = ID, token = token, password = password, vrGlasses = vrGlasses {
             sessionData = SessionData(
@@ -98,6 +106,7 @@ class SessionService {
                 password: password,
                 debuggingEnabled: debuggingEnabled,
                 onboardingVersion: onboardingVersion,
+                vrGlassesSelected: vrGlassesSelected,
                 vrGlasses: vrGlasses
             )
             
@@ -124,6 +133,7 @@ class SessionService {
                     password: password,
                     debuggingEnabled: false,
                     onboardingVersion: loginData.onboardingVersion,
+                    vrGlassesSelected: false,
                     vrGlasses: "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"
                 )
                 updateDeviceToken()

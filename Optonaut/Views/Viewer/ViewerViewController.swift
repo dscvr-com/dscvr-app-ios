@@ -106,6 +106,10 @@ class ViewerViewController: UIViewController  {
         settingsButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))
         view.addSubview(settingsButtonView)
+        
+        if !SessionService.sessionData!.vrGlassesSelected {
+            showGlassesSelection()
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -222,6 +226,7 @@ class ViewerViewController: UIViewController  {
         }
         
         glassesSelectionView!.paramsCallback = { [weak self] params in
+            SessionService.sessionData!.vrGlassesSelected = true
             self?.setViewerParameters(params)
         }
         
