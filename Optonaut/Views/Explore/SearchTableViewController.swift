@@ -31,6 +31,11 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
         
         searchBar.delegate = self
         searchBar.placeholder = "What are you looking for?"
+        searchBar.searchBarStyle = .Minimal
+        
+        if #available(iOS 9.0, *) {
+            (UIBarButtonItem.appearanceWhenContainedInInstancesOfClasses([UISearchBar.self])).tintColor = .DarkGrey
+        }
         
         view.addSubview(searchBar)
         
@@ -141,6 +146,14 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
 
 // MARK: - UISearchBarDelegate
 extension SearchTableViewController: UISearchBarDelegate {
+    
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        searchBar.showsCancelButton = true
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+    }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         if viewModel.searchText.value.isEmpty {

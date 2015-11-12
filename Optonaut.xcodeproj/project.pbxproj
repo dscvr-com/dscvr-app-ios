@@ -85,8 +85,6 @@
 		8FAB9F401B8F01DF00B4C8CB /* NewCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */; };
 		8FAB9F411B8F01DF00B4C8CB /* NewCommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */; };
 		8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F0C1B8F01DF00B4C8CB /* ExploreNavViewController.swift */; };
-		8FAB9F441B8F01DF00B4C8CB /* ExploreTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F0D1B8F01DF00B4C8CB /* ExploreTableViewController.swift */; };
-		8FAB9F451B8F01DF00B4C8CB /* ExploreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F0E1B8F01DF00B4C8CB /* ExploreViewModel.swift */; };
 		8FAB9F461B8F01DF00B4C8CB /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */; };
 		8FAB9F471B8F01DF00B4C8CB /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */; };
 		8FAB9F481B8F01DF00B4C8CB /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F121B8F01DF00B4C8CB /* FeedViewModel.swift */; };
@@ -299,8 +297,6 @@
 		8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentTableViewCell.swift; sourceTree = "<group>"; };
 		8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F0C1B8F01DF00B4C8CB /* ExploreNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreNavViewController.swift; sourceTree = "<group>"; };
-		8FAB9F0D1B8F01DF00B4C8CB /* ExploreTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreTableViewController.swift; sourceTree = "<group>"; };
-		8FAB9F0E1B8F01DF00B4C8CB /* ExploreViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
 		8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9F121B8F01DF00B4C8CB /* FeedViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
@@ -610,7 +606,6 @@
 				8FAB9F171B8F01DF00B4C8CB /* Login */,
 				8FCADEDE1BAB0AC40018674B /* Onboarding */,
 				8FAB9F1E1B8F01DF00B4C8CB /* Profile */,
-				8FAB9F271B8F01DF00B4C8CB /* Search */,
 				A5DE71DF1BE28A7400316F82 /* Viewer */,
 			);
 			path = Views;
@@ -683,8 +678,6 @@
 			isa = PBXGroup;
 			children = (
 				8FAB9F0C1B8F01DF00B4C8CB /* ExploreNavViewController.swift */,
-				8FAB9F0D1B8F01DF00B4C8CB /* ExploreTableViewController.swift */,
-				8FAB9F0E1B8F01DF00B4C8CB /* ExploreViewModel.swift */,
 				8F966E0B1BCCF33900F5F5F8 /* SearchTableViewController.swift */,
 				8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */,
 				8F966E0C1BCCF33900F5F5F8 /* SearchViewModel.swift */,
@@ -733,13 +726,6 @@
 				8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */,
 			);
 			path = Profile;
-			sourceTree = "<group>";
-		};
-		8FAB9F271B8F01DF00B4C8CB /* Search */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Search;
 			sourceTree = "<group>";
 		};
 		8FAB9F5F1B8F02D500B4C8CB /* Utils */ = {
@@ -1318,7 +1304,6 @@
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
 				8F5335A01BDBA5EA0058961A /* ActivityResourceViewsTable.swift in Sources */,
-				8FAB9F451B8F01DF00B4C8CB /* ExploreViewModel.swift in Sources */,
 				8FAB9F3E1B8F01DF00B4C8CB /* DetailsTableViewCell.swift in Sources */,
 				A5FD5D7D1BEA5A4E0031ED1E /* image.cpp in Sources */,
 				A5FD5D821BEA5A4E0031ED1E /* io.cpp in Sources */,
@@ -1434,7 +1419,6 @@
 				8F900B431B839D0C0085566C /* PersonTable.swift in Sources */,
 				8FD845BF1BC92A6F0064048D /* OptographInfoViewModel.swift in Sources */,
 				8FAB9F401B8F01DF00B4C8CB /* NewCommentTableViewCell.swift in Sources */,
-				8FAB9F441B8F01DF00B4C8CB /* ExploreTableViewController.swift in Sources */,
 				8FC7E3751BD15B9D00E97CC3 /* OrientationEKF.mm in Sources */,
 				8F7738161B380F5D001F642B /* Person.swift in Sources */,
 				A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */,
