@@ -134,7 +134,7 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     Stores::right.Clear();
     
     optonaut::Recorder::exposureEnabled = false;
-    optonaut::Recorder::alignmentEnabled = false;
+    optonaut::Recorder::alignmentEnabled = true;
     
     self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero, self->intrinsics, Stores::left, Stores::right, optonaut::RecorderGraph::ModeTruncated, true);
     
