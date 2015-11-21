@@ -82,7 +82,14 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
         Mixpanel.sharedInstance().timeEvent("View.Search")
         
         updateNavbarAppear()
-//        searchBar.becomeFirstResponder()
+        
+        tabBarController?.delegate = self
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        tabBarController?.delegate = nil
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -139,6 +146,34 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
         if indexPath.row > 0 {
             let hashtag = hashtags[indexPath.row - 1].name
             navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
+        }
+    }
+    
+}
+
+// MARK: - UITabBarControllerDelegate
+extension SearchTableViewController: UITabBarControllerDelegate {
+    
+    func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
+        if let t = tabBarController as? TabBarViewController where !TabBarViewController.tabBarController(t)(t, shouldSelectViewController: viewController) {
+            if !SessionService.isLoggedIn {
+                let alert = UIAlertController(title: "Please login first", message: "In order to see this tab you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Login now", style: .Default, handler: { [weak self] _ in
+                    self?.navigationController?.presentViewController(LoginViewController(), animated: false, completion: nil)
+                    }))
+                alert.addAction(UIAlertAction(title: "Later", style: .Cancel, handler: { _ in return }))
+                self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+            }
+            return false
+        }
+        
+        return true
+    }
+    
+    func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
+        if viewController == navigationController {
+            tableView.setContentOffset(CGPointZero, animated: true)
+            searchBar.becomeFirstResponder()
         }
     }
     

@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import SwiftyUserDefaults
 
 class OnboardingProfileViewModel {
     
@@ -32,7 +33,7 @@ class OnboardingProfileViewModel {
     
     init() {
         
-        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- SessionService.sessionData!.ID)
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Defaults[.SessionPersonID]!)
         person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
             
         avatarUploaded.producer

@@ -24,19 +24,3 @@ struct PersonSchemaType: ModelSchema {
 
 let PersonSchema = PersonSchemaType()
 let PersonTable = Table("person")
-
-func PersonMigration() -> String {
-    return PersonTable.create { t in
-        t.column(PersonSchema.ID, primaryKey: true)
-        t.column(PersonSchema.email)
-        t.column(PersonSchema.displayName)
-        t.column(PersonSchema.userName)
-        t.column(PersonSchema.text)
-        t.column(PersonSchema.followersCount)
-        t.column(PersonSchema.followedCount)
-        t.column(PersonSchema.isFollowed)
-        t.column(PersonSchema.createdAt)
-        t.column(PersonSchema.wantsNewsletter)
-        t.column(PersonSchema.avatarAssetID)
-    }
-}

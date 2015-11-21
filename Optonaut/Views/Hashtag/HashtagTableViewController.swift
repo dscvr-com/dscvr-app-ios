@@ -91,6 +91,16 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar, Uniqu
             return
         }
         
+        if !SessionService.isLoggedIn {
+            let alert = UIAlertController(title: "Please login first", message: "In order to follow #\(hashtag.name) you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Login now", style: .Default, handler: { [weak self] _ in
+                self?.navigationController?.presentViewController(LoginViewController(), animated: false, completion: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "Later", style: .Cancel, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
         let followedBefore = isFollowed.value
         
         SignalProducer<Bool, ApiError>(value: followedBefore)

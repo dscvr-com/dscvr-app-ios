@@ -17,12 +17,3 @@ struct HashtagSchemaType: ModelSchema {
 
 let HashtagSchema = HashtagSchemaType()
 let HashtagTable = Table("hashtag")
-
-func HashtagMigration() -> String {
-    return HashtagTable.create { t in
-        t.column(HashtagSchema.ID, primaryKey: true)
-        t.column(HashtagSchema.name)
-        t.column(HashtagSchema.previewAssetID)
-        t.column(HashtagSchema.isFollowed)
-    }
-}

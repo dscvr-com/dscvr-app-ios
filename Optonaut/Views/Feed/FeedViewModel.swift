@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import SwiftyUserDefaults
 
 struct TableViewResults<T: DeletableModel> {
     let insert: [Int]
@@ -86,7 +87,7 @@ class FeedViewModel: NSObject {
         let query = OptographTable.select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == SessionService.sessionData!.ID)
+            .filter(OptographTable[OptographSchema.isStaffPick] || PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == (Defaults[.SessionPersonID] ?? Person.guestID) || PersonTable[PersonSchema.ID] == Person.guestID)
             .order(CommentSchema.createdAt.asc)
         
         refreshNotification.signal

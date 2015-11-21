@@ -16,11 +16,3 @@ struct ActivityResourceViewsSchemaType: ModelSchema {
 
 let ActivityResourceViewsSchema = ActivityResourceViewsSchemaType()
 let ActivityResourceViewsTable = Table("activity_resource_views")
-
-func ActivityResourceViewsMigration() -> String {
-    return ActivityResourceViewsTable.create { t in
-        t.column(ActivityResourceViewsSchema.ID, primaryKey: true)
-        t.column(ActivityResourceViewsSchema.count)
-        t.column(ActivityResourceViewsSchema.optographID)
-    }
-}

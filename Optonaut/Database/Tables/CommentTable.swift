@@ -18,13 +18,3 @@ struct CommentSchemaType: ModelSchema {
 
 let CommentSchema = CommentSchemaType()
 let CommentTable = Table("comment")
-
-func CommentMigration() -> String {
-    return CommentTable.create { t in
-        t.column(CommentSchema.ID, primaryKey: true)
-        t.column(CommentSchema.text)
-        t.column(CommentSchema.createdAt)
-        t.column(CommentSchema.personID)
-        t.column(CommentSchema.optographID)
-    }
-}

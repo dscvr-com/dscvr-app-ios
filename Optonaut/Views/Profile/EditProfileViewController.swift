@@ -10,6 +10,7 @@ import UIKit
 import ReactiveCocoa
 import HexColor
 import Mixpanel
+import SwiftyUserDefaults
 
 class EditProfileViewController: UIViewController, RedNavbar {
     
@@ -367,7 +368,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         
         oldPasswordAlert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { _ in
             let oldPasswordtextField = oldPasswordAlert.textFields![0] as UITextField
-            if oldPasswordtextField.text == SessionService.sessionData?.password {
+            if oldPasswordtextField.text == Defaults[.SessionPassword] {
                 self.presentViewController(newPasswordAlert, animated: true, completion: nil)
             } else {
                 oldPasswordAlert.message = "Your current password was wrong. Please try again."

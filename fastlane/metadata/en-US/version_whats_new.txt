@@ -1,11 +1,4 @@
-New in 1.3.1:
+New in 1.4.0:
 
-- [Feature] Push notifications for activities such as likes, comments and views
-- [Feature] You can now follow and unfollow hashtags in order to change your feed
-- [Improvement] The recording quality and resolution got a LOT better
-- [Improvement] Creating an Optograph became a bit simpler. You're now supported when entering your hashtags
-- [Improvement] The app is a lot more stable in general now
-- [Fixed] Location overlapped UI elements
-- [Fixed] Opening a shared Optograph no longer crashes the app
-- [Fixed] Optograph rendering occurred for other Optographs in your feed
+- [Feature] App can be used without login. Relogin needed.
 - [Fixed] Countless minor issues

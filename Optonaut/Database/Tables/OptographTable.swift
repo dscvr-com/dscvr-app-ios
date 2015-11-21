@@ -31,24 +31,3 @@ struct OptographSchemaType: ModelSchema {
 let OptographSchema = OptographSchemaType()
 let OptographTable = Table("optograph")
 
-func OptographMigration() -> String {
-    return OptographTable.create { t in
-        t.column(OptographSchema.ID, primaryKey: true)
-        t.column(OptographSchema.text)
-        t.column(OptographSchema.personID)
-        t.column(OptographSchema.locationID)
-        t.column(OptographSchema.createdAt)
-        t.column(OptographSchema.deletedAt)
-        t.column(OptographSchema.isStarred)
-        t.column(OptographSchema.starsCount)
-        t.column(OptographSchema.commentsCount)
-        t.column(OptographSchema.viewsCount)
-        t.column(OptographSchema.isStitched)
-        t.column(OptographSchema.isPublished)
-        t.column(OptographSchema.previewAssetID)
-        t.column(OptographSchema.leftTextureAssetID)
-        t.column(OptographSchema.rightTextureAssetID)
-        t.column(OptographSchema.isStaffPick)
-        t.column(OptographSchema.hashtagString)
-    }
-}

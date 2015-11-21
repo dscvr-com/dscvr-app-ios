@@ -73,12 +73,12 @@ class PipelineService {
         optographs.forEach { optograph in
             if !optograph.isStitched {
                 signals[optograph.ID] = stitch(optograph)
-            } else if Reachability.connectedToNetwork() {
+            } else if Reachability.connectedToNetwork() && SessionService.isLoggedIn {
                 signals[optograph.ID] = publish(optograph)
             }
         }
         
-        if optographs.filter({ !$0.isStitched }).isEmpty && StitchingService.hasUnstitchedRecordings() {
+        if optographs.filter({ !$0.isStitched }).isEmpty && !StitchingService.isStitching() && StitchingService.hasUnstitchedRecordings() {
             // This happens when an optograph was recorded, but never
             // inserted into the DB, for example due to cancel.
             // So it needs to be removed.

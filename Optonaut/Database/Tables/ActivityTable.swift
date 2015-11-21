@@ -21,17 +21,3 @@ struct ActivitySchemaType: ModelSchema {
 
 let ActivitySchema = ActivitySchemaType()
 let ActivityTable = Table("activity")
-
-func ActivityMigration() -> String {
-    return ActivityTable.create { t in
-        t.column(ActivitySchema.ID, primaryKey: true)
-        t.column(ActivitySchema.createdAt)
-        t.column(ActivitySchema.deletedAt)
-        t.column(ActivitySchema.type)
-        t.column(ActivitySchema.isRead)
-        t.column(ActivitySchema.activityResourceStarID)
-        t.column(ActivitySchema.activityResourceCommentID)
-        t.column(ActivitySchema.activityResourceViewsID)
-        t.column(ActivitySchema.activityResourceFollowID)
-    }
-}

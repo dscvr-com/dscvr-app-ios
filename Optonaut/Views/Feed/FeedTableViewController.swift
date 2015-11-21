@@ -79,6 +79,10 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
         
         Mixpanel.sharedInstance().timeEvent("View.Feed")
         
+        Async.background {
+            PipelineService.check()
+        }
+        
         tabBarController?.delegate = self
     }
     
@@ -157,6 +161,22 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
 
 // MARK: - UITabBarControllerDelegate
 extension FeedTableViewController: UITabBarControllerDelegate {
+    
+    func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
+        if let t = tabBarController as? TabBarViewController where !TabBarViewController.tabBarController(t)(t, shouldSelectViewController: viewController) {
+            if !SessionService.isLoggedIn {
+                let alert = UIAlertController(title: "Please login first", message: "In order to see this tab you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Login now", style: .Default, handler: { [weak self] _ in
+                    self?.navigationController?.presentViewController(LoginViewController(), animated: false, completion: nil)
+                    }))
+                alert.addAction(UIAlertAction(title: "Later", style: .Cancel, handler: { _ in return }))
+                self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+            }
+            return false
+        }
+        
+        return true
+    }
     
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
         if viewController == navigationController {

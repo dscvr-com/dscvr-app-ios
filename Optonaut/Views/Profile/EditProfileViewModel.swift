@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import SwiftyUserDefaults
 
 class EditProfileViewModel {
     
@@ -24,9 +25,9 @@ class EditProfileViewModel {
     private var person = Person.newInstance()
     
     init() {
-        debugEnabled.value = SessionService.sessionData!.debuggingEnabled
+        debugEnabled.value = Defaults[.SessionDebuggingEnabled]
         
-        let query = PersonTable.filter(PersonTable[PersonSchema.ID] == SessionService.sessionData!.ID)
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] == Defaults[.SessionPersonID]!)
         
         if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
             self.person = person
@@ -93,8 +94,8 @@ class EditProfileViewModel {
     func updatePassword(currentPassword: String, newPassword: String) -> SignalProducer<LoginMappable, ApiError> {
         return ApiService<LoginMappable>.post("persons/me/change-password", parameters: ["current": currentPassword, "new": newPassword])
             .on(next: { loginData in
-                SessionService.sessionData?.token = loginData.token
-                SessionService.sessionData?.password = newPassword
+                Defaults[.SessionToken] = loginData.token
+                Defaults[.SessionPassword] = newPassword
             })
     }
     
@@ -104,7 +105,7 @@ class EditProfileViewModel {
     
     func toggleDebug() {
         debugEnabled.value = !debugEnabled.value
-        SessionService.sessionData?.debuggingEnabled = debugEnabled.value
+        Defaults[.SessionDebuggingEnabled] = debugEnabled.value
     }
     
     func toggleNewsletter() {

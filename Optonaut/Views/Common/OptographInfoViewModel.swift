@@ -11,7 +11,7 @@ import ReactiveCocoa
 class OptographInfoViewModel {
     
     enum Status: Equatable {
-        case Published, Publishing, Stitching, Offline
+        case Published, Publishing, Stitching, Offline, Guest
     }
     
     let displayName: ConstantProperty<String>
@@ -43,6 +43,8 @@ class OptographInfoViewModel {
             updateStatus()
         } else if optograph.isPublished {
             status = MutableProperty(.Published)
+        } else if !SessionService.isLoggedIn {
+            status = MutableProperty(.Guest)
         } else if Reachability.connectedToNetwork() {
             status = MutableProperty(.Publishing)
             updateStatus()

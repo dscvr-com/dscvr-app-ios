@@ -11,6 +11,7 @@ import Alamofire
 import ReactiveCocoa
 import ObjectMapper
 import Crashlytics
+import SwiftyUserDefaults
 
 struct EmptyResponse: Mappable {
     init() {}
@@ -110,7 +111,7 @@ class ApiService<T: Mappable> {
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
-        if let token = SessionService.sessionData?.token {
+        if let token = Defaults[.SessionToken] {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         

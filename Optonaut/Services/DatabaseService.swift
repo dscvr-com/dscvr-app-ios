@@ -76,28 +76,8 @@ class DatabaseService {
     
     private static let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/db.sqlite3"
     private static let migrations = [
-        ActivityMigration,
-        ActivityResourceStarMigration,
-        ActivityResourceCommentMigration,
-        ActivityResourceViewsMigration,
-        ActivityResourceFollowMigration,
-        CommentMigration,
-        HashtagMigration,
-        LocationMigration,
-        OptographMigration,
-        PersonMigration,
-    ]
-    private static let tables = [
-        ActivityTable,
-        ActivityResourceStarTable,
-        ActivityResourceCommentTable,
-        ActivityResourceViewsTable,
-        ActivityResourceFollowTable,
-        CommentTable,
-        HashtagTable,
-        LocationTable,
-        OptographTable,
-        PersonTable,
+        migration0001,
+        migration0002,
     ]
     
     static func prepare() throws {
@@ -107,17 +87,31 @@ class DatabaseService {
         // enable console logging
 //        defaultConnection.trace { msg in print("\(msg)\n") }
         
-        // reset database if new version available
-        if VersionService.isNew {
-            try reset()
-        }
+        try migrate()
         
         SessionService.onLogout(performAlways: true) { try! reset() }
     }
     
     static func reset() throws {
-        try dropAllTables()
-        try migrate()
+        let ephemeralTables = [
+            ActivityTable,
+            ActivityResourceStarTable,
+            ActivityResourceCommentTable,
+            ActivityResourceViewsTable,
+            ActivityResourceFollowTable,
+            CommentTable,
+            HashtagTable,
+            LocationTable,
+        ]
+        for ephemeralTable in ephemeralTables {
+            try defaultConnection.run(ephemeralTable.delete())
+        }
+        
+        let optographsToDelete = OptographTable.filter(OptographSchema.personID != Person.guestID)
+        try defaultConnection.run(optographsToDelete.delete())
+        
+        let personsToDelete = PersonTable.filter(PersonSchema.ID != Person.guestID)
+        try defaultConnection.run(personsToDelete.delete())
     }
     
     static func query(type: DatabaseQueryType, query: Table) -> SignalProducer<Row, DatabaseQueryError> {
@@ -139,15 +133,18 @@ class DatabaseService {
         }
     }
     
-    private static func dropAllTables() throws {
-        for table in tables {
-            try defaultConnection.run(table.drop(ifExists: true))
-        }
-    }
-    
     private static func migrate() throws {
-        for migration in migrations {
-            try defaultConnection.run(migration())
+        var userVersion = defaultConnection.userVersion
+        for (index, migration) in migrations.enumerate() {
+            let migrationVersion = index + 1
+            if userVersion < migrationVersion {
+                try defaultConnection.transaction {
+                    try migration(defaultConnection)
+                    defaultConnection.userVersion = migrationVersion
+                }
+                userVersion = migrationVersion
+                print("Migrated database to version \(migrationVersion)")
+            }
         }
     }
     
@@ -156,6 +153,13 @@ class DatabaseService {
 typealias SQLiteRow = SQLite.Row
 typealias SQLiteTable = SQLite.Table
 typealias SQLiteSetter = SQLite.Setter
+
+extension Connection {
+    public var userVersion: Int {
+        get { return Int(scalar("PRAGMA user_version") as! Int64) }
+        set { try! run("PRAGMA user_version = \(newValue)") }
+    }
+}
 
 infix operator <-- {
     associativity left

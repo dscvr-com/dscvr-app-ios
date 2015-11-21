@@ -23,6 +23,7 @@ class LoginViewController: UIViewController {
     let signupTextView = UILabel()
     let signupHelpTextView = UILabel()
     let loadingView = UIView()
+    let skipTextView = UILabel()
     
     var formViewBottomConstraint: NSLayoutConstraint?
     var didSetConstraints = false
@@ -42,6 +43,13 @@ class LoginViewController: UIViewController {
         logoView.textColor = .whiteColor()
         logoView.font = UIFont.iconOfSize(35)
         view.addSubview(logoView)
+        
+        skipTextView.textColor = .whiteColor()
+        skipTextView.text = "Skip"
+        skipTextView.font = .displayOfSize(14, withType: .Semibold)
+        skipTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "skip"))
+        skipTextView.userInteractionEnabled = true
+        view.addSubview(skipTextView)
         
         view.addSubview(formView)
         
@@ -138,6 +146,10 @@ class LoginViewController: UIViewController {
     
     override func updateViewConstraints() {
         if !didSetConstraints {
+            
+            skipTextView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 50)
+            skipTextView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -30)
+            
             logoView.autoAlignAxisToSuperviewAxis(.Vertical)
             logoView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -100)
             
@@ -188,6 +200,10 @@ class LoginViewController: UIViewController {
     
     func showForgotPasswordViewController() {
         presentViewController(ForgotPasswordViewController(), animated: false, completion: nil)
+    }
+    
+    func skip() {
+        presentViewController(TabBarViewController(), animated: false, completion: nil)
     }
     
     // MARK: - keyboard stuff

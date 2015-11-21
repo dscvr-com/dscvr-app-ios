@@ -16,11 +16,3 @@ struct ActivityResourceStarSchemaType: ModelSchema {
 
 let ActivityResourceStarSchema = ActivityResourceStarSchemaType()
 let ActivityResourceStarTable = Table("activity_resource_star")
-
-func ActivityResourceStarMigration() -> String {
-    return ActivityResourceStarTable.create { t in
-        t.column(ActivityResourceStarSchema.ID, primaryKey: true)
-        t.column(ActivityResourceStarSchema.optographID)
-        t.column(ActivityResourceStarSchema.causingPersonID)
-    }
-}

@@ -15,10 +15,3 @@ struct ActivityResourceFollowSchemaType: ModelSchema {
 
 let ActivityResourceFollowSchema = ActivityResourceFollowSchemaType()
 let ActivityResourceFollowTable = Table("activity_resource_follow")
-
-func ActivityResourceFollowMigration() -> String {
-    return ActivityResourceFollowTable.create { t in
-        t.column(ActivityResourceFollowSchema.ID, primaryKey: true)
-        t.column(ActivityResourceFollowSchema.causingPersonID)
-    }
-}

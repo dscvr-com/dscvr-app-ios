@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftyUserDefaults
 
 protocol OptographOptions: class {
     var navigationController: NavigationController? { get }
@@ -19,7 +20,7 @@ extension OptographOptions {
     func showOptions(var optograph: Optograph, deleteCallback: (() -> ())? = nil) {
         let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         
-        if SessionService.sessionData?.ID == optograph.person.ID {
+        if optograph.person.ID == Defaults[.SessionPersonID] {
             actionAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
                 let confirmAlert = UIAlertController(title: "Are you sure?", message: "Do you really want to delete this Optograph? You cannot undo this.", preferredStyle: .Alert)
                 confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))

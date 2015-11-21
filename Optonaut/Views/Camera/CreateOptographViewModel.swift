@@ -11,6 +11,7 @@ import ReactiveCocoa
 import ObjectMapper
 import Async
 import WebImage
+import SwiftyUserDefaults
 
 class CreateOptographViewModel {
     
@@ -116,7 +117,7 @@ class CreateOptographViewModel {
     }
     
     func post() {
-        optograph.person.ID = SessionService.sessionData!.ID
+        optograph.person.ID = Defaults[.SessionPersonID] ?? Person.guestID
         
         try! optograph.insertOrUpdate()
         try! optograph.location.insertOrUpdate()

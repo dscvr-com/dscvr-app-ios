@@ -22,6 +22,8 @@ struct Person: Model {
     var wantsNewsletter: Bool
     var avatarAssetID: UUID
     
+    static let guestID: UUID = "00000000-0000-0000-0000-000000000000"
+    
     static func newInstance() -> Person {
         return Person(
             ID: uuid(),

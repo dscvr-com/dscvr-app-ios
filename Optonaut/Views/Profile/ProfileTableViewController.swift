@@ -55,18 +55,26 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
         viewModel.results.producer
             .on(
                 next: { [weak self] results in
+                    let wasEmptyBefore = self?.items.isEmpty ?? false
+                    
                     self?.items = results.models
-                    self?.tableView.beginUpdates()
-                    if !results.delete.isEmpty {
-                        self?.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
+                    
+                    if wasEmptyBefore {
+                        self?.tableView.reloadData()
+                    } else {
+                        self?.tableView.beginUpdates()
+                        if !results.delete.isEmpty {
+                            self?.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
+                        }
+                        if !results.update.isEmpty {
+                            self?.tableView.reloadRowsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
+                        }
+                        if !results.insert.isEmpty {
+                            self?.tableView.insertRowsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
+                        }
+                        self?.tableView.endUpdates()
                     }
-                    if !results.update.isEmpty {
-                        self?.tableView.reloadRowsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
-                    }
-                    if !results.insert.isEmpty {
-                        self?.tableView.insertRowsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0 + 1, inSection: 0) }, withRowAnimation: .None)
-                    }
-                    self?.tableView.endUpdates()
+                    
                     self?.refreshControl.endRefreshing()
                 },
                 error: { [weak self] _ in

@@ -309,6 +309,7 @@ extension DetailsTableViewController: UITableViewDataSource {
         } else if indexPath.row == 1 {
             let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
             cell.bindViewModel(viewModel.optograph.ID, commentsCount: viewModel.commentsCount.value)
+            cell.navigationController = navigationController as? NavigationController
             cell.delegate = self
             return cell
         } else {

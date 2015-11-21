@@ -19,14 +19,3 @@ struct LocationSchemaType: ModelSchema {
 
 let LocationSchema = LocationSchemaType()
 let LocationTable = Table("location")
-
-func LocationMigration() -> String {
-    return LocationTable.create { t in
-        t.column(LocationSchema.ID, primaryKey: true)
-        t.column(LocationSchema.text)
-        t.column(LocationSchema.country)
-        t.column(LocationSchema.createdAt)
-        t.column(LocationSchema.latitude)
-        t.column(LocationSchema.longitude)
-    }
-}

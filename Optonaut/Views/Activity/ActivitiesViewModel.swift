@@ -58,7 +58,7 @@ class ActivitiesViewModel: NSObject {
 //            .observeNext { self.results.value = $0 }
         
         refreshNotification.signal
-            .takeWhile { _ in Reachability.connectedToNetwork() }
+            .takeWhile { _ in Reachability.connectedToNetwork() && SessionService.isLoggedIn }
             .flatMap(.Latest) { _ in
                 ApiService<Activity>.get("activities")
                     .observeOnUserInteractive()

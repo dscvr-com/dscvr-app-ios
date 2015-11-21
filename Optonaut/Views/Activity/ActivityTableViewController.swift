@@ -42,18 +42,26 @@ class ActivityTableViewController: UIViewController, RedNavbar {
         viewModel.results.producer
             .on(
                 next: { results in
+                    let wasEmptyBefore = self.items.isEmpty
+                    
                     self.items = results.models
-                    self.tableView.beginUpdates()
-                    if !results.delete.isEmpty {
-                        self.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                    
+                    if wasEmptyBefore {
+                        self.tableView.reloadData()
+                    } else {
+                        self.tableView.beginUpdates()
+                        if !results.delete.isEmpty {
+                            self.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                        }
+                        if !results.update.isEmpty {
+                            self.tableView.reloadRowsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                        }
+                        if !results.insert.isEmpty {
+                            self.tableView.insertRowsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
+                        }
+                        self.tableView.endUpdates()
                     }
-                    if !results.update.isEmpty {
-                        self.tableView.reloadRowsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
-                    }
-                    if !results.insert.isEmpty {
-                        self.tableView.insertRowsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
-                    }
-                    self.tableView.endUpdates()
+                    
                     self.refreshControl.endRefreshing()
                     
                     NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: "markVisibleAsRead", userInfo: nil, repeats: false)
@@ -79,6 +87,8 @@ class ActivityTableViewController: UIViewController, RedNavbar {
         super.viewDidAppear(animated)
         
         updateNavbarAppear()
+                
+        DeviceTokenService.askForPermission()
         
         tabBarController?.delegate = self
     }

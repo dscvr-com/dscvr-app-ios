@@ -90,7 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
         }
         
-        SessionService.deviceToken = tokenString
+        DeviceTokenService.deviceToken = tokenString
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject: AnyObject]) {
@@ -102,7 +102,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func prepareAndExecute(fn: () -> ()) {
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
-        Fabric.with([Crashlytics.self()])
+        
+        #if !DEBUG
+            Fabric.with([Crashlytics.self()])
+        #endif
         
         if case .Production = Env {
             Mixpanel.sharedInstanceWithToken("10ba57dae2871ca534c61f0f89bab97d")
@@ -131,7 +134,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fn()
             }
         } else {
-            window?.rootViewController = LoginViewController()
+            window?.rootViewController = TabBarViewController()
         }
         
         VersionService.onOutdatedApiVersion {

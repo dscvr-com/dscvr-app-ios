@@ -17,12 +17,3 @@ struct ActivityResourceCommentSchemaType: ModelSchema {
 
 let ActivityResourceCommentSchema = ActivityResourceCommentSchemaType()
 let ActivityResourceCommentTable = Table("activity_resource_comment")
-
-func ActivityResourceCommentMigration() -> String {
-    return ActivityResourceCommentTable.create { t in
-        t.column(ActivityResourceCommentSchema.ID, primaryKey: true)
-        t.column(ActivityResourceCommentSchema.optographID)
-        t.column(ActivityResourceCommentSchema.commentID)
-        t.column(ActivityResourceCommentSchema.causingPersonID)
-    }
-}
