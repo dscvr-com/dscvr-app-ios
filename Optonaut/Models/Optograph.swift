@@ -128,6 +128,10 @@ struct Optograph: DeletableModel {
 }
 
 func ==(lhs: Optograph, rhs: Optograph) -> Bool {
+    guard let lhsLocation = lhs.location, rhsLocation = rhs.location else {
+        return false
+    }
+    
     return lhs.ID == rhs.ID
         && lhs.isStitched == rhs.isStitched
         && lhs.starsCount == rhs.starsCount
@@ -135,7 +139,7 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
         && lhs.isStarred == rhs.isStarred
         && lhs.starsCount == rhs.starsCount
         && lhs.person == rhs.person
-        && lhs.location == rhs.location
+        && lhsLocation == rhsLocation
 }
 
 extension Optograph: Mappable {
