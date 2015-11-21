@@ -10,3 +10,5 @@ optonaut::CheckpointStore MakeStore(std::string path) {
 
 optonaut::CheckpointStore Stores::left = MakeStore("left");
 optonaut::CheckpointStore Stores::right = MakeStore("right");
+optonaut::CheckpointStore Stores::common = MakeStore("common");
+
