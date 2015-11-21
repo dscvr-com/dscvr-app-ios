@@ -46,8 +46,10 @@ class CreateOptographViewModel {
                 LocationService.location()
                     .take(1)
                     .on(next: { (lat, lon) in
-                        self.optograph.location.latitude = lat
-                        self.optograph.location.longitude = lon
+                        var location = Location.newInstance()
+                        location.latitude = lat
+                        location.longitude = lon
+                        self.optograph.location = location
                     })
                     .ignoreError()
             }
@@ -67,8 +69,8 @@ class CreateOptographViewModel {
                 self.locationFound.value = true
                 self.locationText.value = location.text
                 self.locationCountry.value = location.country
-                self.optograph.location.text = location.text
-                self.optograph.location.country = location.country
+                self.optograph.location!.text = location.text
+                self.optograph.location!.country = location.country
             }
         
         text.producer.startWithNext { self.optograph.text = $0 }
@@ -93,8 +95,7 @@ class CreateOptographViewModel {
                     .joinWithSeparator(",")
             }
         
-        hashtagStringStatus <~ locationFound.producer
-            .combineLatestWith(previewImageUrl.producer.map(isNotEmpty)).map(and)
+        hashtagStringStatus <~ previewImageUrl.producer.map(isNotEmpty)
             .combineLatestWith(hashtagStringValid.producer)
             .map { (requirements, validHashtag) in
                 if !requirements {
@@ -105,10 +106,8 @@ class CreateOptographViewModel {
             }
         
         textEnabled <~ previewImageUrl.producer.map(isNotEmpty)
-            .combineLatestWith(locationFound.producer).map(and)
     
         readyToSubmit <~ previewImageUrl.producer.map(isNotEmpty)
-            .combineLatestWith(locationFound.producer).map(and)
             .combineLatestWith(hashtagStringValid.producer).map(and)
     }
     
@@ -120,7 +119,7 @@ class CreateOptographViewModel {
         optograph.person.ID = Defaults[.SessionPersonID] ?? Person.guestID
         
         try! optograph.insertOrUpdate()
-        try! optograph.location.insertOrUpdate()
+        try! optograph.location?.insertOrUpdate()
     }
     
     func enableLocation() {

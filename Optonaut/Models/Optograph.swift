@@ -29,7 +29,7 @@ struct Optograph: DeletableModel {
     var starsCount: Int
     var commentsCount: Int
     var viewsCount: Int
-    var location: Location
+    var location: Location?
     var isStitched: Bool
     var isPublished: Bool
     var previewAssetID: UUID
@@ -49,7 +49,7 @@ struct Optograph: DeletableModel {
             starsCount: 0,
             commentsCount: 0,
             viewsCount: 0,
-            location: Location.newInstance(),
+            location: nil,
             isStitched: false,
             isPublished: false,
             previewAssetID: uuid(),
@@ -132,6 +132,10 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
         && lhs.isStitched == rhs.isStitched
         && lhs.starsCount == rhs.starsCount
         && lhs.isPublished == rhs.isPublished
+        && lhs.isStarred == rhs.isStarred
+        && lhs.starsCount == rhs.starsCount
+        && lhs.person == rhs.person
+        && lhs.location == rhs.location
 }
 
 extension Optograph: Mappable {
@@ -186,7 +190,7 @@ extension Optograph: SQLiteModel {
             starsCount: row[OptographSchema.starsCount],
             commentsCount: row[OptographSchema.commentsCount],
             viewsCount: row[OptographSchema.viewsCount],
-            location: Location.newInstance(),
+            location: nil,
             isStitched: row[OptographSchema.isStitched],
             isPublished: row[OptographSchema.isPublished],
             previewAssetID: row[OptographSchema.previewAssetID],
@@ -208,7 +212,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.starsCount <-- starsCount,
             OptographSchema.commentsCount <-- commentsCount,
             OptographSchema.viewsCount <-- viewsCount,
-            OptographSchema.locationID <-- location.ID,
+            OptographSchema.locationID <-- location?.ID,
             OptographSchema.isStitched <-- isStitched,
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.previewAssetID <-- previewAssetID,

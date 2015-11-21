@@ -24,7 +24,7 @@ class OptographsViewModel {
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
-            .join(LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+            .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(PersonTable[PersonSchema.ID] == personID)
         
         refreshNotification.signal
@@ -32,12 +32,10 @@ class OptographsViewModel {
                 DatabaseService.query(.Many, query: query)
                     .observeOn(QueueScheduler(queue: queue))
                     .map { row -> Optograph in
-                        let person = Person.fromSQL(row)
-                        let location = Location.fromSQL(row)
                         var optograph = Optograph.fromSQL(row)
                         
-                        optograph.person = person
-                        optograph.location = location
+                        optograph.person = Person.fromSQL(row)
+                        optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
                         
                         return optograph
                     }
@@ -56,7 +54,7 @@ class OptographsViewModel {
                     .observeOn(QueueScheduler(queue: queue))
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
-                        try! optograph.location.insertOrUpdate()
+                        try! optograph.location?.insertOrUpdate()
                         try! optograph.person.insertOrUpdate()
                     })
                     .collect()
@@ -75,7 +73,7 @@ class OptographsViewModel {
                     .observeOn(QueueScheduler(queue: queue))
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
-                        try! optograph.location.insertOrUpdate()
+                        try! optograph.location?.insertOrUpdate()
                         try! optograph.person.insertOrUpdate()
                     })
                     .collect()

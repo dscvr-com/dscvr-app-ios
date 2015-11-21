@@ -74,7 +74,7 @@ class DatabaseService {
     
     static var defaultConnection: Connection!
     
-    private static let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/db.sqlite3"
+    private static let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/database.sqlite3"
     private static let migrations = [
         migration0001,
         migration0002,
