@@ -129,7 +129,7 @@ struct Optograph: DeletableModel {
 
 func ==(lhs: Optograph, rhs: Optograph) -> Bool {
     guard let lhsLocation = lhs.location, rhsLocation = rhs.location else {
-        return false
+        return lhs.location == nil && rhs.location == nil
     }
     
     return lhs.ID == rhs.ID
