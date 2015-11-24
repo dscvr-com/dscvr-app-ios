@@ -18,78 +18,88 @@ class LoginViewModel {
         case Done = 3
     }
     
-    let nextStep = MutableProperty<NextStep>(.Email)
+    enum Tab { case SignUp, LogIn }
+    
     let emailOrUserName = MutableProperty<String>("")
     let emailOrUserNameValid = MutableProperty<Bool>(false)
-    let emailOrUserNameStatus = MutableProperty<LineTextField.Status>(.Indicated)
     let password = MutableProperty<String>("")
     let passwordValid = MutableProperty<Bool>(false)
-    let passwordStatus = MutableProperty<LineTextField.Status>(.Disabled)
     let allowed = MutableProperty<Bool>(false)
     let pending = MutableProperty<Bool>(false)
+    let facebookPending = MutableProperty<Bool>(false)
+    let selectedTab = MutableProperty<Tab>(.SignUp)
     
     init() {
         
         emailOrUserNameValid <~ emailOrUserName.producer
             .map { $0.rangeOfString("@") != nil ? isValidEmail($0) : isValidUserName($0) }
             .skipRepeats()
-            .on(next: { valid in
-                if valid {
-                    self.nextStep.value = NextStep(rawValue: max(self.nextStep.value.rawValue, NextStep.Password.rawValue))!
-                } else {
-                    self.nextStep.value = .Email
-                }
-            })
         
         passwordValid <~ password.producer
             .map(isValidPassword)
             .skipRepeats()
-            .on(next: { valid in
-                if valid {
-                    self.nextStep.value = NextStep(rawValue: max(self.nextStep.value.rawValue, NextStep.Done.rawValue))!
-                } else {
-                    self.nextStep.value = NextStep(rawValue: min(self.nextStep.value.rawValue, NextStep.Password.rawValue))!
-                }
-            })
         
         allowed <~ emailOrUserNameValid.producer.combineLatestWith(passwordValid.producer).map(and)
-        
-        nextStep.producer
-            .skipRepeats()
-            .startWithNext { state in
-            switch state {
-            case .Email:
-                self.emailOrUserNameStatus.value = .Indicated
-                self.passwordStatus.value = .Disabled
-                break
-            case .Password:
-                self.emailOrUserNameStatus.value = .Normal
-                self.passwordStatus.value = .Indicated
-            case .Done:
-                self.emailOrUserNameStatus.value = .Normal
-                self.passwordStatus.value = .Normal
-            }
-        }
     }
     
-    func login() -> SignalProducer<Void, ApiError> {
+    func submit() -> SignalProducer<Void, ApiError> {
         
         let usesEmail = emailOrUserName.value.rangeOfString("@") != nil
         let identifier = usesEmail ? LoginIdentifier.Email(emailOrUserName.value) : LoginIdentifier.UserName(emailOrUserName.value)
         
-        return SessionService.login(identifier, password: password.value)
+        if case .LogIn = selectedTab.value {
+            return SessionService.login(identifier, password: password.value)
+                .on(
+                    started: {
+                        self.pending.value = true
+                    },
+                    next: { _ in
+                        self.pending.value = false
+                    },
+                    error: { _ in
+                        self.pending.value = false
+                    }
+                )
+                .mapError { _ in ApiError.Nil }
+                .flatMap(.Latest) { _ in SignalProducer(value: ()) }
+        } else {
+            let parameters = [
+                "email": emailOrUserName.value,
+                "password": password.value,
+            ]
+            return ApiService<EmptyResponse>.post("persons", parameters: parameters)
+                .flatMap(.Latest) { _ in SessionService.login(identifier, password: self.password.value) }
+                .on(
+                    started: {
+                        self.pending.value = true
+                    },
+                    next: { _ in
+                        self.pending.value = false
+                    },
+                    error: { _ in
+                        self.pending.value = false
+                    }
+                )
+                .mapError { _ in ApiError.Nil }
+                .flatMap(.Latest) { _ in SignalProducer(value: ()) }
+        }
+    }
+    
+    func facebookSignin(userID: String, token: String) -> SignalProducer<Void, ApiError> {
+        let parameters = [
+            "facebook_user_id": userID,
+            "facebook_token": token,
+        ]
+        return ApiService<LoginMappable>.post("persons/facebook/signin", parameters: parameters)
+            .flatMap(.Latest) { SessionService.handleSignin($0) }
             .on(
-                started: {
-                    self.pending.value = true
+                error: { [weak self] _ in
+                    self?.facebookPending.value = false
                 },
-                next: { _ in
-                    self.pending.value = false
-                },
-                error: { _ in
-                    self.pending.value = false
+                completed: { [weak self] in
+                    self?.facebookPending.value = false
                 }
             )
-            .mapError { _ in ApiError.Nil }
             .flatMap(.Latest) { _ in SignalProducer(value: ()) }
     }
     

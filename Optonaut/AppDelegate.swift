@@ -13,6 +13,8 @@ import Crashlytics
 import PureLayout
 import Mixpanel
 import WebImage
+import Neon
+import FBSDKCoreKit
 
 let Env = EnvType.Development
 //let Env = EnvType.Staging
@@ -24,6 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
+        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         prepareAndExecute {
             let tabBarViewController = TabBarViewController()
@@ -59,7 +63,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
-        //Re-register background task if necassary. 
+        FBSDKAppEvents.activateApp()
+        
+        // Re-register background task if necassary.
         StitchingService.onApplicationResuming()
     }
     
@@ -68,6 +74,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+        if url.scheme.hasPrefix("fb\(FBSDKSettings.appID())") && url.host == "authorize" {
+            return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
+        }
+
         prepareAndExecute {
             let tabBarViewController = TabBarViewController()
             
@@ -102,7 +112,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func prepareAndExecute(fn: () -> ()) {
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
-        
         #if !DEBUG
             Fabric.with([Crashlytics.self()])
         #endif
@@ -134,7 +143,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fn()
             }
         } else {
-            window?.rootViewController = TabBarViewController()
+            window?.rootViewController = LoginViewController()
         }
         
         VersionService.onOutdatedApiVersion {
@@ -153,4 +162,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
 }
-

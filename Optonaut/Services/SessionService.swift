@@ -41,7 +41,6 @@ class SessionService {
     }
     
     static func login(identifier: LoginIdentifier, password: String) -> SignalProducer<Void, ApiError> {
-        
         var parameters: [String: AnyObject] = ["email": "", "user_name": "", "password": password]
         switch identifier {
         case .Email(let email): parameters["email"] = email
@@ -50,9 +49,16 @@ class SessionService {
         
         return ApiService<LoginMappable>.post("persons/login", parameters: parameters)
             .on(next: { loginData in
+                Defaults[.SessionPassword] = password
+            })
+            .flatMap(.Latest) { handleSignin($0) }
+    }
+    
+    static func handleSignin(loginData: LoginMappable) -> SignalProducer<Void, ApiError> {
+       return SignalProducer(value: loginData)
+            .on(next: { loginData in
                 Defaults[.SessionToken] = loginData.token
                 Defaults[.SessionPersonID] = loginData.ID
-                Defaults[.SessionPassword] = password
                 Defaults[.SessionDebuggingEnabled] = false
                 Defaults[.SessionOnboardingVersion] = loginData.onboardingVersion
                 Defaults[.SessionVRGlassesSelected] = false
@@ -66,7 +72,7 @@ class SessionService {
                     updateMixpanel()
                 },
                 error: { _ in
-                    logout()
+                    reset()
                 }
             )
             .flatMap(.Latest) { _ in SignalProducer.empty }
@@ -77,6 +83,16 @@ class SessionService {
             fn()
         }
         
+        reset()
+        
+        logoutCallbacks = logoutCallbacks.filter { (performAlways, _) in performAlways }
+    }
+    
+    static func onLogout(performAlways performAlways: Bool = false, fn: () -> ()) {
+        logoutCallbacks.append((performAlways, fn))
+    }
+    
+    private static func reset() {
         Defaults[.SessionToken] = nil
         Defaults[.SessionPersonID] = nil
         Defaults[.SessionPassword] = nil
@@ -88,12 +104,6 @@ class SessionService {
         Mixpanel.sharedInstance().reset()
         
         UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-        
-        logoutCallbacks = logoutCallbacks.filter { (performAlways, _) in performAlways }
-    }
-    
-    static func onLogout(performAlways performAlways: Bool = false, fn: () -> ()) {
-        logoutCallbacks.append((performAlways, fn))
     }
     
     private static func updateMixpanel() {
@@ -107,7 +117,7 @@ class SessionService {
             Mixpanel.sharedInstance().people.set([
                 "$first": person.displayName,
                 "$username": person.userName,
-                "$email": person.email ?? "test",
+                "$email": person.email!,
                 "$created": person.createdAt,
                 "Followers": person.followersCount,
                 "Followed": person.followedCount,

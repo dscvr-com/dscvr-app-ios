@@ -116,10 +116,10 @@ extension NewCommentTableViewCell: UITextFieldDelegate {
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
         if !SessionService.isLoggedIn {
             let alert = UIAlertController(title: "Please login first", message: "In order to write a comment you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Login now", style: .Default, handler: { [weak self] _ in
+            alert.addAction(UIAlertAction(title: "Sign in", style: .Cancel, handler: { [weak self] _ in
                 self?.navigationController?.presentViewController(LoginViewController(), animated: false, completion: nil)
             }))
-            alert.addAction(UIAlertAction(title: "Later", style: .Cancel, handler: { _ in return }))
+            alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
             self.navigationController?.presentViewController(alert, animated: true, completion: nil)
             return false
         }
