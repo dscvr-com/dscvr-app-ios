@@ -31,11 +31,10 @@ class CameraViewController: UIViewController {
     private var lastAwbGains = AVCaptureWhiteBalanceGains()
     
     // stitcher pointer and variables
-    private var recorder = Recorder()
+    private var recorder: Recorder
     private var frameCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
-    private var debugHelper: CameraDebugService?
     
     // lines
     private var edges: [Edge: SCNNode] = [:]
@@ -66,6 +65,13 @@ class CameraViewController: UIViewController {
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         dispatch_set_target_queue(sessionQueue, high)
         screenScale = Float(UIScreen.mainScreen().scale)
+        
+        if SessionService.sessionData!.debuggingEnabled  {
+            //Explicitely instantiate, so old data is removed. 
+            Recorder.enableDebug(CameraDebugService().path)
+        }
+        
+        recorder = Recorder()
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -200,21 +206,22 @@ class CameraViewController: UIViewController {
             points.append(point)
         }
         
-        for a in points {
-            for b in points {
-                if recorder.areAdjacent(a, and: b) {
-                    let edge = Edge(a, b)
-                    
-                    let vec = GLKVector3Make(0, 0, -1)
-                    let posA = GLKMatrix4MultiplyVector3(a.extrinsics, vec)
-                    let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
-                    
-                    let edgeNode = createLineNode(posA, posB: posB)
-                    
-                    edges[edge] = edgeNode
-                    
-                    scene.rootNode.addChildNode(edgeNode)
-                }
+        var points2 = points;
+        points2.removeAtIndex(0);
+        
+        for (a, b) in zip(points, points2) {
+            if a.ringId == b.ringId {
+                let edge = Edge(a, b)
+                
+                let vec = GLKVector3Make(0, 0, -1)
+                let posA = GLKMatrix4MultiplyVector3(a.extrinsics, vec)
+                let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
+                
+                let edgeNode = createLineNode(posA, posB: posB)
+                
+                edges[edge] = edgeNode
+                
+                scene.rootNode.addChildNode(edgeNode)
             }
         }
     }
@@ -230,10 +237,6 @@ class CameraViewController: UIViewController {
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
-        
-        if SessionService.sessionData!.debuggingEnabled {
-            debugHelper = CameraDebugService()
-        }
         
         frameCount = 0
         
@@ -521,7 +524,7 @@ class CameraViewController: UIViewController {
             }
 
             //We always need debug data, even when not recording - the aligner is not paused when idle.
-            debugHelper?.push(pixelBuffer, intrinsics: self.intrinsics, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
+            //debugHelper?.push(pixelBuffer, intrinsics: map(self.intrinsics.m) { Double($0) }, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
         }
     }
     

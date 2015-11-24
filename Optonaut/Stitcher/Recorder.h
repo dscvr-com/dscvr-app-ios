@@ -32,14 +32,17 @@ struct ExposureInfo {
 //This interface takes matrices in SCNSpace and also gives them back in SCNSpace.
 //It's that simple.
 
++ (void)enableDebug:(NSString*)path;
++ (void)disableDebug;
 + (NSString*)getVersion;
++ (GLKMatrix3)getIPhone6Intrinsics;
++ (GLKMatrix3)getIPhone5Intrinsics;
 + (void)freeImageBuffer:(struct ImageBuffer)toFree;
 
 - (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure :(AVCaptureWhiteBalanceGains)gains;
 - (GLKMatrix4)getCurrentRotation;
 - (SelectionPointIterator*)getSelectionPoints;
 - (SelectionPoint*)currentPoint;
-- (void)enableDebug:(NSString*)path;
 - (void)setIdle:(bool)isIdle;
 - (bool)isIdle;
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b;

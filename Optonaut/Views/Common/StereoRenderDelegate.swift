@@ -77,7 +77,7 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double) {
         let xFov = Float(fov)
-        let yFov = xFov * Float(height / width)
+        let yFov = xFov * Float(height / width) //WRONG, don't scale an angle linearly asin(sin(x) * scale)
         let angles: [Float] = [xFov / Float(2.0), xFov / Float(2.0), yFov / Float(2.0), yFov / Float(2.0)]
         let newFov = FieldOfView(angles: angles)
         

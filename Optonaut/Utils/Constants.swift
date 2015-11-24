@@ -26,11 +26,10 @@ var S3URL: String {
     }
 }
 
-let CameraIntrinsics: [Double] = {
+let CameraIntrinsics: GLKMatrix3 = {
     switch UIDevice.currentDevice().deviceType {
-    case .IPhone6, .IPhone6S, .IPhone6SPlus: return [5.9266119, 0, 1.6875, 0, 5.9266119, 3, 0, 0, 1]
-    case .IPhone5S: return [5.9266119, 0, 1.6875, 0, 5.9266119, 3, 0, 0, 1]
-    case .IPhone5: return [5.49075, 0, 1.276875, 0, 4.1, 2.27, 0, 0, 1] //TODO: Those are off
-    default: return []
+    case .IPhone6, .IPhone6S, .IPhone6SPlus, .IPhone5S: return Recorder.getIPhone6Intrinsics()
+    case .IPhone5: return Recorder.getIPhone5Intrinsics()
+    default: return GLKMatrix3Identity
     }
 }()

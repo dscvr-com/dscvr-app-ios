@@ -411,6 +411,8 @@
 		A56CA40D1BC070AE0078D7E8 /* barrell_displacement.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.fsh; path = Shader/Cardboard/barrell_displacement.fsh; sourceTree = "<group>"; };
 		A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = barrell_displacement.json; path = Shader/Cardboard/barrell_displacement.json; sourceTree = "<group>"; };
 		A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.vsh; path = Shader/Cardboard/barrell_displacement.vsh; sourceTree = "<group>"; };
+		A58F97AA1C04A00100450D31 /* streamingRecorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = streamingRecorderController.hpp; sourceTree = "<group>"; };
+		A58F97AB1C04A00100450D31 /* tolerantRecorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tolerantRecorderController.hpp; sourceTree = "<group>"; };
 		A5DE71E01BE28A7400316F82 /* Distortion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distortion.swift; sourceTree = "<group>"; };
 		A5DE71E11BE28A7400316F82 /* DistortionMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionMesh.swift; sourceTree = "<group>"; };
 		A5DE71E21BE28A7400316F82 /* DistortionProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionProgram.swift; sourceTree = "<group>"; };
@@ -456,7 +458,6 @@
 		A5FD5D671BEA5A4E0031ED1E /* exposureCompensator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = exposureCompensator.hpp; sourceTree = "<group>"; };
 		A5FD5D681BEA5A4E0031ED1E /* recorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = recorder.cpp; sourceTree = "<group>"; };
 		A5FD5D691BEA5A4E0031ED1E /* recorder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorder.hpp; sourceTree = "<group>"; };
-		A5FD5D6A1BEA5A4E0031ED1E /* recorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderController.hpp; sourceTree = "<group>"; };
 		A5FD5D6B1BEA5A4E0031ED1E /* recorderGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderGraph.hpp; sourceTree = "<group>"; };
 		A5FD5D6C1BEA5A4E0031ED1E /* recorderGraphGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderGraphGenerator.hpp; sourceTree = "<group>"; };
 		A5FD5D6D1BEA5A4E0031ED1E /* ringwiseStreamAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ringwiseStreamAligner.hpp; sourceTree = "<group>"; };
@@ -1069,13 +1070,14 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
+				A58F97AA1C04A00100450D31 /* streamingRecorderController.hpp */,
+				A58F97AB1C04A00100450D31 /* tolerantRecorderController.hpp */,
 				A5FD5D641BEA5A4E0031ED1E /* aligner.hpp */,
 				A5FD5D651BEA5A4E0031ED1E /* asyncAligner.hpp */,
 				A5FD5D661BEA5A4E0031ED1E /* bundleAligner.hpp */,
 				A5FD5D671BEA5A4E0031ED1E /* exposureCompensator.hpp */,
 				A5FD5D681BEA5A4E0031ED1E /* recorder.cpp */,
 				A5FD5D691BEA5A4E0031ED1E /* recorder.hpp */,
-				A5FD5D6A1BEA5A4E0031ED1E /* recorderController.hpp */,
 				A5FD5D6B1BEA5A4E0031ED1E /* recorderGraph.hpp */,
 				A5FD5D6C1BEA5A4E0031ED1E /* recorderGraphGenerator.hpp */,
 				A5FD5D6D1BEA5A4E0031ED1E /* ringwiseStreamAligner.hpp */,
