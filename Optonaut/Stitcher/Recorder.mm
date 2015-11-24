@@ -200,22 +200,22 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     assert(pipe != NULL);
     return pipe->HasResults();
 }
-- (GLKMatrix4)getBallPosition {
+- (GLKMatrix4)getNextKeyframePosition {
     assert(pipe != NULL);
-    return CVMatToGLK4(pipe->GetBallPosition());
+    return CVMatToGLK4(pipe->GetNextKeyframe());
 }
 - (bool)isFinished {
     assert(pipe != NULL);
     return pipe->IsFinished();
 }
-- (double)getDistanceToBall {
+- (double)getDistanceToNextKeyframe {
     assert(pipe != NULL);
-    return pipe->GetDistanceToBall();
+    return pipe->GetDistanceToNextKeyframe();
 }
-- (GLKVector3)getAngularDistanceToBall {
+- (GLKVector3)getAngularDistanceToNextKeyframe {
     assert(pipe != NULL);
     //Special coord remapping, so we respect the screen coord system.
-    const Mat &m = pipe->GetAngularDistanceToBall();
+    const Mat &m = pipe->GetAngularDistanceToNextKeyframe();
     return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
 }
 - (uint32_t)getRecordedImagesCount {

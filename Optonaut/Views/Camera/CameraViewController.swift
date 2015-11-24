@@ -336,7 +336,7 @@ class CameraViewController: UIViewController {
         let accelleration = Float(0.1)
         
         let vec = GLKVector3Make(0, 0, -1)
-        let target = GLKMatrix4MultiplyVector3(recorder.getBallPosition(), vec)
+        let target = GLKMatrix4MultiplyVector3(recorder.getNextKeyframePosition(), vec)
         
         let ball = SCNVector3ToGLKVector3(ballNode.position)
         
@@ -445,7 +445,7 @@ class CameraViewController: UIViewController {
             
             recorder.push(r, buf, lastExposureInfo, lastAwbGains)
             
-            let errorVec = recorder.getAngularDistanceToBall()
+            let errorVec = recorder.getAngularDistanceToNextKeyframe()
             // let exposureHintC = recorder.getExposureHint()
             
             Async.main {
