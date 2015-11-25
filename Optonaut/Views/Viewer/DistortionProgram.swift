@@ -35,7 +35,7 @@ class DistortionProgram {
         }
         
         
-        return toDegrees(toRadians(originalFov) - asin(sin(toRadians(originalFov)) * offset))
+        return toDegrees(toRadians(originalFov) - atan(tan(toRadians(originalFov)) * offset))
     }
     
     func setParameters(params: CardboardParams, screen: ScreenParams, eye: Eye) {
@@ -53,8 +53,8 @@ class DistortionProgram {
         
         let fovLeft = DistortionProgram.truncateFov(params.leftEyeMaxFov.left, offset: -xEyeOffsetTanAngleScreen)
         let fovRight = DistortionProgram.truncateFov(params.leftEyeMaxFov.right, offset: xEyeOffsetTanAngleScreen)
-        let fovTop = DistortionProgram.truncateFov(params.leftEyeMaxFov.top, offset: -yEyeOffsetTanAngleScreen)
-        let fovBottom = DistortionProgram.truncateFov(params.leftEyeMaxFov.bottom, offset: yEyeOffsetTanAngleScreen)
+        let fovTop = DistortionProgram.truncateFov(params.leftEyeMaxFov.top, offset: yEyeOffsetTanAngleScreen)
+        let fovBottom = DistortionProgram.truncateFov(params.leftEyeMaxFov.bottom, offset: -yEyeOffsetTanAngleScreen)
         
 
         let newFov = FieldOfView(angles: [fovLeft, fovRight, fovTop, fovBottom])
