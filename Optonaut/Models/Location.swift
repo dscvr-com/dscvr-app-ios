@@ -29,6 +29,10 @@ struct Location: Model {
     
 }
 
+func ==(lhs: Location, rhs: Location) -> Bool {
+    return lhs.ID == rhs.ID
+}
+
 extension Location: Mappable {
     
     init?(_ map: Map){

@@ -7,13 +7,17 @@
 //
 
 import UIKit
+import SwiftyUserDefaults
 
 class ProfileNavViewController: NavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
         setTabBarIcon(tabBarItem, icon: .Profile, withFontSize: 20)
-        pushViewController(ProfileTableViewController(personID: SessionService.sessionData!.ID), animated: false)
+        // TODO
+        if SessionService.isLoggedIn {
+            pushViewController(ProfileTableViewController(personID: Defaults[.SessionPersonID]!), animated: false)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

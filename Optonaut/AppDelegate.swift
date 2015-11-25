@@ -13,6 +13,8 @@ import Crashlytics
 import PureLayout
 import Mixpanel
 import WebImage
+import Neon
+import FBSDKCoreKit
 
 let Env = EnvType.Development
 //let Env = EnvType.Staging
@@ -24,6 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
+        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         prepareAndExecute {
             let tabBarViewController = TabBarViewController()
@@ -59,7 +63,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
-        //Re-register background task if necassary. 
+        FBSDKAppEvents.activateApp()
+        
+        // Re-register background task if necassary.
         StitchingService.onApplicationResuming()
     }
     
@@ -68,6 +74,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+        if url.scheme.hasPrefix("fb\(FBSDKSettings.appID())") && url.host == "authorize" {
+            return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
+        }
+
         prepareAndExecute {
             let tabBarViewController = TabBarViewController()
             
@@ -90,7 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
         }
         
-        SessionService.deviceToken = tokenString
+        DeviceTokenService.deviceToken = tokenString
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject: AnyObject]) {
@@ -102,7 +112,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func prepareAndExecute(fn: () -> ()) {
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
-        Fabric.with([Crashlytics.self()])
+        #if !DEBUG
+            Fabric.with([Crashlytics.self()])
+        #endif
         
         if case .Production = Env {
             Mixpanel.sharedInstanceWithToken("10ba57dae2871ca534c61f0f89bab97d")
@@ -150,4 +162,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
 }
-

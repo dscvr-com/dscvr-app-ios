@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import SwiftyUserDefaults
 
 class OnboardingHashtagSummaryViewModel {
     
@@ -22,7 +23,7 @@ class OnboardingHashtagSummaryViewModel {
                 },
                 completed: {
                     self.loading.value = false
-                    SessionService.sessionData?.onboardingVersion = OnboardingVersion
+                    Defaults[.SessionOnboardingVersion] = OnboardingVersion
                 }
             )
     }

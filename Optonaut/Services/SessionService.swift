@@ -10,115 +10,41 @@ import Foundation
 import ObjectMapper
 import ReactiveCocoa
 import Mixpanel
+import SwiftyUserDefaults
 
-enum LoginIdentifier {
-    case UserName(String)
-    case Email(String)
+extension DefaultsKeys {
+    static let SessionToken = DefaultsKey<String?>("session_auth_token")
+    static let SessionPersonID = DefaultsKey<UUID?>("session_person_id")
+    static let SessionPassword = DefaultsKey<String?>("session_password")
+    static let SessionDebuggingEnabled = DefaultsKey<Bool>("session_debugging_enabled")
+    static let SessionOnboardingVersion = DefaultsKey<Int>("session_onboarding_version")
+    static let SessionVRGlassesSelected = DefaultsKey<Bool>("session_vr_glasses_selected")
+    static let SessionVRGlasses = DefaultsKey<String>("session_vr_glasses")
 }
 
-struct SessionData {
-    let ID: UUID
-    var token: String {
-        willSet {
-            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: "session_person_token")
-        }
-    }
-    var password: String {
-        willSet {
-            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: "session_person_password")
-        }
-    }
-    var debuggingEnabled: Bool {
-        willSet {
-            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: "session_person_debugging_enabled")
-        }
-    }
-    var onboardingVersion: Int {
-        willSet {
-            NSUserDefaults.standardUserDefaults().setInteger(newValue, forKey: "session_person_onboarding_version")
-        }
-    }
-    var vrGlassesSelected: Bool {
-        willSet {
-            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: "session_person_vr_glasses_selected")
-        }
-    }
-    var vrGlasses: String {
-        willSet {
-            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: "session_person_vr_glasses")
-        }
-    }
-}
+let DefaultVRGlasses = "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"
 
 class SessionService {
-
-    static var sessionData: SessionData? {
-        willSet {
-            if let newValue = newValue {
-                NSUserDefaults.standardUserDefaults().setObject(newValue.ID, forKey: "session_person_id")
-                NSUserDefaults.standardUserDefaults().setObject(newValue.token, forKey: "session_person_token")
-                NSUserDefaults.standardUserDefaults().setObject(newValue.password, forKey: "session_person_password")
-                NSUserDefaults.standardUserDefaults().setBool(newValue.debuggingEnabled, forKey: "session_person_debugging_enabled")
-                NSUserDefaults.standardUserDefaults().setInteger(newValue.onboardingVersion, forKey: "session_person_onboarding_version")
-                NSUserDefaults.standardUserDefaults().setBool(newValue.vrGlassesSelected, forKey: "session_person_vr_glasses_selected")
-                NSUserDefaults.standardUserDefaults().setObject(newValue.vrGlasses, forKey: "session_person_vr_glasses")
-            } else {
-                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_id")
-                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_token")
-                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_password")
-                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_debugging_enabled")
-                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_onboarding_version")
-                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_vr_glasses_selected")
-                NSUserDefaults.standardUserDefaults().removeObjectForKey("session_person_vr_glasses")
-            }
-        }
-    }
-    
-    static var deviceToken: String? {
-        didSet {
-            updateDeviceToken()
-        }
-    }
     
     static var isLoggedIn: Bool {
-        return sessionData != nil
+        return Defaults[.SessionPersonID] != nil
     }
     
     static var needsOnboarding: Bool {
-        return sessionData?.onboardingVersion < OnboardingVersion
+        return Defaults[.SessionOnboardingVersion] < OnboardingVersion
     }
     
     private static var logoutCallbacks: [(performAlways: Bool, fn: () -> ())] = []
     
     static func prepare() {
+        updateMixpanel()
         
-        let ID = NSUserDefaults.standardUserDefaults().objectForKey("session_person_id") as? UUID
-        let token = NSUserDefaults.standardUserDefaults().objectForKey("session_person_token") as? String
-        let password = NSUserDefaults.standardUserDefaults().objectForKey("session_person_password") as? String
-        let debuggingEnabled = NSUserDefaults.standardUserDefaults().boolForKey("session_person_debugging_enabled")
-        let onboardingVersion = NSUserDefaults.standardUserDefaults().integerForKey("session_person_onboarding_version")
-        let vrGlassesSelected = NSUserDefaults.standardUserDefaults().boolForKey("session_person_vr_glasses_selected")
-        let vrGlasses = NSUserDefaults.standardUserDefaults().objectForKey("session_person_vr_glasses") as? String
-        if let ID = ID, token = token, password = password, vrGlasses = vrGlasses {
-            sessionData = SessionData(
-                ID: ID,
-                token: token,
-                password: password,
-                debuggingEnabled: debuggingEnabled,
-                onboardingVersion: onboardingVersion,
-                vrGlassesSelected: vrGlassesSelected,
-                vrGlasses: vrGlasses
-            )
-            
-            PipelineService.check()
-            
-            updateMixpanel()
+        if Defaults[.SessionVRGlasses].isEmpty {
+            Defaults[.SessionVRGlasses] = DefaultVRGlasses
         }
-        
     }
     
     static func login(identifier: LoginIdentifier, password: String) -> SignalProducer<Void, ApiError> {
-        
         var parameters: [String: AnyObject] = ["email": "", "user_name": "", "password": password]
         switch identifier {
         case .Email(let email): parameters["email"] = email
@@ -127,25 +53,30 @@ class SessionService {
         
         return ApiService<LoginMappable>.post("persons/login", parameters: parameters)
             .on(next: { loginData in
-                sessionData = SessionData(
-                    ID: loginData.ID,
-                    token: loginData.token,
-                    password: password,
-                    debuggingEnabled: false,
-                    onboardingVersion: loginData.onboardingVersion,
-                    vrGlassesSelected: false,
-                    vrGlasses: "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"
-                )
-                updateDeviceToken()
+                Defaults[.SessionPassword] = password
+            })
+            .flatMap(.Latest) { handleSignin($0) }
+    }
+    
+    static func handleSignin(loginData: LoginMappable) -> SignalProducer<Void, ApiError> {
+       return SignalProducer(value: loginData)
+            .on(next: { loginData in
+                Defaults[.SessionToken] = loginData.token
+                Defaults[.SessionPersonID] = loginData.ID
+                Defaults[.SessionDebuggingEnabled] = false
+                Defaults[.SessionOnboardingVersion] = loginData.onboardingVersion
+                Defaults[.SessionVRGlassesSelected] = false
+                Defaults[.SessionVRGlasses] = DefaultVRGlasses
             })
             .flatMap(.Latest) { _ in ApiService<Person>.get("persons/me") }
             .on(
                 next: { person in
                     try! person.insertOrUpdate()
+                    Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
                     updateMixpanel()
                 },
                 error: { _ in
-                    sessionData = nil
+                    reset()
                 }
             )
             .flatMap(.Latest) { _ in SignalProducer.empty }
@@ -156,7 +87,8 @@ class SessionService {
             fn()
         }
         
-        sessionData = nil
+        reset()
+        
         logoutCallbacks = logoutCallbacks.filter { (performAlways, _) in performAlways }
     }
     
@@ -164,25 +96,36 @@ class SessionService {
         logoutCallbacks.append((performAlways, fn))
     }
     
+    private static func reset() {
+        Defaults[.SessionToken] = nil
+        Defaults[.SessionPersonID] = nil
+        Defaults[.SessionPassword] = nil
+        Defaults[.SessionDebuggingEnabled] = false
+        Defaults[.SessionOnboardingVersion] = 0
+        Defaults[.SessionVRGlassesSelected] = false
+        Defaults[.SessionVRGlasses] = DefaultVRGlasses
+        
+        Mixpanel.sharedInstance().reset()
+        
+        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+    }
+    
     private static func updateMixpanel() {
-        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- SessionService.sessionData!.ID)
+        guard let personID = Defaults[.SessionPersonID] else {
+            return
+        }
+        
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- personID)
         if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
             Mixpanel.sharedInstance().identify(person.ID)
             Mixpanel.sharedInstance().people.set([
                 "$first": person.displayName,
                 "$username": person.userName,
-                "$email": person.email ?? "test",
+                "$email": person.email!,
                 "$created": person.createdAt,
                 "Followers": person.followersCount,
                 "Followed": person.followedCount,
             ])
-        }
-    }
-    
-    private static func updateDeviceToken() {
-        if let deviceToken = deviceToken where isLoggedIn {
-            ApiService<EmptyResponse>.post("persons/me/update-device-token", parameters: ["token": deviceToken])
-                .start()
         }
     }
     
@@ -196,8 +139,13 @@ struct LoginMappable: Mappable {
     init?(_ map: Map) {}
     
     mutating func mapping(map: Map) {
-        token                   <- map["token"]
-        ID                      <- map["id"]
-        onboardingVersion       <- map["onboarding_version"]
+        token              <- map["token"]
+        ID                 <- map["id"]
+        onboardingVersion  <- map["onboarding_version"]
     }
+}
+
+enum LoginIdentifier {
+    case UserName(String)
+    case Email(String)
 }

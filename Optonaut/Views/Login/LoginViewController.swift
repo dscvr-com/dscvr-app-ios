@@ -10,12 +10,16 @@ import UIKit
 import ReactiveCocoa
 import Async
 import Mixpanel
+import FBSDKLoginKit
 
 class LoginViewController: UIViewController {
     
     // subviews
+    let headView = UIView()
+    let skipTextView = UILabel()
     let logoView = UILabel()
-    let formView = UIView()
+    let signupTabView = UILabel()
+    let loginTabView = UILabel()
     let emailOrUserNameInputView = LineTextField()
     let passwordInputView = LineTextField()
     let submitButtonView = ActionButton()
@@ -23,6 +27,7 @@ class LoginViewController: UIViewController {
     let signupTextView = UILabel()
     let signupHelpTextView = UILabel()
     let loadingView = UIView()
+    let facebookButtonView = ActionButton()
     
     var formViewBottomConstraint: NSLayoutConstraint?
     var didSetConstraints = false
@@ -36,58 +41,88 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.Accent
+        view.backgroundColor = .whiteColor()
+        
+        headView.backgroundColor = .Accent
+        view.addSubview(headView)
+        
+        skipTextView.textColor = .whiteColor()
+        skipTextView.textAlignment = .Right
+        skipTextView.text = "Try app without login"
+        skipTextView.font = .displayOfSize(14, withType: .Thin)
+        skipTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "skip"))
+        skipTextView.userInteractionEnabled = true
+        headView.addSubview(skipTextView)
         
         logoView.text = String.iconWithName(.LogoText)
+        logoView.textAlignment = .Center
         logoView.textColor = .whiteColor()
         logoView.font = UIFont.iconOfSize(35)
-        view.addSubview(logoView)
+        headView.addSubview(logoView)
         
-        view.addSubview(formView)
+        loginTabView.textColor = .whiteColor()
+        loginTabView.textAlignment = .Center
+        loginTabView.text = "LOG IN"
+        loginTabView.font = .displayOfSize(14, withType: .Semibold)
+        loginTabView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "selectLogInTab"))
+        loginTabView.userInteractionEnabled = true
+        loginTabView.rac_alpha <~ viewModel.selectedTab.producer.equalsTo(.LogIn).mapToTuple(1, 0.5)
+        headView.addSubview(loginTabView)
         
-        emailOrUserNameInputView.placeholder = "Email address or username"
+        signupTabView.textColor = .whiteColor()
+        signupTabView.textAlignment = .Center
+        signupTabView.text = "SIGN UP"
+        signupTabView.font = .displayOfSize(14, withType: .Semibold)
+        signupTabView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "selectSignUpTab"))
+        signupTabView.userInteractionEnabled = true
+        signupTabView.rac_alpha <~ viewModel.selectedTab.producer.equalsTo(.SignUp).mapToTuple(1, 0.5)
+        headView.addSubview(signupTabView)
+        
+        emailOrUserNameInputView.rac_placeholder <~ viewModel.selectedTab.producer.equalsTo(.SignUp).mapToTuple("Email address", "Email address or username")
         emailOrUserNameInputView.size = .Medium
-        emailOrUserNameInputView.color = .Light
+        emailOrUserNameInputView.color = .Dark
         emailOrUserNameInputView.autocorrectionType = .No
         emailOrUserNameInputView.autocapitalizationType = .None
         emailOrUserNameInputView.keyboardType = .EmailAddress
         emailOrUserNameInputView.returnKeyType = .Next
         emailOrUserNameInputView.delegate = self
-        emailOrUserNameInputView.rac_status <~ viewModel.emailOrUserNameStatus
         viewModel.emailOrUserName <~ emailOrUserNameInputView.rac_text
-        formView.addSubview(emailOrUserNameInputView)
+        view.addSubview(emailOrUserNameInputView)
         
-        passwordInputView.placeholder = "Password"
+        passwordInputView.rac_placeholder <~ viewModel.selectedTab.producer.equalsTo(.SignUp).mapToTuple("Choose a password", "Password")
         passwordInputView.size = .Medium
-        passwordInputView.color = .Light
+        passwordInputView.color = .Dark
         passwordInputView.secureTextEntry = true
         passwordInputView.returnKeyType = .Go
         passwordInputView.delegate = self
-        passwordInputView.rac_status <~ viewModel.passwordStatus
         viewModel.password <~ passwordInputView.rac_text
-        formView.addSubview(passwordInputView)
+        view.addSubview(passwordInputView)
         
-        forgotPasswordView.textColor = .whiteColor()
+        forgotPasswordView.textColor = .Accent
+        forgotPasswordView.textAlignment = .Right
         forgotPasswordView.text = "Forgot?"
-        forgotPasswordView.font = .displayOfSize(13, withType: .Semibold)
+        forgotPasswordView.font = .displayOfSize(13, withType: .Regular)
         forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showForgotPasswordViewController"))
         forgotPasswordView.userInteractionEnabled = true
-        forgotPasswordView.rac_userInteractionEnabled <~ viewModel.passwordStatus.producer.equalsTo(.Disabled).map(negate)
-        forgotPasswordView.rac_alpha <~ viewModel.passwordStatus.producer.equalsTo(.Disabled).map { $0 ? 0.15 : 1 }
+        forgotPasswordView.rac_hidden <~ viewModel.selectedTab.producer.equalsTo(.SignUp)
+            .combineLatestWith(viewModel.password.producer.map(isNotEmpty)).map(or)
         view.addSubview(forgotPasswordView)
         
-        submitButtonView.setTitle(String.iconWithName(.Check), forState: .Normal)
+        submitButtonView.setTitle(String.iconWithName(.Send), forState: .Normal)
         submitButtonView.setTitleColor(.Accent, forState: .Normal)
-        submitButtonView.defaultBackgroundColor = .whiteColor()
-        submitButtonView.titleLabel?.font = UIFont.iconOfSize(28)
-        submitButtonView.layer.cornerRadius = 30
+        submitButtonView.titleLabel?.font = UIFont.iconOfSize(20)
+        submitButtonView.titleLabel?.textAlignment = .Right
         submitButtonView.rac_userInteractionEnabled <~ viewModel.allowed
-        submitButtonView.rac_alpha <~ viewModel.allowed.producer.map { $0 ? 1 : 0.2 }
-        submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "login"))
+        submitButtonView.rac_hidden <~ viewModel.allowed.producer.map(negate)
+        submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "submit"))
         submitButtonView.rac_loading <~ viewModel.pending
-        formView.addSubview(submitButtonView)
+        submitButtonView.defaultBackgroundColor = .clearColor()
+        submitButtonView.activeBackgroundColor = .clearColor()
+        submitButtonView.disabledBackgroundColor = .clearColor()
+        submitButtonView.layer.cornerRadius = 0
+        view.addSubview(submitButtonView)
         
-        signupHelpTextView.textColor = .whiteColor()
+        signupHelpTextView.textColor = .Accent
         signupHelpTextView.text = "Don't have an account yet?"
         signupHelpTextView.font = .displayOfSize(14, withType: .Thin)
         view.addSubview(signupHelpTextView)
@@ -103,31 +138,27 @@ class LoginViewController: UIViewController {
         loadingView.rac_hidden <~ viewModel.pending.producer.map(negate)
         view.addSubview(loadingView)
         
+        facebookButtonView.defaultBackgroundColor = UIColor(0x3C5193)
+        facebookButtonView.activeBackgroundColor = UIColor(0x405BB0)
+        facebookButtonView.disabledBackgroundColor = UIColor(0x405BB0)
+        facebookButtonView.titleLabel?.font = UIFont.displayOfSize(14, withType: .Semibold)
+        facebookButtonView.setTitle("Sign in with Facebook", forState: .Normal)
+        facebookButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+        facebookButtonView.layer.cornerRadius = 4
+        facebookButtonView.clipsToBounds = true
+        facebookButtonView.rac_loading <~ viewModel.facebookPending
+        facebookButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "facebook"))
+        view.addSubview(facebookButtonView)
+        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
-        
-        view.setNeedsUpdateConstraints()
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func viewDidAppear(animated: Bool) {
-        UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)
-        
         Mixpanel.sharedInstance().timeEvent("View.Login")
         
-        super.viewDidAppear(animated)
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
+        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+        super.viewDidAppear(animated)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -136,110 +167,123 @@ class LoginViewController: UIViewController {
         Mixpanel.sharedInstance().track("View.Login")
     }
     
-    override func updateViewConstraints() {
-        if !didSetConstraints {
-            logoView.autoAlignAxisToSuperviewAxis(.Vertical)
-            logoView.autoPinEdge(.Bottom, toEdge: .Top, ofView: formView, withOffset: -100)
-            
-            let formBottomOffset = formBottomOffsetForKeyboardHeight(0, keyboardVisible: false)
-            formViewBottomConstraint = formView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: formBottomOffset)
-            formView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-            formView.autoSetDimension(.Width, toSize: 243)
-            formView.autoSetDimension(.Height, toSize: 158)
-            
-            emailOrUserNameInputView.autoPinEdge(.Top, toEdge: .Top, ofView: formView)
-            emailOrUserNameInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
-            emailOrUserNameInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
-            
-            passwordInputView.autoPinEdge(.Top, toEdge: .Bottom, ofView: emailOrUserNameInputView, withOffset: 35)
-            passwordInputView.autoPinEdge(.Left, toEdge: .Left, ofView: formView)
-            passwordInputView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
-            
-            forgotPasswordView.autoPinEdge(.Right, toEdge: .Right, ofView: passwordInputView, withOffset: 0)
-            forgotPasswordView.autoAlignAxis(.Horizontal, toSameAxisOfView: passwordInputView)
-            
-            submitButtonView.autoPinEdge(.Top, toEdge: .Bottom, ofView: passwordInputView, withOffset: 30)
-            submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: formView)
-            submitButtonView.autoSetDimension(.Width, toSize: 60)
-            submitButtonView.autoSetDimension(.Height, toSize: 60)
-            
-            signupHelpTextView.autoPinEdge(.Bottom, toEdge: .Top, ofView: signupTextView, withOffset: -5)
-            signupHelpTextView.autoAlignAxisToSuperviewAxis(.Vertical)
-            
-            signupTextView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -36)
-            signupTextView.autoAlignAxisToSuperviewAxis(.Vertical)
-            
-            loadingView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
-            
-            didSetConstraints = true
-        }
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         
-        super.updateViewConstraints()
-    }
-    
-    // needed for vertically centering (respecting keyboard visiblity)
-    private func formBottomOffsetForKeyboardHeight(keyboardHeight: CGFloat, keyboardVisible: Bool) -> CGFloat {
-        return keyboardVisible ? -keyboardHeight - 16 : -view.bounds.height / 2 + 158 / 2 + 52
-    }
-    
-    func showSignup() {
-        presentViewController(OnboardingInfoViewController(), animated: false, completion: nil)
+        let size = view.frame.size
+        
+        headView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: size.height - 216 - 113)
+        skipTextView.anchorInCorner(.TopRight, xPad: 23, yPad: 23, width: 300, height: 20)
+        logoView.anchorInCenter(width: 268, height: 84)
+        loginTabView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
+        signupTabView.anchorInCorner(.BottomRight, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
+        emailOrUserNameInputView.align(.UnderCentered, relativeTo: headView, padding: 29, width: size.width - 50, height: emailOrUserNameInputView.frame.height)
+        passwordInputView.align(.UnderCentered, relativeTo: emailOrUserNameInputView, padding: 12, width: size.width - 50, height: passwordInputView.frame.height)
+        forgotPasswordView.align(.UnderMatchingRight, relativeTo: emailOrUserNameInputView, padding: 12, width: 50, height: 20)
+        submitButtonView.align(.UnderMatchingRight, relativeTo: emailOrUserNameInputView, padding: 11, width: 20, height: 20)
+        facebookButtonView.anchorToEdge(.Bottom, padding: 25, width: size.width - 50, height: 50)
     }
     
     func showForgotPasswordViewController() {
         presentViewController(ForgotPasswordViewController(), animated: false, completion: nil)
     }
     
-    // MARK: - keyboard stuff
-    func keyboardWillShowNotification(notification: NSNotification) {
-        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: true)
+    func skip() {
+        presentViewController(TabBarViewController(), animated: false, completion: nil)
     }
     
-    func keyboardWillHideNotification(notification: NSNotification) {
-        updateBottomLayoutConstraintWithNotification(notification, keyboardVisible: false)
+    func selectSignUpTab() {
+        viewModel.selectedTab.value = .SignUp
     }
     
-    func updateBottomLayoutConstraintWithNotification(notification: NSNotification, keyboardVisible: Bool) {
-        let userInfo = notification.userInfo!
-        let keyboardEndFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-        let convertedKeyboardEndFrame = view.convertRect(keyboardEndFrame, fromView: view.window)
-        let keyboardHeight = CGRectGetMaxY(view.bounds) - CGRectGetMinY(convertedKeyboardEndFrame)
-        let rawAnimationCurve = (userInfo[UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).unsignedIntValue << 16
-        let animationCurve = UIViewAnimationOptions.init(rawValue: UInt(rawAnimationCurve))
-        let animationDuration = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
-        
-        formViewBottomConstraint?.constant = formBottomOffsetForKeyboardHeight(keyboardHeight, keyboardVisible: keyboardVisible)
-        
-        UIView.animateWithDuration(animationDuration,
-            delay: 0,
-            options: [.BeginFromCurrentState, animationCurve],
-            animations: {
-                self.view.layoutIfNeeded()
-            },
-            completion: nil)
+    func selectLogInTab() {
+        viewModel.selectedTab.value = .LogIn
     }
     
     func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    func login() {
-        viewModel.login()
+    func submit() {
+        if !viewModel.allowed.value { return }
+        
+        viewModel.submit()
             .on(
-                error: { _ in 
-                    let alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-                    self.presentViewController(alert, animated: true, completion: nil)
-                }, 
-                completed: {
-                    if SessionService.needsOnboarding {
-                        self.presentViewController(OnboardingInfoViewController(), animated: false, completion: nil)
+                error: { _ in
+                    let alert: UIAlertController
+                    if case .LogIn = self.viewModel.selectedTab.value {
+                        alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
                     } else {
-                        self.presentViewController(TabBarViewController(), animated: false, completion: nil)
+                        alert = UIAlertController(title: "Signup unsuccessful", message: "This email address seems to be already taken. Please try another one or login using your existing account.", preferredStyle: .Alert)
                     }
+                    alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                },
+                completed: {
+                    self.forward()
                 }
             )
             .start()
+    }
+    
+    func forward() {
+        if SessionService.needsOnboarding {
+            self.presentViewController(OnboardingInfoViewController(), animated: false, completion: nil)
+        } else {
+            self.presentViewController(TabBarViewController(), animated: false, completion: nil)
+        }
+    }
+    
+    func facebook() {
+        
+        let loginManager = FBSDKLoginManager()
+        let facebookReadPermissions = ["public_profile", "email"]
+        
+        viewModel.facebookPending.value = true
+        
+        let errorBlock = { [weak self] (message: String) in
+            self?.viewModel.facebookPending.value = false
+            
+            let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
+            self?.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+        let successBlock = { [weak self] (token: FBSDKAccessToken!) in
+            self?.viewModel.facebookSignin(token.userID, token: token.tokenString)
+                .on(
+                    error: { _ in
+                        loginManager.logOut()
+                        
+                        errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
+                    },
+                    completed: {
+                        self?.forward()
+                    }
+                )
+                .start()
+        }
+        
+        if let token = FBSDKAccessToken.currentAccessToken() where facebookReadPermissions.reduce(true, combine: { $0 && token.hasGranted($1) }) {
+            successBlock(token)
+            return
+        }
+        
+        loginManager.logInWithReadPermissions(facebookReadPermissions, fromViewController: self) { [weak self] result, error in
+            if error != nil || result.isCancelled {
+                self?.viewModel.facebookPending.value = false
+                loginManager.logOut()
+            } else {
+                let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
+                let allPermissionsGranted = facebookReadPermissions.reduce(true) { $0 && grantedPermissions.contains($1) }
+                
+                if allPermissionsGranted {
+                    successBlock(result.token)
+                } else {
+                    errorBlock("Please allow access to all points in the list. Don't worry, your data will be kept safe.")
+                }
+            }
+        }
     }
     
 }
@@ -255,7 +299,7 @@ extension LoginViewController: UITextFieldDelegate {
         if textField == passwordInputView {
             view.endEditing(true)
             Async.main {
-                self.login()
+                self.submit()
             }
         }
         

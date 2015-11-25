@@ -21,7 +21,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     private let scrollView = UIScrollView()
     private let headlineTextView = UILabel()
     private let uploadButtonView = ActionButton()
-    private let avatarImageView = UIImageView()
+    private let avatarImageView = PlaceholderImageView()
     private let displayNameInputView = LineTextField()
     private let userNameInputView = LineTextField()
     private let nextButtonView = ActionButton()
@@ -65,6 +65,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         view.addSubview(uploadButtonView)
         
         avatarImageView.rac_hidden <~ viewModel.avatarUploaded.producer.map(negate)
+        avatarImageView.rac_url <~ viewModel.avatarImageUrl
         avatarImageView.layer.cornerRadius = 52
         avatarImageView.layer.borderColor = UIColor.whiteColor().CGColor
         avatarImageView.layer.borderWidth = 1.5
@@ -80,7 +81,8 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         displayNameInputView.returnKeyType = .Next
         displayNameInputView.delegate = self
         displayNameInputView.rac_status <~ viewModel.displayNameStatus
-        displayNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.displayName.value = $0 as! String }
+        displayNameInputView.rac_textSignal().toSignalProducer().skip(1).startWithNext { self.viewModel.displayName.value = $0 as! String }
+        displayNameInputView.rac_text <~ viewModel.displayName
         view.addSubview(displayNameInputView)
         
         userNameInputView.size = .Large
@@ -207,7 +209,8 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     
     func showHashtagOnboarding() {
         viewModel.updateData().startWithCompleted {
-            self.presentViewController(OnboardingHashtagInfoViewController(), animated: false, completion: nil)
+//            self.presentViewController(OnboardingHashtagInfoViewController(), animated: false, completion: nil)
+            self.presentViewController(TabBarViewController(), animated: false, completion: nil)
         }
     }
     

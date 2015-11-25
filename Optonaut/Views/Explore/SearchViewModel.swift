@@ -30,7 +30,7 @@ class SearchViewModel {
                 return ApiService<Optograph>.get("optographs/search?keyword=\(keyword)")
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
-                        try! optograph.location.insertOrUpdate()
+                        try! optograph.location?.insertOrUpdate()
                         try! optograph.person.insertOrUpdate()
                     })
                     .ignoreError()

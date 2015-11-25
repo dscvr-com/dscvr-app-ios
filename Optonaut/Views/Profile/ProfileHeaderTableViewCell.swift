@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import SwiftyUserDefaults
 
 class ProfileHeaderTableViewCell: UITableViewCell {
     
@@ -178,7 +179,7 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     func bindViewModel(personID: UUID) {
         viewModel = ProfileViewModel(ID:  personID)
         
-        isMe = SessionService.sessionData!.ID == personID
+        isMe = Defaults[.SessionPersonID] == personID
         
         avatarBackgroundImageView.rac_url <~ viewModel.avatarImageUrl
         
@@ -205,6 +206,16 @@ class ProfileHeaderTableViewCell: UITableViewCell {
     }
     
     func toggleFollow() {
+        if !SessionService.isLoggedIn {
+            let alert = UIAlertController(title: "Please login first", message: "In order to follow \(viewModel.displayName.value) you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Sign in", style: .Cancel, handler: { [weak self] _ in
+                self?.navigationController?.presentViewController(LoginViewController(), animated: false, completion: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
         viewModel.toggleFollow()
     }
     

@@ -11,7 +11,7 @@ import ReactiveCocoa
 class OptographInfoViewModel {
     
     enum Status: Equatable {
-        case Published, Publishing, Stitching, Offline
+        case Published, Publishing, Stitching, Offline, Guest
     }
     
     let displayName: ConstantProperty<String>
@@ -32,8 +32,8 @@ class OptographInfoViewModel {
         
         displayName = ConstantProperty(optograph.person.displayName)
         avatarImageUrl = ConstantProperty(ImageURL(optograph.person.avatarAssetID, width: 40, height: 40))
-        locationText = ConstantProperty(optograph.location.text)
-        locationCountry = ConstantProperty(optograph.location.country)
+        locationText = ConstantProperty(optograph.location?.text ?? "No location available")
+        locationCountry = ConstantProperty(optograph.location?.country ?? "No country available")
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
         timeSinceCreated.value = optograph.createdAt.longDescription
@@ -43,6 +43,8 @@ class OptographInfoViewModel {
             updateStatus()
         } else if optograph.isPublished {
             status = MutableProperty(.Published)
+        } else if !SessionService.isLoggedIn {
+            status = MutableProperty(.Guest)
         } else if Reachability.connectedToNetwork() {
             status = MutableProperty(.Publishing)
             updateStatus()

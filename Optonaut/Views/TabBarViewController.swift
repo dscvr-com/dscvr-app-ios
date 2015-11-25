@@ -32,7 +32,7 @@ class TabBarViewController: UITabBarController {
         activityNavViewController.initNotificationIndicator()
         
         // set bar color
-        tabBar.barTintColor = UIColor.Accent
+        tabBar.barTintColor = .Accent
         tabBar.translucent = false
         
         // set darker red as selected background color
@@ -43,10 +43,10 @@ class TabBarViewController: UITabBarController {
         // remove default border
         tabBar.frame.size.width = self.view.frame.width + 4
         tabBar.frame.origin.x = -2
-        
-        let settings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
-        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
-        UIApplication.sharedApplication().registerForRemoteNotifications()
+    }
+    
+    func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
+        return !(!SessionService.isLoggedIn && (viewController == activityNavViewController || viewController == profileNavViewController))
     }
     
 }

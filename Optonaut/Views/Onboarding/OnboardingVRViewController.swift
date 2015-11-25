@@ -85,11 +85,7 @@ class OnboardingVRViewController: UIViewController {
     }
     
     func showProfileOnboarding() {
-        if SessionService.isLoggedIn {
-            presentViewController(OnboardingProfileViewController(), animated: false, completion: nil)
-        } else {
-            presentViewController(OnboardingAccountViewController(), animated: false, completion: nil)
-        }
+        presentViewController(OnboardingProfileViewController(), animated: false, completion: nil)
     }
     
     func openGlassesPage() {

@@ -70,11 +70,10 @@ class ActionButton: UIButton {
         addTarget(self, action: "buttonUntouched", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
     
-    override func updateConstraints() {
-        super.updateConstraints()
+    override func layoutSubviews() {
+        super.layoutSubviews()
         
-        loadingIndicator.autoAlignAxisToSuperviewAxis(.Vertical)
-        loadingIndicator.autoAlignAxisToSuperviewAxis(.Horizontal)
+        loadingIndicator.anchorInCenter(width: loadingIndicator.frame.width, height: loadingIndicator.frame.height)
     }
     
     private func updateLoadingIndicator() {

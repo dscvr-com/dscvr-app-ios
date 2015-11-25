@@ -73,6 +73,14 @@ extension SignalType {
     }
     
 }
+    
+public extension SignalType where Value == Bool {
+    
+    public func mapToTuple<T>(right: T, _ wrong: T) -> Signal<T, Error> {
+        return map { $0 ? right : wrong }
+    }
+        
+}
 
 public extension SignalType where Value: Equatable {
     public func equalsTo(value: Value) -> Signal<Bool, Error> {
@@ -135,4 +143,12 @@ public extension SignalProducerType where Value: Equatable {
     public func filter(values: [Value]) -> SignalProducer<Value, Error> {
         return lift { $0.filter(values) }
     }
+}
+    
+public extension SignalProducerType where Value == Bool {
+    
+    public func mapToTuple<T>(right: T, _ wrong: T) -> SignalProducer<T, Error> {
+        return lift { $0.mapToTuple(right, wrong) }
+    }
+        
 }

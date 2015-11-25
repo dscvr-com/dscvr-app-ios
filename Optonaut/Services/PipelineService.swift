@@ -54,17 +54,15 @@ class PipelineService {
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
-            .join(LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+            .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(!OptographTable[OptographSchema.isStitched] || !OptographTable[OptographSchema.isPublished])
         
         let optographs = DatabaseService.defaultConnection.prepare(query)
             .map { row -> Optograph in
-                let person = Person.fromSQL(row)
-                let location = Location.fromSQL(row)
                 var optograph = Optograph.fromSQL(row)
                 
-                optograph.person = person
-                optograph.location = location
+                optograph.person = Person.fromSQL(row)
+                optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
                 
                 return optograph
             }
@@ -73,12 +71,12 @@ class PipelineService {
         optographs.forEach { optograph in
             if !optograph.isStitched {
                 signals[optograph.ID] = stitch(optograph)
-            } else if Reachability.connectedToNetwork() {
+            } else if Reachability.connectedToNetwork() && SessionService.isLoggedIn {
                 signals[optograph.ID] = publish(optograph)
             }
         }
         
-        if optographs.filter({ !$0.isStitched }).isEmpty && StitchingService.hasUnstitchedRecordings() {
+        if optographs.filter({ !$0.isStitched }).isEmpty && !StitchingService.isStitching() && StitchingService.hasUnstitchedRecordings() {
             // This happens when an optograph was recorded, but never
             // inserted into the DB, for example due to cancel.
             // So it needs to be removed.

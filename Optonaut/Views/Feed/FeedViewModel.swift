@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import SwiftyUserDefaults
 
 struct TableViewResults<T: DeletableModel> {
     let insert: [Int]
@@ -85,8 +86,8 @@ class FeedViewModel: NSObject {
         
         let query = OptographTable.select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
-            .join(LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == SessionService.sessionData!.ID)
+            .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+            .filter(OptographTable[OptographSchema.isStaffPick] || PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == (Defaults[.SessionPersonID] ?? Person.guestID) || PersonTable[PersonSchema.ID] == Person.guestID)
             .order(CommentSchema.createdAt.asc)
         
         refreshNotification.signal
@@ -94,12 +95,10 @@ class FeedViewModel: NSObject {
                 DatabaseService.query(.Many, query: query)
                     .observeOnUserInteractive()
                     .map { row -> Optograph in
-                        let person = Person.fromSQL(row)
-                        let location = Location.fromSQL(row)
                         var optograph = Optograph.fromSQL(row)
                         
-                        optograph.person = person
-                        optograph.location = location
+                        optograph.person = Person.fromSQL(row)
+                        optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
                         
                         return optograph
                     }
@@ -118,7 +117,7 @@ class FeedViewModel: NSObject {
                     .observeOnUserInteractive()
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
-                        try! optograph.location.insertOrUpdate()
+                        try! optograph.location?.insertOrUpdate()
                         try! optograph.person.insertOrUpdate()
                     })
                     .ignoreError()
@@ -140,7 +139,7 @@ class FeedViewModel: NSObject {
                     .observeOnUserInteractive()
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
-                        try! optograph.location.insertOrUpdate()
+                        try! optograph.location?.insertOrUpdate()
                         try! optograph.person.insertOrUpdate()
                     })
                     .ignoreError()

@@ -102,6 +102,7 @@ class OptographTableViewCell: UITableViewCell {
                 self.progressTextView.hidden = progress == 1
                 if progress == 1 {
                     self.blurViewHeightConstraint.constant = 78
+                    // TODO update optograph in infoViewModel to reflect stitching status
                 } else {
                     self.blurViewHeightConstraint.constant = self.contentView.frame.height
                 }

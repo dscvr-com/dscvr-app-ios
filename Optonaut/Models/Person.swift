@@ -22,6 +22,8 @@ struct Person: Model {
     var wantsNewsletter: Bool
     var avatarAssetID: UUID
     
+    static let guestID: UUID = "00000000-0000-0000-0000-000000000000"
+    
     static func newInstance() -> Person {
         return Person(
             ID: uuid(),
@@ -41,6 +43,10 @@ struct Person: Model {
     func report() -> SignalProducer<EmptyResponse, ApiError> {
         return ApiService<EmptyResponse>.post("persons/\(ID)/report")
     }
+}
+
+func ==(lhs: Person, rhs: Person) -> Bool {
+    return lhs.ID == rhs.ID
 }
 
 extension Person: Mappable {

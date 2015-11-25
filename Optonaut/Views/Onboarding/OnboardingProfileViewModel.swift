@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import SwiftyUserDefaults
 
 class OnboardingProfileViewModel {
     
@@ -20,9 +21,9 @@ class OnboardingProfileViewModel {
     }
     
     let nextStep = MutableProperty<NextStep>(.Avatar)
-    let avatarImage = MutableProperty<UIImage>(UIImage(named: "avatar-placeholder")!)
-    let avatarUploaded = MutableProperty<Bool>(false)
-    let displayName = MutableProperty<String>("")
+    let avatarImageUrl: MutableProperty<String>
+    let avatarUploaded: MutableProperty<Bool>
+    let displayName: MutableProperty<String>
     let displayNameStatus = MutableProperty<LineTextField.Status>(.Disabled)
     let userName = MutableProperty<String>("")
     let userNameStatus = MutableProperty<LineTextField.Status>(.Disabled)
@@ -32,9 +33,13 @@ class OnboardingProfileViewModel {
     
     init() {
         
-        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- SessionService.sessionData!.ID)
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Defaults[.SessionPersonID]!)
         person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
-            
+        
+        displayName = MutableProperty(person.displayName)
+        avatarImageUrl = MutableProperty(ImageURL(person.avatarAssetID, width: 104, height: 104))
+        avatarUploaded = MutableProperty(!person.avatarAssetID.isEmpty)
+        
         avatarUploaded.producer
             .startWithNext { success in
                 if success {
@@ -111,6 +116,7 @@ class OnboardingProfileViewModel {
         let parameters = [
             "display_name": displayName.value,
             "user_name": userName.value,
+            "onboarding_version": OnboardingVersion,
         ] as [String: AnyObject]
         
         return ApiService.put("persons/me", parameters: parameters)
@@ -123,6 +129,7 @@ class OnboardingProfileViewModel {
                     self.person.displayName = self.displayName.value
                     self.person.userName = self.userName.value
                     self.saveModel()
+                    Defaults[.SessionOnboardingVersion] = OnboardingVersion
                 },
                 error: { _ in
                     self.loading.value = false
@@ -134,8 +141,6 @@ class OnboardingProfileViewModel {
         let data = UIImageJPEGRepresentation(image, 1)
         let str = data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         let avatarAssetID = uuid()
-        
-        avatarImage.value = UIImage(data: data!)!
         
         let parameters = [
             "avatar_asset": str!,
@@ -155,7 +160,7 @@ class OnboardingProfileViewModel {
                 },
                 error: { _ in
                     self.avatarUploaded.value = false
-                    self.avatarImage.value = UIImage(named: "avatar-placeholder")!
+                    self.avatarImageUrl.value = ImageURL(avatarAssetID, width: 104, height: 104)
                 }
             )
     }

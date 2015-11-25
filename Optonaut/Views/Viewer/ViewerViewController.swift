@@ -10,6 +10,7 @@ import ReactiveCocoa
 import Crashlytics
 import CardboardParams
 import Async
+import SwiftyUserDefaults
 
 class ViewerViewController: UIViewController  {
     
@@ -56,7 +57,7 @@ class ViewerViewController: UIViewController  {
         default: fatalError("device not supported")
         }
        
-        headset = CardboardParams.fromBase64(SessionService.sessionData!.vrGlasses).value!
+        headset = CardboardParams.fromBase64(Defaults[.SessionVRGlasses]).value!
         
         print("Headset: \(headset.vendor) \(headset.model)")
         
@@ -83,8 +84,8 @@ class ViewerViewController: UIViewController  {
         leftProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Left)
         rightProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Right)
         
-        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov, cameraOffset:  Float(0.5))
-        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov, cameraOffset: Float(-0.5))
+        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov, cameraOffset:  Float(-0.2))
+        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov, cameraOffset: Float(0.2))
             
         leftScnView.scene = leftRenderDelegate.scene
         leftScnView.delegate = leftRenderDelegate
@@ -121,7 +122,7 @@ class ViewerViewController: UIViewController  {
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))
         view.addSubview(settingsButtonView)
         
-        if !SessionService.sessionData!.vrGlassesSelected {
+        if Defaults[.SessionVRGlassesSelected] {
             showGlassesSelection()
         }
     }
@@ -234,14 +235,14 @@ class ViewerViewController: UIViewController  {
         glassesSelectionView = GlassesSelectionView()
         glassesSelectionView!.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
         glassesSelectionView!.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-        glassesSelectionView!.glasses = CardboardParams.fromBase64(SessionService.sessionData!.vrGlasses).value!.model
+        glassesSelectionView!.glasses = CardboardParams.fromBase64(Defaults[.SessionVRGlasses]).value!.model
         
         glassesSelectionView!.closeCallback = { [weak self] in
             self?.glassesSelectionView?.removeFromSuperview()
         }
         
         glassesSelectionView!.paramsCallback = { [weak self] params in
-            SessionService.sessionData!.vrGlassesSelected = true
+            Defaults[.SessionVRGlassesSelected] = true
             self?.setViewerParameters(params)
         }
         
@@ -452,7 +453,7 @@ extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
                     switch result {
                     case let .Success(params):
                         Async.main {
-                            SessionService.sessionData!.vrGlasses = params.compressedRepresentation.base64EncodedStringWithOptions([])
+                            Defaults[.SessionVRGlasses] = params.compressedRepresentation.base64EncodedStringWithOptions([])
                             
                             let cardboardDescription = "\(params.vendor) \(params.model)"
                             Mixpanel.sharedInstance().track("View.CardboardSelection.Scanned", properties: ["cardboard": cardboardDescription, "url" : shortUrl])

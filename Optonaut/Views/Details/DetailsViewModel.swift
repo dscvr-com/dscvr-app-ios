@@ -24,7 +24,7 @@ class DetailsViewModel {
     let textureImageUrl = MutableProperty<String>("")
     let text = MutableProperty<String>("")
     let hashtags = MutableProperty<String>("")
-    let location = MutableProperty<String>("")
+    let location = MutableProperty<String?>(nil)
     let comments = MutableProperty<[Comment]>([])
     let viewIsActive = MutableProperty<Bool>(false)
     let isLoading = MutableProperty<Bool>(true)
@@ -43,12 +43,10 @@ class DetailsViewModel {
             .filter(OptographTable[OptographSchema.ID] == optographID)
         
         if let optograph = DatabaseService.defaultConnection.pluck(query).map({ row -> Optograph in
-            let person = Person.fromSQL(row)
-            let location = Location.fromSQL(row)
             var optograph = Optograph.fromSQL(row)
             
-            optograph.person = person
-            optograph.location = location
+            optograph.person = Person.fromSQL(row)
+            optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
             
             return optograph
         }) {
@@ -163,7 +161,7 @@ class DetailsViewModel {
     
     private func saveModel() {
         try! optograph.insertOrUpdate()
-        try! optograph.location.insertOrUpdate()
+        try! optograph.location?.insertOrUpdate()
         try! optograph.person.insertOrUpdate()
     }
     
@@ -175,7 +173,7 @@ class DetailsViewModel {
         timeSinceCreated.value = optograph.createdAt.longDescription
         text.value = optograph.text
         hashtags.value = optograph.hashtagString
-        location.value = optograph.location.text
+        location.value = optograph.location?.text
         isPublished.value = optograph.isPublished
         avatarImageUrl.value = ImageURL(optograph.person.avatarAssetID, width: 40, height: 40)
         textureImageUrl.value = ImageURL(optograph.leftTextureAssetID)

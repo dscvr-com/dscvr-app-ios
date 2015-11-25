@@ -127,7 +127,7 @@ class CreateOptographViewController: UIViewController {
         locationIconView.rac_textColor <~ viewModel.locationEnabled.producer.map { $0 ? .DarkGrey : .Accent }
         infoWrapperView.addSubview(locationIconView)
         
-        locationWarningView.text = "Location required"
+        locationWarningView.text = "Use Location"
         locationWarningView.textColor = .Accent
         locationWarningView.font = UIFont.displayOfSize(16.5, withType: .Thin)
         locationWarningView.rac_hidden <~ viewModel.locationEnabled

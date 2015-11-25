@@ -166,7 +166,7 @@ class OptographInfoView: UIView {
                     self.retryButtonView.hidden = true
                     self.publishingView.hidden = false
                     self.publishingView.startAnimating()
-                case .Offline:
+                case .Offline, .Guest:
                     self.starButtonView.hidden = true
                     self.starsCountView.hidden = true
                     self.retryButtonView.hidden = false
@@ -181,10 +181,30 @@ class OptographInfoView: UIView {
     }
     
     func toggleStar() {
+        if !SessionService.isLoggedIn {
+            let alert = UIAlertController(title: "Please login first", message: "In order to like this Optograph you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Sign in", style: .Cancel, handler: { [weak self] _ in
+                self?.navigationController?.presentViewController(LoginViewController(), animated: false, completion: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
         viewModel.toggleLike()
     }
     
     func retryPublish() {
+        if !SessionService.isLoggedIn {
+            let alert = UIAlertController(title: "Please login first", message: "In order to upload this Optograph you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Sign in", style: .Cancel, handler: { [weak self] _ in
+                self?.navigationController?.presentViewController(LoginViewController(), animated: false, completion: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
         if !Reachability.connectedToNetwork() {
             NotificationService.push("No internet connection", level: .Warning)
             return

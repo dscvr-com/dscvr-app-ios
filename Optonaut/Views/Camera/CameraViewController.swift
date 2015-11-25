@@ -15,6 +15,7 @@ import Alamofire
 import SceneKit
 import Async
 import Mixpanel
+import SwiftyUserDefaults
 
 class CameraViewController: UIViewController {
     
@@ -66,7 +67,7 @@ class CameraViewController: UIViewController {
         dispatch_set_target_queue(sessionQueue, high)
         screenScale = Float(UIScreen.mainScreen().scale)
         
-        if SessionService.sessionData!.debuggingEnabled  {
+        if Defaults[.SessionDebuggingEnabled] {
             //Explicitely instantiate, so old data is removed. 
             Recorder.enableDebug(CameraDebugService().path)
         }
@@ -148,9 +149,13 @@ class CameraViewController: UIViewController {
         closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         view.addSubview(closeButtonView)
         
-        if SessionService.sessionData!.debuggingEnabled {
-            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "finish"))
-        }
+//        if Defaults[.SessionDebuggingEnabled] {
+        #if DEBUG
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "finish")
+            tapGestureRecognizer.numberOfTapsRequired = 3
+            view.addGestureRecognizer(tapGestureRecognizer)
+        #endif
+//        }
         
         setupCamera()
         
@@ -238,6 +243,7 @@ class CameraViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
+
         frameCount = 0
         
         UIApplication.sharedApplication().idleTimerDisabled = true
