@@ -30,6 +30,7 @@ class CommentTableViewCell: UITableViewCell {
         textView.mentionColor = UIColor.Accent
         textView.hashtagColor = UIColor.Accent
         textView.URLEnabled = false
+        textView.mentionEnabled = false
         textView.userInteractionEnabled = true
         textView.font = UIFont.textOfSize(13, withType: .Regular)
         textView.textColor = .whiteColor()
