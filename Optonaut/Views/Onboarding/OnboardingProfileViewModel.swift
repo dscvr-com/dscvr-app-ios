@@ -116,6 +116,7 @@ class OnboardingProfileViewModel {
         let parameters = [
             "display_name": displayName.value,
             "user_name": userName.value,
+            "onboarding_version": OnboardingVersion,
         ] as [String: AnyObject]
         
         return ApiService.put("persons/me", parameters: parameters)
@@ -128,6 +129,7 @@ class OnboardingProfileViewModel {
                     self.person.displayName = self.displayName.value
                     self.person.userName = self.userName.value
                     self.saveModel()
+                    Defaults[.SessionOnboardingVersion] = OnboardingVersion
                 },
                 error: { _ in
                     self.loading.value = false

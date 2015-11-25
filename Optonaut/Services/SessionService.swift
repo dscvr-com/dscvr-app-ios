@@ -38,6 +38,10 @@ class SessionService {
     
     static func prepare() {
         updateMixpanel()
+        
+        if Defaults[.SessionVRGlasses].isEmpty {
+            Defaults[.SessionVRGlasses] = DefaultVRGlasses
+        }
     }
     
     static func login(identifier: LoginIdentifier, password: String) -> SignalProducer<Void, ApiError> {
