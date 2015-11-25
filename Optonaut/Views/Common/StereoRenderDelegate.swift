@@ -62,10 +62,10 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         print("Fov:")
         print(fov)
         
-        let fovLeft = sin(DistortionProgram.toRadians(fov.left)) * zNear
-        let fovRight = sin(DistortionProgram.toRadians(fov.right)) * zNear
-        let fovTop = sin(DistortionProgram.toRadians(fov.top)) * zNear
-        let fovBottom = sin(DistortionProgram.toRadians(fov.bottom)) * zNear
+        let fovLeft = tan(DistortionProgram.toRadians(fov.left)) * zNear
+        let fovRight = tan(DistortionProgram.toRadians(fov.right)) * zNear
+        let fovTop = tan(DistortionProgram.toRadians(fov.top)) * zNear
+        let fovBottom = tan(DistortionProgram.toRadians(fov.bottom)) * zNear
         
         let projection = GLKMatrix4MakeFrustum(-fovLeft, fovRight, -fovBottom, fovTop, zNear, zFar)
         
@@ -77,7 +77,11 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double) {
         let xFov = Float(fov)
-        let yFov = xFov * Float(height / width)
+        let yFov = DistortionProgram.toDegrees(
+            atan(
+                tan(DistortionProgram.toRadians(xFov) / Float(2)) * Float(height / width)
+            ) * Float(2)
+        )
         let angles: [Float] = [xFov / Float(2.0), xFov / Float(2.0), yFov / Float(2.0), yFov / Float(2.0)]
         let newFov = FieldOfView(angles: angles)
         
