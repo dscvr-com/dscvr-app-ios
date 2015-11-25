@@ -149,21 +149,23 @@ class ApiService<T: Mappable> {
                         sink.sendError(apiError)
                     } else {
                         if let data = data where data.length > 0 {
-                            do {
-                                let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-                                if let object = Mapper<T>().map(json) {
-                                    sink.sendNext(object)
-                                } else if let array = Mapper<T>().mapArray(json) {
-                                    for object in array {
+                            if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
+                                do {
+                                    let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                                    if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
+                                    } else if let array = Mapper<T>().mapArray(json) {
+                                        for object in array {
+                                            sink.sendNext(object)
+                                        }
+                                    } else {
+                                        let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON couldn't be mapped to type T", error: nil)
+                                        sink.sendError(apiError)
                                     }
-                                } else {
-                                    let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON couldn't be mapped to type T", error: nil)
+                                } catch let error {
+                                    let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON invalid", error: error as NSError)
                                     sink.sendError(apiError)
                                 }
-                            } catch let error {
-                                let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON invalid", error: error as NSError)
-                                sink.sendError(apiError)
                             }
                         } else {
                             sink.sendNext(Mapper<T>().map([:])!)
