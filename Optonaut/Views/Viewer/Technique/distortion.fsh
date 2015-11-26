@@ -4,16 +4,14 @@ uniform vec2 uEyeOffset;
 uniform float uVignetteX;
 uniform float uVignetteY;
 
-
 varying vec2 xy;
 
 vec2 distort(vec2 position)
 {
-    vec2 p = position - (uEyeOffset);
-    float radiusSquared = p.y * p.y + p.x * p.x;
-    float radDistorted = 1.0 + radiusSquared * uCoefficients.x + radiusSquared * radiusSquared * uCoefficients.y;
-    p = p * radDistorted;
-    p = p + (uEyeOffset);
+    vec2 p = position.xy - (uEyeOffset);
+    float radiusSquared = (p.y * p.y + p.x * p.x);
+    float radDistorted = 1.0 + (uCoefficients.x + radiusSquared * uCoefficients.y) * radiusSquared;
+    p = p * radDistorted + (uEyeOffset);
     return p;
 }
 

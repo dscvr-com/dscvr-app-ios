@@ -67,8 +67,9 @@ class DistortionProgram {
         //coefficients = CGSize(width: 0, height: 0)
         eyeOffset = CGSize(width: CGFloat(eyeOffsetX), height: CGFloat(eyeOffsetY))
         
-        let factor = distortion.distortInverse(1)
-        let viewportOffset = CGSize(width: CGFloat(distortion.distortInverse(eyeOffsetX)), height: CGFloat(distortion.distortInverse(eyeOffsetY)))
+        let factor = distortion.distortInverse(1 - eyeOffsetX / 2)
+        let viewportOffset = CGSize(width: CGFloat(eyeOffsetX / 2), height: CGFloat(eyeOffsetY / 2))
+        //let viewportOffset = CGSize(width: 0, height: 0)
         
         print("Texture Scale \(factor)")
         
