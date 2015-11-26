@@ -142,7 +142,8 @@ class ApiService<T: Mappable> {
                         }
                         
                         do {
-                            let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
+                            let data = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
+                            print(data)
                         } catch {}
                         
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode ?? -1, message: error.description, error: error)
