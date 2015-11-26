@@ -72,6 +72,39 @@ class ViewerViewController: UIViewController  {
         logRetain()
     }
     
+    private func createRenderDelegates() {
+        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov, cameraOffset:  Float(-0.2))
+        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov, cameraOffset: Float(0.2))
+        
+        leftScnView.scene = leftRenderDelegate.scene
+        leftScnView.delegate = leftRenderDelegate
+        
+        rightScnView.scene = rightRenderDelegate.scene
+        rightScnView.delegate = rightRenderDelegate
+    }
+    
+    private func applyDistortionShader() {
+        leftScnView.technique = leftProgram.technique
+        rightScnView.technique = rightProgram.technique
+        leftRenderDelegate.fov = leftProgram.fov
+        rightRenderDelegate.fov = rightProgram.fov
+    }
+    
+    private func loadDistortionShader() {
+        if headset.vendor.containsString("Zeiss") && headset.model == "VR ONE" {
+            leftProgram = VROneDistortionProgram(isLeft: true)
+            rightProgram = VROneDistortionProgram(isLeft: false)
+        } else {
+            if leftProgram == nil || leftProgram is VROneDistortionProgram {
+                leftProgram = CardboardDistortionProgram(params: headset, screen: screen, eye: Eye.Left)
+                rightProgram = CardboardDistortionProgram(params: headset, screen: screen, eye: Eye.Right)
+            } else {
+                leftProgram.setParameters(headset, screen: screen, eye: .Left)
+                rightProgram.setParameters(headset, screen: screen, eye: .Right)
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -81,20 +114,9 @@ class ViewerViewController: UIViewController  {
         leftScnView = ViewerViewController.createScnView(CGRect(x: 0, y: 0, width: width, height: height / 2))
         rightScnView = ViewerViewController.createScnView(CGRect(x: 0, y: height / 2, width: width, height: height / 2))
         
-        leftProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Left)
-        rightProgram = DistortionProgram(params: headset, screen: screen, eye: Eye.Right)
-        
-        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov, cameraOffset:  Float(-0.2))
-        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov, cameraOffset: Float(0.2))
-            
-        leftScnView.scene = leftRenderDelegate.scene
-        leftScnView.delegate = leftRenderDelegate
-        
-        rightScnView.scene = rightRenderDelegate.scene
-        rightScnView.delegate = rightRenderDelegate
-
-        leftScnView.technique = leftProgram.technique
-        rightScnView.technique = rightProgram.technique
+        loadDistortionShader()
+        createRenderDelegates()
+        applyDistortionShader()
         
         view.addSubview(rightScnView)
         view.addSubview(leftScnView)
@@ -185,11 +207,8 @@ class ViewerViewController: UIViewController  {
     func setViewerParameters(headset: CardboardParams) {
         self.headset = headset
         
-        leftProgram.setParameters(headset, screen: screen, eye: .Left)
-        rightProgram.setParameters(headset, screen: screen, eye: .Right)
-        
-        leftRenderDelegate.fov = leftProgram.fov
-        rightRenderDelegate.fov = rightProgram.fov
+        loadDistortionShader()
+        applyDistortionShader()
     }
     
     override func viewDidDisappear(animated: Bool) {

@@ -78,6 +78,14 @@ func or(a: Bool, _ b: Bool) -> Bool {
     return a || b
 }
 
+func toRadians(deg: Float) -> Float {
+    return deg / Float(180) * Float(M_PI)
+}
+
+func toDegrees(rad: Float) -> Float {
+    return rad * Float(180) / Float(M_PI)
+}
+
 //class NotificationSignal {
 //    
 //    let (signal, sink) =  Signal<Void, NoError>.pipe()

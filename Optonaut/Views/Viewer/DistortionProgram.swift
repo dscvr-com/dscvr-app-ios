@@ -15,27 +15,62 @@ enum Eye {
     case Right
 }
 
-// TODO: Param for flipping 180
-class DistortionProgram {
+
+protocol DistortionProgram {
+    var technique: SCNTechnique! { get }
+    var fov: FieldOfView! { get }
+    
+    func setParameters(params: CardboardParams, screen: ScreenParams, eye: Eye)
+}
+
+class DistortionProgramHelpers {
+    
+    static func techniqueFromName(name: String) -> SCNTechnique {
+        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
+        let json = try! NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! NSDictionary
+        let technique = SCNTechnique(dictionary: json as! [String : AnyObject])
+        
+        return technique!
+    }
+    
+    
+    static func truncateFov(originalFov: Float, offset: Float) -> Float {
+        if offset <= 0 {
+            return originalFov
+        }
+        return toDegrees(toRadians(originalFov) - atan(tan(toRadians(originalFov)) * offset))
+    }
+
+}
+
+class VROneDistortionProgram: DistortionProgram {
+    
+    private(set) var technique: SCNTechnique!
+    private(set) var fov: FieldOfView!
+    
+    init(isLeft: Bool) {
+        if isLeft {
+            technique = DistortionProgramHelpers.techniqueFromName("zeiss_displacement_left")
+        } else {
+            technique = DistortionProgramHelpers.techniqueFromName("zeiss_displacement_right")
+        }
+        
+        fov = FieldOfView(angles: [50, 50, 50, 50])
+    }
+    
+    
+    func setParameters(params: CardboardParams, screen: ScreenParams, eye: Eye) { }
+}
+class CardboardDistortionProgram: DistortionProgram {
     private(set) var technique: SCNTechnique!
     private(set) var fov: FieldOfView!
     private var coefficients: CGSize!
     private var eyeOffset: CGSize!
 
     init(params: CardboardParams, screen: ScreenParams, eye: Eye) {
-        technique = DistortionProgram.techniqueFromName("distortion")
+        technique = DistortionProgramHelpers.techniqueFromName("distortion")
         
         setParameters(params, screen: screen, eye: eye)
-    }
-    
-    static func truncateFov(originalFov: Float, offset: Float) -> Float {
-        
-        if offset <= 0 {
-            return originalFov
-        }
-        
-        
-        return toDegrees(toRadians(originalFov) - atan(tan(toRadians(originalFov)) * offset))
     }
     
     func setParameters(params: CardboardParams, screen: ScreenParams, eye: Eye) {
@@ -51,10 +86,10 @@ class DistortionProgram {
         xEyeOffsetTanAngleScreen *= 2
         yEyeOffsetTanAngleScreen *= -4
         
-        let fovLeft = DistortionProgram.truncateFov(params.leftEyeMaxFov.left, offset: -xEyeOffsetTanAngleScreen)
-        let fovRight = DistortionProgram.truncateFov(params.leftEyeMaxFov.right, offset: xEyeOffsetTanAngleScreen)
-        let fovTop = DistortionProgram.truncateFov(params.leftEyeMaxFov.top, offset: yEyeOffsetTanAngleScreen)
-        let fovBottom = DistortionProgram.truncateFov(params.leftEyeMaxFov.bottom, offset: -yEyeOffsetTanAngleScreen)
+        let fovLeft = DistortionProgramHelpers.truncateFov(params.leftEyeMaxFov.left, offset: -xEyeOffsetTanAngleScreen)
+        let fovRight = DistortionProgramHelpers.truncateFov(params.leftEyeMaxFov.right, offset: xEyeOffsetTanAngleScreen)
+        let fovTop = DistortionProgramHelpers.truncateFov(params.leftEyeMaxFov.top, offset: yEyeOffsetTanAngleScreen)
+        let fovBottom = DistortionProgramHelpers.truncateFov(params.leftEyeMaxFov.bottom, offset: -yEyeOffsetTanAngleScreen)
         
 
         let newFov = FieldOfView(angles: [fovLeft, fovRight, fovTop, fovBottom])
@@ -81,21 +116,5 @@ class DistortionProgram {
         technique.setValue(NSNumber(float: 0.02), forKey: "vignette_y")
         
         self.fov = fov
-    }
-    
-    static func toRadians(deg: Float) -> Float {
-        return deg / Float(180) * Float(M_PI)
-    }
-    
-    static func toDegrees(rad: Float) -> Float {
-        return rad * Float(180) / Float(M_PI)
-    }
-    
-    static func techniqueFromName(name: String) -> SCNTechnique {
-        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
-        let json = try! NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! NSDictionary
-        let technique = SCNTechnique(dictionary: json as! [String : AnyObject])
-        
-        return technique!
     }
 }
