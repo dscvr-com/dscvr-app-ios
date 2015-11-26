@@ -29,6 +29,16 @@ GLKMatrix4 CVMatToGLK4(const cv::Mat &m) {
                           (float)m.at<double>(3, 0), (float)m.at<double>(3, 1), (float)m.at<double>(3, 2), (float)m.at<double>(3, 3));
 }
 
+GLKMatrix3 CVMatToGLK3(const cv::Mat &m) {
+    assert(m.cols == 3 && m.rows == 3 && m.type() == CV_64F);
+    assert(sizeof(float) == 4);
+    assert(sizeof(double) == 8);
+    
+    return GLKMatrix3Make((float)m.at<double>(0, 0), (float)m.at<double>(0, 1), (float)m.at<double>(0, 2),
+                          (float)m.at<double>(1, 0), (float)m.at<double>(1, 1), (float)m.at<double>(1, 2),
+                          (float)m.at<double>(2, 0), (float)m.at<double>(2, 1), (float)m.at<double>(2, 2));
+}
+
 void GLK4ToCVMat(GLKMatrix4 m, cv::Mat &output) {
     cv::Mat tmp = cv::Mat(4, 4, CV_32F, m.m);
     tmp.convertTo(output, CV_64F);
@@ -103,17 +113,30 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 }
 @end
 
+std::string debugPath;
+
 @implementation Recorder {
 @private
     optonaut::Recorder* pipe;
     cv::Mat intrinsics;
-    std::string debugPath;
-    bool isDebug;
     NSString* tempPath;
+}
+
++ (void)enableDebug:(NSString*)path {
+    debugPath = std::string([path UTF8String]);
+}
++ (void)disableDebug {
+    debugPath = "";
 }
 
 + (NSString*)getVersion {
     return [NSString stringWithCString:optonaut::Recorder::version.c_str() encoding: [NSString defaultCStringEncoding]];
+}
++ (GLKMatrix3)getIPhone6Intrinsics {
+    return CVMatToGLK3(optonaut::iPhone6Intrinsics);
+}
++ (GLKMatrix3)getIPhone5Intrinsics {
+    return CVMatToGLK3(optonaut::iPhone5Intrinsics);
 }
 + (void)freeImageBuffer:(ImageBuffer)toFree {
     free(toFree.data);
@@ -122,7 +145,6 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 -(id)init {
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
-    self->isDebug = false;
     
     // Yes, asserting in init is evil.
     // But you sould never even think of starting a new recording
@@ -132,11 +154,12 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     
     Stores::left.Clear();
     Stores::right.Clear();
+    Stores::common.Clear();
     
     optonaut::Recorder::exposureEnabled = false;
-    optonaut::Recorder::alignmentEnabled = false;
+    optonaut::Recorder::alignmentEnabled = true;
     
-    self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero, self->intrinsics, Stores::left, Stores::right, optonaut::RecorderGraph::ModeTruncated, true);
+    self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero, self->intrinsics, Stores::left, Stores::right, Stores::common, debugPath, optonaut::RecorderGraph::ModeTruncated, true);
     
     counter = 0;
 
@@ -178,11 +201,6 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     ConvertSelectionPoint(b, &convB);
     return pipe->AreAdjacent(convA, convB);
 }
-- (void)enableDebug:(NSString*)path {
-    assert(false);
-    debugPath = std::string([path UTF8String]);
-    isDebug = true;
-}
 - (SelectionPointIterator*)getSelectionPoints {
     assert(pipe != NULL);
     return [[SelectionPointIterator alloc] init: pipe->GetSelectionPoints()];
@@ -199,22 +217,22 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
     assert(pipe != NULL);
     return pipe->HasResults();
 }
-- (GLKMatrix4)getBallPosition {
+- (GLKMatrix4)getNextKeyframePosition {
     assert(pipe != NULL);
-    return CVMatToGLK4(pipe->GetBallPosition());
+    return CVMatToGLK4(pipe->GetNextKeyframe());
 }
 - (bool)isFinished {
     assert(pipe != NULL);
     return pipe->IsFinished();
 }
-- (double)getDistanceToBall {
+- (double)getDistanceToNextKeyframe {
     assert(pipe != NULL);
-    return pipe->GetDistanceToBall();
+    return pipe->GetDistanceToNextKeyframe();
 }
-- (GLKVector3)getAngularDistanceToBall {
+- (GLKVector3)getAngularDistanceToNextKeyframe {
     assert(pipe != NULL);
     //Special coord remapping, so we respect the screen coord system.
-    const Mat &m = pipe->GetAngularDistanceToBall();
+    const Mat &m = pipe->GetAngularDistanceToNextKeyframe();
     return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
 }
 - (uint32_t)getRecordedImagesCount {

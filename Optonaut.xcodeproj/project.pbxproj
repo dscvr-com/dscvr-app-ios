@@ -175,6 +175,8 @@
 		A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2D1BC87F7500C9EFE5 /* Stitcher.mm */; };
 		A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */; };
 		A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E301BC87F7500C9EFE5 /* Stores.mm */; };
+		A55C80FA1BF91FDA00420E52 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55C80F61BF91FDA00420E52 /* simplePlaneStitcher.cpp */; };
+		A55C80FB1BF91FDA00420E52 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55C80F81BF91FDA00420E52 /* simpleSphereStitcher.cpp */; };
 		A568D4951BD12F5A008FF556 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4971BD13348008FF556 /* HeadTracker.mm */; };
 		A56CA4061BC070450078D7E8 /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FF1BC070450078D7E8 /* lut */; };
@@ -406,6 +408,11 @@
 		A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StitcherUtils.swift; path = Optonaut/Stitcher/StitcherUtils.swift; sourceTree = SOURCE_ROOT; };
 		A5233E2F1BC87F7500C9EFE5 /* Stores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stores.h; path = Optonaut/Stitcher/Stores.h; sourceTree = SOURCE_ROOT; };
 		A5233E301BC87F7500C9EFE5 /* Stores.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Stores.mm; path = Optonaut/Stitcher/Stores.mm; sourceTree = SOURCE_ROOT; };
+		A55C80F61BF91FDA00420E52 /* simplePlaneStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simplePlaneStitcher.cpp; sourceTree = "<group>"; };
+		A55C80F71BF91FDA00420E52 /* simplePlaneStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simplePlaneStitcher.hpp; sourceTree = "<group>"; };
+		A55C80F81BF91FDA00420E52 /* simpleSphereStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simpleSphereStitcher.cpp; sourceTree = "<group>"; };
+		A55C80F91BF91FDA00420E52 /* simpleSphereStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simpleSphereStitcher.hpp; sourceTree = "<group>"; };
+		A55C80FC1BF920D000420E52 /* planarCorrelator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = planarCorrelator.hpp; sourceTree = "<group>"; };
 		A568D4961BD13171008FF556 /* HeadTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeadTracker.h; path = Optonaut/Vendor/HeadTracker.h; sourceTree = SOURCE_ROOT; };
 		A568D4971BD13348008FF556 /* HeadTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HeadTracker.mm; path = Optonaut/Vendor/HeadTracker.mm; sourceTree = SOURCE_ROOT; };
 		A56CA3FF1BC070450078D7E8 /* lut */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lut; path = Shader/Zeiss/lut; sourceTree = "<group>"; };
@@ -418,6 +425,8 @@
 		A56CA40D1BC070AE0078D7E8 /* barrell_displacement.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.fsh; path = Shader/Cardboard/barrell_displacement.fsh; sourceTree = "<group>"; };
 		A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = barrell_displacement.json; path = Shader/Cardboard/barrell_displacement.json; sourceTree = "<group>"; };
 		A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.vsh; path = Shader/Cardboard/barrell_displacement.vsh; sourceTree = "<group>"; };
+		A58F97AA1C04A00100450D31 /* streamingRecorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = streamingRecorderController.hpp; sourceTree = "<group>"; };
+		A58F97AB1C04A00100450D31 /* tolerantRecorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tolerantRecorderController.hpp; sourceTree = "<group>"; };
 		A5DE71E01BE28A7400316F82 /* Distortion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distortion.swift; sourceTree = "<group>"; };
 		A5DE71E11BE28A7400316F82 /* DistortionMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionMesh.swift; sourceTree = "<group>"; };
 		A5DE71E21BE28A7400316F82 /* DistortionProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionProgram.swift; sourceTree = "<group>"; };
@@ -462,7 +471,6 @@
 		A5FD5D671BEA5A4E0031ED1E /* exposureCompensator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = exposureCompensator.hpp; sourceTree = "<group>"; };
 		A5FD5D681BEA5A4E0031ED1E /* recorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = recorder.cpp; sourceTree = "<group>"; };
 		A5FD5D691BEA5A4E0031ED1E /* recorder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorder.hpp; sourceTree = "<group>"; };
-		A5FD5D6A1BEA5A4E0031ED1E /* recorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderController.hpp; sourceTree = "<group>"; };
 		A5FD5D6B1BEA5A4E0031ED1E /* recorderGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderGraph.hpp; sourceTree = "<group>"; };
 		A5FD5D6C1BEA5A4E0031ED1E /* recorderGraphGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderGraphGenerator.hpp; sourceTree = "<group>"; };
 		A5FD5D6D1BEA5A4E0031ED1E /* ringwiseStreamAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ringwiseStreamAligner.hpp; sourceTree = "<group>"; };
@@ -1064,6 +1072,7 @@
 		A5FD5D511BEA5A4E0031ED1E /* imgproc */ = {
 			isa = PBXGroup;
 			children = (
+				A55C80FC1BF920D000420E52 /* planarCorrelator.hpp */,
 				A5FD5D521BEA5A4E0031ED1E /* correlation.hpp */,
 				A5FD5D531BEA5A4E0031ED1E /* pairwiseCorrelator.hpp */,
 				A5FD5D541BEA5A4E0031ED1E /* pairwiseVisualAligner.hpp */,
@@ -1100,13 +1109,14 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
+				A58F97AA1C04A00100450D31 /* streamingRecorderController.hpp */,
+				A58F97AB1C04A00100450D31 /* tolerantRecorderController.hpp */,
 				A5FD5D641BEA5A4E0031ED1E /* aligner.hpp */,
 				A5FD5D651BEA5A4E0031ED1E /* asyncAligner.hpp */,
 				A5FD5D661BEA5A4E0031ED1E /* bundleAligner.hpp */,
 				A5FD5D671BEA5A4E0031ED1E /* exposureCompensator.hpp */,
 				A5FD5D681BEA5A4E0031ED1E /* recorder.cpp */,
 				A5FD5D691BEA5A4E0031ED1E /* recorder.hpp */,
-				A5FD5D6A1BEA5A4E0031ED1E /* recorderController.hpp */,
 				A5FD5D6B1BEA5A4E0031ED1E /* recorderGraph.hpp */,
 				A5FD5D6C1BEA5A4E0031ED1E /* recorderGraphGenerator.hpp */,
 				A5FD5D6D1BEA5A4E0031ED1E /* ringwiseStreamAligner.hpp */,
@@ -1128,6 +1138,10 @@
 		A5FD5D731BEA5A4E0031ED1E /* stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				A55C80F61BF91FDA00420E52 /* simplePlaneStitcher.cpp */,
+				A55C80F71BF91FDA00420E52 /* simplePlaneStitcher.hpp */,
+				A55C80F81BF91FDA00420E52 /* simpleSphereStitcher.cpp */,
+				A55C80F91BF91FDA00420E52 /* simpleSphereStitcher.hpp */,
 				A5FD5D741BEA5A4E0031ED1E /* dynamicSeamer.cpp */,
 				A5FD5D751BEA5A4E0031ED1E /* dynamicSeamer.hpp */,
 				A5FD5D761BEA5A4E0031ED1E /* multiringStitcher.cpp */,
@@ -1325,6 +1339,7 @@
 				8F23AA591BFF3229008926A8 /* Migration0002.swift in Sources */,
 				8F5335B21BDBE0910058961A /* ActivityFollowTableViewCell.swift in Sources */,
 				8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */,
+				A55C80FB1BF91FDA00420E52 /* simpleSphereStitcher.cpp in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
 				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
 				A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */,
@@ -1467,6 +1482,7 @@
 				8F7738161B380F5D001F642B /* Person.swift in Sources */,
 				A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */,
 				A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */,
+				A55C80FA1BF91FDA00420E52 /* simplePlaneStitcher.cpp in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,
 				A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */,
 				8FAB9F3A1B8F01DF00B4C8CB /* CommentTableViewCell.swift in Sources */,
@@ -1596,6 +1612,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
 				);
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
