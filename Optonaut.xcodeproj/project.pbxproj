@@ -42,6 +42,7 @@
 		8F23AA651C021CA4008926A8 /* Neon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA641C021CA4008926A8 /* Neon.framework */; };
 		8F23AA761C0712ED008926A8 /* Migration0003.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA751C0712ED008926A8 /* Migration0003.swift */; };
 		8F23AA781C072702008926A8 /* BoundingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA771C072702008926A8 /* BoundingLabel.swift */; };
+		8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA791C077C1B008926A8 /* Migration0004.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */; };
@@ -259,6 +260,7 @@
 		8F23AA641C021CA4008926A8 /* Neon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Neon.framework; path = Carthage/Build/iOS/Neon.framework; sourceTree = "<group>"; };
 		8F23AA751C0712ED008926A8 /* Migration0003.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0003.swift; sourceTree = "<group>"; };
 		8F23AA771C072702008926A8 /* BoundingLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingLabel.swift; sourceTree = "<group>"; };
+		8F23AA791C077C1B008926A8 /* Migration0004.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0004.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewController.swift; sourceTree = "<group>"; };
@@ -536,6 +538,7 @@
 				8F23AA561BFF31EC008926A8 /* Migration0001.swift */,
 				8F23AA581BFF3229008926A8 /* Migration0002.swift */,
 				8F23AA751C0712ED008926A8 /* Migration0003.swift */,
+				8F23AA791C077C1B008926A8 /* Migration0004.swift */,
 			);
 			path = Migrations;
 			sourceTree = "<group>";
@@ -1483,6 +1486,7 @@
 				A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */,
 				A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */,
 				A55C80FA1BF91FDA00420E52 /* simplePlaneStitcher.cpp in Sources */,
+				8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,
 				A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */,
 				8FAB9F3A1B8F01DF00B4C8CB /* CommentTableViewCell.swift in Sources */,

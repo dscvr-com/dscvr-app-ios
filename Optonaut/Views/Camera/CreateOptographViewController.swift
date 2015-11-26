@@ -120,14 +120,15 @@ class CreateOptographViewController: UIViewController {
         enableCameraTextView.rac_hidden <~ viewModel.cameraPreviewEnabled.producer.map(negate)
         view.addSubview(enableCameraTextView)
         
-        submitButtonView.rac_hidden <~ viewModel.cameraPreviewEnabled
-        submitButtonView.rac_userInteractionEnabled <~ viewModel.readyToSubmit
-        submitButtonView.setTitle(String.iconWithName(.Check), forState: .Normal)
         submitButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         submitButtonView.defaultBackgroundColor = .Accent
         submitButtonView.disabledBackgroundColor = UIColor.Accent.alpha(0.5)
         submitButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         submitButtonView.layer.cornerRadius = 30
+        submitButtonView.rac_hidden <~ viewModel.cameraPreviewEnabled
+        submitButtonView.rac_userInteractionEnabled <~ viewModel.readyToSubmit
+        submitButtonView.rac_loading <~ viewModel.recorderCleanedUp.producer.map(negate)
+        submitButtonView.rac_title <~ viewModel.recorderCleanedUp.producer.mapToTuple(String.iconWithName(.Check), "")
         submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "submit"))
         view.addSubview(submitButtonView)
         
@@ -371,7 +372,7 @@ class CreateOptographViewController: UIViewController {
     
     func keyboardWillShow(notification: NSNotification) {
         let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
-        view.frame.origin.y = -keyboardHeight + 120
+        view.frame.origin.y = -keyboardHeight
     }
     
     func keyboardWillHide(notification: NSNotification) {

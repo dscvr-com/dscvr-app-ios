@@ -126,6 +126,7 @@ class PipelineService {
         stitchingSignal
             .observeCompleted {
                 optograph.isStitched = true
+                optograph.stitcherVersion = StitcherVersion
                 try! optograph.insertOrUpdate()
                 StitchingService.removeUnstitchedRecordings()
                 signals.removeValueForKey(optograph.ID)

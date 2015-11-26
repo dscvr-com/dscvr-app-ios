@@ -33,6 +33,7 @@ struct Optograph: DeletableModel {
     var isPrivate: Bool
     var isStitched: Bool
     var isPublished: Bool
+    var stitcherVersion: String
     var previewAssetID: UUID
     var leftTextureAssetID: UUID
     var rightTextureAssetID: UUID
@@ -54,6 +55,7 @@ struct Optograph: DeletableModel {
             isPrivate: false,
             isStitched: false,
             isPublished: false,
+            stitcherVersion: "",
             previewAssetID: uuid(),
             leftTextureAssetID: uuid(),
             rightTextureAssetID: uuid(),
@@ -86,7 +88,6 @@ struct Optograph: DeletableModel {
             .map { (left, right, preview) -> [String: AnyObject] in
                 var parameters = Mapper().toJSON(self)
                 
-                parameters["stitcher_version"] = StitcherVersion
                 parameters["left_texture_asset"] = left.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
                 parameters["right_texture_asset"] = right.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
                 parameters["preview_asset"] = preview.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
@@ -163,6 +164,7 @@ extension Optograph: Mappable {
         deletedAt           <- (map["deleted_at"], NSDateTransform())
         isStarred           <- map["is_starred"]
         isPrivate           <- map["is_private"]
+        stitcherVersion     <- map["stitcher_version"]
         starsCount          <- map["stars_count"]
         commentsCount       <- map["comments_count"]
         viewsCount          <- map["views_count"]
@@ -201,6 +203,7 @@ extension Optograph: SQLiteModel {
             isPrivate: row[OptographSchema.isPrivate],
             isStitched: row[OptographSchema.isStitched],
             isPublished: row[OptographSchema.isPublished],
+            stitcherVersion: row[OptographSchema.stitcherVersion],
             previewAssetID: row[OptographSchema.previewAssetID],
             leftTextureAssetID: row[OptographSchema.leftTextureAssetID],
             rightTextureAssetID: row[OptographSchema.rightTextureAssetID],
@@ -224,6 +227,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.isPrivate <-- isPrivate,
             OptographSchema.isStitched <-- isStitched,
             OptographSchema.isPublished <-- isPublished,
+            OptographSchema.stitcherVersion <-- stitcherVersion,
             OptographSchema.previewAssetID <-- previewAssetID,
             OptographSchema.leftTextureAssetID <-- leftTextureAssetID,
             OptographSchema.rightTextureAssetID <-- rightTextureAssetID,
