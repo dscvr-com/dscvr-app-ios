@@ -99,12 +99,6 @@ class ActivityTableViewController: UIViewController, RedNavbar {
         viewModel.refreshNotification.notify(())
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        tabBarController?.delegate = nil
-    }
-    
 }
 
 
