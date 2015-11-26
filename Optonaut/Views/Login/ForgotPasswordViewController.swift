@@ -84,8 +84,6 @@ class ForgotPasswordViewController: UIViewController {
         backButtonView.setTitle("Back", forState: .Normal)
         backButtonView.setTitleColor(.Accent, forState: .Normal)
         backButtonView.defaultBackgroundColor = .whiteColor()
-//        backButtonView.titleLabel?.font = UIFont.displayOfSize(20, withType: .Semibold)
-//        backButtonView.layer.cornerRadius = 30
         backButtonView.rac_hidden <~ viewModel.sent.producer.map(negate)
         backButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         formView.addSubview(backButtonView)
@@ -201,9 +199,6 @@ class ForgotPasswordViewController: UIViewController {
             .on(
                 error: { [weak self] _ in
                     self?.viewModel.emailStatus.value = .Warning("We couldn't find that email address...")
-//                    let alert = UIAlertController(title: "Something went wrong", message: ".", preferredStyle: .Alert)
-//                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-//                    self.presentViewController(alert, animated: true, completion: nil)
                     
                 },
                 completed: { [weak self] in
@@ -215,7 +210,7 @@ class ForgotPasswordViewController: UIViewController {
     }
     
     func cancel() {
-        presentViewController(LoginViewController(), animated: false, completion: nil)
+        view.window?.rootViewController = LoginViewController()
     }
     
 }

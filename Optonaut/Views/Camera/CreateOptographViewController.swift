@@ -11,6 +11,7 @@ import ReactiveCocoa
 import KMPlaceholderTextView
 import Mixpanel
 import ActiveLabel
+import Async
 import AVFoundation
 
 class CreateOptographViewController: UIViewController {
@@ -20,6 +21,7 @@ class CreateOptographViewController: UIViewController {
     // camera
     private let session = AVCaptureSession()
     private let sessionQueue: dispatch_queue_t
+    private let recorderQueue: dispatch_queue_t
     
     // subviews
     private let previewImageView = PlaceholderImageView()
@@ -37,22 +39,32 @@ class CreateOptographViewController: UIViewController {
     private let locationTextView = UILabel()
     private let locationCountryView = UILabel()
     private let locationWarningView = UILabel()
-    private let locationEnableView = UILabel()
+    private let locationEnableView = BoundingLabel()
     private let locationReloadView = UILabel()
     private let locationActivityView = UIActivityIndicatorView()
     private let descriptionView = ActiveLabel()
     private let textInputView = KMPlaceholderTextView()
     private let hashtagInputView = LineTextField()
+    private let lockIconView = BoundingLabel()
+    private let lockTextView = BoundingLabel()
     private let backgroundView = BackgroundView()
     
     private let imagePickerController = UIImagePickerController()
     
-    required init() {
+    required init(recorderCleanup: SignalProducer<Void, NoError>) {
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         dispatch_set_target_queue(sessionQueue, high)
         
+        recorderQueue = dispatch_queue_create("recorderQueue", DISPATCH_QUEUE_SERIAL)
+        
         super.init(nibName: nil, bundle: nil)
+        
+        recorderCleanup
+            .startOn(QueueScheduler(queue: recorderQueue))
+            .startWithCompleted { [weak self] in
+                self?.viewModel.recorderCleanedUp.value = true
+            }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -204,10 +216,24 @@ class CreateOptographViewController: UIViewController {
         }
         infoWrapperView.addSubview(textInputView)
         
+        lockIconView.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Locked), .iconWithName(.Unlocked))
+        lockIconView.textColor = .LightGrey
+        lockIconView.font = UIFont.iconOfSize(15)
+        lockIconView.userInteractionEnabled = true
+        lockIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "togglePrivate"))
+        backgroundView.addSubview(lockIconView)
+        
+        lockTextView.rac_text <~ viewModel.isPrivate.producer.mapToTuple("Optograph will be private", "Optograph will be public")
+        lockTextView.textColor = .LightGrey
+        lockTextView.font = UIFont.displayOfSize(14, withType: .Semibold)
+        lockTextView.userInteractionEnabled = true
+        lockTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "togglePrivate"))
+        backgroundView.addSubview(lockTextView)
+        
         view.addSubview(backgroundView)
         
         setupCamera()
-        
+
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
         
         view.setNeedsUpdateConstraints()
@@ -282,6 +308,14 @@ class CreateOptographViewController: UIViewController {
         textInputView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         textInputView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -19)
         textInputView.autoSetDimension(.Height, toSize: 100)
+        
+        lockIconView.autoPinEdge(.Top, toEdge: .Top, ofView: backgroundView, withOffset: 25)
+        lockIconView.autoPinEdge(.Left, toEdge: .Left, ofView: backgroundView, withOffset: 19)
+        lockIconView.autoSetDimension(.Width, toSize: 15)
+        lockIconView.autoSetDimension(.Height, toSize: 15)
+        
+        lockTextView.autoPinEdge(.Top, toEdge: .Top, ofView: lockIconView, withOffset: 0)
+        lockTextView.autoPinEdge(.Left, toEdge: .Right, ofView: lockIconView, withOffset: 7)
         
         backgroundView.autoPinEdge(.Top, toEdge: .Bottom, ofView: textInputView, withOffset: 10)
         backgroundView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view)
@@ -370,14 +404,6 @@ class CreateOptographViewController: UIViewController {
     }
     
     func cancel() {
-        Mixpanel.sharedInstance().track("Action.CreateOptograph.Cancel")
-        
-        if StitchingService.isStitching() {
-            StitchingService.cancelStitching()
-        }
-        // No if here explicitely. If the stitching service has no 
-        // unstitched recordings, it's not allowed in this view. 
-        StitchingService.removeUnstitchedRecordings()
         
         navigationController?.popViewControllerAnimated(false)
     }
@@ -415,6 +441,22 @@ class CreateOptographViewController: UIViewController {
     
     func textFieldChanged() {
         prependHashtag()
+    }
+    
+    func togglePrivate() {
+        let settingsSheet = UIAlertController(title: "Set visibility", message: "Who should be able to see your Optograph?", preferredStyle: .ActionSheet)
+        
+        settingsSheet.addAction(UIAlertAction(title: "Everybody (Default)", style: .Default, handler: { [weak self] _ in
+            self?.viewModel.isPrivate.value = false
+        }))
+        
+        settingsSheet.addAction(UIAlertAction(title: "Just me", style: .Destructive, handler: { [weak self] _ in
+            self?.viewModel.isPrivate.value = true
+        }))
+        
+        settingsSheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        
+        navigationController?.presentViewController(settingsSheet, animated: true, completion: nil)
     }
     
 }

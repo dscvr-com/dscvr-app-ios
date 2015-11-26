@@ -71,7 +71,7 @@ class OnboardingInfoViewController: UIViewController {
     }
     
     func showVROnboarding() {
-        presentViewController(OnboardingVRViewController(), animated: false, completion: nil)
+        view.window?.rootViewController = OnboardingVRViewController()
     }
     
     override func viewDidAppear(animated: Bool) {

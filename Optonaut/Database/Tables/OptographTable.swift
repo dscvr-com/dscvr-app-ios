@@ -19,6 +19,7 @@ struct OptographSchemaType: ModelSchema {
     let starsCount = Expression<Int>("optograph_stars_count")
     let commentsCount = Expression<Int>("optograph_comments_count")
     let viewsCount = Expression<Int>("optograph_views_count")
+    let isPrivate = Expression<Bool>("optograph_is_private")
     let isStitched = Expression<Bool>("optograph_is_stitched")
     let isPublished = Expression<Bool>("optograph_is_published")
     let previewAssetID = Expression<UUID>("optograph_preview_asset_id")
@@ -30,4 +31,3 @@ struct OptographSchemaType: ModelSchema {
 
 let OptographSchema = OptographSchemaType()
 let OptographTable = Table("optograph")
-

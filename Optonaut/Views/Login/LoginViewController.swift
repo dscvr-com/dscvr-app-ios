@@ -15,24 +15,21 @@ import FBSDKLoginKit
 class LoginViewController: UIViewController {
     
     // subviews
-    let headView = UIView()
-    let skipTextView = UILabel()
-    let logoView = UILabel()
-    let signupTabView = UILabel()
-    let loginTabView = UILabel()
-    let emailOrUserNameInputView = LineTextField()
-    let passwordInputView = LineTextField()
-    let submitButtonView = ActionButton()
-    let forgotPasswordView = UILabel()
-    let signupTextView = UILabel()
-    let signupHelpTextView = UILabel()
-    let loadingView = UIView()
-    let facebookButtonView = ActionButton()
+    private let headView = UIView()
+    private let skipTextView = BoundingLabel()
+    private let logoView = UILabel()
+    private let signupTabView = BoundingLabel()
+    private let loginTabView = BoundingLabel()
+    private let emailOrUserNameInputView = LineTextField()
+    private let passwordInputView = LineTextField()
+    private let submitButtonView = ActionButton()
+    private let forgotPasswordView = UILabel()
+    private let signupTextView = UILabel()
+    private let signupHelpTextView = UILabel()
+    private let loadingView = UIView()
+    private let facebookButtonView = ActionButton()
     
-    var formViewBottomConstraint: NSLayoutConstraint?
-    var didSetConstraints = false
-    
-    let viewModel = LoginViewModel()
+    private let viewModel = LoginViewModel()
     
     deinit {
         logRetain()
@@ -50,7 +47,7 @@ class LoginViewController: UIViewController {
         skipTextView.textAlignment = .Right
         skipTextView.text = "Try app without login"
         skipTextView.font = .displayOfSize(14, withType: .Thin)
-        skipTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "skip"))
+        skipTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showApp"))
         skipTextView.userInteractionEnabled = true
         headView.addSubview(skipTextView)
         
@@ -185,11 +182,11 @@ class LoginViewController: UIViewController {
     }
     
     func showForgotPasswordViewController() {
-        presentViewController(ForgotPasswordViewController(), animated: false, completion: nil)
+        view.window?.rootViewController = ForgotPasswordViewController()
     }
     
-    func skip() {
-        presentViewController(TabBarViewController(), animated: false, completion: nil)
+    func showApp() {
+        view.window?.rootViewController = TabBarViewController()
     }
     
     func selectSignUpTab() {
@@ -209,7 +206,7 @@ class LoginViewController: UIViewController {
         
         viewModel.submit()
             .on(
-                error: { _ in
+                error: { [unowned self] _ in
                     let alert: UIAlertController
                     if case .LogIn = self.viewModel.selectedTab.value {
                         alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
@@ -219,8 +216,8 @@ class LoginViewController: UIViewController {
                     alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
                     self.presentViewController(alert, animated: true, completion: nil)
                 },
-                completed: {
-                    self.forward()
+                completed: { [weak self] in
+                    self?.forward()
                 }
             )
             .start()
@@ -228,14 +225,13 @@ class LoginViewController: UIViewController {
     
     func forward() {
         if SessionService.needsOnboarding {
-            self.presentViewController(OnboardingInfoViewController(), animated: false, completion: nil)
+            view.window?.rootViewController = OnboardingInfoViewController()
         } else {
-            self.presentViewController(TabBarViewController(), animated: false, completion: nil)
+            showApp()
         }
     }
     
     func facebook() {
-        
         let loginManager = FBSDKLoginManager()
         let facebookReadPermissions = ["public_profile", "email"]
         
@@ -298,8 +294,8 @@ extension LoginViewController: UITextFieldDelegate {
         
         if textField == passwordInputView {
             view.endEditing(true)
-            Async.main {
-                self.submit()
+            Async.main { [weak self] in
+                self?.submit()
             }
         }
         

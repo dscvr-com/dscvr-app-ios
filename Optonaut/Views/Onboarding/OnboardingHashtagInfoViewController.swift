@@ -76,7 +76,7 @@ class OnboardingHashtagInfoViewController: UIViewController {
     }
     
     func showHashtagSelectOnboarding() {
-        presentViewController(OnboardingHashtagSelectViewController(), animated: false, completion: nil)
+        view.window?.rootViewController = OnboardingHashtagSelectViewController()
     }
     
     override func viewDidAppear(animated: Bool) {

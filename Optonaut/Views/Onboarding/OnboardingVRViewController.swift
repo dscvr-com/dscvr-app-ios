@@ -85,7 +85,7 @@ class OnboardingVRViewController: UIViewController {
     }
     
     func showProfileOnboarding() {
-        presentViewController(OnboardingProfileViewController(), animated: false, completion: nil)
+        view.window?.rootViewController = OnboardingProfileViewController()
     }
     
     func openGlassesPage() {

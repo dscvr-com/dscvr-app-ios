@@ -555,9 +555,15 @@ class CameraViewController: UIViewController {
         Mixpanel.sharedInstance().track("Action.Camera.FinishRecording")
 
         stopSession()
-        recorder.finish()
         
-        navigationController!.pushViewController(CreateOptographViewController(), animated: false)
+        let recorderCleanup = SignalProducer<Void, NoError> { [weak self] sink, disposable in
+            self?.recorder.finish()
+            sink.sendCompleted()
+        }
+        
+        let createOptographViewController = CreateOptographViewController(recorderCleanup: recorderCleanup)
+        createOptographViewController.hidesBottomBarWhenPushed = true
+        navigationController!.pushViewController(createOptographViewController, animated: false)
         navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self
     }
     

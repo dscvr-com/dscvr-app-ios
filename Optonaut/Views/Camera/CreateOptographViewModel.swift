@@ -29,6 +29,8 @@ class CreateOptographViewModel {
     let hashtagStringStatus = MutableProperty<LineTextField.Status>(.Disabled)
     let cameraPreviewEnabled = MutableProperty<Bool>(true)
     let readyToSubmit = MutableProperty<Bool>(false)
+    let recorderCleanedUp = MutableProperty<Bool>(false)
+    let isPrivate = MutableProperty<Bool>(false)
     
     var locationPermissionTimer: NSTimer?
     
@@ -73,6 +75,8 @@ class CreateOptographViewModel {
                 self.optograph.location!.country = location.country
             }
         
+        isPrivate.producer.startWithNext { self.optograph.isPrivate = $0 }
+        
         text.producer.startWithNext { self.optograph.text = $0 }
         
         let hashtagRegex = try! NSRegularExpression(pattern: "(#[\\\\u4e00-\\\\u9fa5a-zA-Z0-9]+)\\w*", options: [.CaseInsensitive])
@@ -109,6 +113,7 @@ class CreateOptographViewModel {
     
         readyToSubmit <~ previewImageUrl.producer.map(isNotEmpty)
             .combineLatestWith(hashtagStringValid.producer).map(and)
+            .combineLatestWith(recorderCleanedUp.producer).map(and)
     }
     
     func updatePreviewImage() {

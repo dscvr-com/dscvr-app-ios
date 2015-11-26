@@ -85,10 +85,10 @@ class OnboardingHashtagSelectViewController: UIViewController {
         heartButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "followHashtag"))
         view.addSubview(heartButtonView)
         
-        viewModel.selectedHashtags.producer.startWithNext { items in
+        viewModel.selectedHashtags.producer.startWithNext { [weak self] items in
             if items.count == 3 {
                 let hashtagStr = items.map({ "#\($0.name)" }).joinWithSeparator(", ")
-                self.presentViewController(OnboardingHashtagSummaryViewController(todoSelectedHashtags: hashtagStr), animated: false, completion: nil)
+                self?.view.window?.rootViewController = OnboardingHashtagSummaryViewController(todoSelectedHashtags: hashtagStr)
             }
         }
         

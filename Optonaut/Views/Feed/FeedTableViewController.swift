@@ -127,23 +127,9 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
             self.navigationController?.presentViewController(alert, animated: true, completion: nil)
         } else {
-            
-            #if DEBUG
-                let cameraViewController = CameraViewController()
-                cameraViewController.hidesBottomBarWhenPushed = true
-                navigationController?.pushViewController(cameraViewController, animated: false)
-            #else
-//                switch UIDevice.currentDevice().deviceType {
-//                case .IPhone6, .IPhone6Plus, .IPhone6S, .IPhone6SPlus:
-                    let cameraViewController = CameraViewController()
-                    cameraViewController.hidesBottomBarWhenPushed = true
-                    navigationController?.pushViewController(cameraViewController, animated: false)
-//                default:
-//                    let alert = UIAlertController(title: "Device not yet supported", message: "Recording isn't available for your device in the current version but will be enabled in a future release.", preferredStyle: .Alert)
-//                    alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-//                    self.navigationController?.presentViewController(alert, animated: true, completion: nil)
-//                }
-            #endif
+            let cameraViewController = CameraViewController()
+            cameraViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(cameraViewController, animated: false)
         }
     }
     
@@ -167,7 +153,7 @@ extension FeedTableViewController: UITabBarControllerDelegate {
             if !SessionService.isLoggedIn {
                 let alert = UIAlertController(title: "Please login first", message: "In order to see this tab you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "Sign in", style: .Cancel, handler: { [weak self] _ in
-                    self?.navigationController?.presentViewController(LoginViewController(), animated: false, completion: nil)
+                    self?.view.window?.rootViewController = LoginViewController()
                     }))
                 alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
                 self.navigationController?.presentViewController(alert, animated: true, completion: nil)

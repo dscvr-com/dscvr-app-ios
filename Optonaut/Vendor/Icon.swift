@@ -101,4 +101,6 @@ public enum Icon: String {
     case LogoText = "\u{e918}"
     case Plus = "\u{e919}"
     case Inbox = "\u{e91a}"
+    case Locked = "\u{e91b}"
+    case Unlocked = "\u{e91c}"
 }

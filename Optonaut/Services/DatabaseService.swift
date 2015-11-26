@@ -78,6 +78,7 @@ class DatabaseService {
     private static let migrations = [
         migration0001,
         migration0002,
+        migration0003,
     ]
     
     static func prepare() throws {
@@ -101,7 +102,6 @@ class DatabaseService {
             ActivityResourceFollowTable,
             CommentTable,
             HashtagTable,
-            LocationTable,
         ]
         for ephemeralTable in ephemeralTables {
             try defaultConnection.run(ephemeralTable.delete())

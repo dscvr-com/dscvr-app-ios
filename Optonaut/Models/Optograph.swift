@@ -30,6 +30,7 @@ struct Optograph: DeletableModel {
     var commentsCount: Int
     var viewsCount: Int
     var location: Location?
+    var isPrivate: Bool
     var isStitched: Bool
     var isPublished: Bool
     var previewAssetID: UUID
@@ -50,6 +51,7 @@ struct Optograph: DeletableModel {
             commentsCount: 0,
             viewsCount: 0,
             location: nil,
+            isPrivate: false,
             isStitched: false,
             isPublished: false,
             previewAssetID: uuid(),
@@ -160,6 +162,7 @@ extension Optograph: Mappable {
         createdAt           <- (map["created_at"], NSDateTransform())
         deletedAt           <- (map["deleted_at"], NSDateTransform())
         isStarred           <- map["is_starred"]
+        isPrivate           <- map["is_private"]
         starsCount          <- map["stars_count"]
         commentsCount       <- map["comments_count"]
         viewsCount          <- map["views_count"]
@@ -195,6 +198,7 @@ extension Optograph: SQLiteModel {
             commentsCount: row[OptographSchema.commentsCount],
             viewsCount: row[OptographSchema.viewsCount],
             location: nil,
+            isPrivate: row[OptographSchema.isPrivate],
             isStitched: row[OptographSchema.isStitched],
             isPublished: row[OptographSchema.isPublished],
             previewAssetID: row[OptographSchema.previewAssetID],
@@ -217,6 +221,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.commentsCount <-- commentsCount,
             OptographSchema.viewsCount <-- viewsCount,
             OptographSchema.locationID <-- location?.ID,
+            OptographSchema.isPrivate <-- isPrivate,
             OptographSchema.isStitched <-- isStitched,
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.previewAssetID <-- previewAssetID,

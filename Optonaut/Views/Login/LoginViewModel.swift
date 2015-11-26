@@ -12,12 +12,6 @@ import ObjectMapper
 
 class LoginViewModel {
     
-    enum NextStep: Int {
-        case Email = 1
-        case Password = 2
-        case Done = 3
-    }
-    
     enum Tab { case SignUp, LogIn }
     
     let emailOrUserName = MutableProperty<String>("")
@@ -42,47 +36,41 @@ class LoginViewModel {
         allowed <~ emailOrUserNameValid.producer.combineLatestWith(passwordValid.producer).map(and)
     }
     
+    deinit {
+        logRetain()
+    }
+    
     func submit() -> SignalProducer<Void, ApiError> {
         
         let usesEmail = emailOrUserName.value.rangeOfString("@") != nil
         let identifier = usesEmail ? LoginIdentifier.Email(emailOrUserName.value) : LoginIdentifier.UserName(emailOrUserName.value)
+        let signalProducer: SignalProducer<Void, ApiError>
         
         if case .LogIn = selectedTab.value {
-            return SessionService.login(identifier, password: password.value)
-                .on(
-                    started: {
-                        self.pending.value = true
-                    },
-                    next: { _ in
-                        self.pending.value = false
-                    },
-                    error: { _ in
-                        self.pending.value = false
-                    }
-                )
-                .mapError { _ in ApiError.Nil }
-                .flatMap(.Latest) { _ in SignalProducer(value: ()) }
+            signalProducer = SessionService.login(identifier, password: password.value)
         } else {
             let parameters = [
                 "email": emailOrUserName.value,
                 "password": password.value,
             ]
-            return ApiService<EmptyResponse>.post("persons", parameters: parameters)
+            signalProducer = ApiService<EmptyResponse>.post("persons", parameters: parameters)
                 .flatMap(.Latest) { _ in SessionService.login(identifier, password: self.password.value) }
+        }
+        
+        return signalProducer
                 .on(
-                    started: {
-                        self.pending.value = true
+                    started: { [weak self] in
+                        self?.pending.value = true
                     },
-                    next: { _ in
-                        self.pending.value = false
+                    next: { [weak self] _ in
+                        self?.pending.value = false
                     },
-                    error: { _ in
-                        self.pending.value = false
+                    error: { [weak self] _ in
+                        self?.pending.value = false
                     }
                 )
                 .mapError { _ in ApiError.Nil }
                 .flatMap(.Latest) { _ in SignalProducer(value: ()) }
-        }
     }
     
     func facebookSignin(userID: String, token: String) -> SignalProducer<Void, ApiError> {

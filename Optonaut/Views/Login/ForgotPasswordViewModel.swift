@@ -26,12 +26,12 @@ class ForgotPasswordViewModel {
         let parameters = ["email": email.value]
         return ApiService.post("persons/forgot-password", parameters: parameters)
             .on(
-                completed: { _ in
-                    self.pending.value = false
-                    self.sent.value = true
+                completed: { [weak self] _ in
+                    self?.pending.value = false
+                    self?.sent.value = true
                 },
-                error: { _ in
-                    self.pending.value = false
+                error: { [weak self] _ in
+                    self?.pending.value = false
                 }
         )
     }
