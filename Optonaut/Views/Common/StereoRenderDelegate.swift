@@ -15,7 +15,35 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     let scene = SCNScene()
     var image: UIImage? {
         didSet {
-            sphereNode.geometry?.firstMaterial?.diffuse.contents = image
+            if image?.size.width == image?.size.height {
+                // Classic case - quadratic texture
+                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
+            } else {
+                // Extended case - rectangular texture, need to center
+                let ratio = Float((image!.size.width / CGFloat(2)) / image!.size.height)
+                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
+                
+                // Yes, we calculate our transform ourselves.
+                // And yes, this matrix is inverted.
+                let transform = SCNMatrix4FromGLKMatrix4(
+                    GLKMatrix4Make(
+                        1, 0, 0, 0,
+                        0, ratio, 0, 0,
+                        0, 0, 1, 0,
+                        0, (1 - ratio) / 2, 0, 1
+                    )
+                )
+                
+                sphereNode.geometry?.firstMaterial?.diffuse.contentsTransform = transform
+                if #available(iOS 9.0, *) {
+                    sphereNode.geometry?.firstMaterial?.diffuse.wrapS = .ClampToBorder
+                    sphereNode.geometry?.firstMaterial?.diffuse.wrapT = .ClampToBorder
+                } else {
+                    
+                }
+                sphereNode.geometry?.firstMaterial?.diffuse.borderColor =  UIColor.blackColor()
+
+            }
         }
     }
 
