@@ -1,4 +1,16 @@
 New in 1.4.0:
 
-- [Feature] App can be used without login. Relogin needed.
-- [Fixed] Countless minor issues
+- [Feature] Optonaut can now be used without login/signup. 🎉
+- [Feature] You can now also signup/login using your Facebook account.
+- [Feature] Optographs can now be marked as private. 🕵
+- [Improvement] Improved recording quality by reducing misalignments and enhancing the 3D process.
+- [Improvement] Images in VR viewer are a lot more clear now. 💎
+- [Improvement] Massively reduced network data usage. You're Optographs should load a lot faster now. ⏲
+- [Improvement] The onboarding process got a lot simpler.
+- [Improvement] You're no longer forced to show your location if you don't want to.
+- [Improvement] Added a "Forgot password" feature.
+- [Improvement] Share URLs became a lot shorter.
+- [Fixed] No more "double-images" in VR viewer.
+- [Fixed] Notifications will be marked as read when you actually read them.
+- [Fixed] Forced logouts which happened occasionally. (However you'll need to re-login one last time with this update. Sorry about that.)
+- [Fixed] Countless minor issues and crashes.

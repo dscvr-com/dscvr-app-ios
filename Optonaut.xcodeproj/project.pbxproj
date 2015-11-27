@@ -78,6 +78,7 @@
 		8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
 		8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA66BA41B80905C00EE5D44 /* SQLite.framework */; };
+		8FA86D4F1C08F2C80033CBA9 /* OptonautUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA86D4E1C08F2C80033CBA9 /* OptonautUITests.swift */; };
 		8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */; };
 		8FAB9F291B8F01DF00B4C8CB /* ActivitiesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EEE1B8F01DF00B4C8CB /* ActivitiesViewModel.swift */; };
 		8FAB9F2A1B8F01DF00B4C8CB /* ActivityNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EEF1B8F01DF00B4C8CB /* ActivityNavViewController.swift */; };
@@ -217,6 +218,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8FA86D511C08F2C80033CBA9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FCCA0231B3806040091F1B1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FCCA02A1B3806040091F1B1;
+			remoteInfo = Optonaut;
+		};
 		8FCCA0411B3806040091F1B1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8FCCA0231B3806040091F1B1 /* Project object */;
@@ -300,6 +308,9 @@
 		8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		8FA66BA41B80905C00EE5D44 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
+		8FA86D4C1C08F2C80033CBA9 /* OptonautUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptonautUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FA86D4E1C08F2C80033CBA9 /* OptonautUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptonautUITests.swift; sourceTree = "<group>"; };
+		8FA86D501C08F2C80033CBA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		8FAB9EEE1B8F01DF00B4C8CB /* ActivitiesViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivitiesViewModel.swift; sourceTree = "<group>"; };
 		8FAB9EEF1B8F01DF00B4C8CB /* ActivityNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityNavViewController.swift; sourceTree = "<group>"; };
@@ -497,6 +508,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8FA86D491C08F2C80033CBA9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8FCCA0281B3806040091F1B1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -645,6 +663,15 @@
 				8F7738141B380F5D001F642B /* Person.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		8FA86D4D1C08F2C80033CBA9 /* OptonautUITests */ = {
+			isa = PBXGroup;
+			children = (
+				8FA86D4E1C08F2C80033CBA9 /* OptonautUITests.swift */,
+				8FA86D501C08F2C80033CBA9 /* Info.plist */,
+			);
+			path = OptonautUITests;
 			sourceTree = "<group>";
 		};
 		8FAB9EEC1B8F01DF00B4C8CB /* Views */ = {
@@ -904,6 +931,7 @@
 			children = (
 				8FCCA02D1B3806040091F1B1 /* Optonaut */,
 				8FCCA0431B3806040091F1B1 /* OptonautTests */,
+				8FA86D4D1C08F2C80033CBA9 /* OptonautUITests */,
 				8F366DD01B59321C00C0012E /* Frameworks */,
 				8FCCA02C1B3806040091F1B1 /* Products */,
 			);
@@ -914,6 +942,7 @@
 			children = (
 				8FCCA02B1B3806040091F1B1 /* Optonaut.app */,
 				8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */,
+				8FA86D4C1C08F2C80033CBA9 /* OptonautUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1167,6 +1196,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		8FA86D4B1C08F2C80033CBA9 /* OptonautUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8FA86D551C08F2C80033CBA9 /* Build configuration list for PBXNativeTarget "OptonautUITests" */;
+			buildPhases = (
+				8FA86D481C08F2C80033CBA9 /* Sources */,
+				8FA86D491C08F2C80033CBA9 /* Frameworks */,
+				8FA86D4A1C08F2C80033CBA9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8FA86D521C08F2C80033CBA9 /* PBXTargetDependency */,
+			);
+			name = OptonautUITests;
+			productName = OptonautUITests;
+			productReference = 8FA86D4C1C08F2C80033CBA9 /* OptonautUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		8FCCA02A1B3806040091F1B1 /* Optonaut */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "Optonaut" */;
@@ -1210,10 +1257,14 @@
 		8FCCA0231B3806040091F1B1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0700;
+				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Optonaut;
 				TargetAttributes = {
+					8FA86D4B1C08F2C80033CBA9 = {
+						CreatedOnToolsVersion = 7.1.1;
+						TestTargetID = 8FCCA02A1B3806040091F1B1;
+					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
 						DevelopmentTeam = 5X3WW56JVE;
@@ -1244,11 +1295,19 @@
 			targets = (
 				8FCCA02A1B3806040091F1B1 /* Optonaut */,
 				8FCCA03F1B3806040091F1B1 /* OptonautTests */,
+				8FA86D4B1C08F2C80033CBA9 /* OptonautUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8FA86D4A1C08F2C80033CBA9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8FCCA0291B3806040091F1B1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1339,6 +1398,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8FA86D481C08F2C80033CBA9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FA86D4F1C08F2C80033CBA9 /* OptonautUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8FCCA0271B3806040091F1B1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1516,6 +1583,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8FA86D521C08F2C80033CBA9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8FCCA02A1B3806040091F1B1 /* Optonaut */;
+			targetProxy = 8FA86D511C08F2C80033CBA9 /* PBXContainerItemProxy */;
+		};
 		8FCCA0421B3806040091F1B1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8FCCA02A1B3806040091F1B1 /* Optonaut */;
@@ -1524,6 +1596,35 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		8FA86D531C08F2C80033CBA9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				INFOPLIST_FILE = OptonautUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.optonaut.OptonautUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "f0f6cc20-a27e-43c2-85ab-99258340f77e";
+				TEST_TARGET_NAME = Optonaut;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		8FA86D541C08F2C80033CBA9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = OptonautUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.optonaut.OptonautUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "f0f6cc20-a27e-43c2-85ab-99258340f77e";
+				TEST_TARGET_NAME = Optonaut;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
 		8FCCA0481B3806040091F1B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1616,7 +1717,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 75;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1662,7 +1763,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 73;
+				CURRENT_PROJECT_VERSION = 75;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1724,6 +1825,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8FA86D551C08F2C80033CBA9 /* Build configuration list for PBXNativeTarget "OptonautUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FA86D531C08F2C80033CBA9 /* Debug */,
+				8FA86D541C08F2C80033CBA9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "Optonaut" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
