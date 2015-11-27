@@ -17,7 +17,7 @@ class CommentTableViewCell: UITableViewCell {
     var viewModel: CommentViewModel!
     
     // subviews
-    private let textView = ActiveLabel()
+    private let textView = SubActiveLabel()
     private let avatarImageView = PlaceholderImageView()
     private let dateView = UILabel()
     
@@ -27,7 +27,6 @@ class CommentTableViewCell: UITableViewCell {
         backgroundColor = .clearColor()
         
         textView.numberOfLines = 0
-        textView.mentionColor = UIColor.Accent
         textView.hashtagColor = UIColor.Accent
         textView.URLEnabled = false
         textView.mentionEnabled = false
@@ -82,11 +81,6 @@ class CommentTableViewCell: UITableViewCell {
         textView.handleHashtagTap { hashtag in
             self.navigationController?.pushViewController(HashtagTableViewController(hashtag: hashtag), animated: true)
         }
-        textView.handleMentionTap { userName in
-            ApiService<Person>.get("persons/user-name/\(userName)").startWithNext { person in
-                self.navigationController?.pushViewController(ProfileTableViewController(personID: person.ID), animated: true)
-            }
-        }
         
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
         dateView.rac_text <~ viewModel.timeSinceCreated
@@ -99,4 +93,11 @@ class CommentTableViewCell: UITableViewCell {
     override func setSelected(selected: Bool, animated: Bool) {}
     override func setHighlighted(highlighted: Bool, animated: Bool) {}
     
+}
+
+private class SubActiveLabel: ActiveLabel {
+    // needed to make elements tapable above scene background
+    override func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOfGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
+    }
 }
