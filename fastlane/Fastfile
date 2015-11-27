@@ -30,7 +30,7 @@ platform :ios do
     )
     crashlytics(
       notes_path: "./fastlane/metadata/en-US/version_whats_new.txt",
-      crashlytics_path: "./Carthage/Build/iOS/Crashlytics.framework",
+      crashlytics_path: "./Frameworks/Crashlytics.framework",
       ipa_path: "./Optonaut.ipa",
     )
     slack(

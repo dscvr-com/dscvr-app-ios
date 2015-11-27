@@ -86,7 +86,7 @@ class EditProfileViewModel {
         return ApiService<EmptyResponse>.post("persons/me/upload-profile-image", parameters: parameters)
             .on(completed: { [weak self] _ in
                 self?.person.avatarAssetID = avatarAssetID
-                self?.updateProperties()
+                self?.avatarImageUrl.value = ImageURL(avatarAssetID, width: 60, height: 60)
                 self?.saveModel()
             })
     }
@@ -101,6 +101,11 @@ class EditProfileViewModel {
     
     func updateEmail(email: String) -> SignalProducer<EmptyResponse, ApiError> {
         return ApiService<EmptyResponse>.post("persons/me/change-email", parameters: ["email": email])
+            .on(completed: { [weak self] in
+                self?.email.value = email
+                self?.person.email = email
+                self?.saveModel()
+            })
     }
     
     func toggleDebug() {
@@ -122,7 +127,6 @@ class EditProfileViewModel {
     }
     
     private func updateModel() {
-        person.email = email.value
         person.displayName = displayName.value
         person.userName = userName.value
         person.wantsNewsletter = wantsNewsletter.value

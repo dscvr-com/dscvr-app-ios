@@ -27,7 +27,7 @@ let DefaultVRGlasses = "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAA
 class SessionService {
     
     static var isLoggedIn: Bool {
-        return Defaults[.SessionPersonID] != nil
+        return Defaults[.SessionPersonID] != nil && Defaults[.SessionToken] != nil
     }
     
     static var needsOnboarding: Bool {
