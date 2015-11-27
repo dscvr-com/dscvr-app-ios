@@ -116,12 +116,6 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
         Mixpanel.sharedInstance().track("View.Profile", properties: ["person_id": personID, "person_name" : headerTableViewCell!.viewModel.person.displayName])
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        tabBarController?.delegate = nil
-    }
-    
     override func updateViewConstraints() {
         tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         

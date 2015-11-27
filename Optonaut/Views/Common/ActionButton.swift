@@ -62,6 +62,8 @@ class ActionButton: UIButton {
         titleLabel?.font = UIFont.displayOfSize(24, withType: .Semibold)
         setTitleColor(.Accent, forState: .Normal)
         
+        loadingIndicator.hidesWhenStopped = true
+        
         addSubview(loadingIndicator)
         
         updateBackground()

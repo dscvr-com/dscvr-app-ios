@@ -57,15 +57,6 @@ class LoginViewController: UIViewController {
         logoView.font = UIFont.iconOfSize(35)
         headView.addSubview(logoView)
         
-        loginTabView.textColor = .whiteColor()
-        loginTabView.textAlignment = .Center
-        loginTabView.text = "LOG IN"
-        loginTabView.font = .displayOfSize(14, withType: .Semibold)
-        loginTabView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "selectLogInTab"))
-        loginTabView.userInteractionEnabled = true
-        loginTabView.rac_alpha <~ viewModel.selectedTab.producer.equalsTo(.LogIn).mapToTuple(1, 0.5)
-        headView.addSubview(loginTabView)
-        
         signupTabView.textColor = .whiteColor()
         signupTabView.textAlignment = .Center
         signupTabView.text = "SIGN UP"
@@ -74,6 +65,15 @@ class LoginViewController: UIViewController {
         signupTabView.userInteractionEnabled = true
         signupTabView.rac_alpha <~ viewModel.selectedTab.producer.equalsTo(.SignUp).mapToTuple(1, 0.5)
         headView.addSubview(signupTabView)
+        
+        loginTabView.textColor = .whiteColor()
+        loginTabView.textAlignment = .Center
+        loginTabView.text = "LOG IN"
+        loginTabView.font = .displayOfSize(14, withType: .Semibold)
+        loginTabView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "selectLogInTab"))
+        loginTabView.userInteractionEnabled = true
+        loginTabView.rac_alpha <~ viewModel.selectedTab.producer.equalsTo(.LogIn).mapToTuple(1, 0.5)
+        headView.addSubview(loginTabView)
         
         emailOrUserNameInputView.rac_placeholder <~ viewModel.selectedTab.producer.equalsTo(.SignUp).mapToTuple("Email address", "Email address or username")
         emailOrUserNameInputView.size = .Medium
@@ -139,7 +139,7 @@ class LoginViewController: UIViewController {
         facebookButtonView.activeBackgroundColor = UIColor(0x405BB0)
         facebookButtonView.disabledBackgroundColor = UIColor(0x405BB0)
         facebookButtonView.titleLabel?.font = UIFont.displayOfSize(14, withType: .Semibold)
-        facebookButtonView.setTitle("Sign in with Facebook", forState: .Normal)
+        facebookButtonView.rac_title <~ viewModel.selectedTab.producer.equalsTo(.SignUp).mapToTuple("Sign up with Facebook", "Log in with Facebook")
         facebookButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         facebookButtonView.layer.cornerRadius = 4
         facebookButtonView.clipsToBounds = true
@@ -172,8 +172,8 @@ class LoginViewController: UIViewController {
         headView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: size.height - 216 - 113)
         skipTextView.anchorInCorner(.TopRight, xPad: 23, yPad: 23, width: 300, height: 20)
         logoView.anchorInCenter(width: 268, height: 84)
-        loginTabView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
-        signupTabView.anchorInCorner(.BottomRight, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
+        signupTabView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
+        loginTabView.anchorInCorner(.BottomRight, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
         emailOrUserNameInputView.align(.UnderCentered, relativeTo: headView, padding: 29, width: size.width - 50, height: emailOrUserNameInputView.frame.height)
         passwordInputView.align(.UnderCentered, relativeTo: emailOrUserNameInputView, padding: 12, width: size.width - 50, height: passwordInputView.frame.height)
         forgotPasswordView.align(.UnderMatchingRight, relativeTo: emailOrUserNameInputView, padding: 12, width: 50, height: 20)

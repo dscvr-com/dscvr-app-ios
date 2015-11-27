@@ -33,7 +33,7 @@ class ViewerViewController: UIViewController  {
     private var rightDownloadDisposable: Disposable?
     private let imageManager = SDWebImageManager()
     
-    private let settingsButtonView = UIButton()
+    private let settingsButtonView = BoundingButton()
     private var glassesSelectionView: GlassesSelectionView?
     private let leftLoadingView = UIActivityIndicatorView()
     private let rightLoadingView = UIActivityIndicatorView()
@@ -144,7 +144,7 @@ class ViewerViewController: UIViewController  {
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))
         view.addSubview(settingsButtonView)
         
-        if Defaults[.SessionVRGlassesSelected] {
+        if !Defaults[.SessionVRGlassesSelected] {
             showGlassesSelection()
         }
     }

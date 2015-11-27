@@ -86,12 +86,6 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
         tabBarController?.delegate = self
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        tabBarController?.delegate = nil
-    }
-    
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
