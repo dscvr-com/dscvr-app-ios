@@ -150,14 +150,15 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
         tableView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - tabBarController!.tabBar.frame.height)
         tableView.scrollEnabled = true
+        
+        tableView.backgroundView = blurView
+        
         view.addSubview(tableView)
         
         loadingView.activityIndicatorViewStyle = .WhiteLarge
         loadingView.startAnimating()
         loadingView.frame = CGRect(x: view.frame.width / 2 - 20, y: view.frame.height / 2 - 20 - 78 / 2, width: 40, height: 40)
         view.addSubview(loadingView)
-        
-        tableView.backgroundView = blurView
         
         viewModel.comments.producer.startWithNext { [weak self] _ in
             self?.tableView.reloadData()

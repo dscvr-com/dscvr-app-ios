@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
-        prepareAndExecute {
+        prepareAndExecute(requireLogin: true) {
             let tabBarViewController = TabBarViewController()
             
             if let notification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
@@ -78,7 +78,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
         }
 
-        prepareAndExecute {
+        prepareAndExecute(requireLogin: false) {
             let tabBarViewController = TabBarViewController()
             
             if case .Optograph(let uuid) = url.applicationURLData {
@@ -109,7 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    private func prepareAndExecute(fn: () -> ()) {
+    private func prepareAndExecute(requireLogin requireLogin: Bool, fn: () -> ()) {
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
         #if !DEBUG
@@ -136,8 +136,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SessionService.prepare()
         SessionService.onLogout(performAlways: true) { self.window?.rootViewController = LoginViewController() }
         
-        if SessionService.isLoggedIn {
-            if SessionService.needsOnboarding {
+        if SessionService.isLoggedIn || !requireLogin {
+            if SessionService.needsOnboarding && requireLogin {
                 window?.rootViewController = OnboardingInfoViewController()
             } else {
                 fn()

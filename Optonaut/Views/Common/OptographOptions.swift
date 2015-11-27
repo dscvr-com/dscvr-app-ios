@@ -32,7 +32,7 @@ extension OptographOptions {
                 }))
                 self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
             }))
-        } else {
+        } else if SessionService.isLoggedIn {
             actionAlert.addAction(UIAlertAction(title: "Report", style: .Destructive, handler: { _ in
                 let confirmAlert = UIAlertController(title: "Are you sure?", message: "This action will message one of the moderators.", preferredStyle: .Alert)
                 confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
@@ -45,7 +45,7 @@ extension OptographOptions {
         
         if optograph.isPublished {
             actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
-                if let url = NSURL(string: "http://opto.space/\(optograph.ID)") {
+                if let url = NSURL(string: "http://opto.space/\(optograph.shareAlias)") {
                     let textToShare = "Check out this awesome Optograph of \(optograph.person.displayName) on \(url)"
                     let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
                     activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]

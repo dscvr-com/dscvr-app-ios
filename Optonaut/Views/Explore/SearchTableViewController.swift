@@ -150,14 +150,6 @@ extension SearchTableViewController: UITabBarControllerDelegate {
     
     func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
         if let t = tabBarController as? TabBarViewController where !TabBarViewController.tabBarController(t)(t, shouldSelectViewController: viewController) {
-            if !SessionService.isLoggedIn {
-                let alert = UIAlertController(title: "Please login first", message: "In order to see this tab you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Sign in", style: .Cancel, handler: { [weak self] _ in
-                    self?.view.window?.rootViewController = LoginViewController()
-                    }))
-                alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
-                self.navigationController?.presentViewController(alert, animated: true, completion: nil)
-            }
             return false
         }
         

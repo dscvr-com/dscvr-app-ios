@@ -39,7 +39,7 @@ class DetailsViewModel {
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
-            .join(LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+            .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(OptographTable[OptographSchema.ID] == optographID)
         
         if let optograph = DatabaseService.defaultConnection.pluck(query).map({ row -> Optograph in
@@ -171,7 +171,7 @@ class DetailsViewModel {
         viewsCount.value = optograph.viewsCount
         commentsCount.value = optograph.commentsCount
         timeSinceCreated.value = optograph.createdAt.longDescription
-        text.value = optograph.text
+        text.value = optograph.isPrivate ? "[private] " + optograph.text : optograph.text
         hashtags.value = optograph.hashtagString
         location.value = optograph.location?.text
         isPublished.value = optograph.isPublished

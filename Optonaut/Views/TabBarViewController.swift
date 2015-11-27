@@ -43,11 +43,28 @@ class TabBarViewController: UITabBarController {
         // remove default border
         tabBar.frame.size.width = self.view.frame.width + 4
         tabBar.frame.origin.x = -2
+        
+        delegate = self
     }
     
     func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
-        return !(!SessionService.isLoggedIn && (viewController == activityNavViewController || viewController == profileNavViewController))
+        let isAllowed = !(!SessionService.isLoggedIn && (viewController == activityNavViewController || viewController == profileNavViewController))
+        
+        if !isAllowed {
+            let alert = UIAlertController(title: "Please login first", message: "In order to see this tab you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Sign in", style: .Cancel, handler: { [weak self] _ in
+                self?.view.window?.rootViewController = LoginViewController()
+                }))
+            alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+        return isAllowed
     }
+    
+}
+
+extension TabBarViewController: UITabBarControllerDelegate {
     
 }
 

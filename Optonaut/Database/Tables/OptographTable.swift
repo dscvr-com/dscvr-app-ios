@@ -21,6 +21,7 @@ struct OptographSchemaType: ModelSchema {
     let viewsCount = Expression<Int>("optograph_views_count")
     let isPrivate = Expression<Bool>("optograph_is_private")
     let stitcherVersion = Expression<String>("optograph_is_stitcher_version")
+    let shareAlias = Expression<String>("optograph_share_alias")
     let isStitched = Expression<Bool>("optograph_is_stitched")
     let isPublished = Expression<Bool>("optograph_is_published")
     let previewAssetID = Expression<UUID>("optograph_preview_asset_id")

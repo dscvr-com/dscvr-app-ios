@@ -34,6 +34,7 @@ struct Optograph: DeletableModel {
     var isStitched: Bool
     var isPublished: Bool
     var stitcherVersion: String
+    var shareAlias: String
     var previewAssetID: UUID
     var leftTextureAssetID: UUID
     var rightTextureAssetID: UUID
@@ -56,6 +57,7 @@ struct Optograph: DeletableModel {
             isStitched: false,
             isPublished: false,
             stitcherVersion: "",
+            shareAlias: "",
             previewAssetID: "",
             leftTextureAssetID: "",
             rightTextureAssetID: "",
@@ -165,6 +167,7 @@ extension Optograph: Mappable {
         isStarred           <- map["is_starred"]
         isPrivate           <- map["is_private"]
         stitcherVersion     <- map["stitcher_version"]
+        shareAlias          <- map["share_alias"]
         starsCount          <- map["stars_count"]
         commentsCount       <- map["comments_count"]
         viewsCount          <- map["views_count"]
@@ -204,6 +207,7 @@ extension Optograph: SQLiteModel {
             isStitched: row[OptographSchema.isStitched],
             isPublished: row[OptographSchema.isPublished],
             stitcherVersion: row[OptographSchema.stitcherVersion],
+            shareAlias: row[OptographSchema.shareAlias],
             previewAssetID: row[OptographSchema.previewAssetID],
             leftTextureAssetID: row[OptographSchema.leftTextureAssetID],
             rightTextureAssetID: row[OptographSchema.rightTextureAssetID],
@@ -228,6 +232,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.isStitched <-- isStitched,
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.stitcherVersion <-- stitcherVersion,
+            OptographSchema.shareAlias <-- shareAlias,
             OptographSchema.previewAssetID <-- previewAssetID,
             OptographSchema.leftTextureAssetID <-- leftTextureAssetID,
             OptographSchema.rightTextureAssetID <-- rightTextureAssetID,

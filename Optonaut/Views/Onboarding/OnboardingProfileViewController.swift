@@ -79,6 +79,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         displayNameInputView.color = .Light
         displayNameInputView.placeholder = "Your name"
         displayNameInputView.returnKeyType = .Next
+        displayNameInputView.autocorrectionType = .No
         displayNameInputView.delegate = self
         displayNameInputView.rac_status <~ viewModel.displayNameStatus
         displayNameInputView.rac_textSignal().toSignalProducer().skip(1).startWithNext { self.viewModel.displayName.value = $0 as! String }
