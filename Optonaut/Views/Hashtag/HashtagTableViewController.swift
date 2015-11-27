@@ -97,7 +97,7 @@ class HashtagTableViewController: OptographTableViewController, RedNavbar, Uniqu
                 self?.view.window?.rootViewController = LoginViewController()
             }))
             alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
-            view.window?.rootViewController = LoginViewController()
+            presentViewController(alert, animated: true, completion: nil)
             return
         }
         
