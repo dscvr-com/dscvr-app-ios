@@ -56,9 +56,9 @@ struct Optograph: DeletableModel {
             isStitched: false,
             isPublished: false,
             stitcherVersion: "",
-            previewAssetID: uuid(),
-            leftTextureAssetID: uuid(),
-            rightTextureAssetID: uuid(),
+            previewAssetID: "",
+            leftTextureAssetID: "",
+            rightTextureAssetID: "",
             isStaffPick: false,
             hashtagString: ""
         )

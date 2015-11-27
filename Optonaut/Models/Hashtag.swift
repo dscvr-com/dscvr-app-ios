@@ -21,7 +21,7 @@ struct Hashtag: Model {
             ID: uuid(),
             createdAt: NSDate(),
             name: "",
-            previewAssetID: uuid(),
+            previewAssetID: "",
             isFollowed: false
         )
     }

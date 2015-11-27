@@ -36,7 +36,7 @@ struct Person: Model {
             isFollowed: false,
             createdAt: NSDate(),
             wantsNewsletter: false,
-            avatarAssetID: uuid()
+            avatarAssetID: ""
         )
     }
     

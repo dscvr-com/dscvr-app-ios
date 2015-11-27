@@ -16,8 +16,10 @@ class LoginViewModel {
     
     let emailOrUserName = MutableProperty<String>("")
     let emailOrUserNameValid = MutableProperty<Bool>(false)
+    let emailOrUserNameStatus = MutableProperty<LineTextField.Status>(.Normal)
     let password = MutableProperty<String>("")
     let passwordValid = MutableProperty<Bool>(false)
+    let passwordStatus = MutableProperty<LineTextField.Status>(.Normal)
     let allowed = MutableProperty<Bool>(false)
     let pending = MutableProperty<Bool>(false)
     let facebookPending = MutableProperty<Bool>(false)
@@ -28,6 +30,23 @@ class LoginViewModel {
         emailOrUserNameValid <~ emailOrUserName.producer
             .map { $0.rangeOfString("@") != nil ? isValidEmail($0) : isValidUserName($0) }
             .skipRepeats()
+        
+        emailOrUserNameStatus <~ emailOrUserName.producer
+            .combineLatestWith(selectedTab.producer) // needed to refresh on selectedTab change
+            .filter { isSignUp($0.1) }
+            .map { isValidEmail($0.0) || isEmpty($0.0) }
+            .mapToTuple(.Normal, .Warning("Invalid email address"))
+        
+        emailOrUserNameStatus <~ emailOrUserName.producer
+            .combineLatestWith(selectedTab.producer) // needed to refresh on selectedTab change
+            .filter { !isSignUp($0.1) }
+            .map { isEmpty($0.0) || ($0.0.rangeOfString("@") != nil ? isValidEmail($0.0) : isValidUserName($0.0)) }
+            .mapToTuple(.Normal, .Warning("Invalid email address"))
+        
+        passwordStatus <~ password.producer
+            .map { isValidPassword($0) || isEmpty($0) }
+            .skipRepeats()
+            .mapToTuple(.Normal, .Warning("Password is too short"))
         
         passwordValid <~ password.producer
             .map(isValidPassword)
@@ -71,6 +90,7 @@ class LoginViewModel {
                 )
                 .mapError { _ in ApiError.Nil }
                 .flatMap(.Latest) { _ in SignalProducer(value: ()) }
+        
     }
     
     func facebookSignin(userID: String, token: String) -> SignalProducer<Void, ApiError> {
@@ -91,4 +111,13 @@ class LoginViewModel {
             .flatMap(.Latest) { _ in SignalProducer(value: ()) }
     }
     
+    
+}
+
+private func isSignUp(tab: LoginViewModel.Tab) -> Bool {
+    if case .SignUp = tab {
+        return true
+    } else {
+        return false
+    }
 }

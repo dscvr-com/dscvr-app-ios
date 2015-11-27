@@ -83,6 +83,7 @@ class LoginViewController: UIViewController {
         emailOrUserNameInputView.keyboardType = .EmailAddress
         emailOrUserNameInputView.returnKeyType = .Next
         emailOrUserNameInputView.delegate = self
+        emailOrUserNameInputView.rac_status <~ viewModel.emailOrUserNameStatus
         viewModel.emailOrUserName <~ emailOrUserNameInputView.rac_text
         view.addSubview(emailOrUserNameInputView)
         
@@ -92,6 +93,7 @@ class LoginViewController: UIViewController {
         passwordInputView.secureTextEntry = true
         passwordInputView.returnKeyType = .Go
         passwordInputView.delegate = self
+        passwordInputView.rac_status <~ viewModel.passwordStatus
         viewModel.password <~ passwordInputView.rac_text
         view.addSubview(passwordInputView)
         
@@ -169,7 +171,7 @@ class LoginViewController: UIViewController {
         
         let size = view.frame.size
         
-        headView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: size.height - 216 - 113)
+        headView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: size.height - 216 - 137) // 216: keyboard, 127: input fields
         skipTextView.anchorInCorner(.TopRight, xPad: 23, yPad: 23, width: 300, height: 20)
         logoView.anchorInCenter(width: 268, height: 84)
         signupTabView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
