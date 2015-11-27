@@ -42,6 +42,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
 //    let newsletterLabelView = UILabel()
 //    let newsletterSwitchView = UISwitch()
     
+    private var confirmAlertAction: UIAlertAction?
+    
     deinit {
         logRetain()
     }
@@ -401,13 +403,14 @@ class EditProfileViewController: UIViewController, RedNavbar {
     
     func showEmailAlert() {
         let alert = UIAlertController(title: "New Email Address", message: "Please enter your new email address. We will send you an email to reconfirm it.", preferredStyle: .Alert)
+        
         alert.addTextFieldWithConfigurationHandler { textField in
             textField.text = ""
             textField.keyboardType = .EmailAddress
             textField.placeholder = self.viewModel.email.value
         }
         
-        alert.addAction(UIAlertAction(title: "Change Email", style: .Destructive, handler: { _ in
+        confirmAlertAction = UIAlertAction(title: "Change Email", style: .Destructive, handler: { [unowned self] _ in
             let textField = alert.textFields![0] as UITextField
             let email = textField.text!
             self.viewModel.updateEmail(email)
@@ -420,7 +423,15 @@ class EditProfileViewController: UIViewController, RedNavbar {
                     }
                 )
                 .start()
-        }))
+        })
+        
+        
+        let textField = alert.textFields![0] as UITextField
+        textField.delegate = self
+        
+        confirmAlertAction!.enabled = false
+        
+        alert.addAction(confirmAlertAction!)
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
         
@@ -430,7 +441,6 @@ class EditProfileViewController: UIViewController, RedNavbar {
     func updateImage() {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             imagePickerController.sourceType = .PhotoLibrary
-//            imagePickerController.allowsEditing = true
             imagePickerController.delegate = self
             self.presentViewController(imagePickerController, animated: true, completion: nil)
         }
@@ -438,6 +448,17 @@ class EditProfileViewController: UIViewController, RedNavbar {
     
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+}
+
+extension EditProfileViewController: UITextFieldDelegate {
+    
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+        let email = NSString(string: textField.text!).stringByReplacingCharactersInRange(range, withString: string)
+        confirmAlertAction?.enabled = isValidEmail(email)
+        
+        return true
     }
     
 }

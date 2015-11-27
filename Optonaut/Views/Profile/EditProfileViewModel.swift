@@ -101,6 +101,9 @@ class EditProfileViewModel {
     
     func updateEmail(email: String) -> SignalProducer<EmptyResponse, ApiError> {
         return ApiService<EmptyResponse>.post("persons/me/change-email", parameters: ["email": email])
+            .on(completed: { [weak self] in
+                self?.email.value = email
+            })
     }
     
     func toggleDebug() {
