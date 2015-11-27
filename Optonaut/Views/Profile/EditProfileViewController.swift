@@ -444,7 +444,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             imagePickerController.sourceType = .PhotoLibrary
             imagePickerController.delegate = self
-            self.presentViewController(imagePickerController, animated: true, completion: nil)
+            presentViewController(imagePickerController, animated: true, completion: nil)
         }
     }
     
