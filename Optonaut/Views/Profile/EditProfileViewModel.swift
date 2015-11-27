@@ -103,6 +103,8 @@ class EditProfileViewModel {
         return ApiService<EmptyResponse>.post("persons/me/change-email", parameters: ["email": email])
             .on(completed: { [weak self] in
                 self?.email.value = email
+                self?.updateModel()
+                self?.saveModel()
             })
     }
     

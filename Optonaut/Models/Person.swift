@@ -47,6 +47,10 @@ struct Person: Model {
 
 func ==(lhs: Person, rhs: Person) -> Bool {
     return lhs.ID == rhs.ID
+        && lhs.displayName == rhs.displayName
+        && lhs.userName == rhs.userName
+        && lhs.isFollowed == rhs.isFollowed
+        && lhs.avatarAssetID == rhs.avatarAssetID
 }
 
 extension Person: Mappable {

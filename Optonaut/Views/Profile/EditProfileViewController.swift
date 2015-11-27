@@ -410,10 +410,10 @@ class EditProfileViewController: UIViewController, RedNavbar {
             textField.placeholder = self.viewModel.email.value
         }
         
-        confirmAlertAction = UIAlertAction(title: "Change Email", style: .Destructive, handler: { [unowned self] _ in
+        confirmAlertAction = UIAlertAction(title: "Change Email", style: .Destructive, handler: { [weak self] _ in
             let textField = alert.textFields![0] as UITextField
             let email = textField.text!
-            self.viewModel.updateEmail(email)
+            self?.viewModel.updateEmail(email)
                 .on(
                     error: { _ in
                         NotificationService.push("Email address already taken. Please try another one.", level: .Error)
@@ -423,6 +423,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
                     }
                 )
                 .start()
+            
+            self?.confirmAlertAction = nil
         })
         
         
