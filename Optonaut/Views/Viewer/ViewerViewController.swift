@@ -221,6 +221,12 @@ class ViewerViewController: UIViewController  {
         HeadTrackerRotationSource.Instance.stop()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        applyDistortionShader()
+    }
+    
     override func viewWillDisappear(animated: Bool) {
         tabBarController?.tabBar.hidden = false
         navigationController?.setNavigationBarHidden(false, animated: false)
