@@ -9,6 +9,7 @@
 import UIKit
 import Async
 import Mixpanel
+import SwiftyUserDefaults
 
 class ProfileTableViewController: OptographTableViewController, NoNavbar, UniqueView {
     
@@ -141,8 +142,14 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
             return cell
         } else if items.isEmpty {
             let cell = tableView.dequeueReusableCellWithIdentifier("placeholder-cell") as! PlaceholderTableViewCell
-            cell.textView.text = "Record your first Optograph"
-            cell.iconView.text = String.iconWithName(.Rocket)
+            if personID == Defaults[.SessionPersonID] {
+                cell.textView.text = "Record your first Optograph"
+                cell.iconView.text = String.iconWithName(.Rocket)
+            } else {
+                cell.textView.text = "No Optographs yet :("
+                cell.iconView.text = String.iconWithName(.Inbox)
+                cell.iconView.textColor = .LightGrey
+            }
             return cell
         } else {
             return super.tableView(tableView, cellForRowAtIndexPath: NSIndexPath(forRow: indexPath.row - 1, inSection: indexPath.section))
@@ -166,7 +173,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.row == 1 && items.isEmpty {
+        if indexPath.row == 1 && items.isEmpty && personID == Defaults[.SessionPersonID] {
             pushCamera()
         }
     }
