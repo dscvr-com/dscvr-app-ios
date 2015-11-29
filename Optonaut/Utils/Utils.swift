@@ -86,6 +86,29 @@ func toDegrees(rad: Float) -> Float {
     return rad * Float(180) / Float(M_PI)
 }
 
+func extractRotationVector(matrix: GLKMatrix4) -> GLKVector3 {
+    let x = atan2(matrix.m21, matrix.m22);
+    let y = atan2(-matrix.m20, sqrt(matrix.m21 * matrix.m21 + matrix.m22 * matrix.m22));
+    let z = atan2(matrix.m10, matrix.m00);
+    
+    return GLKVector3Make(x, y, z);
+}
+
+func carthesianToSpherical(vec: GLKVector3) -> GLKVector2 {
+    let len = GLKVector3Length(vec)
+    let theta = acos(vec.z / len);
+    let phi = atan2(vec.y, vec.x);
+    
+    return GLKVector2Make(phi, theta)
+}
+
+func getBearing(a: GLKVector2, b: GLKVector2) -> Float {
+    let y = sin(a.s - b.s) * cos(b.t);
+    let x = cos(a.t) * sin(b.t) -
+            sin(a.t) * cos(b.t) * cos(b.s - a.s);
+    return atan2(y, x);
+}
+
 //class NotificationSignal {
 //    
 //    let (signal, sink) =  Signal<Void, NoError>.pipe()

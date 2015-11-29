@@ -482,10 +482,32 @@ class CameraViewController: UIViewController {
                         return
                     }
                     
+                    // Progress bar
                     self.viewModel.progress.value = Float(self.recorder.getRecordedImagesCount()) / Float(self.recorder.getImagesToRecordCount())
+                    
+                    // Normal towards ring
                     self.viewModel.tiltAngle.value = Float(errorVec.z)
-                    self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
-                    self.viewModel.headingToDot.value = Float(atan2(errorVec.x, errorVec.y) - errorVec.z)
+                    
+                    // Helpers for bearing and distance. Relative to ball.
+                    let unit = GLKVector3Make(0, 0, -1)
+                    let ballHeading = GLKVector3Normalize(SCNVector3ToGLKVector3(self.ballNode.position))
+                    let currentHeading = GLKVector3Normalize(GLKMatrix4MultiplyVector3(r, unit))
+                    //print("Diff: \(diff.x), \(diff.y), \(diff.z)")
+                    
+                    // Use 3D diff as dist
+                    let diff = GLKVector3Subtract(ballHeading, currentHeading);
+                    self.viewModel.distXY.value = GLKVector3Length(diff)
+                    
+                    // (Approximate) bearing betwenn ballHeading and currentHeading on Sphere
+                    let angularBallHeading = carthesianToSpherical(ballHeading)
+                    let angularCurrentHeading = carthesianToSpherical(currentHeading)
+                    
+                    // print("Angular: \(angularBallHeading.x), \(angularBallHeading.y), \(angularCurrentHeading.x), \(angularCurrentHeading.y)")
+                    
+                    let angularDiff = GLKVector2Make(asin(sin(angularBallHeading.s - angularCurrentHeading.s)),
+                        asin(sin(angularBallHeading.t - angularCurrentHeading.t)))
+                
+                    self.viewModel.headingToDot.value = atan2(angularDiff.x, angularDiff.y)
                 }
                 
                 // TODO: Re-enable this code as soon as apple fixes
