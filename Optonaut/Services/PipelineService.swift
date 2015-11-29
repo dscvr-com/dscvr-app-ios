@@ -117,9 +117,14 @@ class PipelineService {
         stitchingSignal
             .observeNext { result in
                 switch result {
-                case .LeftImage(let data): optograph.saveAsset(.LeftImage(data))
-                case .RightImage(let data): optograph.saveAsset(.RightImage(data))
-                case .Progress(let progress): sink.sendNext(.Stitching(min(0.99, progress)))
+                case .LeftImage(let data):
+                    optograph.leftTextureAssetID = uuid()
+                    optograph.saveAsset(.LeftImage(data))
+                case .RightImage(let data):
+                    optograph.rightTextureAssetID = uuid()
+                    optograph.saveAsset(.RightImage(data))
+                case .Progress(let progress):
+                    sink.sendNext(.Stitching(min(0.99, progress)))
                 }
             }
         

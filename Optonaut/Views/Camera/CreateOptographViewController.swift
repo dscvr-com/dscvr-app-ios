@@ -513,6 +513,7 @@ extension CreateOptographViewController: UIImagePickerControllerDelegate, UINavi
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
         let fixedImage = image.fixedOrientation()
         let imageData = UIImageJPEGRepresentation(fixedImage, 0.7)!
+        viewModel.optograph.previewAssetID = uuid()
         viewModel.optograph.saveAsset(.PreviewImage(imageData))
         viewModel.updatePreviewImage()
     }

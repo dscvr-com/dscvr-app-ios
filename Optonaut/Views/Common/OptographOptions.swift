@@ -20,7 +20,7 @@ extension OptographOptions {
     func showOptions(var optograph: Optograph, deleteCallback: (() -> ())? = nil) {
         let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         
-        if optograph.person.ID == Defaults[.SessionPersonID] {
+        if optograph.person.ID == Defaults[.SessionPersonID] || optograph.person.ID == Person.guestID {
             actionAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
                 let confirmAlert = UIAlertController(title: "Are you sure?", message: "Do you really want to delete this Optograph? You cannot undo this.", preferredStyle: .Alert)
                 confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
