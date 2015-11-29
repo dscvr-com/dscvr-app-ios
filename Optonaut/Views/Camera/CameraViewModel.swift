@@ -17,6 +17,7 @@ class CameraViewModel {
     let progress = MutableProperty<Float>(0)
     let tiltAngle = MutableProperty<Float>(0)
     let distXY = MutableProperty<Float>(0)
+    let headingToDot = MutableProperty<Float>(0)
     
     init() {
         isRecording.producer.startWithNext { [unowned self] isRecording in

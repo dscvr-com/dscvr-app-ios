@@ -263,6 +263,7 @@ class ViewerViewController: UIViewController  {
         glassesSelectionView!.glasses = CardboardParams.fromBase64(Defaults[.SessionVRGlasses]).value!.model
         
         glassesSelectionView!.closeCallback = { [weak self] in
+            Defaults[.SessionVRGlassesSelected] = true
             self?.glassesSelectionView?.removeFromSuperview()
         }
         

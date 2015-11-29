@@ -48,6 +48,7 @@ class CameraViewController: UIViewController {
     private let progressView = CameraProgressView()
     private let instructionView = UILabel()
     private let circleView = DashedCircleView()
+    private let arrowView = UILabel()
     private let recordButtonView = UIButton()
     private let closeButtonView = UIButton()
     
@@ -130,6 +131,19 @@ class CameraViewController: UIViewController {
         viewModel.isRecording.producer.startWithNext { [weak self] val in self?.circleView.isDashed = !val }
         viewModel.isCentered.producer.startWithNext { [weak self] val in self?.circleView.isActive = val }
         view.addSubview(circleView)
+        
+        arrowView.text = String.iconWithName(.Back)
+        arrowView.textColor = .Accent
+        arrowView.textAlignment = .Center
+        arrowView.font = UIFont.iconOfSize(40)
+        arrowView.rac_alpha <~ viewModel.distXY.producer.map { distXY in
+            let distLimit = Float(M_PI / 30)
+            return 1 - max(CGFloat((distLimit - distXY) / distLimit + 1), 0)
+        }
+        viewModel.headingToDot.producer
+            .map { CGAffineTransformMakeRotation(CGFloat($0) - CGFloat(M_PI_2)) }
+            .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
+        view.addSubview(arrowView)
         
         recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
         recordButtonView.layer.cornerRadius = 35
@@ -278,6 +292,10 @@ class CameraViewController: UIViewController {
         
         instructionView.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withMultiplier: 0.5)
         instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        
+        arrowView.autoAlignAxis(.Horizontal, toSameAxisOfView: view)
+        arrowView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        arrowView.autoSetDimensionsToSize(CGSize(width: 70, height: 70))
         
         circleView.autoAlignAxis(.Horizontal, toSameAxisOfView: view)
         circleView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
@@ -467,6 +485,7 @@ class CameraViewController: UIViewController {
                     self.viewModel.progress.value = Float(self.recorder.getRecordedImagesCount()) / Float(self.recorder.getImagesToRecordCount())
                     self.viewModel.tiltAngle.value = Float(errorVec.z)
                     self.viewModel.distXY.value = Float(sqrt(errorVec.x * errorVec.x + errorVec.y * errorVec.y))
+                    self.viewModel.headingToDot.value = Float(atan2(errorVec.x, errorVec.y) - errorVec.z)
                 }
                 
                 // TODO: Re-enable this code as soon as apple fixes
