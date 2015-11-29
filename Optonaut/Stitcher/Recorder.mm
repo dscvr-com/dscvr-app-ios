@@ -189,9 +189,9 @@ std::string debugPath;
     assert(pipe != NULL);
     return CVMatToGLK4(pipe->GetCurrentRotation());
 }
-- (SelectionPoint*)currentPoint {
+- (SelectionPoint*)lastKeyframe {
     assert(pipe != NULL);
-    return ConvertSelectionPoint(pipe->CurrentPoint().closestPoint);
+    return ConvertSelectionPoint(pipe->LastKeyframe().closestPoint);
 }
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
     assert(pipe != NULL);
@@ -213,6 +213,11 @@ std::string debugPath;
     assert(pipe != NULL);
     return pipe->IsIdle();
 }
+- (bool)hasStarted {
+    assert(pipe != NULL);
+    return pipe->HasStarted();
+}
+
 - (bool)hasResults {
     assert(pipe != NULL);
     return pipe->HasResults();

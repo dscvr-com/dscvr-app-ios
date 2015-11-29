@@ -42,9 +42,10 @@ struct ExposureInfo {
 - (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure :(AVCaptureWhiteBalanceGains)gains;
 - (GLKMatrix4)getCurrentRotation;
 - (SelectionPointIterator*)getSelectionPoints;
-- (SelectionPoint*)currentPoint;
+- (SelectionPoint*)lastKeyframe;
 - (void)setIdle:(bool)isIdle;
 - (bool)isIdle;
+- (bool)hasStarted;
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b;
 - (GLKMatrix4)getNextKeyframePosition;
 - (bool)isFinished;

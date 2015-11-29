@@ -20,7 +20,6 @@ import SwiftyUserDefaults
 class CameraViewController: UIViewController {
     
     private let viewModel = CameraViewModel()
-    
     private let motionManager = CMMotionManager()
     
     // camera
@@ -36,6 +35,7 @@ class CameraViewController: UIViewController {
     private var frameCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
+    private var lastKeyframe: SelectionPoint?
     
     // lines
     private var edges: [Edge: SCNNode] = [:]
@@ -327,7 +327,7 @@ class CameraViewController: UIViewController {
         let line = SCNGeometry(sources: [source], elements: [element])
         let node = SCNNode(geometry: line)
     
-        line.firstMaterial?.diffuse.contents = UIColor(red: 239 / 255.0, green: 71 / 255.0, blue: 54 / 255.0, alpha: 1.0)
+        line.firstMaterial?.diffuse.contents = UIColor.whiteColor()
         
         return node
     }
@@ -341,8 +341,8 @@ class CameraViewController: UIViewController {
     
     private func updateBallPosition() {
         
-        let maxSpeed = Float(0.008)
-        let accelleration = Float(0.1)
+        let maxSpeed = recorder.hasStarted() ? Float(0.008) : Float(0.08)
+        let accelleration = recorder.hasStarted() ? Float(0.1) : Float(0.5)
         
         let vec = GLKVector3Make(0, 0, -1)
         let target = GLKMatrix4MultiplyVector3(recorder.getNextKeyframePosition(), vec)
@@ -514,6 +514,19 @@ class CameraViewController: UIViewController {
             }
             
             updateBallPosition()
+            
+            if recorder.hasStarted() {
+                let currentKeyframe = recorder.lastKeyframe()
+                
+                if lastKeyframe == nil {
+                    lastKeyframe = currentKeyframe
+                }
+                else if currentKeyframe.globalId != lastKeyframe?.globalId {
+                    let recordedEdge = Edge(lastKeyframe!, currentKeyframe)
+                    edges[recordedEdge]?.geometry!.firstMaterial!.diffuse.contents = UIColor.Accent
+                    lastKeyframe = currentKeyframe
+                }
+            }
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
