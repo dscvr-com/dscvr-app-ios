@@ -186,6 +186,14 @@ extension ActivityTableViewController: UITableViewDataSource {
 // MARK: - UITabBarControllerDelegate
 extension ActivityTableViewController: UITabBarControllerDelegate {
     
+    func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
+        if let t = tabBarController as? TabBarViewController where !TabBarViewController.tabBarController(t)(t, shouldSelectViewController: viewController) {
+            return false
+        }
+        
+        return true
+    }
+    
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
         if viewController == navigationController {
             tableView.setContentOffset(CGPointZero, animated: true)
