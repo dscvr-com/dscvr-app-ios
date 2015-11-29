@@ -10,19 +10,12 @@ import Foundation
 //import CommonCrypto
 
 func ImageURL(uuid: String, width: Int = 0, height: Int = 0) -> String {
-    let staticImageHost: String
     let s3Host: String
     
     switch Env {
-    case .Development:
-        staticImageHost = "http://images.optonaut.co"
-        s3Host = "optonaut-ios-beta-dev.s3.amazonaws.com"
-    case .Staging:
-        staticImageHost = "http://images.optonaut.co"
-        s3Host = "optonaut-ios-beta-staging.s3.amazonaws.com"
-    case .Production:
-        staticImageHost = "http://images.optonaut.co"
-        s3Host = "optonaut-ios-beta-production.s3.amazonaws.com"
+    case .Development: s3Host = "optonaut-ios-beta-dev.s3.amazonaws.com"
+    case .Staging: s3Host = "optonaut-ios-beta-staging.s3.amazonaws.com"
+    case .Production: s3Host = "optonaut-ios-beta-production.s3.amazonaws.com"
     }
     
     let scale = Int(UIScreen.mainScreen().scale)
@@ -31,7 +24,7 @@ func ImageURL(uuid: String, width: Int = 0, height: Int = 0) -> String {
     let urlPartToSign = "\(width * scale)x\(height * scale)/\(s3Host)/original/\(uuid).jpg"
     let hmacUrlPart = urlPartToSign.hmac(securityKey)
     
-    return "\(staticImageHost)/\(hmacUrlPart)/\(urlPartToSign)"
+    return "http://images.optonaut.co/\(hmacUrlPart)/\(urlPartToSign)"
 }
 
 enum ImageURLDimension { case Width, Height }

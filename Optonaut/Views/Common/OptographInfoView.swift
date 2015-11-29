@@ -51,6 +51,7 @@ class OptographInfoView: UIView {
         locationTextView.font = UIFont.displayOfSize(14.5, withType: .Semibold)
         locationTextView.textColor = .whiteColor()
         locationTextView.adjustsFontSizeToFitWidth = true
+        locationTextView.accessibilityIdentifier = "location"
         addSubview(locationTextView)
         
         locationCountryView.font = UIFont.displayOfSize(13, withType: .Thin)

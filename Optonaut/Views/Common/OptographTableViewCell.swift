@@ -43,6 +43,8 @@ class OptographTableViewCell: UITableViewCell {
         previewImageView.contentMode = .ScaleAspectFill
         previewImageView.clipsToBounds = true
         previewImageView.userInteractionEnabled = true
+        previewImageView.accessibilityIdentifier = "preview-image"
+        previewImageView.isAccessibilityElement = true
         previewImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
         contentView.addSubview(previewImageView)
         
@@ -55,6 +57,10 @@ class OptographTableViewCell: UITableViewCell {
         
         previewImageView.addSubview(progressView)
         
+        infoView.userInteractionEnabled = true
+        infoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
+        infoView.accessibilityIdentifier = "info"
+        infoView.isAccessibilityElement = true
         contentView.addSubview(infoView)
         
         contentView.setNeedsUpdateConstraints()

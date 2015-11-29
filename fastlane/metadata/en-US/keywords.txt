@@ -1,11 +1,1 @@
-virtual reality
-photography
-google cardboard
-vr
-panorama
-360
-3d
-augmented reality
-ar
-picture
-vrone
+virtualreality,vr,googlecardboard,cardboard,vr,360,3d,augmented,ar,vrone,photography
