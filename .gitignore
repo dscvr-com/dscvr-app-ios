@@ -50,3 +50,4 @@ fastlane/screenshots
 *.ipa
 *.dSYM.zip
 *.mobileprovision
+Preview.html

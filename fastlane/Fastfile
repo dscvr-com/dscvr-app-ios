@@ -9,6 +9,14 @@ platform :ios do
     #snapshot
   end
 
+  desc "Build"
+  lane :build do
+    increment_build_number
+    gym(
+      include_bitcode: false,
+    )
+  end
+
   desc "Bump"
   lane :bump do
     increment_version_number

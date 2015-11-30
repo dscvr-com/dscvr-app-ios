@@ -5,7 +5,7 @@ New in 1.4.0:
 - [Feature] Optographs can now be marked as private. 🕵
 - [Improvement] Improved recording quality by reducing misalignments and enhancing the 3D process.
 - [Improvement] Images in VR viewer are a lot more clear now. 💎
-- [Improvement] Massively reduced network data usage. You're Optographs should load a lot faster now. ⏲
+- [Improvement] Massively reduced network data usage. Your Optographs should load a lot faster now. ⏲
 - [Improvement] The onboarding process got a lot simpler.
 - [Improvement] You're no longer forced to show your location if you don't want to.
 - [Improvement] Added a "Forgot password" feature.
