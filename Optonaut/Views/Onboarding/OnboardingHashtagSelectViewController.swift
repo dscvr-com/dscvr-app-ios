@@ -8,7 +8,6 @@
 
 import Foundation
 import ReactiveCocoa
-import WebImage
 import Mixpanel
 
 class OnboardingHashtagSelectViewController: UIViewController {
@@ -51,15 +50,15 @@ class OnboardingHashtagSelectViewController: UIViewController {
         imageView.clipsToBounds = true
         view.addSubview(imageView)
         
-        viewModel.currentHashtag.producer
-            .ignoreNil()
-            .map { "\(S3URL)/hashtag-preview/\($0.previewAssetID).jpg" }
-            .flatMap(.Latest) { SDWebImageManager.sharedManager().downloadImageForURL($0) }
-            .startWithNext { image in
-                self.viewModel.loading.value = false
-                self.imageView.image = image
-                self.backgroundImageView.image = image
-            }
+//        viewModel.currentHashtag.producer
+//            .ignoreNil()
+//            .map { "\(S3URL)/hashtag-preview/\($0.previewAssetID).jpg" }
+//            .flatMap(.Latest) { SDWebImageManager.sharedManager().downloadImageForURL($0) }
+//            .startWithNext { image in
+//                self.viewModel.loading.value = false
+//                self.imageView.image = image
+//                self.backgroundImageView.image = image
+//            }
         
         loadingInidicatorView.rac_animating <~ viewModel.loading
         loadingInidicatorView.activityIndicatorViewStyle = .White

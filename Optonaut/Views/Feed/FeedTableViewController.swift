@@ -57,7 +57,7 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
                     self.tableView.endUpdates()
                     self.refreshControl.endRefreshing()
                 },
-                error: { _ in
+                failed: { _ in
                     self.refreshControl.endRefreshing()
                 }
             )

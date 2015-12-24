@@ -125,9 +125,9 @@ class PlaceholderImageView: UIImageView {
     func setImageWithURLString(urlStr: String) {
         if let url = NSURL(string: urlStr) {
             if self.placeholderImage != nil {
-                self.sd_setImageWithURL(url, placeholderImage: self.placeholderImage)
+                self.kf_setImageWithURL(url, placeholderImage: self.placeholderImage)
             } else {
-                self.sd_setImageWithURL(url)
+                self.kf_setImageWithURL(url)
             }
         }
     }

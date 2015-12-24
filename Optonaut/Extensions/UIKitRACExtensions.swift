@@ -8,7 +8,6 @@
 
 import UIKit
 import ReactiveCocoa
-import WebImage
 
 struct AssociationKey {
     static var hidden: UInt8 = 1

@@ -113,7 +113,7 @@ class DetailsViewModel {
                     self.isStarred.value = !starredBefore
                     self.starsCount.value += starredBefore ? -1 : 1
                 },
-                error: { _ in
+                failed: { _ in
                     self.isStarred.value = starredBefore
                     self.starsCount.value = starsCountBefore
                 },

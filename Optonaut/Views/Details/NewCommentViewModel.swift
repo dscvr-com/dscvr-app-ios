@@ -40,7 +40,7 @@ class NewCommentViewModel {
                     self.text.value = ""
                     self.isPosting.value = false
                 },
-                error: { _ in
+                failed: { _ in
                     self.commentsCount.value--
                 }
         )

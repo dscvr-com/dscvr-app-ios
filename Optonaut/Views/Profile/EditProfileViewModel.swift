@@ -49,7 +49,7 @@ class EditProfileViewModel {
             .startWithNext { userName in
                 // nesting needed in order to accept ApiErrors
                 ApiService<EmptyResponse>.post("persons/me/check-user-name", parameters: ["user_name": userName])
-                    .startWithError { _ in
+                    .startWithFailed { _ in
                         self.userNameTaken.value = self.person.userName != userName
                     }
             }

@@ -66,7 +66,7 @@ class ActivityTableViewController: UIViewController, RedNavbar {
                     
                     NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: "markVisibleAsRead", userInfo: nil, repeats: false)
                 },
-                error: { _ in
+                failed: { _ in
                     self.refreshControl.endRefreshing()
                 }
             )

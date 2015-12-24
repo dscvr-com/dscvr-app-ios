@@ -51,7 +51,7 @@ class ProfileViewModel {
                 started: {
                     self.isFollowed.value = !followedBefore
                 },
-                error: { _ in
+                failed: { _ in
                     self.isFollowed.value = followedBefore
                 },
                 completed: {

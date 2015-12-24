@@ -7,33 +7,29 @@
 //
 
 import Foundation
-import WebImage
+import Kingfisher
 import ReactiveCocoa
 
-extension SDWebImageManager {
+extension ImageDownloader {
     
     func downloadImageForURL(url: String) -> SignalProducer<UIImage, NoError> {
         return SignalProducer { sink, disposable in
-            let operation = SDWebImageManager.sharedManager().downloadImageWithURL(
+            // TODO cancel producer
+            self.downloadImageWithURL(
                 NSURL(string: url)!,
-                options: [],
-                progress: { _ in },
-                completed: { (image, error, _, _, _) in
+                progressBlock: nil,
+                completionHandler: { (image, error, _, _) in
                     if !disposable.disposed {
                         if let image = image {
                             sink.sendNext(image)
                         }
                         if let error = error {
-                            print("SDWebImageManager Download Error")
+                            print("KingfisherManager Download Error")
                             print(error)
                         }
                         sink.sendCompleted()
                     }
             })
-            disposable.addDisposable {
-                operation.cancel()
-            }
-
         }
     }
     

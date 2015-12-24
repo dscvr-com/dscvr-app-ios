@@ -82,13 +82,13 @@ class ApiService<T: Mappable> {
                         .validate(statusCode: 200..<300)
                         .response { _, _, _, error in
                             if let error = error {
-                                sink.sendError(error)
+                                sink.sendFailed(error)
                             } else {
                                 sink.sendCompleted()
                             }
                     }
                 case .Failure(let error):
-                    sink.sendError(error as NSError)
+                    sink.sendFailed(error as NSError)
                 }
             }
             
@@ -121,7 +121,7 @@ class ApiService<T: Mappable> {
     private static func request(endpoint: String, method: Alamofire.Method, queries: [String: String]? = nil, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return SignalProducer { sink, disposable in
             if !Reachability.connectedToNetwork() {
-                sink.sendError(ApiError(endpoint: endpoint, timeout: false, status: nil, message: "Offline", error: nil))
+                sink.sendFailed(ApiError(endpoint: endpoint, timeout: false, status: nil, message: "Offline", error: nil))
                 return
             }
             
@@ -147,7 +147,7 @@ class ApiService<T: Mappable> {
                         } catch {}
                         
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode ?? -1, message: error.description, error: error)
-                        sink.sendError(apiError)
+                        sink.sendFailed(apiError)
                     } else {
                         if let data = data where data.length > 0 {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
@@ -161,11 +161,11 @@ class ApiService<T: Mappable> {
                                         }
                                     } else {
                                         let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON couldn't be mapped to type T", error: nil)
-                                        sink.sendError(apiError)
+                                        sink.sendFailed(apiError)
                                     }
                                 } catch let error {
                                     let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "JSON invalid", error: error as NSError)
-                                    sink.sendError(apiError)
+                                    sink.sendFailed(apiError)
                                 }
                             }
                         } else {
@@ -179,7 +179,7 @@ class ApiService<T: Mappable> {
                 request.cancel()
             }
         }
-            .on(error: { error in
+            .on(failed: { error in
                 if error.suspicious {
 //                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
                     print(error)

@@ -78,7 +78,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
                     
                     self?.refreshControl.endRefreshing()
                 },
-                error: { [weak self] _ in
+                failed: { [weak self] _ in
                     self?.refreshControl.endRefreshing()
                 }
             )

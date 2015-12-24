@@ -348,7 +348,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
     func save() {
         viewModel.updateData()
             .on(
-                error: { _ in
+                failed: { _ in
                     NotificationService.push("Profile information invalid.", level: .Error)
                 },
                 completed: {
@@ -415,7 +415,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
             let email = textField.text!
             self?.viewModel.updateEmail(email)
                 .on(
-                    error: { _ in
+                    failed: { _ in
                         NotificationService.push("Email address already taken. Please try another one.", level: .Error)
                     },
                     completed: {

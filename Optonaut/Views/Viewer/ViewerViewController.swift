@@ -5,12 +5,12 @@ import CoreMotion
 import Device
 import CoreGraphics
 import Mixpanel
-import WebImage
 import ReactiveCocoa
 import Crashlytics
 import CardboardParams
 import Async
 import SwiftyUserDefaults
+import Kingfisher
 
 class ViewerViewController: UIViewController  {
     
@@ -31,7 +31,7 @@ class ViewerViewController: UIViewController  {
     private var rotationDisposable: Disposable?
     private var leftDownloadDisposable: Disposable?
     private var rightDownloadDisposable: Disposable?
-    private let imageManager = SDWebImageManager()
+    private let imageManager = KingfisherManager()
     
     private let settingsButtonView = BoundingButton()
     private var glassesSelectionView: GlassesSelectionView?
@@ -41,7 +41,6 @@ class ViewerViewController: UIViewController  {
     required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
         self.orientation = orientation
         self.optograph = optograph
-        imageManager.imageCache.maxMemoryCountLimit = 0
         
         // Please set this to meaningful default values.
         
@@ -58,7 +57,7 @@ class ViewerViewController: UIViewController  {
         }
        
         headset = CardboardParams.fromBase64(Defaults[.SessionVRGlasses]).value!
-        
+    
         print("Headset: \(headset.vendor) \(headset.model)")
         
         super.init(nibName: nil, bundle: nil)
@@ -188,18 +187,18 @@ class ViewerViewController: UIViewController  {
             rightDownloadDisposable = nil
         }
         
-        leftDownloadDisposable = imageManager.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))
+        leftDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))
             .startWithNext { [weak self] image in
                 self?.leftRenderDelegate.image = image
                 self?.leftDownloadDisposable = nil
-                self?.imageManager.imageCache.clearMemory()
+                self?.imageManager.cache.clearMemoryCache()
                 self?.leftLoadingView.stopAnimating()
         }
-        rightDownloadDisposable = imageManager.downloadImageForURL(ImageURL(optograph.rightTextureAssetID))
+        rightDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.rightTextureAssetID))
             .startWithNext { [weak self] image in
                 self?.rightRenderDelegate.image = image
                 self?.rightDownloadDisposable = nil
-                self?.imageManager.imageCache.clearMemory()
+                self?.imageManager.cache.clearMemoryCache()
                 self?.rightLoadingView.stopAnimating()
         }
     }

@@ -16,7 +16,7 @@ extension SignalType {
         return Signal { observer in
             self.observe { event in
                 switch event {
-                case .Error(_): break
+                case .Failed(_): break
                 case let .Next(val): observer.sendNext(val)
                 case .Completed: observer.sendCompleted()
                 case .Interrupted: observer.sendInterrupted()
@@ -29,7 +29,7 @@ extension SignalType {
         return Signal { observer in
             self.observe { event in
                 switch event {
-                case .Error(_): observer.sendNext(false)
+                case .Failed(_): observer.sendNext(false)
                 case .Next(_): break
                 case .Completed: observer.sendNext(true)
                 case .Interrupted: observer.sendInterrupted()
@@ -42,7 +42,7 @@ extension SignalType {
         return Signal { observer in
             self.observe { event in
                 switch event {
-                case let .Error(err): observer.sendError(err)
+                case let .Failed(err): observer.sendFailed(err)
                 case .Next(_): break
                 case .Completed: observer.sendNext(())
                 case .Interrupted: observer.sendInterrupted()
@@ -55,7 +55,7 @@ extension SignalType {
         return Signal { observer in
             self.observe { event in
                 switch event {
-                case let .Error(err): observer.sendError(err)
+                case let .Failed(err): observer.sendFailed(err)
                 case .Next(_): observer.sendCompleted()
                 case .Completed: observer.sendCompleted()
                 case .Interrupted: observer.sendInterrupted()

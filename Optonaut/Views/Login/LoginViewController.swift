@@ -208,7 +208,7 @@ class LoginViewController: UIViewController {
         
         viewModel.submit()
             .on(
-                error: { [unowned self] _ in
+                failed: { [unowned self] _ in
                     let alert: UIAlertController
                     if case .LogIn = self.viewModel.selectedTab.value {
                         alert = UIAlertController(title: "Login unsuccessful", message: "Your entered data wasn't correct. Please try again.", preferredStyle: .Alert)
@@ -250,7 +250,7 @@ class LoginViewController: UIViewController {
         let successBlock = { [weak self] (token: FBSDKAccessToken!) in
             self?.viewModel.facebookSignin(token.userID, token: token.tokenString)
                 .on(
-                    error: { _ in
+                    failed: { _ in
                         loginManager.logOut()
                         
                         errorBlock("Something went wrong and we couldn't sign you in. Please try again.")

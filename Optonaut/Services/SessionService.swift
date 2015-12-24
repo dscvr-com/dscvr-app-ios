@@ -75,7 +75,7 @@ class SessionService {
                     Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
                     updateMixpanel()
                 },
-                error: { _ in
+                failed: { _ in
                     reset()
                 }
             )

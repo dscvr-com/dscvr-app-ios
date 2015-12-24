@@ -10,7 +10,6 @@ import Foundation
 import ReactiveCocoa
 import ObjectMapper
 import Async
-import WebImage
 import SwiftyUserDefaults
 
 class CreateOptographViewModel {
@@ -58,7 +57,7 @@ class CreateOptographViewModel {
             .flatMap(.Latest) { (lat, lon) -> SignalProducer<LocationMappable, NoError> in
                 if Reachability.connectedToNetwork() {
                     return ApiService.post("locations/lookup", parameters: ["latitude": lat, "longitude": lon])
-                        .on(error: { _ in
+                        .on(failed: { _ in
                             self.locationLoading.value = false
                         })
                         .ignoreError()

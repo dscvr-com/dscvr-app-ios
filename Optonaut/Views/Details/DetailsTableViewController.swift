@@ -10,8 +10,8 @@ import Foundation
 import Mixpanel
 import Async
 import SceneKit
-import WebImage
 import ReactiveCocoa
+import Kingfisher
 
 class CombinedMotionManager: RotationMatrixSource {
     private var horizontalOffset: Float = 0
@@ -46,14 +46,13 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
     
-    private let imageManager = SDWebImageManager()
+    private let imageManager = KingfisherManager()
     private var imageDownloadDisposable: Disposable?
     
     private var rotationAlert: UIAlertController?
     
     required init(optographID: UUID) {
         viewModel = DetailsViewModel(optographID: optographID)
-        imageManager.imageCache.maxMemoryCountLimit = 0
         logInit()
         super.init(nibName: nil, bundle: nil)
     }
@@ -71,21 +70,23 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         if imageDownloadDisposable != nil {
             imageDownloadDisposable?.dispose()
         }
-        imageDownloadDisposable = self.imageManager.downloadImageForURL(viewModel.textureImageUrl.value).startWithNext { [weak self] image in
-            if let strongSelf = self  {
-                if strongSelf.viewModel.viewIsActive.value {
-                    strongSelf.renderDelegate.image = image
-                    strongSelf.scnView.prepareObject(strongSelf.renderDelegate!.scene, shouldAbortBlock: nil)
-                    strongSelf.scnView.playing = true
-                    strongSelf.loadingView.stopAnimating()
-                    strongSelf.loadingView.hidden = true
-                    strongSelf.blurView.fullscreen = false
-                    strongSelf.viewModel.isLoading.value  = false
-                    strongSelf.imageDownloadDisposable = nil
-                    strongSelf.imageManager.imageCache.clearMemory()
+        imageDownloadDisposable = imageManager.downloader.downloadImageForURL(viewModel.textureImageUrl.value)
+            .observeOnMain()
+            .startWithNext { [weak self] image in
+                if let strongSelf = self  {
+                    if strongSelf.viewModel.viewIsActive.value {
+                        strongSelf.renderDelegate.image = image
+                        strongSelf.scnView.prepareObject(strongSelf.renderDelegate!.scene, shouldAbortBlock: nil)
+                        strongSelf.scnView.playing = true
+                        strongSelf.loadingView.stopAnimating()
+                        strongSelf.loadingView.hidden = true
+                        strongSelf.blurView.fullscreen = false
+                        strongSelf.viewModel.isLoading.value  = false
+                        strongSelf.imageDownloadDisposable = nil
+                        strongSelf.imageManager.cache.clearMemoryCache()
+                    }
                 }
             }
-        }
     }
     
     override func viewDidLoad() {

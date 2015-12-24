@@ -12,7 +12,6 @@ import Fabric
 import Crashlytics
 import PureLayout
 import Mixpanel
-import WebImage
 import Neon
 import FBSDKCoreKit
 
@@ -130,8 +129,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupAppearanceDefaults()
         
-        SDImageCache.sharedImageCache().shouldDecompressImages = false
-        SDImageCache.sharedImageCache().shouldCacheImagesInMemory = false
+//        SDImageCache.sharedImageCache().shouldDecompressImages = false
+//        SDImageCache.sharedImageCache().shouldCacheImagesInMemory = false
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         

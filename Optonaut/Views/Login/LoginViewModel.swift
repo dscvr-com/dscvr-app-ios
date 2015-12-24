@@ -84,7 +84,7 @@ class LoginViewModel {
                     next: { [weak self] _ in
                         self?.pending.value = false
                     },
-                    error: { [weak self] _ in
+                    failed: { [weak self] _ in
                         self?.pending.value = false
                     }
                 )
@@ -101,7 +101,7 @@ class LoginViewModel {
         return ApiService<LoginMappable>.post("persons/facebook/signin", parameters: parameters)
             .flatMap(.Latest) { SessionService.handleSignin($0) }
             .on(
-                error: { [weak self] _ in
+                failed: { [weak self] _ in
                     self?.facebookPending.value = false
                 },
                 completed: { [weak self] in

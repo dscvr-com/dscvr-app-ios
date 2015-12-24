@@ -30,7 +30,7 @@ class ForgotPasswordViewModel {
                     self?.pending.value = false
                     self?.sent.value = true
                 },
-                error: { [weak self] _ in
+                failed: { [weak self] _ in
                     self?.pending.value = false
                 }
         )

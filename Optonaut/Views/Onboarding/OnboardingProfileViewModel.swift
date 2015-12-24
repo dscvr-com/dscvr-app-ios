@@ -131,7 +131,7 @@ class OnboardingProfileViewModel {
                     self.saveModel()
                     Defaults[.SessionOnboardingVersion] = OnboardingVersion
                 },
-                error: { _ in
+                failed: { _ in
                     self.loading.value = false
                 }
             )
@@ -158,7 +158,7 @@ class OnboardingProfileViewModel {
                     self.avatarUploaded.value = true
                     self.saveModel()
                 },
-                error: { _ in
+                failed: { _ in
                     self.avatarUploaded.value = false
                     self.avatarImageUrl.value = ImageURL(avatarAssetID, width: 104, height: 104)
                 }

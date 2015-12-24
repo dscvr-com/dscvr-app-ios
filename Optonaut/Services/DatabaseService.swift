@@ -121,7 +121,7 @@ class DatabaseService {
             switch type {
             case .One:
                 guard let row = DatabaseService.defaultConnection.pluck(query) else {
-                    sink.sendError(.NotFound)
+                    sink.sendFailed(.NotFound)
                     break
                 }
                 sink.sendNext(row)

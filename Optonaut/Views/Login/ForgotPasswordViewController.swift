@@ -197,7 +197,7 @@ class ForgotPasswordViewController: UIViewController {
     func sendEmail() {
         viewModel.sendEmail()
             .on(
-                error: { [weak self] _ in
+                failed: { [weak self] _ in
                     self?.viewModel.emailStatus.value = .Warning("We couldn't find that email address...")
                     
                 },

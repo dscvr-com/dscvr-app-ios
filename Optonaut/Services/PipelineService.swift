@@ -98,7 +98,7 @@ class PipelineService {
                     sink.sendNext(.PublishingFinished)
                     sink.sendCompleted()
                 },
-                error: { _ in
+                failed: { _ in
                     NotificationService.push("Publishing failed...", level: .Warning)
                     signals.removeValueForKey(optograph.ID)
                     PipelineService.check()

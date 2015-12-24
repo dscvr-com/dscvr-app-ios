@@ -8,7 +8,7 @@
 
 import ObjectMapper
 import ReactiveCocoa
-import WebImage
+import Kingfisher
 
 enum OptographAsset {
     case PreviewImage(NSData)
@@ -69,23 +69,23 @@ struct Optograph: DeletableModel {
     func saveAsset(asset: OptographAsset) {
         switch asset {
         case .LeftImage(let data):
-            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(leftTextureAssetID), toDisk: true)
+            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(leftTextureAssetID))
         case .RightImage(let data):
-            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID), toDisk: true)
+            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID))
         case .PreviewImage(let data):
-            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID), toDisk: true)
+            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID))
             // needs all different sizes
-            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID, fullDimension: .Width), toDisk: true)
-            SDImageCache.sharedImageCache().storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID, width: 32, height: 40), toDisk: true)
+            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID, fullDimension: .Width))
+            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID, width: 32, height: 40))
         }
     }
     
     mutating func publish() -> SignalProducer<Optograph, ApiError> {
         assert(!isPublished)
         
-        return SDWebImageManager.sharedManager().downloadDataForURL(ImageURL(leftTextureAssetID))
-            .combineLatestWith(SDWebImageManager.sharedManager().downloadDataForURL(ImageURL(rightTextureAssetID)))
-            .combineLatestWith(SDWebImageManager.sharedManager().downloadDataForURL(ImageURL(previewAssetID)))
+        return KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(leftTextureAssetID))
+            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(rightTextureAssetID)))
+            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(previewAssetID)))
             .map { ($0.0, $0.1, $1) }
             .map { (left, right, preview) -> [String: AnyObject] in
                 var parameters = Mapper().toJSON(self)
