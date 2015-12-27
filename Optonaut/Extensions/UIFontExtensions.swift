@@ -60,8 +60,9 @@ public extension UIFont {
         case Semibold = "Semibold"
 //        case Light = "Light"
         case Thin = "Thin"
+        case Light = "Light"
         
-        static let allValues = [Regular, Semibold, Thin]
+        static let allValues = [Regular, Semibold, Thin, Light]
     }
     
     public class func displayOfSize(fontSize: CGFloat, withType type: DisplayFontType) -> UIFont {

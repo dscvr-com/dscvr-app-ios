@@ -79,9 +79,9 @@ class ProfileHeaderTableViewCell: UITableViewCell {
         settingsButtonView.layer.borderColor = UIColor.Accent.CGColor
         settingsButtonView.layer.cornerRadius = 5
         settingsButtonView.layer.masksToBounds = true
-        settingsButtonView.setTitle(String.icomoonWithName(.Cog), forState: .Normal)
+//        settingsButtonView.setTitle(String.icomoonWithName(.Cog), forState: .Normal)
         settingsButtonView.setTitleColor(UIColor.Accent, forState: .Normal)
-        settingsButtonView.titleLabel?.font = .icomoonOfSize(16)
+//        settingsButtonView.titleLabel?.font = .icomoonOfSize(16)
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showSettingsActions"))
         contentView.addSubview(settingsButtonView)
         

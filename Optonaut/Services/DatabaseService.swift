@@ -81,6 +81,7 @@ class DatabaseService {
         migration0003,
         migration0004,
         migration0005,
+        migration0006,
     ]
     
     static func prepare() throws {

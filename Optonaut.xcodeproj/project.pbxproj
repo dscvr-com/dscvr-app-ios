@@ -143,8 +143,6 @@
 		8FBC869A1BB723E600539D4E /* SF-UI-Text-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86951BB723DA00539D4E /* SF-UI-Text-Semibold.otf */; };
 		8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC869B1BB72A2600539D4E /* SF-UI-Display-Light.otf */; };
 		8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC869D1BB72AE900539D4E /* SF-UI-Display-Thin.otf */; };
-		8FBC86A01BB7D84900539D4E /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FBC869F1BB7D84900539D4E /* Icon.swift */; };
-		8FBC86A21BB7D86B00539D4E /* icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86A11BB7D86400539D4E /* icons.ttf */; };
 		8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FBC86A31BB7E1AD00539D4E /* OnboardingVRViewController.swift */; };
 		8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FBDE8B11B5D186800C78486 /* Device.framework */; };
 		8FC7E3621BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC7E3611BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift */; };
@@ -175,6 +173,13 @@
 		8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEA6F201BA5969700153677 /* DatabaseService.swift */; };
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
+		8FFB561A1C2C2BA900D2BE62 /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB56191C2C2BA800D2BE62 /* CollectionViewController.swift */; };
+		8FFB561C1C2C371900D2BE62 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561B1C2C371900D2BE62 /* CollectionViewCell.swift */; };
+		8FFB561E1C2CA43C00D2BE62 /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */; };
+		8FFB56201C2D59EB00D2BE62 /* CollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561F1C2D59EB00D2BE62 /* CollectionViewCellModel.swift */; };
+		8FFB56501C2D8A4D00D2BE62 /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */; };
+		8FFB565B1C300C8F00D2BE62 /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB565A1C300C8F00D2BE62 /* FXBlurView.m */; };
+		8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB565C1C3055D000D2BE62 /* Migration0006.swift */; };
 		8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */; };
 		A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2B1BC87F7500C9EFE5 /* Recorder.mm */; };
 		A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2D1BC87F7500C9EFE5 /* Stitcher.mm */; };
@@ -234,6 +239,19 @@
 			remoteInfo = Optonaut;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8FFB564C1C2D884B00D2BE62 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
@@ -376,8 +394,6 @@
 		8FBC86951BB723DA00539D4E /* SF-UI-Text-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-Semibold.otf"; sourceTree = "<group>"; };
 		8FBC869B1BB72A2600539D4E /* SF-UI-Display-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Light.otf"; sourceTree = "<group>"; };
 		8FBC869D1BB72AE900539D4E /* SF-UI-Display-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Thin.otf"; sourceTree = "<group>"; };
-		8FBC869F1BB7D84900539D4E /* Icon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
-		8FBC86A11BB7D86400539D4E /* icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icons.ttf; sourceTree = "<group>"; };
 		8FBC86A31BB7E1AD00539D4E /* OnboardingVRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingVRViewController.swift; sourceTree = "<group>"; };
 		8FBDE8B11B5D186800C78486 /* Device.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Device.framework; path = Carthage/Build/iOS/Device.framework; sourceTree = "<group>"; };
 		8FC7E3611BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSummaryViewModel.swift; sourceTree = "<group>"; };
@@ -417,6 +433,14 @@
 		8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		8FEA6F201BA5969700153677 /* DatabaseService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		8FFB56191C2C2BA800D2BE62 /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CollectionViewController.swift; path = ../CollectionViewController.swift; sourceTree = "<group>"; };
+		8FFB561B1C2C371900D2BE62 /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
+		8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
+		8FFB561F1C2D59EB00D2BE62 /* CollectionViewCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCellModel.swift; sourceTree = "<group>"; };
+		8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Icomoon.framework; path = Frameworks/Icomoon.framework; sourceTree = "<group>"; };
+		8FFB56591C300C8F00D2BE62 /* FXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXBlurView.h; sourceTree = "<group>"; };
+		8FFB565A1C300C8F00D2BE62 /* FXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXBlurView.m; sourceTree = "<group>"; };
+		8FFB565C1C3055D000D2BE62 /* Migration0006.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0006.swift; sourceTree = "<group>"; };
 		8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHashtagTableViewCell.swift; sourceTree = "<group>"; };
 		A5233E281BC87F7500C9EFE5 /* CommonExternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommonExternal.h; path = Optonaut/Stitcher/CommonExternal.h; sourceTree = SOURCE_ROOT; };
 		A5233E291BC87F7500C9EFE5 /* CommonInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommonInternal.h; path = Optonaut/Stitcher/CommonInternal.h; sourceTree = SOURCE_ROOT; };
@@ -521,6 +545,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FFB56501C2D8A4D00D2BE62 /* Icomoon.framework in Frameworks */,
 				8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */,
 				8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */,
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
@@ -564,6 +589,7 @@
 				8F23AA751C0712ED008926A8 /* Migration0003.swift */,
 				8F23AA791C077C1B008926A8 /* Migration0004.swift */,
 				8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */,
+				8FFB565C1C3055D000D2BE62 /* Migration0006.swift */,
 			);
 			path = Migrations;
 			sourceTree = "<group>";
@@ -588,6 +614,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */,
 				8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */,
 				8F23AA641C021CA4008926A8 /* Neon.framework */,
 				8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */,
@@ -628,7 +655,6 @@
 			isa = PBXGroup;
 			children = (
 				8F4C6E311B4A70CD007508ED /* icomoon.ttf */,
-				8FBC86A11BB7D86400539D4E /* icons.ttf */,
 				8FBC869B1BB72A2600539D4E /* SF-UI-Display-Light.otf */,
 				8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */,
 				8FBC86921BB723DA00539D4E /* SF-UI-Display-Semibold.otf */,
@@ -681,6 +707,7 @@
 			isa = PBXGroup;
 			children = (
 				8FAB9F281B8F01DF00B4C8CB /* TabBarViewController.swift */,
+				8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */,
 				8FAB9EED1B8F01DF00B4C8CB /* Activity */,
 				8FAB9EF31B8F01DF00B4C8CB /* Camera */,
 				8FAB9EF81B8F01DF00B4C8CB /* Common */,
@@ -775,7 +802,10 @@
 		8FAB9F0F1B8F01DF00B4C8CB /* Feed */ = {
 			isa = PBXGroup;
 			children = (
+				8FFB56191C2C2BA800D2BE62 /* CollectionViewController.swift */,
 				8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */,
+				8FFB561B1C2C371900D2BE62 /* CollectionViewCell.swift */,
+				8FFB561F1C2D59EB00D2BE62 /* CollectionViewCellModel.swift */,
 				8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */,
 				8FAB9F121B8F01DF00B4C8CB /* FeedViewModel.swift */,
 			);
@@ -1020,12 +1050,21 @@
 			path = CWStatusBarNotification;
 			sourceTree = "<group>";
 		};
+		8FFB56581C300C8F00D2BE62 /* FXBlurView */ = {
+			isa = PBXGroup;
+			children = (
+				8FFB56591C300C8F00D2BE62 /* FXBlurView.h */,
+				8FFB565A1C300C8F00D2BE62 /* FXBlurView.m */,
+			);
+			path = FXBlurView;
+			sourceTree = "<group>";
+		};
 		8FFCE4B61B4DBF1900832C88 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				8FFB56581C300C8F00D2BE62 /* FXBlurView */,
 				8FC7E3651BD15B9D00E97CC3 /* Sensors */,
 				A56CA3D81BC05C4F0078D7E8 /* Shaders */,
-				8FBC869F1BB7D84900539D4E /* Icon.swift */,
 				8FE09F5E1BAEFD7100EA105D /* CWStatusBarNotification */,
 				8FD7F85C1B5924D5001680AA /* Stitcher */,
 			);
@@ -1226,6 +1265,7 @@
 				8FCCA0291B3806040091F1B1 /* Resources */,
 				8F7738061B38098B001F642B /* Carthage */,
 				8F900B481B83DC720085566C /* Crashlytics */,
+				8FFB564C1C2D884B00D2BE62 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1318,7 +1358,6 @@
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
 				A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */,
-				8FBC86A21BB7D86B00539D4E /* icons.ttf in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
 				A5DE71EE1BE28A7400316F82 /* distortion.json in Resources */,
@@ -1376,6 +1415,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyUserDefaults.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Neon.framework",
+				"$(SRCROOT)/Frameworks/Icomoon.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -1422,11 +1462,13 @@
 				A55C80FB1BF91FDA00420E52 /* simpleSphereStitcher.cpp in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
 				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
+				8FFB561E1C2CA43C00D2BE62 /* TabViewController.swift in Sources */,
 				A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */,
 				8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */,
 				A5FD5D891BEA5A4E0031ED1E /* ringStitcher.cpp in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
+				8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */,
 				8FAB9F5A1B8F01DF00B4C8CB /* TabBarViewController.swift in Sources */,
 				8FAB9F371B8F01DF00B4C8CB /* OptographTableViewCellModel.swift in Sources */,
 				8FC7E3731BD15B9D00E97CC3 /* HeadTracker.mm in Sources */,
@@ -1457,7 +1499,6 @@
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,
 				8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */,
-				8FBC86A01BB7D84900539D4E /* Icon.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* CreateOptographViewModel.swift in Sources */,
 				8F23AA531BFF31B4008926A8 /* LocationTable.swift in Sources */,
 				A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */,
@@ -1494,6 +1535,7 @@
 				8FAB9F581B8F01DF00B4C8CB /* ProfileTableViewController.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
+				8FFB561C1C2C371900D2BE62 /* CollectionViewCell.swift in Sources */,
 				8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */,
 				A5FD5D801BEA5A4E0031ED1E /* checkpointStore.cpp in Sources */,
 				8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */,
@@ -1504,6 +1546,7 @@
 				8F1E71801BCC188B00F3D6FB /* ProgressView.swift in Sources */,
 				8F5335AA1BDBC09A0058961A /* ActivityResourceFollow.swift in Sources */,
 				8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */,
+				8FFB561A1C2C2BA900D2BE62 /* CollectionViewController.swift in Sources */,
 				8F966E0E1BCCF33900F5F5F8 /* SearchViewModel.swift in Sources */,
 				8FAB9F7E1B8F03BE00B4C8CB /* UIKitRACExtensions.swift in Sources */,
 				A5FD5D811BEA5A4E0031ED1E /* inputImage.cpp in Sources */,
@@ -1512,6 +1555,7 @@
 				8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */,
 				8FC7E3741BD15B9D00E97CC3 /* Matrix3x3d.mm in Sources */,
 				8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */,
+				8FFB565B1C300C8F00D2BE62 /* FXBlurView.m in Sources */,
 				8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */,
 				8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */,
 				8FAB9F8A1B8F05BD00B4C8CB /* IcomoonExtension.swift in Sources */,
@@ -1528,6 +1572,7 @@
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
 				A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */,
+				8FFB56201C2D59EB00D2BE62 /* CollectionViewCellModel.swift in Sources */,
 				8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */,
 				8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */,
 				8F23AA4D1BFF31B4008926A8 /* ActivityResourceFollowTable.swift in Sources */,

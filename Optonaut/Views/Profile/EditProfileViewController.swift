@@ -79,8 +79,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
         view.addSubview(avatarImageView)
         
-        displayNameIconView.font = .icomoonOfSize(20)
-        displayNameIconView.text = .icomoonWithName(.VCard)
+//        displayNameIconView.font = .icomoonOfSize(20)
+//        displayNameIconView.text = .icomoonWithName(.VCard)
         displayNameIconView.textColor = UIColor(0xe5e5e5)
         view.addSubview(displayNameIconView)
         
@@ -91,8 +91,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
         displayNameInputView.rac_textSignal().toSignalProducer().startWithNext { self.viewModel.displayName.value = $0 as! String }
         view.addSubview(displayNameInputView)
         
-        userNameIconView.font = .icomoonOfSize(20)
-        userNameIconView.text = .icomoonWithName(.Email)
+//        userNameIconView.font = .icomoonOfSize(20)
+//        userNameIconView.text = .icomoonWithName(.Email)
         userNameIconView.textColor = UIColor(0xe5e5e5)
         view.addSubview(userNameIconView)
         
@@ -112,8 +112,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
         
         view.addSubview(userNameTakenView)
         
-        descriptionIconView.font = .icomoonOfSize(20)
-        descriptionIconView.text = .icomoonWithName(.InfoWithCircle)
+//        descriptionIconView.font = .icomoonOfSize(20)
+//        descriptionIconView.text = .icomoonWithName(.InfoWithCircle)
         descriptionIconView.textColor = UIColor(0xe5e5e5)
         view.addSubview(descriptionIconView)
         
@@ -130,8 +130,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
         privateHeaderView.font = UIFont.robotoOfSize(15, withType: .Medium)
         view.addSubview(privateHeaderView)
         
-        emailIconView.font = .icomoonOfSize(20)
-        emailIconView.text = .icomoonWithName(.PaperPlane)
+//        emailIconView.font = .icomoonOfSize(20)
+//        emailIconView.text = .icomoonWithName(.PaperPlane)
         emailIconView.textColor = UIColor(0xe5e5e5)
         view.addSubview(emailIconView)
         
@@ -148,8 +148,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
         emailButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showEmailAlert"))
         view.addSubview(emailButtonView)
         
-        passwordIconView.font = .icomoonOfSize(20)
-        passwordIconView.text = .icomoonWithName(.Lock)
+//        passwordIconView.font = .icomoonOfSize(20)
+//        passwordIconView.text = .icomoonWithName(.Lock)
         passwordIconView.textColor = UIColor(0xe5e5e5)
         view.addSubview(passwordIconView)
         
@@ -173,8 +173,8 @@ class EditProfileViewController: UIViewController, RedNavbar {
         view.addSubview(settingsHeaderView)
        
         // since we need debug for developing.
-        debugIconView.font = .icomoonOfSize(20)
-        debugIconView.text = .icomoonWithName(.Cog)
+//        debugIconView.font = .icomoonOfSize(20)
+//        debugIconView.text = .icomoonWithName(.Cog)
         debugIconView.textColor = UIColor(0xe5e5e5)
         debugIconView.hidden = true
         view.addSubview(debugIconView)

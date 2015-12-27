@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import HexColor
+import Icomoon
 
 func setupAppearanceDefaults() {
     UIApplication.sharedApplication().setStatusBarStyle(.LightContent, animated: false)

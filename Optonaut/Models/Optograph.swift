@@ -40,6 +40,7 @@ struct Optograph: DeletableModel {
     var rightTextureAssetID: UUID
     var isStaffPick: Bool
     var hashtagString: String
+    var isInFeed: Bool
     
     static func newInstance() -> Optograph {
         return Optograph(
@@ -62,7 +63,8 @@ struct Optograph: DeletableModel {
             leftTextureAssetID: "",
             rightTextureAssetID: "",
             isStaffPick: false,
-            hashtagString: ""
+            hashtagString: "",
+            isInFeed: false
         )
     }
     
@@ -212,7 +214,8 @@ extension Optograph: SQLiteModel {
             leftTextureAssetID: row[OptographSchema.leftTextureAssetID],
             rightTextureAssetID: row[OptographSchema.rightTextureAssetID],
             isStaffPick: row[OptographSchema.isStaffPick],
-            hashtagString: row[OptographSchema.hashtagString]
+            hashtagString: row[OptographSchema.hashtagString],
+            isInFeed: row[OptographSchema.isInFeed]
         )
     }
     
@@ -238,6 +241,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.rightTextureAssetID <-- rightTextureAssetID,
             OptographSchema.isStaffPick <-- isStaffPick,
             OptographSchema.hashtagString <-- hashtagString,
+            OptographSchema.isInFeed <-- isInFeed,
         ]
     }
     

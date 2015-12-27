@@ -13,3 +13,4 @@ github "alexeyxo/protobuf-swift" "ProtoBuf3.0-Swift2.0"
 github "optonaut/CardboardParams.swift"
 github "radex/SwiftyUserDefaults"
 github "onevcat/Kingfisher" ~> 1.8
+github "KyoheiG3/DynamicBlurView"

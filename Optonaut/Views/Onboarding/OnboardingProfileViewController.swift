@@ -53,9 +53,9 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         headlineTextView.font = UIFont.displayOfSize(25, withType: .Thin)
         view.addSubview(headlineTextView)
         
-        uploadButtonView.setTitle(String.icomoonWithName(.LnrCamera), forState: .Normal)
+//        uploadButtonView.setTitle(String.icomoonWithName(.LnrCamera), forState: .Normal)
         uploadButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-        uploadButtonView.titleLabel?.font = UIFont.icomoonOfSize(35)
+//        uploadButtonView.titleLabel?.font = UIFont.icomoonOfSize(35)
         uploadButtonView.defaultBackgroundColor = UIColor.whiteColor().alpha(0.3)
         uploadButtonView.layer.cornerRadius = 52
         uploadButtonView.layer.borderColor = UIColor.whiteColor().CGColor

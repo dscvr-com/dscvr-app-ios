@@ -13,9 +13,9 @@ func ImageURL(uuid: String, width: Int = 0, height: Int = 0) -> String {
     let s3Host: String
     
     switch Env {
-    case .Development: s3Host = "optonaut-ios-beta-dev.s3.amazonaws.com"
+//    case .Development: s3Host = "optonaut-ios-beta-dev.s3.amazonaws.com"
     case .Staging: s3Host = "optonaut-ios-beta-staging.s3.amazonaws.com"
-    case .Production: s3Host = "optonaut-ios-beta-production.s3.amazonaws.com"
+    case .Production, .Development: s3Host = "optonaut-ios-beta-production.s3.amazonaws.com"
     }
     
     let scale = Int(UIScreen.mainScreen().scale)

@@ -15,9 +15,9 @@ import Mixpanel
 import Neon
 import FBSDKCoreKit
 
-//let Env = EnvType.Development
+let Env = EnvType.Development
 //let Env = EnvType.Staging
-let Env = EnvType.Production
+//let Env = EnvType.Production
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -29,15 +29,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         prepareAndExecute(requireLogin: true) {
-            let tabBarViewController = TabBarViewController()
+//            let tabBarViewController = TabBarViewController()
+//            
+//            if let notification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
+//                Mixpanel.sharedInstance().track("Launch.Notification")
+//                self.application(application, didReceiveRemoteNotification: notification)
+//                tabBarViewController.selectedIndex = 2
+//            }
             
-            if let notification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
-                Mixpanel.sharedInstance().track("Launch.Notification")
-                self.application(application, didReceiveRemoteNotification: notification)
-                tabBarViewController.selectedIndex = 2
-            }
-            
-            self.window?.rootViewController = tabBarViewController
+//            self.window?.rootViewController = tabBarViewController
+            self.window?.rootViewController = TabViewController()
         }
         
         return true

@@ -87,7 +87,7 @@ class FeedViewModel: NSObject {
         let query = OptographTable.select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .filter(OptographTable[OptographSchema.isStaffPick] || PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == (Defaults[.SessionPersonID] ?? Person.guestID) || PersonTable[PersonSchema.ID] == Person.guestID)
+            .filter(OptographTable[OptographSchema.isInFeed])
             .order(CommentSchema.createdAt.asc)
         
         refreshNotification.signal
@@ -114,6 +114,7 @@ class FeedViewModel: NSObject {
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .flatMap(.Latest) { _ in
                 ApiService<Optograph>.get("optographs/feed")
+                    .map { (var optograph) in optograph.isInFeed = true; return optograph }
                     .observeOnUserInteractive()
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()
@@ -136,6 +137,7 @@ class FeedViewModel: NSObject {
             .ignoreNil()
             .flatMap(.Latest) { oldestResult in
                 ApiService<Optograph>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                    .map { (var optograph) in optograph.isInFeed = true; return optograph }
                     .observeOnUserInteractive()
                     .on(next: { optograph in
                         try! optograph.insertOrUpdate()

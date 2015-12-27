@@ -29,6 +29,7 @@ struct OptographSchemaType: ModelSchema {
     let rightTextureAssetID = Expression<UUID>("optograph_right_texture_asset_id")
     let isStaffPick = Expression<Bool>("optograph_is_staff_pick")
     let hashtagString = Expression<String>("optograph_hashtag_string")
+    let isInFeed = Expression<Bool>("optograph_is_in_feed")
 }
 
 let OptographSchema = OptographSchemaType()
