@@ -9,28 +9,30 @@
 import Foundation
 import SceneKit
 import CardboardParams
+import SpriteKit
 
 class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     
     let scene = SCNScene()
-    var image: UIImage? {
+    var image: SKTexture? {
         didSet {
-            if image?.size.width == image?.size.height {
+            if image?.size().width == image?.size().height {
                 // Classic case - quadratic texture
                 sphereNode.geometry?.firstMaterial?.diffuse.contents = image
             } else {
                 // Extended case - rectangular texture, need to center
-                let ratio = Float((image!.size.width / CGFloat(2)) / image!.size.height)
+                let ratio = Float((image!.size().width / CGFloat(2)) / image!.size().height)
                 sphereNode.geometry?.firstMaterial?.diffuse.contents = image
                 
                 // Yes, we calculate our transform ourselves.
                 // And yes, this matrix is inverted.
+                // Texture mapping from 0 to 1
                 let transform = SCNMatrix4FromGLKMatrix4(
                     GLKMatrix4Make(
                         1, 0, 0, 0,
-                        0, ratio, 0, 0,
+                        0, -ratio, 0, 0,
                         0, 0, 1, 0,
-                        0, (1 - ratio) / 2, 0, 1
+                        0, 1 - (1 - ratio) / 2, 0, 1
                     )
                 )
                 
@@ -48,7 +50,7 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     }
 
     private var cameraNode: SCNNode!
-    private let sphereNode: SCNNode
+    let sphereNode: SCNNode
     private let rotationMatrixSource: RotationMatrixSource
     private var _fov: FieldOfView!
     private let cameraOffset: Float
@@ -87,8 +89,8 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         let zNear = Float(0.01)
         let zFar = Float(10000)
         
-        print("Fov:")
-        print(fov)
+//        print("Fov:")
+//        print(fov)
         
         let fovLeft = tan(toRadians(fov.left)) * zNear
         let fovRight = tan(toRadians(fov.right)) * zNear

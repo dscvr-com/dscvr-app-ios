@@ -15,9 +15,9 @@ import Mixpanel
 import Neon
 import FBSDKCoreKit
 
-let Env = EnvType.Development
+//let Env = EnvType.Development
 //let Env = EnvType.Staging
-//let Env = EnvType.Production
+let Env = EnvType.Production
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

@@ -70,23 +70,23 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         if imageDownloadDisposable != nil {
             imageDownloadDisposable?.dispose()
         }
-        imageDownloadDisposable = imageManager.downloader.downloadImageForURL(viewModel.textureImageUrl.value)
-            .observeOnMain()
-            .startWithNext { [weak self] image in
-                if let strongSelf = self  {
-                    if strongSelf.viewModel.viewIsActive.value {
-                        strongSelf.renderDelegate.image = image
-                        strongSelf.scnView.prepareObject(strongSelf.renderDelegate!.scene, shouldAbortBlock: nil)
-                        strongSelf.scnView.playing = true
-                        strongSelf.loadingView.stopAnimating()
-                        strongSelf.loadingView.hidden = true
-                        strongSelf.blurView.fullscreen = false
-                        strongSelf.viewModel.isLoading.value  = false
-                        strongSelf.imageDownloadDisposable = nil
-                        strongSelf.imageManager.cache.clearMemoryCache()
-                    }
-                }
-            }
+//        imageDownloadDisposable = imageManager.downloader.downloadImageForURL(viewModel.textureImageUrl.value)
+//            .observeOnMain()
+//            .startWithNext { [weak self] image in
+//                if let strongSelf = self  {
+//                    if strongSelf.viewModel.viewIsActive.value {
+//                        strongSelf.renderDelegate.image = image
+//                        strongSelf.scnView.prepareObject(strongSelf.renderDelegate!.scene, shouldAbortBlock: nil)
+//                        strongSelf.scnView.playing = true
+//                        strongSelf.loadingView.stopAnimating()
+//                        strongSelf.loadingView.hidden = true
+//                        strongSelf.blurView.fullscreen = false
+//                        strongSelf.viewModel.isLoading.value  = false
+//                        strongSelf.imageDownloadDisposable = nil
+//                        strongSelf.imageManager.cache.clearMemoryCache()
+//                    }
+//                }
+//            }
     }
     
     override func viewDidLoad() {

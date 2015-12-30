@@ -178,7 +178,6 @@
 		8FFB561E1C2CA43C00D2BE62 /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */; };
 		8FFB56201C2D59EB00D2BE62 /* CollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561F1C2D59EB00D2BE62 /* CollectionViewCellModel.swift */; };
 		8FFB56501C2D8A4D00D2BE62 /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */; };
-		8FFB565B1C300C8F00D2BE62 /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB565A1C300C8F00D2BE62 /* FXBlurView.m */; };
 		8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB565C1C3055D000D2BE62 /* Migration0006.swift */; };
 		8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */; };
 		A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2B1BC87F7500C9EFE5 /* Recorder.mm */; };
@@ -438,8 +437,6 @@
 		8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		8FFB561F1C2D59EB00D2BE62 /* CollectionViewCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCellModel.swift; sourceTree = "<group>"; };
 		8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Icomoon.framework; path = Frameworks/Icomoon.framework; sourceTree = "<group>"; };
-		8FFB56591C300C8F00D2BE62 /* FXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXBlurView.h; sourceTree = "<group>"; };
-		8FFB565A1C300C8F00D2BE62 /* FXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXBlurView.m; sourceTree = "<group>"; };
 		8FFB565C1C3055D000D2BE62 /* Migration0006.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0006.swift; sourceTree = "<group>"; };
 		8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHashtagTableViewCell.swift; sourceTree = "<group>"; };
 		A5233E281BC87F7500C9EFE5 /* CommonExternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommonExternal.h; path = Optonaut/Stitcher/CommonExternal.h; sourceTree = SOURCE_ROOT; };
@@ -1050,19 +1047,9 @@
 			path = CWStatusBarNotification;
 			sourceTree = "<group>";
 		};
-		8FFB56581C300C8F00D2BE62 /* FXBlurView */ = {
-			isa = PBXGroup;
-			children = (
-				8FFB56591C300C8F00D2BE62 /* FXBlurView.h */,
-				8FFB565A1C300C8F00D2BE62 /* FXBlurView.m */,
-			);
-			path = FXBlurView;
-			sourceTree = "<group>";
-		};
 		8FFCE4B61B4DBF1900832C88 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
-				8FFB56581C300C8F00D2BE62 /* FXBlurView */,
 				8FC7E3651BD15B9D00E97CC3 /* Sensors */,
 				A56CA3D81BC05C4F0078D7E8 /* Shaders */,
 				8FE09F5E1BAEFD7100EA105D /* CWStatusBarNotification */,
@@ -1555,7 +1542,6 @@
 				8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */,
 				8FC7E3741BD15B9D00E97CC3 /* Matrix3x3d.mm in Sources */,
 				8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */,
-				8FFB565B1C300C8F00D2BE62 /* FXBlurView.m in Sources */,
 				8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */,
 				8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */,
 				8FAB9F8A1B8F05BD00B4C8CB /* IcomoonExtension.swift in Sources */,
