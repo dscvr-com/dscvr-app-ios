@@ -45,6 +45,7 @@
 		8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA791C077C1B008926A8 /* Migration0004.swift */; };
 		8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA7B1C07BC6D008926A8 /* BoundingButton.swift */; };
 		8F23AA7E1C08ADB4008926A8 /* Migration0005.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */; };
+		8F276F291C36DC4E003C348C /* CollectionNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F276F281C36DC4E003C348C /* CollectionNavViewController.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */; };
@@ -291,6 +292,7 @@
 		8F23AA791C077C1B008926A8 /* Migration0004.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0004.swift; sourceTree = "<group>"; };
 		8F23AA7B1C07BC6D008926A8 /* BoundingButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingButton.swift; sourceTree = "<group>"; };
 		8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0005.swift; sourceTree = "<group>"; };
+		8F276F281C36DC4E003C348C /* CollectionNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionNavViewController.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewController.swift; sourceTree = "<group>"; };
@@ -801,6 +803,7 @@
 			children = (
 				8FFB56191C2C2BA800D2BE62 /* CollectionViewController.swift */,
 				8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */,
+				8F276F281C36DC4E003C348C /* CollectionNavViewController.swift */,
 				8FFB561B1C2C371900D2BE62 /* CollectionViewCell.swift */,
 				8FFB561F1C2D59EB00D2BE62 /* CollectionViewCellModel.swift */,
 				8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */,
@@ -1527,6 +1530,7 @@
 				A5FD5D801BEA5A4E0031ED1E /* checkpointStore.cpp in Sources */,
 				8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */,
 				8FD845C11BC9BBFF0064048D /* PipelineService.swift in Sources */,
+				8F276F291C36DC4E003C348C /* CollectionNavViewController.swift in Sources */,
 				A5FD5D871BEA5A4E0031ED1E /* dynamicSeamer.cpp in Sources */,
 				8FAB9F541B8F01DF00B4C8CB /* OptographsViewModel.swift in Sources */,
 				8FC7E3771BD15B9D00E97CC3 /* Vector3d.mm in Sources */,

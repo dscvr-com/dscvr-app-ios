@@ -18,6 +18,7 @@ class CollectionViewCellModel {
     let liked = MutableProperty<Bool>(false)
     let textToggled = MutableProperty<Bool>(false)
     let uiHidden = MutableProperty<Bool>(false)
+    let isLoading = MutableProperty<Bool>(true)
     
     func bind(optograph: Optograph) {
         self.optograph = optograph
@@ -26,6 +27,7 @@ class CollectionViewCellModel {
         liked.value = optograph.isStarred
         textToggled.value = false
         uiHidden.value = false
+        isLoading.value = true
         
 //        if !optograph.isStitched && StitchingService.hasUnstitchedRecordings() {
 //            stitchingProgress = MutableProperty(0)

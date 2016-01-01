@@ -10,6 +10,7 @@ import UIKit
 import ReactiveCocoa
 import SceneKit
 import SpriteKit
+import Async
 
 class NewCombinedMotionManager: RotationMatrixSource {
     private var horizontalOffset: Float = 0
@@ -85,6 +86,15 @@ class NewCombinedMotionManager: RotationMatrixSource {
         isTouching = false
     }
     
+    func reset() {
+        phiDiff = 0
+        thetaDiff = 0
+        phi = 0
+        theta = 0
+        phiDamp = 0
+        thetaDamp = 0
+    }
+    
     func getRotationMatrix() -> GLKMatrix4 {
         
         let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
@@ -134,7 +144,7 @@ class CollectionViewCell: UICollectionViewCell {
     
     private var combinedMotionManager: NewCombinedMotionManager!
     
-    private let vfov:Float = 45
+    private let vfov: Float = 45
     
     // subviews
     private let topElements = UIView()
@@ -150,6 +160,7 @@ class CollectionViewCell: UICollectionViewCell {
     private let likeCountView = UILabel()
     private let dateView = UILabel()
     private let textView = UILabel()
+    private let loadingOverlayView = UIView()
     
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
@@ -171,6 +182,11 @@ class CollectionViewCell: UICollectionViewCell {
         
         contentView.addSubview(scnView)
         
+        loadingOverlayView.backgroundColor = .blackColor()
+        loadingOverlayView.frame = contentView.frame
+        loadingOverlayView.rac_hidden <~ viewModel.isLoading.producer.map(negate)
+        contentView.addSubview(loadingOverlayView)
+        
         topElements.frame = CGRect(x: 0, y: 0, width: contentView.frame.width, height: 122)
         
         let topGradient = CAGradientLayer()
@@ -182,6 +198,8 @@ class CollectionViewCell: UICollectionViewCell {
         avatarImageView.layer.borderColor = UIColor.whiteColor().CGColor
         avatarImageView.layer.borderWidth = 1.5
         avatarImageView.clipsToBounds = true
+        avatarImageView.userInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         topElements.addSubview(avatarImageView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
@@ -241,7 +259,6 @@ class CollectionViewCell: UICollectionViewCell {
         textView.font = UIFont.displayOfSize(13, withType: .Light)
         textView.textColor = .whiteColor()
         textView.userInteractionEnabled = true
-        textView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleText"))
         bottomElements.addSubview(textView)
         
         viewModel.textToggled.producer.startWithNext { [weak self] toggled in
@@ -269,6 +286,7 @@ class CollectionViewCell: UICollectionViewCell {
         
         bottomElements.clipsToBounds = true
         bottomElements.rac_hidden <~ viewModel.uiHidden
+        bottomElements.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleText"))
         contentView.addSubview(bottomElements)
         
         bottomBackgroundView.frame = CGRect(x: 0, y: contentView.frame.height - 108, width: contentView.frame.width, height: 108)
@@ -318,7 +336,9 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func bindViewModel(optograph: Optograph) {
+    func reset(optograph: Optograph) {
+        combinedMotionManager.reset()
+        
         viewModel.bind(optograph)
         
         avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL(optograph.person.avatarAssetID, width: 40, height: 40))!)
@@ -338,10 +358,13 @@ class CollectionViewCell: UICollectionViewCell {
     
     func setImage(image: SKTexture) {
         renderDelegate.image = image
+        Async.main { [weak self] in
+            self?.viewModel.isLoading.value = false
+        }
     }
     
     func willDisplay() {
-        scnView.playing = true
+        scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
     }
     
     func didEndDisplay() {
@@ -359,6 +382,10 @@ class CollectionViewCell: UICollectionViewCell {
     
     func toggleLike() {
         viewModel.toggleLike()
+    }
+    
+    func pushProfile() {
+        navigationController?.pushViewController(ProfileTableViewController(personID: viewModel.optograph!.person.ID), animated: true)
     }
     
 }

@@ -10,6 +10,8 @@ import UIKit
 
 class TabViewController: UIViewController {
     
+    enum ActiveSide: Equatable { case Left, Right }
+    
     private let blurView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .Dark)
         return UIVisualEffectView(effect: blurEffect)
@@ -20,18 +22,37 @@ class TabViewController: UIViewController {
     private let recordButton = RecordButton()
     private let leftButton = TabButton()
     private let rightButton = TabButton()
+    private let leftViewController: NavigationController
+    private let rightViewController: NavigationController
+    private var activeViewController: NavigationController
     
     private var uiHidden = false
+    
+    var delegate: TabControllerDelegate?
+    
+    required init() {
+        leftViewController = CollectionNavViewController()
+        rightViewController = ProfileNavViewController()
+        
+        activeViewController = leftViewController
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let vc = CollectionViewController(collectionViewLayout: UICollectionViewFlowLayout())
-        addChildViewController(vc)
+        addChildViewController(leftViewController)
+        addChildViewController(rightViewController)
         
-        view.insertSubview(vc.view, atIndex: 0)
+        view.insertSubview(leftViewController.view, atIndex: 0)
         
         blurView.frame = CGRect(x: 0, y: view.frame.height - 107, width: view.frame.width, height: 107)
+        blurView.alpha = 0.95
         view.addSubview(blurView)
         
         borderLineLayer.backgroundColor = UIColor.whiteColor().CGColor
@@ -40,16 +61,19 @@ class TabViewController: UIViewController {
         view.layer.addSublayer(borderLineLayer)
         
         recordButton.frame = CGRect(x: view.frame.width / 2 - 34, y: view.frame.height - 107 / 2 - 34, width: 68, height: 68)
+        recordButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushCamera"))
         view.addSubview(recordButton)
 
         leftButton.isActive = true
         leftButton.type = .Explore
         leftButton.frame = CGRect(x: view.frame.width * 1.01 / 4 - 34, y: view.frame.height - 107 / 2 - 27.5, width: 34, height: 34)
+        leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftButton"))
         view.addSubview(leftButton)
 
         rightButton.isActive = false
         rightButton.type = .Profile
         rightButton.frame = CGRect(x: view.frame.width * 2.99 / 4, y: view.frame.height - 107 / 2 - 27.5, width: 34, height: 34)
+        rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapRightButton"))
         view.addSubview(rightButton)
     }
     
@@ -60,6 +84,47 @@ class TabViewController: UIViewController {
         recordButton.hidden = uiHidden
         leftButton.hidden = uiHidden
         rightButton.hidden = uiHidden
+    }
+    
+    func tapLeftButton() {
+        if activeViewController == leftViewController {
+            if activeViewController.popToRootViewControllerAnimated(true) == nil {
+                delegate?.jumpToTop()
+            }
+        } else {
+            updateActiveTab(.Left)
+        }
+    }
+    
+    func tapRightButton() {
+        if activeViewController == rightViewController {
+            if activeViewController.popToRootViewControllerAnimated(true) == nil {
+                delegate?.jumpToTop()
+            }
+        } else {
+            updateActiveTab(.Right)
+        }
+    }
+    
+    func pushCamera() {
+        if StitchingService.isStitching() {
+            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last Optograph has finished rendering.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            activeViewController.presentViewController(alert, animated: true, completion: nil)
+        } else {
+            let cameraViewController = CameraViewController()
+            activeViewController.pushViewController(cameraViewController, animated: false)
+        }
+    }
+    
+    private func updateActiveTab(side: ActiveSide) {
+        let isLeft = side == .Left
+        leftButton.isActive = isLeft
+        rightButton.isActive = !isLeft
+        
+        activeViewController.view.removeFromSuperview()
+        activeViewController = isLeft ? leftViewController : rightViewController
+        view.insertSubview(activeViewController.view, atIndex: 0)
     }
 
 }
@@ -162,4 +227,14 @@ private class TabButton: UIButton {
         activeBorderLayer.cornerRadius = activeBorderLayer.frame.width / 2
     }
     
+}
+
+protocol TabControllerDelegate {
+    func jumpToTop()
+}
+
+extension UIViewController {
+    var tabController: TabViewController? {
+        return navigationController?.parentViewController as? TabViewController
+    }
 }

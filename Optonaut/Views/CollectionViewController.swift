@@ -88,6 +88,9 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         collectionView!.pagingEnabled = true
         
+        automaticallyAdjustsScrollViewInsets = false
+
+        
         collectionView!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleUI"))
         
         CoreMotionRotationSource.Instance.start()
@@ -110,50 +113,38 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                 }
             )
             .start()
-
-        // Do any additional setup after loading the view.
-//        collectionView!.collectionViewLayout = UICollectionViewFlowLayout()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
         viewModel.refreshNotification.notify(())
+        
+        tabController!.delegate = self
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
 
     // MARK: UICollectionViewDataSource
 
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
         return items.count
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! CollectionViewCell
     
-        // Configure the cell
-        cell.bindViewModel(items[indexPath.row])
+        cell.reset(items[indexPath.row])
+        cell.navigationController = navigationController as? NavigationController
     
         return cell
     }
@@ -182,7 +173,11 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                 self.imageCache.touch(index, url: url)
             }
             
-            self.imageCache.get(indexPath.row, callback: cell.setImage)
+            self.imageCache.get(indexPath.row) { [weak self] image in
+                if self?.collectionView?.indexPathsForVisibleItems().contains(indexPath) == true {
+                    cell.setImage(image)
+                }
+            }
         }
         
         if indexPath.row > items.count - 3 {
@@ -202,38 +197,16 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         UIApplication.sharedApplication().setStatusBarHidden(!uiVisible, withAnimation: .None)
         
-        (parentViewController! as! TabViewController).toggleUI()
+        tabController!.toggleUI()
     }
 
-    // MARK: UICollectionViewDelegate
+}
 
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(collectionView: UICollectionView, shouldHighlightItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(collectionView: UICollectionView, shouldShowMenuForItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(collectionView: UICollectionView, canPerformAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) -> Bool {
-        return false
-    }
-
-    override func collectionView(collectionView: UICollectionView, performAction action: Selector, forItemAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) {
+// MARK: - UITabBarControllerDelegate
+extension CollectionViewController: TabControllerDelegate {
     
+    func jumpToTop() {
+        collectionView!.setContentOffset(CGPointZero, animated: true)
     }
-    */
-
+    
 }
