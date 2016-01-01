@@ -20,10 +20,15 @@ class NewCombinedMotionManager: RotationMatrixSource {
     // Take care, compared to the webviewer implementation,
     // phi and theta are switched since native apps and the browser use
     // different reference frames.
-    private var phiDiff: Float = 0
     private var phi: Float = 0
-    private var thetaDiff: Float = 0
     private var theta: Float = Float(-M_PI_2)
+    
+    // Damping
+    private var phiDiff: Float = 0
+    private var thetaDiff: Float = 0
+    private var phiDamp: Float = 0
+    private var thetaDamp: Float = 0
+    private let dampFactor: Float = 0.9
     
     private var isTouching = false
     private var touchStartPoint: CGPoint?
@@ -69,11 +74,8 @@ class NewCombinedMotionManager: RotationMatrixSource {
         let endPhi = atan((Float(point.x) - x0) / flen)
         let endTheta = atan((Float(point.y) - y0) / flen)
         
-        phiDiff = Float(startPhi - endPhi)
-        phi += phiDiff
-        
-        thetaDiff = Float(startTheta - endTheta)
-        theta += thetaDiff
+        phiDiff += Float(startPhi - endPhi)
+        thetaDiff += Float(startTheta - endTheta)
         
         touchStartPoint = point
     }
@@ -86,7 +88,9 @@ class NewCombinedMotionManager: RotationMatrixSource {
     func getRotationMatrix() -> GLKMatrix4 {
         
         let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
+        
         if !isTouching {
+            // Update from motion and damping
             if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
                 let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
                 
@@ -97,9 +101,23 @@ class NewCombinedMotionManager: RotationMatrixSource {
                 
                 phi += diffRotationPhi
                 theta += diffRotationTheta
-                
             }
+            
+            phiDamp *= dampFactor
+            thetaDamp *= dampFactor
+            phi += phiDamp
+            theta += thetaDamp
+        } else {
+            // Update from touch
+            phi += phiDiff
+            theta += thetaDiff
+            phiDamp = phiDiff
+            thetaDamp = thetaDiff
+            phiDiff = 0
+            thetaDiff = 0
         }
+        
+        
         
         theta = max(minTheta, min(theta, maxTheta))
         
