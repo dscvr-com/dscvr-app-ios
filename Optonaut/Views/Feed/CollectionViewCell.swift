@@ -20,7 +20,7 @@ class NewCombinedMotionManager: RotationMatrixSource {
     private var phiDiff: Float = 0
     private var phi: Float = 0
     private var thetaDiff: Float = 0
-    private var theta: Float = 0
+    private var theta: Float = Float(-M_PI_2)
     
     private var isTouching = false
     private var touchStartPoint: CGPoint?
@@ -73,10 +73,9 @@ class NewCombinedMotionManager: RotationMatrixSource {
                 
                 phi += diffRotationPhi
                 theta += diffRotationTheta
+                
             }
         }
-        
-        //print("Phi: \(phi), Theta: \(theta)")
         
         lastCoreMotionRotationMatrix = coreMotionRotationMatrix
         
