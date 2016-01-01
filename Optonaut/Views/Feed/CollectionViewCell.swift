@@ -52,8 +52,6 @@ class NewCombinedMotionManager: RotationMatrixSource {
         theta += thetaDiff
         
         touchStartPoint = point
-        
-        print("Phi: \(phi), theta: \(theta)")
     }
     
     func touchEnd() {
@@ -64,19 +62,25 @@ class NewCombinedMotionManager: RotationMatrixSource {
     func getRotationMatrix() -> GLKMatrix4 {
         
         let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
-        if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
-            let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
+        if !isTouching {
+            if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
+                let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
+                
+                let diffRotationTheta = atan2(diffRotationMatrix.m21, diffRotationMatrix.m22)
+                let diffRotationPhi = atan2(-diffRotationMatrix.m20,
+                                            sqrt(diffRotationMatrix.m21 * diffRotationMatrix.m21 +
+                                                diffRotationMatrix.m22 * diffRotationMatrix.m22))
+                
+                phi += diffRotationPhi
+                theta += diffRotationTheta
+            }
         }
+        
+        //print("Phi: \(phi), Theta: \(theta)")
         
         lastCoreMotionRotationMatrix = coreMotionRotationMatrix
         
-        //let combinedRotationMatrix = coreMotionRotationMatrix
-        
-        //if isTouching {
-            return GLKMatrix4Multiply(GLKMatrix4MakeZRotation(-phi), GLKMatrix4MakeXRotation(-theta))
-        //} else {
-        //    return combinedRotationMatrix
-        //}
+        return GLKMatrix4Multiply(GLKMatrix4MakeZRotation(-phi), GLKMatrix4MakeXRotation(-theta))
     }
 }
 
