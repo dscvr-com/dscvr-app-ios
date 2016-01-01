@@ -121,12 +121,31 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         viewModel.refreshNotification.notify(())
         
         tabController!.delegate = self
+        
+        RotationService.sharedInstance.rotationEnable()
+    }
+    
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        RotationService.sharedInstance.rotationDisable()
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
         navigationController?.setNavigationBarHidden(true, animated: false)
+        
+        if let rotationSignal = RotationService.sharedInstance.rotationSignal {
+            rotationSignal
+                .skipRepeats()
+                .filter([.LandscapeLeft, .LandscapeRight])
+//                .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
+                .take(1)
+                .observeOn(UIScheduler())
+                .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
+        }
     }
 
     // MARK: UICollectionViewDataSource
@@ -134,7 +153,6 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
-
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return items.count
@@ -197,7 +215,18 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         UIApplication.sharedApplication().setStatusBarHidden(!uiVisible, withAnimation: .None)
         
-        tabController!.toggleUI()
+        if uiVisible {
+            tabController!.showUI()
+        } else {
+            tabController!.hideUI()
+        }
+    }
+    
+    private func pushViewer(orientation: UIInterfaceOrientation) {
+        let optograph = items[collectionView!.indexPathsForVisibleItems().first!.row]
+        let viewerViewController = ViewerViewController(orientation: orientation, optograph: optograph)
+        navigationController?.pushViewController(viewerViewController, animated: false)
+//        viewModel.increaseViewsCount()
     }
 
 }

@@ -9,13 +9,13 @@
 import Foundation
 import Kingfisher
 import ReactiveCocoa
+import SpriteKit
 
 extension ImageDownloader {
     
     func downloadImageForURL(url: String) -> SignalProducer<UIImage, NoError> {
         return SignalProducer { sink, disposable in
-            // TODO cancel producer
-            self.downloadImageWithURL(
+            let task = self.downloadImageWithURL(
                 NSURL(string: url)!,
                 progressBlock: nil,
                 completionHandler: { (image, error, _, _) in
@@ -30,9 +30,16 @@ extension ImageDownloader {
                         sink.sendCompleted()
                     }
             })
+            
+            disposable.addDisposable {
+                task?.cancel()
+            }
         }
     }
     
+    func downloadSKTextureForURL(url: String) -> SignalProducer<SKTexture, NoError> {
+        return downloadImageForURL(url).map { SKTexture(image: $0) }
+    }
     
     func downloadDataForURL(url: String) -> SignalProducer<NSData, NoError> {
         return downloadImageForURL(url).map { UIImageJPEGRepresentation($0, 0.7)! }

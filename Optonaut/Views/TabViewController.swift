@@ -77,13 +77,20 @@ class TabViewController: UIViewController {
         view.addSubview(rightButton)
     }
     
-    func toggleUI() {
-        uiHidden = !uiHidden
-        blurView.hidden = uiHidden
-        borderLineLayer.hidden = uiHidden
-        recordButton.hidden = uiHidden
-        leftButton.hidden = uiHidden
-        rightButton.hidden = uiHidden
+    func showUI() {
+        blurView.hidden = true
+        borderLineLayer.hidden = true
+        recordButton.hidden = true
+        leftButton.hidden = true
+        rightButton.hidden = true
+    }
+    
+    func hideUI() {
+        blurView.hidden = false
+        borderLineLayer.hidden = false
+        recordButton.hidden = false
+        leftButton.hidden = false
+        rightButton.hidden = false
     }
     
     func tapLeftButton() {
@@ -133,6 +140,8 @@ private class RecordButton: UIButton {
     
     private let ringLayer = CALayer()
     
+    private var touched = false
+    
     override init (frame: CGRect) {
         super.init(frame: frame)
         
@@ -146,6 +155,9 @@ private class RecordButton: UIButton {
         setTitle(String.iconWithName(.Camera_Alt), forState: .Normal)
         setTitleColor(.whiteColor(), forState: .Normal)
         titleLabel?.font = UIFont.iconOfSize(30)
+        
+        addTarget(self, action: "buttonTouched", forControlEvents: .TouchDown)
+        addTarget(self, action: "buttonUntouched", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
     
     convenience init () {
@@ -163,6 +175,26 @@ private class RecordButton: UIButton {
         
         ringLayer.frame = CGRect(x: -3, y: -3, width: frame.width + 6, height: frame.height + 6)
         ringLayer.cornerRadius = ringLayer.frame.width / 2
+    }
+    
+    private func updateBackground() {
+        if touched {
+            backgroundColor = UIColor.Accent.alpha(0.7)
+        } else {
+            backgroundColor = .Accent
+        }
+    }
+    
+    @objc
+    private func buttonTouched() {
+        touched = true
+        updateBackground()
+    }
+    
+    @objc
+    private func buttonUntouched() {
+        touched = false
+        updateBackground()
     }
     
 }

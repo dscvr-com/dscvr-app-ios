@@ -159,6 +159,8 @@ class ViewerViewController: UIViewController  {
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = true
         
+        tabController!.hideUI()
+        
         var popActivated = false // needed when viewer was opened without rotation
         HeadTrackerRotationSource.Instance.start()
         RotationService.sharedInstance.rotationEnable()
@@ -177,32 +179,31 @@ class ViewerViewController: UIViewController  {
                 }
             }
         
-        
         if leftDownloadDisposable != nil {
             leftDownloadDisposable?.dispose()
             leftDownloadDisposable = nil
         }
+        
         if rightDownloadDisposable != nil {
             rightDownloadDisposable?.dispose()
             rightDownloadDisposable = nil
         }
         
-        leftDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))
+        leftDownloadDisposable = imageManager.downloader.downloadSKTextureForURL(ImageURL(optograph.leftTextureAssetID))
             .observeOnMain()
             .startWithNext { [weak self] image in
-//                self?.leftRenderDelegate.image = image
-                self?.leftDownloadDisposable = nil
+                self?.leftRenderDelegate.image = image
                 self?.imageManager.cache.clearMemoryCache()
                 self?.leftLoadingView.stopAnimating()
-        }
-        rightDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.rightTextureAssetID))
+            }
+        
+        rightDownloadDisposable = imageManager.downloader.downloadSKTextureForURL(ImageURL(optograph.rightTextureAssetID))
             .observeOnMain()
             .startWithNext { [weak self] image in
-//                self?.rightRenderDelegate.image = image
-                self?.rightDownloadDisposable = nil
+                self?.rightRenderDelegate.image = image
                 self?.imageManager.cache.clearMemoryCache()
                 self?.rightLoadingView.stopAnimating()
-        }
+            }
     }
     
     func setViewerParameters(headset: CardboardParams) {
