@@ -17,6 +17,9 @@ class NewCombinedMotionManager: RotationMatrixSource {
     
     private var lastCoreMotionRotationMatrix: GLKMatrix4?
     
+    // Take care, compared to the webviewer implementation,
+    // phi and theta are switched since native apps and the browser use
+    // different reference frames.
     private var phiDiff: Float = 0
     private var phi: Float = 0
     private var thetaDiff: Float = 0
@@ -25,8 +28,30 @@ class NewCombinedMotionManager: RotationMatrixSource {
     private var isTouching = false
     private var touchStartPoint: CGPoint?
     
-    init(coreMotionRotationSource: CoreMotionRotationSource) {
+    private let sceneWidth: Int
+    private let sceneHeight: Int
+    
+    // FOV of the scene
+    private let vfov: Float
+    private let hfov: Float
+    
+    // Dependent on optograph format. This values are suitable for
+    // Stitcher version <= 7.
+    private let border = Float(M_PI) / Float(6.45)
+    private let minTheta: Float
+    private let maxTheta: Float
+    
+    init(coreMotionRotationSource: CoreMotionRotationSource, sceneSize: CGSize, vfov: Float) {
         self.coreMotionRotationSource = coreMotionRotationSource
+        self.vfov = vfov
+        
+        sceneWidth = Int(sceneSize.width)
+        sceneHeight = Int(sceneSize.height)
+            
+        hfov = vfov * Float(sceneHeight) / Float(sceneWidth)
+        
+        maxTheta = -border - (hfov * Float(M_PI) / 180) / 2
+        minTheta = Float(-M_PI) - maxTheta
     }
     
     func touchStart(point: CGPoint) {
@@ -35,15 +60,14 @@ class NewCombinedMotionManager: RotationMatrixSource {
     }
     
     func touchMove(point: CGPoint) {
-        let x0 = UIScreen.mainScreen().bounds.width / 2
-        let y0 = UIScreen.mainScreen().bounds.height / 2
-        let hfov: CGFloat = 65
-        let flen = x0 / tan(hfov / 2 * CGFloat(M_PI) / 180)
+        let x0 = Float(sceneWidth / 2)
+        let y0 = Float(sceneHeight / 2)
+        let flen = y0 / tan(hfov / 2 * Float(M_PI) / 180)
         
-        let startPhi = atan((touchStartPoint!.x - x0) / flen)
-        let startTheta = atan((touchStartPoint!.y - y0) / flen)
-        let endPhi = atan((point.x - x0) / flen)
-        let endTheta = atan((point.y - y0) / flen)
+        let startPhi = atan((Float(touchStartPoint!.x) - x0) / flen)
+        let startTheta = atan((Float(touchStartPoint!.y) - y0) / flen)
+        let endPhi = atan((Float(point.x) - x0) / flen)
+        let endTheta = atan((Float(point.y) - y0) / flen)
         
         phiDiff = Float(startPhi - endPhi)
         phi += phiDiff
@@ -77,6 +101,8 @@ class NewCombinedMotionManager: RotationMatrixSource {
             }
         }
         
+        theta = max(minTheta, min(theta, maxTheta))
+        
         lastCoreMotionRotationMatrix = coreMotionRotationMatrix
         
         return GLKMatrix4Multiply(GLKMatrix4MakeZRotation(-phi), GLKMatrix4MakeXRotation(-theta))
@@ -88,7 +114,9 @@ class CollectionViewCell: UICollectionViewCell {
     weak var navigationController: NavigationController?
     let viewModel = CollectionViewCellModel()
     
-    private let combinedMotionManager = NewCombinedMotionManager(coreMotionRotationSource: CoreMotionRotationSource.Instance)
+    private var combinedMotionManager: NewCombinedMotionManager!
+    
+    private let vfov:Float = 45
     
     // subviews
     private let topElements = UIView()
@@ -114,8 +142,10 @@ class CollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = .blackColor()
         
         scnView = SCNView(frame: contentView.frame)
-        
-        renderDelegate = StereoRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: 65)
+    
+        combinedMotionManager = NewCombinedMotionManager(coreMotionRotationSource: CoreMotionRotationSource.Instance, sceneSize: CGSize(width: scnView.frame.width, height: scnView.frame.height), vfov: vfov)
+    
+        renderDelegate = StereoRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(vfov))
         
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
