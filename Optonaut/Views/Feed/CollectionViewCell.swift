@@ -11,10 +11,79 @@ import ReactiveCocoa
 import SceneKit
 import SpriteKit
 
+class NewCombinedMotionManager: RotationMatrixSource {
+    private var horizontalOffset: Float = 0
+    private let coreMotionRotationSource: CoreMotionRotationSource
+    
+    private var lastCoreMotionRotationMatrix: GLKMatrix4?
+    
+    private var phiDiff: Float = 0
+    private var phi: Float = 0
+    private var thetaDiff: Float = 0
+    private var theta: Float = 0
+    
+    private var isTouching = false
+    private var touchStartPoint: CGPoint?
+    
+    init(coreMotionRotationSource: CoreMotionRotationSource) {
+        self.coreMotionRotationSource = coreMotionRotationSource
+    }
+    
+    func touchStart(point: CGPoint) {
+        touchStartPoint = point
+        isTouching = true
+    }
+    
+    func touchMove(point: CGPoint) {
+        let x0 = UIScreen.mainScreen().bounds.width / 2
+        let y0 = UIScreen.mainScreen().bounds.height / 2
+        let hfov: CGFloat = 65
+        let flen = x0 / tan(hfov / 2 * CGFloat(M_PI) / 180)
+        
+        let startPhi = atan((touchStartPoint!.x - x0) / flen)
+        let startTheta = atan((touchStartPoint!.y - y0) / flen)
+        let endPhi = atan((point.x - x0) / flen)
+        let endTheta = atan((point.y - y0) / flen)
+        
+        phiDiff = Float(startPhi - endPhi)
+        phi += phiDiff
+        
+        thetaDiff = Float(startTheta - endTheta)
+        theta += thetaDiff
+        
+        print(phi)
+    }
+    
+    func touchEnd() {
+        touchStartPoint = nil
+        isTouching = false
+    }
+    
+    func getRotationMatrix() -> GLKMatrix4 {
+        
+        let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
+        if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
+            let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
+        }
+        
+        lastCoreMotionRotationMatrix = coreMotionRotationMatrix
+        
+        let combinedRotationMatrix = coreMotionRotationMatrix
+        
+        if isTouching {
+            return GLKMatrix4Multiply(GLKMatrix4MakeXRotation(theta), GLKMatrix4MakeYRotation(phi))
+        } else {
+            return combinedRotationMatrix
+        }
+    }
+}
+
 class CollectionViewCell: UICollectionViewCell {
     
     weak var navigationController: NavigationController?
     let viewModel = CollectionViewCellModel()
+    
+    private let combinedMotionManager = NewCombinedMotionManager(coreMotionRotationSource: CoreMotionRotationSource.Instance)
     
     // subviews
     private let topElements = UIView()
@@ -41,7 +110,7 @@ class CollectionViewCell: UICollectionViewCell {
         
         scnView = SCNView(frame: contentView.frame)
         
-        renderDelegate = StereoRenderDelegate(rotationMatrixSource: CoreMotionRotationSource.Instance, width: scnView.frame.width, height: scnView.frame.height, fov: 65)
+        renderDelegate = StereoRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: 65)
         
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
@@ -166,6 +235,34 @@ class CollectionViewCell: UICollectionViewCell {
         searchButtonView.anchorInCorner(.TopRight, xPad: 52, yPad: 37, width: 24, height: 24)
         optionsButtonView.anchorInCorner(.TopRight, xPad: 14, yPad: 37, width: 24, height: 24)
         dateView.anchorInCorner(.TopRight, xPad: 18, yPad: 17, width: 70, height: 13)
+    }
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesBegan(touches, withEvent: event)
+        if viewModel.uiHidden.value && touches.count == 1 {
+            combinedMotionManager.touchStart(touches.first!.locationInView(contentView))
+        }
+    }
+    
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesMoved(touches, withEvent: event)
+        if viewModel.uiHidden.value {
+            combinedMotionManager.touchMove(touches.first!.locationInView(contentView))
+        }
+    }
+    
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesEnded(touches, withEvent: event)
+        if touches.count == 1 {
+            combinedMotionManager.touchEnd()
+        }
+    }
+    
+    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+        super.touchesCancelled(touches, withEvent: event)
+        if let touches = touches where touches.count == 1 {
+            combinedMotionManager.touchEnd()
+        }
     }
     
     func bindViewModel(optograph: Optograph) {

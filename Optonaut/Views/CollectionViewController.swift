@@ -40,7 +40,6 @@ private class CollectionImageCache {
         if items[cacheIndex] == nil || items[cacheIndex]!.index != index {
             
             if let downloadTask = items[cacheIndex]?.downloadTask {
-                print("cancel")
                 downloadTask.cancel()
             }
             
