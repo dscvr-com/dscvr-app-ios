@@ -142,6 +142,8 @@ class CollectionViewCell: UICollectionViewCell {
     weak var navigationController: NavigationController?
     let viewModel = CollectionViewCellModel()
     
+    var deleteCallback: (() -> ())?
+    
     private var combinedMotionManager: NewCombinedMotionManager!
     
     private let vfov: Float = 45
@@ -152,11 +154,11 @@ class CollectionViewCell: UICollectionViewCell {
     private let bottomBackgroundView = UIView()
     private let bottomGradient = CAGradientLayer()
     private let avatarImageView = UIImageView()
-    private let personNameView = UILabel()
+    private let personNameView = BoundingLabel()
     private let locationTextView = UILabel()
-    private let searchButtonView = UIButton()
-    private let optionsButtonView = UIButton()
-    private let likeButtonView = UIButton()
+    private let searchButtonView = BoundingButton()
+    private let optionsButtonView = BoundingButton()
+    private let likeButtonView = BoundingButton()
     private let likeCountView = UILabel()
     private let dateView = UILabel()
     private let textView = UILabel()
@@ -197,6 +199,7 @@ class CollectionViewCell: UICollectionViewCell {
         avatarImageView.layer.cornerRadius = 21.5
         avatarImageView.layer.borderColor = UIColor.whiteColor().CGColor
         avatarImageView.layer.borderWidth = 1.5
+        avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
@@ -204,14 +207,18 @@ class CollectionViewCell: UICollectionViewCell {
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
         personNameView.textColor = .whiteColor()
+        personNameView.userInteractionEnabled = true
+        personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         topElements.addSubview(personNameView)
         
         searchButtonView.titleLabel?.font = UIFont.iconOfSize(28)
         searchButtonView.setTitle(String.iconWithName(.Search), forState: .Normal)
+        searchButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushSearch"))
         topElements.addSubview(searchButtonView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(28)
         optionsButtonView.setTitle(String.iconWithName(.More_Vert), forState: .Normal)
+        optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTapOptions"))
         topElements.addSubview(optionsButtonView)
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
@@ -258,7 +265,6 @@ class CollectionViewCell: UICollectionViewCell {
         
         textView.font = UIFont.displayOfSize(13, withType: .Light)
         textView.textColor = .whiteColor()
-        textView.userInteractionEnabled = true
         bottomElements.addSubview(textView)
         
         viewModel.textToggled.producer.startWithNext { [weak self] toggled in
@@ -286,6 +292,7 @@ class CollectionViewCell: UICollectionViewCell {
         
         bottomElements.clipsToBounds = true
         bottomElements.rac_hidden <~ viewModel.uiHidden
+//        bottomElements.userInteractionEnabled = true
         bottomElements.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleText"))
         contentView.addSubview(bottomElements)
         
@@ -357,7 +364,11 @@ class CollectionViewCell: UICollectionViewCell {
     }
     
     func setImage(image: SKTexture) {
-        renderDelegate.image = image
+        if renderDelegate.image != image {
+            renderDelegate.image = nil
+            renderDelegate.image = image
+            scnView.prepareObject(renderDelegate!.sphereNode, shouldAbortBlock: nil)
+        }
         Async.main { [weak self] in
             self?.viewModel.isLoading.value = false
         }
@@ -386,6 +397,18 @@ class CollectionViewCell: UICollectionViewCell {
     
     func pushProfile() {
         navigationController?.pushViewController(ProfileTableViewController(personID: viewModel.optograph!.person.ID), animated: true)
+    }
+    
+    func pushSearch() {
+        navigationController?.pushViewController(SearchTableViewController(), animated: true)
+    }
+    
+}
+
+extension CollectionViewCell: OptographOptions {
+    
+    func didTapOptions() {
+        showOptions(viewModel.optograph!, deleteCallback: deleteCallback)
     }
     
 }

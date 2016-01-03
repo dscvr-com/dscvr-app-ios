@@ -262,6 +262,8 @@ class CameraViewController: UIViewController {
         
         UIApplication.sharedApplication().idleTimerDisabled = true
         
+        tabController!.hideUI()
+        
         motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
     }
     

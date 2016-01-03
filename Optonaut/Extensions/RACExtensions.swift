@@ -72,6 +72,32 @@ extension SignalType {
         return observeOn(UIScheduler())
     }
     
+    public func retryUntil(interval: NSTimeInterval, onScheduler scheduler: DateSchedulerType, fn: () -> Bool) -> Signal<Value, Error> {
+        precondition(interval >= 0)
+        
+        return Signal { observer in
+            return self.observe { event in
+                switch event {
+                case .Failed, .Interrupted:
+                    scheduler.schedule {
+                        observer.action(event)
+                    }
+                    
+                default:
+                    var schedulerDisposable: Disposable?
+                    var retryAttempts = 100
+                    schedulerDisposable = scheduler.scheduleAfter(scheduler.currentDate, repeatingEvery: interval, withLeeway: interval) {
+                        if fn() || --retryAttempts == 0 {
+                            observer.action(event)
+                            schedulerDisposable?.dispose()
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+    
 }
     
 public extension SignalType where Value == Bool {
@@ -123,6 +149,10 @@ extension SignalProducerType {
     
     public func observeOnMain() -> SignalProducer<Value, Error> {
         return lift { $0.observeOnMain() }
+    }
+    
+    public func retryUntil(interval: NSTimeInterval, onScheduler scheduler: DateSchedulerType, fn: () -> Bool) -> SignalProducer<Value, Error> {
+        return lift { $0.retryUntil(interval, onScheduler: scheduler, fn: fn) }
     }
     
     public static func fromValues(values: [Value]) -> SignalProducer<Value, Error> {

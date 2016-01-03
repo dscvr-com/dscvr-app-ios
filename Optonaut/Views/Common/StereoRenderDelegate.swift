@@ -16,12 +16,18 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
     let scene = SCNScene()
     var image: SKTexture? {
         didSet {
-            if image?.size().width == image?.size().height {
+            guard let image = image else {
+                sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
+                return
+            }
+            
+            if image.size().width == image.size().height {
                 // Classic case - quadratic texture
+                sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
                 sphereNode.geometry?.firstMaterial?.diffuse.contents = image
             } else {
                 // Extended case - rectangular texture, need to center
-                let ratio = Float((image!.size().width / CGFloat(2)) / image!.size().height)
+                let ratio = Float((image.size().width / CGFloat(2)) / image.size().height)
                 sphereNode.geometry?.firstMaterial?.diffuse.contents = image
                 
                 // Yes, we calculate our transform ourselves.

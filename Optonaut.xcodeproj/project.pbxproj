@@ -46,6 +46,7 @@
 		8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA7B1C07BC6D008926A8 /* BoundingButton.swift */; };
 		8F23AA7E1C08ADB4008926A8 /* Migration0005.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */; };
 		8F276F291C36DC4E003C348C /* CollectionNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F276F281C36DC4E003C348C /* CollectionNavViewController.swift */; };
+		8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F276F2A1C3819A6003C348C /* ActivitiesService.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */; };
@@ -167,6 +168,7 @@
 		8FD845C11BC9BBFF0064048D /* PipelineService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C01BC9BBFF0064048D /* PipelineService.swift */; };
 		8FD845C31BCA5AFA0064048D /* StereoRenderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C21BCA5AFA0064048D /* StereoRenderDelegate.swift */; };
 		8FD845C51BCAA4530064048D /* WebImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C41BCAA4530064048D /* WebImage.swift */; };
+		8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDBEADB1C39990F0055EA57 /* Debouncer.swift */; };
 		8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */; };
 		8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */; };
 		8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F631BAF680A00EA105D /* Hashtag.swift */; };
@@ -293,6 +295,7 @@
 		8F23AA7B1C07BC6D008926A8 /* BoundingButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingButton.swift; sourceTree = "<group>"; };
 		8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0005.swift; sourceTree = "<group>"; };
 		8F276F281C36DC4E003C348C /* CollectionNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionNavViewController.swift; sourceTree = "<group>"; };
+		8F276F2A1C3819A6003C348C /* ActivitiesService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivitiesService.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewController.swift; sourceTree = "<group>"; };
@@ -428,6 +431,7 @@
 		8FD845C01BC9BBFF0064048D /* PipelineService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PipelineService.swift; sourceTree = "<group>"; };
 		8FD845C21BCA5AFA0064048D /* StereoRenderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StereoRenderDelegate.swift; sourceTree = "<group>"; };
 		8FD845C41BCAA4530064048D /* WebImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebImage.swift; sourceTree = "<group>"; };
+		8FDBEADB1C39990F0055EA57 /* Debouncer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
 		8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotificationUtils.swift; sourceTree = "<group>"; };
 		8FE09F631BAF680A00EA105D /* Hashtag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hashtag.swift; sourceTree = "<group>"; };
@@ -851,6 +855,7 @@
 				8FAB9F611B8F02D500B4C8CB /* Appearance.swift */,
 				8FAB9F621B8F02D500B4C8CB /* Constants.swift */,
 				8FD845B71BC870B90064048D /* Debug.swift */,
+				8FDBEADB1C39990F0055EA57 /* Debouncer.swift */,
 				8FAB9F661B8F02D500B4C8CB /* NSDateTransform.swift */,
 				8FAB9F671B8F02D500B4C8CB /* Reachability.swift */,
 				8FAB9F6E1B8F02D500B4C8CB /* Utils.swift */,
@@ -911,6 +916,7 @@
 				8F1E0AC31B98251A002E2FB5 /* SessionService.swift */,
 				8FC7E3631BCF158200E97CC3 /* ScreenService.swift */,
 				8F1E0AC51B98304F002E2FB5 /* VersionService.swift */,
+				8F276F2A1C3819A6003C348C /* ActivitiesService.swift */,
 			);
 			name = Services;
 			path = Optonaut/Services;
@@ -1557,6 +1563,7 @@
 				8FC7E3781BD15B9D00E97CC3 /* MagnetSensor.mm in Sources */,
 				8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */,
 				A5DE71EC1BE28A7400316F82 /* DistortionRenderer.swift in Sources */,
+				8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */,
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,
@@ -1589,6 +1596,7 @@
 				8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */,
 				A5FD5D841BEA5A4E0031ED1E /* support.cpp in Sources */,
 				8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */,
+				8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */,
 				8F5335A81BDBBFE30058961A /* ActivityResourceViews.swift in Sources */,
 				8FAB9F411B8F01DF00B4C8CB /* NewCommentViewModel.swift in Sources */,
 				8F8E32D01BFE043200E09392 /* DeviceTokenService.swift in Sources */,

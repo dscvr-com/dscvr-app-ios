@@ -19,11 +19,12 @@ class TabViewController: UIViewController {
     
     private let borderLineLayer = CALayer()
     
+    private let uiWrapper = UIView()
     private let recordButton = RecordButton()
     private let leftButton = TabButton()
     private let rightButton = TabButton()
-    private let leftViewController: NavigationController
-    private let rightViewController: NavigationController
+    private let leftViewController: CollectionNavViewController
+    private let rightViewController: ProfileNavViewController
     private var activeViewController: NavigationController
     
     private var uiHidden = false
@@ -51,46 +52,43 @@ class TabViewController: UIViewController {
         
         view.insertSubview(leftViewController.view, atIndex: 0)
         
-        blurView.frame = CGRect(x: 0, y: view.frame.height - 107, width: view.frame.width, height: 107)
+        blurView.frame = CGRect(x: 0, y: 1, width: view.frame.width, height: 107)
         blurView.alpha = 0.95
-        view.addSubview(blurView)
+        uiWrapper.addSubview(blurView)
         
         borderLineLayer.backgroundColor = UIColor.whiteColor().CGColor
         borderLineLayer.opacity = 0.5
-        borderLineLayer.frame = CGRect(x: 0, y: view.frame.height - 108, width: view.frame.width, height: 1)
-        view.layer.addSublayer(borderLineLayer)
+        borderLineLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 1)
+        uiWrapper.layer.addSublayer(borderLineLayer)
         
-        recordButton.frame = CGRect(x: view.frame.width / 2 - 34, y: view.frame.height - 107 / 2 - 34, width: 68, height: 68)
+        recordButton.frame = CGRect(x: view.frame.width / 2 - 34, y: 1 + 107 / 2 - 34, width: 68, height: 68)
         recordButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushCamera"))
-        view.addSubview(recordButton)
+        uiWrapper.addSubview(recordButton)
 
         leftButton.isActive = true
         leftButton.type = .Explore
-        leftButton.frame = CGRect(x: view.frame.width * 1.01 / 4 - 34, y: view.frame.height - 107 / 2 - 27.5, width: 34, height: 34)
+        leftButton.frame = CGRect(x: view.frame.width * 1.01 / 4 - 34, y: 1 + 107 / 2 - 23.5, width: 34, height: 34)
         leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftButton"))
-        view.addSubview(leftButton)
+        uiWrapper.addSubview(leftButton)
 
         rightButton.isActive = false
         rightButton.type = .Profile
-        rightButton.frame = CGRect(x: view.frame.width * 2.99 / 4, y: view.frame.height - 107 / 2 - 27.5, width: 34, height: 34)
+        rightButton.frame = CGRect(x: view.frame.width * 2.99 / 4, y: 1 + 107 / 2 - 23.5, width: 34, height: 34)
         rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapRightButton"))
-        view.addSubview(rightButton)
+        uiWrapper.addSubview(rightButton)
+        
+        initNotificationIndicator()
+        
+        uiWrapper.frame = CGRect(x: 0, y: view.frame.height - 108, width: view.frame.width, height: 108)
+        view.addSubview(uiWrapper)
     }
     
     func showUI() {
-        blurView.hidden = true
-        borderLineLayer.hidden = true
-        recordButton.hidden = true
-        leftButton.hidden = true
-        rightButton.hidden = true
+        uiWrapper.hidden = false
     }
     
     func hideUI() {
-        blurView.hidden = false
-        borderLineLayer.hidden = false
-        recordButton.hidden = false
-        leftButton.hidden = false
-        rightButton.hidden = false
+        uiWrapper.hidden = true
     }
     
     func tapLeftButton() {
@@ -132,6 +130,25 @@ class TabViewController: UIViewController {
         activeViewController.view.removeFromSuperview()
         activeViewController = isLeft ? leftViewController : rightViewController
         view.insertSubview(activeViewController.view, atIndex: 0)
+    }
+    
+    private func initNotificationIndicator() {
+        let circle = UILabel()
+        circle.frame = CGRect(x: rightButton.frame.origin.x + 25, y: rightButton.frame.origin.y - 3, width: 16, height: 16)
+        circle.backgroundColor = .Accent
+        circle.font = UIFont.displayOfSize(10, withType: .Regular)
+        circle.textAlignment = .Center
+        circle.textColor = .whiteColor()
+        circle.layer.cornerRadius = 8
+        circle.clipsToBounds = true
+        circle.hidden = true
+        uiWrapper.addSubview(circle)
+        
+        ActivitiesService.unreadCount.producer.startWithNext { count in
+            let hidden = count <= 0
+            circle.hidden = hidden
+            circle.text = "\(count)"
+        }
     }
 
 }
