@@ -363,10 +363,10 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setImage(image: SKTexture) {
-        if renderDelegate.image != image {
+    func setImage(texture: SKTexture) {
+        if renderDelegate.texture != texture {
             renderDelegate.image = nil
-            renderDelegate.image = image
+            renderDelegate.texture = texture
             scnView.prepareObject(renderDelegate!.sphereNode, shouldAbortBlock: nil)
         }
         Async.main { [weak self] in

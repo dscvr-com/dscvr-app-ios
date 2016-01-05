@@ -189,7 +189,7 @@ class ViewerViewController: UIViewController  {
             rightDownloadDisposable = nil
         }
         
-        leftDownloadDisposable = imageManager.downloader.downloadSKTextureForURL(ImageURL(optograph.leftTextureAssetID))
+        leftDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))
             .observeOnMain()
             .startWithNext { [weak self] image in
                 self?.leftRenderDelegate.image = image
@@ -197,7 +197,7 @@ class ViewerViewController: UIViewController  {
                 self?.leftLoadingView.stopAnimating()
             }
         
-        rightDownloadDisposable = imageManager.downloader.downloadSKTextureForURL(ImageURL(optograph.rightTextureAssetID))
+        rightDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.rightTextureAssetID))
             .observeOnMain()
             .startWithNext { [weak self] image in
                 self?.rightRenderDelegate.image = image
