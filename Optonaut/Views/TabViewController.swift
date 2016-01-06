@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ReactiveCocoa
 
 class TabViewController: UIViewController {
     
@@ -19,10 +20,14 @@ class TabViewController: UIViewController {
     
     private let borderLineLayer = CALayer()
     
-    private let uiWrapper = UIView()
+    private let uiWrapper = PassThroughView()
     private let recordButton = RecordButton()
     private let leftButton = TabButton()
     private let rightButton = TabButton()
+    private let bottomGradient = CAGradientLayer()
+    
+    private let bottomGradientOffset = MutableProperty<CGFloat>(0)
+    
     private let leftViewController: CollectionNavViewController
     private let rightViewController: ProfileNavViewController
     private var activeViewController: NavigationController
@@ -52,34 +57,49 @@ class TabViewController: UIViewController {
         
         view.insertSubview(leftViewController.view, atIndex: 0)
         
-        blurView.frame = CGRect(x: 0, y: 1, width: view.frame.width, height: 107)
-        blurView.alpha = 0.95
-        uiWrapper.addSubview(blurView)
+        let width = view.frame.width
         
-        borderLineLayer.backgroundColor = UIColor.whiteColor().CGColor
-        borderLineLayer.opacity = 0.5
-        borderLineLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 1)
-        uiWrapper.layer.addSublayer(borderLineLayer)
+        bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: 126)
+        bottomGradient.colors = [UIColor.clearColor().CGColor, UIColor.blackColor().alpha(0.5).CGColor]
+//        bottomGradient.colors = [UIColor.clearColor().CGColor, UIColor.redColor().alpha(0.5).CGColor]
+        uiWrapper.layer.addSublayer(bottomGradient)
         
-        recordButton.frame = CGRect(x: view.frame.width / 2 - 34, y: 1 + 107 / 2 - 34, width: 68, height: 68)
+        bottomGradientOffset.producer.startWithNext { [weak self] offset in
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0.3)
+            CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut))
+            self?.bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: offset + 126)
+            CATransaction.commit()
+        }
+        
+//        blurView.frame = CGRect(x: 0, y: 1, width: view.frame.width, height: 107)
+//        blurView.alpha = 0.95
+//        uiWrapper.addSubview(blurView)
+        
+//        borderLineLayer.backgroundColor = UIColor.whiteColor().CGColor
+//        borderLineLayer.opacity = 0.5
+//        borderLineLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 1)
+//        uiWrapper.layer.addSublayer(borderLineLayer)
+        
+        recordButton.frame = CGRect(x: view.frame.width / 2 - 35, y: 126 / 2 - 35, width: 70, height: 70)
         recordButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushCamera"))
         uiWrapper.addSubview(recordButton)
 
         leftButton.isActive = true
-        leftButton.type = .Explore
-        leftButton.frame = CGRect(x: view.frame.width * 1.01 / 4 - 34, y: 1 + 107 / 2 - 23.5, width: 34, height: 34)
+        leftButton.type = .Home
+        leftButton.frame = CGRect(x: view.frame.width * 1.01 / 4 - 34, y: 126 / 2 - 23.5, width: 34, height: 34)
         leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftButton"))
         uiWrapper.addSubview(leftButton)
 
         rightButton.isActive = false
         rightButton.type = .Profile
-        rightButton.frame = CGRect(x: view.frame.width * 2.99 / 4, y: 1 + 107 / 2 - 23.5, width: 34, height: 34)
+        rightButton.frame = CGRect(x: view.frame.width * 2.99 / 4, y: 126 / 2 - 23.5, width: 34, height: 34)
         rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapRightButton"))
         uiWrapper.addSubview(rightButton)
         
         initNotificationIndicator()
         
-        uiWrapper.frame = CGRect(x: 0, y: view.frame.height - 108, width: view.frame.width, height: 108)
+        uiWrapper.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
         view.addSubview(uiWrapper)
     }
     
@@ -155,23 +175,26 @@ class TabViewController: UIViewController {
 
 private class RecordButton: UIButton {
     
-    private let ringLayer = CALayer()
+//    private let ringLayer = CALayer()
     
     private var touched = false
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        ringLayer.borderColor = UIColor.whiteColor().CGColor
-        ringLayer.borderWidth = 1
-        
-        layer.addSublayer(ringLayer)
+//        ringLayer.borderColor = UIColor.whiteColor().CGColor
+//        ringLayer.borderWidth = 1
+//        
+//        layer.addSublayer(ringLayer)
         
         backgroundColor = .Accent
         
+        
+        layer.cornerRadius = 12
+        
         setTitle(String.iconWithName(.Camera_Alt), forState: .Normal)
         setTitleColor(.whiteColor(), forState: .Normal)
-        titleLabel?.font = UIFont.iconOfSize(30)
+        titleLabel?.font = UIFont.iconOfSize(33)
         
         addTarget(self, action: "buttonTouched", forControlEvents: .TouchDown)
         addTarget(self, action: "buttonUntouched", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
@@ -188,10 +211,8 @@ private class RecordButton: UIButton {
     private override func layoutSubviews() {
         super.layoutSubviews()
         
-        layer.cornerRadius = frame.width / 2
-        
-        ringLayer.frame = CGRect(x: -3, y: -3, width: frame.width + 6, height: frame.height + 6)
-        ringLayer.cornerRadius = ringLayer.frame.width / 2
+//        ringLayer.frame = CGRect(x: -3, y: -3, width: frame.width + 6, height: frame.height + 6)
+//        ringLayer.cornerRadius = ringLayer.frame.width / 2
     }
     
     private func updateBackground() {
@@ -218,12 +239,12 @@ private class RecordButton: UIButton {
 
 private class TabButton: UIButton {
     
-    enum Type { case Explore, Profile }
-    var type: Type = .Explore {
+    enum Type { case Home, Profile }
+    var type: Type = .Home {
         didSet {
             switch type {
-            case .Explore:
-                text.text = "EXPLORE"
+            case .Home:
+                text.text = "HOME"
                 setTitle(String.iconWithName(.Explore), forState: .Normal)
             case .Profile:
                 text.text = "PROFILE"
@@ -285,5 +306,16 @@ protocol TabControllerDelegate {
 extension UIViewController {
     var tabController: TabViewController? {
         return navigationController?.parentViewController as? TabViewController
+    }
+}
+
+class PassThroughView: UIView {
+    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+        for subview in subviews as [UIView] {
+            if !subview.hidden && subview.alpha > 0 && subview.userInteractionEnabled && subview.pointInside(convertPoint(point, toView: subview), withEvent: event) {
+                return true
+            }
+        }
+        return false
     }
 }

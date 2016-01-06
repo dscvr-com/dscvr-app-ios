@@ -35,3 +35,13 @@ extension Double {
         return round(self * divisor) / divisor
     }
 }
+
+extension CGPoint {
+    func distanceTo(otherPoint: CGPoint) -> CGFloat {
+        let p1 = self
+        let p2 = otherPoint
+        let squareX = (p1.x - p2.x) * (p1.x - p2.x)
+        let squareY = (p1.y - p2.y) * (p1.y - p2.y)
+        return sqrt(squareX + squareY)
+    }
+}

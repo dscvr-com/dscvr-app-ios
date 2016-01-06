@@ -23,10 +23,6 @@ class CollectionViewCellModel {
     func bind(optograph: Optograph) {
         self.optograph = optograph
         
-        likeCount.value = optograph.starsCount
-        liked.value = optograph.isStarred
-        textToggled.value = false
-        uiHidden.value = false
         isLoading.value = true
         
 //        if !optograph.isStitched && StitchingService.hasUnstitchedRecordings() {
@@ -50,38 +46,6 @@ class CollectionViewCellModel {
 //        } else {
 //            stitchingProgress = MutableProperty(1)
 //        }
-    }
-    
-    func toggleLike() {
-        let starredBefore = liked.value
-        let starsCountBefore = likeCount.value
-        
-        SignalProducer<Bool, ApiError>(value: starredBefore)
-            .flatMap(.Latest) { followedBefore in
-                starredBefore
-                    ? ApiService<EmptyResponse>.delete("optographs/\(self.optograph!.ID)/star")
-                    : ApiService<EmptyResponse>.post("optographs/\(self.optograph!.ID)/star", parameters: nil)
-            }
-            .on(
-                started: {
-                    self.liked.value = !starredBefore
-                    self.likeCount.value += starredBefore ? -1 : 1
-                },
-                failed: { _ in
-                    self.liked.value = starredBefore
-                    self.likeCount.value = starsCountBefore
-                },
-                completed: updateModel
-            )
-            .start()
-    }
-    
-    
-    private func updateModel() {
-        optograph!.isStarred = liked.value
-        optograph!.starsCount = likeCount.value
-        
-        try! optograph!.insertOrUpdate()
     }
     
 }
