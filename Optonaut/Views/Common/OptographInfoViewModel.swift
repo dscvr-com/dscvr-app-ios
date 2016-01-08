@@ -88,19 +88,19 @@ class OptographInfoViewModel {
     }
     
     private func updateStatus() {
-        if let signal = PipelineService.statusSignalForOptograph(optograph.ID) {
-            signalDisposable?.dispose()
-            signalDisposable = signal
-                .skipRepeats()
-                .filter([.StitchingFinished, .PublishingFinished])
-                .observeNext { [weak self] status in
-                    switch status {
-                    case .StitchingFinished: self?.status.value = Reachability.connectedToNetwork() ? .Publishing : .Offline
-                    case .PublishingFinished: self?.status.value = .Published
-                    default: break
-                    }
-                }
-        }
+//        if let signal = PipelineService.statusSignalForOptograph(optograph.ID) {
+//            signalDisposable?.dispose()
+//            signalDisposable = signal
+//                .skipRepeats()
+//                .filter([.StitchingFinished, .PublishingFinished])
+//                .observeNext { [weak self] status in
+//                    switch status {
+//                    case .StitchingFinished: self?.status.value = Reachability.connectedToNetwork() ? .Publishing : .Offline
+//                    case .PublishingFinished: self?.status.value = .Published
+//                    default: break
+//                    }
+//                }
+//        }
     }
     
     private func updateModel() {

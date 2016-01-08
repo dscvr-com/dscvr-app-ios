@@ -29,13 +29,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         prepareAndExecute(requireLogin: true) {
-            let tabBarViewController = TabBarViewController()
-            
-            if let notification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
-                Mixpanel.sharedInstance().track("Launch.Notification")
-                self.application(application, didReceiveRemoteNotification: notification)
-                tabBarViewController.selectedIndex = 2
-            }
+//            let tabBarViewController = TabBarViewController()
+//            
+//            if let notification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
+//                Mixpanel.sharedInstance().track("Launch.Notification")
+//                self.application(application, didReceiveRemoteNotification: notification)
+//                tabBarViewController.selectedIndex = 2
+//            }
             
 //            self.window?.rootViewController = tabBarViewController
             self.window?.rootViewController = TabViewController()
@@ -83,14 +83,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         prepareAndExecute(requireLogin: false) {
-            let tabBarViewController = TabBarViewController()
-            
-            if case .Optograph(let uuid) = url.applicationURLData {
-                let detailsViewController = DetailsTableViewController(optographID: uuid)
-                tabBarViewController.feedNavViewController.pushViewController(detailsViewController, animated: false)
-            }
-            
-            self.window?.rootViewController = tabBarViewController
+//            let tabBarViewController = TabBarViewController()
+//            
+//            if case .Optograph(let uuid) = url.applicationURLData {
+//                let detailsViewController = DetailsTableViewController(optographID: uuid)
+//                tabBarViewController.feedNavViewController.pushViewController(detailsViewController, animated: false)
+//            }
+//            
+//            self.window?.rootViewController = tabBarViewController
         }
         
         return true

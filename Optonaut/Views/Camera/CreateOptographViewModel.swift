@@ -14,7 +14,7 @@ import SwiftyUserDefaults
 
 class CreateOptographViewModel {
     
-    let previewImageUrl = MutableProperty<String>("")
+    let previewImageUrl = MutableProperty<String>("http://test")
     let locationSignal = NotificationSignal<Void>()
     let locationText = MutableProperty<String>("")
     let locationCountry = MutableProperty<String>("")
@@ -22,11 +22,11 @@ class CreateOptographViewModel {
     let locationEnabled = MutableProperty<Bool>(false)
     let locationLoading = MutableProperty<Bool>(true)
     let text = MutableProperty<String>("")
-    let textEnabled = MutableProperty<Bool>(false)
+    let textEnabled = MutableProperty<Bool>(true)
     let hashtagString = MutableProperty<String>("")
     let hashtagStringValid = MutableProperty<Bool>(false)
     let hashtagStringStatus = MutableProperty<LineTextField.Status>(.Disabled)
-    let cameraPreviewEnabled = MutableProperty<Bool>(true)
+    let cameraPreviewEnabled = MutableProperty<Bool>(false)
     let readyToSubmit = MutableProperty<Bool>(false)
     let recorderCleanedUp = MutableProperty<Bool>(false)
     let isPrivate = MutableProperty<Bool>(false)
@@ -98,20 +98,12 @@ class CreateOptographViewModel {
                     .joinWithSeparator(",")
             }
         
-        hashtagStringStatus <~ previewImageUrl.producer.map(isNotEmpty)
-            .combineLatestWith(hashtagStringValid.producer)
-            .map { (requirements, validHashtag) in
-                if !requirements {
-                    return .Disabled
-                } else {
-                    return validHashtag ? .Normal : .Indicated
-                }
+        hashtagStringStatus <~ hashtagStringValid.producer
+            .map { validHashtag in
+                return validHashtag ? .Normal : .Indicated
             }
-        
-        textEnabled <~ previewImageUrl.producer.map(isNotEmpty)
     
-        readyToSubmit <~ previewImageUrl.producer.map(isNotEmpty)
-            .combineLatestWith(hashtagStringValid.producer).map(and)
+        readyToSubmit <~ hashtagStringValid.producer
             .combineLatestWith(recorderCleanedUp.producer).map(and)
     }
     

@@ -101,18 +101,18 @@ class OptographTableViewCell: UITableViewCell {
         previewImageView.rac_url <~ viewModel.previewImageUrl
         
         progressDisposable?.dispose()
-        progressDisposable = viewModel.stitchingProgress.producer
-            .observeOnMain()
-            .startWithNext { [unowned self] progress in
-                self.progressView.progress = progress
-                self.progressTextView.hidden = progress == 1
-                if progress == 1 {
-                    self.blurViewHeightConstraint.constant = 78
-                    // TODO update optograph in infoViewModel to reflect stitching status
-                } else {
-                    self.blurViewHeightConstraint.constant = self.contentView.frame.height
-                }
-            }
+//        progressDisposable = viewModel.stitchingProgress.producer
+//            .observeOnMain()
+//            .startWithNext { [unowned self] progress in
+//                self.progressView.progress = progress
+//                self.progressTextView.hidden = progress == 1
+//                if progress == 1 {
+//                    self.blurViewHeightConstraint.constant = 78
+//                    // TODO update optograph in infoViewModel to reflect stitching status
+//                } else {
+//                    self.blurViewHeightConstraint.constant = self.contentView.frame.height
+//                }
+//            }
         
         infoView.bindViewModel(optograph)
         infoView.navigationController = navigationController

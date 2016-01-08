@@ -14,9 +14,7 @@ import ReactiveCocoa
 func ==(lhs: PipelineService.Status, rhs: PipelineService.Status) -> Bool {
     switch (lhs, rhs) {
     case let (.Stitching(lhs), .Stitching(rhs)): return lhs == rhs
-    case let (.Publishing(lhs), .Publishing(rhs)): return lhs == rhs
-    case (.StitchingFinished, .StitchingFinished): return true
-    case (.PublishingFinished, .PublishingFinished): return true
+    case let (.StitchingFinished(lhs), .StitchingFinished(rhs)): return lhs == rhs
     default: return false
     }
 }
@@ -25,15 +23,11 @@ class PipelineService {
     
     enum Status: Equatable {
         case Stitching(Float)
-        case StitchingFinished
-        case Publishing(Float)
-        case PublishingFinished
+        case StitchingFinished(Optograph)
+        case Idle
     }
     
-    typealias StatusSignal = Signal<Status, NoError>
-    private typealias StatusSignalPair = (signal: StatusSignal, disposable: Disposable)
-    
-    private static var signals: [UUID: StatusSignalPair] = [:]
+    static let status = MutableProperty<Status>(.Idle)
     
     static func check() {
         Async.main {
@@ -41,13 +35,10 @@ class PipelineService {
         }
     }
     
-    static func statusSignalForOptograph(ID: UUID) -> StatusSignal? {
-        return signals[ID]?.signal
-    }
-    
     static func stop(ID: UUID) {
-        signals[ID]?.disposable.dispose()
-        signals[ID] = nil
+        if StitchingService.isStitching() {
+            StitchingService.cancelStitching()
+        }
     }
     
     private static func updateOptographs() {
@@ -55,9 +46,9 @@ class PipelineService {
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .filter(!OptographTable[OptographSchema.isStitched] || !OptographTable[OptographSchema.isPublished])
+            .filter(!OptographTable[OptographSchema.isStitched])
         
-        let optographs = DatabaseService.defaultConnection.prepare(query)
+        let optograph = DatabaseService.defaultConnection.pluck(query)
             .map { row -> Optograph in
                 var optograph = Optograph.fromSQL(row)
                 
@@ -66,17 +57,10 @@ class PipelineService {
                 
                 return optograph
             }
-            .filter { signals[$0.ID] == nil }
-            
-        optographs.forEach { optograph in
-            if !optograph.isStitched {
-                signals[optograph.ID] = stitch(optograph)
-            } else if Reachability.connectedToNetwork() && SessionService.isLoggedIn {
-                signals[optograph.ID] = publish(optograph)
-            }
-        }
         
-        if optographs.filter({ !$0.isStitched }).isEmpty && !StitchingService.isStitching() && StitchingService.hasUnstitchedRecordings() {
+        if let optograph = optograph {
+            stitch(optograph)
+        } else if !StitchingService.isStitching() && StitchingService.hasUnstitchedRecordings() {
             // This happens when an optograph was recorded, but never
             // inserted into the DB, for example due to cancel.
             // So it needs to be removed.
@@ -84,34 +68,8 @@ class PipelineService {
         }
     }
     
-    private static func publish(var optograph: Optograph) -> StatusSignalPair {
-        let (signal, sink) = StatusSignal.pipe()
+    private static func stitch(var optograph: Optograph) {
         
-        let disposable = optograph.publish()
-            .on(
-                started: {
-                    sink.sendNext(.Publishing(0))
-                },
-                completed: {
-                    sink.sendNext(.Publishing(1))
-                    signals.removeValueForKey(optograph.ID)
-                    sink.sendNext(.PublishingFinished)
-                    sink.sendCompleted()
-                },
-                failed: { _ in
-                    NotificationService.push("Publishing failed...", level: .Warning)
-                    signals.removeValueForKey(optograph.ID)
-                    PipelineService.check()
-                }
-            )
-            .start()
-    
-        return (signal, disposable)
-    }
-    
-    private static func stitch(var optograph: Optograph) -> StatusSignalPair {
-        
-        let (signal, sink) = StatusSignal.pipe()
         let stitchingSignal = StitchingService.startStitching(optograph)
         
         stitchingSignal
@@ -124,7 +82,7 @@ class PipelineService {
                     optograph.rightTextureAssetID = uuid()
                     optograph.saveAsset(.RightImage(data))
                 case .Progress(let progress):
-                    sink.sendNext(.Stitching(min(0.99, progress)))
+                    status.value = .Stitching(min(0.99, progress))
                 }
             }
         
@@ -132,20 +90,13 @@ class PipelineService {
             .observeCompleted {
                 optograph.isStitched = true
                 optograph.stitcherVersion = StitcherVersion
+                optograph.isInFeed = true
                 try! optograph.insertOrUpdate()
                 StitchingService.removeUnstitchedRecordings()
-                signals.removeValueForKey(optograph.ID)
-                sink.sendNext(.Stitching(1))
-                sink.sendNext(.StitchingFinished)
-                sink.sendCompleted()
+                status.value = .Stitching(1)
+                status.value = .StitchingFinished(optograph)
                 PipelineService.check()
             }
-        
-        let disposable = ActionDisposable {
-            StitchingService.cancelStitching()
-        }
-        
-        return (signal, disposable)
     }
     
 }

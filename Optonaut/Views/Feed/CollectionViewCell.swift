@@ -139,6 +139,7 @@ class NewCombinedMotionManager: RotationMatrixSource {
 
 class CollectionViewCell: UICollectionViewCell {
     
+    
     weak var uiHidden: MutableProperty<Bool>!
     
     private var combinedMotionManager: NewCombinedMotionManager!
@@ -154,9 +155,12 @@ class CollectionViewCell: UICollectionViewCell {
     private var renderDelegate: StereoRenderDelegate!
     private var scnView: SCNView!
     
+    private let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+    
     private var touchStart: CGPoint?
     
-    private let isLoading = MutableProperty<Bool>(true)
+    private enum LoadingStatus { case Nothing, Preview, Loaded }
+    private let loadingStatus = MutableProperty<LoadingStatus>(.Nothing)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -176,8 +180,12 @@ class CollectionViewCell: UICollectionViewCell {
         
         loadingOverlayView.backgroundColor = .blackColor()
         loadingOverlayView.frame = contentView.frame
-        loadingOverlayView.rac_hidden <~ isLoading.producer.map(negate)
+        loadingOverlayView.rac_hidden <~ loadingStatus.producer.equalsTo(.Nothing).map(negate)
         contentView.addSubview(loadingOverlayView)
+        
+        loadingIndicatorView.frame = contentView.frame
+        loadingIndicatorView.rac_animating <~ loadingStatus.producer.equalsTo(.Loaded).map(negate)
+        contentView.addSubview(loadingIndicatorView)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -185,18 +193,34 @@ class CollectionViewCell: UICollectionViewCell {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        touchStart = touches.first!.locationInView(self)
         super.touchesBegan(touches, withEvent: event)
-        if uiHidden.value && touches.count == 1 {
-            combinedMotionManager.touchStart(touches.first!.locationInView(contentView))
+        var point = touches.first!.locationInView(contentView)
+        touchStart = point
+        
+        if !uiHidden.value {
+            point.y = 0
+        }
+        
+        if touches.count == 1 {
+            combinedMotionManager.touchStart(point)
         }
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesMoved(touches, withEvent: event)
-        if uiHidden.value {
-            combinedMotionManager.touchMove(touches.first!.locationInView(contentView))
+        var point = touches.first!.locationInView(contentView)
+        
+        if !uiHidden.value {
+            if abs(point.x - touchStart!.x) > 20 {
+                toggleUI()
+                combinedMotionManager.touchStart(point)
+                return
+            }
+            
+            point.y = 0
         }
+        
+        combinedMotionManager.touchMove(point)
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -219,17 +243,17 @@ class CollectionViewCell: UICollectionViewCell {
     
     func reset() {
         combinedMotionManager.reset()
-        isLoading.value = true
+        loadingStatus.value = .Nothing
     }
     
-    func setImage(texture: SKTexture) {
+    func setImage(texture: SKTexture, isPreview: Bool) {
         if renderDelegate.texture != texture {
             renderDelegate.image = nil
             renderDelegate.texture = texture
             scnView.prepareObject(renderDelegate!.sphereNode, shouldAbortBlock: nil)
         }
         Async.main { [weak self] in
-            self?.isLoading.value = false
+            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
         }
     }
     

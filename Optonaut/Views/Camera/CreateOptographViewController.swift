@@ -24,15 +24,15 @@ class CreateOptographViewController: UIViewController {
     private let recorderQueue: dispatch_queue_t
     
     // subviews
-    private let previewImageView = PlaceholderImageView()
-    private let cameraPreviewImageView = UIView()
-    private let cameraPreviewImageBlurView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .Dark)
-        return UIVisualEffectView(effect: blurEffect)
-    }()
+//    private let previewImageView = PlaceholderImageView()
+//    private let cameraPreviewImageView = UIView()
+//    private let cameraPreviewImageBlurView: UIVisualEffectView = {
+//        let blurEffect = UIBlurEffect(style: .Dark)
+//        return UIVisualEffectView(effect: blurEffect)
+//    }()
     private let cancelButtonView = UIButton()
-    private let enableCameraButtonView = ActionButton()
-    private let enableCameraTextView = UILabel()
+//    private let enableCameraButtonView = ActionButton()
+//    private let enableCameraTextView = UILabel()
     private let submitButtonView = ActionButton()
     private let infoWrapperView = UIView()
     private let locationIconView = UILabel()
@@ -49,7 +49,7 @@ class CreateOptographViewController: UIViewController {
     private let lockTextView = BoundingLabel()
     private let backgroundView = BackgroundView()
     
-    private let imagePickerController = UIImagePickerController()
+//    private let imagePickerController = UIImagePickerController()
     
     required init(recorderCleanup: SignalProducer<Void, NoError>) {
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
@@ -80,22 +80,22 @@ class CreateOptographViewController: UIViewController {
         
         view.backgroundColor = .whiteColor()
         
-        previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
-        previewImageView.contentMode = .ScaleAspectFill
-        previewImageView.clipsToBounds = true
-        previewImageView.rac_url <~ viewModel.previewImageUrl
-        previewImageView.rac_hidden <~ viewModel.cameraPreviewEnabled
-        view.addSubview(previewImageView)
+//        previewImageView.placeholderImage = UIImage(named: "optograph-placeholder")!
+//        previewImageView.contentMode = .ScaleAspectFill
+//        previewImageView.clipsToBounds = true
+//        previewImageView.rac_url <~ viewModel.previewImageUrl
+//        previewImageView.rac_hidden <~ viewModel.cameraPreviewEnabled
+//        view.addSubview(previewImageView)
         
-        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        cameraPreviewImageView.backgroundColor = .DarkGrey
-        cameraPreviewImageView.layer.addSublayer(previewLayer)
-        cameraPreviewImageView.rac_hidden <~ viewModel.cameraPreviewEnabled.producer.map(negate)
-        view.addSubview(cameraPreviewImageView)
+//        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+//        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+//        cameraPreviewImageView.backgroundColor = .DarkGrey
+//        cameraPreviewImageView.layer.addSublayer(previewLayer)
+//        cameraPreviewImageView.rac_hidden <~ viewModel.cameraPreviewEnabled.producer.map(negate)
+//        view.addSubview(cameraPreviewImageView)
         
-        cameraPreviewImageView.rac_hidden <~ viewModel.cameraPreviewEnabled.producer.map(negate)
-        cameraPreviewImageView.addSubview(cameraPreviewImageBlurView)
+//        cameraPreviewImageView.rac_hidden <~ viewModel.cameraPreviewEnabled.producer.map(negate)
+//        cameraPreviewImageView.addSubview(cameraPreviewImageBlurView)
         
         cancelButtonView.setTitle(String.iconWithName(.Cross), forState: .Normal)
         cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
@@ -103,29 +103,29 @@ class CreateOptographViewController: UIViewController {
         cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         view.addSubview(cancelButtonView)
         
-        enableCameraButtonView.setTitle(String.iconWithName(.CameraAdd), forState: .Normal)
-        enableCameraButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-        enableCameraButtonView.titleLabel?.font = UIFont.iconOfSize(35)
-        enableCameraButtonView.defaultBackgroundColor = UIColor.whiteColor().alpha(0.3)
-        enableCameraButtonView.layer.cornerRadius = 52
-        enableCameraButtonView.layer.borderColor = UIColor.whiteColor().CGColor
-        enableCameraButtonView.layer.borderWidth = 1.5
-        enableCameraButtonView.rac_hidden <~ viewModel.cameraPreviewEnabled.producer.map(negate)
-        enableCameraButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "takePicture"))
-        view.addSubview(enableCameraButtonView)
-        
-        enableCameraTextView.text = "Please take a preview picture"
-        enableCameraTextView.font = UIFont.displayOfSize(14, withType: .Regular)
-        enableCameraTextView.textColor = .whiteColor()
-        enableCameraTextView.rac_hidden <~ viewModel.cameraPreviewEnabled.producer.map(negate)
-        view.addSubview(enableCameraTextView)
+//        enableCameraButtonView.setTitle(String.iconWithName(.CameraAdd), forState: .Normal)
+//        enableCameraButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+//        enableCameraButtonView.titleLabel?.font = UIFont.iconOfSize(35)
+//        enableCameraButtonView.defaultBackgroundColor = UIColor.whiteColor().alpha(0.3)
+//        enableCameraButtonView.layer.cornerRadius = 52
+//        enableCameraButtonView.layer.borderColor = UIColor.whiteColor().CGColor
+//        enableCameraButtonView.layer.borderWidth = 1.5
+//        enableCameraButtonView.rac_hidden <~ viewModel.cameraPreviewEnabled.producer.map(negate)
+//        enableCameraButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "takePicture"))
+//        view.addSubview(enableCameraButtonView)
+//        
+//        enableCameraTextView.text = "Please take a preview picture"
+//        enableCameraTextView.font = UIFont.displayOfSize(14, withType: .Regular)
+//        enableCameraTextView.textColor = .whiteColor()
+//        enableCameraTextView.rac_hidden <~ viewModel.cameraPreviewEnabled.producer.map(negate)
+//        view.addSubview(enableCameraTextView)
         
         submitButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         submitButtonView.defaultBackgroundColor = .Accent
         submitButtonView.disabledBackgroundColor = UIColor.Accent.alpha(0.5)
         submitButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         submitButtonView.layer.cornerRadius = 30
-        submitButtonView.rac_hidden <~ viewModel.cameraPreviewEnabled
+//        submitButtonView.rac_hidden <~ viewModel.cameraPreviewEnabled
         submitButtonView.rac_userInteractionEnabled <~ viewModel.readyToSubmit
         submitButtonView.rac_loading <~ viewModel.recorderCleanedUp.producer.map(negate)
         submitButtonView.rac_title <~ viewModel.recorderCleanedUp.producer.mapToTuple(String.iconWithName(.Check), "")
@@ -243,33 +243,33 @@ class CreateOptographViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        cameraPreviewImageView.layer.sublayers?.first?.frame = cameraPreviewImageView.frame
+//        cameraPreviewImageView.layer.sublayers?.first?.frame = cameraPreviewImageView.frame
     }
     
     override func updateViewConstraints() {
-        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
-        previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
+//        previewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
+//        previewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
+//        previewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
+//        
+//        cameraPreviewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
+//        cameraPreviewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
+//        cameraPreviewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
+//        
+//        cameraPreviewImageBlurView.autoPinEdgesToSuperviewEdges()
         
-        cameraPreviewImageView.autoPinEdge(.Top, toEdge: .Top, ofView: view)
-        cameraPreviewImageView.autoMatchDimension(.Width, toDimension: .Width, ofView: view)
-        cameraPreviewImageView.autoMatchDimension(.Height, toDimension: .Width, ofView: view, withMultiplier: 3 / 4)
+        cancelButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 30)
+        cancelButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 20)
         
-        cameraPreviewImageBlurView.autoPinEdgesToSuperviewEdges()
+//        enableCameraButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: previewImageView)
+//        enableCameraButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: previewImageView, withOffset: -10)
+//        enableCameraButtonView.autoSetDimension(.Height, toSize: 104)
+//        enableCameraButtonView.autoSetDimension(.Width, toSize: 104)
+//        
+//        enableCameraTextView.autoAlignAxis(.Vertical, toSameAxisOfView: previewImageView)
+//        enableCameraTextView.autoPinEdge(.Top, toEdge: .Bottom, ofView: enableCameraButtonView, withOffset: 20)
         
-        cancelButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: previewImageView, withOffset: 30)
-        cancelButtonView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 20)
-        
-        enableCameraButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: previewImageView)
-        enableCameraButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: previewImageView, withOffset: -10)
-        enableCameraButtonView.autoSetDimension(.Height, toSize: 104)
-        enableCameraButtonView.autoSetDimension(.Width, toSize: 104)
-        
-        enableCameraTextView.autoAlignAxis(.Vertical, toSameAxisOfView: previewImageView)
-        enableCameraTextView.autoPinEdge(.Top, toEdge: .Bottom, ofView: enableCameraButtonView, withOffset: 20)
-        
-        submitButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: previewImageView, withOffset: -20)
-        submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: previewImageView, withOffset: -20)
+        submitButtonView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 20)
+        submitButtonView.autoPinEdge(.Right, toEdge: .Right, ofView: view, withOffset: -20)
         submitButtonView.autoSetDimension(.Width, toSize: 60)
         submitButtonView.autoSetDimension(.Height, toSize: 60)
         
@@ -278,8 +278,8 @@ class CreateOptographViewController: UIViewController {
         infoWrapperView.autoPinEdge(.Top, toEdge: .Top, ofView: locationIconView)
         infoWrapperView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: textInputView)
         
-        locationIconView.autoPinEdge(.Top, toEdge: .Bottom, ofView: previewImageView, withOffset: 20)
-        locationIconView.autoPinEdge(.Left, toEdge: .Left, ofView: previewImageView, withOffset: 19)
+        locationIconView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 120)
+        locationIconView.autoPinEdge(.Left, toEdge: .Left, ofView: view, withOffset: 19)
         locationIconView.autoSetDimension(.Width, toSize: 15)
         locationIconView.autoSetDimension(.Height, toSize: 15)
         
@@ -423,18 +423,18 @@ class CreateOptographViewController: UIViewController {
     func reloadLocation() {
         viewModel.locationSignal.notify(())
     }
-    
-    func takePicture() {
-        if UIImagePickerController.isSourceTypeAvailable(.Camera) {
-            imagePickerController.sourceType = .Camera
-        } else if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
-            // just for simulator debugging
-            imagePickerController.sourceType = .PhotoLibrary
-        }
-        
-        imagePickerController.delegate = self
-        presentViewController(imagePickerController, animated: true, completion: nil)
-    }
+//    
+//    func takePicture() {
+//        if UIImagePickerController.isSourceTypeAvailable(.Camera) {
+//            imagePickerController.sourceType = .Camera
+//        } else if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
+//            // just for simulator debugging
+//            imagePickerController.sourceType = .PhotoLibrary
+//        }
+//        
+//        imagePickerController.delegate = self
+//        presentViewController(imagePickerController, animated: true, completion: nil)
+//    }
     
     func dismissKeyboard() {
         view.endEditing(true)
@@ -502,20 +502,20 @@ extension CreateOptographViewController: UITextViewDelegate {
 }
 
 // MARK: - UIImagePickerControllerDelegate
-extension CreateOptographViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        
-        viewModel.cameraPreviewEnabled.value = false
-        
-        imagePickerController.dismissViewControllerAnimated(true, completion: nil)
-    
-        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
-        let fixedImage = image.fixedOrientation()
-        let imageData = UIImageJPEGRepresentation(fixedImage, 0.7)!
-        viewModel.optograph.previewAssetID = uuid()
-        viewModel.optograph.saveAsset(.PreviewImage(imageData))
-        viewModel.updatePreviewImage()
-    }
-    
-}
+//extension CreateOptographViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+//    
+//    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+//        
+//        viewModel.cameraPreviewEnabled.value = false
+//        
+//        imagePickerController.dismissViewControllerAnimated(true, completion: nil)
+//    
+//        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
+//        let fixedImage = image.fixedOrientation()
+//        let imageData = UIImageJPEGRepresentation(fixedImage, 0.7)!
+//        viewModel.optograph.previewAssetID = uuid()
+//        viewModel.optograph.saveAsset(.PreviewImage(imageData))
+//        viewModel.updatePreviewImage()
+//    }
+//    
+//}

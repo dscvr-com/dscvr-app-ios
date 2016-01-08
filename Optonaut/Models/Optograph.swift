@@ -71,7 +71,10 @@ struct Optograph: DeletableModel {
     func saveAsset(asset: OptographAsset) {
         switch asset {
         case .LeftImage(let data):
-            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(leftTextureAssetID))
+            let image = UIImage(data: data)!
+            ImageCache.defaultCache.storeImage(image, forKey: ImageURL(leftTextureAssetID))
+            // needed for feed
+            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 2048 * UIScreen.mainScreen().scale), forKey: ImageURL(leftTextureAssetID, width: 2048))
         case .RightImage(let data):
             ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID))
         case .PreviewImage(let data):

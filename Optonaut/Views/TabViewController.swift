@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveCocoa
+import Async
 
 class TabViewController: UIViewController {
     
@@ -61,7 +62,6 @@ class TabViewController: UIViewController {
         
         bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: 126)
         bottomGradient.colors = [UIColor.clearColor().CGColor, UIColor.blackColor().alpha(0.5).CGColor]
-//        bottomGradient.colors = [UIColor.clearColor().CGColor, UIColor.redColor().alpha(0.5).CGColor]
         uiWrapper.layer.addSublayer(bottomGradient)
         
         bottomGradientOffset.producer.startWithNext { [weak self] offset in
@@ -84,6 +84,20 @@ class TabViewController: UIViewController {
         recordButton.frame = CGRect(x: view.frame.width / 2 - 35, y: 126 / 2 - 35, width: 70, height: 70)
         recordButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushCamera"))
         uiWrapper.addSubview(recordButton)
+        
+        #if DEBUG
+            let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: "_debug_showCameraAlert")
+            longPressGestureRecognizer.minimumPressDuration = 1
+            recordButton.addGestureRecognizer(longPressGestureRecognizer)
+        #endif
+        
+        PipelineService.status.producer.startWithNext { [weak self] status in
+            switch status {
+            case .Idle: self?.recordButton.progress = 0
+            case let .Stitching(progress): self?.recordButton.progress = CGFloat(progress)
+            default: ()
+            }
+        }
 
         leftButton.isActive = true
         leftButton.type = .Home
@@ -101,6 +115,14 @@ class TabViewController: UIViewController {
         
         uiWrapper.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
         view.addSubview(uiWrapper)
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Async.background {
+            PipelineService.check()
+        }
     }
     
     func showUI() {
@@ -132,13 +154,16 @@ class TabViewController: UIViewController {
     }
     
     func pushCamera() {
-        if StitchingService.isStitching() {
-            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last Optograph has finished rendering.", preferredStyle: .Alert)
+        switch PipelineService.status.value {
+        case .Idle:
+            activeViewController.pushViewController(CameraViewController(), animated: false)
+        case .Stitching(_):
+            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
             activeViewController.presentViewController(alert, animated: true, completion: nil)
-        } else {
-            let cameraViewController = CameraViewController()
-            activeViewController.pushViewController(cameraViewController, animated: false)
+        case let .StitchingFinished(optograph):
+            delegate?.scrollToOptograph(optograph)
+            PipelineService.status.value = .Idle
         }
     }
     
@@ -170,29 +195,50 @@ class TabViewController: UIViewController {
             circle.text = "\(count)"
         }
     }
+    
+    @objc
+    private func _debug_showCameraAlert() {
+        let confirmAlert = UIAlertController(title: "Choose wisely", message: "", preferredStyle: .Alert)
+        confirmAlert.addAction(UIAlertAction(title: "Skip to save screen", style: .Default, handler: { _ in
+            
+        }))
+        confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        self.presentViewController(confirmAlert, animated: true, completion: nil)
+    }
 
 }
 
 private class RecordButton: UIButton {
     
-//    private let ringLayer = CALayer()
+    private let progressLayer = CALayer()
     
     private var touched = false
+    
+    var progress: CGFloat = 0 {
+        didSet {
+            if progress == 0 {
+                setTitle(String.iconWithName(.Camera_Alt), forState: .Normal)
+            } else if progress == 1 {
+                setTitle(String.iconWithName(.Check), forState: .Normal)
+            } else {
+                setTitle(String.iconWithName(.Feed), forState: .Normal)
+            }
+            layoutSubviews()
+        }
+    }
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-//        ringLayer.borderColor = UIColor.whiteColor().CGColor
-//        ringLayer.borderWidth = 1
-//        
-//        layer.addSublayer(ringLayer)
+        progressLayer.backgroundColor = UIColor.Accent.mixWithColor(.blackColor(), amount: 0.1).CGColor
+        
+        layer.addSublayer(progressLayer)
         
         backgroundColor = .Accent
-        
+        clipsToBounds = true
         
         layer.cornerRadius = 12
         
-        setTitle(String.iconWithName(.Camera_Alt), forState: .Normal)
         setTitleColor(.whiteColor(), forState: .Normal)
         titleLabel?.font = UIFont.iconOfSize(33)
         
@@ -211,8 +257,7 @@ private class RecordButton: UIButton {
     private override func layoutSubviews() {
         super.layoutSubviews()
         
-//        ringLayer.frame = CGRect(x: -3, y: -3, width: frame.width + 6, height: frame.height + 6)
-//        ringLayer.cornerRadius = ringLayer.frame.width / 2
+        progressLayer.frame = CGRect(x: 0, y: 0, width: frame.width * progress, height: frame.height)
     }
     
     private func updateBackground() {
@@ -301,6 +346,11 @@ private class TabButton: UIButton {
 
 protocol TabControllerDelegate {
     func jumpToTop()
+    func scrollToOptograph(optograph: Optograph)
+}
+
+extension TabControllerDelegate {
+    func scrollToOptograph(optograph: Optograph) {}
 }
 
 extension UIViewController {

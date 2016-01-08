@@ -188,7 +188,7 @@ class LoginViewController: UIViewController {
     }
     
     func showApp() {
-        view.window?.rootViewController = TabBarViewController()
+        view.window?.rootViewController = TabViewController()
     }
     
     func selectSignUpTab() {

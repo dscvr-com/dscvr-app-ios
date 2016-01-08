@@ -14,13 +14,15 @@ import Async
 
 private let reuseIdentifier = "Cell"
 
+private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
+
 class CollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
     
     private let viewModel = FeedViewModel()
     internal var optographs = [Optograph]()
     private var imageCache: CollectionImageCache!
-    private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
-    private let cacheDebouncer: Debouncer
+    private let cacheDebouncerGet: Debouncer
+    private let cacheDebouncerTouch: Debouncer
     private let overlayDebouncer: Debouncer
     
     private let refreshControl = UIRefreshControl()
@@ -32,7 +34,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     
     required override init(collectionViewLayout: UICollectionViewLayout) {
-        cacheDebouncer = Debouncer(queue: queue, delay: 0.1)
+        cacheDebouncerGet = Debouncer(queue: queue, delay: 0.1)
+        cacheDebouncerTouch = Debouncer(queue: queue, delay: 0.1)
         overlayDebouncer = Debouncer(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), delay: 0.01)
         
         super.init(collectionViewLayout: collectionViewLayout)
@@ -84,6 +87,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         automaticallyAdjustsScrollViewInsets = false
         
+        collectionView!.delaysContentTouches = false
+        
         edgesForExtendedLayout = .None
 
         
@@ -95,6 +100,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             .on(next: { [weak self] results in
                 if let strongSelf = self {
                     let visibleOptograph: Optograph? = strongSelf.optographs.isEmpty ? nil : strongSelf.optographs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+                    let before = strongSelf.optographs.count
                     strongSelf.optographs = results.models
                     
                     CATransaction.begin()
@@ -106,8 +112,10 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                             strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0, inSection: 0) })
                             strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0, inSection: 0) })
                         }, completion: { _ in
-                            if let visibleOptograph = visibleOptograph, visibleRow = strongSelf.optographs.indexOf({ $0.ID == visibleOptograph.ID }) where !strongSelf.refreshControl.refreshing {
-                                strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
+                            if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
+                                if let visibleOptograph = visibleOptograph, visibleRow = strongSelf.optographs.indexOf({ $0.ID == visibleOptograph.ID }) {
+                                    strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
+                                }
                             }
                             strongSelf.refreshControl.endRefreshing()
                             CATransaction.commit()
@@ -116,12 +124,13 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             })
             .start()
         
-        let topOffset = navigationController!.navigationBar.frame.height + UIApplication.sharedApplication().statusBarFrame.size.height
+        let topOffset = navigationController!.navigationBar.frame.height + 20
         overlayView.frame = CGRect(x: 0, y: topOffset, width: view.frame.width, height: view.frame.height - topOffset)
         overlayView.uiHidden = uiHidden
         overlayView.navigationController = navigationController as? NavigationController
         overlayView.rac_hidden <~ uiHidden
         overlayView.deleteCallback = { [weak self] in
+            self?.overlayView.optograph = nil
             self?.viewModel.refreshNotification.notify(())
         }
         view.addSubview(overlayView)
@@ -143,6 +152,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        uiHidden.value = false
+        
         viewModel.refreshNotification.notify(())
         
         tabController!.delegate = self
@@ -161,8 +172,6 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
-//        navigationController?.setNavigationBarHidden(true, animated: false)
         
         updateNavbarAppear()
         
@@ -223,19 +232,17 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             return
         }
         
-        print("will disp \(indexPath.row)")
-        
         cell.willDisplay()
         
-        let imageCallback = { [weak self] (image: SKTexture) in
+        let imageCallback = { [weak self] (image: SKTexture, isPreview: Bool) in
             if self?.collectionView?.indexPathsForVisibleItems().contains(indexPath) == true {
-                cell.setImage(image)
+                cell.setImage(image, isPreview: isPreview)
             }
         }
         
         dispatch_async(queue) { [weak self] in
             if self?.imageCache.get(indexPath.row, force: false, callback: imageCallback) == false {
-                self?.cacheDebouncer.debounce { [weak self] in
+                self?.cacheDebouncerGet.debounce { [weak self] in
                     self?.imageCache.get(indexPath.row, force: true, callback: imageCallback)
                 }
             }
@@ -245,7 +252,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             overlayView.optograph = optographs[indexPath.row]
         }
         
-        cacheDebouncer.debounce { [weak self] in
+        cacheDebouncerTouch.debounce { [weak self] in
             self?.imageCache.touch(indexPath.row)
         }
         
@@ -271,9 +278,12 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                 if scrollView.decelerating && overlayView.alpha == 0 {
                     overlayAnimating = true
                     dispatch_async(dispatch_get_main_queue()) {
-                        UIView.animateWithDuration(0.2) {
-                            self.overlayView.alpha = 1
-                        }
+                        UIView.animateWithDuration(0.2,
+                            delay: 0,
+                            options: [.AllowUserInteraction],
+                            animations: {
+                                self.overlayView.alpha = 1
+                            }, completion: nil)
                     }
                     return
                 }
@@ -289,6 +299,11 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         if overlayOptograph.ID != overlayView.optograph?.ID {
             overlayView.optograph = overlayOptograph
         }
+    }
+    
+    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        overlayAnimating = false
+        overlayView.layer.removeAllAnimations()
     }
 
     override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
@@ -312,15 +327,23 @@ extension CollectionViewController: TabControllerDelegate {
     
     func jumpToTop() {
         viewModel.refreshNotification.notify(())
-//        collectionView!.setContentOffset(CGPointZero, animated: true)
+        collectionView!.setContentOffset(CGPointZero, animated: true)
+    }
+    
+    func scrollToOptograph(optograph: Optograph) {
+        let row = optographs.indexOf({ $0.ID == optograph.ID })
+        collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
     }
     
 }
 
 private class CollectionImageCache {
     
-    typealias Callback = SKTexture -> Void
-    typealias Item = (index: Int, image: SKTexture?, callback: Callback?, downloadTask: RetrieveImageDownloadTask?)
+    private enum Downloaded { case None, Preview, Full }
+    
+    typealias Callback = (SKTexture, isPreview: Bool) -> Void
+//    typealias Item = (index: Int, image: SKTexture?, callback: Callback?, downloadTask: RetrieveImageDownloadTask?)
+    typealias Item = (index: Int, image: SKTexture?, callback: Callback?, previewDownloadTask: RetrieveImageTask?, fullDownloadTask: RetrieveImageTask?)
     
     private var items: [Item?]
     private var optographs: [Optograph] {
@@ -330,7 +353,7 @@ private class CollectionImageCache {
     
     private static let cacheSize = 5
     
-    private let imageManager = KingfisherManager()
+//    private let imageManager = KingfisherManager()
     
     private var activeIndex = 0
     
@@ -338,13 +361,15 @@ private class CollectionImageCache {
         items = [Item?](count: CollectionImageCache.cacheSize, repeatedValue: nil)
         self.optographsGetter = optographsGetter
         
+        KingfisherManager.sharedManager.downloader.downloadTimeout = 60
+        
 //        imageManager.cache.maxMemoryCost = UInt(NSProcessInfo.processInfo().physicalMemory) / 4
     }
     
     func get(index: Int, force: Bool, callback: Callback) -> Bool {
         
         if force {
-            update(index)
+            update(index, callback: callback)
         }
         
         guard let item = items[index % CollectionImageCache.cacheSize] else {
@@ -356,8 +381,10 @@ private class CollectionImageCache {
         }
         
         if let image = item.image {
-            callback(image)
-        } else {
+            callback(image, isPreview: item.fullDownloadTask != nil)
+        }
+        
+        if item.fullDownloadTask != nil {
             items[index % CollectionImageCache.cacheSize]!.callback = callback
         }
         
@@ -371,41 +398,60 @@ private class CollectionImageCache {
         let endIndex = min(optographs.count - 1, activeIndex + 2)
         
         for index in startIndex...endIndex {
-            update(index)
+            update(index, callback: nil)
         }
     }
     
-    private func update(index: Int) {
+    private func update(index: Int, callback: Callback?) {
         let cacheIndex = index % CollectionImageCache.cacheSize
         if items[cacheIndex] == nil || items[cacheIndex]!.index != index {
             
-            if let downloadTask = items[cacheIndex]?.downloadTask {
-                downloadTask.cancel()
-                print("cancel \(index)")
-            }
+            items[cacheIndex]?.previewDownloadTask?.cancel()
+            items[cacheIndex]?.fullDownloadTask?.cancel()
             
-            items[cacheIndex] = (index: index, image: nil, callback: nil, downloadTask: nil)
+            var item: Item = (index: index, image: nil, callback: nil, previewDownloadTask: nil, fullDownloadTask: nil)
             
-            let url = ImageURL(optographs[index].leftTextureAssetID, width: 2048)
-            let downloadTask = imageManager.downloader.downloadImageWithURL(
-                NSURL(string: url)!,
-                options: (forceRefresh: false, lowPriority: activeIndex != index, cacheMemoryOnly: false, shouldDecode: false, queue: dispatch_get_main_queue(), scale: 1.0),
+            item.fullDownloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
+                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: 2048))!,
+                optionsInfo: nil,
+//                optionsInfo: [.Options(.LowPriority)],
                 progressBlock: nil,
                 completionHandler: { [weak self] (image, error, _, _) in
-                    if let image = image {
-                        let tex = SKTexture(image: image)
-                        self?.items[cacheIndex]!.image = tex
-                        self?.items[cacheIndex]!.downloadTask = nil
-                        self?.items[cacheIndex]!.callback?(tex)
-                        self?.items[cacheIndex]!.callback = nil
-                    }
-                    if let error = error {
-                        print(error)
+                    dispatch_async(queue) {
+                        self?.items[cacheIndex]?.previewDownloadTask?.cancel()
+                        
+                        if let image = image where self?.items[cacheIndex] != nil {
+                            let tex = SKTexture(image: image)
+                            self?.items[cacheIndex]?.image = tex
+                            self?.items[cacheIndex]?.fullDownloadTask = nil
+                            self?.items[cacheIndex]?.callback?(tex, isPreview: false)
+                            self?.items[cacheIndex]?.callback = nil
+                        }
                     }
                 }
             )
             
-            items[cacheIndex]!.downloadTask = downloadTask
+            item.previewDownloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
+                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: 128))!,
+                optionsInfo: nil,
+                progressBlock: nil,
+                completionHandler: { [weak self] (image, error, _, _) in
+                    dispatch_async(queue) {
+                        if self?.items[cacheIndex]?.fullDownloadTask == nil {
+                            return
+                        }
+                        
+                        if let image = image {
+                            let tex = SKTexture(image: image)
+                            self?.items[cacheIndex]?.image = tex
+                            self?.items[cacheIndex]?.previewDownloadTask = nil
+                            self?.items[cacheIndex]?.callback?(tex, isPreview: true)
+                        }
+                    }
+                }
+            )
+            
+            items[cacheIndex] = item
         }
     }
     
@@ -414,7 +460,8 @@ private class CollectionImageCache {
         for index in indices {
             let shiftedIndex = index - count
             if let item = items.filter({ $0?.index == shiftedIndex }).first! {
-                item.downloadTask?.cancel()
+                item.previewDownloadTask?.cancel()
+                item.fullDownloadTask?.cancel()
                 
                 // shift remaining items down
                 let shiftLimit = CollectionImageCache.cacheSize - count - 1 // 1 because one gets deleted anyways
@@ -449,7 +496,7 @@ private class CollectionImageCache {
             }
             
             items[(minIndex + lowerShiftIndexOffset) % CollectionImageCache.cacheSize] = nil
-            update(minIndex + lowerShiftIndexOffset)
+            update(minIndex + lowerShiftIndexOffset, callback: nil)
         }
     }
 }
@@ -551,9 +598,9 @@ private class OverlayView: UIView {
         whiteBackground.backgroundColor = UIColor.whiteColor().alpha(0.95)
         addSubview(whiteBackground)
         
-        avatarImageView.layer.cornerRadius = 21.5
-        avatarImageView.layer.borderColor = UIColor.whiteColor().CGColor
-        avatarImageView.layer.borderWidth = 1.5
+        avatarImageView.layer.cornerRadius = 23.5
+//        avatarImageView.layer.borderColor = UIColor.whiteColor().CGColor
+//        avatarImageView.layer.borderWidth = 1.5
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
@@ -592,13 +639,13 @@ private class OverlayView: UIView {
         viewModel.liked.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
                 if liked {
-                    strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 150, width: 28, height: 28)
+                    strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 152, width: 31, height: 28)
                     strongSelf.likeButtonView.backgroundColor = .Accent
-                    strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(12)
+                    strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(15)
                 } else {
-                    strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 150, width: 20, height: 28)
+                    strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 152, width: 23, height: 28)
                     strongSelf.likeButtonView.backgroundColor = .clearColor()
-                    strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(21)
+                    strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(24)
                 }
                 strongSelf.likeCountView.align(.ToTheLeftCentered, relativeTo: strongSelf.likeButtonView, padding: 8, width: 40, height: 13)
             }
@@ -609,7 +656,7 @@ private class OverlayView: UIView {
         dateView.textAlignment = .Right
         addSubview(dateView)
         
-        textView.font = UIFont.displayOfSize(13, withType: .Light)
+        textView.font = UIFont.displayOfSize(14, withType: .Regular)
         textView.textColor = .whiteColor()
         addSubview(textView)
         
@@ -664,6 +711,8 @@ private class OverlayView: UIView {
     
     @objc
     private func toggleLike() {
+//        KingfisherManager.sharedManager.cache.clearDiskCache()
+//        KingfisherManager.sharedManager.cache.clearMemoryCache()
         viewModel.toggleLike()
     }
     
