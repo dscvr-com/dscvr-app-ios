@@ -30,6 +30,8 @@ struct OptographSchemaType: ModelSchema {
     let isStaffPick = Expression<Bool>("optograph_is_staff_pick")
     let hashtagString = Expression<String>("optograph_hashtag_string")
     let isInFeed = Expression<Bool>("optograph_is_in_feed")
+    let directionPhi = Expression<Double>("optograph_direction_phi")
+    let directionTheta = Expression<Double>("optograph_direction_theta")
 }
 
 let OptographSchema = OptographSchemaType()

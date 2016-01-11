@@ -95,7 +95,6 @@ class PipelineService {
                 StitchingService.removeUnstitchedRecordings()
                 status.value = .Stitching(1)
                 status.value = .StitchingFinished(optograph)
-                PipelineService.check()
             }
     }
     

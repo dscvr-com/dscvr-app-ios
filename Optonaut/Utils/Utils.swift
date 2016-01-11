@@ -109,6 +109,10 @@ func getBearing(a: GLKVector2, b: GLKVector2) -> Float {
     return atan2(y, x);
 }
 
+func getTextureWidth(hfov: Float) -> Float {
+    return Float(UIScreen.mainScreen().bounds.width) * 360 / hfov
+}
+
 //class NotificationSignal {
 //    
 //    let (signal, sink) =  Signal<Void, NoError>.pipe()

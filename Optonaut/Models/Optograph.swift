@@ -41,6 +41,8 @@ struct Optograph: DeletableModel {
     var isStaffPick: Bool
     var hashtagString: String
     var isInFeed: Bool
+    var directionPhi: Double
+    var directionTheta: Double
     
     static func newInstance() -> Optograph {
         return Optograph(
@@ -64,7 +66,9 @@ struct Optograph: DeletableModel {
             rightTextureAssetID: "",
             isStaffPick: false,
             hashtagString: "",
-            isInFeed: false
+            isInFeed: false,
+            directionPhi: 0,
+            directionTheta: 0
         )
     }
     
@@ -74,7 +78,8 @@ struct Optograph: DeletableModel {
             let image = UIImage(data: data)!
             ImageCache.defaultCache.storeImage(image, forKey: ImageURL(leftTextureAssetID))
             // needed for feed
-            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 2048 * UIScreen.mainScreen().scale), forKey: ImageURL(leftTextureAssetID, width: 2048))
+//            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 2048 * UIScreen.mainScreen().scale), forKey: ImageURL(leftTextureAssetID, width: 2048))
+            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 4096), forKey: ImageURL(leftTextureAssetID, width: Int(4096 / UIScreen.mainScreen().scale)))
         case .RightImage(let data):
             ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID))
         case .PreviewImage(let data):
@@ -182,6 +187,13 @@ extension Optograph: Mappable {
         rightTextureAssetID <- map["right_texture_asset_id"]
         isStaffPick         <- map["is_staff_pick"]
         hashtagString       <- map["hashtag_string"]
+        directionPhi        <- map["direction_phi"]
+        directionTheta      <- map["direction_theta"]
+        
+        if person.displayName.isEmpty {
+            
+            print(self)
+        }
     }
     
 }
@@ -218,7 +230,9 @@ extension Optograph: SQLiteModel {
             rightTextureAssetID: row[OptographSchema.rightTextureAssetID],
             isStaffPick: row[OptographSchema.isStaffPick],
             hashtagString: row[OptographSchema.hashtagString],
-            isInFeed: row[OptographSchema.isInFeed]
+            isInFeed: row[OptographSchema.isInFeed],
+            directionPhi: row[OptographSchema.directionPhi],
+            directionTheta: row[OptographSchema.directionTheta]
         )
     }
     
@@ -245,6 +259,8 @@ extension Optograph: SQLiteModel {
             OptographSchema.isStaffPick <-- isStaffPick,
             OptographSchema.hashtagString <-- hashtagString,
             OptographSchema.isInFeed <-- isInFeed,
+            OptographSchema.directionPhi <-- directionPhi,
+            OptographSchema.directionTheta <-- directionTheta,
         ]
     }
     

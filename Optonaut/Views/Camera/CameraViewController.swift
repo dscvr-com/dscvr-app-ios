@@ -41,7 +41,6 @@ class CameraViewController: UIViewController {
     private var edges: [Edge: SCNNode] = [:]
     private let screenScale : Float
     private let lineWidth = Float(3)
-
     
     // subviews
     private let tiltView = TiltView()
@@ -49,8 +48,6 @@ class CameraViewController: UIViewController {
     private let instructionView = UILabel()
     private let circleView = DashedCircleView()
     private let arrowView = UILabel()
-    private let recordButtonView = UIButton()
-    private let closeButtonView = UIButton()
     
     // sphere
     private let cameraNode = SCNNode()
@@ -145,23 +142,17 @@ class CameraViewController: UIViewController {
             .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
         view.addSubview(arrowView)
         
-        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
-        recordButtonView.layer.cornerRadius = 35
-        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
-            .map { _ in true }
-            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
-            .map { _ in false }
-            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-        view.addSubview(recordButtonView)
+        tabController!.cameraButton
         
-        closeButtonView.rac_hidden <~ viewModel.isRecording
-        closeButtonView.setTitle("Cancel", forState: .Normal)
-        closeButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-        closeButtonView.titleLabel?.font = UIFont.robotoOfSize(16, withType: .Regular)
-        closeButtonView.alpha = 0.8
-        closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
-        view.addSubview(closeButtonView)
+//        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
+//        recordButtonView.layer.cornerRadius = 35
+//        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
+//            .map { _ in true }
+//            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+//        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
+//            .map { _ in false }
+//            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+//        view.addSubview(recordButtonView)
         
 //        if Defaults[.SessionDebuggingEnabled] {
         #if DEBUG
@@ -248,6 +239,13 @@ class CameraViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        tabController!.cameraButton.backgroundColor = .whiteColor()
+        tabController!.cameraButton.setTitleColor(.blackColor(), forState: .Normal)
+        
+        updateTabs()
+        
+        tabController!.delegate = self
+        
         Mixpanel.sharedInstance().timeEvent("View.Camera")
         
         viewModel.isRecording.producer.filter(identity).take(1).startWithNext { _ in
@@ -261,8 +259,6 @@ class CameraViewController: UIViewController {
         frameCount = 0
         
         UIApplication.sharedApplication().idleTimerDisabled = true
-        
-        tabController!.hideUI()
         
         motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
     }
@@ -303,14 +299,14 @@ class CameraViewController: UIViewController {
         circleView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         circleView.autoSetDimensionsToSize(CGSize(width: 70, height: 70))
         
-        recordButtonView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view, withOffset: -35)
-        recordButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        recordButtonView.autoSetDimensionsToSize(CGSize(width: 70, height: 70))
-        
-        closeButtonView.autoAlignAxis(.Vertical, toSameAxisOfView: view, withMultiplier: 0.43)
-        closeButtonView.autoAlignAxis(.Horizontal, toSameAxisOfView: recordButtonView)
-        
         super.updateViewConstraints()
+    }
+    
+    override func updateTabs() {
+        tabController!.leftButton.title = "CANCEL"
+        tabController!.leftButton.icon = .Cross
+        
+        tabController!.rightButton.hidden = true
     }
     
     private func setupScene() {
@@ -627,7 +623,29 @@ class CameraViewController: UIViewController {
         navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self
     }
     
-    func cancel() {
+}
+
+extension CameraViewController: TabControllerDelegate {
+    
+    func onTouchStartCameraButton() {
+        viewModel.isRecording.value = true
+        tabController!.cameraButton.backgroundColor = .Accent
+        tabController!.cameraButton.setTitleColor(.whiteColor(), forState: .Normal)
+    }
+    
+    func onTouchEndCameraButton() {
+        viewModel.isRecording.value = false
+        tabController!.cameraButton.backgroundColor = .whiteColor()
+        tabController!.cameraButton.setTitleColor(.blackColor(), forState: .Normal)
+    }
+    
+    func onTapCameraButton() {
+        let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
+        confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+        presentViewController(confirmAlert, animated: true, completion: nil)
+    }
+    
+    func onTapLeftButton() {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
         
         stopSession()
@@ -637,6 +655,7 @@ class CameraViewController: UIViewController {
         
         navigationController?.popViewControllerAnimated(false)
     }
+    
 }
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
@@ -735,8 +754,6 @@ private class CameraProgressView: UIView {
     }
     
     private let firstBackgroundLine = CALayer()
-    private let secondBackgroundLine = CALayer()
-    private let middlePoint = CALayer()
     private let endPoint = CALayer()
     private let foregroundLine = CALayer()
     private let trackingPoint = CALayer()
@@ -747,13 +764,6 @@ private class CameraProgressView: UIView {
         firstBackgroundLine.backgroundColor = UIColor.whiteColor().CGColor
         layer.addSublayer(firstBackgroundLine)
         
-        secondBackgroundLine.backgroundColor = UIColor.whiteColor().CGColor
-        layer.addSublayer(secondBackgroundLine)
-        
-        middlePoint.borderColor = UIColor.whiteColor().CGColor
-        middlePoint.borderWidth = 1
-        middlePoint.cornerRadius = 3.5
-        layer.addSublayer(middlePoint)
         endPoint.backgroundColor = UIColor.whiteColor().CGColor
         endPoint.cornerRadius = 3.5
         layer.addSublayer(endPoint)
@@ -776,15 +786,11 @@ private class CameraProgressView: UIView {
     private override func layoutSubviews() {
         super.layoutSubviews()
         
-        middlePoint.hidden = progress > 0.5
-        
         let width = bounds.width - 12
         let originX = bounds.origin.x + 6
         let originY = bounds.origin.y + 6
         
-        firstBackgroundLine.frame = CGRect(x: originX, y: originY - 0.6, width: width * 0.5 - 3.5, height: 1.2)
-        secondBackgroundLine.frame = CGRect(x: originX + width * 0.5 + 3.5, y: originY - 0.6, width: width * 0.5 - 3.5, height: 1.2)
-        middlePoint.frame = CGRect(x: originX + width * 0.5 - 3.5, y: originY - 3.5, width: 7, height: 7)
+        firstBackgroundLine.frame = CGRect(x: originX, y: originY - 0.6, width: width, height: 1.2)
         endPoint.frame = CGRect(x: width + 3.5, y: originY - 3.5, width: 7, height: 7)
         foregroundLine.frame = CGRect(x: originX, y: originY - 1, width: width * CGFloat(progress), height: 2)
         trackingPoint.frame = CGRect(x: originX + width * CGFloat(progress) - 6, y: originY - 6, width: 12, height: 12)

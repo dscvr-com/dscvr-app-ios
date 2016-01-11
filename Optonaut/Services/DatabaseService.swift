@@ -127,7 +127,7 @@ class DatabaseService {
                 }
                 sink.sendNext(row)
             case .Many:
-                for row in DatabaseService.defaultConnection.prepare(query) {
+                for row in try! DatabaseService.defaultConnection.prepare(query) {
                     sink.sendNext(row)
                 }
             }

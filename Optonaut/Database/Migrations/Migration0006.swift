@@ -10,4 +10,6 @@ import SQLite
 
 func migration0006(db: Connection) throws {
     try db.run(OptographTable.addColumn(OptographSchema.isInFeed, defaultValue: false))
+    try db.run(OptographTable.addColumn(OptographSchema.directionPhi, defaultValue: 0))
+    try db.run(OptographTable.addColumn(OptographSchema.directionTheta, defaultValue: 0))
 }

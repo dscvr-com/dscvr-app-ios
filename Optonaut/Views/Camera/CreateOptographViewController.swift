@@ -14,7 +14,7 @@ import ActiveLabel
 import Async
 import AVFoundation
 
-class CreateOptographViewController: UIViewController {
+class CreateOptographViewController: UIViewController, RedNavbar {
     
     private let viewModel = CreateOptographViewModel()
     
@@ -337,6 +337,8 @@ class CreateOptographViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        updateNavbarAppear()
         
         Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
         

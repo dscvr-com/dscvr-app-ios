@@ -127,8 +127,6 @@ class NewCombinedMotionManager: RotationMatrixSource {
             thetaDiff = 0
         }
         
-        
-        
         theta = max(minTheta, min(theta, maxTheta))
         
         lastCoreMotionRotationMatrix = coreMotionRotationMatrix
@@ -143,8 +141,6 @@ class CollectionViewCell: UICollectionViewCell {
     weak var uiHidden: MutableProperty<Bool>!
     
     private var combinedMotionManager: NewCombinedMotionManager!
-    
-    private let vfov: Float = 45
     
     // subviews
     private let topElements = UIView()
@@ -169,9 +165,9 @@ class CollectionViewCell: UICollectionViewCell {
         
         scnView = SCNView(frame: contentView.frame)
     
-        combinedMotionManager = NewCombinedMotionManager(coreMotionRotationSource: CoreMotionRotationSource.Instance, sceneSize: CGSize(width: scnView.frame.width, height: scnView.frame.height), vfov: vfov)
+        combinedMotionManager = NewCombinedMotionManager(coreMotionRotationSource: CoreMotionRotationSource.Instance, sceneSize: CGSize(width: scnView.frame.width, height: scnView.frame.height), vfov: HorizontalFieldOfView)
     
-        renderDelegate = StereoRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(vfov))
+        renderDelegate = StereoRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView))
         
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
@@ -212,7 +208,7 @@ class CollectionViewCell: UICollectionViewCell {
         
         if !uiHidden.value {
             if abs(point.x - touchStart!.x) > 20 {
-                toggleUI()
+                uiHidden.value = true
                 combinedMotionManager.touchStart(point)
                 return
             }
@@ -226,7 +222,7 @@ class CollectionViewCell: UICollectionViewCell {
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let distance = touchStart!.distanceTo(touches.first!.locationInView(self))
         if distance < 10 {
-            toggleUI()
+            uiHidden.value = !uiHidden.value
         }
         super.touchesEnded(touches, withEvent: event)
         if touches.count == 1 {
@@ -264,10 +260,6 @@ class CollectionViewCell: UICollectionViewCell {
     func didEndDisplay() {
         renderDelegate.image = nil
         scnView.playing = false
-    }
-    
-    private func toggleUI() {
-        uiHidden.value = !uiHidden.value
     }
     
 }

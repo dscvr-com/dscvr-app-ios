@@ -152,14 +152,14 @@ class FeedViewModel: NSObject {
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
         
-//        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
+        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
         
         PipelineService.status.producer.startWithNext { [weak self] _ in
             self?.refreshNotification.notify(())
         }
         
         SessionService.onLogout { [weak self] in
-//            self?.refreshTimer.invalidate()
+            self?.refreshTimer.invalidate()
             self?.refreshNotification.dispose()
             self?.loadMoreNotification.dispose()
         }

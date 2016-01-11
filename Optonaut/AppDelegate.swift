@@ -14,6 +14,7 @@ import PureLayout
 import Mixpanel
 import Neon
 import FBSDKCoreKit
+import Kingfisher
 
 //let Env = EnvType.Development
 //let Env = EnvType.Staging
@@ -132,6 +133,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 //        SDImageCache.sharedImageCache().shouldDecompressImages = false
 //        SDImageCache.sharedImageCache().shouldCacheImagesInMemory = false
+        
+        KingfisherManager.sharedManager.cache.maxDiskCacheSize = 200000000 // 200mb
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         

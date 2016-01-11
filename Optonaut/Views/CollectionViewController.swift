@@ -113,6 +113,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                             strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0, inSection: 0) })
                         }, completion: { _ in
                             if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
+                                // preserves scroll position
                                 if let visibleOptograph = visibleOptograph, visibleRow = strongSelf.optographs.indexOf({ $0.ID == visibleOptograph.ID }) {
                                     strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
                                 }
@@ -175,6 +176,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         updateNavbarAppear()
         
+        updateTabs()
+        
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.iconOfSize(26),
             NSForegroundColorAttributeName: UIColor.whiteColor(),
@@ -233,6 +236,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         }
         
         cell.willDisplay()
+        
+        print("will disp \(indexPath.row)")
         
         let imageCallback = { [weak self] (image: SKTexture, isPreview: Bool) in
             if self?.collectionView?.indexPathsForVisibleItems().contains(indexPath) == true {
@@ -323,7 +328,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
 }
 
 // MARK: - UITabBarControllerDelegate
-extension CollectionViewController: TabControllerDelegate {
+extension CollectionViewController: DefaultTabControllerDelegate {
     
     func jumpToTop() {
         viewModel.refreshNotification.notify(())
@@ -412,11 +417,13 @@ private class CollectionImageCache {
             var item: Item = (index: index, image: nil, callback: nil, previewDownloadTask: nil, fullDownloadTask: nil)
             
             item.fullDownloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
-                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: 2048))!,
+                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(4096 / UIScreen.mainScreen().scale)))!,
+//                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(getTextureWidth(HorizontalFieldOfView) / Float(UIScreen.mainScreen().scale))))!,
                 optionsInfo: nil,
 //                optionsInfo: [.Options(.LowPriority)],
                 progressBlock: nil,
                 completionHandler: { [weak self] (image, error, _, _) in
+                    print(error)
                     dispatch_async(queue) {
                         self?.items[cacheIndex]?.previewDownloadTask?.cancel()
                         

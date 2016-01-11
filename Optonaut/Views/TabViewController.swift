@@ -9,6 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import Async
+import Icomoon
 
 class TabViewController: UIViewController {
     
@@ -22,16 +23,18 @@ class TabViewController: UIViewController {
     private let borderLineLayer = CALayer()
     
     private let uiWrapper = PassThroughView()
-    private let recordButton = RecordButton()
-    private let leftButton = TabButton()
-    private let rightButton = TabButton()
+    
+    let cameraButton = RecordButton()
+    let leftButton = TabButton()
+    let rightButton = TabButton()
+    
     private let bottomGradient = CAGradientLayer()
     
     private let bottomGradientOffset = MutableProperty<CGFloat>(0)
     
-    private let leftViewController: CollectionNavViewController
-    private let rightViewController: ProfileNavViewController
-    private var activeViewController: NavigationController
+    let leftViewController: CollectionNavViewController
+    let rightViewController: ProfileNavViewController
+    var activeViewController: NavigationController
     
     private var uiHidden = false
     
@@ -81,32 +84,34 @@ class TabViewController: UIViewController {
 //        borderLineLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 1)
 //        uiWrapper.layer.addSublayer(borderLineLayer)
         
-        recordButton.frame = CGRect(x: view.frame.width / 2 - 35, y: 126 / 2 - 35, width: 70, height: 70)
-        recordButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushCamera"))
-        uiWrapper.addSubview(recordButton)
+        cameraButton.frame = CGRect(x: view.frame.width / 2 - 35, y: 126 / 2 - 35, width: 70, height: 70)
+        cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapCameraButton"))
+        cameraButton.addTarget(self, action: "touchStartCameraButton", forControlEvents: [.TouchDown])
+        cameraButton.addTarget(self, action: "touchEndCameraButton", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        uiWrapper.addSubview(cameraButton)
         
-        #if DEBUG
-            let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: "_debug_showCameraAlert")
-            longPressGestureRecognizer.minimumPressDuration = 1
-            recordButton.addGestureRecognizer(longPressGestureRecognizer)
-        #endif
+//        #if DEBUG
+//            let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: "_debug_showCameraAlert")
+//            longPressGestureRecognizer.minimumPressDuration = 1
+//            cameraButton.addGestureRecognizer(longPressGestureRecognizer)
+//        #endif
         
-        PipelineService.status.producer.startWithNext { [weak self] status in
-            switch status {
-            case .Idle: self?.recordButton.progress = 0
-            case let .Stitching(progress): self?.recordButton.progress = CGFloat(progress)
-            default: ()
+        PipelineService.status.producer
+            .observeOnMain()
+            .startWithNext { [weak self] status in
+                switch status {
+                case .Idle: self?.cameraButton.progress = 0
+                case let .Stitching(progress): self?.cameraButton.progress = CGFloat(progress)
+                default: ()
+                }
             }
-        }
 
         leftButton.isActive = true
-        leftButton.type = .Home
         leftButton.frame = CGRect(x: view.frame.width * 1.01 / 4 - 34, y: 126 / 2 - 23.5, width: 34, height: 34)
         leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftButton"))
         uiWrapper.addSubview(leftButton)
 
         rightButton.isActive = false
-        rightButton.type = .Profile
         rightButton.frame = CGRect(x: view.frame.width * 2.99 / 4, y: 126 / 2 - 23.5, width: 34, height: 34)
         rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapRightButton"))
         uiWrapper.addSubview(rightButton)
@@ -133,38 +138,29 @@ class TabViewController: UIViewController {
         uiWrapper.hidden = true
     }
     
-    func tapLeftButton() {
-        if activeViewController == leftViewController {
-            if activeViewController.popToRootViewControllerAnimated(true) == nil {
-                delegate?.jumpToTop()
-            }
-        } else {
-            updateActiveTab(.Left)
-        }
+    @objc
+    private func tapLeftButton() {
+        delegate?.onTapLeftButton()
     }
     
-    func tapRightButton() {
-        if activeViewController == rightViewController {
-            if activeViewController.popToRootViewControllerAnimated(true) == nil {
-                delegate?.jumpToTop()
-            }
-        } else {
-            updateActiveTab(.Right)
-        }
+    @objc
+    private func tapRightButton() {
+        delegate?.onTapRightButton()
     }
     
-    func pushCamera() {
-        switch PipelineService.status.value {
-        case .Idle:
-            activeViewController.pushViewController(CameraViewController(), animated: false)
-        case .Stitching(_):
-            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            activeViewController.presentViewController(alert, animated: true, completion: nil)
-        case let .StitchingFinished(optograph):
-            delegate?.scrollToOptograph(optograph)
-            PipelineService.status.value = .Idle
-        }
+    @objc
+    private func tapCameraButton() {
+        delegate?.onTapCameraButton()
+    }
+    
+    @objc
+    private func touchStartCameraButton() {
+        delegate?.onTouchStartCameraButton()
+    }
+    
+    @objc
+    private func touchEndCameraButton() {
+        delegate?.onTouchEndCameraButton()
     }
     
     private func updateActiveTab(side: ActiveSide) {
@@ -208,11 +204,11 @@ class TabViewController: UIViewController {
 
 }
 
-private class RecordButton: UIButton {
-    
-    private let progressLayer = CALayer()
+class RecordButton: UIButton {
     
     private var touched = false
+    
+    private let progressLayer = CALayer()
     
     var progress: CGFloat = 0 {
         didSet {
@@ -245,16 +241,12 @@ private class RecordButton: UIButton {
         addTarget(self, action: "buttonTouched", forControlEvents: .TouchDown)
         addTarget(self, action: "buttonUntouched", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
-    
-    convenience init () {
-        self.init(frame: CGRectZero)
-    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private override func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         
         progressLayer.frame = CGRect(x: 0, y: 0, width: frame.width * progress, height: frame.height)
@@ -279,22 +271,19 @@ private class RecordButton: UIButton {
         touched = false
         updateBackground()
     }
-    
 }
 
-private class TabButton: UIButton {
+class TabButton: UIButton {
     
-    enum Type { case Home, Profile }
-    var type: Type = .Home {
+    var title: String = "" {
         didSet {
-            switch type {
-            case .Home:
-                text.text = "HOME"
-                setTitle(String.iconWithName(.Explore), forState: .Normal)
-            case .Profile:
-                text.text = "PROFILE"
-                setTitle(String.iconWithName(.Account_Circle), forState: .Normal)
-            }
+            text.text = title
+        }
+    }
+    
+    var icon: Icon = .Explore {
+        didSet {
+            setTitle(String.iconWithName(icon), forState: .Normal)
         }
     }
     
@@ -332,7 +321,7 @@ private class TabButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private override func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         
         let textWidth: CGFloat = 50
@@ -345,17 +334,83 @@ private class TabButton: UIButton {
 }
 
 protocol TabControllerDelegate {
+    var tabController: TabViewController? { get }
     func jumpToTop()
     func scrollToOptograph(optograph: Optograph)
+    func onTouchStartCameraButton()
+    func onTouchEndCameraButton()
+    func onTapCameraButton()
+    func onTapLeftButton()
+    func onTapRightButton()
 }
 
 extension TabControllerDelegate {
     func scrollToOptograph(optograph: Optograph) {}
+    func jumpToTop() {}
+    func onTouchStartCameraButton() {}
+    func onTouchEndCameraButton() {}
+    func onTapCameraButton() {}
+    func onTapLeftButton() {}
+    func onTapRightButton() {}
+}
+
+protocol DefaultTabControllerDelegate: TabControllerDelegate {}
+
+extension DefaultTabControllerDelegate {
+    
+    func onTapCameraButton() {
+        switch PipelineService.status.value {
+        case .Idle:
+            tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
+        case .Stitching(_):
+            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
+        case let .StitchingFinished(optograph):
+            scrollToOptograph(optograph)
+            PipelineService.status.value = .Idle
+        }
+    }
+    
+    func onTapLeftButton() {
+        if tabController?.activeViewController == tabController?.leftViewController {
+            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
+                jumpToTop()
+            }
+        } else {
+            tabController?.updateActiveTab(.Left)
+        }
+    }
+    
+    func onTapRightButton() {
+        if tabController?.activeViewController == tabController?.rightViewController {
+            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
+                jumpToTop()
+            }
+        } else {
+            tabController?.updateActiveTab(.Right)
+        }
+    }
+    
 }
 
 extension UIViewController {
     var tabController: TabViewController? {
         return navigationController?.parentViewController as? TabViewController
+    }
+    
+    func updateTabs() {
+        tabController!.leftButton.title = "HOME"
+        tabController!.leftButton.icon = .Explore
+        tabController!.leftButton.hidden = false
+        
+        tabController!.rightButton.title = "PROFILE"
+        tabController!.rightButton.icon = .Account_Circle
+        tabController!.rightButton.hidden = false
+        
+        tabController!.cameraButton.setTitle(String.iconWithName(.Camera_Alt), forState: .Normal)
+        tabController!.cameraButton.setTitleColor(.whiteColor(), forState: .Normal)
+        tabController!.cameraButton.backgroundColor = .Accent
     }
 }
 

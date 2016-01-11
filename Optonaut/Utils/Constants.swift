@@ -12,6 +12,8 @@ import Device
 
 let OnboardingVersion: Int = 1
 
+let HorizontalFieldOfView: Float = 45
+
 enum EnvType {
     case Development
     case Staging

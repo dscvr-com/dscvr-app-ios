@@ -71,7 +71,7 @@ class DetailsViewModel {
             .join(PersonTable, on: CommentTable[CommentSchema.personID] == PersonTable[PersonSchema.ID])
             .filter(CommentTable[CommentSchema.optographID] == optographID)
         
-        DatabaseService.defaultConnection.prepare(commentQuery)
+        try! DatabaseService.defaultConnection.prepare(commentQuery)
             .map { row -> Comment in
                 let person = Person.fromSQL(row)
                 var comment = Comment.fromSQL(row)
