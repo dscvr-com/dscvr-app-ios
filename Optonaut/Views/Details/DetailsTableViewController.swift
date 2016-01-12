@@ -120,7 +120,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
             .startWithNext { [weak self] active in
                 if let strongSelf = self  {
                     if !active {
-                        strongSelf.renderDelegate.image = nil
+//                        strongSelf.renderDelegate.image = nil
                     }
                 }
             }

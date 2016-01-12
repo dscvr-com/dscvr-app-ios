@@ -11,95 +11,17 @@ import SceneKit
 import CardboardParams
 import SpriteKit
 
+private let d: CGFloat = 10
+
 class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
-    
+
     let scene = SCNScene()
-    var image: UIImage? {
-        didSet {
-            guard let image = image else {
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
-                return
-            }
-            
-            if image.size.width == image.size.height {
-                // Classic case - quadratic texture
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
-            } else {
-                // Extended case - rectangular texture, need to center
-                let ratio = Float((image.size.width / CGFloat(2)) / image.size.height)
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
-                
-                // Yes, we calculate our transform ourselves.
-                // And yes, this matrix is inverted.
-                // Texture mapping from 0 to 1
-                let transform = SCNMatrix4FromGLKMatrix4(
-                    GLKMatrix4Make(
-                        1, 0, 0, 0,
-                        0, ratio, 0, 0,
-                        0, 0, 1, 0,
-                        0, (1 - ratio) / 2, 0, 1
-                    )
-                )
-                
-                sphereNode.geometry?.firstMaterial?.diffuse.contentsTransform = transform
-                if #available(iOS 9.0, *) {
-                    sphereNode.geometry?.firstMaterial?.diffuse.wrapS = .ClampToBorder
-                    sphereNode.geometry?.firstMaterial?.diffuse.wrapT = .ClampToBorder
-                } else {
-                    
-                }
-                sphereNode.geometry?.firstMaterial?.diffuse.borderColor =  UIColor.blackColor()
-
-            }
-        }
-    }
-    var texture: SKTexture? {
-        didSet {
-            guard let image = texture else {
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
-                return
-            }
-            
-            if image.size().width == image.size().height {
-                // Classic case - quadratic texture
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
-            } else {
-                // Extended case - rectangular texture, need to center
-                let ratio = Float((image.size().width / CGFloat(2)) / image.size().height)
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
-                
-                // Yes, we calculate our transform ourselves.
-                // And yes, this matrix is inverted.
-                // Texture mapping from 0 to 1
-                let transform = SCNMatrix4FromGLKMatrix4(
-                    GLKMatrix4Make(
-                        1, 0, 0, 0,
-                        0, -ratio, 0, 0,
-                        0, 0, 1, 0,
-                        0, 1 - (1 - ratio) / 2, 0, 1
-                    )
-                )
-                
-                sphereNode.geometry?.firstMaterial?.diffuse.contentsTransform = transform
-                if #available(iOS 9.0, *) {
-                    sphereNode.geometry?.firstMaterial?.diffuse.wrapS = .ClampToBorder
-                    sphereNode.geometry?.firstMaterial?.diffuse.wrapT = .ClampToBorder
-                } else {
-                    
-                }
-                sphereNode.geometry?.firstMaterial?.diffuse.borderColor =  UIColor.blackColor()
-
-            }
-        }
-    }
-
-    private var cameraNode: SCNNode!
-    let sphereNode: SCNNode
+    private var cameraNode: SCNNode
     private let rotationMatrixSource: RotationMatrixSource
-    private var _fov: FieldOfView!
+    private var _fov: FieldOfView
     private let cameraOffset: Float
+    
+    var planes: [CubeImageCache.Index: SCNNode] = [:]
     
     var fov: FieldOfView {
         get {
@@ -125,18 +47,31 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         
         cameraNode.pivot = SCNMatrix4MakeTranslation(0, cameraOffset, 0)
         
-        sphereNode = StereoRenderDelegate.createSphere()
-        scene.rootNode.addChildNode(sphereNode)
+//        sphereNode = StereoRenderDelegate.createSphere()
+        let transforms: [(position: SCNVector3, rotation: SCNVector3)] = [
+            (SCNVector3Make(0, 0, Float(d)), SCNVector3Make(0, 0, 0)),
+            (SCNVector3Make(Float(d), 0, 0), SCNVector3Make(0, Float(M_PI_2), 0)),
+            (SCNVector3Make(0, 0, Float(-d)), SCNVector3Make(0, Float(M_PI), 0)),
+            (SCNVector3Make(Float(-d), 0, 0), SCNVector3Make(0, Float(-M_PI_2), 0)),
+            (SCNVector3Make(0, Float(d), 0), SCNVector3Make(Float(-M_PI_2), Float(-M_PI_2), 0)),
+            (SCNVector3Make(0, Float(-d), 0), SCNVector3Make(Float(M_PI_2), Float(-M_PI_2), 0)),
+        ]
+        for face in 0..<6 {
+            let node = StereoRenderDelegate.createPlane(position: transforms[face].position, rotation: transforms[face].rotation)
+            planes[CubeImageCache.Index(face: face, x: 0, y: 0, d: 1)] = node
+            scene.rootNode.addChildNode(node)
+        }
         
         super.init()
+    }
+    
+    func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
+        planes[index]!.geometry!.firstMaterial!.diffuse.contents = texture
     }
     
     private static func setupCamera(fov: FieldOfView) -> SCNCamera {
         let zNear = Float(0.01)
         let zFar = Float(10000)
-        
-//        print("Fov:")
-//        print(fov)
         
         let fovLeft = tan(toRadians(fov.left)) * zNear
         let fovRight = tan(toRadians(fov.right)) * zNear
@@ -168,16 +103,17 @@ class StereoRenderDelegate: NSObject, SCNSceneRendererDelegate {
         cameraNode.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
     }
     
-    private static func createSphere() -> SCNNode {
-        // rotate sphere to correctly display texture
-        let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
-        let geometry = SCNSphere(radius: 5.0)
-        geometry.segmentCount = 128
-        geometry.firstMaterial?.doubleSided = true
-        geometry.firstMaterial?.diffuse.contents = UIColor.clearColor()
+    private static func createPlane(position position: SCNVector3, rotation: SCNVector3) -> SCNNode {
+        let geometry = SCNPlane(width: 2 * d, height: 2 * d)
+        geometry.firstMaterial!.doubleSided = true
         
         let node = SCNNode(geometry: geometry)
-        node.transform = transform
+        
+        node.position = position
+        node.eulerAngles = rotation
+        
+        let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
+        node.transform = SCNMatrix4Mult(node.transform, transform)
         
         return node
     }

@@ -242,14 +242,17 @@ class CollectionViewCell: UICollectionViewCell {
         loadingStatus.value = .Nothing
     }
     
-    func setImage(texture: SKTexture, isPreview: Bool) {
-        if renderDelegate.texture != texture {
-            renderDelegate.image = nil
-            renderDelegate.texture = texture
-            scnView.prepareObject(renderDelegate!.sphereNode, shouldAbortBlock: nil)
-        }
+    func setImage(texture: SKTexture, forIndex index: CubeImageCache.Index) {
+//        if renderDelegate.texture != texture {
+//            renderDelegate.image = nil
+//            renderDelegate.texture = texture
+//            scnView.prepareObject(renderDelegate!.sphereNode, shouldAbortBlock: nil)
+//        }
+        renderDelegate.setTexture(texture, forIndex: index)
+        scnView.prepareObject(renderDelegate!.planes[index]!, shouldAbortBlock: nil)
         Async.main { [weak self] in
-            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
+//            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
+            self?.loadingStatus.value = .Loaded
         }
     }
     
@@ -258,7 +261,7 @@ class CollectionViewCell: UICollectionViewCell {
     }
     
     func didEndDisplay() {
-        renderDelegate.image = nil
+//        renderDelegate.image = nil
         scnView.playing = false
     }
     

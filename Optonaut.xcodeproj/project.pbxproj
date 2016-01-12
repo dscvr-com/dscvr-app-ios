@@ -21,6 +21,7 @@
 		8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */; };
 		8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */; };
 		8F1E71801BCC188B00F3D6FB /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */; };
+		8F21F48F1C4405300075C8EC /* CollectionImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */; };
 		8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* FoundationExtension.swift */; };
 		8F23AA4C1BFF31B4008926A8 /* ActivityResourceCommentTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA421BFF31B4008926A8 /* ActivityResourceCommentTable.swift */; };
 		8F23AA4D1BFF31B4008926A8 /* ActivityResourceFollowTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA431BFF31B4008926A8 /* ActivityResourceFollowTable.swift */; };
@@ -270,6 +271,7 @@
 		8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
 		8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RACExtensions.swift; sourceTree = "<group>"; };
 		8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionImageCache.swift; sourceTree = "<group>"; };
 		8F2214C21B976E6100E693CE /* FoundationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtension.swift; sourceTree = "<group>"; };
 		8F23AA421BFF31B4008926A8 /* ActivityResourceCommentTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceCommentTable.swift; sourceTree = "<group>"; };
 		8F23AA431BFF31B4008926A8 /* ActivityResourceFollowTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceFollowTable.swift; sourceTree = "<group>"; };
@@ -806,6 +808,7 @@
 			isa = PBXGroup;
 			children = (
 				8FFB56191C2C2BA800D2BE62 /* CollectionViewController.swift */,
+				8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */,
 				8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */,
 				8F276F281C36DC4E003C348C /* CollectionNavViewController.swift */,
 				8FFB561B1C2C371900D2BE62 /* CollectionViewCell.swift */,
@@ -1594,6 +1597,7 @@
 				8F23AA571BFF31EC008926A8 /* Migration0001.swift in Sources */,
 				8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */,
 				8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */,
+				8F21F48F1C4405300075C8EC /* CollectionImageCache.swift in Sources */,
 				A5FD5D841BEA5A4E0031ED1E /* support.cpp in Sources */,
 				8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */,
 				8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */,

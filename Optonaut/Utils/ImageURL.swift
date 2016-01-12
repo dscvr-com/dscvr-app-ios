@@ -10,6 +10,23 @@ import Foundation
 //import CommonCrypto
 
 func ImageURL(uuid: String, width: Int = 0, height: Int = 0) -> String {
+    return buildURL(uuid, width: width, height: height, filter: nil)
+}
+
+enum ImageURLDimension { case Width, Height }
+
+func ImageURL(uuid: String, fullDimension: ImageURLDimension) -> String {
+    switch fullDimension {
+    case .Width: return ImageURL(uuid, width: Int(UIScreen.mainScreen().bounds.width), height: 0)
+    case .Height: return ImageURL(uuid, width: 0, height: Int(UIScreen.mainScreen().bounds.height))
+    }
+}
+
+func ImageURL(uuid: String, size: Int, face: Int, x: Float, y: Float, d: Float) -> String {
+    return buildURL(uuid, width: 0, height: 0, filter: "cube(\(face),\(x),\(y),\(d),\(size))")
+}
+
+private func buildURL(uuid: String, width: Int, height: Int, filter: String?) -> String {
     let s3Host: String
     
     switch Env {
@@ -21,19 +38,11 @@ func ImageURL(uuid: String, width: Int = 0, height: Int = 0) -> String {
     let scale = Int(UIScreen.mainScreen().scale)
     let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
     
-    let urlPartToSign = "\(width * scale)x\(height * scale)/\(s3Host)/original/\(uuid).jpg"
+    let filterStr = filter != nil ? "filters:\(filter!)/" : ""
+    let urlPartToSign = "\(width * scale)x\(height * scale)/\(filterStr)\(s3Host)/original/\(uuid).jpg"
     let hmacUrlPart = urlPartToSign.hmac(securityKey)
     
     return "http://images.optonaut.co/\(hmacUrlPart)/\(urlPartToSign)"
-}
-
-enum ImageURLDimension { case Width, Height }
-
-func ImageURL(uuid: String, fullDimension: ImageURLDimension) -> String {
-    switch fullDimension {
-    case .Width: return ImageURL(uuid, width: Int(UIScreen.mainScreen().bounds.width), height: 0)
-    case .Height: return ImageURL(uuid, width: 0, height: Int(UIScreen.mainScreen().bounds.height))
-    }
 }
 
 private extension String {

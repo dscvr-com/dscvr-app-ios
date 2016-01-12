@@ -8,9 +8,9 @@
 
 import UIKit
 import ReactiveCocoa
-import Kingfisher
 import SpriteKit
 import Async
+import Kingfisher
 
 private let reuseIdentifier = "Cell"
 
@@ -20,9 +20,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     private let viewModel = FeedViewModel()
     internal var optographs = [Optograph]()
-    private var imageCache: CollectionImageCache!
-    private let cacheDebouncerGet: Debouncer
-    private let cacheDebouncerTouch: Debouncer
+    private var imageCache = CollectionImageCache()
     private let overlayDebouncer: Debouncer
     
     private let refreshControl = UIRefreshControl()
@@ -34,15 +32,9 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     
     required override init(collectionViewLayout: UICollectionViewLayout) {
-        cacheDebouncerGet = Debouncer(queue: queue, delay: 0.1)
-        cacheDebouncerTouch = Debouncer(queue: queue, delay: 0.1)
         overlayDebouncer = Debouncer(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), delay: 0.01)
         
         super.init(collectionViewLayout: collectionViewLayout)
-        
-        imageCache = CollectionImageCache(optographsGetter: {
-            return self.optographs
-        })
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -91,6 +83,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         edgesForExtendedLayout = .None
 
+        
+        KingfisherManager.sharedManager.downloader.downloadTimeout = 60
         
         CoreMotionRotationSource.Instance.start()
         
@@ -239,17 +233,23 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         print("will disp \(indexPath.row)")
         
-        let imageCallback = { [weak self] (image: SKTexture, isPreview: Bool) in
+        let imageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) in
             if self?.collectionView?.indexPathsForVisibleItems().contains(indexPath) == true {
-                cell.setImage(image, isPreview: isPreview)
+                cell.setImage(image, forIndex: index)
             }
         }
         
         dispatch_async(queue) { [weak self] in
-            if self?.imageCache.get(indexPath.row, force: false, callback: imageCallback) == false {
-                self?.cacheDebouncerGet.debounce { [weak self] in
-                    self?.imageCache.get(indexPath.row, force: true, callback: imageCallback)
-                }
+            if let assetID = self?.optographs[indexPath.row].leftTextureAssetID {
+                let defaultIndices = [
+                    CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 1, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 2, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 3, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
+                ]
+                self?.imageCache.get(indexPath.row, assetID: assetID, cubeIndices: defaultIndices, callback: imageCallback)
             }
         }
         
@@ -257,9 +257,9 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             overlayView.optograph = optographs[indexPath.row]
         }
         
-        cacheDebouncerTouch.debounce { [weak self] in
-            self?.imageCache.touch(indexPath.row)
-        }
+//        cacheDebouncerTouch.debounce { [weak self] in
+//            self?.imageCache.touch(indexPath.row)
+//        }
         
         if indexPath.row > optographs.count - 3 {
             viewModel.loadMoreNotification.notify(())
@@ -340,172 +340,6 @@ extension CollectionViewController: DefaultTabControllerDelegate {
         collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
     }
     
-}
-
-private class CollectionImageCache {
-    
-    private enum Downloaded { case None, Preview, Full }
-    
-    typealias Callback = (SKTexture, isPreview: Bool) -> Void
-//    typealias Item = (index: Int, image: SKTexture?, callback: Callback?, downloadTask: RetrieveImageDownloadTask?)
-    typealias Item = (index: Int, image: SKTexture?, callback: Callback?, previewDownloadTask: RetrieveImageTask?, fullDownloadTask: RetrieveImageTask?)
-    
-    private var items: [Item?]
-    private var optographs: [Optograph] {
-        return optographsGetter()
-    }
-    private let optographsGetter: () -> [Optograph]
-    
-    private static let cacheSize = 5
-    
-//    private let imageManager = KingfisherManager()
-    
-    private var activeIndex = 0
-    
-    init(optographsGetter: () -> [Optograph]) {
-        items = [Item?](count: CollectionImageCache.cacheSize, repeatedValue: nil)
-        self.optographsGetter = optographsGetter
-        
-        KingfisherManager.sharedManager.downloader.downloadTimeout = 60
-        
-//        imageManager.cache.maxMemoryCost = UInt(NSProcessInfo.processInfo().physicalMemory) / 4
-    }
-    
-    func get(index: Int, force: Bool, callback: Callback) -> Bool {
-        
-        if force {
-            update(index, callback: callback)
-        }
-        
-        guard let item = items[index % CollectionImageCache.cacheSize] else {
-            return false
-        }
-        
-        if item.index != index {
-            return false
-        }
-        
-        if let image = item.image {
-            callback(image, isPreview: item.fullDownloadTask != nil)
-        }
-        
-        if item.fullDownloadTask != nil {
-            items[index % CollectionImageCache.cacheSize]!.callback = callback
-        }
-        
-        return true
-    }
-    
-    func touch(activeIndex: Int) {
-        self.activeIndex = activeIndex
-        
-        let startIndex = max(0, activeIndex - 2)
-        let endIndex = min(optographs.count - 1, activeIndex + 2)
-        
-        for index in startIndex...endIndex {
-            update(index, callback: nil)
-        }
-    }
-    
-    private func update(index: Int, callback: Callback?) {
-        let cacheIndex = index % CollectionImageCache.cacheSize
-        if items[cacheIndex] == nil || items[cacheIndex]!.index != index {
-            
-            items[cacheIndex]?.previewDownloadTask?.cancel()
-            items[cacheIndex]?.fullDownloadTask?.cancel()
-            
-            var item: Item = (index: index, image: nil, callback: nil, previewDownloadTask: nil, fullDownloadTask: nil)
-            
-            item.fullDownloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
-                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(4096 / UIScreen.mainScreen().scale)))!,
-//                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(getTextureWidth(HorizontalFieldOfView) / Float(UIScreen.mainScreen().scale))))!,
-                optionsInfo: nil,
-//                optionsInfo: [.Options(.LowPriority)],
-                progressBlock: nil,
-                completionHandler: { [weak self] (image, error, _, _) in
-                    print(error)
-                    dispatch_async(queue) {
-                        self?.items[cacheIndex]?.previewDownloadTask?.cancel()
-                        
-                        if let image = image where self?.items[cacheIndex] != nil {
-                            let tex = SKTexture(image: image)
-                            self?.items[cacheIndex]?.image = tex
-                            self?.items[cacheIndex]?.fullDownloadTask = nil
-                            self?.items[cacheIndex]?.callback?(tex, isPreview: false)
-                            self?.items[cacheIndex]?.callback = nil
-                        }
-                    }
-                }
-            )
-            
-            item.previewDownloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
-                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: 128))!,
-                optionsInfo: nil,
-                progressBlock: nil,
-                completionHandler: { [weak self] (image, error, _, _) in
-                    dispatch_async(queue) {
-                        if self?.items[cacheIndex]?.fullDownloadTask == nil {
-                            return
-                        }
-                        
-                        if let image = image {
-                            let tex = SKTexture(image: image)
-                            self?.items[cacheIndex]?.image = tex
-                            self?.items[cacheIndex]?.previewDownloadTask = nil
-                            self?.items[cacheIndex]?.callback?(tex, isPreview: true)
-                        }
-                    }
-                }
-            )
-            
-            items[cacheIndex] = item
-        }
-    }
-    
-    func delete(indices: [Int]) {
-        var count = 0
-        for index in indices {
-            let shiftedIndex = index - count
-            if let item = items.filter({ $0?.index == shiftedIndex }).first! {
-                item.previewDownloadTask?.cancel()
-                item.fullDownloadTask?.cancel()
-                
-                // shift remaining items down
-                let shiftLimit = CollectionImageCache.cacheSize - count - 1 // 1 because one gets deleted anyways
-                if shiftLimit >= 1 {
-                    for shift in 0..<shiftLimit {
-                        items[(shiftedIndex + shift) % CollectionImageCache.cacheSize] = items[(shiftedIndex + shift + 1) % CollectionImageCache.cacheSize]
-                        items[(shiftedIndex + shift) % CollectionImageCache.cacheSize]?.index--
-                    }
-                    items[(shiftedIndex + shiftLimit) % CollectionImageCache.cacheSize] = nil
-                }
-                count++
-            }
-        }
-    }
-    
-    func insert(indices: [Int]) {
-        for index in indices {
-            let sortedCacheIndices = items.flatMap({ $0?.index }).sort { $0.0 < $0.1 }
-            guard let minIndex = sortedCacheIndices.first, maxIndex = sortedCacheIndices.last else {
-                continue
-            }
-            
-            if index > maxIndex {
-                continue
-            }
-            
-            // shift items "up" with item.index >= index
-            let lowerShiftIndexOffset = max(0, index - minIndex)
-            for shiftIndexOffset in (lowerShiftIndexOffset..<CollectionImageCache.cacheSize - 1).reverse() {
-                items[(minIndex + shiftIndexOffset + 1) % CollectionImageCache.cacheSize] = items[(minIndex + shiftIndexOffset) % CollectionImageCache.cacheSize]
-                items[(minIndex + shiftIndexOffset + 1) % CollectionImageCache.cacheSize]?.index++
-            }
-            
-            items[(minIndex + lowerShiftIndexOffset) % CollectionImageCache.cacheSize] = nil
-            update(minIndex + lowerShiftIndexOffset, callback: nil)
-        }
-    }
 }
 
 private class OverlayViewModel {
