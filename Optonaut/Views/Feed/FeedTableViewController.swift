@@ -26,7 +26,7 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        recordButtonView.setTitle(String.iconWithName(.Logo), forState: .Normal)
+//        recordButtonView.setTitle(String.iconWithName(.Logo), forState: .Normal)
         recordButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         recordButtonView.defaultBackgroundColor = .Accent
         recordButtonView.titleLabel?.font = UIFont.iconOfSize(20)

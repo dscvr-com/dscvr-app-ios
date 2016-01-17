@@ -51,10 +51,16 @@
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */; };
+		8F47150E1C49648F00663684 /* TwitterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150D1C49648F00663684 /* TwitterKit.framework */; };
+		8F4715101C4964AD00663684 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150F1C4964AD00663684 /* TwitterCore.framework */; };
+		8F4715121C49688700663684 /* TwitterKitResources.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4715111C49688700663684 /* TwitterKitResources.bundle */; };
+		8F4715131C49698B00663684 /* TwitterKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8F4715111C49688700663684 /* TwitterKitResources.bundle */; };
 		8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4B6F971BE004B9005D2D68 /* ProtocolBuffers.framework */; };
 		8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4B6FA11BE0F2A5005D2D68 /* CardboardParams.framework */; };
 		8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E311B4A70CD007508ED /* icomoon.ttf */; };
 		8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
+		8F50DCC51C485F8700A706A9 /* FBSDKMessengerShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F50DCC31C485F8700A706A9 /* FBSDKMessengerShareKit.framework */; };
+		8F50DCC61C485F8700A706A9 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F50DCC41C485F8700A706A9 /* FBSDKShareKit.framework */; };
 		8F5335A41BDBA7270058961A /* ActivityResourceStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5335A31BDBA7270058961A /* ActivityResourceStar.swift */; };
 		8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5335A51BDBBF5D0058961A /* ActivityResourceComment.swift */; };
 		8F5335A81BDBBFE30058961A /* ActivityResourceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5335A71BDBBFE30058961A /* ActivityResourceViews.swift */; };
@@ -90,8 +96,8 @@
 		8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF11B8F01DF00B4C8CB /* ActivityTableViewController.swift */; };
 		8FAB9F2E1B8F01DF00B4C8CB /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF41B8F01DF00B4C8CB /* CameraViewController.swift */; };
 		8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF51B8F01DF00B4C8CB /* CameraViewModel.swift */; };
-		8FAB9F301B8F01DF00B4C8CB /* CreateOptographViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF61B8F01DF00B4C8CB /* CreateOptographViewController.swift */; };
-		8FAB9F311B8F01DF00B4C8CB /* CreateOptographViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF71B8F01DF00B4C8CB /* CreateOptographViewModel.swift */; };
+		8FAB9F301B8F01DF00B4C8CB /* SaveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF61B8F01DF00B4C8CB /* SaveViewController.swift */; };
+		8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF71B8F01DF00B4C8CB /* SaveViewModel.swift */; };
 		8FAB9F321B8F01DF00B4C8CB /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF91B8F01DF00B4C8CB /* BottomLineTextField.swift */; };
 		8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFA1B8F01DF00B4C8CB /* InsetLabel.swift */; };
 		8FAB9F341B8F01DF00B4C8CB /* NavbarProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */; };
@@ -167,7 +173,7 @@
 		8FD845BD1BC92A600064048D /* OptographInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845BC1BC92A600064048D /* OptographInfoView.swift */; };
 		8FD845BF1BC92A6F0064048D /* OptographInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845BE1BC92A6F0064048D /* OptographInfoViewModel.swift */; };
 		8FD845C11BC9BBFF0064048D /* PipelineService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C01BC9BBFF0064048D /* PipelineService.swift */; };
-		8FD845C31BCA5AFA0064048D /* StereoRenderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C21BCA5AFA0064048D /* StereoRenderDelegate.swift */; };
+		8FD845C31BCA5AFA0064048D /* RenderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */; };
 		8FD845C51BCAA4530064048D /* WebImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C41BCAA4530064048D /* WebImage.swift */; };
 		8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDBEADB1C39990F0055EA57 /* Debouncer.swift */; };
 		8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */; };
@@ -301,10 +307,15 @@
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewController.swift; sourceTree = "<group>"; };
+		8F47150D1C49648F00663684 /* TwitterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterKit.framework; path = Frameworks/TwitterKit.framework; sourceTree = "<group>"; };
+		8F47150F1C4964AD00663684 /* TwitterCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterCore.framework; path = Frameworks/TwitterCore.framework; sourceTree = "<group>"; };
+		8F4715111C49688700663684 /* TwitterKitResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TwitterKitResources.bundle; path = Frameworks/TwitterKitResources.bundle; sourceTree = "<group>"; };
 		8F4B6F971BE004B9005D2D68 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		8F4B6FA11BE0F2A5005D2D68 /* CardboardParams.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CardboardParams.framework; path = Carthage/Build/iOS/CardboardParams.framework; sourceTree = "<group>"; };
 		8F4C6E311B4A70CD007508ED /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		8F4CE79F1B6CEEC700BD8A71 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		8F50DCC31C485F8700A706A9 /* FBSDKMessengerShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKMessengerShareKit.framework; path = Frameworks/FBSDKMessengerShareKit.framework; sourceTree = "<group>"; };
+		8F50DCC41C485F8700A706A9 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = Frameworks/FBSDKShareKit.framework; sourceTree = "<group>"; };
 		8F5335A31BDBA7270058961A /* ActivityResourceStar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceStar.swift; sourceTree = "<group>"; };
 		8F5335A51BDBBF5D0058961A /* ActivityResourceComment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceComment.swift; sourceTree = "<group>"; };
 		8F5335A71BDBBFE30058961A /* ActivityResourceViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceViews.swift; sourceTree = "<group>"; };
@@ -323,7 +334,6 @@
 		8F7738141B380F5D001F642B /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		8F77C5191BC45DE1003B1594 /* StitchingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StitchingService.swift; sourceTree = "<group>"; };
 		8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActiveLabel.framework; path = Carthage/Build/iOS/ActiveLabel.framework; sourceTree = "<group>"; };
-		8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PermissionScope.framework; path = Carthage/Build/iOS/PermissionScope.framework; sourceTree = "<group>"; };
 		8F86D4F61B9B9664009F91EB /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/iOS/PureLayout.framework; sourceTree = "<group>"; };
 		8F8E32CF1BFE043200E09392 /* DeviceTokenService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceTokenService.swift; sourceTree = "<group>"; };
 		8F8E32D11BFE152C00E09392 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
@@ -344,8 +354,8 @@
 		8FAB9EF11B8F01DF00B4C8CB /* ActivityTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9EF41B8F01DF00B4C8CB /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		8FAB9EF51B8F01DF00B4C8CB /* CameraViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
-		8FAB9EF61B8F01DF00B4C8CB /* CreateOptographViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateOptographViewController.swift; sourceTree = "<group>"; };
-		8FAB9EF71B8F01DF00B4C8CB /* CreateOptographViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateOptographViewModel.swift; sourceTree = "<group>"; };
+		8FAB9EF61B8F01DF00B4C8CB /* SaveViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveViewController.swift; sourceTree = "<group>"; };
+		8FAB9EF71B8F01DF00B4C8CB /* SaveViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveViewModel.swift; sourceTree = "<group>"; };
 		8FAB9EF91B8F01DF00B4C8CB /* BottomLineTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		8FAB9EFA1B8F01DF00B4C8CB /* InsetLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InsetLabel.swift; sourceTree = "<group>"; };
 		8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavbarProtocols.swift; sourceTree = "<group>"; };
@@ -431,7 +441,7 @@
 		8FD845BC1BC92A600064048D /* OptographInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographInfoView.swift; sourceTree = "<group>"; };
 		8FD845BE1BC92A6F0064048D /* OptographInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographInfoViewModel.swift; sourceTree = "<group>"; };
 		8FD845C01BC9BBFF0064048D /* PipelineService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PipelineService.swift; sourceTree = "<group>"; };
-		8FD845C21BCA5AFA0064048D /* StereoRenderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StereoRenderDelegate.swift; sourceTree = "<group>"; };
+		8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderDelegate.swift; sourceTree = "<group>"; };
 		8FD845C41BCAA4530064048D /* WebImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebImage.swift; sourceTree = "<group>"; };
 		8FDBEADB1C39990F0055EA57 /* Debouncer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
@@ -571,8 +581,13 @@
 				8F23AA601C01F8A5008926A8 /* Fabric.framework in Frameworks */,
 				8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */,
 				8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */,
+				8F50DCC51C485F8700A706A9 /* FBSDKMessengerShareKit.framework in Frameworks */,
+				8F50DCC61C485F8700A706A9 /* FBSDKShareKit.framework in Frameworks */,
 				8F23AA631C01F8A5008926A8 /* opencv2.framework in Frameworks */,
 				8F23AA651C021CA4008926A8 /* Neon.framework in Frameworks */,
+				8F47150E1C49648F00663684 /* TwitterKit.framework in Frameworks */,
+				8F4715101C4964AD00663684 /* TwitterCore.framework in Frameworks */,
+				8F4715121C49688700663684 /* TwitterKitResources.bundle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -619,6 +634,11 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F4715111C49688700663684 /* TwitterKitResources.bundle */,
+				8F47150F1C4964AD00663684 /* TwitterCore.framework */,
+				8F47150D1C49648F00663684 /* TwitterKit.framework */,
+				8F50DCC31C485F8700A706A9 /* FBSDKMessengerShareKit.framework */,
+				8F50DCC41C485F8700A706A9 /* FBSDKShareKit.framework */,
 				8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */,
 				8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */,
 				8F23AA641C021CA4008926A8 /* Neon.framework */,
@@ -632,7 +652,6 @@
 				8F4B6F971BE004B9005D2D68 /* ProtocolBuffers.framework */,
 				8F6084831BC27DD400ADAFFC /* Mixpanel.framework */,
 				8F86D4F61B9B9664009F91EB /* PureLayout.framework */,
-				8F86D4F41B9B1EC4009F91EB /* PermissionScope.framework */,
 				8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */,
 				8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */,
 				8F29FB561B84C26500B2C005 /* Async.framework */,
@@ -748,8 +767,8 @@
 			children = (
 				8FAB9EF41B8F01DF00B4C8CB /* CameraViewController.swift */,
 				8FAB9EF51B8F01DF00B4C8CB /* CameraViewModel.swift */,
-				8FAB9EF61B8F01DF00B4C8CB /* CreateOptographViewController.swift */,
-				8FAB9EF71B8F01DF00B4C8CB /* CreateOptographViewModel.swift */,
+				8FAB9EF61B8F01DF00B4C8CB /* SaveViewController.swift */,
+				8FAB9EF71B8F01DF00B4C8CB /* SaveViewModel.swift */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -774,7 +793,7 @@
 				8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */,
 				8F0B17851BAC193000FAF649 /* LineTextField.swift */,
 				8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */,
-				8FD845C21BCA5AFA0064048D /* StereoRenderDelegate.swift */,
+				8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1262,8 +1281,8 @@
 				8FCCA0271B3806040091F1B1 /* Sources */,
 				8FCCA0281B3806040091F1B1 /* Frameworks */,
 				8FCCA0291B3806040091F1B1 /* Resources */,
+				8F900B481B83DC720085566C /* Fabric */,
 				8F7738061B38098B001F642B /* Carthage */,
-				8F900B481B83DC720085566C /* Crashlytics */,
 				8FFB564C1C2D884B00D2BE62 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -1354,6 +1373,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F4715131C49698B00663684 /* TwitterKitResources.bundle in Resources */,
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
 				A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */,
@@ -1423,14 +1443,14 @@
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
-		8F900B481B83DC720085566C /* Crashlytics */ = {
+		8F900B481B83DC720085566C /* Fabric */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = Crashlytics;
+			name = Fabric;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1498,12 +1518,12 @@
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,
 				8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */,
-				8FAB9F311B8F01DF00B4C8CB /* CreateOptographViewModel.swift in Sources */,
+				8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */,
 				8F23AA531BFF31B4008926A8 /* LocationTable.swift in Sources */,
 				A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */,
 				8FAB9F461B8F01DF00B4C8CB /* FeedNavViewController.swift in Sources */,
 				8FAB9F321B8F01DF00B4C8CB /* BottomLineTextField.swift in Sources */,
-				8FAB9F301B8F01DF00B4C8CB /* CreateOptographViewController.swift in Sources */,
+				8FAB9F301B8F01DF00B4C8CB /* SaveViewController.swift in Sources */,
 				8F23AA7E1C08ADB4008926A8 /* Migration0005.swift in Sources */,
 				8FAB9F591B8F01DF00B4C8CB /* ProfileViewModel.swift in Sources */,
 				8F23AA761C0712ED008926A8 /* Migration0003.swift in Sources */,
@@ -1551,7 +1571,7 @@
 				8FAB9F7E1B8F03BE00B4C8CB /* UIKitRACExtensions.swift in Sources */,
 				A5FD5D811BEA5A4E0031ED1E /* inputImage.cpp in Sources */,
 				8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */,
-				8FD845C31BCA5AFA0064048D /* StereoRenderDelegate.swift in Sources */,
+				8FD845C31BCA5AFA0064048D /* RenderDelegate.swift in Sources */,
 				8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */,
 				8FC7E3741BD15B9D00E97CC3 /* Matrix3x3d.mm in Sources */,
 				8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */,

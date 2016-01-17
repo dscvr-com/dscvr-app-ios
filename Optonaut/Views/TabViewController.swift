@@ -30,7 +30,7 @@ class TabViewController: UIViewController {
     
     private let bottomGradient = CAGradientLayer()
     
-    private let bottomGradientOffset = MutableProperty<CGFloat>(0)
+    let bottomGradientOffset = MutableProperty<CGFloat>(126)
     
     let leftViewController: CollectionNavViewController
     let rightViewController: ProfileNavViewController
@@ -61,9 +61,10 @@ class TabViewController: UIViewController {
         
         view.insertSubview(leftViewController.view, atIndex: 0)
         
+        leftViewController.pushViewController(SaveViewController(recorderCleanup: SignalProducer(value: ())), animated: false)
+        
         let width = view.frame.width
         
-        bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: 126)
         bottomGradient.colors = [UIColor.clearColor().CGColor, UIColor.blackColor().alpha(0.5).CGColor]
         uiWrapper.layer.addSublayer(bottomGradient)
         
@@ -71,7 +72,7 @@ class TabViewController: UIViewController {
             CATransaction.begin()
             CATransaction.setAnimationDuration(0.3)
             CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut))
-            self?.bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: offset + 126)
+            self?.bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: offset)
             CATransaction.commit()
         }
         
@@ -107,12 +108,12 @@ class TabViewController: UIViewController {
             }
 
         leftButton.isActive = true
-        leftButton.frame = CGRect(x: view.frame.width * 1.01 / 4 - 34, y: 126 / 2 - 23.5, width: 34, height: 34)
+        leftButton.frame = CGRect(x: view.frame.width * 1.01 / 4 - 34, y: 126 / 2 - 23.5, width: 28, height: 28)
         leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftButton"))
         uiWrapper.addSubview(leftButton)
 
         rightButton.isActive = false
-        rightButton.frame = CGRect(x: view.frame.width * 2.99 / 4, y: 126 / 2 - 23.5, width: 34, height: 34)
+        rightButton.frame = CGRect(x: view.frame.width * 2.99 / 4, y: 126 / 2 - 23.5, width: 28, height: 28)
         rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapRightButton"))
         uiWrapper.addSubview(rightButton)
         
@@ -213,11 +214,11 @@ class RecordButton: UIButton {
     var progress: CGFloat = 0 {
         didSet {
             if progress == 0 {
-                setTitle(String.iconWithName(.Camera_Alt), forState: .Normal)
+                setTitle(String.iconWithName(.Camera), forState: .Normal)
             } else if progress == 1 {
-                setTitle(String.iconWithName(.Check), forState: .Normal)
+                setTitle(String.iconWithName(.Cancel), forState: .Normal)
             } else {
-                setTitle(String.iconWithName(.Feed), forState: .Normal)
+                setTitle(String.iconWithName(.Cancel), forState: .Normal)
             }
             layoutSubviews()
         }
@@ -275,13 +276,15 @@ class RecordButton: UIButton {
 
 class TabButton: UIButton {
     
+    enum Color { case Light, Dark }
+    
     var title: String = "" {
         didSet {
             text.text = title
         }
     }
     
-    var icon: Icon = .Explore {
+    var icon: Icon = .Cancel {
         didSet {
             setTitle(String.iconWithName(icon), forState: .Normal)
         }
@@ -290,11 +293,19 @@ class TabButton: UIButton {
     var isActive: Bool = false {
         didSet {
             alpha = isActive ? 1 : 0.5
-            activeBorderLayer.hidden = !isActive
+//            activeBorderLayer.hidden = !isActive
         }
     }
     
-    private let activeBorderLayer = CALayer()
+    var color: Color = .Dark {
+        didSet {
+            let actualColor = color == .Dark ? .whiteColor() : UIColor(0x919293)
+            setTitleColor(actualColor, forState: .Normal)
+            text.textColor = actualColor
+        }
+    }
+    
+//    private let activeBorderLayer = CALayer()
     
     private let text = UILabel()
     
@@ -302,15 +313,15 @@ class TabButton: UIButton {
         super.init(frame: frame)
         
         setTitleColor(.whiteColor(), forState: .Normal)
-        titleLabel?.font = UIFont.iconOfSize(34)
+        titleLabel?.font = UIFont.iconOfSize(28)
         
         text.font = UIFont.displayOfSize(9, withType: .Light)
         text.textColor = .whiteColor()
         text.textAlignment = .Center
         addSubview(text)
         
-        activeBorderLayer.backgroundColor = UIColor.whiteColor().alpha(0.2).CGColor
-        layer.addSublayer(activeBorderLayer)
+//        activeBorderLayer.backgroundColor = UIColor.whiteColor().alpha(0.2).CGColor
+//        layer.addSublayer(activeBorderLayer)
     }
     
     convenience init () {
@@ -327,8 +338,8 @@ class TabButton: UIButton {
         let textWidth: CGFloat = 50
         text.frame = CGRect(x: (frame.width - textWidth) / 2, y: frame.height + 10, width: textWidth, height: 11)
         
-        activeBorderLayer.frame = CGRect(x: -5, y: -5, width: frame.width + 10, height: frame.height + 10)
-        activeBorderLayer.cornerRadius = activeBorderLayer.frame.width / 2
+//        activeBorderLayer.frame = CGRect(x: -5, y: -5, width: frame.width + 10, height: frame.height + 10)
+//        activeBorderLayer.cornerRadius = activeBorderLayer.frame.width / 2
     }
     
 }
@@ -401,14 +412,16 @@ extension UIViewController {
     
     func updateTabs() {
         tabController!.leftButton.title = "HOME"
-        tabController!.leftButton.icon = .Explore
+        tabController!.leftButton.icon = .Cancel
         tabController!.leftButton.hidden = false
+        tabController!.leftButton.color = .Dark
         
         tabController!.rightButton.title = "PROFILE"
-        tabController!.rightButton.icon = .Account_Circle
+        tabController!.rightButton.icon = .Cancel
         tabController!.rightButton.hidden = false
+        tabController!.rightButton.color = .Dark
         
-        tabController!.cameraButton.setTitle(String.iconWithName(.Camera_Alt), forState: .Normal)
+        tabController!.cameraButton.setTitle(String.iconWithName(.Camera), forState: .Normal)
         tabController!.cameraButton.setTitleColor(.whiteColor(), forState: .Normal)
         tabController!.cameraButton.backgroundColor = .Accent
     }

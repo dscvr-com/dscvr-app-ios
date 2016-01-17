@@ -13,29 +13,29 @@ import SceneKit
 import ReactiveCocoa
 import Kingfisher
 
-class CombinedMotionManager: RotationMatrixSource {
-    private var horizontalOffset: Float = 0
-    private let parent: RotationMatrixSource
-    
-    init(parent: RotationMatrixSource) {
-        self.parent = parent
-    }
-    
-    func addHorizontalOffset(offset: Float) {
-        horizontalOffset += offset
-    }
-    
-    func getRotationMatrix() -> GLKMatrix4 {
-        let offsetRotation = GLKMatrix4MakeZRotation(horizontalOffset / 250)
-        return GLKMatrix4Multiply(offsetRotation, parent.getRotationMatrix())
-    }
-}
+//class CombinedMotionManager: RotationMatrixSource {
+//    private var horizontalOffset: Float = 0
+//    private let parent: RotationMatrixSource
+//    
+//    init(parent: RotationMatrixSource) {
+//        self.parent = parent
+//    }
+//    
+//    func addHorizontalOffset(offset: Float) {
+//        horizontalOffset += offset
+//    }
+//    
+//    func getRotationMatrix() -> GLKMatrix4 {
+//        let offsetRotation = GLKMatrix4MakeZRotation(horizontalOffset / 250)
+//        return GLKMatrix4Multiply(offsetRotation, parent.getRotationMatrix())
+//    }
+//}
 
 class DetailsTableViewController: UIViewController, NoNavbar {
     
     private let viewModel: DetailsViewModel
     
-    private let combinedMotionManager = CombinedMotionManager(parent: CoreMotionRotationSource.Instance)
+//    private let combinedMotionManager = CombinedMotionManager(parent: CoreMotionRotationSource.Instance)
     
     // subviews
     private let tableView = TableView()
@@ -43,7 +43,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private let glassesButtonView = ActionButton()
     private let loadingView = UIActivityIndicatorView()
     
-    private var renderDelegate: StereoRenderDelegate!
+    private var renderDelegate: RenderDelegate!
     private var scnView: SCNView!
     
     private let imageManager = KingfisherManager()
@@ -96,16 +96,16 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         navigationItem.title = ""
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
-        
+//        
         scnView = SCNView(frame: view.frame)
         
-        renderDelegate = StereoRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: 65)
-        
-        scnView.scene = renderDelegate.scene
-        scnView.delegate = renderDelegate
-        scnView.backgroundColor = .clearColor()
-        
-        view.addSubview(scnView)
+//        renderDelegate = RenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: 65)
+//        
+//        scnView.scene = renderDelegate.scene
+//        scnView.delegate = renderDelegate
+//        scnView.backgroundColor = .clearColor()
+//        
+//        view.addSubview(scnView)
 
         viewModel.textureImageUrl.producer.combineLatestWith(viewModel.viewIsActive.producer)
             .filter { (_, active) in return active }
@@ -118,14 +118,14 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         
         viewModel.viewIsActive.producer.skipRepeats()
             .startWithNext { [weak self] active in
-                if let strongSelf = self  {
-                    if !active {
-//                        strongSelf.renderDelegate.image = nil
-                    }
-                }
+//                if let strongSelf = self  {
+//                    if !active {
+////                        strongSelf.renderDelegate.image = nil
+//                    }
+//                }
             }
         
-        glassesButtonView.setTitle(String.iconWithName(.Cardboard), forState: .Normal)
+        glassesButtonView.setTitle(String.iconWithName(.Next), forState: .Normal)
         glassesButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         glassesButtonView.defaultBackgroundColor = .Accent
         glassesButtonView.titleLabel?.font = UIFont.iconOfSize(20)
@@ -142,9 +142,9 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         tableView.delaysContentTouches = false
         tableView.exclusiveTouch = false
         
-        tableView.horizontalScrollDistanceCallback = { [weak self] offset in
-            self?.combinedMotionManager.addHorizontalOffset(offset)
-        }
+//        tableView.horizontalScrollDistanceCallback = { [weak self] offset in
+//            self?.combinedMotionManager.addHorizontalOffset(offset)
+//        }
         
         tableView.registerClass(DetailsTableViewCell.self, forCellReuseIdentifier: "details-cell")
         tableView.registerClass(CommentTableViewCell.self, forCellReuseIdentifier: "comment-cell")

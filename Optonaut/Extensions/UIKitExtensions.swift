@@ -149,3 +149,11 @@ class PlaceholderImageView: UIImageView {
         }
     }
 }
+
+class UIShortPressGestureRecognizer: UILongPressGestureRecognizer {
+    override init(target: AnyObject?, action: Selector) {
+        super.init(target: target, action: action)
+        
+        minimumPressDuration = 0.05
+    }
+}

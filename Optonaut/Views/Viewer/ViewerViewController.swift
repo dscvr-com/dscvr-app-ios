@@ -17,8 +17,8 @@ class ViewerViewController: UIViewController  {
     private let orientation: UIInterfaceOrientation
     private let optograph: Optograph
     
-    private var leftRenderDelegate: StereoRenderDelegate!
-    private var rightRenderDelegate: StereoRenderDelegate!
+    private var leftRenderDelegate: RenderDelegate!
+    private var rightRenderDelegate: RenderDelegate!
     private var leftScnView: SCNView!
     private var rightScnView: SCNView!
     private let separatorLayer = CALayer()
@@ -72,8 +72,8 @@ class ViewerViewController: UIViewController  {
     }
     
     private func createRenderDelegates() {
-        leftRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov, cameraOffset:  Float(-0.2))
-        rightRenderDelegate = StereoRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov, cameraOffset: Float(0.2))
+        leftRenderDelegate = RenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov, cameraOffset:  Float(-0.2))
+        rightRenderDelegate = RenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov, cameraOffset: Float(0.2))
         
         leftScnView.scene = leftRenderDelegate.scene
         leftScnView.delegate = leftRenderDelegate
@@ -137,7 +137,7 @@ class ViewerViewController: UIViewController  {
         view.addSubview(rightLoadingView)
         
         settingsButtonView.frame = CGRect(x: 10, y: view.frame.height / 2 - 15, width: 30, height: 30)
-        settingsButtonView.setTitle(String.iconWithName(.Settings), forState: .Normal)
+//        settingsButtonView.setTitle(String.iconWithName(.Settings), forState: .Normal)
         settingsButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         settingsButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))
@@ -313,7 +313,7 @@ private class GlassesSelectionView: UIView {
         
         addSubview(blurView)
         
-        cancelButtonView.setTitle(String.iconWithName(.Cross), forState: .Normal)
+//        cancelButtonView.setTitle(String.iconWithName(.Cross), forState: .Normal)
         cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
@@ -325,7 +325,7 @@ private class GlassesSelectionView: UIView {
         titleTextView.font = UIFont.displayOfSize(35, withType: .Thin)
         addSubview(titleTextView)
         
-        glassesIconView.text = String.iconWithName(.Cardboard)
+//        glassesIconView.text = String.iconWithName(.Cardboard)
         glassesIconView.textColor = .whiteColor()
         glassesIconView.textAlignment = .Center
         glassesIconView.font = UIFont.iconOfSize(73)
@@ -340,7 +340,7 @@ private class GlassesSelectionView: UIView {
         glassesTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         addSubview(glassesTextView)
         
-        qrcodeIconView.text = String.iconWithName(.Qrcode)
+//        qrcodeIconView.text = String.iconWithName(.Qrcode)
         qrcodeIconView.font = UIFont.iconOfSize(50)
         qrcodeIconView.textColor = .whiteColor()
         qrcodeIconView.textAlignment = .Center

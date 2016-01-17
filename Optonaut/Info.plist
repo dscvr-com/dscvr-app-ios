@@ -33,7 +33,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb1502356293392008</string>
+				<string>fb1502357570058547</string>
 				<string>fbauth2</string>
 			</array>
 		</dict>
@@ -55,15 +55,25 @@
 		</array>
 	</dict>
 	<key>FacebookAppID</key>
-	<string>1502356293392008</string>
+	<string>1502357570058547</string>
 	<key>FacebookDisplayName</key>
-	<string>Optonaut</string>
+	<string>Optonaut - Test</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
+		<string>fbapi20130214</string>
+		<string>fbapi20130410</string>
+		<string>fbapi20130702</string>
+		<string>fbapi20131010</string>
+		<string>fbapi20131219</string>
+		<string>fbapi20140410</string>
+		<string>fbapi20140116</string>
+		<string>fbapi20150313</string>
+		<string>fbapi20150629</string>
 		<string>fb-messenger-api</string>
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
+		<string>whatsapp</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

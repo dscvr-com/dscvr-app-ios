@@ -152,7 +152,7 @@ extension ActivityTableViewController: UITableViewDataSource {
         if items.isEmpty {
             let cell = tableView.dequeueReusableCellWithIdentifier("placeholder-cell") as! PlaceholderTableViewCell
             cell.textView.text = "Nothing new yet"
-            cell.iconView.text = String.iconWithName(.Inbox)
+//            cell.iconView.text = String.iconWithName(.Inbox)
             cell.iconView.textColor = .LightGrey
             return cell
         } else {

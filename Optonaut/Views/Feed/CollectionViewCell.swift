@@ -12,34 +12,31 @@ import SceneKit
 import SpriteKit
 import Async
 
-class NewCombinedMotionManager: RotationMatrixSource {
-    private var horizontalOffset: Float = 0
-    private let coreMotionRotationSource: CoreMotionRotationSource
+class TouchRotationSource: RotationMatrixSource {
     
-    private var lastCoreMotionRotationMatrix: GLKMatrix4?
+    var isTouching = false
     
     // Take care, compared to the webviewer implementation,
     // phi and theta are switched since native apps and the browser use
     // different reference frames.
-    private var phi: Float = 0
-    private var theta: Float = Float(-M_PI_2)
-    
-    // Damping
-    private var phiDiff: Float = 0
-    private var thetaDiff: Float = 0
-    private var phiDamp: Float = 0
-    private var thetaDamp: Float = 0
-    private let dampFactor: Float = 0.9
-    
-    private var isTouching = false
-    private var touchStartPoint: CGPoint?
-    
-    private let sceneWidth: Int
-    private let sceneHeight: Int
+    var phi: Float = 0
+    var theta: Float = Float(-M_PI_2)
     
     // FOV of the scene
     private let vfov: Float
     private let hfov: Float
+    
+    // Damping
+    private var phiDiff: Float = 0
+    private var thetaDiff: Float = 0
+    var phiDamp: Float = 0
+    var thetaDamp: Float = 0
+    var dampFactor: Float = 0.9
+    
+    private var touchStartPoint: CGPoint?
+    
+    private let sceneWidth: Int
+    private let sceneHeight: Int
     
     // Dependent on optograph format. This values are suitable for
     // Stitcher version <= 7.
@@ -47,16 +44,15 @@ class NewCombinedMotionManager: RotationMatrixSource {
     private let minTheta: Float
     private let maxTheta: Float
     
-    init(coreMotionRotationSource: CoreMotionRotationSource, sceneSize: CGSize, vfov: Float) {
-        self.coreMotionRotationSource = coreMotionRotationSource
-        self.vfov = vfov
+    init(sceneSize: CGSize, hfov: Float) {
+        self.hfov = hfov
         
         sceneWidth = Int(sceneSize.width)
         sceneHeight = Int(sceneSize.height)
             
-        hfov = vfov * Float(sceneHeight) / Float(sceneWidth)
+        vfov = hfov * Float(sceneHeight) / Float(sceneWidth)
         
-        maxTheta = -border - (hfov * Float(M_PI) / 180) / 2
+        maxTheta = -border - (vfov * Float(M_PI) / 180) / 2
         minTheta = Float(-M_PI) - maxTheta
     }
     
@@ -68,7 +64,7 @@ class NewCombinedMotionManager: RotationMatrixSource {
     func touchMove(point: CGPoint) {
         let x0 = Float(sceneWidth / 2)
         let y0 = Float(sceneHeight / 2)
-        let flen = y0 / tan(hfov / 2 * Float(M_PI) / 180)
+        let flen = y0 / tan(vfov / 2 * Float(M_PI) / 180)
         
         let startPhi = atan((Float(touchStartPoint!.x) - x0) / flen)
         let startTheta = atan((Float(touchStartPoint!.y) - y0) / flen)
@@ -97,22 +93,8 @@ class NewCombinedMotionManager: RotationMatrixSource {
     
     func getRotationMatrix() -> GLKMatrix4 {
         
-        let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
-        
         if !isTouching {
             // Update from motion and damping
-            if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
-                let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
-                
-                let diffRotationTheta = atan2(diffRotationMatrix.m21, diffRotationMatrix.m22)
-                let diffRotationPhi = atan2(-diffRotationMatrix.m20,
-                                            sqrt(diffRotationMatrix.m21 * diffRotationMatrix.m21 +
-                                                diffRotationMatrix.m22 * diffRotationMatrix.m22))
-                
-                phi += diffRotationPhi
-                theta += diffRotationTheta
-            }
-            
             phiDamp *= dampFactor
             thetaDamp *= dampFactor
             phi += phiDamp
@@ -129,18 +111,70 @@ class NewCombinedMotionManager: RotationMatrixSource {
         
         theta = max(minTheta, min(theta, maxTheta))
         
+        return GLKMatrix4Multiply(GLKMatrix4MakeZRotation(-phi), GLKMatrix4MakeXRotation(-theta))
+    }
+}
+
+class CombinedMotionManager: RotationMatrixSource {
+    private let coreMotionRotationSource: CoreMotionRotationSource
+    private let touchRotationSource: TouchRotationSource
+    
+    private var lastCoreMotionRotationMatrix: GLKMatrix4?
+    
+    init(sceneSize: CGSize, hfov: Float) {
+        self.coreMotionRotationSource = CoreMotionRotationSource.Instance
+        self.touchRotationSource = TouchRotationSource(sceneSize: sceneSize, hfov: hfov)
+    }
+    
+    init(coreMotionRotationSource: CoreMotionRotationSource, touchRotationSource: TouchRotationSource) {
+        self.coreMotionRotationSource = coreMotionRotationSource
+        self.touchRotationSource = touchRotationSource
+    }
+    
+    func touchStart(point: CGPoint) {
+        touchRotationSource.touchStart(point)
+    }
+    
+    func touchMove(point: CGPoint) {
+        touchRotationSource.touchMove(point)
+    }
+    
+    func touchEnd() {
+        touchRotationSource.touchEnd()
+    }
+    
+    func reset() {
+        touchRotationSource.reset()
+    }
+    
+    func getRotationMatrix() -> GLKMatrix4 {
+        
+        let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
+        
+        if !touchRotationSource.isTouching {
+            // Update from motion and damping
+            if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
+                let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
+                
+                let diffRotationTheta = atan2(diffRotationMatrix.m21, diffRotationMatrix.m22)
+                let diffRotationPhi = atan2(-diffRotationMatrix.m20,
+                                            sqrt(diffRotationMatrix.m21 * diffRotationMatrix.m21 +
+                                                diffRotationMatrix.m22 * diffRotationMatrix.m22))
+                
+                touchRotationSource.phi += diffRotationPhi
+                touchRotationSource.theta += diffRotationTheta
+            }
+        }
+        
         lastCoreMotionRotationMatrix = coreMotionRotationMatrix
         
-        return GLKMatrix4Multiply(GLKMatrix4MakeZRotation(-phi), GLKMatrix4MakeXRotation(-theta))
+        return touchRotationSource.getRotationMatrix()
     }
 }
 
 class CollectionViewCell: UICollectionViewCell {
     
-    
     weak var uiHidden: MutableProperty<Bool>!
-    
-    private var combinedMotionManager: NewCombinedMotionManager!
     
     // subviews
     private let topElements = UIView()
@@ -148,7 +182,8 @@ class CollectionViewCell: UICollectionViewCell {
     private let bottomBackgroundView = UIView()
     private let loadingOverlayView = UIView()
     
-    private var renderDelegate: StereoRenderDelegate!
+    private var combinedMotionManager: CombinedMotionManager!
+    private var renderDelegate: CubeRenderDelegate!
     private var scnView: SCNView!
     
     private let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
@@ -165,9 +200,9 @@ class CollectionViewCell: UICollectionViewCell {
         
         scnView = SCNView(frame: contentView.frame)
     
-        combinedMotionManager = NewCombinedMotionManager(coreMotionRotationSource: CoreMotionRotationSource.Instance, sceneSize: CGSize(width: scnView.frame.width, height: scnView.frame.height), vfov: HorizontalFieldOfView)
+        combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: HorizontalFieldOfView)
     
-        renderDelegate = StereoRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView))
+        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView))
         
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
@@ -240,14 +275,10 @@ class CollectionViewCell: UICollectionViewCell {
     func reset() {
         combinedMotionManager.reset()
         loadingStatus.value = .Nothing
+        renderDelegate.reset()
     }
     
     func setImage(texture: SKTexture, forIndex index: CubeImageCache.Index) {
-//        if renderDelegate.texture != texture {
-//            renderDelegate.image = nil
-//            renderDelegate.texture = texture
-//            scnView.prepareObject(renderDelegate!.sphereNode, shouldAbortBlock: nil)
-//        }
         renderDelegate.setTexture(texture, forIndex: index)
         scnView.prepareObject(renderDelegate!.planes[index]!, shouldAbortBlock: nil)
         Async.main { [weak self] in

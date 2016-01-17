@@ -126,7 +126,7 @@ private class NavHashtagView: UIView {
     
     var isFollowed = false {
         didSet {
-            iconView.text = isFollowed ? String.iconWithName(.Check) : String.iconWithName(.Plus)
+//            iconView.text = isFollowed ? String.iconWithName(.Cancel) : String.iconWithName(.Plus)
             backgroundColor = isFollowed ? .whiteColor() : .Accent
             iconView.textColor = isFollowed ? .Accent : .whiteColor()
             titleView.textColor = isFollowed ? .Accent : .whiteColor()

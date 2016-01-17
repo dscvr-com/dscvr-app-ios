@@ -44,19 +44,21 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = String.iconWithName(.LogoText)
+//        title = String.iconWithName(.LogoText)
         
         let searchButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-        searchButton.text = String.iconWithName(.Search)
+        searchButton.text = String.iconWithName(.Cancel)
         searchButton.textColor = .whiteColor()
         searchButton.font = UIFont.iconOfSize(24)
+        searchButton.userInteractionEnabled = true
         searchButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushSearch"))
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchButton)
         
         let activityButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-        activityButton.text = String.iconWithName(.Bell)
+        activityButton.text = String.iconWithName(.Cancel)
         activityButton.textColor = .whiteColor()
         activityButton.font = UIFont.iconOfSize(24)
+        activityButton.userInteractionEnabled = true
         activityButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushActivity"))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityButton)
 
@@ -455,7 +457,7 @@ private class OverlayView: UIView {
         addSubview(personNameView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(28)
-        optionsButtonView.setTitle(String.iconWithName(.MoreHor), forState: .Normal)
+        optionsButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.LightGrey, forState: .Normal)
         optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTapOptions"))
         addSubview(optionsButtonView)
@@ -467,7 +469,7 @@ private class OverlayView: UIView {
         likeButtonView.layer.cornerRadius = 14
         likeButtonView.clipsToBounds = true
         likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleLike"))
-        likeButtonView.setTitle(String.iconWithName(.HeartFilled), forState: .Normal)
+        likeButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
         addSubview(likeButtonView)
         
         likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)

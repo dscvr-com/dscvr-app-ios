@@ -35,7 +35,7 @@ class OnboardingHashtagInfoViewController: UIViewController {
         view.addSubview(headlineTextView)
         
         iconView.textAlignment = .Center
-        iconView.text = String.iconWithName(.Heart)
+//        iconView.text = String.iconWithName(.Heart)
         iconView.textColor = .whiteColor()
         iconView.font = UIFont.iconOfSize(90)
         view.addSubview(iconView)

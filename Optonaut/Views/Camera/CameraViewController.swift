@@ -129,7 +129,7 @@ class CameraViewController: UIViewController {
         viewModel.isCentered.producer.startWithNext { [weak self] val in self?.circleView.isActive = val }
         view.addSubview(circleView)
         
-        arrowView.text = String.iconWithName(.Back)
+        arrowView.text = String.iconWithName(.Next)
         arrowView.textColor = .Accent
         arrowView.textAlignment = .Center
         arrowView.font = UIFont.iconOfSize(40)
@@ -304,7 +304,7 @@ class CameraViewController: UIViewController {
     
     override func updateTabs() {
         tabController!.leftButton.title = "CANCEL"
-        tabController!.leftButton.icon = .Cross
+        tabController!.leftButton.icon = .Cancel
         
         tabController!.rightButton.hidden = true
     }
@@ -613,11 +613,14 @@ class CameraViewController: UIViewController {
         stopSession()
         
         let recorderCleanup = SignalProducer<Void, NoError> { [weak self] sink, disposable in
+            
+            // TODO preview image
+            
             self?.recorder.finish()
             sink.sendCompleted()
         }
         
-        let createOptographViewController = CreateOptographViewController(recorderCleanup: recorderCleanup)
+        let createOptographViewController = SaveViewController(recorderCleanup: recorderCleanup)
         createOptographViewController.hidesBottomBarWhenPushed = true
         navigationController!.pushViewController(createOptographViewController, animated: false)
         navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self

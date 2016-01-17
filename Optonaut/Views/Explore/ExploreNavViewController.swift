@@ -14,7 +14,7 @@ class ExploreNavViewController: NavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        setTabBarIcon(tabBarItem, icon: .Search, withFontSize: 20)
+        setTabBarIcon(tabBarItem, icon: .Cancel, withFontSize: 20)
         pushViewController(SearchTableViewController(), animated: false)
     }
     

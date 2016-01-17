@@ -41,7 +41,7 @@ class NewCommentTableViewCell: UITableViewCell {
         contentView.addSubview(textInputView)
         
         commentsIconView.font = UIFont.iconOfSize(17)
-        commentsIconView.text = String.iconWithName(.Comment)
+//        commentsIconView.text = String.iconWithName(.Comment)
         commentsIconView.textColor = .whiteColor()
         contentView.addSubview(commentsIconView)
         
@@ -51,7 +51,7 @@ class NewCommentTableViewCell: UITableViewCell {
         
         sendButtonView.titleLabel?.font = UIFont.iconOfSize(24)
         sendButtonView.contentHorizontalAlignment = .Right
-        sendButtonView.setTitle(String.iconWithName(.Send), forState: .Normal)
+//        sendButtonView.setTitle(String.iconWithName(.Send), forState: .Normal)
         sendButtonView.setTitleColor(.Accent, forState: .Normal)
         sendButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "postComment"))
         contentView.addSubview(sendButtonView)

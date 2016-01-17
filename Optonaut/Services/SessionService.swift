@@ -11,6 +11,8 @@ import ObjectMapper
 import ReactiveCocoa
 import Mixpanel
 import SwiftyUserDefaults
+import TwitterKit
+import FBSDKLoginKit
 
 extension DefaultsKeys {
     static let SessionToken = DefaultsKey<String?>("session_auth_token")
@@ -20,6 +22,9 @@ extension DefaultsKeys {
     static let SessionOnboardingVersion = DefaultsKey<Int>("session_onboarding_version")
     static let SessionVRGlassesSelected = DefaultsKey<Bool>("session_vr_glasses_selected")
     static let SessionVRGlasses = DefaultsKey<String>("session_vr_glasses")
+    static let SessionShareToggledFacebook = DefaultsKey<Bool>("session_share_toggled_facebook")
+    static let SessionShareToggledTwitter = DefaultsKey<Bool>("session_share_toggled_twitter")
+    static let SessionShareToggledInstagram = DefaultsKey<Bool>("session_share_toggled_instagram")
 }
 
 let DefaultVRGlasses = "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"
@@ -67,6 +72,9 @@ class SessionService {
                 Defaults[.SessionOnboardingVersion] = loginData.onboardingVersion
                 Defaults[.SessionVRGlassesSelected] = false
                 Defaults[.SessionVRGlasses] = DefaultVRGlasses
+                Defaults[.SessionShareToggledFacebook] = false
+                Defaults[.SessionShareToggledTwitter] = false
+                Defaults[.SessionShareToggledInstagram] = false
             })
             .flatMap(.Latest) { _ in ApiService<Person>.get("persons/me") }
             .on(
@@ -87,6 +95,14 @@ class SessionService {
             fn()
         }
         
+        // logout twitter
+        if let session = Twitter.sharedInstance().sessionStore.session() {
+            Twitter.sharedInstance().sessionStore.logOutUserID(session.userID)
+        }
+        
+        // logout facebook
+        FBSDKAccessToken.setCurrentAccessToken(nil)
+        
         reset()
         
         logoutCallbacks = logoutCallbacks.filter { (performAlways, _) in performAlways }
@@ -104,6 +120,9 @@ class SessionService {
         Defaults[.SessionOnboardingVersion] = 0
         Defaults[.SessionVRGlassesSelected] = false
         Defaults[.SessionVRGlasses] = DefaultVRGlasses
+        Defaults[.SessionShareToggledFacebook] = false
+        Defaults[.SessionShareToggledTwitter] = false
+        Defaults[.SessionShareToggledInstagram] = false
         
         Mixpanel.sharedInstance().reset()
         

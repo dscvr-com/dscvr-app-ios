@@ -10,15 +10,16 @@ import UIKit
 import Device
 import Fabric
 import Crashlytics
+import TwitterKit
 import PureLayout
 import Mixpanel
 import Neon
 import FBSDKCoreKit
 import Kingfisher
 
-//let Env = EnvType.Development
+let Env = EnvType.Development
 //let Env = EnvType.Staging
-let Env = EnvType.Production
+//let Env = EnvType.Production
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -92,6 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            }
 //            
 //            self.window?.rootViewController = tabBarViewController
+            self.window?.rootViewController = TabViewController()
         }
         
         return true
@@ -117,9 +119,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func prepareAndExecute(requireLogin requireLogin: Bool, fn: () -> ()) {
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
-        #if !DEBUG
-            Fabric.with([Crashlytics.self()])
-        #endif
+//        #if !DEBUG
+            Twitter.sharedInstance().startWithConsumerKey("sKBlhsebljhzzejrOWdWVAYKD", consumerSecret: "jZE8ccXXGf869FZrmaeTV2Al0CZqSWLz6dBvBLOqEVBg0igaNi")
+            Fabric.with([Crashlytics.sharedInstance(), Twitter.sharedInstance()])
+//        #endif
         
         if case .Production = Env {
             Mixpanel.sharedInstanceWithToken("10ba57dae2871ca534c61f0f89bab97d")

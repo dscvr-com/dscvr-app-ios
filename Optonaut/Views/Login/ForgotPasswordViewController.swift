@@ -35,7 +35,7 @@ class ForgotPasswordViewController: UIViewController {
         
         view.backgroundColor = UIColor.Accent
         
-        cancelButtonView.setTitle(String.iconWithName(.Cross), forState: .Normal)
+        cancelButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
         cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
@@ -69,7 +69,7 @@ class ForgotPasswordViewController: UIViewController {
         viewModel.email <~ emailInputView.rac_text
         formView.addSubview(emailInputView)
         
-        submitButtonView.setTitle(String.iconWithName(.Check), forState: .Normal)
+        submitButtonView.setTitle(String.iconWithName(.Next), forState: .Normal)
         submitButtonView.setTitleColor(.Accent, forState: .Normal)
         submitButtonView.defaultBackgroundColor = .whiteColor()
         submitButtonView.titleLabel?.font = UIFont.iconOfSize(28)

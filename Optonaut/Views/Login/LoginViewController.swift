@@ -51,7 +51,7 @@ class LoginViewController: UIViewController {
         skipTextView.userInteractionEnabled = true
         headView.addSubview(skipTextView)
         
-        logoView.text = String.iconWithName(.LogoText)
+//        logoView.text = String.iconWithName(.LogoText)
         logoView.textAlignment = .Center
         logoView.textColor = .whiteColor()
         logoView.font = UIFont.iconOfSize(35)
@@ -107,7 +107,7 @@ class LoginViewController: UIViewController {
             .combineLatestWith(viewModel.password.producer.map(isNotEmpty)).map(or)
         view.addSubview(forgotPasswordView)
         
-        submitButtonView.setTitle(String.iconWithName(.Send), forState: .Normal)
+//        submitButtonView.setTitle(String.iconWithName(.Send), forState: .Normal)
         submitButtonView.setTitleColor(.Accent, forState: .Normal)
         submitButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         submitButtonView.titleLabel?.textAlignment = .Right

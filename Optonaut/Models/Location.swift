@@ -10,18 +10,26 @@ import ObjectMapper
 
 struct Location: Model {
     var ID: UUID
+    var createdAt: NSDate
     var text: String
     var country: String
-    var createdAt: NSDate
+    var countryShort: String
+    var place: String
+    var region: String
+    var POI: Bool
     var latitude: Double
     var longitude: Double
     
     static func newInstance() -> Location {
         return Location(
             ID: uuid(),
+            createdAt: NSDate(),
             text: "",
             country: "",
-            createdAt: NSDate(),
+            countryShort: "",
+            place: "",
+            region: "",
+            POI: false,
             latitude: 0,
             longitude: 0
         )
@@ -41,9 +49,13 @@ extension Location: Mappable {
     
     mutating func mapping(map: Map) {
         ID              <- map["id"]
+        createdAt       <- (map["created_at"], NSDateTransform())
         text            <- map["text"]
         country         <- map["country"]
-        createdAt       <- (map["created_at"], NSDateTransform())
+        countryShort    <- map["country_short"]
+        place           <- map["place"]
+        region          <- map["region"]
+        POI             <- map["poi"]
         latitude        <- map["latitude"]
         longitude       <- map["longitude"]
     }
@@ -62,9 +74,13 @@ extension Location: SQLiteModel {
     static func fromSQL(row: SQLiteRow) -> Location {
         return Location(
             ID: row[LocationSchema.ID],
+            createdAt: row[LocationSchema.createdAt],
             text: row[LocationSchema.text],
             country: row[LocationSchema.country],
-            createdAt: row[LocationSchema.createdAt],
+            countryShort: row[LocationSchema.countryShort],
+            place: row[LocationSchema.place],
+            region: row[LocationSchema.region],
+            POI: row[LocationSchema.POI],
             latitude: row[LocationSchema.latitude],
             longitude: row[LocationSchema.longitude]
         )
@@ -73,9 +89,13 @@ extension Location: SQLiteModel {
     func toSQL() -> [SQLiteSetter] {
         return [
             LocationSchema.ID <-- ID,
+            LocationSchema.createdAt <-- createdAt,
             LocationSchema.text <-- text,
             LocationSchema.country <-- country,
-            LocationSchema.createdAt <-- createdAt,
+            LocationSchema.countryShort <-- countryShort,
+            LocationSchema.place <-- place,
+            LocationSchema.region <-- region,
+            LocationSchema.POI <-- POI,
             LocationSchema.latitude <-- latitude,
             LocationSchema.longitude <-- longitude
         ]

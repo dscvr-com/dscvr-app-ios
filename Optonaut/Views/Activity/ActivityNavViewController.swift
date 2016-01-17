@@ -18,7 +18,7 @@ class ActivityNavViewController: NavigationController, RedNavbar {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        setTabBarIcon(tabBarItem, icon: .Bell, withFontSize: 20)
+//        setTabBarIcon(tabBarItem, icon: .Bell, withFontSize: 20)
         pushViewController(activityTableViewController, animated: false)
     }
     

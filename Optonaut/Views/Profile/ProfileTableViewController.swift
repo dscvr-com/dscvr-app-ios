@@ -144,10 +144,10 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
             let cell = tableView.dequeueReusableCellWithIdentifier("placeholder-cell") as! PlaceholderTableViewCell
             if personID == Defaults[.SessionPersonID] {
                 cell.textView.text = "Record your first Optograph"
-                cell.iconView.text = String.iconWithName(.Rocket)
+//                cell.iconView.text = String.iconWithName(.Rocket)
             } else {
                 cell.textView.text = "No Optographs yet :("
-                cell.iconView.text = String.iconWithName(.Inbox)
+//                cell.iconView.text = String.iconWithName(.Inbox)
                 cell.iconView.textColor = .LightGrey
             }
             return cell

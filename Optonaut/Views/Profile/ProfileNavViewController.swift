@@ -13,7 +13,7 @@ class ProfileNavViewController: NavigationController {
     
     required init() {
         super.init(nibName: nil, bundle: nil)
-        setTabBarIcon(tabBarItem, icon: .Profile, withFontSize: 20)
+        setTabBarIcon(tabBarItem, icon: .Cancel, withFontSize: 20)
         // TODO
         if SessionService.isLoggedIn {
             pushViewController(ProfileTableViewController(personID: Defaults[.SessionPersonID]!), animated: false)

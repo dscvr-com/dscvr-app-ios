@@ -64,7 +64,7 @@ class OptographInfoView: UIView {
 //        addSubview(dateView)
         
         starButtonView.titleLabel?.font = UIFont.iconOfSize(23.5)
-        starButtonView.setTitle(String.iconWithName(.HeartFilled), forState: .Normal)
+//        starButtonView.setTitle(String.iconWithName(.HeartFilled), forState: .Normal)
         starButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleStar"))
         addSubview(starButtonView)
         
@@ -72,7 +72,7 @@ class OptographInfoView: UIView {
         starsCountView.textColor = .whiteColor()
         
         retryButtonView.titleLabel?.font = UIFont.iconOfSize(23.5)
-        retryButtonView.setTitle(String.iconWithName(.Redo), forState: .Normal)
+//        retryButtonView.setTitle(String.iconWithName(.Redo), forState: .Normal)
         retryButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "retryPublish"))
         addSubview(retryButtonView)
         
@@ -81,7 +81,7 @@ class OptographInfoView: UIView {
         addSubview(starsCountView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(23.5)
-        optionsButtonView.setTitle(String.iconWithName(.MoreOptions), forState: .Normal)
+//        optionsButtonView.setTitle(String.iconWithName(.MoreOptions), forState: .Normal)
         optionsButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTapOptions"))
         addSubview(optionsButtonView)

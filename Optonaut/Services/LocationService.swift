@@ -30,6 +30,11 @@ class LocationService: NSObject {
     }
     
     static func askPermission() {
+        if !CLLocationManager.locationServicesEnabled() {
+            sharedInstance.locationManager.requestWhenInUseAuthorization()
+            return
+        }
+        
         switch CLLocationManager.authorizationStatus() {
         case .NotDetermined:
             sharedInstance.locationManager.requestWhenInUseAuthorization()

@@ -43,6 +43,11 @@ func calcTextHeight(text: String, withWidth width: CGFloat, andFont font: UIFont
     return textRect.height
 }
 
+func calcTextWidth(text: String, withFont font: UIFont) -> CGFloat {
+    let size = (text as NSString).sizeWithAttributes([NSFontAttributeName: font])
+    return size.width
+}
+
 class NotificationSignal<T> {
     
     let (signal, sink) = Signal<T, NoError>.pipe()
@@ -110,7 +115,7 @@ func getBearing(a: GLKVector2, b: GLKVector2) -> Float {
 }
 
 func getTextureWidth(hfov: Float) -> Float {
-    return Float(UIScreen.mainScreen().bounds.width) * 360 / hfov
+    return Float(UIScreen.mainScreen().bounds.width) * 360 / hfov * 4 / Float(M_PI)
 }
 
 func toDictionary<E, K, V>(array: [E], transformer: (element: E) -> (key: K, value: V)?) -> Dictionary<K, V> {

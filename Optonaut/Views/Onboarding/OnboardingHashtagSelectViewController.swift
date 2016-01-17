@@ -66,7 +66,7 @@ class OnboardingHashtagSelectViewController: UIViewController {
         
         skipButtonView.defaultBackgroundColor = .Accent
         skipButtonView.titleLabel?.font = UIFont.iconOfSize(20)
-        skipButtonView.setTitle(String.iconWithName(.Cross), forState: .Normal)
+        skipButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
         skipButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         skipButtonView.layer.cornerRadius = 30
         skipButtonView.rac_alpha <~ viewModel.loading.producer.map { $0 ? 0.3 : 1 }
@@ -76,7 +76,7 @@ class OnboardingHashtagSelectViewController: UIViewController {
         
         heartButtonView.defaultBackgroundColor = .Accent
         heartButtonView.titleLabel?.font = UIFont.iconOfSize(20)
-        heartButtonView.setTitle(String.iconWithName(.HeartFilled), forState: .Normal)
+//        heartButtonView.setTitle(String.iconWithName(.HeartFilled), forState: .Normal)
         heartButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         heartButtonView.layer.cornerRadius = 30
         heartButtonView.rac_alpha <~ viewModel.loading.producer.map { $0 ? 0.3 : 1 }

@@ -37,7 +37,7 @@ class OnboardingVRViewController: UIViewController {
         view.addSubview(headlineTextView)
         
         iconView.textAlignment = .Center
-        iconView.text = String.iconWithName(.OnboardingVr)
+//        iconView.text = String.iconWithName(.OnboardingVr)
         iconView.textColor = .whiteColor()
         iconView.font = UIFont.iconOfSize(60)
         view.addSubview(iconView)
