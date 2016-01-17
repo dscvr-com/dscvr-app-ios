@@ -614,7 +614,14 @@ class CameraViewController: UIViewController {
         
         let recorderCleanup = SignalProducer<Void, NoError> { [weak self] sink, disposable in
             
-            // TODO preview image
+            if let recorder = self?.recorder where recorder.previewAvailable() {
+                let previewData = recorder.getPreviewImage()
+                autoreleasepool {
+                    let previewImage = ImageBufferToCompressedUIImage(previewData)
+                    // TODO: Do someting with previewImage
+                }
+                Recorder.freeImageBuffer(previewData)
+            }
             
             self?.recorder.finish()
             sink.sendCompleted()

@@ -216,6 +216,8 @@
 		A5DE71EE1BE28A7400316F82 /* distortion.json in Resources */ = {isa = PBXBuildFile; fileRef = A5DE71E61BE28A7400316F82 /* distortion.json */; };
 		A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5DE71E71BE28A7400316F82 /* distortion.vsh */; };
 		A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */; };
+		A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F8AF231C4B1BA300072032 /* debugHook.cpp */; };
+		A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F8AF2B1C4B1BB200072032 /* static_counter.cpp */; };
 		A5FD5D7D1BEA5A4E0031ED1E /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D471BEA5A4E0031ED1E /* image.cpp */; };
 		A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D4B1BEA5A4E0031ED1E /* progressCallback.cpp */; };
 		A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D4E1BEA5A4E0031ED1E /* static_timer.cpp */; };
@@ -493,6 +495,15 @@
 		A5DE71E61BE28A7400316F82 /* distortion.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = distortion.json; sourceTree = "<group>"; };
 		A5DE71E71BE28A7400316F82 /* distortion.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.vsh; sourceTree = "<group>"; };
 		A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewerViewController.swift; sourceTree = "<group>"; };
+		A5F8AF231C4B1BA300072032 /* debugHook.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debugHook.cpp; path = debug/debugHook.cpp; sourceTree = "<group>"; };
+		A5F8AF241C4B1BA300072032 /* debugHook.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = debugHook.hpp; path = debug/debugHook.hpp; sourceTree = "<group>"; };
+		A5F8AF261C4B1BB200072032 /* assert.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = assert.hpp; sourceTree = "<group>"; };
+		A5F8AF271C4B1BB200072032 /* backtrace.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = backtrace.hpp; sourceTree = "<group>"; };
+		A5F8AF281C4B1BB200072032 /* bimap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bimap.hpp; sourceTree = "<group>"; };
+		A5F8AF291C4B1BB200072032 /* queueProcessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = queueProcessor.hpp; sourceTree = "<group>"; };
+		A5F8AF2A1C4B1BB200072032 /* reduceProcessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reduceProcessor.hpp; sourceTree = "<group>"; };
+		A5F8AF2B1C4B1BB200072032 /* static_counter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = static_counter.cpp; sourceTree = "<group>"; };
+		A5F8AF2C1C4B1BB200072032 /* static_counter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = static_counter.hpp; sourceTree = "<group>"; };
 		A5FD5D421BEA5A4E0031ED1E /* asyncQueueWorker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncQueueWorker.hpp; sourceTree = "<group>"; };
 		A5FD5D431BEA5A4E0031ED1E /* asyncStreamWrapper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncStreamWrapper.hpp; sourceTree = "<group>"; };
 		A5FD5D441BEA5A4E0031ED1E /* drawing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = drawing.hpp; sourceTree = "<group>"; };
@@ -1056,6 +1067,7 @@
 		8FD7F85C1B5924D5001680AA /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				A5F8AF221C4B1B9300072032 /* debug */,
 				A5FD5D8A1BEA5A570031ED1E /* lib */,
 				A5FD5D411BEA5A4E0031ED1E /* common */,
 				A5FD5D511BEA5A4E0031ED1E /* imgproc */,
@@ -1145,9 +1157,25 @@
 			path = Technique;
 			sourceTree = "<group>";
 		};
+		A5F8AF221C4B1B9300072032 /* debug */ = {
+			isa = PBXGroup;
+			children = (
+				A5F8AF231C4B1BA300072032 /* debugHook.cpp */,
+				A5F8AF241C4B1BA300072032 /* debugHook.hpp */,
+			);
+			name = debug;
+			sourceTree = "<group>";
+		};
 		A5FD5D411BEA5A4E0031ED1E /* common */ = {
 			isa = PBXGroup;
 			children = (
+				A5F8AF261C4B1BB200072032 /* assert.hpp */,
+				A5F8AF271C4B1BB200072032 /* backtrace.hpp */,
+				A5F8AF281C4B1BB200072032 /* bimap.hpp */,
+				A5F8AF291C4B1BB200072032 /* queueProcessor.hpp */,
+				A5F8AF2A1C4B1BB200072032 /* reduceProcessor.hpp */,
+				A5F8AF2B1C4B1BB200072032 /* static_counter.cpp */,
+				A5F8AF2C1C4B1BB200072032 /* static_counter.hpp */,
 				A5FD5D421BEA5A4E0031ED1E /* asyncQueueWorker.hpp */,
 				A5FD5D431BEA5A4E0031ED1E /* asyncStreamWrapper.hpp */,
 				A5FD5D441BEA5A4E0031ED1E /* drawing.hpp */,
@@ -1494,6 +1522,7 @@
 				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,
+				A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */,
 				8F23AA551BFF31B4008926A8 /* PersonTable.swift in Sources */,
 				A5FD5D831BEA5A4E0031ED1E /* quat.cpp in Sources */,
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
@@ -1611,6 +1640,7 @@
 				8FD845C51BCAA4530064048D /* WebImage.swift in Sources */,
 				8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */,
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
+				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				8FD845BD1BC92A600064048D /* OptographInfoView.swift in Sources */,
@@ -1818,7 +1848,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "c02124f7-5c32-4738-81bf-b2012cc916f9";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1852,7 +1882,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "c02124f7-5c32-4738-81bf-b2012cc916f9";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

@@ -57,5 +57,7 @@ struct ExposureInfo {
 - (void)dispose;
 - (bool)isDisposed;
 - (struct ExposureInfo)getExposureHint;
+- (bool)previewAvailable;
+- (struct ImageBuffer)getPreviewImage;
 
 @end
