@@ -61,7 +61,7 @@ class TabViewController: UIViewController {
         
         view.insertSubview(leftViewController.view, atIndex: 0)
         
-        leftViewController.pushViewController(SaveViewController(recorderCleanup: SignalProducer(value: ())), animated: false)
+//        leftViewController.pushViewController(SaveViewController(recorderCleanup: SignalProducer(value: ())), animated: false)
         
         let width = view.frame.width
         
@@ -210,6 +210,21 @@ class RecordButton: UIButton {
     private var touched = false
     
     private let progressLayer = CALayer()
+    private let loadingView = UIActivityIndicatorView()
+    
+    var loading = false {
+        didSet {
+            if loading {
+                loadingView.startAnimating()
+            } else {
+                loadingView.stopAnimating()
+            }
+            
+            setTitleColor(titleColorForState(.Normal)!.alpha(loading ? 0 : 1), forState: .Normal)
+            
+            userInteractionEnabled = !loading
+        }
+    }
     
     var progress: CGFloat = 0 {
         didSet {
@@ -228,8 +243,10 @@ class RecordButton: UIButton {
         super.init(frame: frame)
         
         progressLayer.backgroundColor = UIColor.Accent.mixWithColor(.blackColor(), amount: 0.1).CGColor
-        
         layer.addSublayer(progressLayer)
+        
+        loadingView.hidesWhenStopped = true
+        addSubview(loadingView)
         
         backgroundColor = .Accent
         clipsToBounds = true
@@ -251,6 +268,7 @@ class RecordButton: UIButton {
         super.layoutSubviews()
         
         progressLayer.frame = CGRect(x: 0, y: 0, width: frame.width * progress, height: frame.height)
+        loadingView.fillSuperview()
     }
     
     private func updateBackground() {
@@ -412,12 +430,12 @@ extension UIViewController {
     
     func updateTabs() {
         tabController!.leftButton.title = "HOME"
-        tabController!.leftButton.icon = .Cancel
+        tabController!.leftButton.icon = .Home
         tabController!.leftButton.hidden = false
         tabController!.leftButton.color = .Dark
         
         tabController!.rightButton.title = "PROFILE"
-        tabController!.rightButton.icon = .Cancel
+        tabController!.rightButton.icon = .User
         tabController!.rightButton.hidden = false
         tabController!.rightButton.color = .Dark
         

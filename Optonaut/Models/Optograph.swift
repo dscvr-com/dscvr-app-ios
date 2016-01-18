@@ -35,7 +35,7 @@ struct Optograph: DeletableModel {
     var isPublished: Bool
     var stitcherVersion: String
     var shareAlias: String
-    var previewAssetID: UUID
+    var placeholderTextureAssetID: UUID
     var leftTextureAssetID: UUID
     var rightTextureAssetID: UUID
     var isStaffPick: Bool
@@ -61,7 +61,7 @@ struct Optograph: DeletableModel {
             isPublished: false,
             stitcherVersion: "",
             shareAlias: "",
-            previewAssetID: "",
+            placeholderTextureAssetID: "",
             leftTextureAssetID: "",
             rightTextureAssetID: "",
             isStaffPick: false,
@@ -83,10 +83,10 @@ struct Optograph: DeletableModel {
         case .RightImage(let data):
             ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID))
         case .PreviewImage(let data):
-            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID))
+            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID))
             // needs all different sizes
-            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID, fullDimension: .Width))
-            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(previewAssetID, width: 32, height: 40))
+            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID, fullDimension: .Width))
+            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID, width: 32, height: 40))
         }
     }
     
@@ -95,7 +95,7 @@ struct Optograph: DeletableModel {
         
         return KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(leftTextureAssetID))
             .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(rightTextureAssetID)))
-            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(previewAssetID)))
+            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(placeholderTextureAssetID)))
             .map { ($0.0, $0.1, $1) }
             .map { (left, right, preview) -> [String: AnyObject] in
                 var parameters = Mapper().toJSON(self)
@@ -169,29 +169,28 @@ extension Optograph: Mappable {
             isPublished = true
         }
         
-        ID                  <- map["id"]
-        text                <- map["text"]
-        person              <- map["person"]
-        createdAt           <- (map["created_at"], NSDateTransform())
-        deletedAt           <- (map["deleted_at"], NSDateTransform())
-        isStarred           <- map["is_starred"]
-        isPrivate           <- map["is_private"]
-        stitcherVersion     <- map["stitcher_version"]
-        shareAlias          <- map["share_alias"]
-        starsCount          <- map["stars_count"]
-        commentsCount       <- map["comments_count"]
-        viewsCount          <- map["views_count"]
-        location            <- map["location"]
-        previewAssetID      <- map["preview_asset_id"]
-        leftTextureAssetID  <- map["left_texture_asset_id"]
-        rightTextureAssetID <- map["right_texture_asset_id"]
-        isStaffPick         <- map["is_staff_pick"]
-        hashtagString       <- map["hashtag_string"]
-        directionPhi        <- map["direction_phi"]
-        directionTheta      <- map["direction_theta"]
+        ID                          <- map["id"]
+        text                        <- map["text"]
+        person                      <- map["person"]
+        createdAt                   <- (map["created_at"], NSDateTransform())
+        deletedAt                   <- (map["deleted_at"], NSDateTransform())
+        isStarred                   <- map["is_starred"]
+        isPrivate                   <- map["is_private"]
+        stitcherVersion             <- map["stitcher_version"]
+        shareAlias                  <- map["share_alias"]
+        starsCount                  <- map["stars_count"]
+        commentsCount               <- map["comments_count"]
+        viewsCount                  <- map["views_count"]
+        location                    <- map["location"]
+        placeholderTextureAssetID   <- map["placeholder_texture_asset_id"]
+        leftTextureAssetID          <- map["left_texture_asset_id"]
+        rightTextureAssetID         <- map["right_texture_asset_id"]
+        isStaffPick                 <- map["is_staff_pick"]
+        hashtagString               <- map["hashtag_string"]
+        directionPhi                <- map["direction_phi"]
+        directionTheta              <- map["direction_theta"]
         
         if person.displayName.isEmpty {
-            
             print(self)
         }
     }
@@ -225,7 +224,7 @@ extension Optograph: SQLiteModel {
             isPublished: row[OptographSchema.isPublished],
             stitcherVersion: row[OptographSchema.stitcherVersion],
             shareAlias: row[OptographSchema.shareAlias],
-            previewAssetID: row[OptographSchema.previewAssetID],
+            placeholderTextureAssetID: row[OptographSchema.placeholderTextureAssetID],
             leftTextureAssetID: row[OptographSchema.leftTextureAssetID],
             rightTextureAssetID: row[OptographSchema.rightTextureAssetID],
             isStaffPick: row[OptographSchema.isStaffPick],
@@ -253,7 +252,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.stitcherVersion <-- stitcherVersion,
             OptographSchema.shareAlias <-- shareAlias,
-            OptographSchema.previewAssetID <-- previewAssetID,
+            OptographSchema.placeholderTextureAssetID <-- placeholderTextureAssetID,
             OptographSchema.leftTextureAssetID <-- leftTextureAssetID,
             OptographSchema.rightTextureAssetID <-- rightTextureAssetID,
             OptographSchema.isStaffPick <-- isStaffPick,

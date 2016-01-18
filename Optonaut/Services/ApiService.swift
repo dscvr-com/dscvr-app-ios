@@ -98,6 +98,43 @@ class ApiService<T: Mappable> {
         }
     }
     
+    static func upload(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
+        return SignalProducer { sink, disposable in
+            let mutableURLRequest = buildURLRequest(endpoint, method: .POST, queries: nil)
+            
+            var request: Alamofire.Request?
+            Alamofire.upload(mutableURLRequest, multipartFormData: multipartFormData) { result in
+                switch result {
+                case .Success(let upload, _, _):
+                    request = upload
+                        .validate(statusCode: 200..<300)
+                        .response { _, _, _, error in
+                            if let error = error {
+                                let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "Upload failed", error: error)
+                                sink.sendFailed(apiError)
+                            } else {
+                                sink.sendCompleted()
+                            }
+                    }
+                case .Failure(let error):
+                    let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "Upload failed", error: error as NSError)
+                    sink.sendFailed(apiError)
+                }
+            }
+            
+            disposable.addDisposable {
+                request?.cancel()
+            }
+        }
+            .on(failed: { error in
+                if error.suspicious {
+//                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+                    print(error)
+                    Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
+                }
+            })
+    }
+    
     private static func buildURLRequest(endpoint: String, method: Alamofire.Method, queries: [String: String]?) -> NSMutableURLRequest {
         var queryStr = ""
         if let queries = queries {

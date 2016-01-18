@@ -98,7 +98,7 @@ class OptographTableViewCell: UITableViewCell {
     func bindViewModel(optograph: Optograph) {
         viewModel = OptographTableViewCellModel(optograph: optograph)
         
-        previewImageView.rac_url <~ viewModel.previewImageUrl
+//        previewImageView.rac_url <~ viewModel.previewImageUrl
         
         progressDisposable?.dispose()
 //        progressDisposable = viewModel.stitchingProgress.producer

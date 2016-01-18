@@ -15,15 +15,13 @@ import Async
 import AVFoundation
 import SceneKit
 import ObjectMapper
-import Kingfisher
 import FBSDKLoginKit
 import TwitterKit
 import SwiftyUserDefaults
 
 class SaveViewController: UIViewController, RedNavbar {
     
-    private let viewModel = SaveViewModel()
-    
+    private let viewModel: SaveViewModel
     
     private var touchRotationSource: TouchRotationSource!
     private var renderDelegate: SphereRenderDelegate!
@@ -45,16 +43,30 @@ class SaveViewController: UIViewController, RedNavbar {
     private let twitterSocialButton = SocialButton()
     private let instagramSocialButton = SocialButton()
     private let moreSocialButton = SocialButton()
+    private var placeholderImage: UIImage?
     
-    required init(recorderCleanup: SignalProducer<Void, NoError>) {
+    required init(recorderCleanup: SignalProducer<UIImage, NoError>) {
+        
+        let (placeholderSignal, placeholderSink) = Signal<UIImage, NoError>.pipe()
+        
+        viewModel = SaveViewModel(placeholderSignal: placeholderSignal)
         
         super.init(nibName: nil, bundle: nil)
         
         recorderCleanup
             .startOn(QueueScheduler(queue: dispatch_queue_create("recorderQueue", DISPATCH_QUEUE_SERIAL)))
-            .startWithCompleted { [weak self] in
-                self?.viewModel.recorderCleanedUp.value = true
-            }
+            .on(event: { event in
+                placeholderSink.action(event)
+            })
+            .observeOnMain()
+            .on(next: { [weak self] image in
+                if let renderDelegate = self?.renderDelegate {
+                    renderDelegate.image = image
+                } else {
+                    self?.placeholderImage = image
+                }
+            })
+            .start()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -93,6 +105,8 @@ class SaveViewController: UIViewController, RedNavbar {
         let hfov: Float = 80
         
         touchRotationSource = TouchRotationSource(sceneSize: scnView.frame.size, hfov: hfov)
+        touchRotationSource.dampFactor = 0.9999
+        touchRotationSource.phiDamp = 0.003
     
         renderDelegate = SphereRenderDelegate(rotationMatrixSource: touchRotationSource, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov))
         
@@ -102,13 +116,7 @@ class SaveViewController: UIViewController, RedNavbar {
         scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
         scrollView.addSubview(scnView)
         
-        KingfisherManager.sharedManager.downloader.downloadSKTextureForURL(ImageURL("7fdb61ce-0b8b-4fa8-928d-6389496885fd", width: 2048))
-            .observeOnMain()
-            .startWithNext { [weak self] image in
-                self?.touchRotationSource.dampFactor = 0.9999
-                self?.touchRotationSource.phiDamp = 0.003
-                self?.renderDelegate.texture = image
-            }
+        renderDelegate.image = placeholderImage
         
         blurView.frame = scnView.frame
         
@@ -207,6 +215,10 @@ class SaveViewController: UIViewController, RedNavbar {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
+        
+        viewModel.isReady.producer.startWithNext { [weak self] isReady in
+            self?.tabController!.cameraButton.loading = !isReady
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -247,6 +259,7 @@ class SaveViewController: UIViewController, RedNavbar {
         
         updateNavbarAppear()
         
+        navigationController?.setNavigationBarHidden(false, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
         navigationController?.navigationBar.titleTextAttributes = [
@@ -294,6 +307,8 @@ class SaveViewController: UIViewController, RedNavbar {
         tabController!.rightButton.color = .Light
         
         tabController!.cameraButton.setTitle(String.iconWithName(.Next), forState: .Normal)
+        tabController!.cameraButton.setTitleColor(UIColor.whiteColor().alpha(0), forState: .Normal)
+        tabController!.cameraButton.backgroundColor = .Accent
         
         tabController!.bottomGradientOffset.value = 0
     }

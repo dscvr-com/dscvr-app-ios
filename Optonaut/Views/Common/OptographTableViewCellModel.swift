@@ -14,13 +14,13 @@ class OptographTableViewCellModel {
     
     let optograph: Optograph
     
-    let previewImageUrl: ConstantProperty<String>
+//    let previewImageUrl: ConstantProperty<String>
 //    let stitchingProgress: MutableProperty<Float>
     
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        previewImageUrl = ConstantProperty(ImageURL(optograph.previewAssetID, fullDimension: .Width))
+//        previewImageUrl = ConstantProperty(ImageURL(optograph.previewAssetID, fullDimension: .Width))
         
 //        if !optograph.isStitched && StitchingService.hasUnstitchedRecordings() {
 //            stitchingProgress = MutableProperty(0)

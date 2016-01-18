@@ -55,7 +55,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchButton)
         
         let activityButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-        activityButton.text = String.iconWithName(.Cancel)
+        activityButton.text = String.iconWithName(.Notifications)
         activityButton.textColor = .whiteColor()
         activityButton.font = UIFont.iconOfSize(24)
         activityButton.userInteractionEnabled = true
@@ -457,7 +457,7 @@ private class OverlayView: UIView {
         addSubview(personNameView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(28)
-        optionsButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
+        optionsButtonView.setTitle(String.iconWithName(.More), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.LightGrey, forState: .Normal)
         optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTapOptions"))
         addSubview(optionsButtonView)
@@ -469,7 +469,7 @@ private class OverlayView: UIView {
         likeButtonView.layer.cornerRadius = 14
         likeButtonView.clipsToBounds = true
         likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleLike"))
-        likeButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
+        likeButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
         addSubview(likeButtonView)
         
         likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)

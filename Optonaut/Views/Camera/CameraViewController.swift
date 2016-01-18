@@ -138,7 +138,8 @@ class CameraViewController: UIViewController {
             return 1 - max(CGFloat((distLimit - distXY) / distLimit + 1), 0)
         }
         viewModel.headingToDot.producer
-            .map { CGAffineTransformMakeRotation(CGFloat($0) - CGFloat(M_PI_2)) }
+            .map { CGAffineTransformMakeRotation(CGFloat($0) + CGFloat(M_PI_2)) }
+//            .map { CGAffineTransformMakeRotation(CGFloat($0) - CGFloat(M_PI_2)) }
             .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
         view.addSubview(arrowView)
         
@@ -273,7 +274,6 @@ class CameraViewController: UIViewController {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        navigationController?.setNavigationBarHidden(false, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
         UIApplication.sharedApplication().idleTimerDisabled = false
@@ -612,12 +612,12 @@ class CameraViewController: UIViewController {
 
         stopSession()
         
-        let recorderCleanup = SignalProducer<Void, NoError> { [weak self] sink, disposable in
+        let recorderCleanup = SignalProducer<UIImage, NoError> { [weak self] sink, disposable in
             
             if let recorder = self?.recorder where recorder.previewAvailable() {
                 let previewData = recorder.getPreviewImage()
                 autoreleasepool {
-                    let previewImage = ImageBufferToCompressedUIImage(previewData)
+                    sink.sendNext(UIImage(CGImage: ImageBufferToCGImage(previewData)))
                     // TODO: Do someting with previewImage
                 }
                 Recorder.freeImageBuffer(previewData)

@@ -30,7 +30,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         }
     }
 
-    init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: FieldOfView, cameraOffset: Float) {
+    init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float) {
         self.rotationMatrixSource = rotationMatrixSource
         self.cameraOffset = cameraOffset
         
@@ -55,7 +55,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         let angles = [xFov / Float(2.0), xFov / Float(2.0), yFov / Float(2.0), yFov / Float(2.0)]
         let newFov = FieldOfView(angles: angles)
         
-        self.init(rotationMatrixSource: rotationMatrixSource, width: width, height: height, fov: newFov, cameraOffset: Float(0))
+        self.init(rotationMatrixSource: rotationMatrixSource, fov: newFov, cameraOffset: Float(0))
     }
     
     private static func setupCamera(fov: FieldOfView) -> SCNCamera {
@@ -87,8 +87,8 @@ class CubeRenderDelegate: RenderDelegate {
 
     private let d: CGFloat = 10
     
-    override init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: FieldOfView, cameraOffset: Float) {
-        super.init(rotationMatrixSource: rotationMatrixSource, width: width, height: height, fov: fov, cameraOffset: cameraOffset)
+    override init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float) {
+        super.init(rotationMatrixSource: rotationMatrixSource, fov: fov, cameraOffset: cameraOffset)
         
         let transforms: [(position: SCNVector3, rotation: SCNVector3)] = [
             (SCNVector3Make(0, 0, Float(d)), SCNVector3Make(0, 0, 0)),
@@ -216,10 +216,10 @@ class SphereRenderDelegate: RenderDelegate {
     }
 
     
-    override init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: FieldOfView, cameraOffset: Float) {
+    override init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float) {
         sphereNode = SphereRenderDelegate.createSphere()
         
-        super.init(rotationMatrixSource: rotationMatrixSource, width: width, height: height, fov: fov, cameraOffset: cameraOffset)
+        super.init(rotationMatrixSource: rotationMatrixSource, fov: fov, cameraOffset: cameraOffset)
         
         scene.rootNode.addChildNode(sphereNode)
     }

@@ -72,8 +72,8 @@ class ViewerViewController: UIViewController  {
     }
     
     private func createRenderDelegates() {
-        leftRenderDelegate = RenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: leftScnView.frame.width, height: leftScnView.frame.height, fov: leftProgram.fov, cameraOffset:  Float(-0.2))
-        rightRenderDelegate = RenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, width: rightScnView.frame.width, height: rightScnView.frame.height, fov: rightProgram.fov, cameraOffset: Float(0.2))
+        leftRenderDelegate = RenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: leftProgram.fov, cameraOffset:  Float(-0.2))
+        rightRenderDelegate = RenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: rightProgram.fov, cameraOffset: Float(0.2))
         
         leftScnView.scene = leftRenderDelegate.scene
         leftScnView.delegate = leftRenderDelegate

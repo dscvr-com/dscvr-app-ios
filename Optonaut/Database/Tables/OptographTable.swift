@@ -24,7 +24,7 @@ struct OptographSchemaType: ModelSchema {
     let shareAlias = Expression<String>("optograph_share_alias")
     let isStitched = Expression<Bool>("optograph_is_stitched")
     let isPublished = Expression<Bool>("optograph_is_published")
-    let previewAssetID = Expression<UUID>("optograph_preview_asset_id")
+    let placeholderTextureAssetID = Expression<UUID>("optograph_placeholder_texture_asset_id")
     let leftTextureAssetID = Expression<UUID>("optograph_left_texture_asset_id")
     let rightTextureAssetID = Expression<UUID>("optograph_right_texture_asset_id")
     let isStaffPick = Expression<Bool>("optograph_is_staff_pick")

@@ -44,7 +44,7 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
         }
         
         if self.activity != activity {
-            optographImageView.setImageWithURLString(ImageURL(activity.activityResourceComment!.optograph.previewAssetID, width: 32, height: 40))
+//            optographImageView.setImageWithURLString(ImageURL(activity.activityResourceComment!.optograph.previewAssetID, width: 32, height: 40))
         }
         
         super.update(activity)
