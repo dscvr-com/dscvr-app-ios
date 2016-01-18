@@ -142,7 +142,7 @@ std::string debugPath;
     free(toFree.data);
 }
 
--(id)init {
+-(id)init:(RecorderMode)recorderMode {
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
     
@@ -156,10 +156,25 @@ std::string debugPath;
     Stores::right.Clear();
     Stores::common.Clear();
     
+    int internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
+    
+    switch(recorderMode) {
+        case TinyDebug:
+            internalRecordingMode = optonaut::RecorderGraph::ModeTinyDebug;
+            break;
+        case Center:
+            internalRecordingMode = optonaut::RecorderGraph::ModeCenter;
+            break;
+        case Full:
+            internalRecordingMode = optonaut::RecorderGraph::ModeAll;
+            break;
+        default: break; //Explicitely default to truncated. This removes the compiler warning.
+    }
+    
     optonaut::Recorder::exposureEnabled = false;
     optonaut::Recorder::alignmentEnabled = true;
     
-    self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero, self->intrinsics, Stores::left, Stores::right, Stores::common, debugPath, optonaut::RecorderGraph::ModeTruncated, true);
+    self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero, self->intrinsics, Stores::left, Stores::right, Stores::common, debugPath, internalRecordingMode, true);
     
     counter = 0;
 

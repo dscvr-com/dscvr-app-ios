@@ -70,7 +70,7 @@ class CameraViewController: UIViewController {
             Recorder.enableDebug(CameraDebugService().path)
         }
         
-        recorder = Recorder()
+        recorder = Recorder(.Center)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -81,7 +81,9 @@ class CameraViewController: UIViewController {
     
     deinit {
         motionManager.stopDeviceMotionUpdates()
-        recorder.dispose()
+        
+        //We do that in our signal as soon as everything's finished
+        //recorder.dispose()
         
         logRetain()
     }
@@ -612,19 +614,24 @@ class CameraViewController: UIViewController {
 
         stopSession()
         
-        let recorderCleanup = SignalProducer<UIImage, NoError> { [weak self] sink, disposable in
+        let recorder_ = recorder
+        
+        let recorderCleanup = SignalProducer<UIImage, NoError> { sink, disposable in
             
-            if let recorder = self?.recorder where recorder.previewAvailable() {
-                let previewData = recorder.getPreviewImage()
+            if recorder_.previewAvailable() {
+                let previewData = recorder_.getPreviewImage()
                 autoreleasepool {
                     sink.sendNext(UIImage(CGImage: ImageBufferToCGImage(previewData)))
-                    // TODO: Do someting with previewImage
                 }
                 Recorder.freeImageBuffer(previewData)
             }
             
-            self?.recorder.finish()
+            recorder_.finish()
             sink.sendCompleted()
+            
+            // TODO - get images
+            
+            recorder_.dispose()
         }
         
         let createOptographViewController = SaveViewController(recorderCleanup: recorderCleanup)

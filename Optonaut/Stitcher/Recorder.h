@@ -16,6 +16,13 @@
 @property GLKMatrix4 extrinsics;
 @end
 
+typedef NS_ENUM(NSInteger, RecorderMode) {
+    TinyDebug,
+    Truncated,
+    Center,
+    Full
+};
+
 struct ExposureInfo {
     uint32_t iso;
     double exposureTime;
@@ -39,6 +46,7 @@ struct ExposureInfo {
 + (GLKMatrix3)getIPhone5Intrinsics;
 + (void)freeImageBuffer:(struct ImageBuffer)toFree;
 
+- (id)init:(RecorderMode)recorderMode;
 - (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure :(AVCaptureWhiteBalanceGains)gains;
 - (GLKMatrix4)getCurrentRotation;
 - (SelectionPointIterator*)getSelectionPoints;
