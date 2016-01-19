@@ -6,6 +6,8 @@
 #include <string>
 #define OPTONAUT_TARGET_PHONE
 
+#include "storageSink.hpp"
+#include "stitcherSink.hpp"
 #include "recorder.hpp"
 #include "intrinsics.hpp"
 #include "Recorder.h"
@@ -142,6 +144,11 @@ std::string debugPath;
     free(toFree.data);
 }
 
+// TODO - using static variables here is dangerous.
+// Promote to class variables instead (somehow). 
+optonaut::StorageSink storageSink(Stores::left, Stores::right);
+optonaut::StitcherSink stitcherSink;
+
 -(id)init:(RecorderMode)recorderMode {
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
@@ -156,17 +163,22 @@ std::string debugPath;
     Stores::right.Clear();
     Stores::common.Clear();
     
+    optonaut::StereoSink& sink = storageSink;
+    
     int internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
     
     switch(recorderMode) {
         case TinyDebug:
             internalRecordingMode = optonaut::RecorderGraph::ModeTinyDebug;
+            //sink = stitcherSink;
             break;
         case Center:
             internalRecordingMode = optonaut::RecorderGraph::ModeCenter;
+            //sink = stitcherSink;
             break;
         case Full:
             internalRecordingMode = optonaut::RecorderGraph::ModeAll;
+            //sink = storageSink;
             break;
         default: break; //Explicitely default to truncated. This removes the compiler warning.
     }
@@ -174,7 +186,10 @@ std::string debugPath;
     optonaut::Recorder::exposureEnabled = false;
     optonaut::Recorder::alignmentEnabled = true;
     
-    self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero, self->intrinsics, Stores::left, Stores::right, Stores::common, debugPath, internalRecordingMode, true);
+    
+    self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+                                        self->intrinsics, sink,
+                                        debugPath, internalRecordingMode, true);
     
     counter = 0;
 
