@@ -58,13 +58,18 @@ class SaveViewController: UIViewController, RedNavbar {
                 placeholderSink.action(event)
             })
             .observeOnMain()
-            .on(next: { [weak self] image in
-                if let renderDelegate = self?.renderDelegate {
-                    renderDelegate.image = image
-                } else {
-                    self?.placeholderImage = image
+            .on(
+                next: { [weak self] image in
+                    if let renderDelegate = self?.renderDelegate {
+                        renderDelegate.image = image
+                    } else {
+                        self?.placeholderImage = image
+                    }
+                },
+                completed: { [weak self] in
+                    self?.viewModel.stitcherFinished.value = true
                 }
-            })
+            )
             .start()
     }
     
@@ -179,8 +184,6 @@ class SaveViewController: UIViewController, RedNavbar {
         shareBackgroundView.backgroundColor = UIColor(0xfbfbfb)
         shareBackgroundView.layer.borderWidth = 1
         shareBackgroundView.layer.borderColor = UIColor(0xe6e6e6).CGColor
-        shareBackgroundView.rac_userInteractionEnabled <~ viewModel.isOnline
-        shareBackgroundView.rac_alpha <~ viewModel.isOnline.producer.mapToTuple(1, 0.5)
         scrollView.addSubview(shareBackgroundView)
         
         facebookSocialButton.icon = String.iconWithName(.Facebook)
@@ -218,8 +221,8 @@ class SaveViewController: UIViewController, RedNavbar {
         
         moreSocialButton.icon = String.iconWithName(.ShareAlt)
         moreSocialButton.text = "More"
-        moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReady
-        moreSocialButton.rac_alpha <~ viewModel.isReady.producer.mapToTuple(1, 0.5)
+        moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReady.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
+        moreSocialButton.rac_alpha <~ viewModel.isReady.producer.mapToTuple(1, 0.2)
         moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapMoreSocialButton"))
         shareBackgroundView.addSubview(moreSocialButton)
         
@@ -405,7 +408,24 @@ class SaveViewController: UIViewController, RedNavbar {
         navigationController?.presentViewController(settingsSheet, animated: true, completion: nil)
     }
     
+    private func signupAlert() {
+        let alert = UIAlertController(title: "Login Needed", message: "In order to share your moment you need to create an account. Your image won't be lost and can be shared afterwards.", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { _ in return }))
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    private func offlineAlert() {
+        let alert = UIAlertController(title: "No Network Connection", message: "In order to share your moment you need a network connection. Your image won't be lost and can still be shared later.", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { _ in return }))
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
     @objc private func tapFacebookSocialButton() {
+        if !viewModel.isLoggedIn.value {
+            signupAlert()
+            return
+        }
+        
         let loginManager = FBSDKLoginManager()
         let publishPermissions = ["publish_actions"]
         
@@ -439,6 +459,11 @@ class SaveViewController: UIViewController, RedNavbar {
             return
         }
         
+        if !viewModel.isOnline.value {
+            offlineAlert()
+            return
+        }
+        
         facebookSocialButton.state = .Loading
         
         loginManager.logInWithPublishPermissions(publishPermissions, fromViewController: self) { [weak self] result, error in
@@ -459,11 +484,17 @@ class SaveViewController: UIViewController, RedNavbar {
     }
     
     @objc private func tapTwitterSocialButton() {
-//        print(Twitter.sharedInstance().sessionStore.session()!.userID)
-        if let session = Twitter.sharedInstance().sessionStore.session() {
-            print(session.userID)
+        if !viewModel.isLoggedIn.value {
+            signupAlert()
+            return
         }
+        
         if Twitter.sharedInstance().sessionStore.session() == nil {
+            if !viewModel.isOnline.value {
+                offlineAlert()
+                return
+            }
+            
             twitterSocialButton.state = .Loading
             
             Twitter.sharedInstance().logInWithViewController(self) { [weak self] (session, error) in
@@ -493,10 +524,20 @@ class SaveViewController: UIViewController, RedNavbar {
     }
     
     @objc private func tapInstagramSocialButton() {
+        if !viewModel.isLoggedIn.value {
+            signupAlert()
+            return
+        }
+        
         viewModel.postInstagram.value = !viewModel.postInstagram.value
     }
     
     @objc private func tapMoreSocialButton() {
+        if !viewModel.isLoggedIn.value {
+            signupAlert()
+            return
+        }
+        
         moreSocialButton.state = .Loading
         
         Async.main { [weak self] in

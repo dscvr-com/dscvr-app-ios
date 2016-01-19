@@ -58,6 +58,8 @@ class CameraViewController: UIViewController {
     private let ballNode = SCNNode()
     private var ballSpeed = GLKVector3Make(0, 0, 0)
     
+    private var tapCameraButtonCallback: (() -> ())?
+    
     required init() {
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
@@ -73,6 +75,12 @@ class CameraViewController: UIViewController {
         recorder = Recorder(.Center)
         
         super.init(nibName: nil, bundle: nil)
+        
+        tapCameraButtonCallback = { [weak self] in
+            let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
+            confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+            self?.presentViewController(confirmAlert, animated: true, completion: nil)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -654,12 +662,12 @@ extension CameraViewController: TabControllerDelegate {
         viewModel.isRecording.value = false
         tabController!.cameraButton.backgroundColor = .whiteColor()
         tabController!.cameraButton.setTitleColor(.blackColor(), forState: .Normal)
+        
+        tapCameraButtonCallback = nil
     }
     
     func onTapCameraButton() {
-        let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
-        confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-        presentViewController(confirmAlert, animated: true, completion: nil)
+        tapCameraButtonCallback?()
     }
     
     func onTapLeftButton() {

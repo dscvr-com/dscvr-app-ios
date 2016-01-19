@@ -19,11 +19,13 @@ class SaveViewModel {
     let isPrivate = MutableProperty<Bool>(false)
     let isReady = MutableProperty<Bool>(false)
     let isInitialized = MutableProperty<Bool>(false)
+    let stitcherFinished = MutableProperty<Bool>(false)
     let locationLoading = MutableProperty<Bool>(false)
     let postFacebook: MutableProperty<Bool>
     let postTwitter: MutableProperty<Bool>
     let postInstagram: MutableProperty<Bool>
     let isOnline: MutableProperty<Bool>
+    let isLoggedIn: MutableProperty<Bool>
     let placeID = MutableProperty<String?>(nil)
     
     var optograph: Optograph!
@@ -35,6 +37,7 @@ class SaveViewModel {
         postInstagram = MutableProperty(Defaults[.SessionShareToggledInstagram])
         
         isOnline = MutableProperty(Reachability.connectedToNetwork())
+        isLoggedIn = MutableProperty(SessionService.isLoggedIn)
         
         postFacebook.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
             Defaults[.SessionShareToggledFacebook] = toggled
@@ -59,7 +62,7 @@ class SaveViewModel {
             self?.optograph.text = text
         }
         
-        if isOnline.value {
+        if isOnline.value && isLoggedIn.value {
             ApiService<Optograph>.post("optographs", parameters: ["stitcher_version": StitcherVersion])
                 .map { (var optograph) in
                     optograph.isPublished = false
@@ -91,11 +94,11 @@ class SaveViewModel {
                     if val == nil {
                         self?.optograph.location = nil
                     }
-                    })
+                })
                 .ignoreNil()
                 .on(next: { [weak self] _ in
                     self?.locationLoading.value = true
-                    })
+                })
                 .mapError { _ in ApiError.Nil }
                 .flatMap(.Latest) { ApiService<GeocodeDetails>.get("locations/geocode-details/\($0)") }
                 .on(failed: { [weak self] _ in
@@ -138,6 +141,7 @@ class SaveViewModel {
         
         isReady <~ isInitialized.producer
             .combineLatestWith(locationLoading.producer.map(negate)).map(and)
+            .combineLatestWith(stitcherFinished.producer).map(and)
     }
     
     func submit(shouldBePublished: Bool) -> SignalProducer<Void, NoError> {

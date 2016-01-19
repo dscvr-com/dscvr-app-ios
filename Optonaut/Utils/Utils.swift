@@ -127,6 +127,14 @@ func toDictionary<E, K, V>(array: [E], transformer: (element: E) -> (key: K, val
     }
 }
 
+func safeOptional<T>(val: T!) -> T? {
+    if let val = val {
+        return val
+    } else {
+        return nil
+    }
+}
+
 //class NotificationSignal {
 //    
 //    let (signal, sink) =  Signal<Void, NoError>.pipe()
