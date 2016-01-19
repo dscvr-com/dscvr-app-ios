@@ -111,9 +111,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject: AnyObject]) {
-        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {
-            tabBarViewController.activityNavViewController.activityTableViewController.viewModel.refreshNotification.notify(())
-        }
+//        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {
+//            tabBarViewController.activityNavViewController.activityTableViewController.viewModel.refreshNotification.notify(())
+//        }
     }
     
     private func prepareAndExecute(requireLogin requireLogin: Bool, fn: () -> ()) {

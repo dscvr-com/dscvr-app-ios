@@ -126,7 +126,6 @@
 		8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */; };
 		8FAB9F581B8F01DF00B4C8CB /* ProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F251B8F01DF00B4C8CB /* ProfileTableViewController.swift */; };
 		8FAB9F591B8F01DF00B4C8CB /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */; };
-		8FAB9F5A1B8F01DF00B4C8CB /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F281B8F01DF00B4C8CB /* TabBarViewController.swift */; };
 		8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */; };
 		8FAB9F5E1B8F02A900B4C8CB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8FAB9F5D1B8F02A900B4C8CB /* Assets.xcassets */; };
 		8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F611B8F02D500B4C8CB /* Appearance.swift */; };
@@ -386,7 +385,6 @@
 		8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNavViewController.swift; sourceTree = "<group>"; };
 		8FAB9F251B8F01DF00B4C8CB /* ProfileTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
-		8FAB9F281B8F01DF00B4C8CB /* TabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraDebugService.swift; sourceTree = "<group>"; };
 		8FAB9F5D1B8F02A900B4C8CB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8FAB9F611B8F02D500B4C8CB /* Appearance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
@@ -748,7 +746,6 @@
 		8FAB9EEC1B8F01DF00B4C8CB /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				8FAB9F281B8F01DF00B4C8CB /* TabBarViewController.swift */,
 				8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */,
 				8FAB9EED1B8F01DF00B4C8CB /* Activity */,
 				8FAB9EF31B8F01DF00B4C8CB /* Camera */,
@@ -1530,7 +1527,6 @@
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
 				8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */,
-				8FAB9F5A1B8F01DF00B4C8CB /* TabBarViewController.swift in Sources */,
 				8FAB9F371B8F01DF00B4C8CB /* OptographTableViewCellModel.swift in Sources */,
 				8FC7E3731BD15B9D00E97CC3 /* HeadTracker.mm in Sources */,
 				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,

@@ -66,7 +66,8 @@ struct StitcherCancellation {
     NSArray<NSValue*>* result;
     
     try {
-        return [self getCubeFaces:stitcher.Finish(callback->At(0))->image.data];
+        auto sphere = stitcher.Finish(callback->At(0))->image.data;
+        return [self getCubeFaces:sphere];
     } catch (StitcherCancellation c) { }
     return result;
 }

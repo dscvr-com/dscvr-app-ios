@@ -211,7 +211,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     func showHashtagOnboarding() {
         viewModel.updateData().startWithCompleted { [weak self] in
 //            self.presentViewController(OnboardingHashtagInfoViewController(), animated: false, completion: nil)
-            self?.view.window?.rootViewController = TabBarViewController()
+//            self?.view.window?.rootViewController = TabBarViewController()
         }
     }
     

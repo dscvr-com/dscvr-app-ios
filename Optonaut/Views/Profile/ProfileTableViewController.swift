@@ -184,9 +184,9 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
 extension ProfileTableViewController: UITabBarControllerDelegate {
     
     func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
-        if let t = tabBarController as? TabBarViewController where !TabBarViewController.tabBarController(t)(t, shouldSelectViewController: viewController) {
-            return false
-        }
+//        if let t = tabBarController as? TabBarViewController where !TabBarViewController.tabBarController(t)(t, shouldSelectViewController: viewController) {
+//            return false
+//        }
         
         return true
     }

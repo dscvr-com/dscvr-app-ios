@@ -310,7 +310,7 @@ class TabButton: UIButton {
     
     var isActive: Bool = false {
         didSet {
-            alpha = isActive ? 1 : 0.5
+//            alpha = isActive ? 1 : 0.5
 //            activeBorderLayer.hidden = !isActive
         }
     }

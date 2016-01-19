@@ -99,8 +99,10 @@ class StitchingService {
             
             // Please refactor accordingly. This code is just an example.
             
+            print("Ich bin so verbose \(shallCancel)")
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getLeftResult().enumerate() {
+                    print("Ich bin ein linkes gesicht \(face)")
                     var leftFace = ImageBuffer()
                     cubeFace.getValue(&leftFace)
                     
@@ -108,7 +110,6 @@ class StitchingService {
                         autoreleasepool {
                             let image = ImageBufferToCompressedUIImage(leftFace)
                             sink.sendNext(.Result(side: .Left, face: face, image: image))
-//                            sink.sendNext(.LeftImage(data!))
                         }
                     }
                     Recorder.freeImageBuffer(leftFace)
@@ -117,6 +118,7 @@ class StitchingService {
             
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getRightResult().enumerate() {
+                    print("Ich bin ein rechtes gesicht \(face)")
                     var rightFace = ImageBuffer()
                     cubeFace.getValue(&rightFace)
 

@@ -101,7 +101,7 @@ class OnboardingHashtagSummaryViewController: UIViewController {
     
     func showFeed() {
         viewModel.updateData().startWithCompleted { [weak self] in
-            self?.view.window?.rootViewController = TabBarViewController()
+//            self?.view.window?.rootViewController = TabBarViewController()
         }
     }
     
