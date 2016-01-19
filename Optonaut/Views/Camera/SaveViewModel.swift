@@ -120,6 +120,8 @@ class SaveViewModel {
                 }
         } else {
             optograph = Optograph.newInstance()
+            optograph.person.ID = Defaults[.SessionPersonID] ?? Person.guestID
+            
             isInitialized.value = true
             
             placeID.producer
@@ -155,7 +157,6 @@ class SaveViewModel {
                 "direction_theta": optograph.directionTheta,
             ]
             if let location = optograph.location {
-                print(location)
                 parameters["location"] = location.toJSON()
             }
             
