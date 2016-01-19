@@ -122,13 +122,16 @@ class SaveViewModel {
             optograph = Optograph.newInstance()
             isInitialized.value = true
             
-            placeID.producer.startWithNext { [weak self] geocodeDetails in
-                let coords = LocationService.lastLocation()!
-                var location = Location.newInstance()
-                location.latitude = coords.latitude
-                location.longitude = coords.longitude
-                self?.optograph.location = location
-            }
+            placeID.producer
+                .delayLatestUntil(isInitialized.producer)
+                .ignoreNil()
+                .startWithNext { [weak self] geocodeDetails in
+                    let coords = LocationService.lastLocation()!
+                    var location = Location.newInstance()
+                    location.latitude = coords.latitude
+                    location.longitude = coords.longitude
+                    self?.optograph.location = location
+                }
         }
         
         isReady <~ isInitialized.producer

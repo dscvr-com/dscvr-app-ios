@@ -230,6 +230,8 @@ class SaveViewController: UIViewController, RedNavbar {
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
         
+        updateTabs()
+        
         viewModel.isReady.producer.startWithNext { [weak self] isReady in
             self?.tabController!.cameraButton.loading = !isReady
             self?.tabController!.rightButton.loading = !isReady
@@ -281,8 +283,6 @@ class SaveViewController: UIViewController, RedNavbar {
             NSFontAttributeName: UIFont.displayOfSize(14, withType: .Regular),
             NSForegroundColorAttributeName: UIColor.whiteColor(),
         ]
-        
-        updateTabs()
         
         tabController!.delegate = self
         
