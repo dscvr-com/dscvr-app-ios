@@ -22,10 +22,10 @@ struct StitcherCancellation {
 
 };
 
--(NSArray<NSValue*>*)getCubeFaces:(Mat)sphere {
+-(NSArray<NSValue*>*)getCubeFaces:(cv::Mat)sphere {
     int width = sphere.cols / 4;
 
-    NSMutableArray<NSValue*>* cubeFaces;
+    NSMutableArray<NSValue*>* cubeFaces = [[NSMutableArray<NSValue*> alloc] init];
     
     for(int i = 0; i < 6; i++) {
         Mat m;
@@ -66,7 +66,7 @@ struct StitcherCancellation {
     NSArray<NSValue*>* result;
     
     try {
-        auto sphere = stitcher.Finish(callback->At(0))->image.data;
+        cv::Mat sphere = stitcher.Finish(callback->At(0))->image.data;
         return [self getCubeFaces:sphere];
     } catch (StitcherCancellation c) { }
     return result;
@@ -78,7 +78,8 @@ struct StitcherCancellation {
     NSArray<NSValue*>* result;
     
     try {
-        return [self getCubeFaces:stitcher.Finish(callback->At(1))->image.data];
+        cv::Mat sphere = stitcher.Finish(callback->At(1))->image.data;
+        return [self getCubeFaces:sphere];
     } catch (StitcherCancellation c) { }
     return result;
 }
