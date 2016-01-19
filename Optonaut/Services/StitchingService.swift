@@ -93,26 +93,39 @@ class StitchingService {
                 return !shallCancel
             }
             
+            
+            // This is for the Schickling. GetLeftResult now returns an array
+            // of cube faces, encoded as NSValues that contain an image buffer. 
+            // The order is like we defined for the thumbor plugin. 
+            
+            // Please refactor accordingly. This code is just an example.
+            
             if !shallCancel {
-                let leftBuffer = stitcher.getLeftResult()
-                if !shallCancel {
-                    autoreleasepool {
-                        let data = ImageBufferToCompressedUIImage(leftBuffer)
-                        sink.sendNext(.LeftImage(data!))
+                for cubeFace in stitcher.getLeftResult() {
+                    var leftFace = ImageBuffer()
+                    cubeFace.getValue(&leftFace)
+                    
+                    if !shallCancel {
+                        autoreleasepool {
+                            let data = ImageBufferToCompressedUIImage(leftFace)
+                            sink.sendNext(.LeftImage(data!))
+                        }
                     }
+                    Recorder.freeImageBuffer(leftFace)
                 }
-                Recorder.freeImageBuffer(leftBuffer)
             }
             
             if !shallCancel {
-                let rightBuffer = stitcher.getRightResult()
-                if !shallCancel {
+                for cubeFace in stitcher.getRightResult() {
+                    var rightFace = ImageBuffer()
+                    cubeFace.getValue(&rightFace)
+
                     autoreleasepool {
-                        let data = ImageBufferToCompressedUIImage(rightBuffer)
+                        let data = ImageBufferToCompressedUIImage(rightFace)
                         sink.sendNext(.RightImage(data!))
                     }
+                    Recorder.freeImageBuffer(rightFace)
                 }
-                Recorder.freeImageBuffer(rightBuffer)
             }
             
             Mixpanel.sharedInstance().track("Action.Stitching.Finish")

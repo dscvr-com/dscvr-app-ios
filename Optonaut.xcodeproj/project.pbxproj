@@ -468,6 +468,10 @@
 		A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StitcherUtils.swift; path = Optonaut/Stitcher/StitcherUtils.swift; sourceTree = SOURCE_ROOT; };
 		A5233E2F1BC87F7500C9EFE5 /* Stores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stores.h; path = Optonaut/Stitcher/Stores.h; sourceTree = SOURCE_ROOT; };
 		A5233E301BC87F7500C9EFE5 /* Stores.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Stores.mm; path = Optonaut/Stitcher/Stores.mm; sourceTree = SOURCE_ROOT; };
+		A5376ECF1C4DA163004EFE88 /* asyncTolerantRingRecorder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncTolerantRingRecorder.hpp; sourceTree = "<group>"; };
+		A5376ED01C4DA163004EFE88 /* ImageSelector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ImageSelector.hpp; sourceTree = "<group>"; };
+		A5376ED11C4DA163004EFE88 /* alignmentGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = alignmentGraph.hpp; sourceTree = "<group>"; };
+		A5376ED21C4DA163004EFE88 /* iterativeBundleAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = iterativeBundleAligner.hpp; sourceTree = "<group>"; };
 		A55C80F61BF91FDA00420E52 /* simplePlaneStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simplePlaneStitcher.cpp; sourceTree = "<group>"; };
 		A55C80F71BF91FDA00420E52 /* simplePlaneStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simplePlaneStitcher.hpp; sourceTree = "<group>"; };
 		A55C80F81BF91FDA00420E52 /* simpleSphereStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simpleSphereStitcher.cpp; sourceTree = "<group>"; };
@@ -1235,6 +1239,10 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
+				A5376ECF1C4DA163004EFE88 /* asyncTolerantRingRecorder.hpp */,
+				A5376ED01C4DA163004EFE88 /* ImageSelector.hpp */,
+				A5376ED11C4DA163004EFE88 /* alignmentGraph.hpp */,
+				A5376ED21C4DA163004EFE88 /* iterativeBundleAligner.hpp */,
 				A58F97AA1C04A00100450D31 /* streamingRecorderController.hpp */,
 				A58F97AB1C04A00100450D31 /* tolerantRecorderController.hpp */,
 				A5FD5D641BEA5A4E0031ED1E /* aligner.hpp */,

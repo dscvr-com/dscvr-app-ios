@@ -10,6 +10,7 @@
 #include "Stores.h"
 #include "CommonInternal.h"
 #include "progressCallback.hpp"
+#include "projection.hpp"
 
 @implementation Stitcher {
 @private
@@ -20,6 +21,22 @@
 struct StitcherCancellation {
 
 };
+
+-(NSArray<NSValue*>*)getCubeFaces:(Mat)sphere {
+    int width = sphere.cols / 4;
+
+    NSMutableArray<NSValue*>* cubeFaces;
+    
+    for(int i = 0; i < 6; i++) {
+        Mat m;
+        optonaut::CreateCubeMapFace(sphere, m, i, width, width);
+        ImageBuffer buf = CVMatToImageBuffer(m);
+        NSValue* conv = [NSValue valueWithBytes:&buf objCType:@encode(ImageBuffer)];
+        [cubeFaces addObject:conv];
+    }
+    
+    return [NSArray<NSValue*> arrayWithArray:cubeFaces];
+}
 
 -(id)init {
     self = [super init];
@@ -42,24 +59,25 @@ struct StitcherCancellation {
                          );
     callback = new optonaut::ProgressCallbackAccumulator(*callbackWrapper, {0.5f, 0.5f});
 }
-- (ImageBuffer)getLeftResult {
+- (NSArray<NSValue*>*)getLeftResult {
     
     optonaut::Stitcher stitcher(Stores::left);
     
-    ImageBuffer result;
+    NSArray<NSValue*>* result;
     
     try {
-        result = CVMatToImageBuffer(stitcher.Finish(callback->At(0))->image.data);
+        return [self getCubeFaces:stitcher.Finish(callback->At(2))->image.data];
     } catch (StitcherCancellation c) { }
     return result;
 }
-- (ImageBuffer)getRightResult {
+- (NSArray<NSValue*>*)getRightResult {
     optonaut::Stitcher stitcher(Stores::right);
     
-    ImageBuffer result;
+    
+    NSArray<NSValue*>* result;
     
     try {
-        return CVMatToImageBuffer(stitcher.Finish(callback->At(1))->image.data);
+        return [self getCubeFaces:stitcher.Finish(callback->At(1))->image.data];
     } catch (StitcherCancellation c) { }
     return result;
 }

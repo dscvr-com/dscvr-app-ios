@@ -112,7 +112,7 @@ class SaveViewController: UIViewController, RedNavbar {
         
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
-        scnView.backgroundColor = .clearColor()
+        scnView.backgroundColor = .blackColor()
         scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
         scrollView.addSubview(scnView)
         
