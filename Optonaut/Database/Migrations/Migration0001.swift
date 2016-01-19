@@ -59,8 +59,8 @@ private func createOptograph() -> String {
         t.column(OptographSchema.isStitched)
         t.column(OptographSchema.isPublished)
 //        t.column(OptographSchema.previewAssetID) // removed
-        t.column(OptographSchema.leftTextureAssetID)
-        t.column(OptographSchema.rightTextureAssetID)
+//        t.column(OptographSchema.leftTextureAssetID) // removed
+//        t.column(OptographSchema.rightTextureAssetID) // removed
         t.column(OptographSchema.isStaffPick)
         t.column(OptographSchema.hashtagString)
         

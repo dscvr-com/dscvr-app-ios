@@ -320,18 +320,37 @@ class TabButton: UIButton {
             let actualColor = color == .Dark ? .whiteColor() : UIColor(0x919293)
             setTitleColor(actualColor, forState: .Normal)
             text.textColor = actualColor
+            loadingView.color = actualColor
+        }
+    }
+    
+    var loading = false {
+        didSet {
+            if loading {
+                loadingView.startAnimating()
+            } else {
+                loadingView.stopAnimating()
+            }
+            
+            setTitleColor(titleColorForState(.Normal)!.alpha(loading ? 0 : 1), forState: .Normal)
+            
+            userInteractionEnabled = !loading
         }
     }
     
 //    private let activeBorderLayer = CALayer()
     
     private let text = UILabel()
+    private let loadingView = UIActivityIndicatorView()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
         setTitleColor(.whiteColor(), forState: .Normal)
         titleLabel?.font = UIFont.iconOfSize(28)
+        
+        loadingView.hidesWhenStopped = true
+        addSubview(loadingView)
         
         text.font = UIFont.displayOfSize(9, withType: .Light)
         text.textColor = .whiteColor()
@@ -355,6 +374,8 @@ class TabButton: UIButton {
         
         let textWidth: CGFloat = 50
         text.frame = CGRect(x: (frame.width - textWidth) / 2, y: frame.height + 10, width: textWidth, height: 11)
+        
+        loadingView.fillSuperview()
         
 //        activeBorderLayer.frame = CGRect(x: -5, y: -5, width: frame.width + 10, height: frame.height + 10)
 //        activeBorderLayer.cornerRadius = activeBorderLayer.frame.width / 2

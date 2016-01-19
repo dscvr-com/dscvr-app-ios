@@ -95,7 +95,30 @@ extension SignalType {
                 }
             }
         }
+    }
+    
+    public func delayLatestUntil<E>(triggerSignal: Signal<Bool, E>) -> Signal<Value, Error> {
+        let (newSignal, newObserver) = Signal<Value, Error>.pipe()
         
+        var passOn = false
+        var latestValue: Value?
+        
+        observe { event in
+            if passOn {
+                newObserver.action(event)
+            } else if case .Next(let val) = event {
+                latestValue = val
+            }
+        }
+        
+        triggerSignal.filter(identity).take(1).observeNext { _ in
+            if let latestValue = latestValue {
+                newObserver.sendNext(latestValue)
+            }
+            passOn = true
+        }
+        
+        return newSignal
     }
     
 }
@@ -155,12 +178,37 @@ extension SignalProducerType {
         return lift { $0.retryUntil(interval, onScheduler: scheduler, fn: fn) }
     }
     
+    public func delayLatestUntil<E>(triggerProducer: SignalProducer<Bool, E>) -> SignalProducer<Value, Error> {
+        return liftRight(Signal.delayLatestUntil)(triggerProducer)
+    }
+    
     public static func fromValues(values: [Value]) -> SignalProducer<Value, Error> {
         return SignalProducer { sink, _ in
             for value in values {
                 sink.sendNext(value)
             }
             sink.sendCompleted()
+        }
+    }
+    
+    /// Right-associative lifting of a binary signal operator over producers. That
+    /// is, the argument producer will be started before the receiver. When both
+    /// producers are synchronous this order can be important depending on the operator
+    /// to generate correct results.
+    @warn_unused_result(message="Did you forget to call `start` on the producer?")
+    private func liftRight<U, F, V, G>(transform: Signal<Value, Error> -> Signal<U, F> -> Signal<V, G>) -> SignalProducer<U, F> -> SignalProducer<V, G> {
+        return { otherProducer in
+            return SignalProducer { observer, outerDisposable in
+                self.startWithSignal { signal, disposable in
+                    outerDisposable.addDisposable(disposable)
+                    
+                    otherProducer.startWithSignal { otherSignal, otherDisposable in
+                        outerDisposable.addDisposable(otherDisposable)
+                        
+                        transform(signal)(otherSignal).observe(observer)
+                    }
+                }
+            }
         }
     }
 }

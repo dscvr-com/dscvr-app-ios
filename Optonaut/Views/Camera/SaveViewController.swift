@@ -17,7 +17,6 @@ import SceneKit
 import ObjectMapper
 import FBSDKLoginKit
 import TwitterKit
-import SwiftyUserDefaults
 
 class SaveViewController: UIViewController, RedNavbar {
     
@@ -151,6 +150,9 @@ class SaveViewController: UIViewController, RedNavbar {
         dragIconView.frame = CGRect(x: -30, y: 0, width: 20, height: 20)
         dragTextView.addSubview(dragIconView)
         
+        locationView.didSelectLocation = { [weak self] placeID in
+            self?.viewModel.placeID.value = placeID
+        }
         scrollView.addSubview(locationView)
         
         textPlaceholderView.font = UIFont.textOfSize(12, withType: .Regular)
@@ -177,35 +179,47 @@ class SaveViewController: UIViewController, RedNavbar {
         shareBackgroundView.backgroundColor = UIColor(0xfbfbfb)
         shareBackgroundView.layer.borderWidth = 1
         shareBackgroundView.layer.borderColor = UIColor(0xe6e6e6).CGColor
+        shareBackgroundView.rac_userInteractionEnabled <~ viewModel.isOnline
+        shareBackgroundView.rac_alpha <~ viewModel.isOnline.producer.mapToTuple(1, 0.5)
         scrollView.addSubview(shareBackgroundView)
         
         facebookSocialButton.icon = String.iconWithName(.Facebook)
         facebookSocialButton.text = "Facebook"
         facebookSocialButton.color = UIColor(0x3b5998)
-        facebookSocialButton.state = Defaults[.SessionShareToggledFacebook] ? .Selected : .Unselected
         facebookSocialButton.userInteractionEnabled = true
         facebookSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapFacebookSocialButton"))
         shareBackgroundView.addSubview(facebookSocialButton)
         
+        viewModel.postFacebook.producer.startWithNext { [weak self] toggled in
+            self?.facebookSocialButton.state = toggled ? .Selected : .Unselected
+        }
+        
         twitterSocialButton.icon = String.iconWithName(.Twitter)
         twitterSocialButton.text = "Twitter"
         twitterSocialButton.color = UIColor(0x55acee)
-        twitterSocialButton.state = Defaults[.SessionShareToggledTwitter] ? .Selected : .Unselected
         twitterSocialButton.userInteractionEnabled = true
         twitterSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapTwitterSocialButton"))
         shareBackgroundView.addSubview(twitterSocialButton)
         
+        viewModel.postTwitter.producer.startWithNext { [weak self] toggled in
+            self?.twitterSocialButton.state = toggled ? .Selected : .Unselected
+        }
+        
         instagramSocialButton.icon = String.iconWithName(.Instagram)
         instagramSocialButton.text = "Instagram"
         instagramSocialButton.color = UIColor(0x9b6954)
-        instagramSocialButton.state = Defaults[.SessionShareToggledInstagram] ? .Selected : .Unselected
         instagramSocialButton.userInteractionEnabled = true
         instagramSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapInstagramSocialButton"))
         shareBackgroundView.addSubview(instagramSocialButton)
         
+        viewModel.postInstagram.producer.startWithNext { [weak self] toggled in
+            self?.instagramSocialButton.state = toggled ? .Selected : .Unselected
+        }
+        
         moreSocialButton.icon = String.iconWithName(.ShareAlt)
         moreSocialButton.text = "More"
-        moreSocialButton.userInteractionEnabled = true
+        moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReady
+        moreSocialButton.rac_alpha <~ viewModel.isReady.producer.mapToTuple(1, 0.5)
         moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapMoreSocialButton"))
         shareBackgroundView.addSubview(moreSocialButton)
         
@@ -218,6 +232,7 @@ class SaveViewController: UIViewController, RedNavbar {
         
         viewModel.isReady.producer.startWithNext { [weak self] isReady in
             self?.tabController!.cameraButton.loading = !isReady
+            self?.tabController!.rightButton.loading = !isReady
         }
     }
     
@@ -290,9 +305,6 @@ class SaveViewController: UIViewController, RedNavbar {
         super.viewDidDisappear(animated)
         
         Mixpanel.sharedInstance().track("View.CreateOptograph")
-        
-        // TODO find better way to do this
-//        viewModel.locationPermissionTimer?.invalidate()
     }
     
     override func updateTabs() {
@@ -300,11 +312,13 @@ class SaveViewController: UIViewController, RedNavbar {
         tabController!.leftButton.icon = .Camera
         tabController!.leftButton.hidden = false
         tabController!.leftButton.color = .Light
+        tabController!.leftButton.isActive = true
         
         tabController!.rightButton.title = "POST LATER"
         tabController!.rightButton.icon = .Clock
         tabController!.rightButton.hidden = false
         tabController!.rightButton.color = .Light
+        tabController!.rightButton.isActive = true
         
         tabController!.cameraButton.setTitle(String.iconWithName(.Next), forState: .Normal)
         tabController!.cameraButton.setTitleColor(UIColor.whiteColor().alpha(0), forState: .Normal)
@@ -396,8 +410,7 @@ class SaveViewController: UIViewController, RedNavbar {
         let publishPermissions = ["publish_actions"]
         
         let errorBlock = { [weak self] (message: String) in
-            self?.facebookSocialButton.state = .Unselected
-            Defaults[.SessionShareToggledFacebook] = false
+            self?.viewModel.postFacebook.value = false
             
             let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
@@ -415,16 +428,14 @@ class SaveViewController: UIViewController, RedNavbar {
                         errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
                     },
                     completed: { [weak self] in
-                        self?.facebookSocialButton.state = .Selected
-                        Defaults[.SessionShareToggledFacebook] = true
+                        self?.viewModel.postFacebook.value = true
                     }
                 )
                 .start()
         }
         
         if let token = FBSDKAccessToken.currentAccessToken() where publishPermissions.reduce(true, combine: { $0 && token.hasGranted($1) }) {
-            facebookSocialButton.state.toggle()
-            Defaults[.SessionShareToggledFacebook] = !Defaults[.SessionShareToggledFacebook]
+            viewModel.postFacebook.value = !viewModel.postFacebook.value
             return
         }
         
@@ -432,8 +443,7 @@ class SaveViewController: UIViewController, RedNavbar {
         
         loginManager.logInWithPublishPermissions(publishPermissions, fromViewController: self) { [weak self] result, error in
             if error != nil || result.isCancelled {
-                self?.facebookSocialButton.state = .Unselected
-                Defaults[.SessionShareToggledFacebook] = false
+                self?.viewModel.postFacebook.value = false
                 loginManager.logOut()
             } else {
                 let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
@@ -466,28 +476,24 @@ class SaveViewController: UIViewController, RedNavbar {
                         .on(
                             failed: { [weak self] _ in
 //                                errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
-                                self?.twitterSocialButton.state = .Unselected
-                                Defaults[.SessionShareToggledTwitter] = false
+                                self?.viewModel.postTwitter.value = false
                             },
                             completed: { [weak self] in
-                                self?.twitterSocialButton.state = .Selected
-                                Defaults[.SessionShareToggledTwitter] = true
+                                self?.viewModel.postTwitter.value = true
                             }
                         )
                         .start()
                 } else {
-                    self?.twitterSocialButton.state = .Unselected
+                    self?.viewModel.postTwitter.value = false
                 }
             }
         } else {
-            twitterSocialButton.state.toggle()
-            Defaults[.SessionShareToggledTwitter] = !Defaults[.SessionShareToggledTwitter]
+            viewModel.postTwitter.value = !viewModel.postTwitter.value
         }
     }
     
     @objc private func tapInstagramSocialButton() {
-        instagramSocialButton.state.toggle()
-        Defaults[.SessionShareToggledInstagram] = !Defaults[.SessionShareToggledInstagram]
+        viewModel.postInstagram.value = !viewModel.postInstagram.value
     }
     
     @objc private func tapMoreSocialButton() {
@@ -503,6 +509,28 @@ class SaveViewController: UIViewController, RedNavbar {
                 self?.moreSocialButton.state = .Unselected
             }
         }
+    }
+    
+    private func submit(shouldBePublished: Bool) {
+        viewModel.optograph.directionPhi = Double(touchRotationSource.phi)
+        viewModel.optograph.directionTheta = Double(touchRotationSource.theta)
+        
+        viewModel.submit(shouldBePublished)
+            .observeOnMain()
+            .on(
+                started: { [weak self] in
+                    self?.tabController!.cameraButton.loading = true
+                    self?.tabController!.rightButton.loading = true
+                },
+                completed: { [weak self] in
+                    Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
+                    self?.tabController!.cameraButton.loading = false
+                    self?.tabController!.rightButton.loading = false
+                    PipelineService.check()
+                    self?.navigationController?.popViewControllerAnimated(false)
+                }
+            )
+            .start()
     }
     
 }
@@ -526,10 +554,7 @@ extension SaveViewController: UITextViewDelegate {
 extension SaveViewController: TabControllerDelegate {
     
     func onTapCameraButton() {
-        Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
-        viewModel.post()
-        PipelineService.check()
-        navigationController?.popViewControllerAnimated(true)
+        submit(true)
     }
     
     func onTapLeftButton() {
@@ -546,7 +571,7 @@ extension SaveViewController: TabControllerDelegate {
     }
     
     func onTapRightButton() {
-
+        submit(false)
     }
     
 }
@@ -564,7 +589,7 @@ private class LocationViewModel {
     
     enum State { case Disabled, Selection }
     
-    let locations = MutableProperty<[LocationMappable]>([])
+    let locations = MutableProperty<[GeocodePreview]>([])
     let selectedLocation = MutableProperty<Int?>(nil)
     let state: MutableProperty<State>
     
@@ -595,17 +620,17 @@ private class LocationViewModel {
                     })
                     .ignoreError()
             }
-            .flatMap(.Latest) { (lat, lon) -> SignalProducer<[LocationMappable], NoError> in
+            .flatMap(.Latest) { (lat, lon) -> SignalProducer<[GeocodePreview], NoError> in
                 if Reachability.connectedToNetwork() {
-                    return ApiService<LocationMappable>.get("locations/geocode-reverse", queries: ["lat": "\(lat)", "lon": "\(lon)"])
+                    return ApiService<GeocodePreview>.get("locations/geocode-reverse", queries: ["lat": "\(lat)", "lon": "\(lon)"])
                         .on(failed: { _ in
                             self.locationLoading.value = false
                         })
                         .ignoreError()
                         .collect()
                 } else {
-                    var fallbackLocation = LocationMappable()
-                    fallbackLocation.name = "\(lat.roundToPlaces(1)), \(lon.roundToPlaces(1))"
+                    var fallbackLocation = GeocodePreview()
+                    fallbackLocation.name = "Use location (\(lat.roundToPlaces(1)), \(lon.roundToPlaces(1)))"
                     return SignalProducer(value: [fallbackLocation])
                 }
             }
@@ -638,7 +663,7 @@ private class LocationViewModel {
     }
 }
 
-private struct LocationMappable: Mappable {
+private struct GeocodePreview: Mappable {
     var placeID = ""
     var name = ""
     var vicinity = ""
@@ -701,9 +726,11 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
     private let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
     private let loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
     
+    var didSelectLocation: (String? -> ())?
+    
     private let viewModel = LocationViewModel()
     
-    private var locations: [LocationMappable] = []
+    private var locations: [GeocodePreview] = []
     
     override init (frame: CGRect) {
         super.init(frame: frame)
@@ -747,7 +774,6 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         statusText.rac_hidden <~ viewModel.locationEnabled
         statusText.text = "Add location"
         addSubview(statusText)
-        
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -777,6 +803,7 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
     }
     
     @objc func reloadLocation() {
+        didSelectLocation?(nil)
         viewModel.locationSignal.notify(())
     }
     
@@ -805,8 +832,10 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
     @objc private func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if viewModel.selectedLocation.value == indexPath.row {
             viewModel.selectedLocation.value = nil
+            didSelectLocation?(nil)
         } else {
             viewModel.selectedLocation.value = indexPath.row
+            didSelectLocation?(locations[indexPath.row].placeID)
         }
     }
     
@@ -837,17 +866,7 @@ private class SocialButton: UIView {
         }
     }
     
-    enum State {
-        case Selected, Unselected, Loading
-        
-        mutating func toggle() {
-            switch self {
-            case .Selected: self = .Unselected
-            case .Unselected: self = .Selected
-            case .Loading: self = .Loading
-            }
-        }
-    }
+    enum State { case Selected, Unselected, Loading }
     
     var state: State = .Unselected {
         didSet {

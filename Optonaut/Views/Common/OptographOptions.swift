@@ -53,6 +53,10 @@ extension OptographOptions {
                     self.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
                 }
             }))
+        
+            actionAlert.addAction(UIAlertAction(title: "Copy sharing URL", style: .Default, handler: { _ in
+                UIPasteboard.generalPasteboard().string = "http://opto.space/\(optograph.shareAlias)"
+            }))
         }
         
         actionAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))

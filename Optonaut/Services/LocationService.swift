@@ -16,6 +16,8 @@ class LocationService: NSObject {
     
     private static let sharedInstance = LocationService()
     
+    private var lastCoordinate: Coordinate?
+    
     private let locationManager = CLLocationManager()
     private var callback: (Coordinate -> ())?
     
@@ -27,6 +29,10 @@ class LocationService: NSObject {
     
     static var enabled: Bool {
         return CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse || CLLocationManager.authorizationStatus() == .AuthorizedAlways
+    }
+    
+    static func lastLocation() -> Coordinate? {
+        return sharedInstance.lastCoordinate
     }
     
     static func askPermission() {
@@ -70,7 +76,9 @@ extension LocationService: CLLocationManagerDelegate {
         if let location = locations.last {
             let latitude = Double(location.coordinate.latitude)
             let longitude = Double(location.coordinate.longitude)
-            callback?((latitude, longitude))
+            let coords = (latitude, longitude)
+            lastCoordinate = coords
+            callback?(coords)
         }
     }
     

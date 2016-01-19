@@ -26,20 +26,27 @@ func ImageURL(uuid: String, size: Int, face: Int, x: Float, y: Float, d: Float) 
     return buildURL(uuid, width: 0, height: 0, filter: "cube(\(face),\(x),\(y),\(d),\(size))")
 }
 
-private func buildURL(uuid: String, width: Int, height: Int, filter: String?) -> String {
+enum TextureSide { case Left, Right }
+
+func TextureURL(optographID: String, side: TextureSide, size: Int, face: Int, x: Float, y: Float, d: Float) -> String {
+    let sideLetter = side == .Left ? "l" : "r"
+    return buildURL("textures/\(optographID)/\(sideLetter)\(face).jpg", width: 0, height: 0, filter: nil)
+}
+
+private func buildURL(path: String, width: Int, height: Int, filter: String?) -> String {
     let s3Host: String
     
     switch Env {
 //    case .Development: s3Host = "optonaut-ios-beta-dev.s3.amazonaws.com"
     case .Staging: s3Host = "optonaut-ios-beta-staging.s3.amazonaws.com"
-    case .Production, .Development: s3Host = "optonaut-ios-beta-production.s3.amazonaws.com"
+    case .Production, .Development: s3Host = "resources.optonaut.co.s3.amazonaws.com"
     }
     
     let scale = Int(UIScreen.mainScreen().scale)
     let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
     
     let filterStr = filter != nil ? "filters:\(filter!)/" : ""
-    let urlPartToSign = "\(width * scale)x\(height * scale)/\(filterStr)\(s3Host)/original/\(uuid).jpg"
+    let urlPartToSign = "\(width * scale)x\(height * scale)/\(filterStr)\(s3Host)/\(path)"
     let hmacUrlPart = urlPartToSign.hmac(securityKey)
     
     return "http://images.optonaut.co/\(hmacUrlPart)/\(urlPartToSign)"

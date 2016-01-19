@@ -72,7 +72,7 @@ class SessionService {
                 Defaults[.SessionOnboardingVersion] = loginData.onboardingVersion
                 Defaults[.SessionVRGlassesSelected] = false
                 Defaults[.SessionVRGlasses] = DefaultVRGlasses
-                Defaults[.SessionShareToggledFacebook] = false
+                Defaults[.SessionShareToggledFacebook] = FBSDKAccessToken.currentAccessToken().hasGranted("publish_actions") ?? false
                 Defaults[.SessionShareToggledTwitter] = false
                 Defaults[.SessionShareToggledInstagram] = false
             })

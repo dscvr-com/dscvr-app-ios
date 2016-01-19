@@ -12,7 +12,12 @@ func migration0006(db: Connection) throws {
     try db.run(OptographTable.addColumn(OptographSchema.isInFeed, defaultValue: false))
     try db.run(OptographTable.addColumn(OptographSchema.directionPhi, defaultValue: 0))
     try db.run(OptographTable.addColumn(OptographSchema.directionTheta, defaultValue: 0))
-    try db.run(OptographTable.addColumn(OptographSchema.placeholderTextureAssetID, defaultValue: ""))
+    try db.run(OptographTable.addColumn(OptographSchema.leftCubeTextureUploadStatus, defaultValue: nil))
+    try db.run(OptographTable.addColumn(OptographSchema.rightCubeTextureUploadStatus, defaultValue: nil))
+    try db.run(OptographTable.addColumn(OptographSchema.postFacebook, defaultValue: false))
+    try db.run(OptographTable.addColumn(OptographSchema.postTwitter, defaultValue: false))
+    try db.run(OptographTable.addColumn(OptographSchema.postInstagram, defaultValue: false))
+    try db.run(OptographTable.addColumn(OptographSchema.shouldBePublished, defaultValue: false))
     
     try db.run(LocationTable.addColumn(LocationSchema.countryShort, defaultValue: ""))
     try db.run(LocationTable.addColumn(LocationSchema.place, defaultValue: ""))

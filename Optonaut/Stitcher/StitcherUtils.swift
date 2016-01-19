@@ -32,10 +32,13 @@ func ImageBufferToCGImage(buf: ImageBuffer) -> CGImage {
     return CGBitmapContextCreateImage(bitmapContext)!
 }
 
-func ImageBufferToCompressedUIImage(input: ImageBuffer) -> NSData? {
+func ImageBufferToCompressedUIImage(input: ImageBuffer) -> UIImage {
     let cgImage = ImageBufferToCGImage(input)
-    let uiImage = UIImageJPEGRepresentation(UIImage(CGImage: cgImage), 0.8)
-    return uiImage
+    return UIImage(CGImage: cgImage)
+}
+
+func ImageBufferToCompressedJPG(input: ImageBuffer, ratio: CGFloat) -> NSData? {
+    return UIImageJPEGRepresentation(ImageBufferToCompressedUIImage(input), ratio)
 }
 
 func RotateCGImage(image: CGImage, orientation: UIImageOrientation) -> CGImage {

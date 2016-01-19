@@ -134,13 +134,13 @@ class DetailsViewModel {
     }
     
     func publish() {
-        optograph.publish()
-            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
-            .startWithCompleted {
-                self.isPublished.value = true
-                self.updateModel()
-                self.saveModel()
-            }
+//        optograph.publish()
+//            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
+//            .startWithCompleted {
+//                self.isPublished.value = true
+//                self.updateModel()
+//                self.saveModel()
+//            }
     }
     
     func insertNewComment(comment: Comment) {
@@ -176,7 +176,7 @@ class DetailsViewModel {
         location.value = optograph.location?.text
         isPublished.value = optograph.isPublished
         avatarImageUrl.value = ImageURL(optograph.person.avatarAssetID, width: 40, height: 40)
-        textureImageUrl.value = ImageURL(optograph.leftTextureAssetID)
+//        textureImageUrl.value = ImageURL(optograph.leftTextureAssetID)
     }
     
 }

@@ -10,6 +10,7 @@ import Foundation
 import SQLite
 import Async
 import ReactiveCocoa
+import Kingfisher
     
 func ==(lhs: PipelineService.Status, rhs: PipelineService.Status) -> Bool {
     switch (lhs, rhs) {
@@ -75,12 +76,9 @@ class PipelineService {
         stitchingSignal
             .observeNext { result in
                 switch result {
-                case .LeftImage(let data):
-                    optograph.leftTextureAssetID = uuid()
-                    optograph.saveAsset(.LeftImage(data))
-                case .RightImage(let data):
-                    optograph.rightTextureAssetID = uuid()
-                    optograph.saveAsset(.RightImage(data))
+                case let .Result(side, face, image):
+                    let url = TextureURL(optograph.ID, side: side, size: 1024, face: face, x: 0, y: 0, d: 1)
+                    KingfisherManager.sharedManager.cache.storeImage(image, forKey: url)
                 case .Progress(let progress):
                     status.value = .Stitching(min(0.99, progress))
                 }

@@ -18,6 +18,35 @@ enum OptographAsset {
 
 typealias HashtagStrings = Array<String>
 
+struct CubeTextureUploadStatus: SQLiteValue {
+    var status: [Bool] = [false, false, false, false, false, false]
+    
+//    subscript(index: Int) -> Bool {
+//        get { return status[index] }
+//        set(newVal) { status[index] = newVal }
+//    }
+    
+    static var declaredDatatype: String {
+        return Int64.declaredDatatype
+    }
+    
+    static func fromDatatypeValue(datatypeValue: Int64) -> CubeTextureUploadStatus {
+        var status = CubeTextureUploadStatus()
+        var val = datatypeValue
+        for i in 0..<6 {
+            status.status[i] = val % 2 == 1
+            val /= 2
+        }
+        return status
+    }
+    
+    var datatypeValue: Int64 {
+        return (0..<6)
+            .filter { self.status[$0] }
+            .reduce(0) { Int64(pow(2, Double($1))) + $0 }
+    }
+}
+
 struct Optograph: DeletableModel {
     
     var ID: UUID
@@ -35,14 +64,17 @@ struct Optograph: DeletableModel {
     var isPublished: Bool
     var stitcherVersion: String
     var shareAlias: String
-    var placeholderTextureAssetID: UUID
-    var leftTextureAssetID: UUID
-    var rightTextureAssetID: UUID
+    var leftCubeTextureUploadStatus: CubeTextureUploadStatus?
+    var rightCubeTextureUploadStatus: CubeTextureUploadStatus?
     var isStaffPick: Bool
     var hashtagString: String
     var isInFeed: Bool
     var directionPhi: Double
     var directionTheta: Double
+    var postFacebook: Bool
+    var postTwitter: Bool
+    var postInstagram: Bool
+    var shouldBePublished: Bool
     
     static func newInstance() -> Optograph {
         return Optograph(
@@ -61,63 +93,72 @@ struct Optograph: DeletableModel {
             isPublished: false,
             stitcherVersion: "",
             shareAlias: "",
-            placeholderTextureAssetID: "",
-            leftTextureAssetID: "",
-            rightTextureAssetID: "",
+            leftCubeTextureUploadStatus: nil,
+            rightCubeTextureUploadStatus: nil,
             isStaffPick: false,
             hashtagString: "",
             isInFeed: false,
             directionPhi: 0,
-            directionTheta: 0
+            directionTheta: 0,
+            postFacebook: false,
+            postTwitter: false,
+            postInstagram: false,
+            shouldBePublished: false
         )
     }
     
     func saveAsset(asset: OptographAsset) {
-        switch asset {
-        case .LeftImage(let data):
-            let image = UIImage(data: data)!
-            ImageCache.defaultCache.storeImage(image, forKey: ImageURL(leftTextureAssetID))
-            // needed for feed
-//            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 2048 * UIScreen.mainScreen().scale), forKey: ImageURL(leftTextureAssetID, width: 2048))
-            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 4096), forKey: ImageURL(leftTextureAssetID, width: Int(4096 / UIScreen.mainScreen().scale)))
-        case .RightImage(let data):
-            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID))
-        case .PreviewImage(let data):
-            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID))
-            // needs all different sizes
-            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID, fullDimension: .Width))
-            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID, width: 32, height: 40))
-        }
+        
+//                    return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
+//                        form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
+//                        form.appendBodyPart(data: optograph.placeholderTextureAssetID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "asset_id")
+//                        form.appendBodyPart(data: UIImageJPEGRepresentation(image, 0.7)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
+//                    })
+//        switch asset {
+//        case .LeftImage(let data):
+//            let image = UIImage(data: data)!
+//            ImageCache.defaultCache.storeImage(image, forKey: ImageURL(leftTextureAssetID))
+//            // needed for feed
+////            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 2048 * UIScreen.mainScreen().scale), forKey: ImageURL(leftTextureAssetID, width: 2048))
+//            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 4096), forKey: ImageURL(leftTextureAssetID, width: Int(4096 / UIScreen.mainScreen().scale)))
+//        case .RightImage(let data):
+//            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID))
+//        case .PreviewImage(let data):
+//            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID))
+//            // needs all different sizes
+//            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID, fullDimension: .Width))
+//            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID, width: 32, height: 40))
+//        }
     }
     
-    mutating func publish() -> SignalProducer<Optograph, ApiError> {
-        assert(!isPublished)
-        
-        return KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(leftTextureAssetID))
-            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(rightTextureAssetID)))
-            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(placeholderTextureAssetID)))
-            .map { ($0.0, $0.1, $1) }
-            .map { (left, right, preview) -> [String: AnyObject] in
-                var parameters = Mapper().toJSON(self)
-                
-                parameters["left_texture_asset"] = left.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-                parameters["right_texture_asset"] = right.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-                parameters["preview_asset"] = preview.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-                
-                return parameters
-            }
-            .mapError { _ in ApiError.Nil }
-            .flatMap(.Latest) { ApiService.post("optographs", parameters: $0) }
-            .on(completed: {
-                self.isPublished = true
-                
-                try! DatabaseService.defaultConnection.run(
-                    OptographTable.filter(OptographSchema.ID ==- self.ID).update(
-                        OptographSchema.isPublished <-- self.isPublished
-                    )
-                )
-            })
-    }
+//    mutating func publish() -> SignalProducer<Optograph, ApiError> {
+//        assert(!isPublished)
+    
+//        return KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(leftTextureAssetID))
+//            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(rightTextureAssetID)))
+//            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(placeholderTextureAssetID)))
+//            .map { ($0.0, $0.1, $1) }
+//            .map { (left, right, preview) -> [String: AnyObject] in
+//                var parameters = Mapper().toJSON(self)
+//                
+//                parameters["left_texture_asset"] = left.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+//                parameters["right_texture_asset"] = right.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+//                parameters["preview_asset"] = preview.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+//                
+//                return parameters
+//            }
+//            .mapError { _ in ApiError.Nil }
+//            .flatMap(.Latest) { ApiService.post("optographs", parameters: $0) }
+//            .on(completed: {
+//                self.isPublished = true
+//                
+//                try! DatabaseService.defaultConnection.run(
+//                    OptographTable.filter(OptographSchema.ID ==- self.ID).update(
+//                        OptographSchema.isPublished <-- self.isPublished
+//                    )
+//                )
+//            })
+//    }
     
     mutating func delete() -> SignalProducer<EmptyResponse, ApiError> {
         var signalProducer: SignalProducer<EmptyResponse, ApiError>
@@ -182,9 +223,6 @@ extension Optograph: Mappable {
         commentsCount               <- map["comments_count"]
         viewsCount                  <- map["views_count"]
         location                    <- map["location"]
-        placeholderTextureAssetID   <- map["placeholder_texture_asset_id"]
-        leftTextureAssetID          <- map["left_texture_asset_id"]
-        rightTextureAssetID         <- map["right_texture_asset_id"]
         isStaffPick                 <- map["is_staff_pick"]
         hashtagString               <- map["hashtag_string"]
         directionPhi                <- map["direction_phi"]
@@ -208,6 +246,9 @@ extension Optograph: SQLiteModel {
     }
     
     static func fromSQL(row: SQLiteRow) -> Optograph {
+        let leftCubeTextureUploadStatus = row.get(OptographSchema.leftCubeTextureUploadStatus)
+        let rightCubeTextureUploadStatus = row.get(OptographSchema.rightCubeTextureUploadStatus)
+        
         return Optograph(
             ID: row[OptographSchema.ID],
             text: row[OptographSchema.text],
@@ -224,18 +265,22 @@ extension Optograph: SQLiteModel {
             isPublished: row[OptographSchema.isPublished],
             stitcherVersion: row[OptographSchema.stitcherVersion],
             shareAlias: row[OptographSchema.shareAlias],
-            placeholderTextureAssetID: row[OptographSchema.placeholderTextureAssetID],
-            leftTextureAssetID: row[OptographSchema.leftTextureAssetID],
-            rightTextureAssetID: row[OptographSchema.rightTextureAssetID],
+            leftCubeTextureUploadStatus: leftCubeTextureUploadStatus,
+            rightCubeTextureUploadStatus: rightCubeTextureUploadStatus,
             isStaffPick: row[OptographSchema.isStaffPick],
             hashtagString: row[OptographSchema.hashtagString],
             isInFeed: row[OptographSchema.isInFeed],
             directionPhi: row[OptographSchema.directionPhi],
-            directionTheta: row[OptographSchema.directionTheta]
+            directionTheta: row[OptographSchema.directionTheta],
+            postFacebook: row[OptographSchema.postFacebook],
+            postTwitter: row[OptographSchema.postTwitter],
+            postInstagram: row[OptographSchema.postInstagram],
+            shouldBePublished: row[OptographSchema.shouldBePublished]
         )
     }
     
     func toSQL() -> [SQLiteSetter] {
+//        print("in feed \(isInFeed)")
         return [
             OptographSchema.ID <-- ID,
             OptographSchema.text <-- text,
@@ -252,14 +297,17 @@ extension Optograph: SQLiteModel {
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.stitcherVersion <-- stitcherVersion,
             OptographSchema.shareAlias <-- shareAlias,
-            OptographSchema.placeholderTextureAssetID <-- placeholderTextureAssetID,
-            OptographSchema.leftTextureAssetID <-- leftTextureAssetID,
-            OptographSchema.rightTextureAssetID <-- rightTextureAssetID,
+            OptographSchema.leftCubeTextureUploadStatus <-- leftCubeTextureUploadStatus,
+            OptographSchema.rightCubeTextureUploadStatus <-- rightCubeTextureUploadStatus,
             OptographSchema.isStaffPick <-- isStaffPick,
             OptographSchema.hashtagString <-- hashtagString,
             OptographSchema.isInFeed <-- isInFeed,
             OptographSchema.directionPhi <-- directionPhi,
             OptographSchema.directionTheta <-- directionTheta,
+            OptographSchema.postFacebook <-- postFacebook,
+            OptographSchema.postTwitter <-- postTwitter,
+            OptographSchema.postInstagram <-- postInstagram,
+            OptographSchema.shouldBePublished <-- shouldBePublished,
         ]
     }
     

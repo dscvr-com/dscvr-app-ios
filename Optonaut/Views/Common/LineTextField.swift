@@ -184,6 +184,12 @@ class LineTextField: UITextField {
         }
     }
     
+    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+        let margin: CGFloat = 5
+        let area = CGRectInset(bounds, -margin, -margin)
+        return CGRectContainsPoint(area, point)
+    }
+    
     func beginEditing() {
         update()
     }

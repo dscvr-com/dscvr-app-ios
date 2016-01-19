@@ -17,8 +17,7 @@ enum StitchingError: ErrorType {
 
 enum StitchingResult {
     case Progress(Float)
-    case LeftImage(NSData)
-    case RightImage(NSData)
+    case Result(side: TextureSide, face: Int, image: UIImage)
 }
 
 enum StitcherError : ErrorType {
@@ -101,14 +100,15 @@ class StitchingService {
             // Please refactor accordingly. This code is just an example.
             
             if !shallCancel {
-                for cubeFace in stitcher.getLeftResult() {
+                for (face, cubeFace) in stitcher.getLeftResult().enumerate() {
                     var leftFace = ImageBuffer()
                     cubeFace.getValue(&leftFace)
                     
                     if !shallCancel {
                         autoreleasepool {
-                            let data = ImageBufferToCompressedUIImage(leftFace)
-                            sink.sendNext(.LeftImage(data!))
+                            let image = ImageBufferToCompressedUIImage(leftFace)
+                            sink.sendNext(.Result(side: .Left, face: face, image: image))
+//                            sink.sendNext(.LeftImage(data!))
                         }
                     }
                     Recorder.freeImageBuffer(leftFace)
@@ -116,13 +116,15 @@ class StitchingService {
             }
             
             if !shallCancel {
-                for cubeFace in stitcher.getRightResult() {
+                for (face, cubeFace) in stitcher.getRightResult().enumerate() {
                     var rightFace = ImageBuffer()
                     cubeFace.getValue(&rightFace)
 
                     autoreleasepool {
-                        let data = ImageBufferToCompressedUIImage(rightFace)
-                        sink.sendNext(.RightImage(data!))
+                        if !shallCancel {
+                            let image = ImageBufferToCompressedUIImage(rightFace)
+                            sink.sendNext(.Result(side: .Right, face: face, image: image))
+                        }
                     }
                     Recorder.freeImageBuffer(rightFace)
                 }

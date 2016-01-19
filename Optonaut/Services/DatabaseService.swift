@@ -156,6 +156,7 @@ class DatabaseService {
 typealias SQLiteRow = SQLite.Row
 typealias SQLiteTable = SQLite.Table
 typealias SQLiteSetter = SQLite.Setter
+typealias SQLiteValue = SQLite.Value
 
 extension Connection {
     public var userVersion: Int {

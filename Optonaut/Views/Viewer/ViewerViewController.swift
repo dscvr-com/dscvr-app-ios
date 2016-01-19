@@ -189,21 +189,21 @@ class ViewerViewController: UIViewController  {
             rightDownloadDisposable = nil
         }
         
-        leftDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))
-            .observeOnMain()
-            .startWithNext { [weak self] image in
-//                self?.leftRenderDelegate.image = image
-                self?.imageManager.cache.clearMemoryCache()
-                self?.leftLoadingView.stopAnimating()
-            }
-        
-        rightDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.rightTextureAssetID))
-            .observeOnMain()
-            .startWithNext { [weak self] image in
-//                self?.rightRenderDelegate.image = image
-                self?.imageManager.cache.clearMemoryCache()
-                self?.rightLoadingView.stopAnimating()
-            }
+//        leftDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))
+//            .observeOnMain()
+//            .startWithNext { [weak self] image in
+////                self?.leftRenderDelegate.image = image
+//                self?.imageManager.cache.clearMemoryCache()
+//                self?.leftLoadingView.stopAnimating()
+//            }
+//        
+//        rightDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.rightTextureAssetID))
+//            .observeOnMain()
+//            .startWithNext { [weak self] image in
+////                self?.rightRenderDelegate.image = image
+//                self?.imageManager.cache.clearMemoryCache()
+//                self?.rightLoadingView.stopAnimating()
+//            }
     }
     
     func setViewerParameters(headset: CardboardParams) {
