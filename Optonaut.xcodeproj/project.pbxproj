@@ -490,6 +490,7 @@
 		A56CA40D1BC070AE0078D7E8 /* barrell_displacement.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.fsh; path = Shader/Cardboard/barrell_displacement.fsh; sourceTree = "<group>"; };
 		A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = barrell_displacement.json; path = Shader/Cardboard/barrell_displacement.json; sourceTree = "<group>"; };
 		A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.vsh; path = Shader/Cardboard/barrell_displacement.vsh; sourceTree = "<group>"; };
+		A56DE1161C502D730099A14D /* panoramaBlur.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = panoramaBlur.hpp; sourceTree = "<group>"; };
 		A58F97AA1C04A00100450D31 /* streamingRecorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = streamingRecorderController.hpp; sourceTree = "<group>"; };
 		A58F97AB1C04A00100450D31 /* tolerantRecorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tolerantRecorderController.hpp; sourceTree = "<group>"; };
 		A5DE71E01BE28A7400316F82 /* Distortion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distortion.swift; sourceTree = "<group>"; };
@@ -1202,6 +1203,7 @@
 		A5FD5D511BEA5A4E0031ED1E /* imgproc */ = {
 			isa = PBXGroup;
 			children = (
+				A56DE1161C502D730099A14D /* panoramaBlur.hpp */,
 				A55C80FC1BF920D000420E52 /* planarCorrelator.hpp */,
 				A5FD5D521BEA5A4E0031ED1E /* correlation.hpp */,
 				A5FD5D531BEA5A4E0031ED1E /* pairwiseCorrelator.hpp */,
@@ -1836,7 +1838,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
 				);
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",

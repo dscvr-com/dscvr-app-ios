@@ -11,6 +11,7 @@
 #include "CommonInternal.h"
 #include "progressCallback.hpp"
 #include "projection.hpp"
+#include "panoramaBlur.hpp"
 
 @implementation Stitcher {
 @private
@@ -67,7 +68,12 @@ struct StitcherCancellation {
     
     try {
         cv::Mat sphere = stitcher.Finish(callback->At(0))->image.data;
-        return [self getCubeFaces:sphere];
+        cv::Mat blurred;
+        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, sphere.cols / 2));
+        panoBlur.Blur(sphere, blurred);
+        sphere.release();
+        
+        return [self getCubeFaces:blurred];
     } catch (StitcherCancellation c) { }
     return result;
 }
@@ -78,8 +84,12 @@ struct StitcherCancellation {
     NSArray<NSValue*>* result;
     
     try {
-        cv::Mat sphere = stitcher.Finish(callback->At(1))->image.data;
-        return [self getCubeFaces:sphere];
+        cv::Mat sphere = stitcher.Finish(callback->At(1))->image.data;   cv::Mat blurred;
+        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, sphere.cols / 2));
+        panoBlur.Blur(sphere, blurred);
+        sphere.release();
+        
+        return [self getCubeFaces:blurred];
     } catch (StitcherCancellation c) { }
     return result;
 }
