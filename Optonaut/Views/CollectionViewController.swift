@@ -242,17 +242,17 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         }
         
         dispatch_async(queue) { [weak self] in
-//            if let assetID = self?.optographs[indexPath.row].leftTextureAssetID {
-//                let defaultIndices = [
-//                    CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
-//                    CubeImageCache.Index(face: 1, x: 0, y: 0, d: 1),
-//                    CubeImageCache.Index(face: 2, x: 0, y: 0, d: 1),
-//                    CubeImageCache.Index(face: 3, x: 0, y: 0, d: 1),
-//                    CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
-//                    CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
-//                ]
-//                self?.imageCache.get(indexPath.row, assetID: assetID, cubeIndices: defaultIndices, callback: imageCallback)
-//            }
+            if let optographID = self?.optographs[indexPath.row].ID {
+                let defaultIndices = [
+                    CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 1, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 2, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 3, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
+                    CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
+                ]
+                self?.imageCache.get(indexPath.row, optographID: optographID, side: .Left, cubeIndices: defaultIndices, callback: imageCallback)
+            }
         }
         
         if overlayView.optograph == nil {

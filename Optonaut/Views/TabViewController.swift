@@ -15,14 +15,15 @@ class TabViewController: UIViewController {
     
     enum ActiveSide: Equatable { case Left, Right }
     
-    private let blurView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .Dark)
-        return UIVisualEffectView(effect: blurEffect)
-    }()
-    
-    private let borderLineLayer = CALayer()
-    
     private let uiWrapper = PassThroughView()
+    
+    var indicatedSide: ActiveSide? {
+        didSet {
+            updateIndicatedSide()
+        }
+    }
+    
+    private let indicatedSideLayer = CALayer()
     
     let cameraButton = RecordButton()
     let leftButton = TabButton()
@@ -61,12 +62,14 @@ class TabViewController: UIViewController {
         
         view.insertSubview(leftViewController.view, atIndex: 0)
         
-//        leftViewController.pushViewController(SaveViewController(recorderCleanup: SignalProducer(value: ())), animated: false)
-        
         let width = view.frame.width
         
         bottomGradient.colors = [UIColor.clearColor().CGColor, UIColor.blackColor().alpha(0.5).CGColor]
         uiWrapper.layer.addSublayer(bottomGradient)
+        
+        indicatedSideLayer.backgroundColor = UIColor.Accent.CGColor
+        indicatedSideLayer.cornerRadius = 5
+        uiWrapper.layer.addSublayer(indicatedSideLayer)
         
         bottomGradientOffset.producer.startWithNext { [weak self] offset in
             CATransaction.begin()
@@ -76,26 +79,11 @@ class TabViewController: UIViewController {
             CATransaction.commit()
         }
         
-//        blurView.frame = CGRect(x: 0, y: 1, width: view.frame.width, height: 107)
-//        blurView.alpha = 0.95
-//        uiWrapper.addSubview(blurView)
-        
-//        borderLineLayer.backgroundColor = UIColor.whiteColor().CGColor
-//        borderLineLayer.opacity = 0.5
-//        borderLineLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 1)
-//        uiWrapper.layer.addSublayer(borderLineLayer)
-        
         cameraButton.frame = CGRect(x: view.frame.width / 2 - 35, y: 126 / 2 - 35, width: 70, height: 70)
         cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapCameraButton"))
         cameraButton.addTarget(self, action: "touchStartCameraButton", forControlEvents: [.TouchDown])
         cameraButton.addTarget(self, action: "touchEndCameraButton", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
         uiWrapper.addSubview(cameraButton)
-        
-//        #if DEBUG
-//            let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: "_debug_showCameraAlert")
-//            longPressGestureRecognizer.minimumPressDuration = 1
-//            cameraButton.addGestureRecognizer(longPressGestureRecognizer)
-//        #endif
         
         PipelineService.status.producer
             .observeOnMain()
@@ -107,13 +95,12 @@ class TabViewController: UIViewController {
                 }
             }
 
-        leftButton.isActive = true
-        leftButton.frame = CGRect(x: view.frame.width * 1.01 / 4 - 34, y: 126 / 2 - 23.5, width: 28, height: 28)
+        let buttonSpacing = (view.frame.width / 2 - 35) / 2 - 14
+        leftButton.frame = CGRect(x: buttonSpacing, y: 126 / 2 - 23.5, width: 28, height: 28)
         leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftButton"))
         uiWrapper.addSubview(leftButton)
 
-        rightButton.isActive = false
-        rightButton.frame = CGRect(x: view.frame.width * 2.99 / 4, y: 126 / 2 - 23.5, width: 28, height: 28)
+        rightButton.frame = CGRect(x: view.frame.width - buttonSpacing - 28, y: 126 / 2 - 23.5, width: 28, height: 28)
         rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapRightButton"))
         uiWrapper.addSubview(rightButton)
         
@@ -166,12 +153,26 @@ class TabViewController: UIViewController {
     
     private func updateActiveTab(side: ActiveSide) {
         let isLeft = side == .Left
-        leftButton.isActive = isLeft
-        rightButton.isActive = !isLeft
         
         activeViewController.view.removeFromSuperview()
         activeViewController = isLeft ? leftViewController : rightViewController
         view.insertSubview(activeViewController.view, atIndex: 0)
+    }
+    
+    private func updateIndicatedSide() {
+        indicatedSideLayer.hidden = indicatedSide == nil
+        
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        
+        let spacing = (view.frame.width / 2 - 35) / 2 - 31
+        switch indicatedSide {
+        case .Left?: indicatedSideLayer.frame = CGRect(x: spacing, y: 121, width: 62, height: 10)
+        case .Right?: indicatedSideLayer.frame = CGRect(x: view.frame.width - spacing - 62, y: 121, width: 62, height: 10)
+        default: ()
+        }
+        
+        CATransaction.commit()
     }
     
     private func initNotificationIndicator() {
@@ -191,16 +192,6 @@ class TabViewController: UIViewController {
             circle.hidden = hidden
             circle.text = "\(count)"
         }
-    }
-    
-    @objc
-    private func _debug_showCameraAlert() {
-        let confirmAlert = UIAlertController(title: "Choose wisely", message: "", preferredStyle: .Alert)
-        confirmAlert.addAction(UIAlertAction(title: "Skip to save screen", style: .Default, handler: { _ in
-            
-        }))
-        confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
-        self.presentViewController(confirmAlert, animated: true, completion: nil)
     }
 
 }
@@ -308,13 +299,6 @@ class TabButton: UIButton {
         }
     }
     
-    var isActive: Bool = false {
-        didSet {
-//            alpha = isActive ? 1 : 0.5
-//            activeBorderLayer.hidden = !isActive
-        }
-    }
-    
     var color: Color = .Dark {
         didSet {
             let actualColor = color == .Dark ? .whiteColor() : UIColor(0x919293)
@@ -381,6 +365,12 @@ class TabButton: UIButton {
 //        activeBorderLayer.cornerRadius = activeBorderLayer.frame.width / 2
     }
     
+    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+        let margin: CGFloat = 10
+        let area = CGRectInset(bounds, -margin, -margin)
+        return CGRectContainsPoint(area, point)
+    }
+    
 }
 
 protocol TabControllerDelegate {
@@ -429,6 +419,7 @@ extension DefaultTabControllerDelegate {
             }
         } else {
             tabController?.updateActiveTab(.Left)
+            tabController?.indicatedSide = .Left
         }
     }
     
@@ -439,6 +430,7 @@ extension DefaultTabControllerDelegate {
             }
         } else {
             tabController?.updateActiveTab(.Right)
+            tabController?.indicatedSide = .Right
         }
     }
     
@@ -450,6 +442,8 @@ extension UIViewController {
     }
     
     func updateTabs() {
+        tabController!.indicatedSide = .Left
+        
         tabController!.leftButton.title = "HOME"
         tabController!.leftButton.icon = .Home
         tabController!.leftButton.hidden = false

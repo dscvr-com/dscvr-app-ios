@@ -311,17 +311,17 @@ class SaveViewController: UIViewController, RedNavbar {
     }
     
     override func updateTabs() {
+        tabController!.indicatedSide = nil
+        
         tabController!.leftButton.title = "RETRY"
         tabController!.leftButton.icon = .Camera
         tabController!.leftButton.hidden = false
         tabController!.leftButton.color = .Light
-        tabController!.leftButton.isActive = true
         
         tabController!.rightButton.title = "POST LATER"
         tabController!.rightButton.icon = .Clock
         tabController!.rightButton.hidden = false
         tabController!.rightButton.color = .Light
-        tabController!.rightButton.isActive = true
         
         tabController!.cameraButton.setTitle(String.iconWithName(.Next), forState: .Normal)
         tabController!.cameraButton.setTitleColor(UIColor.whiteColor().alpha(0), forState: .Normal)

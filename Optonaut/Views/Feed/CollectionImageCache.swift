@@ -35,10 +35,12 @@ class CubeImageCache {
     private typealias InnerItem = (image: SKTexture?, downloadTask: RetrieveImageTask?)
     
     private var items: [Index: InnerItem] = [:]
-    private let assetID: UUID
+    private let optographID: UUID
+    private let side: TextureSide
     
-    init(assetID: UUID) {
-        self.assetID = assetID
+    init(optographID: UUID, side: TextureSide) {
+        self.optographID = optographID
+        self.side = side
     }
     
     func get(index: Index, callback: Callback) {
@@ -49,7 +51,7 @@ class CubeImageCache {
             }
         } else {
             let downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
-                NSURL(string: ImageURL(assetID, size: 1024, face: index.face, x: index.x, y: index.y, d: index.d))!,
+                NSURL(string: TextureURL(optographID, side: side, size: 1024, face: index.face, x: index.x, y: index.y, d: index.d))!,
 //                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(getTextureWidth(HorizontalFieldOfView) / Float(UIScreen.mainScreen().scale))))!,
                 optionsInfo: nil,
 //                optionsInfo: [.Options(.LowPriority)],
@@ -96,7 +98,7 @@ class CollectionImageCache {
         debouncerTouch = Debouncer(queue: queue, delay: 0.1)
     }
     
-    func get(index: Int, assetID: UUID, cubeIndices: [CubeImageCache.Index], callback: CubeImageCache.Callback) {
+    func get(index: Int, optographID: UUID, side: TextureSide, cubeIndices: [CubeImageCache.Index], callback: CubeImageCache.Callback) {
         
         let cacheIndex = index % CollectionImageCache.cacheSize
         
@@ -107,8 +109,8 @@ class CollectionImageCache {
         } else {
             // debounce in order to avoid download/cancel when scrolling fast
             debouncerGet.debounce { [weak self] in
-                self?.items[cacheIndex] = (index: index, innerCache: CubeImageCache(assetID: assetID))
-                self?.get(index, assetID: assetID, cubeIndices: cubeIndices, callback: callback)
+                self?.items[cacheIndex] = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side))
+                self?.get(index, optographID: optographID, side: side, cubeIndices: cubeIndices, callback: callback)
             }
         }
         
