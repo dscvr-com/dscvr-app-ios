@@ -89,6 +89,7 @@ class TabViewController: UIViewController {
             .observeOnMain()
             .startWithNext { [weak self] status in
                 switch status {
+                case .Disabled: self?.cameraButton.loading = true
                 case .Idle: self?.cameraButton.progress = 0
                 case let .Stitching(progress): self?.cameraButton.progress = CGFloat(progress)
                 default: ()
@@ -203,6 +204,13 @@ class RecordButton: UIButton {
     private let progressLayer = CALayer()
     private let loadingView = UIActivityIndicatorView()
     
+    var icon: Icon = .Camera {
+        didSet {
+            
+//            setTitle(String.iconWithName(icon), forState: .Normal)
+        }
+    }
+    
     var loading = false {
         didSet {
             if loading {
@@ -220,11 +228,14 @@ class RecordButton: UIButton {
     var progress: CGFloat = 0 {
         didSet {
             if progress == 0 {
+                loading = false
                 setTitle(String.iconWithName(.Camera), forState: .Normal)
             } else if progress == 1 {
-                setTitle(String.iconWithName(.Cancel), forState: .Normal)
+                loading = false
+                setTitle(String.iconWithName(.Next), forState: .Normal)
             } else {
-                setTitle(String.iconWithName(.Cancel), forState: .Normal)
+                loading = true
+                setTitle("", forState: .Normal)
             }
             layoutSubviews()
         }
@@ -233,7 +244,7 @@ class RecordButton: UIButton {
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        progressLayer.backgroundColor = UIColor.Accent.mixWithColor(.blackColor(), amount: 0.1).CGColor
+        progressLayer.backgroundColor = UIColor.Accent.mixWithColor(.blackColor(), amount: 0.3).CGColor
         layer.addSublayer(progressLayer)
         
         loadingView.hidesWhenStopped = true
@@ -409,6 +420,7 @@ extension DefaultTabControllerDelegate {
         case let .StitchingFinished(optograph):
             scrollToOptograph(optograph)
             PipelineService.status.value = .Idle
+        case .Disabled: ()
         }
     }
     

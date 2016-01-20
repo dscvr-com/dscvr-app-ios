@@ -92,17 +92,8 @@ class StitchingService {
                 return !shallCancel
             }
             
-            
-            // This is for the Schickling. GetLeftResult now returns an array
-            // of cube faces, encoded as NSValues that contain an image buffer. 
-            // The order is like we defined for the thumbor plugin. 
-            
-            // Please refactor accordingly. This code is just an example.
-            
-            print("Ich bin so verbose \(shallCancel)")
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getLeftResult().enumerate() {
-                    print("Ich bin ein linkes gesicht \(face)")
                     var leftFace = ImageBuffer()
                     cubeFace.getValue(&leftFace)
                     
@@ -118,7 +109,6 @@ class StitchingService {
             
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getRightResult().enumerate() {
-                    print("Ich bin ein rechtes gesicht \(face)")
                     var rightFace = ImageBuffer()
                     cubeFace.getValue(&rightFace)
 
@@ -135,8 +125,8 @@ class StitchingService {
             Mixpanel.sharedInstance().track("Action.Stitching.Finish")
             
             
-            //Executing this on the main thread is important
-            //to avoid a racing condition with onApplicationResuming
+            // Executing this on the main thread is important
+            // to avoid a racing condition with onApplicationResuming
             Async.main {
                 unregisterBackgroundTask()
                 activeSignal = nil

@@ -43,6 +43,10 @@ class CubeImageCache {
         self.side = side
     }
     
+    deinit {
+        logRetain()
+    }
+    
     func get(index: Index, callback: Callback) {
         
         if let item = items[index] {
@@ -109,6 +113,7 @@ class CollectionImageCache {
         } else {
             // debounce in order to avoid download/cancel when scrolling fast
             debouncerGet.debounce { [weak self] in
+                self?.items[cacheIndex]?.innerCache.dispose()
                 self?.items[cacheIndex] = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side))
                 self?.get(index, optographID: optographID, side: side, cubeIndices: cubeIndices, callback: callback)
             }

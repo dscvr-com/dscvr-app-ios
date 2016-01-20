@@ -97,7 +97,7 @@ class SaveViewController: UIViewController, RedNavbar {
         let privateButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
         privateButton.textColor = .whiteColor()
         privateButton.font = UIFont.iconOfSize(18)
-        privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.Safe))
+        privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.Eye))
         privateButton.userInteractionEnabled = true
         privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "togglePrivate"))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: privateButton)
@@ -565,7 +565,6 @@ class SaveViewController: UIViewController, RedNavbar {
                 },
                 completed: { [weak self] in
                     Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
-                    self?.tabController!.cameraButton.loading = false
                     self?.tabController!.rightButton.loading = false
                     PipelineService.check()
                     self?.navigationController?.popViewControllerAnimated(false)

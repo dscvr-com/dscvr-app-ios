@@ -11,14 +11,15 @@ import CardboardParams
 import Async
 import SwiftyUserDefaults
 import Kingfisher
+import SpriteKit
 
 class ViewerViewController: UIViewController  {
     
     private let orientation: UIInterfaceOrientation
     private let optograph: Optograph
     
-    private var leftRenderDelegate: RenderDelegate!
-    private var rightRenderDelegate: RenderDelegate!
+    private var leftRenderDelegate: CubeRenderDelegate!
+    private var rightRenderDelegate: CubeRenderDelegate!
     private var leftScnView: SCNView!
     private var rightScnView: SCNView!
     private let separatorLayer = CALayer()
@@ -72,11 +73,15 @@ class ViewerViewController: UIViewController  {
     }
     
     private func createRenderDelegates() {
-        leftRenderDelegate = RenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: leftProgram.fov, cameraOffset:  Float(-0.2))
-        rightRenderDelegate = RenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: rightProgram.fov, cameraOffset: Float(0.2))
+        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: leftProgram.fov, cameraOffset: Float(-0.2))
+        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: rightProgram.fov, cameraOffset: Float(0.2))
         
         leftScnView.scene = leftRenderDelegate.scene
         leftScnView.delegate = leftRenderDelegate
+        
+        for plane in leftRenderDelegate.planes {
+            plane.1.geometry!.firstMaterial!.diffuse.contents = UIColor.redColor()
+        }
         
         rightScnView.scene = rightRenderDelegate.scene
         rightScnView.delegate = rightRenderDelegate
@@ -187,6 +192,40 @@ class ViewerViewController: UIViewController  {
         if rightDownloadDisposable != nil {
             rightDownloadDisposable?.dispose()
             rightDownloadDisposable = nil
+        }
+        
+        
+        let leftImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
+            print(index)
+            Async.main {
+                self?.leftRenderDelegate.setTexture(image, forIndex: index)
+                self?.leftLoadingView.stopAnimating()
+            }
+        }
+        
+        let rightImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
+            Async.main {
+                self?.rightRenderDelegate.setTexture(image, forIndex: index)
+                self?.rightLoadingView.stopAnimating()
+            }
+        }
+        
+        
+        let defaultIndices = [
+            CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
+            CubeImageCache.Index(face: 1, x: 0, y: 0, d: 1),
+            CubeImageCache.Index(face: 2, x: 0, y: 0, d: 1),
+            CubeImageCache.Index(face: 3, x: 0, y: 0, d: 1),
+            CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
+            CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
+        ]
+        
+        let leftCache = CubeImageCache(optographID: optograph.ID, side: .Left)
+        let rightCache = CubeImageCache(optographID: optograph.ID, side: .Right)
+        
+        for cubeIndex in defaultIndices {
+            leftCache.get(cubeIndex, callback: leftImageCallback)
+            rightCache.get(cubeIndex, callback: rightImageCallback)
         }
         
 //        leftDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))

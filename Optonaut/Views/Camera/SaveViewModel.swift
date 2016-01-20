@@ -142,7 +142,6 @@ class SaveViewModel {
         isReady <~ isInitialized.producer
             .combineLatestWith(locationLoading.producer.map(negate)).map(and)
             .combineLatestWith(stitcherFinished.producer).map(and)
-            .observeOnMain()
     }
     
     func submit(shouldBePublished: Bool) -> SignalProducer<Void, NoError> {

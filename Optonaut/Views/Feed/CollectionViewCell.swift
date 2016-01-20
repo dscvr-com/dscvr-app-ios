@@ -272,7 +272,7 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func reset() {
+    private func reset() {
         combinedMotionManager.reset()
         loadingStatus.value = .Nothing
         renderDelegate.reset()
@@ -293,6 +293,7 @@ class CollectionViewCell: UICollectionViewCell {
     
     func didEndDisplay() {
 //        renderDelegate.image = nil
+        reset()
         scnView.playing = false
     }
     

@@ -44,23 +44,23 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        title = String.iconWithName(.LogoText)
+        title = String.iconWithName(.LogoText)
         
-        let searchButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-        searchButton.text = String.iconWithName(.Cancel)
-        searchButton.textColor = .whiteColor()
-        searchButton.font = UIFont.iconOfSize(24)
-        searchButton.userInteractionEnabled = true
-        searchButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushSearch"))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchButton)
-        
-        let activityButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-        activityButton.text = String.iconWithName(.Notifications)
-        activityButton.textColor = .whiteColor()
-        activityButton.font = UIFont.iconOfSize(24)
-        activityButton.userInteractionEnabled = true
-        activityButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushActivity"))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityButton)
+//        let searchButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
+//        searchButton.text = String.iconWithName(.Cancel)
+//        searchButton.textColor = .whiteColor()
+//        searchButton.font = UIFont.iconOfSize(24)
+//        searchButton.userInteractionEnabled = true
+//        searchButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushSearch"))
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchButton)
+//        
+//        let activityButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
+//        activityButton.text = String.iconWithName(.Notifications)
+//        activityButton.textColor = .whiteColor()
+//        activityButton.font = UIFont.iconOfSize(24)
+//        activityButton.userInteractionEnabled = true
+//        activityButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushActivity"))
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityButton)
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -212,7 +212,6 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! CollectionViewCell
     
-        cell.reset()
         cell.uiHidden = uiHidden
     
         return cell
@@ -414,7 +413,7 @@ private class OverlayView: UIView {
                 textView.text = optograph.text
                 
                 if let location = optograph.location {
-                    locationTextView.text = "\(location.text), \(location.country)"
+                    locationTextView.text = "\(location.text), \(location.countryShort)"
                     personNameView.anchorInCorner(.TopLeft, xPad: 75, yPad: 17, width: 200, height: 18)
                     locationTextView.anchorInCorner(.TopLeft, xPad: 75, yPad: 37, width: 200, height: 13)
                 } else {

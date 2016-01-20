@@ -313,6 +313,8 @@ class CameraViewController: UIViewController {
     }
     
     override func updateTabs() {
+        tabController!.indicatedSide = nil
+        
         tabController!.leftButton.title = "CANCEL"
         tabController!.leftButton.icon = .Cancel
         

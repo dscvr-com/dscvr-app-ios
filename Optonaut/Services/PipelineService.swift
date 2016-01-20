@@ -26,9 +26,10 @@ class PipelineService {
         case Stitching(Float)
         case StitchingFinished(Optograph)
         case Idle
+        case Disabled
     }
     
-    static let status = MutableProperty<Status>(.Idle)
+    static let status = MutableProperty<Status>(.Disabled)
     
     static func check() {
         Async.main {
@@ -59,41 +60,41 @@ class PipelineService {
                 return optograph
             }
         
-        if let optograph = optograph {
-            stitch(optograph)
-        } else if !StitchingService.isStitching() && StitchingService.hasUnstitchedRecordings() {
-            // This happens when an optograph was recorded, but never
-            // inserted into the DB, for example due to cancel.
-            // So it needs to be removed.
-            StitchingService.removeUnstitchedRecordings()
-        }
-    }
-    
-    private static func stitch(var optograph: Optograph) {
-        
-        let stitchingSignal = StitchingService.startStitching(optograph)
-        
-        stitchingSignal
-            .observeNext { result in
-                switch result {
-                case let .Result(side, face, image):
-                    let url = TextureURL(optograph.ID, side: side, size: 1024, face: face, x: 0, y: 0, d: 1)
-                    KingfisherManager.sharedManager.cache.storeImage(image, forKey: url)
-                case .Progress(let progress):
-                    status.value = .Stitching(min(0.99, progress))
+        if var optograph = optograph {
+            let stitchingSignal = StitchingService.startStitching(optograph)
+            
+            stitchingSignal
+                .observeNext { result in
+                    switch result {
+                    case let .Result(side, face, image):
+                        let url = TextureURL(optograph.ID, side: side, size: 1024, face: face, x: 0, y: 0, d: 1)
+                        KingfisherManager.sharedManager.cache.storeImage(image, forKey: url)
+                    case .Progress(let progress):
+                        status.value = .Stitching(min(0.99, progress))
+                    }
                 }
-            }
-        
-        stitchingSignal
-            .observeCompleted {
-                optograph.isStitched = true
-                optograph.stitcherVersion = StitcherVersion
-                optograph.isInFeed = true
-                try! optograph.insertOrUpdate()
+            
+            stitchingSignal
+                .observeCompleted {
+                    optograph.isStitched = true
+                    optograph.stitcherVersion = StitcherVersion
+                    optograph.isInFeed = true
+                    try! optograph.insertOrUpdate()
+                    StitchingService.removeUnstitchedRecordings()
+                    status.value = .Stitching(1)
+                    status.value = .StitchingFinished(optograph)
+                }
+            
+        } else {
+            status.value = .Idle
+            
+            if !StitchingService.isStitching() && StitchingService.hasUnstitchedRecordings() {
+                // This happens when an optograph was recorded, but never
+                // inserted into the DB, for example due to cancel.
+                // So it needs to be removed.
                 StitchingService.removeUnstitchedRecordings()
-                status.value = .Stitching(1)
-                status.value = .StitchingFinished(optograph)
             }
+        }
     }
     
 }

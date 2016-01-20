@@ -30,7 +30,7 @@ enum TextureSide { case Left, Right }
 
 func TextureURL(optographID: String, side: TextureSide, size: Int, face: Int, x: Float, y: Float, d: Float) -> String {
     let sideLetter = side == .Left ? "l" : "r"
-    return buildURL("textures/\(optographID)/\(sideLetter)\(face).jpg", width: 0, height: 0, filter: nil)
+    return buildURL("textures/\(optographID)/\(sideLetter)\(face).jpg", width: 0, height: 0, filter: "subface(\(x),\(y),\(d),\(size))")
 }
 
 private func buildURL(path: String, width: Int, height: Int, filter: String?) -> String {
