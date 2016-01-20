@@ -221,8 +221,8 @@ class SaveViewController: UIViewController, RedNavbar {
         
         moreSocialButton.icon = String.iconWithName(.ShareAlt)
         moreSocialButton.text = "More"
-        moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReady.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
-        moreSocialButton.rac_alpha <~ viewModel.isReady.producer.mapToTuple(1, 0.2)
+        moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReadyForSubmit.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
+        moreSocialButton.rac_alpha <~ viewModel.isReadyForSubmit.producer.mapToTuple(1, 0.2)
         moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapMoreSocialButton"))
         shareBackgroundView.addSubview(moreSocialButton)
         
@@ -235,10 +235,17 @@ class SaveViewController: UIViewController, RedNavbar {
         
         updateTabs()
         
-        viewModel.isReady.producer.startWithNext { [weak self] isReady in
+        viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
             self?.tabController!.cameraButton.loading = !isReady
             self?.tabController!.rightButton.loading = !isReady
         }
+        
+        viewModel.isReadyForStitching.producer
+            .filter(identity)
+            .startWithNext { _ in
+                print("stitch it")
+                PipelineService.check()
+            }
     }
     
     override func viewDidLayoutSubviews() {
@@ -288,6 +295,7 @@ class SaveViewController: UIViewController, RedNavbar {
         ]
         
         tabController!.delegate = self
+        tabController!.cameraButton.progressLocked = true
         
         Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
         
@@ -297,6 +305,8 @@ class SaveViewController: UIViewController, RedNavbar {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        
+        tabController!.cameraButton.progressLocked = false
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
@@ -323,8 +333,8 @@ class SaveViewController: UIViewController, RedNavbar {
         tabController!.rightButton.hidden = false
         tabController!.rightButton.color = .Light
         
-        tabController!.cameraButton.setTitle(String.iconWithName(.Next), forState: .Normal)
-        tabController!.cameraButton.setTitleColor(UIColor.whiteColor().alpha(0), forState: .Normal)
+        tabController!.cameraButton.icon = .Next
+        tabController!.cameraButton.iconColor = .whiteColor()
         tabController!.cameraButton.backgroundColor = .Accent
         
         tabController!.bottomGradientOffset.value = 0
@@ -381,7 +391,9 @@ class SaveViewController: UIViewController, RedNavbar {
     private func cancel() {
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { [weak self] _ in
-            self?.navigationController!.popViewControllerAnimated(false)
+            self?.viewModel.optograph.delete().startWithCompleted {
+                self?.navigationController!.popViewControllerAnimated(false)
+            }
         }))
         confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))
         navigationController!.presentViewController(confirmAlert, animated: true, completion: nil)
@@ -566,7 +578,8 @@ class SaveViewController: UIViewController, RedNavbar {
                 completed: { [weak self] in
                     Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
                     self?.tabController!.rightButton.loading = false
-                    PipelineService.check()
+                    // set progress because stitching will start
+//                    self?.tabController!.cameraButton.progress = 0
                     self?.navigationController?.popViewControllerAnimated(false)
                 }
             )

@@ -251,7 +251,7 @@ class CameraViewController: UIViewController {
         super.viewDidAppear(animated)
         
         tabController!.cameraButton.backgroundColor = .whiteColor()
-        tabController!.cameraButton.setTitleColor(.blackColor(), forState: .Normal)
+        tabController!.cameraButton.iconColor = .blackColor()
         
         updateTabs()
         
@@ -657,13 +657,13 @@ extension CameraViewController: TabControllerDelegate {
     func onTouchStartCameraButton() {
         viewModel.isRecording.value = true
         tabController!.cameraButton.backgroundColor = .Accent
-        tabController!.cameraButton.setTitleColor(.whiteColor(), forState: .Normal)
+        tabController!.cameraButton.iconColor = .whiteColor()
     }
     
     func onTouchEndCameraButton() {
         viewModel.isRecording.value = false
         tabController!.cameraButton.backgroundColor = .whiteColor()
-        tabController!.cameraButton.setTitleColor(.blackColor(), forState: .Normal)
+        tabController!.cameraButton.iconColor = .blackColor()
         
         tapCameraButtonCallback = nil
     }

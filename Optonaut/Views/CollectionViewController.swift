@@ -341,6 +341,10 @@ extension CollectionViewController: DefaultTabControllerDelegate {
         collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
     }
     
+    func cleanup() {
+        imageCache.reset()
+    }
+    
 }
 
 private class OverlayViewModel {

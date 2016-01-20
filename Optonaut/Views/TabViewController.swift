@@ -90,9 +90,11 @@ class TabViewController: UIViewController {
             .startWithNext { [weak self] status in
                 switch status {
                 case .Disabled: self?.cameraButton.loading = true
-                case .Idle: self?.cameraButton.progress = 0
-                case let .Stitching(progress): self?.cameraButton.progress = CGFloat(progress)
-                default: ()
+                case .Idle: self?.cameraButton.progress = nil
+                case let .Stitching(progress):
+                    self?.cameraButton.progress = CGFloat(progress)
+                    print(progress)
+                case .StitchingFinished(_): self?.cameraButton.progress = 1
                 }
             }
 
@@ -202,12 +204,17 @@ class RecordButton: UIButton {
     private var touched = false
     
     private let progressLayer = CALayer()
-    private let loadingView = UIActivityIndicatorView()
+    private let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
     
     var icon: Icon = .Camera {
         didSet {
-            
-//            setTitle(String.iconWithName(icon), forState: .Normal)
+            setTitle(String.iconWithName(icon), forState: .Normal)
+        }
+    }
+    
+    var iconColor: UIColor = .whiteColor() {
+        didSet {
+            setTitleColor(iconColor.alpha(loading ? 0 : 1), forState: .Normal)
         }
     }
     
@@ -225,26 +232,42 @@ class RecordButton: UIButton {
         }
     }
     
-    var progress: CGFloat = 0 {
+    var progressLocked = false {
         didSet {
-            if progress == 0 {
-                loading = false
-                setTitle(String.iconWithName(.Camera), forState: .Normal)
-            } else if progress == 1 {
-                loading = false
-                setTitle(String.iconWithName(.Next), forState: .Normal)
-            } else {
-                loading = true
-                setTitle("", forState: .Normal)
+            if !progressLocked {
+                // reapply last progress value
+                let tmp = progress
+                progress = tmp
             }
-            layoutSubviews()
+        }
+    }
+    
+    var progress: CGFloat? = nil {
+        didSet {
+            if !progressLocked {
+                if let progress = progress {
+                    backgroundColor = UIColor.Accent.mixWithColor(.blackColor(), amount: 0.3).alpha(0.5)
+                    loading = progress != 1
+                    
+                    if progress == 0 {
+                        icon = .Camera
+                    } else if progress == 1 {
+                        icon = .Next
+                    }
+                } else {
+                    backgroundColor = UIColor.Accent
+                    loading = false
+                }
+                
+                layoutSubviews()
+            }
         }
     }
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        progressLayer.backgroundColor = UIColor.Accent.mixWithColor(.blackColor(), amount: 0.3).CGColor
+        progressLayer.backgroundColor = UIColor.Accent.CGColor
         layer.addSublayer(progressLayer)
         
         loadingView.hidesWhenStopped = true
@@ -269,7 +292,7 @@ class RecordButton: UIButton {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        progressLayer.frame = CGRect(x: 0, y: 0, width: frame.width * progress, height: frame.height)
+        progressLayer.frame = CGRect(x: 0, y: 0, width: frame.width * (progress ?? 0), height: frame.height)
         loadingView.fillSuperview()
     }
     
@@ -393,6 +416,7 @@ protocol TabControllerDelegate {
     func onTapCameraButton()
     func onTapLeftButton()
     func onTapRightButton()
+    func cleanup()
 }
 
 extension TabControllerDelegate {
@@ -403,6 +427,7 @@ extension TabControllerDelegate {
     func onTapCameraButton() {}
     func onTapLeftButton() {}
     func onTapRightButton() {}
+    func cleanup() {}
 }
 
 protocol DefaultTabControllerDelegate: TabControllerDelegate {}
@@ -412,6 +437,7 @@ extension DefaultTabControllerDelegate {
     func onTapCameraButton() {
         switch PipelineService.status.value {
         case .Idle:
+            cleanup()
             tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
@@ -466,8 +492,8 @@ extension UIViewController {
         tabController!.rightButton.hidden = false
         tabController!.rightButton.color = .Dark
         
-        tabController!.cameraButton.setTitle(String.iconWithName(.Camera), forState: .Normal)
-        tabController!.cameraButton.setTitleColor(.whiteColor(), forState: .Normal)
+        tabController!.cameraButton.icon = .Camera
+        tabController!.cameraButton.iconColor = .whiteColor()
         tabController!.cameraButton.backgroundColor = .Accent
     }
 }

@@ -17,9 +17,10 @@ class SaveViewModel {
     
     let text = MutableProperty<String>("")
     let isPrivate = MutableProperty<Bool>(false)
-    let isReady = MutableProperty<Bool>(false)
+    let isReadyForSubmit = MutableProperty<Bool>(false)
     let isInitialized = MutableProperty<Bool>(false)
     let stitcherFinished = MutableProperty<Bool>(false)
+    let isReadyForStitching = MutableProperty<Bool>(false)
     let locationLoading = MutableProperty<Bool>(false)
     let postFacebook: MutableProperty<Bool>
     let postTwitter: MutableProperty<Bool>
@@ -107,6 +108,8 @@ class SaveViewModel {
                     location.latitude = coords.latitude
                     location.longitude = coords.longitude
                     self?.optograph.location = location
+                    try! self?.optograph.insertOrUpdate()
+                    try! self?.optograph.location?.insertOrUpdate()
                 })
                 .startWithNext { [weak self] geocodeDetails in
                     self?.locationLoading.value = false
@@ -120,6 +123,8 @@ class SaveViewModel {
                     location.place = geocodeDetails.place
                     location.region = geocodeDetails.region
                     self?.optograph.location = location
+                    try! self?.optograph.insertOrUpdate()
+                    try! self?.optograph.location?.insertOrUpdate()
                 }
         } else {
             optograph = Optograph.newInstance()
@@ -136,10 +141,22 @@ class SaveViewModel {
                     location.latitude = coords.latitude
                     location.longitude = coords.longitude
                     self?.optograph.location = location
+                    try! self?.optograph.insertOrUpdate()
+                    try! self?.optograph.location?.insertOrUpdate()
                 }
         }
         
-        isReady <~ isInitialized.producer
+        isReadyForStitching <~ stitcherFinished.producer
+            .combineLatestWith(isInitialized.producer).map(and)
+            .filter(identity)
+            .take(1)
+            .on(next: { [weak self] _ in
+                print("insert it")
+                try! self?.optograph.insertOrUpdate()
+                try! self?.optograph.location?.insertOrUpdate()
+            })
+        
+        isReadyForSubmit <~ isInitialized.producer
             .combineLatestWith(locationLoading.producer.map(negate)).map(and)
             .combineLatestWith(stitcherFinished.producer).map(and)
     }

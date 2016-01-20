@@ -132,6 +132,11 @@ class CollectionImageCache {
 //        }
 //    }
     
+    func reset() {
+        items.forEach { $0?.innerCache.dispose() }
+        items.removeAll()
+    }
+    
     func delete(indices: [Int]) {
         var count = 0
         for index in indices {
