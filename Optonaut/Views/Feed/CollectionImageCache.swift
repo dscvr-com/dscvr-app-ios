@@ -133,8 +133,8 @@ class CollectionImageCache {
 //    }
     
     func reset() {
-        items.forEach { $0?.innerCache.dispose() }
-        items.removeAll()
+       // items.forEach { $0?.innerCache.dispose() }
+       // items.removeAll()
     }
     
     func delete(indices: [Int]) {

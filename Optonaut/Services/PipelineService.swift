@@ -67,12 +67,18 @@ class PipelineService {
                 .observeNext { result in
                     switch result {
                     case let .Result(side, face, image):
-                        let originalURL = TextureURL(optograph.ID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
-                        KingfisherManager.sharedManager.cache.storeImage(image, forKey: originalURL)
                         
+                        // This is a hack to circumvent asynchronous de/encoding of the image by Kingfisher. 
+                        // We encode our image ourselves, and pass the encoded representation to Kingfisher. 
+                        // Otherwise, the async method would retain the uncompressed image and use up a lot of memory. 
+                        
+                        // let originalData = UIImageJPEGRepresentation(image, 0.9)!
+                        // let originalURL = TextureURL(optograph.ID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
+                        // KingfisherManager.sharedManager.cache.storeImage(UIImage(data: originalData)!, originalData: originalData, forKey: originalURL)
+                        
+                        let resizedData = UIImageJPEGRepresentation(image.resized(.Width, value: 1024 * UIScreen.mainScreen().scale), 0.8)!
                         let resizedURL = TextureURL(optograph.ID, side: side, size: 1024, face: face, x: 0, y: 0, d: 1)
-                        KingfisherManager.sharedManager.cache.storeImage(image.resized(.Width, value: 1024 * UIScreen.mainScreen().scale), forKey: resizedURL)
-                    case .Progress(let progress):
+                        KingfisherManager.sharedManager.cache.storeImage(UIImage(data: resizedData)!, originalData: resizedData, forKey: resizedURL)                    case .Progress(let progress):
                         status.value = .Stitching(min(0.99, progress))
                     }
                 }
