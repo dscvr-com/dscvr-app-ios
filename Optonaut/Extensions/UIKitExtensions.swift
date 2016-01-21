@@ -16,12 +16,13 @@ extension UIImage {
         print(size)
         let resizeWidth = dimension == .Width
         let oldValue = resizeWidth ? size.width : size.height
-        let scale = value / oldValue
+        let scale = value / CGFloat(oldValue)
         let otherValue = (resizeWidth ? size.height : size.width) * scale
         let newSize = resizeWidth ? CGSize(width: value, height: otherValue) : CGSize(width: otherValue, height: value)
+        let newSizeAsInt = CGSize(width: Int(newSize.width), height: Int(newSize.height))
         
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
-        drawInRect(CGRect(origin: CGPointZero, size: newSize))
+        UIGraphicsBeginImageContextWithOptions(newSizeAsInt, false, 0.0)
+        drawInRect(CGRect(origin: CGPointZero, size: newSizeAsInt))
         let newImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         return newImage;
