@@ -30,7 +30,8 @@ enum TextureSide { case Left, Right }
 
 func TextureURL(optographID: String, side: TextureSide, size: Int, face: Int, x: Float, y: Float, d: Float) -> String {
     let sideLetter = side == .Left ? "l" : "r"
-    return buildURL("textures/\(optographID)/\(sideLetter)\(face).jpg", width: 0, height: 0, filter: "subface(\(x),\(y),\(d),\(size))")
+    let scaledSize = Int(CGFloat(size) * UIScreen.mainScreen().scale)
+    return buildURL("textures/\(optographID)/\(sideLetter)\(face).jpg", width: 0, height: 0, filter: "subface(\(x),\(y),\(d),\(scaledSize))")
 }
 
 private func buildURL(path: String, width: Int, height: Int, filter: String?) -> String {
@@ -42,11 +43,13 @@ private func buildURL(path: String, width: Int, height: Int, filter: String?) ->
     case .Production, .Development: s3Host = "resources.optonaut.co.s3.amazonaws.com"
     }
     
-    let scale = Int(UIScreen.mainScreen().scale)
+    let scale = UIScreen.mainScreen().scale
+    let scaledWidth = Int(CGFloat(width) * scale)
+    let scaledHeight = Int(CGFloat(height) * scale)
     let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
     
     let filterStr = filter != nil ? "filters:\(filter!)/" : ""
-    let urlPartToSign = "\(width * scale)x\(height * scale)/\(filterStr)\(s3Host)/\(path)"
+    let urlPartToSign = "\(scaledWidth)x\(scaledHeight)/\(filterStr)\(s3Host)/\(path)"
     let hmacUrlPart = urlPartToSign.hmac(securityKey)
     
     return "http://images.optonaut.co/\(hmacUrlPart)/\(urlPartToSign)"

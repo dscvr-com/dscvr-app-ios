@@ -54,14 +54,15 @@ class CubeImageCache {
                 callback(image, index: index)
             }
         } else {
+            let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
+            print(textureSize)
             let downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
-                NSURL(string: TextureURL(optographID, side: side, size: 1024, face: index.face, x: index.x, y: index.y, d: index.d))!,
+                NSURL(string: TextureURL(optographID, side: side, size: Int(textureSize), face: index.face, x: index.x, y: index.y, d: index.d))!,
 //                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(getTextureWidth(HorizontalFieldOfView) / Float(UIScreen.mainScreen().scale))))!,
                 optionsInfo: nil,
 //                optionsInfo: [.Options(.LowPriority)],
                 progressBlock: nil,
                 completionHandler: { [weak self] (image, error, _, _) in
-                    print(error)
                     Async.userInteractive {
                         if let image = image where self?.items[index] != nil {
                             let tex = SKTexture(image: image)
@@ -133,8 +134,8 @@ class CollectionImageCache {
 //    }
     
     func reset() {
-       // items.forEach { $0?.innerCache.dispose() }
-       // items.removeAll()
+        items.forEach { $0?.innerCache.dispose() }
+        items = [Item?](count: CollectionImageCache.cacheSize, repeatedValue: nil)
     }
     
     func delete(indices: [Int]) {

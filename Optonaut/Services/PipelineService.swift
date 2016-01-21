@@ -37,10 +37,52 @@ class PipelineService {
         }
     }
     
-    static func stop(ID: UUID) {
+    static func stop() {
         if StitchingService.isStitching() {
             StitchingService.cancelStitching()
         }
+    }
+    
+    static func stitch(var optograph: Optograph) {
+        let stitchingSignal = StitchingService.startStitching(optograph)
+        
+        stitchingSignal
+            .observeNext { result in
+                switch result {
+                case let .Result(side, face, image):
+                    
+                    // This is a hack to circumvent asynchronous de/encoding of the image by Kingfisher. 
+                    // We encode our image ourselves, and pass the encoded representation to Kingfisher. 
+                    // Otherwise, the async method would retain the uncompressed image and use up a lot of memory. 
+                    
+                    let originalData = UIImageJPEGRepresentation(image, 0.9)!
+                    let originalURL = TextureURL(optograph.ID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
+                    KingfisherManager.sharedManager.cache.storeImage(UIImage(data: originalData)!, originalData: originalData, forKey: originalURL)
+                    
+                    let screen = UIScreen.mainScreen()
+                    let textureSize = getTextureWidth(screen.bounds.width, hfov: HorizontalFieldOfView)
+                    // NOTE: this might be a bug in Kingfisher where UIImages automatically get scaled up
+                    // https://github.com/onevcat/Kingfisher/issues/214
+                    // let resizedData = UIImageJPEGRepresentation(image.resized(.Width, value: textureSize * screen.scale), 0.7)!
+                    let resizedData = UIImageJPEGRepresentation(image.resized(.Width, value: textureSize), 0.7)!
+                    let resizedURL = TextureURL(optograph.ID, side: side, size: Int(textureSize), face: face, x: 0, y: 0, d: 1)
+                    KingfisherManager.sharedManager.cache.storeImage(UIImage(data: resizedData)!, originalData: resizedData, forKey: resizedURL)
+                    
+                case .Progress(let progress):
+                        status.value = .Stitching(min(0.99, progress))
+                }
+            }
+        
+        stitchingSignal
+            .observeCompleted {
+                optograph.isStitched = true
+                optograph.stitcherVersion = StitcherVersion
+                optograph.isInFeed = true
+                try! optograph.insertOrUpdate()
+                StitchingService.removeUnstitchedRecordings()
+                status.value = .Stitching(1)
+                status.value = .StitchingFinished(optograph)
+            }
     }
     
     private static func updateOptographs() {
@@ -48,7 +90,7 @@ class PipelineService {
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .filter(!OptographTable[OptographSchema.isStitched])
+            .filter(!OptographTable[OptographSchema.isStitched] && OptographTable[OptographSchema.deletedAt] == nil)
         
         let optograph = DatabaseService.defaultConnection.pluck(query)
             .map { row -> Optograph in
@@ -61,38 +103,15 @@ class PipelineService {
             }
         
         if var optograph = optograph {
-            let stitchingSignal = StitchingService.startStitching(optograph)
             
-            stitchingSignal
-                .observeNext { result in
-                    switch result {
-                    case let .Result(side, face, image):
-                        
-                        // This is a hack to circumvent asynchronous de/encoding of the image by Kingfisher. 
-                        // We encode our image ourselves, and pass the encoded representation to Kingfisher. 
-                        // Otherwise, the async method would retain the uncompressed image and use up a lot of memory. 
-                        
-                        // let originalData = UIImageJPEGRepresentation(image, 0.9)!
-                        // let originalURL = TextureURL(optograph.ID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
-                        // KingfisherManager.sharedManager.cache.storeImage(UIImage(data: originalData)!, originalData: originalData, forKey: originalURL)
-                        
-                        let resizedData = UIImageJPEGRepresentation(image.resized(.Width, value: 1024 * UIScreen.mainScreen().scale), 0.8)!
-                        let resizedURL = TextureURL(optograph.ID, side: side, size: 1024, face: face, x: 0, y: 0, d: 1)
-                        KingfisherManager.sharedManager.cache.storeImage(UIImage(data: resizedData)!, originalData: resizedData, forKey: resizedURL)                    case .Progress(let progress):
-                        status.value = .Stitching(min(0.99, progress))
-                    }
-                }
-            
-            stitchingSignal
-                .observeCompleted {
-                    optograph.isStitched = true
-                    optograph.stitcherVersion = StitcherVersion
-                    optograph.isInFeed = true
-                    try! optograph.insertOrUpdate()
-                    StitchingService.removeUnstitchedRecordings()
-                    status.value = .Stitching(1)
-                    status.value = .StitchingFinished(optograph)
-                }
+            if !optograph.isSubmitted {
+                status.value = .Idle
+                StitchingService.removeUnstitchedRecordings()
+                optograph.delete().start()
+                print("remooooooooooooooove")
+            } else {
+                stitch(optograph)
+            }
             
         } else {
             status.value = .Idle

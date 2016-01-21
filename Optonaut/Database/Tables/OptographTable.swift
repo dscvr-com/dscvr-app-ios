@@ -23,6 +23,7 @@ struct OptographSchemaType: ModelSchema {
     let stitcherVersion = Expression<String>("optograph_is_stitcher_version")
     let shareAlias = Expression<String>("optograph_share_alias")
     let isStitched = Expression<Bool>("optograph_is_stitched")
+    let isSubmitted = Expression<Bool>("optograph_is_submitted")
     let isPublished = Expression<Bool>("optograph_is_published")
     let isStaffPick = Expression<Bool>("optograph_is_staff_pick")
     let hashtagString = Expression<String>("optograph_hashtag_string")

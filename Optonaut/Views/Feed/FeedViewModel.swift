@@ -76,6 +76,7 @@ class FeedViewModel: NSObject {
     
     let results = MutableProperty<TableViewResults<Optograph>>(.empty())
     let newResultsAvailable = MutableProperty<Bool>(false)
+    let isActive = MutableProperty<Bool>(false)
     
     let refreshNotification = NotificationSignal<Void>()
     let loadMoreNotification = NotificationSignal<Void>()

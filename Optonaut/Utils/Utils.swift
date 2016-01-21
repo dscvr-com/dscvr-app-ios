@@ -114,8 +114,8 @@ func getBearing(a: GLKVector2, b: GLKVector2) -> Float {
     return atan2(y, x);
 }
 
-func getTextureWidth(hfov: Float) -> Float {
-    return Float(UIScreen.mainScreen().bounds.width) * 360 / hfov * 4 / Float(M_PI)
+func getTextureWidth(sceneWidth: CGFloat, hfov: Float) -> CGFloat {
+    return CGFloat((sceneWidth * 360) / (CGFloat(hfov) * CGFloat(M_PI)))
 }
 
 func toDictionary<E, K, V>(array: [E], transformer: (element: E) -> (key: K, value: V)?) -> Dictionary<K, V> {

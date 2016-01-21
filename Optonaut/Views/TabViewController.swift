@@ -33,8 +33,8 @@ class TabViewController: UIViewController {
     
     let bottomGradientOffset = MutableProperty<CGFloat>(126)
     
-    let leftViewController: CollectionNavViewController
-    let rightViewController: ProfileNavViewController
+    let leftViewController: NavigationController
+    let rightViewController: NavigationController
     var activeViewController: NavigationController
     
     private var uiHidden = false
@@ -73,8 +73,9 @@ class TabViewController: UIViewController {
         
         bottomGradientOffset.producer.startWithNext { [weak self] offset in
             CATransaction.begin()
-            CATransaction.setAnimationDuration(0.3)
-            CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut))
+            CATransaction.setDisableActions(true)
+//            CATransaction.setAnimationDuration(0.3)
+//            CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut))
             self?.bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: offset)
             CATransaction.commit()
         }

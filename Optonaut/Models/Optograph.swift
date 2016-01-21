@@ -61,6 +61,7 @@ struct Optograph: DeletableModel {
     var location: Location?
     var isPrivate: Bool
     var isStitched: Bool
+    var isSubmitted: Bool
     var isPublished: Bool
     var stitcherVersion: String
     var shareAlias: String
@@ -90,6 +91,7 @@ struct Optograph: DeletableModel {
             location: nil,
             isPrivate: false,
             isStitched: false,
+            isSubmitted: false,
             isPublished: false,
             stitcherVersion: "",
             shareAlias: "",
@@ -208,6 +210,7 @@ extension Optograph: Mappable {
         if map.mappingType == .FromJSON {
             isStitched = true
             isPublished = true
+            isSubmitted = true
         }
         
         ID                          <- map["id"]
@@ -262,6 +265,7 @@ extension Optograph: SQLiteModel {
             location: nil,
             isPrivate: row[OptographSchema.isPrivate],
             isStitched: row[OptographSchema.isStitched],
+            isSubmitted: row[OptographSchema.isSubmitted],
             isPublished: row[OptographSchema.isPublished],
             stitcherVersion: row[OptographSchema.stitcherVersion],
             shareAlias: row[OptographSchema.shareAlias],
@@ -294,6 +298,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.locationID <-- location?.ID,
             OptographSchema.isPrivate <-- isPrivate,
             OptographSchema.isStitched <-- isStitched,
+            OptographSchema.isSubmitted <-- isSubmitted,
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.stitcherVersion <-- stitcherVersion,
             OptographSchema.shareAlias <-- shareAlias,

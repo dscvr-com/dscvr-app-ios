@@ -30,6 +30,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     private var overlayAnimating = false
     
+    private var disabled = false
+    
     
     required override init(collectionViewLayout: UICollectionViewLayout) {
         overlayDebouncer = Debouncer(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), delay: 0.01)
@@ -92,11 +94,11 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         viewModel.results.producer
             .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
+            .delayAllUntil(viewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
                 if let strongSelf = self {
                     let visibleOptograph: Optograph? = strongSelf.optographs.isEmpty ? nil : strongSelf.optographs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-                    let before = strongSelf.optographs.count
                     strongSelf.optographs = results.models
                     
                     CATransaction.begin()
@@ -144,12 +146,22 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                 self?.tabController?.showUI()
             }
         }
+        
+        viewModel.isActive.producer
+            .skip(1)
+            .map(negate)
+            .filter(identity)
+            .startWithNext { [weak self] _ in
+                self?.imageCache.reset()
+            }
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
         uiHidden.value = false
+        
+        viewModel.isActive.value = true
         
         viewModel.refreshNotification.notify(())
         
@@ -342,7 +354,7 @@ extension CollectionViewController: DefaultTabControllerDelegate {
     }
     
     func cleanup() {
-        imageCache.reset()
+        viewModel.isActive.value = false
     }
     
 }
@@ -510,7 +522,7 @@ private class OverlayView: UIView {
             if let strongSelf = self, text = strongSelf.optograph?.text {
                 let textHeight = calcTextHeight(text, withWidth: strongSelf.frame.width - 36, andFont: UIFont.displayOfSize(13, withType: .Light))
                 let displayedTextHeight = toggled && textHeight > 16 ? textHeight : 15
-                let bottomHeight: CGFloat = 50 + (text.isEmpty ? 0 : displayedTextHeight + 11)
+//                let bottomHeight: CGFloat = 50 + (text.isEmpty ? 0 : displayedTextHeight + 11)
                 
                 UIView.setAnimationCurve(.EaseInOut)
                 UIView.animateWithDuration(0.3) {

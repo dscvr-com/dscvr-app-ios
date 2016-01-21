@@ -65,14 +65,17 @@ class SaveViewModel {
         
         if isOnline.value && isLoggedIn.value {
             ApiService<Optograph>.post("optographs", parameters: ["stitcher_version": StitcherVersion])
-                .map { (var optograph) in
+                .map { (var optograph) -> Optograph in
                     optograph.isPublished = false
                     optograph.isStitched = false
+                    optograph.isSubmitted = false
                     optograph.person.ID = Defaults[.SessionPersonID] ?? Person.guestID
                     return optograph
                 }
                 .on(next: { [weak self] optograph in
                     self?.optograph = optograph
+                    try! self?.optograph.insertOrUpdate()
+                    try! self?.optograph.location?.insertOrUpdate()
                 })
                 .zipWith(placeholderSignal.mapError({ _ in ApiError.Nil }))
                 .flatMap(.Latest) { (optograph, image) in
@@ -94,6 +97,7 @@ class SaveViewModel {
                 .on(next: { [weak self] val in
                     if val == nil {
                         self?.optograph.location = nil
+                        try! self?.optograph.insertOrUpdate()
                     }
                 })
                 .ignoreNil()
@@ -102,33 +106,38 @@ class SaveViewModel {
                 })
                 .mapError { _ in ApiError.Nil }
                 .flatMap(.Latest) { ApiService<GeocodeDetails>.get("locations/geocode-details/\($0)") }
-                .on(failed: { [weak self] _ in
-                    let coords = LocationService.lastLocation()!
-                    var location = Location.newInstance()
-                    location.latitude = coords.latitude
-                    location.longitude = coords.longitude
-                    self?.optograph.location = location
-                    try! self?.optograph.insertOrUpdate()
-                    try! self?.optograph.location?.insertOrUpdate()
-                })
-                .startWithNext { [weak self] geocodeDetails in
-                    self?.locationLoading.value = false
-                    let coords = LocationService.lastLocation()!
-                    var location = Location.newInstance()
-                    location.latitude = coords.latitude
-                    location.longitude = coords.longitude
-                    location.text = geocodeDetails.name
-                    location.country = geocodeDetails.country
-                    location.countryShort = geocodeDetails.countryShort
-                    location.place = geocodeDetails.place
-                    location.region = geocodeDetails.region
-                    self?.optograph.location = location
-                    try! self?.optograph.insertOrUpdate()
-                    try! self?.optograph.location?.insertOrUpdate()
-                }
+                .on(
+                    next: { [weak self] geocodeDetails in
+                        self?.locationLoading.value = false
+                        let coords = LocationService.lastLocation()!
+                        var location = Location.newInstance()
+                        location.latitude = coords.latitude
+                        location.longitude = coords.longitude
+                        location.text = geocodeDetails.name
+                        location.country = geocodeDetails.country
+                        location.countryShort = geocodeDetails.countryShort
+                        location.place = geocodeDetails.place
+                        location.region = geocodeDetails.region
+                        self?.optograph.location = location
+                        try! self?.optograph.insertOrUpdate()
+                        try! self?.optograph.location?.insertOrUpdate()
+                    },
+                    failed: { [weak self] _ in
+                        let coords = LocationService.lastLocation()!
+                        var location = Location.newInstance()
+                        location.latitude = coords.latitude
+                        location.longitude = coords.longitude
+                        self?.optograph.location = location
+                        try! self?.optograph.insertOrUpdate()
+                        try! self?.optograph.location?.insertOrUpdate()
+                    }
+                )
+                .start()
         } else {
             optograph = Optograph.newInstance()
             optograph.person.ID = Defaults[.SessionPersonID] ?? Person.guestID
+            try! optograph.insertOrUpdate()
+            try! optograph.location?.insertOrUpdate()
             
             isInitialized.value = true
             
@@ -150,11 +159,6 @@ class SaveViewModel {
             .combineLatestWith(isInitialized.producer).map(and)
             .filter(identity)
             .take(1)
-            .on(next: { [weak self] _ in
-                print("insert it")
-                try! self?.optograph.insertOrUpdate()
-                try! self?.optograph.location?.insertOrUpdate()
-            })
         
         isReadyForSubmit <~ isInitialized.producer
             .combineLatestWith(locationLoading.producer.map(negate)).map(and)
@@ -164,9 +168,9 @@ class SaveViewModel {
     func submit(shouldBePublished: Bool) -> SignalProducer<Void, NoError> {
         
         optograph.shouldBePublished = shouldBePublished
+        optograph.isSubmitted = true
         
         try! optograph.insertOrUpdate()
-        try! optograph.location?.insertOrUpdate()
         
         if isOnline.value {
             var parameters: [String: AnyObject] = [

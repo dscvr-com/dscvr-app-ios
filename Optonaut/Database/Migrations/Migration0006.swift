@@ -18,6 +18,7 @@ func migration0006(db: Connection) throws {
     try db.run(OptographTable.addColumn(OptographSchema.postTwitter, defaultValue: false))
     try db.run(OptographTable.addColumn(OptographSchema.postInstagram, defaultValue: false))
     try db.run(OptographTable.addColumn(OptographSchema.shouldBePublished, defaultValue: false))
+    try db.run(OptographTable.addColumn(OptographSchema.isSubmitted, defaultValue: true))
     
     try db.run(LocationTable.addColumn(LocationSchema.countryShort, defaultValue: ""))
     try db.run(LocationTable.addColumn(LocationSchema.place, defaultValue: ""))

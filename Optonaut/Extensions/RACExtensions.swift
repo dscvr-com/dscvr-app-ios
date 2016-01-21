@@ -111,11 +111,45 @@ extension SignalType {
             }
         }
         
-        triggerSignal.filter(identity).take(1).observeNext { _ in
-            if let latestValue = latestValue {
-                newObserver.sendNext(latestValue)
+        triggerSignal.observeNext { trigger in
+            passOn = trigger
+            
+            if trigger {
+                if let latestValue = latestValue {
+                    newObserver.sendNext(latestValue)
+                }
+                latestValue = nil
             }
-            passOn = true
+        }
+        
+        return newSignal
+    }
+    
+    public func delayAllUntil<E>(triggerSignal: Signal<Bool, E>) -> Signal<Value, Error> {
+        let (newSignal, newObserver) = Signal<Value, Error>.pipe()
+        
+        var passOn = false
+        var latestValues: [Value] = []
+        
+        observe { event in
+            if passOn {
+                newObserver.action(event)
+            } else if case .Next(let val) = event {
+                latestValues.append(val)
+            }
+        }
+        
+        triggerSignal.observeNext { trigger in
+            print("trigger \(trigger)")
+            passOn = trigger
+            
+            if trigger {
+                for val in latestValues {
+                    print("var \(val)")
+                    newObserver.sendNext(val)
+                }
+                latestValues.removeAll()
+            }
         }
         
         return newSignal
@@ -180,6 +214,10 @@ extension SignalProducerType {
     
     public func delayLatestUntil<E>(triggerProducer: SignalProducer<Bool, E>) -> SignalProducer<Value, Error> {
         return liftRight(Signal.delayLatestUntil)(triggerProducer)
+    }
+    
+    public func delayAllUntil<E>(triggerProducer: SignalProducer<Bool, E>) -> SignalProducer<Value, Error> {
+        return liftRight(Signal.delayAllUntil)(triggerProducer)
     }
     
     public static func fromValues(values: [Value]) -> SignalProducer<Value, Error> {

@@ -242,23 +242,24 @@ class SaveViewController: UIViewController, RedNavbar {
         
         viewModel.isReadyForStitching.producer
             .filter(identity)
-            .startWithNext { _ in
-                print("stitch it")
-                PipelineService.check()
+            .startWithNext { [weak self] _ in
+                if let strongSelf = self {
+                    PipelineService.stitch(strongSelf.viewModel.optograph)
+                }
             }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        let contentHeight = 0.46 * view.frame.width + 120 + 68 + 105 + 126
+        let contentHeight = 0.46 * view.frame.width + 85 + 68 + 105 + 126
         let scrollEnabled = contentHeight > view.frame.height
         scrollView.contentSize = CGSize(width: view.frame.width, height: scrollEnabled ? contentHeight : view.frame.height)
         scrollView.scrollEnabled = scrollEnabled
         
         scrollView.fillSuperview()
         locationView.alignAndFillWidth(align: .UnderCentered, relativeTo: scnView, padding: 0, height: 68)
-        textInputView.alignAndFillWidth(align: .UnderCentered, relativeTo: locationView, padding: 0, height: 120)
+        textInputView.alignAndFillWidth(align: .UnderCentered, relativeTo: locationView, padding: 0, height: 85)
         textPlaceholderView.anchorInCorner(.TopLeft, xPad: 16, yPad: 7, width: 250, height: 20)
         
         if scrollEnabled {
@@ -391,6 +392,7 @@ class SaveViewController: UIViewController, RedNavbar {
     private func cancel() {
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { [weak self] _ in
+            PipelineService.stop()
             self?.viewModel.optograph.delete().startWithCompleted {
                 self?.navigationController!.popViewControllerAnimated(false)
             }
@@ -788,7 +790,7 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        bottomBorder.backgroundColor = UIColor(0x9d9d9d).CGColor
+        bottomBorder.backgroundColor = UIColor(0xe6e6e6).CGColor
         layer.addSublayer(bottomBorder)
         
         let flowLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
