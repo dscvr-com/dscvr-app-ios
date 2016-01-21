@@ -492,7 +492,6 @@
 		A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.vsh; path = Shader/Cardboard/barrell_displacement.vsh; sourceTree = "<group>"; };
 		A56DE1161C502D730099A14D /* panoramaBlur.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = panoramaBlur.hpp; sourceTree = "<group>"; };
 		A58F97AA1C04A00100450D31 /* streamingRecorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = streamingRecorderController.hpp; sourceTree = "<group>"; };
-		A58F97AB1C04A00100450D31 /* tolerantRecorderController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tolerantRecorderController.hpp; sourceTree = "<group>"; };
 		A5DE71E01BE28A7400316F82 /* Distortion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distortion.swift; sourceTree = "<group>"; };
 		A5DE71E11BE28A7400316F82 /* DistortionMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionMesh.swift; sourceTree = "<group>"; };
 		A5DE71E21BE28A7400316F82 /* DistortionProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionProgram.swift; sourceTree = "<group>"; };
@@ -1248,7 +1247,6 @@
 				A5376ED11C4DA163004EFE88 /* alignmentGraph.hpp */,
 				A5376ED21C4DA163004EFE88 /* iterativeBundleAligner.hpp */,
 				A58F97AA1C04A00100450D31 /* streamingRecorderController.hpp */,
-				A58F97AB1C04A00100450D31 /* tolerantRecorderController.hpp */,
 				A5FD5D641BEA5A4E0031ED1E /* aligner.hpp */,
 				A5FD5D651BEA5A4E0031ED1E /* asyncAligner.hpp */,
 				A5FD5D661BEA5A4E0031ED1E /* bundleAligner.hpp */,
