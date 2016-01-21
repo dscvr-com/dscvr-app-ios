@@ -86,16 +86,19 @@ class TabViewController: UIViewController {
         cameraButton.addTarget(self, action: "touchEndCameraButton", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
         uiWrapper.addSubview(cameraButton)
         
-        PipelineService.status.producer
+        PipelineService.stitchingStatus.producer
             .observeOnMain()
             .startWithNext { [weak self] status in
                 switch status {
-                case .Disabled: self?.cameraButton.loading = true
-                case .Idle: self?.cameraButton.progress = nil
+                case .Uninitialized:
+                    self?.cameraButton.loading = true
+                case .Idle:
+                    self?.cameraButton.progress = nil
+                    self?.cameraButton.icon = .Camera
                 case let .Stitching(progress):
                     self?.cameraButton.progress = CGFloat(progress)
-                    print(progress)
-                case .StitchingFinished(_): self?.cameraButton.progress = 1
+                case .StitchingFinished(_):
+                    self?.cameraButton.progress = 1
                 }
             }
 
@@ -436,7 +439,7 @@ protocol DefaultTabControllerDelegate: TabControllerDelegate {}
 extension DefaultTabControllerDelegate {
     
     func onTapCameraButton() {
-        switch PipelineService.status.value {
+        switch PipelineService.stitchingStatus.value {
         case .Idle:
             cleanup()
             tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
@@ -446,8 +449,8 @@ extension DefaultTabControllerDelegate {
             tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
         case let .StitchingFinished(optograph):
             scrollToOptograph(optograph)
-            PipelineService.status.value = .Idle
-        case .Disabled: ()
+            PipelineService.stitchingStatus.value = .Idle
+        case .Uninitialized: ()
         }
     }
     

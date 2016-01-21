@@ -55,7 +55,6 @@ class CubeImageCache {
             }
         } else {
             let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
-            print(textureSize)
             let downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
                 NSURL(string: TextureURL(optographID, side: side, size: Int(textureSize), face: index.face, x: index.x, y: index.y, d: index.d))!,
 //                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(getTextureWidth(HorizontalFieldOfView) / Float(UIScreen.mainScreen().scale))))!,

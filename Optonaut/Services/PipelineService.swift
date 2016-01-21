@@ -12,8 +12,10 @@ import Async
 import ReactiveCocoa
 import Kingfisher
     
-func ==(lhs: PipelineService.Status, rhs: PipelineService.Status) -> Bool {
+func ==(lhs: PipelineService.StitchingStatus, rhs: PipelineService.StitchingStatus) -> Bool {
     switch (lhs, rhs) {
+    case (.Idle, .Idle): return true
+    case (.Uninitialized, .Uninitialized): return true
     case let (.Stitching(lhs), .Stitching(rhs)): return lhs == rhs
     case let (.StitchingFinished(lhs), .StitchingFinished(rhs)): return lhs == rhs
     default: return false
@@ -22,14 +24,14 @@ func ==(lhs: PipelineService.Status, rhs: PipelineService.Status) -> Bool {
 
 class PipelineService {
     
-    enum Status: Equatable {
+    enum StitchingStatus: Equatable {
         case Stitching(Float)
         case StitchingFinished(Optograph)
         case Idle
-        case Disabled
+        case Uninitialized
     }
     
-    static let status = MutableProperty<Status>(.Disabled)
+    static let stitchingStatus = MutableProperty<StitchingStatus>(.Uninitialized)
     
     static func check() {
         Async.main {
@@ -69,7 +71,7 @@ class PipelineService {
                     KingfisherManager.sharedManager.cache.storeImage(UIImage(data: resizedData)!, originalData: resizedData, forKey: resizedURL)
                     
                 case .Progress(let progress):
-                        status.value = .Stitching(min(0.99, progress))
+                    stitchingStatus.value = .Stitching(min(0.99, progress))
                 }
             }
         
@@ -80,8 +82,8 @@ class PipelineService {
                 optograph.isInFeed = true
                 try! optograph.insertOrUpdate()
                 StitchingService.removeUnstitchedRecordings()
-                status.value = .Stitching(1)
-                status.value = .StitchingFinished(optograph)
+                stitchingStatus.value = .Stitching(1)
+                stitchingStatus.value = .StitchingFinished(optograph)
             }
     }
     
@@ -105,16 +107,15 @@ class PipelineService {
         if var optograph = optograph {
             
             if !optograph.isSubmitted {
-                status.value = .Idle
+                stitchingStatus.value = .Idle
                 StitchingService.removeUnstitchedRecordings()
                 optograph.delete().start()
-                print("remooooooooooooooove")
             } else {
                 stitch(optograph)
             }
             
         } else {
-            status.value = .Idle
+            stitchingStatus.value = .Idle
             
             if !StitchingService.isStitching() && StitchingService.hasUnstitchedRecordings() {
                 // This happens when an optograph was recorded, but never

@@ -155,9 +155,12 @@ class FeedViewModel: NSObject {
         
         refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
         
-        PipelineService.status.producer.startWithNext { [weak self] _ in
-            self?.refreshNotification.notify(())
-        }
+        PipelineService.stitchingStatus.producer
+            .startWithNext { [weak self] status in
+                if case .StitchingFinished(_) = status {
+                    self?.refreshNotification.notify(())
+                }
+            }
         
         SessionService.onLogout { [weak self] in
             self?.refreshTimer.invalidate()

@@ -147,6 +147,11 @@ class CombinedMotionManager: RotationMatrixSource {
         touchRotationSource.reset()
     }
     
+    func align(direction: (phi: Float, theta: Float)) {
+        touchRotationSource.phi = direction.phi
+        touchRotationSource.theta = direction.theta
+    }
+    
     func getRotationMatrix() -> GLKMatrix4 {
         
         let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
@@ -276,6 +281,7 @@ class CollectionViewCell: UICollectionViewCell {
         combinedMotionManager.reset()
         loadingStatus.value = .Nothing
         renderDelegate.reset()
+        scnView.prepareObject(renderDelegate!.scene, shouldAbortBlock: nil)
     }
     
     func setImage(texture: SKTexture, forIndex index: CubeImageCache.Index) {
@@ -287,8 +293,9 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func willDisplay() {
+    func willDisplay(direction: (phi: Float, theta: Float)) {
         scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
+        combinedMotionManager.align(direction)
     }
     
     func didEndDisplay() {

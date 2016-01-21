@@ -242,7 +242,9 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             return
         }
         
-        cell.willDisplay()
+        let optograph = optographs[indexPath.row]
+        
+        cell.willDisplay((phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta)))
         
         print("will disp \(indexPath.row)")
         
@@ -253,17 +255,15 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         }
         
         dispatch_async(queue) { [weak self] in
-            if let optographID = self?.optographs[indexPath.row].ID {
-                let defaultIndices = [
-                    CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 1, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 2, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 3, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
-                ]
-                self?.imageCache.get(indexPath.row, optographID: optographID, side: .Left, cubeIndices: defaultIndices, callback: imageCallback)
-            }
+            let defaultIndices = [
+                CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
+                CubeImageCache.Index(face: 1, x: 0, y: 0, d: 1),
+                CubeImageCache.Index(face: 2, x: 0, y: 0, d: 1),
+                CubeImageCache.Index(face: 3, x: 0, y: 0, d: 1),
+                CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
+                CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
+            ]
+            self?.imageCache.get(indexPath.row, optographID: optograph.ID, side: .Left, cubeIndices: defaultIndices, callback: imageCallback)
         }
         
         if overlayView.optograph == nil {
