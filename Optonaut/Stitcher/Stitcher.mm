@@ -69,7 +69,7 @@ struct StitcherCancellation {
     try {
         cv::Mat sphere = stitcher.Finish(callback->At(0))->image.data;
         cv::Mat blurred;
-        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, sphere.cols / 2));
+        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
         panoBlur.Blur(sphere, blurred);
         sphere.release();
         
@@ -83,8 +83,9 @@ struct StitcherCancellation {
     NSArray<NSValue*>* result;
     
     try {
-        cv::Mat sphere = stitcher.Finish(callback->At(1))->image.data;   cv::Mat blurred;
-        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, sphere.cols / 2));
+        cv::Mat sphere = stitcher.Finish(callback->At(1))->image.data;
+        cv::Mat blurred;
+        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
         panoBlur.Blur(sphere, blurred);
         sphere.release();
         
