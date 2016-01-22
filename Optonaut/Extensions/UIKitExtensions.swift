@@ -13,7 +13,6 @@ extension UIImage {
     enum Dimension { case Width, Height }
     
     func resized(dimension: Dimension, value: CGFloat) -> UIImage {
-        print(size)
         let resizeWidth = dimension == .Width
         let oldValue = resizeWidth ? size.width : size.height
         let scale = value / CGFloat(oldValue)

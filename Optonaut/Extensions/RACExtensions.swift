@@ -140,12 +140,10 @@ extension SignalType {
         }
         
         triggerSignal.observeNext { trigger in
-            print("trigger \(trigger)")
             passOn = trigger
             
             if trigger {
                 for val in latestValues {
-                    print("var \(val)")
                     newObserver.sendNext(val)
                 }
                 latestValues.removeAll()

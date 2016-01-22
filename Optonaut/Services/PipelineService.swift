@@ -31,7 +31,17 @@ class PipelineService {
         case Uninitialized
     }
     
+    enum UploadingStatus: Equatable {
+        case Uploading
+//        case
+    }
+    
+    typealias UploadSignal = Signal<UploadingStatus, NoError>
+    
     static let stitchingStatus = MutableProperty<StitchingStatus>(.Uninitialized)
+    static var uploadingStatus: [UUID: UploadSignal] = [:]
+    
+    private static let uploadQueue = dispatch_queue_create("pipeline_upload", DISPATCH_QUEUE_CONCURRENT)
     
     static func check() {
         Async.main {
@@ -84,7 +94,65 @@ class PipelineService {
                 StitchingService.removeUnstitchedRecordings()
                 stitchingStatus.value = .Stitching(1)
                 stitchingStatus.value = .StitchingFinished(optograph)
+                
+                upload(optograph)
             }
+    }
+    
+    static func upload(optograph: Optograph) -> UploadSignal {
+        if let signal = uploadingStatus[optograph.ID] {
+            return signal
+        }
+
+        let (signal, observer) = UploadSignal.pipe()
+        
+        Async.customQueue(uploadQueue) {
+            if var leftCubeTextureUploadStatus = optograph.leftCubeTextureUploadStatus {
+                for (index, uploaded) in leftCubeTextureUploadStatus.status.enumerate() {
+                    if !uploaded {
+                        let url = TextureURL(optograph.ID, side: .Left, size: 0, face: index, x: 0, y: 0, d: 1)
+                        let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
+                        
+                        print("upload l\(index)")
+                        
+                        let result = ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
+                            form.appendBodyPart(data: "l\(index)".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
+                            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "image.jpg", mimeType: "image/jpeg")
+                        })
+                            .transformToBool()
+                            .first()
+                        
+                        leftCubeTextureUploadStatus.status[index] = result?.value == true
+                    }
+                }
+                
+                print(leftCubeTextureUploadStatus.status)
+            }
+            
+            if var rightCubeTextureUploadStatus = optograph.rightCubeTextureUploadStatus {
+                for (index, uploaded) in rightCubeTextureUploadStatus.status.enumerate() {
+                    if !uploaded {
+                        let url = TextureURL(optograph.ID, side: .Right, size: 0, face: index, x: 0, y: 0, d: 1)
+                        let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
+                        
+                        print("upload r\(index)")
+                        
+                        let result = ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
+                            form.appendBodyPart(data: "r\(index)".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
+                            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "image.jpg", mimeType: "image/jpeg")
+                        })
+                            .transformToBool()
+                            .first()
+                        
+                        rightCubeTextureUploadStatus.status[index] = result?.value == true
+                    }
+                }
+                
+                print(rightCubeTextureUploadStatus.status)
+            }
+        }
+        
+        return signal
     }
     
     private static func updateOptographs() {

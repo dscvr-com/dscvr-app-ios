@@ -72,7 +72,7 @@ class CameraViewController: UIViewController {
             Recorder.enableDebug(CameraDebugService().path)
         }
         
-        recorder = Recorder(.Center)
+        recorder = Recorder(.TinyDebug)
         
         super.init(nibName: nil, bundle: nil)
         

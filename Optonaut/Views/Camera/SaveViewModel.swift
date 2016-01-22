@@ -41,6 +41,12 @@ class SaveViewModel {
         isLoggedIn = MutableProperty(SessionService.isLoggedIn)
         
         postFacebook.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
+            print("WTF______")
+            print(NSThread.currentThread())
+            print(toggled)
+            print(self?.optograph)
+            print(self?.isInitialized.value)
+            print("WTF______")
             Defaults[.SessionShareToggledFacebook] = toggled
             self?.optograph.postFacebook = toggled
         }
@@ -65,11 +71,15 @@ class SaveViewModel {
         
         if isOnline.value && isLoggedIn.value {
             ApiService<Optograph>.post("optographs", parameters: ["stitcher_version": StitcherVersion])
+//                .observeOnMain()
                 .map { (var optograph) -> Optograph in
+                    print(NSThread.currentThread())
                     optograph.isPublished = false
                     optograph.isStitched = false
                     optograph.isSubmitted = false
                     optograph.person.ID = Defaults[.SessionPersonID] ?? Person.guestID
+                    optograph.leftCubeTextureUploadStatus = CubeTextureUploadStatus()
+                    optograph.rightCubeTextureUploadStatus = CubeTextureUploadStatus()
                     return optograph
                 }
                 .on(next: { [weak self] optograph in
@@ -84,13 +94,17 @@ class SaveViewModel {
                         form.appendBodyPart(data: UIImageJPEGRepresentation(image, 0.7)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
                     })
                 }
-                .on(failed: { [weak self] _ in
-                    self?.isOnline.value = false
-                    self?.isInitialized.value = true
-                })
-                .startWithCompleted { [weak self] in
-                    self?.isInitialized.value = true
-                }
+                .on(
+                    completed: { [weak self] in
+                        print(NSThread.currentThread())
+                        self?.isInitialized.value = true
+                    },
+                    failed: { [weak self] _ in
+                        self?.isOnline.value = false
+                        self?.isInitialized.value = true
+                    }
+                )
+                .start()
         
             placeID.producer
                 .delayLatestUntil(isInitialized.producer)
@@ -136,6 +150,8 @@ class SaveViewModel {
         } else {
             optograph = Optograph.newInstance()
             optograph.person.ID = Defaults[.SessionPersonID] ?? Person.guestID
+            optograph.leftCubeTextureUploadStatus = CubeTextureUploadStatus()
+            optograph.rightCubeTextureUploadStatus = CubeTextureUploadStatus()
             try! optograph.insertOrUpdate()
             try! optograph.location?.insertOrUpdate()
             
