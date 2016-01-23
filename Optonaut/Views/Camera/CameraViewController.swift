@@ -29,6 +29,11 @@ class CameraViewController: UIViewController {
     
     private var lastExposureInfo = ExposureInfo()
     private var lastAwbGains = AVCaptureWhiteBalanceGains()
+    private var exposureDuration = Double(1)
+    private var captureWidth = Int(1)
+    
+    private let sensorWidthInMeters = Double(0.004)
+    private let estimatedArmLengthInMeters = Double(0.50)
     
     // stitcher pointer and variables
     private var recorder: Recorder
@@ -72,7 +77,7 @@ class CameraViewController: UIViewController {
             Recorder.enableDebug(CameraDebugService().path)
         }
         
-        recorder = Recorder(.TinyDebug)
+        recorder = Recorder(.Center)
         
         super.init(nibName: nil, bundle: nil)
         
@@ -203,8 +208,15 @@ class CameraViewController: UIViewController {
     
     private func setExposureMode(mode: AVCaptureExposureMode) {
         try! videoDevice!.lockForConfiguration()
+
         if mode == AVCaptureExposureMode.Custom {
-            videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: Float(videoDevice!.ISO), completionHandler: nil)
+            exposureDuration = videoDevice!.exposureDuration.seconds
+            var iso = videoDevice!.ISO
+            if(iso > videoDevice!.activeFormat.maxISO) {
+                iso = videoDevice!.activeFormat.maxISO
+            }
+            videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
+            print("Video Settings. Iso: \(iso), exposure duration: \(exposureDuration)");
         } else {
             videoDevice!.exposureMode = mode
         }
@@ -367,19 +379,38 @@ class CameraViewController: UIViewController {
         scene.rootNode.addChildNode(ballNode)
     }
     
+    private var time = Double(-1)
+    
     private func updateBallPosition() {
         
-        let maxSpeed = recorder.hasStarted() ? Float(0.008) : Float(0.08)
-        let accelleration = recorder.hasStarted() ? Float(0.1) : Float(0.5)
         
-        let vec = GLKVector3Make(0, 0, -1)
-        let target = GLKMatrix4MultiplyVector3(recorder.getNextKeyframePosition(), vec)
+        let ballSphereRadius = Float(1);
+        let movementPerFrameInPixels = Double(400);
+        
+        let newTime = CACurrentMediaTime()
+        
+        let vec = GLKVector3Make(0, 0, -ballSphereRadius)
+        let target = GLKMatrix4MultiplyVector3(recorder.getBallPosition(), vec)
         
         let ball = SCNVector3ToGLKVector3(ballNode.position)
         
-        if ball.x == 0 && ball.y == 0 && ball.z == 0 {
+        if true || !recorder.hasStarted() {
             ballNode.position = SCNVector3FromGLKVector3(target)
         } else {
+            // Speed per second
+            let maxRecordingSpeedInRadiants = sensorWidthInMeters * movementPerFrameInPixels / (Double(captureWidth) * exposureDuration)
+            let maxRecordingSpeed = ballSphereRadius * Float(maxRecordingSpeedInRadiants)
+            
+            //print("exposure duration: \(exposureDuration), maxSpeed per second: \(maxRecordingSpeed), capturewidth: \(captureWidth)")
+            
+            var maxSpeed = recorder.hasStarted() ? Float(maxRecordingSpeed) : Float(2.4)
+            var accelleration = recorder.hasStarted() ? Float(3) : Float(15)
+            
+            let timeDiff = (newTime - time)
+            
+            maxSpeed *= Float(timeDiff)
+            accelleration *= Float(timeDiff)
+            
             var newSpeed = GLKVector3Subtract(target, ball)
             
             let dist = GLKVector3Length(newSpeed)
@@ -390,9 +421,12 @@ class CameraViewController: UIViewController {
             newSpeed = GLKVector3Subtract(newSpeed, ballSpeed)
             newSpeed = GLKVector3MultiplyScalar(newSpeed, accelleration)
             newSpeed = GLKVector3Add(newSpeed, ballSpeed)
+            //print("Ball Speed: \(newSpeed.x), \(newSpeed.y), \(newSpeed.z)")
             ballSpeed = newSpeed;
             ballNode.position = SCNVector3FromGLKVector3(GLKVector3Add(ball, ballSpeed))
         }
+        
+        time = newTime
         
     }
     
@@ -432,6 +466,23 @@ class CameraViewController: UIViewController {
         session.commitConfiguration()
         
         try! videoDevice?.lockForConfiguration()
+        
+        var bestFormat: AVCaptureDeviceFormat?
+        var bestFrameRate: AVFrameRateRange?
+        
+        for format in videoDevice!.formats.map({ $0 as! AVCaptureDeviceFormat }) {
+            for rate in format.videoSupportedFrameRateRanges.map({ $0 as! AVFrameRateRange }) {
+                if bestFormat == nil || bestFrameRate!.minFrameDuration > rate.minFrameDuration {
+                    bestFormat = format
+                    bestFrameRate = rate
+                }
+                print("Video: \(format.description), Max: \(rate.maxFrameDuration.seconds), min: \(rate.minFrameDuration.seconds)");
+            }
+        }
+        videoDevice!.activeFormat = bestFormat
+        videoDevice!.activeVideoMinFrameDuration = bestFrameRate!.minFrameDuration
+        videoDevice!.activeVideoMaxFrameDuration = bestFrameRate!.minFrameDuration
+        
     
         if videoDevice!.activeFormat.videoHDRSupported.boolValue {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
@@ -477,12 +528,14 @@ class CameraViewController: UIViewController {
             buf.width = UInt32(CVPixelBufferGetWidth(pixelBuffer))
             buf.height = UInt32(CVPixelBufferGetHeight(pixelBuffer))
             
+            captureWidth = Int(buf.width)
+            
             recorder.setIdle(!self.viewModel.isRecording.value)
             
             
             recorder.push(r, buf, lastExposureInfo, lastAwbGains)
             
-            let errorVec = recorder.getAngularDistanceToNextKeyframe()
+            let errorVec = recorder.getAngularDistanceToBall()
             // let exposureHintC = recorder.getExposureHint()
             
             Async.main {
