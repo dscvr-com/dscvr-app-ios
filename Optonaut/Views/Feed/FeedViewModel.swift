@@ -22,7 +22,7 @@ struct TableViewResults<T: DeletableModel> {
     }
     
     func merge(newModels: [T], deleteOld: Bool) -> TableViewResults<T> {
-        
+
         var models = self.models
         
         var delete: [Int] = []
@@ -88,7 +88,7 @@ class FeedViewModel: NSObject {
         let query = OptographTable.select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .filter(OptographTable[OptographSchema.isInFeed])
+            .filter(OptographTable[OptographSchema.isInFeed] && OptographTable[OptographSchema.deletedAt] == nil)
             .order(CommentSchema.createdAt.asc)
         
         refreshNotification.signal
@@ -96,10 +96,13 @@ class FeedViewModel: NSObject {
                 DatabaseService.query(.Many, query: query)
                     .observeOnUserInteractive()
                     .map { row -> Optograph in
-                        var optograph = Optograph.fromSQL(row)
+                        let optograph = Optograph.fromSQL(row)
                         
-                        optograph.person = Person.fromSQL(row)
-                        optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
+                        Models.optographs.touch(optograph)
+                        Models.persons.touch(Person.fromSQL(row))
+                        if row[OptographSchema.locationID] != nil {
+                            Models.locations.touch(Location.fromSQL(row))
+                        }
                         
                         return optograph
                     }
@@ -114,17 +117,24 @@ class FeedViewModel: NSObject {
         refreshNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .flatMap(.Latest) { _ in
-                ApiService<Optograph>.get("optographs/feed")
-                    .map { (var optograph) in optograph.isInFeed = true; return optograph }
-                    .observeOnUserInteractive()
-                    .on(next: { optograph in
-                        try! optograph.insertOrUpdate()
-                        try! optograph.location?.insertOrUpdate()
-                        try! optograph.person.insertOrUpdate()
+                ApiService<OptographApiModel>.get("optographs/feed")
+                    .observeOnUserInitiated()
+                    .on(next: { apiModel in
+                        var optograph = apiModel.toModel()
+                        
+                        optograph.isInFeed = true
+                        optograph.isStitched = true
+                        optograph.isPublished = true
+                        optograph.isSubmitted = true
+                        
+                        Models.optographs.touch(optograph).insertOrUpdate()
+                        Models.persons.touch(apiModel.person.toModel()).insertOrUpdate()
+                        Models.locations.touch(apiModel.location?.toModel())?.insertOrUpdate()
                     })
+                    .map { $0.toModel() }
                     .ignoreError()
                     .collect()
-                    .startOnUserInteractive()
+                    .startOnUserInitiated()
             }
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
@@ -132,22 +142,29 @@ class FeedViewModel: NSObject {
                 self.newResultsAvailable.value = self.results.value.models.first?.ID != results.models.first?.ID
                 self.results.value = results
             }
-        
+
         loadMoreNotification.signal
             .map { _ in self.results.value.models.last }
             .ignoreNil()
             .flatMap(.Latest) { oldestResult in
-                ApiService<Optograph>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
-                    .map { (var optograph) in optograph.isInFeed = true; return optograph }
-                    .observeOnUserInteractive()
-                    .on(next: { optograph in
-                        try! optograph.insertOrUpdate()
-                        try! optograph.location?.insertOrUpdate()
-                        try! optograph.person.insertOrUpdate()
+                ApiService<OptographApiModel>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                    .observeOnUserInitiated()
+                    .on(next: { apiModel in
+                        var optograph = apiModel.toModel()
+                        
+                        optograph.isInFeed = true
+                        optograph.isStitched = true
+                        optograph.isPublished = true
+                        optograph.isSubmitted = true
+                        
+                        Models.optographs.touch(optograph).insertOrUpdate()
+                        Models.persons.touch(apiModel.person.toModel()).insertOrUpdate()
+                        Models.locations.touch(apiModel.location?.toModel())?.insertOrUpdate()
                     })
+                    .map { $0.toModel() }
                     .ignoreError()
                     .collect()
-                    .startOnUserInteractive()
+                    .startOnUserInitiated()
             }
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }

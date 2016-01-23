@@ -244,7 +244,7 @@ class SaveViewController: UIViewController, RedNavbar {
             .filter(identity)
             .startWithNext { [weak self] _ in
                 if let strongSelf = self {
-                    PipelineService.stitch(strongSelf.viewModel.optograph)
+                    PipelineService.stitch(strongSelf.viewModel.optographBox.model.ID)
                 }
             }
     }
@@ -392,10 +392,10 @@ class SaveViewController: UIViewController, RedNavbar {
     private func cancel() {
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { [weak self] _ in
-            PipelineService.stop()
-            self?.viewModel.optograph.delete().startWithCompleted {
-                self?.navigationController!.popViewControllerAnimated(false)
-            }
+            PipelineService.stopStitching()
+//            self?.viewModel.optograph.delete().startWithCompleted {
+//                self?.navigationController!.popViewControllerAnimated(false)
+//            }
         }))
         confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))
         navigationController!.presentViewController(confirmAlert, animated: true, completion: nil)
@@ -567,10 +567,7 @@ class SaveViewController: UIViewController, RedNavbar {
     }
     
     private func submit(shouldBePublished: Bool) {
-        viewModel.optograph.directionPhi = Double(touchRotationSource.phi)
-        viewModel.optograph.directionTheta = Double(touchRotationSource.theta)
-        
-        viewModel.submit(shouldBePublished)
+        viewModel.submit(shouldBePublished, directionPhi: Double(touchRotationSource.phi), directionTheta: Double(touchRotationSource.theta))
             .observeOnMain()
             .on(
                 started: { [weak self] in
@@ -609,7 +606,9 @@ extension SaveViewController: UITextViewDelegate {
 extension SaveViewController: TabControllerDelegate {
     
     func onTapCameraButton() {
-        submit(true)
+        if viewModel.isReadyForSubmit.value {
+            submit(true)
+        }
     }
     
     func onTapLeftButton() {
@@ -626,7 +625,9 @@ extension SaveViewController: TabControllerDelegate {
     }
     
     func onTapRightButton() {
-        submit(false)
+        if viewModel.isReadyForSubmit.value {
+            submit(false)
+        }
     }
     
 }

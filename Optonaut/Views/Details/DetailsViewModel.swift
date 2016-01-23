@@ -45,8 +45,8 @@ class DetailsViewModel {
         if let optograph = DatabaseService.defaultConnection.pluck(query).map({ row -> Optograph in
             var optograph = Optograph.fromSQL(row)
             
-            optograph.person = Person.fromSQL(row)
-            optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
+//            optograph.person = Person.fromSQL(row)
+//            optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
             
             return optograph
         }) {
@@ -58,12 +58,12 @@ class DetailsViewModel {
         }
         
         if optograph.isPublished {
-            ApiService<Optograph>.get("optographs/\(optographID)").startWithNext { optograph in
-                self.optograph = optograph
-                self.optographReloaded.value = ()
-                self.saveModel()
-                self.updateProperties()
-            }
+//            ApiService<Optograph>.get("optographs/\(optographID)").startWithNext { optograph in
+//                self.optograph = optograph
+//                self.optographReloaded.value = ()
+//                self.saveModel()
+//                self.updateProperties()
+//            }
         }
         
         let commentQuery = CommentTable
@@ -147,9 +147,9 @@ class DetailsViewModel {
         comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
     }
     
-    func delete() -> SignalProducer<EmptyResponse, ApiError> {
-        return optograph.delete()
-    }
+//    func delete() -> SignalProducer<EmptyResponse, ApiError> {
+//        return optograph.delete()
+//    }
     
     private func updateModel() {
         optograph.isPublished = isPublished.value
@@ -160,22 +160,22 @@ class DetailsViewModel {
     }
     
     private func saveModel() {
-        try! optograph.insertOrUpdate()
-        try! optograph.location?.insertOrUpdate()
-        try! optograph.person.insertOrUpdate()
+//        try! optograph.insertOrUpdate()
+//        try! optograph.location?.insertOrUpdate()
+//        try! optograph.person.insertOrUpdate()
     }
     
     private func updateProperties() {
-        isStarred.value = optograph.isStarred
-        starsCount.value = optograph.starsCount
-        viewsCount.value = optograph.viewsCount
-        commentsCount.value = optograph.commentsCount
-        timeSinceCreated.value = optograph.createdAt.longDescription
-        text.value = optograph.isPrivate ? "[private] " + optograph.text : optograph.text
-        hashtags.value = optograph.hashtagString
-        location.value = optograph.location?.text
-        isPublished.value = optograph.isPublished
-        avatarImageUrl.value = ImageURL(optograph.person.avatarAssetID, width: 40, height: 40)
+//        isStarred.value = optograph.isStarred
+//        starsCount.value = optograph.starsCount
+//        viewsCount.value = optograph.viewsCount
+//        commentsCount.value = optograph.commentsCount
+//        timeSinceCreated.value = optograph.createdAt.longDescription
+//        text.value = optograph.isPrivate ? "[private] " + optograph.text : optograph.text
+//        hashtags.value = optograph.hashtagString
+//        location.value = optograph.location?.text
+//        isPublished.value = optograph.isPublished
+//        avatarImageUrl.value = ImageURL(optograph.person.avatarAssetID, width: 40, height: 40)
 //        textureImageUrl.value = ImageURL(optograph.leftTextureAssetID)
     }
     

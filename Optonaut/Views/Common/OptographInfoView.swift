@@ -178,7 +178,7 @@ class OptographInfoView: UIView {
     }
     
     func pushProfile() {
-        navigationController?.pushViewController(ProfileTableViewController(personID: viewModel.optograph.person.ID), animated: true)
+//        navigationController?.pushViewController(ProfileTableViewController(personID: viewModel.optograph.person.ID), animated: true)
     }
     
     func toggleStar() {

@@ -43,7 +43,7 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
         viewModel.results.producer
             .on(
                 next: { results in
-                    self.items = results.models
+//                    self.items = results.models
                     self.tableView.beginUpdates()
                     if !results.delete.isEmpty {
                         self.tableView.deleteRowsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0, inSection: 0) }, withRowAnimation: .None)
@@ -79,9 +79,7 @@ class FeedTableViewController: OptographTableViewController, NoNavbar {
         
         Mixpanel.sharedInstance().timeEvent("View.Feed")
         
-        Async.background {
-            PipelineService.check()
-        }
+//        PipelineService.check
         
         tabBarController?.delegate = self
     }

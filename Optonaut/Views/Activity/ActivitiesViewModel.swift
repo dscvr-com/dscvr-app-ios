@@ -57,35 +57,35 @@ class ActivitiesViewModel: NSObject {
 //            .map { self.results.value.merge($0, deleteOld: false) }
 //            .observeNext { self.results.value = $0 }
         
-        refreshNotification.signal
-            .takeWhile { _ in Reachability.connectedToNetwork() && SessionService.isLoggedIn }
-            .flatMap(.Latest) { _ in
-                ApiService<Activity>.get("activities")
-                    .observeOnUserInteractive()
-                    .on(next: { activity in
-                        try! activity.insertOrUpdate()
-                        try! activity.activityResourceStar?.insertOrUpdate()
-                        activity.activityResourceStar?.optograph.insertOrIgnore()
-                        activity.activityResourceStar?.causingPerson.insertOrIgnore()
-                        try! activity.activityResourceComment?.insertOrUpdate()
-                        activity.activityResourceComment?.optograph.insertOrIgnore()
-                        activity.activityResourceComment?.comment.insertOrIgnore()
-                        activity.activityResourceComment?.causingPerson.insertOrIgnore()
-                        try! activity.activityResourceViews?.insertOrUpdate()
-                        activity.activityResourceViews?.optograph.insertOrIgnore()
-                        try! activity.activityResourceFollow?.insertOrUpdate()
-                        activity.activityResourceFollow?.causingPerson.insertOrIgnore()
-                    })
-                    .ignoreError()
-                    .collect()
-                    .startOnUserInteractive()
-            }
-            .observeOnMain()
-            .map { self.results.value.merge($0, deleteOld: false) }
-            .observeNext { results in
-                self.unreadCount.value = results.models.reduce(0) { (acc, activity) in acc + (activity.isRead ? 0 : 1) }
-                self.results.value = results
-            }
+//        refreshNotification.signal
+//            .takeWhile { _ in Reachability.connectedToNetwork() && SessionService.isLoggedIn }
+//            .flatMap(.Latest) { _ in
+//                ApiService<Activity>.get("activities")
+//                    .observeOnUserInteractive()
+//                    .on(next: { activity in
+//                        try! activity.insertOrUpdate()
+//                        try! activity.activityResourceStar?.insertOrUpdate()
+//                        activity.activityResourceStar?.optograph.insertOrIgnore()
+//                        activity.activityResourceStar?.causingPerson.insertOrIgnore()
+//                        try! activity.activityResourceComment?.insertOrUpdate()
+//                        activity.activityResourceComment?.optograph.insertOrIgnore()
+//                        activity.activityResourceComment?.comment.insertOrIgnore()
+//                        activity.activityResourceComment?.causingPerson.insertOrIgnore()
+//                        try! activity.activityResourceViews?.insertOrUpdate()
+//                        activity.activityResourceViews?.optograph.insertOrIgnore()
+//                        try! activity.activityResourceFollow?.insertOrUpdate()
+//                        activity.activityResourceFollow?.causingPerson.insertOrIgnore()
+//                    })
+//                    .ignoreError()
+//                    .collect()
+//                    .startOnUserInteractive()
+//            }
+//            .observeOnMain()
+//            .map { self.results.value.merge($0, deleteOld: false) }
+//            .observeNext { results in
+//                self.unreadCount.value = results.models.reduce(0) { (acc, activity) in acc + (activity.isRead ? 0 : 1) }
+//                self.results.value = results
+//            }
         
         refreshNotification.notify(())
         

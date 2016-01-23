@@ -26,7 +26,7 @@ class PipelineService {
     
     enum StitchingStatus: Equatable {
         case Stitching(Float)
-        case StitchingFinished(Optograph)
+        case StitchingFinished(UUID)
         case Idle
         case Uninitialized
     }
@@ -39,26 +39,30 @@ class PipelineService {
     typealias UploadSignal = Signal<UploadingStatus, NoError>
     
     static let stitchingStatus = MutableProperty<StitchingStatus>(.Uninitialized)
-    static var uploadingStatus: [UUID: UploadSignal] = [:]
+//    static var uploadingStatus: [UUID: UploadSignal] = [:]
     
     private static let uploadQueue = dispatch_queue_create("pipeline_upload", DISPATCH_QUEUE_CONCURRENT)
     
-    static func check() {
-        Async.main {
-            updateOptographs()
-        }
-    }
+//    static func check() {
+//        Async.main {
+//            checkStitching()
+//            checkUploading()
+//        }
+//    }
     
-    static func stop() {
+    static func stopStitching() {
         if StitchingService.isStitching() {
             StitchingService.cancelStitching()
         }
     }
     
-    static func stitch(var optograph: Optograph) {
-        let stitchingSignal = StitchingService.startStitching(optograph)
+    static func stitch(optographID: UUID) {
+        let stitchingSignal = StitchingService.startStitching(optographID)
+        
+        let optographBox = Models.optographs[optographID]!
         
         stitchingSignal
+            .observeOnUserInitiated()
             .observeNext { result in
                 switch result {
                 case let .Result(side, face, image):
@@ -68,8 +72,10 @@ class PipelineService {
                     // Otherwise, the async method would retain the uncompressed image and use up a lot of memory. 
                     
                     let originalData = UIImageJPEGRepresentation(image, 0.9)!
-                    let originalURL = TextureURL(optograph.ID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
-                    KingfisherManager.sharedManager.cache.storeImage(UIImage(data: originalData)!, originalData: originalData, forKey: originalURL)
+                    let originalURL = TextureURL(optographID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
+                    KingfisherManager.sharedManager.cache.storeImage(UIImage(data: originalData)!, originalData: originalData, forKey: originalURL, toDisk: true) {
+                        upload(optographID, side: side, face: face)
+                    }
                     
                     let screen = UIScreen.mainScreen()
                     let textureSize = getTextureWidth(screen.bounds.width, hfov: HorizontalFieldOfView)
@@ -77,7 +83,7 @@ class PipelineService {
                     // https://github.com/onevcat/Kingfisher/issues/214
                     // let resizedData = UIImageJPEGRepresentation(image.resized(.Width, value: textureSize * screen.scale), 0.7)!
                     let resizedData = UIImageJPEGRepresentation(image.resized(.Width, value: textureSize), 0.7)!
-                    let resizedURL = TextureURL(optograph.ID, side: side, size: Int(textureSize), face: face, x: 0, y: 0, d: 1)
+                    let resizedURL = TextureURL(optographID, side: side, size: Int(textureSize), face: face, x: 0, y: 0, d: 1)
                     KingfisherManager.sharedManager.cache.storeImage(UIImage(data: resizedData)!, originalData: resizedData, forKey: resizedURL)
                     
                 case .Progress(let progress):
@@ -86,76 +92,118 @@ class PipelineService {
             }
         
         stitchingSignal
-            .observeCompleted {
-                optograph.isStitched = true
-                optograph.stitcherVersion = StitcherVersion
-                optograph.isInFeed = true
-                try! optograph.insertOrUpdate()
+            .on(completed: {
                 StitchingService.removeUnstitchedRecordings()
+            })
+            .observeOnMain()
+            .observeCompleted {
+                optographBox.insertOrUpdate { box in
+                    box.model.isStitched = true
+                    box.model.stitcherVersion = StitcherVersion
+                    box.model.isInFeed = true
+                }
                 stitchingStatus.value = .Stitching(1)
-                stitchingStatus.value = .StitchingFinished(optograph)
-                
-                upload(optograph)
+                stitchingStatus.value = .StitchingFinished(optographID)
             }
     }
     
-    static func upload(optograph: Optograph) -> UploadSignal {
-        if let signal = uploadingStatus[optograph.ID] {
-            return signal
-        }
+    private static func upload(optographID: UUID) {
+//        if let signal = uploadingStatus[optograph.ID] {
+//            return signal
+//        }
 
-        let (signal, observer) = UploadSignal.pipe()
+//        let (signal, observer) = UploadSignal.pipe()
         
-        Async.customQueue(uploadQueue) {
-            if var leftCubeTextureUploadStatus = optograph.leftCubeTextureUploadStatus {
-                for (index, uploaded) in leftCubeTextureUploadStatus.status.enumerate() {
-                    if !uploaded {
-                        let url = TextureURL(optograph.ID, side: .Left, size: 0, face: index, x: 0, y: 0, d: 1)
-                        let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
-                        
-                        print("upload l\(index)")
-                        
-                        let result = ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
-                            form.appendBodyPart(data: "l\(index)".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
-                            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "image.jpg", mimeType: "image/jpeg")
-                        })
-                            .transformToBool()
-                            .first()
-                        
-                        leftCubeTextureUploadStatus.status[index] = result?.value == true
-                    }
+        let optographBox = Models.optographs[optographID]!
+        
+        if let leftCubeTextureUploadStatus = optographBox.model.leftCubeTextureUploadStatus {
+            for (index, uploaded) in leftCubeTextureUploadStatus.status.enumerate() {
+                if !uploaded {
+                    upload(optographID, side: .Left, face: index)
                 }
-                
-                print(leftCubeTextureUploadStatus.status)
+            }
+        }
+        
+        if let rightCubeTextureUploadStatus = optographBox.model.rightCubeTextureUploadStatus {
+            for (index, uploaded) in rightCubeTextureUploadStatus.status.enumerate() {
+                if !uploaded {
+                    upload(optographID, side: .Right, face: index)
+                }
+            }
+        }
+        
+//        return signal
+    }
+    
+    private static func upload(optographID: UUID, side: TextureSide, face: Int) {
+        Async.customQueue(uploadQueue) {
+            let optographBox = Models.optographs[optographID]!
+            
+            switch side {
+            case .Left where optographBox.model.leftCubeTextureUploadStatus?.status[face] == false: break
+            case .Right where optographBox.model.rightCubeTextureUploadStatus?.status[face] == false: break
+            default: return
             }
             
-            if var rightCubeTextureUploadStatus = optograph.rightCubeTextureUploadStatus {
-                for (index, uploaded) in rightCubeTextureUploadStatus.status.enumerate() {
-                    if !uploaded {
-                        let url = TextureURL(optograph.ID, side: .Right, size: 0, face: index, x: 0, y: 0, d: 1)
-                        let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
-                        
-                        print("upload r\(index)")
-                        
-                        let result = ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
-                            form.appendBodyPart(data: "r\(index)".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
-                            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "image.jpg", mimeType: "image/jpeg")
-                        })
-                            .transformToBool()
-                            .first()
-                        
-                        rightCubeTextureUploadStatus.status[index] = result?.value == true
+            let url = TextureURL(optographID, side: .Left, size: 0, face: face, x: 0, y: 0, d: 1)
+            let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
+            let sideLetter = side == .Left ? "l" : "r"
+            
+            let result = ApiService<EmptyResponse>.upload("optographs/\(optographID)/upload-asset", multipartFormData: { form in
+                form.appendBodyPart(data: "\(sideLetter)\(face)".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
+                form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "image.jpg", mimeType: "image/jpeg")
+            })
+                .transformToBool()
+                .first()
+            
+            optographBox.insertOrUpdate { box in
+                if result?.value == true {
+                    switch side {
+                    case .Left:
+                        box.model.leftCubeTextureUploadStatus!.status[face] = true
+                        if box.model.leftCubeTextureUploadStatus!.completed {
+                            box.model.leftCubeTextureUploadStatus = nil
+                        }
+                    case .Right:
+                        box.model.rightCubeTextureUploadStatus!.status[face] = true
+                        if box.model.rightCubeTextureUploadStatus!.completed {
+                            box.model.rightCubeTextureUploadStatus = nil
+                        }
                     }
+                    
+                    if box.model.leftCubeTextureUploadStatus == nil && box.model.rightCubeTextureUploadStatus == nil {
+                        box.model.isPublished = true
+                    }
+                } else {
+                    box.model.shouldBePublished = false
                 }
-                
-                print(rightCubeTextureUploadStatus.status)
             }
         }
-        
-        return signal
     }
     
-    private static func updateOptographs() {
+    static func checkUploading() {
+        let query = OptographTable
+            .select(*)
+            .filter(!OptographTable[OptographSchema.isPublished]
+                && OptographTable[OptographSchema.shouldBePublished]
+                && OptographTable[OptographSchema.isSubmitted])
+        
+        let optographs = try! DatabaseService.defaultConnection.prepare(query)
+            .map { Optograph.fromSQL($0) }
+        
+        if Reachability.connectedToNetwork() {
+            for optograph in optographs {
+                Models.optographs.touch(optograph)
+                upload(optograph.ID)
+            }
+        }
+    }
+    
+    static func checkStitching() {
+        if StitchingService.isStitching() {
+            return
+        }
+        
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
@@ -163,23 +211,18 @@ class PipelineService {
             .filter(!OptographTable[OptographSchema.isStitched] && OptographTable[OptographSchema.deletedAt] == nil)
         
         let optograph = DatabaseService.defaultConnection.pluck(query)
-            .map { row -> Optograph in
-                var optograph = Optograph.fromSQL(row)
-                
-                optograph.person = Person.fromSQL(row)
-                optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
-                
-                return optograph
-            }
+            .map { Optograph.fromSQL($0) }
         
-        if var optograph = optograph {
+        if let optographBox = Models.optographs.touch(optograph) {
             
-            if !optograph.isSubmitted {
+            if !optographBox.model.isSubmitted {
                 stitchingStatus.value = .Idle
                 StitchingService.removeUnstitchedRecordings()
-                optograph.delete().start()
+                optographBox.insertOrUpdate { box in
+                    box.model.delete()
+                }
             } else {
-                stitch(optograph)
+                stitch(optographBox.model.ID)
             }
             
         } else {
