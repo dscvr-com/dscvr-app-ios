@@ -242,6 +242,8 @@ class CameraViewController: UIViewController {
         var points2 = points;
         points2.removeAtIndex(0);
         
+        var i = 0
+        
         for (a, b) in zip(points, points2) {
             if a.ringId == b.ringId {
                 let edge = Edge(a, b)
@@ -252,9 +254,15 @@ class CameraViewController: UIViewController {
                 
                 let edgeNode = createLineNode(posA, posB: posB)
                 
+                if i % 20 > 9 {
+                    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor()
+                }
+                
                 edges[edge] = edgeNode
                 
                 scene.rootNode.addChildNode(edgeNode)
+                
+                i++;
             }
         }
     }
@@ -451,9 +459,7 @@ class CameraViewController: UIViewController {
         let videoDeviceOutput = AVCaptureVideoDataOutput()
         videoDeviceOutput.videoSettings = [
             kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
-        
         videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
-        
         videoDeviceOutput.setSampleBufferDelegate(self, queue: sessionQueue)
         
         if session.canAddOutput(videoDeviceOutput) {
@@ -462,7 +468,7 @@ class CameraViewController: UIViewController {
         
         let conn = videoDeviceOutput.connectionWithMediaType(AVMediaTypeVideo)
         conn.videoOrientation = AVCaptureVideoOrientation.Portrait
-            
+        
         session.commitConfiguration()
         
         try! videoDevice?.lockForConfiguration()
@@ -483,7 +489,6 @@ class CameraViewController: UIViewController {
         videoDevice!.activeVideoMinFrameDuration = bestFrameRate!.minFrameDuration
         videoDevice!.activeVideoMaxFrameDuration = bestFrameRate!.minFrameDuration
         
-    
         if videoDevice!.activeFormat.videoHDRSupported.boolValue {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
             videoDevice!.videoHDREnabled = false
