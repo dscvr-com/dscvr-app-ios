@@ -51,6 +51,10 @@
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */; };
+		8F4185F41C525538009E1E3F /* ModelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185F31C525538009E1E3F /* ModelService.swift */; };
+		8F4185F91C529C74009E1E3F /* OptographApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185F81C529C74009E1E3F /* OptographApiModel.swift */; };
+		8F4185FB1C52DB08009E1E3F /* PersonApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185FA1C52DB08009E1E3F /* PersonApiModel.swift */; };
+		8F4185FD1C52DBBD009E1E3F /* LocationApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185FC1C52DBBD009E1E3F /* LocationApiModel.swift */; };
 		8F47150E1C49648F00663684 /* TwitterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150D1C49648F00663684 /* TwitterKit.framework */; };
 		8F4715101C4964AD00663684 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150F1C4964AD00663684 /* TwitterCore.framework */; };
 		8F4715121C49688700663684 /* TwitterKitResources.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4715111C49688700663684 /* TwitterKitResources.bundle */; };
@@ -308,6 +312,10 @@
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
 		8F3D2D641BAC66F80022587C /* OnboardingHashtagSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewController.swift; sourceTree = "<group>"; };
+		8F4185F31C525538009E1E3F /* ModelService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelService.swift; sourceTree = "<group>"; };
+		8F4185F81C529C74009E1E3F /* OptographApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographApiModel.swift; sourceTree = "<group>"; };
+		8F4185FA1C52DB08009E1E3F /* PersonApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonApiModel.swift; sourceTree = "<group>"; };
+		8F4185FC1C52DBBD009E1E3F /* LocationApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationApiModel.swift; sourceTree = "<group>"; };
 		8F47150D1C49648F00663684 /* TwitterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterKit.framework; path = Frameworks/TwitterKit.framework; sourceTree = "<group>"; };
 		8F47150F1C4964AD00663684 /* TwitterCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterCore.framework; path = Frameworks/TwitterCore.framework; sourceTree = "<group>"; };
 		8F4715111C49688700663684 /* TwitterKitResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TwitterKitResources.bundle; path = Frameworks/TwitterKitResources.bundle; sourceTree = "<group>"; };
@@ -682,6 +690,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		8F4185F71C529C5A009E1E3F /* ApiModel */ = {
+			isa = PBXGroup;
+			children = (
+				8F4185F81C529C74009E1E3F /* OptographApiModel.swift */,
+				8F4185FA1C52DB08009E1E3F /* PersonApiModel.swift */,
+				8F4185FC1C52DBBD009E1E3F /* LocationApiModel.swift */,
+			);
+			name = ApiModel;
+			path = APIModel;
+			sourceTree = "<group>";
+		};
 		8F488ED51B4416A100599B61 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -946,6 +965,7 @@
 				8FEA6F201BA5969700153677 /* DatabaseService.swift */,
 				8F8E32CF1BFE043200E09392 /* DeviceTokenService.swift */,
 				8FB3B7411B8E3D7900656D99 /* LocationService.swift */,
+				8F4185F31C525538009E1E3F /* ModelService.swift */,
 				8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */,
 				8FD845C01BC9BBFF0064048D /* PipelineService.swift */,
 				8F77C5191BC45DE1003B1594 /* StitchingService.swift */,
@@ -1031,6 +1051,7 @@
 				8F740CF81B80DC6200FED1D0 /* Database */,
 				8FAB9F7C1B8F032000B4C8CB /* Extensions */,
 				8F7738121B380F5D001F642B /* Models */,
+				8F4185F71C529C5A009E1E3F /* ApiModel */,
 				8F488ED51B4416A100599B61 /* Resources */,
 				8FB3B7401B8E3D5E00656D99 /* Services */,
 				8FAB9F691B8F02D500B4C8CB /* Stitcher */,
@@ -1528,7 +1549,9 @@
 				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
 				8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */,
 				8FAB9F371B8F01DF00B4C8CB /* OptographTableViewCellModel.swift in Sources */,
+				8F4185FB1C52DB08009E1E3F /* PersonApiModel.swift in Sources */,
 				8FC7E3731BD15B9D00E97CC3 /* HeadTracker.mm in Sources */,
+				8F4185F91C529C74009E1E3F /* OptographApiModel.swift in Sources */,
 				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,
@@ -1637,6 +1660,7 @@
 				8F23AA4D1BFF31B4008926A8 /* ActivityResourceFollowTable.swift in Sources */,
 				8F5335A41BDBA7270058961A /* ActivityResourceStar.swift in Sources */,
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
+				8F4185FD1C52DBBD009E1E3F /* LocationApiModel.swift in Sources */,
 				8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */,
 				A5FD5D881BEA5A4E0031ED1E /* multiringStitcher.cpp in Sources */,
 				8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */,
@@ -1653,6 +1677,7 @@
 				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
+				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
 				8FD845BD1BC92A600064048D /* OptographInfoView.swift in Sources */,
 				8F23AA571BFF31EC008926A8 /* Migration0001.swift in Sources */,
 				8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */,

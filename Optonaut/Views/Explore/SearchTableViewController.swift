@@ -43,7 +43,7 @@ class SearchTableViewController: OptographTableViewController, RedNavbar {
             .on(
                 next: { results in
                     let itemsWasEmpty = self.items.isEmpty
-                    self.items = results.models
+//                    self.items = results.models
                     
                     if itemsWasEmpty || self.items.isEmpty {
                         self.tableView.reloadData()

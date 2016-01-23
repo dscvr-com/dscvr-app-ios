@@ -19,7 +19,7 @@ private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERI
 class CollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
     
     private let viewModel = FeedViewModel()
-    internal var optographs = [Optograph]()
+    internal var optographIDs: [UUID] = []
     private var imageCache = CollectionImageCache()
     private let overlayDebouncer: Debouncer
     
@@ -98,8 +98,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             .observeOnMain()
             .on(next: { [weak self] results in
                 if let strongSelf = self {
-                    let visibleOptograph: Optograph? = strongSelf.optographs.isEmpty ? nil : strongSelf.optographs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-                    strongSelf.optographs = results.models
+                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+                    strongSelf.optographIDs = results.models.map { $0.ID }
                     
                     CATransaction.begin()
                     CATransaction.setDisableActions(true)
@@ -112,7 +112,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                         }, completion: { _ in
                             if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
                                 // preserves scroll position
-                                if let visibleOptograph = visibleOptograph, visibleRow = strongSelf.optographs.indexOf({ $0.ID == visibleOptograph.ID }) {
+                                if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
                                     strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
                                 }
                             }
@@ -129,7 +129,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         overlayView.navigationController = navigationController as? NavigationController
         overlayView.rac_hidden <~ uiHidden
         overlayView.deleteCallback = { [weak self] in
-            self?.overlayView.optograph = nil
+            self?.overlayView.optographID = nil
             self?.viewModel.refreshNotification.notify(())
         }
         view.addSubview(overlayView)
@@ -218,7 +218,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return optographs.count
+        return optographIDs.count
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -242,7 +242,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             return
         }
         
-        let optograph = optographs[indexPath.row]
+        let optographID = optographIDs[indexPath.row]
+        let optograph = Models.optographs[optographID]!.model
         
         cell.willDisplay((phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta)))
         
@@ -263,18 +264,18 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                 CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
                 CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
             ]
-            self?.imageCache.get(indexPath.row, optographID: optograph.ID, side: .Left, cubeIndices: defaultIndices, callback: imageCallback)
+            self?.imageCache.get(indexPath.row, optographID: optographID, side: .Left, cubeIndices: defaultIndices, callback: imageCallback)
         }
         
-        if overlayView.optograph == nil {
-            overlayView.optograph = optographs[indexPath.row]
+        if overlayView.optographID == nil {
+            overlayView.optographID = optographID
         }
         
 //        cacheDebouncerTouch.debounce { [weak self] in
 //            self?.imageCache.touch(indexPath.row)
 //        }
         
-        if indexPath.row > optographs.count - 3 {
+        if indexPath.row > optographIDs.count - 3 {
             viewModel.loadMoreNotification.notify(())
         }
         
@@ -313,9 +314,9 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             overlayView.alpha = opacity
         }
         
-        let overlayOptograph = optographs[Int(round(offset / height))]
-        if overlayOptograph.ID != overlayView.optograph?.ID {
-            overlayView.optograph = overlayOptograph
+        let overlayOptographID = optographIDs[Int(round(offset / height))]
+        if overlayOptographID != overlayView.optographID {
+            overlayView.optographID = overlayOptographID
         }
     }
     
@@ -333,7 +334,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             return
         }
         
-        let viewerViewController = ViewerViewController(orientation: orientation, optograph: optographs[index])
+        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographIDs[index]]!.model)
         navigationController?.pushViewController(viewerViewController, animated: false)
 //        viewModel.increaseViewsCount()
     }
@@ -348,8 +349,8 @@ extension CollectionViewController: DefaultTabControllerDelegate {
         collectionView!.setContentOffset(CGPointZero, animated: true)
     }
     
-    func scrollToOptograph(optograph: Optograph) {
-        let row = optographs.indexOf({ $0.ID == optograph.ID })
+    func scrollToOptograph(optographID: UUID) {
+        let row = optographIDs.indexOf(optographID)
         collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
     }
     
@@ -417,23 +418,28 @@ private class OverlayView: UIView {
     
     var deleteCallback: (() -> ())?
     
-    private var optograph: Optograph? {
+    private var optographID: UUID? {
         didSet {
-            if let optograph = optograph {
+            if let optographID = optographID  {
+                let optograph = Models.optographs[optographID]!.model
+                let person = Models.persons[optograph.personID]!.model
+                
                 viewModel.bind(optograph)
                 
-                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL(optograph.person.avatarAssetID, width: 47, height: 47))!)
-                personNameView.text = optograph.person.displayName
-                locationTextView.text = optograph.location?.text
+                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL(person.avatarAssetID, width: 47, height: 47))!)
+                personNameView.text = person.displayName
                 dateView.text = optograph.createdAt.longDescription
                 textView.text = optograph.text
                 
-                if let location = optograph.location {
+                if let locationID = optograph.locationID {
+                    let location = Models.locations[locationID]!.model
                     locationTextView.text = "\(location.text), \(location.countryShort)"
                     personNameView.anchorInCorner(.TopLeft, xPad: 75, yPad: 17, width: 200, height: 18)
                     locationTextView.anchorInCorner(.TopLeft, xPad: 75, yPad: 37, width: 200, height: 13)
+                    locationTextView.text = location.text
                 } else {
                     personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+                    locationTextView.text = ""
                 }
                 
             }
@@ -519,20 +525,20 @@ private class OverlayView: UIView {
         addSubview(textView)
         
         viewModel.textToggled.producer.startWithNext { [weak self] toggled in
-            if let strongSelf = self, text = strongSelf.optograph?.text {
-                let textHeight = calcTextHeight(text, withWidth: strongSelf.frame.width - 36, andFont: UIFont.displayOfSize(13, withType: .Light))
-                let displayedTextHeight = toggled && textHeight > 16 ? textHeight : 15
-//                let bottomHeight: CGFloat = 50 + (text.isEmpty ? 0 : displayedTextHeight + 11)
-                
-                UIView.setAnimationCurve(.EaseInOut)
-                UIView.animateWithDuration(0.3) {
-//                    strongSelf.frame = CGRect(x: 0, y: strongSelf.frame.height - 108 - bottomHeight, width: strongSelf.frame.width, height: bottomHeight)
-                }
-                
-                strongSelf.textView.anchorInCorner(.BottomLeft, xPad: 16, yPad: 126, width: strongSelf.frame.width - 36, height: displayedTextHeight)
-                
-                strongSelf.textView.numberOfLines = toggled ? 0 : 1
-            }
+//            if let strongSelf = self, text = strongSelf.optograph?.text {
+//                let textHeight = calcTextHeight(text, withWidth: strongSelf.frame.width - 36, andFont: UIFont.displayOfSize(13, withType: .Light))
+//                let displayedTextHeight = toggled && textHeight > 16 ? textHeight : 15
+////                let bottomHeight: CGFloat = 50 + (text.isEmpty ? 0 : displayedTextHeight + 11)
+//                
+//                UIView.setAnimationCurve(.EaseInOut)
+//                UIView.animateWithDuration(0.3) {
+////                    strongSelf.frame = CGRect(x: 0, y: strongSelf.frame.height - 108 - bottomHeight, width: strongSelf.frame.width, height: bottomHeight)
+//                }
+//                
+//                strongSelf.textView.anchorInCorner(.BottomLeft, xPad: 16, yPad: 126, width: strongSelf.frame.width - 36, height: displayedTextHeight)
+//                
+//                strongSelf.textView.numberOfLines = toggled ? 0 : 1
+//            }
         }
     }
     
@@ -569,14 +575,12 @@ private class OverlayView: UIView {
     
     @objc
     private func toggleLike() {
-//        KingfisherManager.sharedManager.cache.clearDiskCache()
-//        KingfisherManager.sharedManager.cache.clearMemoryCache()
         viewModel.toggleLike()
     }
     
     @objc
     private func pushProfile() {
-        navigationController?.pushViewController(ProfileTableViewController(personID: viewModel.optograph!.person.ID), animated: true)
+//        navigationController?.pushViewController(ProfileTableViewController(personID: viewModel.optograph!.person.ID), animated: true)
     }
     
     @objc

@@ -10,6 +10,8 @@ import Foundation
 import ReactiveCocoa
 
 private let userInteractiveQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
+private let userInitiatedQueue = dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)
+private let backgroundQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
 
 extension SignalType {
     public func ignoreError() -> Signal<Value, NoError> {
@@ -32,6 +34,19 @@ extension SignalType {
                 case .Failed(_): observer.sendNext(false)
                 case .Next(_): break
                 case .Completed: observer.sendNext(true)
+                case .Interrupted: observer.sendInterrupted()
+                }
+            }
+        }
+    }
+    
+    public func failedAsNext(fn: () -> Value) -> Signal<Value, NoError> {
+        return Signal { observer in
+            self.observe { event in
+                switch event {
+                case .Failed(_): observer.sendNext(fn())
+                case let .Next(val): observer.sendNext(val)
+                case .Completed: observer.sendCompleted()
                 case .Interrupted: observer.sendInterrupted()
                 }
             }
@@ -68,8 +83,16 @@ extension SignalType {
         return observeOn(QueueScheduler(queue: userInteractiveQueue))
     }
     
+    public func observeOnUserInitiated() -> Signal<Value, Error> {
+        return observeOn(QueueScheduler(queue: userInitiatedQueue))
+    }
+    
     public func observeOnMain() -> Signal<Value, Error> {
         return observeOn(UIScheduler())
+    }
+    
+    public func observeOnBackground() -> Signal<Value, Error> {
+        return observeOn(QueueScheduler(queue: backgroundQueue))
     }
     
     public func retryUntil(interval: NSTimeInterval, onScheduler scheduler: DateSchedulerType, fn: () -> Bool) -> Signal<Value, Error> {
@@ -182,6 +205,10 @@ extension SignalProducerType {
         return lift { $0.transformToBool() }
     }
     
+    public func failedAsNext(fn: () -> Value) -> SignalProducer<Value, NoError> {
+        return lift { $0.failedAsNext(fn) }
+    }
+    
     public func completedAsNext() -> SignalProducer<Void, Error> {
         return lift { $0.completedAsNext() }
     }
@@ -196,6 +223,14 @@ extension SignalProducerType {
     
     public func observeOnUserInteractive() -> SignalProducer<Value, Error> {
         return lift { $0.observeOnUserInteractive() }
+    }
+    
+    public func startOnUserInitiated() -> SignalProducer<Value, Error> {
+        return startOn(QueueScheduler(queue: userInitiatedQueue))
+    }
+    
+    public func observeOnUserInitiated() -> SignalProducer<Value, Error> {
+        return lift { $0.observeOnUserInitiated() }
     }
     
     public func startOnMain() -> SignalProducer<Value, Error> {

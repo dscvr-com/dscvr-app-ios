@@ -6,7 +6,6 @@
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
-import ObjectMapper
 import ReactiveCocoa
 import Kingfisher
 
@@ -21,10 +20,9 @@ typealias HashtagStrings = Array<String>
 struct CubeTextureUploadStatus: SQLiteValue {
     var status: [Bool] = [false, false, false, false, false, false]
     
-//    subscript(index: Int) -> Bool {
-//        get { return status[index] }
-//        set(newVal) { status[index] = newVal }
-//    }
+    var completed: Bool {
+        return status.reduce(true, combine: and)
+    }
     
     static var declaredDatatype: String {
         return Int64.declaredDatatype
@@ -51,14 +49,14 @@ struct Optograph: DeletableModel {
     
     var ID: UUID
     var text: String
-    var person: Person
+    var personID: UUID
     var createdAt: NSDate
     var deletedAt: NSDate?
     var isStarred: Bool
     var starsCount: Int
     var commentsCount: Int
     var viewsCount: Int
-    var location: Location?
+    var locationID: UUID?
     var isPrivate: Bool
     var isStitched: Bool
     var isSubmitted: Bool
@@ -81,18 +79,18 @@ struct Optograph: DeletableModel {
         return Optograph(
             ID: uuid(),
             text: "",
-            person: Person.newInstance(),
+            personID: "",
             createdAt: NSDate(),
             deletedAt: nil,
             isStarred: false,
             starsCount: 0,
             commentsCount: 0,
             viewsCount: 0,
-            location: nil,
+            locationID: nil,
             isPrivate: false,
-            isStitched: false,
-            isSubmitted: false,
-            isPublished: false,
+            isStitched: true,
+            isSubmitted: true,
+            isPublished: true,
             stitcherVersion: "",
             shareAlias: "",
             leftCubeTextureUploadStatus: nil,
@@ -109,75 +107,8 @@ struct Optograph: DeletableModel {
         )
     }
     
-    func saveAsset(asset: OptographAsset) {
-        
-//                    return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
-//                        form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
-//                        form.appendBodyPart(data: optograph.placeholderTextureAssetID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "asset_id")
-//                        form.appendBodyPart(data: UIImageJPEGRepresentation(image, 0.7)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
-//                    })
-//        switch asset {
-//        case .LeftImage(let data):
-//            let image = UIImage(data: data)!
-//            ImageCache.defaultCache.storeImage(image, forKey: ImageURL(leftTextureAssetID))
-//            // needed for feed
-////            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 2048 * UIScreen.mainScreen().scale), forKey: ImageURL(leftTextureAssetID, width: 2048))
-//            ImageCache.defaultCache.storeImage(image.resized(.Width, value: 4096), forKey: ImageURL(leftTextureAssetID, width: Int(4096 / UIScreen.mainScreen().scale)))
-//        case .RightImage(let data):
-//            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(rightTextureAssetID))
-//        case .PreviewImage(let data):
-//            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID))
-//            // needs all different sizes
-//            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID, fullDimension: .Width))
-//            ImageCache.defaultCache.storeImage(UIImage(data: data)!, forKey: ImageURL(placeholderTextureAssetID, width: 32, height: 40))
-//        }
-    }
-    
-//    mutating func publish() -> SignalProducer<Optograph, ApiError> {
-//        assert(!isPublished)
-    
-//        return KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(leftTextureAssetID))
-//            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(rightTextureAssetID)))
-//            .combineLatestWith(KingfisherManager.sharedManager.downloader.downloadDataForURL(ImageURL(placeholderTextureAssetID)))
-//            .map { ($0.0, $0.1, $1) }
-//            .map { (left, right, preview) -> [String: AnyObject] in
-//                var parameters = Mapper().toJSON(self)
-//                
-//                parameters["left_texture_asset"] = left.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-//                parameters["right_texture_asset"] = right.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-//                parameters["preview_asset"] = preview.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-//                
-//                return parameters
-//            }
-//            .mapError { _ in ApiError.Nil }
-//            .flatMap(.Latest) { ApiService.post("optographs", parameters: $0) }
-//            .on(completed: {
-//                self.isPublished = true
-//                
-//                try! DatabaseService.defaultConnection.run(
-//                    OptographTable.filter(OptographSchema.ID ==- self.ID).update(
-//                        OptographSchema.isPublished <-- self.isPublished
-//                    )
-//                )
-//            })
-//    }
-    
-    mutating func delete() -> SignalProducer<EmptyResponse, ApiError> {
-        var signalProducer: SignalProducer<EmptyResponse, ApiError>
-        if isPublished {
-            signalProducer = ApiService<EmptyResponse>.delete("optographs/\(ID)")
-        } else {
-            signalProducer = SignalProducer { sink, disposable in
-                disposable.addDisposable {}
-                sink.sendCompleted()
-            }
-        }
-        
-        return signalProducer
-            .on(completed: {
-                self.deletedAt = NSDate()
-                try! self.insertOrUpdate()
-            })
+    mutating func delete() {
+        deletedAt = NSDate()
     }
     
     func report() -> SignalProducer<EmptyResponse, ApiError> {
@@ -186,8 +117,8 @@ struct Optograph: DeletableModel {
 }
 
 func ==(lhs: Optograph, rhs: Optograph) -> Bool {
-    guard let lhsLocation = lhs.location, rhsLocation = rhs.location else {
-        return lhs.location == nil && rhs.location == nil
+    guard let lhsLocationID = lhs.locationID, rhsLocationID = rhs.locationID else {
+        return lhs.locationID == nil && rhs.locationID == nil
     }
     
     return lhs.ID == rhs.ID
@@ -196,46 +127,8 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
         && lhs.isPublished == rhs.isPublished
         && lhs.isStarred == rhs.isStarred
         && lhs.starsCount == rhs.starsCount
-        && lhs.person == rhs.person
-        && lhsLocation == rhsLocation
-}
-
-extension Optograph: Mappable {
-    
-    init?(_ map: Map){
-        self = Optograph.newInstance()
-    }
-    
-    mutating func mapping(map: Map) {
-        if map.mappingType == .FromJSON {
-            isStitched = true
-            isPublished = true
-            isSubmitted = true
-        }
-        
-        ID                          <- map["id"]
-        text                        <- map["text"]
-        person                      <- map["person"]
-        createdAt                   <- (map["created_at"], NSDateTransform())
-        deletedAt                   <- (map["deleted_at"], NSDateTransform())
-        isStarred                   <- map["is_starred"]
-        isPrivate                   <- map["is_private"]
-        stitcherVersion             <- map["stitcher_version"]
-        shareAlias                  <- map["share_alias"]
-        starsCount                  <- map["stars_count"]
-        commentsCount               <- map["comments_count"]
-        viewsCount                  <- map["views_count"]
-        location                    <- map["location"]
-        isStaffPick                 <- map["is_staff_pick"]
-        hashtagString               <- map["hashtag_string"]
-        directionPhi                <- map["direction_phi"]
-        directionTheta              <- map["direction_theta"]
-        
-        if person.displayName.isEmpty {
-            print(self)
-        }
-    }
-    
+        && lhs.personID == rhs.personID
+        && lhsLocationID == rhsLocationID
 }
 
 extension Optograph: SQLiteModel {
@@ -255,14 +148,14 @@ extension Optograph: SQLiteModel {
         return Optograph(
             ID: row[OptographSchema.ID],
             text: row[OptographSchema.text],
-            person: Person.newInstance(),
+            personID: row[OptographSchema.personID],
             createdAt: row[OptographSchema.createdAt],
             deletedAt: row[OptographSchema.deletedAt],
             isStarred: row[OptographSchema.isStarred],
             starsCount: row[OptographSchema.starsCount],
             commentsCount: row[OptographSchema.commentsCount],
             viewsCount: row[OptographSchema.viewsCount],
-            location: nil,
+            locationID: row[OptographSchema.locationID],
             isPrivate: row[OptographSchema.isPrivate],
             isStitched: row[OptographSchema.isStitched],
             isSubmitted: row[OptographSchema.isSubmitted],
@@ -288,14 +181,14 @@ extension Optograph: SQLiteModel {
         return [
             OptographSchema.ID <-- ID,
             OptographSchema.text <-- text,
-            OptographSchema.personID <-- person.ID,
+            OptographSchema.personID <-- personID,
             OptographSchema.createdAt <-- createdAt,
             OptographSchema.deletedAt <-- deletedAt,
             OptographSchema.isStarred <-- isStarred,
             OptographSchema.starsCount <-- starsCount,
             OptographSchema.commentsCount <-- commentsCount,
             OptographSchema.viewsCount <-- viewsCount,
-            OptographSchema.locationID <-- location?.ID,
+            OptographSchema.locationID <-- locationID,
             OptographSchema.isPrivate <-- isPrivate,
             OptographSchema.isStitched <-- isStitched,
             OptographSchema.isSubmitted <-- isSubmitted,

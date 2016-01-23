@@ -58,16 +58,16 @@ class StitchingService {
     }
     
     /// This function starts a new stitching process.
-    static func startStitching(optograph: Optograph) -> StitchingSignal {
+    static func startStitching(optographID: UUID) -> StitchingSignal {
         if isStitching() {
-            assert(optograph.ID == currentOptograph)
+            assert(optographID == currentOptograph)
             return activeSignal!
         }
         
         assert(!isStitching())
         assert(hasUnstitchedRecordings())
         
-        currentOptograph = optograph.ID
+        currentOptograph = optographID
         
         shallCancel = false
         

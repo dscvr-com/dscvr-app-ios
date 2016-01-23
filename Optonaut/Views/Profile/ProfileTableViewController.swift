@@ -58,7 +58,7 @@ class ProfileTableViewController: OptographTableViewController, NoNavbar, Unique
                 next: { [weak self] results in
                     let wasEmptyBefore = self?.items.isEmpty ?? false
                     
-                    self?.items = results.models
+//                    self?.items = results.models
                     
                     if wasEmptyBefore {
                         self?.tableView.reloadData()

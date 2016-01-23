@@ -30,10 +30,14 @@ class OptographInfoViewModel {
     init(optograph: Optograph) {
         self.optograph = optograph
         
-        displayName = ConstantProperty(optograph.person.displayName)
-        avatarImageUrl = ConstantProperty(ImageURL(optograph.person.avatarAssetID, width: 40, height: 40))
-        locationText = ConstantProperty(optograph.location?.text ?? "No location available")
-        locationCountry = ConstantProperty(optograph.location?.country ?? "No country available")
+        displayName = ConstantProperty("")
+        avatarImageUrl = ConstantProperty("")
+        locationText = ConstantProperty("")
+        locationCountry = ConstantProperty("")
+//        displayName = ConstantProperty(optograph.person.displayName)
+//        avatarImageUrl = ConstantProperty(ImageURL(optograph.person.avatarAssetID, width: 40, height: 40))
+//        locationText = ConstantProperty(optograph.location?.text ?? "No location available")
+//        locationCountry = ConstantProperty(optograph.location?.country ?? "No country available")
         isStarred.value = optograph.isStarred
         starsCount.value = optograph.starsCount
         timeSinceCreated.value = optograph.createdAt.longDescription
@@ -82,9 +86,9 @@ class OptographInfoViewModel {
     }
     
     func retryPublish() {
-        PipelineService.check()
-        status.value = .Publishing
-        updateStatus()
+//        PipelineService.check()
+//        status.value = .Publishing
+//        updateStatus()
     }
     
     private func updateStatus() {

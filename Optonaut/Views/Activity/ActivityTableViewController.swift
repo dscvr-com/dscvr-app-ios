@@ -44,7 +44,7 @@ class ActivityTableViewController: UIViewController, RedNavbar {
                 next: { results in
                     let wasEmptyBefore = self.items.isEmpty
                     
-                    self.items = results.models
+//                    self.items = results.models
                     
                     if wasEmptyBefore {
                         self.tableView.reloadData()

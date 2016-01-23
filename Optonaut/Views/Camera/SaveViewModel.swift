@@ -29,9 +29,21 @@ class SaveViewModel {
     let isLoggedIn: MutableProperty<Bool>
     let placeID = MutableProperty<String?>(nil)
     
-    var optograph: Optograph!
+    let optographBox: ModelBox<Optograph>
+    var locationBox: ModelBox<Location>?
     
     init(placeholderSignal: Signal<UIImage, NoError>) {
+        
+        var optograph = Optograph.newInstance()
+        
+        optograph.personID = Defaults[.SessionPersonID] ?? Person.guestID
+        optograph.isPublished = false
+        optograph.isStitched = false
+        optograph.isSubmitted = false
+        optograph.leftCubeTextureUploadStatus = CubeTextureUploadStatus()
+        optograph.rightCubeTextureUploadStatus = CubeTextureUploadStatus()
+        
+        optographBox = Models.optographs.create(optograph)
         
         postFacebook = MutableProperty(Defaults[.SessionShareToggledFacebook])
         postTwitter = MutableProperty(Defaults[.SessionShareToggledTwitter])
@@ -41,51 +53,35 @@ class SaveViewModel {
         isLoggedIn = MutableProperty(SessionService.isLoggedIn)
         
         postFacebook.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
-            print("WTF______")
-            print(NSThread.currentThread())
-            print(toggled)
-            print(self?.optograph)
-            print(self?.isInitialized.value)
-            print("WTF______")
             Defaults[.SessionShareToggledFacebook] = toggled
-            self?.optograph.postFacebook = toggled
+            self?.optographBox.insertOrUpdate { $0.model.postFacebook = toggled }
         }
         
         postTwitter.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
             Defaults[.SessionShareToggledTwitter] = toggled
-            self?.optograph.postTwitter = toggled
+            self?.optographBox.insertOrUpdate { $0.model.postTwitter = toggled }
         }
         
         postInstagram.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
             Defaults[.SessionShareToggledInstagram] = toggled
-            self?.optograph.postInstagram = toggled
+            self?.optographBox.insertOrUpdate { $0.model.postInstagram = toggled }
         }
         
         isPrivate.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] isPrivate in
-            self?.optograph.isPrivate = isPrivate
+            self?.optographBox.insertOrUpdate { $0.model.isPrivate = isPrivate }
         }
         
         text.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] text in
-            self?.optograph.text = text
+            self?.optographBox.insertOrUpdate { $0.model.text = text }
         }
         
         if isOnline.value && isLoggedIn.value {
-            ApiService<Optograph>.post("optographs", parameters: ["stitcher_version": StitcherVersion])
-//                .observeOnMain()
-                .map { (var optograph) -> Optograph in
-                    print(NSThread.currentThread())
-                    optograph.isPublished = false
-                    optograph.isStitched = false
-                    optograph.isSubmitted = false
-                    optograph.person.ID = Defaults[.SessionPersonID] ?? Person.guestID
-                    optograph.leftCubeTextureUploadStatus = CubeTextureUploadStatus()
-                    optograph.rightCubeTextureUploadStatus = CubeTextureUploadStatus()
-                    return optograph
-                }
+            ApiService<OptographApiModel>.post("optographs", parameters: ["id": optograph.ID, "stitcher_version": StitcherVersion])
                 .on(next: { [weak self] optograph in
-                    self?.optograph = optograph
-                    try! self?.optograph.insertOrUpdate()
-                    try! self?.optograph.location?.insertOrUpdate()
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.shareAlias = optograph.shareAlias
+                        box.model.createdAt = optograph.createdAt
+                    }
                 })
                 .zipWith(placeholderSignal.mapError({ _ in ApiError.Nil }))
                 .flatMap(.Latest) { (optograph, image) in
@@ -96,7 +92,6 @@ class SaveViewModel {
                 }
                 .on(
                     completed: { [weak self] in
-                        print(NSThread.currentThread())
                         self?.isInitialized.value = true
                     },
                     failed: { [weak self] _ in
@@ -105,69 +100,69 @@ class SaveViewModel {
                     }
                 )
                 .start()
-        
+            
             placeID.producer
                 .delayLatestUntil(isInitialized.producer)
                 .on(next: { [weak self] val in
                     if val == nil {
-                        self?.optograph.location = nil
-                        try! self?.optograph.insertOrUpdate()
+                        self?.locationBox?.removeFromCache()
+                        self?.optographBox.insertOrUpdate { $0.model.locationID = nil }
                     }
                 })
                 .ignoreNil()
                 .on(next: { [weak self] _ in
                     self?.locationLoading.value = true
                 })
-                .mapError { _ in ApiError.Nil }
-                .flatMap(.Latest) { ApiService<GeocodeDetails>.get("locations/geocode-details/\($0)") }
-                .on(
-                    next: { [weak self] geocodeDetails in
-                        self?.locationLoading.value = false
-                        let coords = LocationService.lastLocation()!
-                        var location = Location.newInstance()
-                        location.latitude = coords.latitude
-                        location.longitude = coords.longitude
-                        location.text = geocodeDetails.name
-                        location.country = geocodeDetails.country
-                        location.countryShort = geocodeDetails.countryShort
-                        location.place = geocodeDetails.place
-                        location.region = geocodeDetails.region
-                        self?.optograph.location = location
-                        try! self?.optograph.insertOrUpdate()
-                        try! self?.optograph.location?.insertOrUpdate()
-                    },
-                    failed: { [weak self] _ in
-                        let coords = LocationService.lastLocation()!
-                        var location = Location.newInstance()
-                        location.latitude = coords.latitude
-                        location.longitude = coords.longitude
-                        self?.optograph.location = location
-                        try! self?.optograph.insertOrUpdate()
-                        try! self?.optograph.location?.insertOrUpdate()
+                .flatMap(.Latest) { placeID -> SignalProducer<Location, NoError> in
+                    return ApiService<GeocodeDetails>.get("locations/geocode-details/\(placeID)")
+                        .map { geocodeDetails in
+                            let coords = LocationService.lastLocation()!
+                            var location = Location.newInstance()
+                            location.latitude = coords.latitude
+                            location.longitude = coords.longitude
+                            location.text = geocodeDetails.name
+                            location.country = geocodeDetails.country
+                            location.countryShort = geocodeDetails.countryShort
+                            location.place = geocodeDetails.place
+                            location.region = geocodeDetails.region
+                            return location
+                        }
+                        .failedAsNext {
+                            let coords = LocationService.lastLocation()!
+                            var location = Location.newInstance()
+                            location.latitude = coords.latitude
+                            location.longitude = coords.longitude
+                            return location
+                        }
+                }
+                .startWithNext { [weak self] location in
+                    self?.locationLoading.value = false
+                    self?.locationBox?.removeFromCache()
+                    self?.locationBox = Models.locations.create(location)
+                    self?.locationBox!.insertOrUpdate()
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.locationID = location.ID
                     }
-                )
-                .start()
+                }
         } else {
-            optograph = Optograph.newInstance()
-            optograph.person.ID = Defaults[.SessionPersonID] ?? Person.guestID
-            optograph.leftCubeTextureUploadStatus = CubeTextureUploadStatus()
-            optograph.rightCubeTextureUploadStatus = CubeTextureUploadStatus()
-            try! optograph.insertOrUpdate()
-            try! optograph.location?.insertOrUpdate()
+            optographBox.insertOrUpdate()
             
             isInitialized.value = true
             
             placeID.producer
                 .delayLatestUntil(isInitialized.producer)
                 .ignoreNil()
-                .startWithNext { [weak self] geocodeDetails in
+                .startWithNext { [weak self] _ in
                     let coords = LocationService.lastLocation()!
                     var location = Location.newInstance()
                     location.latitude = coords.latitude
                     location.longitude = coords.longitude
-                    self?.optograph.location = location
-                    try! self?.optograph.insertOrUpdate()
-                    try! self?.optograph.location?.insertOrUpdate()
+                    self?.locationBox?.removeFromCache()
+                    self?.locationBox = Models.locations.create(location)
+                    self?.locationBox!.insertOrUpdate()
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.locationID = location.ID
+                    }
                 }
         }
         
@@ -181,14 +176,17 @@ class SaveViewModel {
             .combineLatestWith(stitcherFinished.producer).map(and)
     }
     
-    func submit(shouldBePublished: Bool) -> SignalProducer<Void, NoError> {
+    func submit(shouldBePublished: Bool, directionPhi: Double, directionTheta: Double) -> SignalProducer<Void, NoError> {
         
-        optograph.shouldBePublished = shouldBePublished
-        optograph.isSubmitted = true
-        
-        try! optograph.insertOrUpdate()
+        optographBox.insertOrUpdate { box in
+            box.model.shouldBePublished = shouldBePublished
+            box.model.isSubmitted = true
+            box.model.directionPhi = directionPhi
+            box.model.directionTheta = directionTheta
+        }
         
         if isOnline.value {
+            let optograph = optographBox.model
             var parameters: [String: AnyObject] = [
                 "text": optograph.text,
                 "is_private": optograph.isPrivate,
@@ -197,8 +195,17 @@ class SaveViewModel {
                 "direction_phi": optograph.directionPhi,
                 "direction_theta": optograph.directionTheta,
             ]
-            if let location = optograph.location {
-                parameters["location"] = location.toJSON()
+            if let location = locationBox?.model {
+                parameters["location"] = [
+                    "latitude": location.latitude,
+                    "longitude": location.longitude,
+                    "text": location.text,
+                    "country": location.country,
+                    "country_short": location.countryShort,
+                    "place": location.place,
+                    "region": location.region,
+                    "poi": location.POI,
+                ]
             }
             
             return ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: parameters)

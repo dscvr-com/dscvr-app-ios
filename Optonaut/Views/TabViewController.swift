@@ -94,7 +94,9 @@ class TabViewController: UIViewController {
                     self?.cameraButton.loading = true
                 case .Idle:
                     self?.cameraButton.progress = nil
-                    self?.cameraButton.icon = .Camera
+                    if self?.cameraButton.progressLocked == false {
+                        self?.cameraButton.icon = .Camera
+                    }
                 case let .Stitching(progress):
                     self?.cameraButton.progress = CGFloat(progress)
                 case .StitchingFinished(_):
@@ -120,9 +122,8 @@ class TabViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Async.background {
-            PipelineService.check()
-        }
+        PipelineService.checkStitching()
+        PipelineService.checkUploading()
     }
     
     func showUI() {
@@ -414,7 +415,7 @@ class TabButton: UIButton {
 protocol TabControllerDelegate {
     var tabController: TabViewController? { get }
     func jumpToTop()
-    func scrollToOptograph(optograph: Optograph)
+    func scrollToOptograph(optographID: UUID)
     func onTouchStartCameraButton()
     func onTouchEndCameraButton()
     func onTapCameraButton()
@@ -424,7 +425,7 @@ protocol TabControllerDelegate {
 }
 
 extension TabControllerDelegate {
-    func scrollToOptograph(optograph: Optograph) {}
+    func scrollToOptograph(optographID: UUID) {}
     func jumpToTop() {}
     func onTouchStartCameraButton() {}
     func onTouchEndCameraButton() {}
@@ -447,8 +448,8 @@ extension DefaultTabControllerDelegate {
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
             tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
-        case let .StitchingFinished(optograph):
-            scrollToOptograph(optograph)
+        case let .StitchingFinished(optographID):
+            scrollToOptograph(optographID)
             PipelineService.stitchingStatus.value = .Idle
         case .Uninitialized: ()
         }
