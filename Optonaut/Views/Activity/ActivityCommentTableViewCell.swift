@@ -51,7 +51,7 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
     }
     
     func pushProfile() {
-        navigationController?.pushViewController(ProfileTableViewController(personID: activity.activityResourceComment!.causingPerson.ID), animated: true)
+//        navigationController?.pushViewController(ProfileTableViewController(personID: activity.activityResourceComment!.causingPerson.ID), animated: true)
     }
     
     func pushDetails() {

@@ -10,6 +10,8 @@ import SQLite
 
 struct PersonSchemaType: ModelSchema {
     let ID = Expression<UUID>("person_id")
+    let createdAt = Expression<NSDate>("person_created_at")
+    let updatedAt = Expression<NSDate>("person_updated_at")
     let email = Expression<String?>("person_email")
     let displayName = Expression<String>("person_display_name")
     let userName = Expression<String>("person_user_name")
@@ -17,7 +19,6 @@ struct PersonSchemaType: ModelSchema {
     let followersCount = Expression<Int>("person_followers_count")
     let followedCount = Expression<Int>("person_followed_count")
     let isFollowed = Expression<Bool>("person_is_followed")
-    let createdAt = Expression<NSDate>("person_created_at")
     let wantsNewsletter = Expression<Bool>("person_wants_newsletter")
     let avatarAssetID = Expression<UUID>("person_avatar_asset_id")
 }

@@ -60,7 +60,8 @@ class TabViewController: UIViewController {
         addChildViewController(leftViewController)
         addChildViewController(rightViewController)
         
-        view.insertSubview(leftViewController.view, atIndex: 0)
+//        view.insertSubview(leftViewController.view, atIndex: 0)
+        view.insertSubview(rightViewController.view, atIndex: 0)
         
         let width = view.frame.width
         

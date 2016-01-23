@@ -9,16 +9,16 @@
 import Foundation
 //import CommonCrypto
 
-func ImageURL(uuid: String, width: Int = 0, height: Int = 0) -> String {
-    return buildURL(uuid, width: width, height: height, filter: nil)
+func ImageURL(path: String, width: Int = 0, height: Int = 0) -> String {
+    return buildURL(path, width: width, height: height, filter: nil)
 }
 
 enum ImageURLDimension { case Width, Height }
 
-func ImageURL(uuid: String, fullDimension: ImageURLDimension) -> String {
+func ImageURL(path: String, fullDimension: ImageURLDimension) -> String {
     switch fullDimension {
-    case .Width: return ImageURL(uuid, width: Int(UIScreen.mainScreen().bounds.width), height: 0)
-    case .Height: return ImageURL(uuid, width: 0, height: Int(UIScreen.mainScreen().bounds.height))
+    case .Width: return ImageURL(path, width: Int(UIScreen.mainScreen().bounds.width), height: 0)
+    case .Height: return ImageURL(path, width: 0, height: Int(UIScreen.mainScreen().bounds.height))
     }
 }
 

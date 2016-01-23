@@ -11,6 +11,8 @@ import ReactiveCocoa
 
 struct Person: Model {
     var ID: UUID
+    var createdAt: NSDate
+    var updatedAt: NSDate
     var email: String?
     var displayName: String
     var userName: String
@@ -18,7 +20,6 @@ struct Person: Model {
     var followersCount: Int
     var followedCount: Int
     var isFollowed: Bool
-    var createdAt: NSDate
     var wantsNewsletter: Bool
     var avatarAssetID: UUID
     
@@ -27,6 +28,8 @@ struct Person: Model {
     static func newInstance() -> Person {
         return Person(
             ID: uuid(),
+            createdAt: NSDate(),
+            updatedAt: NSDate(),
             email: nil,
             displayName: "",
             userName: "",
@@ -34,7 +37,6 @@ struct Person: Model {
             followersCount: 0,
             followedCount: 0,
             isFollowed: false,
-            createdAt: NSDate(),
             wantsNewsletter: false,
             avatarAssetID: ""
         )
@@ -45,34 +47,29 @@ struct Person: Model {
     }
 }
 
+extension Person: MergeApiModel {
+    typealias AM = PersonApiModel
+    
+    mutating func mergeApiModel(apiModel: PersonApiModel) {
+        ID = apiModel.ID
+        createdAt = apiModel.createdAt
+        updatedAt = apiModel.updatedAt
+        email = apiModel.email
+        displayName = apiModel.displayName
+        userName = apiModel.userName
+        text = apiModel.text
+        followersCount = apiModel.followersCount
+        followedCount = apiModel.followedCount
+        isFollowed = apiModel.isFollowed
+    }
+}
+
 func ==(lhs: Person, rhs: Person) -> Bool {
     return lhs.ID == rhs.ID
         && lhs.displayName == rhs.displayName
         && lhs.userName == rhs.userName
         && lhs.isFollowed == rhs.isFollowed
         && lhs.avatarAssetID == rhs.avatarAssetID
-}
-
-extension Person: Mappable {
-    
-    init?(_ map: Map){
-        self = Person.newInstance()
-    }
-    
-    mutating func mapping(map: Map) {
-        ID                  <- map["id"]
-        email               <- map["email"]
-        displayName         <- map["display_name"]
-        userName            <- map["user_name"]
-        text                <- map["text"]
-        followersCount      <- map["followers_count"]
-        followedCount       <- map["followed_count"]
-        isFollowed          <- map["is_followed"]
-        createdAt           <- (map["created_at"], NSDateTransform())
-        wantsNewsletter     <- map["wants_newsletter"]
-        avatarAssetID       <- map["avatar_asset_id"]
-    }
-    
 }
 
 extension Person: SQLiteModel {
@@ -88,6 +85,8 @@ extension Person: SQLiteModel {
     static func fromSQL(row: SQLiteRow) -> Person {
         return Person(
             ID: row[PersonSchema.ID],
+            createdAt: row[PersonSchema.createdAt],
+            updatedAt: row[PersonSchema.updatedAt],
             email: row[PersonSchema.email],
             displayName: row[PersonSchema.displayName],
             userName: row[PersonSchema.userName],
@@ -95,7 +94,6 @@ extension Person: SQLiteModel {
             followersCount: row[PersonSchema.followersCount],
             followedCount: row[PersonSchema.followedCount],
             isFollowed: row[PersonSchema.isFollowed],
-            createdAt: row[PersonSchema.createdAt],
             wantsNewsletter: row[PersonSchema.wantsNewsletter],
             avatarAssetID: row[PersonSchema.avatarAssetID]
         )
@@ -104,13 +102,14 @@ extension Person: SQLiteModel {
     func toSQL() -> [SQLiteSetter] {
         var setters = [
             PersonSchema.ID <-- ID,
+            PersonSchema.createdAt <-- createdAt,
+            PersonSchema.updatedAt <-- updatedAt,
             PersonSchema.displayName <-- displayName,
             PersonSchema.userName <-- userName,
             PersonSchema.text <-- text,
             PersonSchema.followersCount <-- followersCount,
             PersonSchema.followedCount <-- followedCount,
             PersonSchema.isFollowed <-- isFollowed,
-            PersonSchema.createdAt <-- createdAt,
             PersonSchema.wantsNewsletter <-- wantsNewsletter,
             PersonSchema.avatarAssetID <-- avatarAssetID
         ]

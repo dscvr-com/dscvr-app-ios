@@ -30,8 +30,6 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     private var overlayAnimating = false
     
-    private var disabled = false
-    
     
     required override init(collectionViewLayout: UICollectionViewLayout) {
         overlayDebouncer = Debouncer(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), delay: 0.01)
@@ -86,9 +84,6 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         collectionView!.delaysContentTouches = false
         
         edgesForExtendedLayout = .None
-
-        
-        KingfisherManager.sharedManager.downloader.downloadTimeout = 60
         
         CoreMotionRotationSource.Instance.start()
         

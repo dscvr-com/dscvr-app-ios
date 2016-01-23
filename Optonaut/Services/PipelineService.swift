@@ -188,8 +188,7 @@ class PipelineService {
                 && OptographTable[OptographSchema.shouldBePublished]
                 && OptographTable[OptographSchema.isSubmitted])
         
-        let optographs = try! DatabaseService.defaultConnection.prepare(query)
-            .map { Optograph.fromSQL($0) }
+        let optographs = try! DatabaseService.defaultConnection.prepare(query).map(Optograph.fromSQL)
         
         if Reachability.connectedToNetwork() {
             for optograph in optographs {
@@ -210,8 +209,7 @@ class PipelineService {
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(!OptographTable[OptographSchema.isStitched] && OptographTable[OptographSchema.deletedAt] == nil)
         
-        let optograph = DatabaseService.defaultConnection.pluck(query)
-            .map { Optograph.fromSQL($0) }
+        let optograph = DatabaseService.defaultConnection.pluck(query).map(Optograph.fromSQL)
         
         if let optographBox = Models.optographs.touch(optograph) {
             

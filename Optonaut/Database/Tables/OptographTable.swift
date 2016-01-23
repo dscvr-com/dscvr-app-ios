@@ -14,6 +14,7 @@ struct OptographSchemaType: ModelSchema {
     let personID = Expression<UUID>("optograph_person_id")
     let locationID = Expression<UUID?>("optograph_location_id")
     let createdAt = Expression<NSDate>("optograph_created_at")
+    let updatedAt = Expression<NSDate>("optograph_updated_at")
     let deletedAt = Expression<NSDate?>("optograph_deleted_at")
     let isStarred = Expression<Bool>("optograph_is_starred")
     let starsCount = Expression<Int>("optograph_stars_count")

@@ -51,6 +51,7 @@ struct Optograph: DeletableModel {
     var text: String
     var personID: UUID
     var createdAt: NSDate
+    var updatedAt: NSDate
     var deletedAt: NSDate?
     var isStarred: Bool
     var starsCount: Int
@@ -81,6 +82,7 @@ struct Optograph: DeletableModel {
             text: "",
             personID: "",
             createdAt: NSDate(),
+            updatedAt: NSDate(),
             deletedAt: nil,
             isStarred: false,
             starsCount: 0,
@@ -114,6 +116,7 @@ struct Optograph: DeletableModel {
     func report() -> SignalProducer<EmptyResponse, ApiError> {
         return ApiService<EmptyResponse>.post("optographs/\(ID)/report")
     }
+    
 }
 
 func ==(lhs: Optograph, rhs: Optograph) -> Bool {
@@ -129,6 +132,30 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
         && lhs.starsCount == rhs.starsCount
         && lhs.personID == rhs.personID
         && lhsLocationID == rhsLocationID
+}
+
+extension Optograph: MergeApiModel {
+    typealias AM = OptographApiModel
+    
+    mutating func mergeApiModel(apiModel: AM) {
+        ID = apiModel.ID
+        text = apiModel.text
+        personID = apiModel.person.ID
+        createdAt = apiModel.createdAt
+        updatedAt = apiModel.updatedAt
+        deletedAt = apiModel.deletedAt
+        isStarred = apiModel.isStarred
+        isPrivate = apiModel.isPrivate
+        stitcherVersion = apiModel.stitcherVersion
+        shareAlias = apiModel.shareAlias
+        starsCount = apiModel.starsCount
+        commentsCount = apiModel.commentsCount
+        viewsCount = apiModel.viewsCount
+        locationID = apiModel.location?.ID
+        isStaffPick = apiModel.isStaffPick
+        directionPhi = apiModel.directionPhi
+        directionTheta = apiModel.directionTheta
+    }
 }
 
 extension Optograph: SQLiteModel {
@@ -150,6 +177,7 @@ extension Optograph: SQLiteModel {
             text: row[OptographSchema.text],
             personID: row[OptographSchema.personID],
             createdAt: row[OptographSchema.createdAt],
+            updatedAt: row[OptographSchema.updatedAt],
             deletedAt: row[OptographSchema.deletedAt],
             isStarred: row[OptographSchema.isStarred],
             starsCount: row[OptographSchema.starsCount],
@@ -183,6 +211,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.text <-- text,
             OptographSchema.personID <-- personID,
             OptographSchema.createdAt <-- createdAt,
+            OptographSchema.updatedAt <-- updatedAt,
             OptographSchema.deletedAt <-- deletedAt,
             OptographSchema.isStarred <-- isStarred,
             OptographSchema.starsCount <-- starsCount,

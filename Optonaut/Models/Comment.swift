@@ -11,16 +11,18 @@ import ObjectMapper
 
 struct Comment: Model {
     var ID: UUID
-    var text: String
     var createdAt: NSDate
+    var updatedAt: NSDate
+    var text: String
     var person: Person
     var optograph: Optograph
     
     static func newInstance() -> Comment {
         return Comment(
             ID:  uuid(),
-            text: "",
             createdAt: NSDate(),
+            updatedAt: NSDate(),
+            text: "",
             person: Person.newInstance(),
             optograph: Optograph.newInstance()
         )
@@ -36,10 +38,11 @@ extension Comment: Mappable {
     
     mutating func mapping(map: Map) {
         ID          <- map["id"]
+        createdAt   <- (map["created_at"], NSDateTransform())
+        updatedAt   <- (map["updated_at"], NSDateTransform())
         text        <- map["text"]
         person      <- map["person"]
         optograph   <- map["optograph"]
-        createdAt   <- (map["created_at"], NSDateTransform())
     }
     
 }
@@ -57,8 +60,9 @@ extension Comment: SQLiteModel {
     static func fromSQL(row: SQLiteRow) -> Comment {
         return Comment(
             ID: row[CommentSchema.ID],
-            text: row[CommentSchema.text],
             createdAt: row[CommentSchema.createdAt],
+            updatedAt: row[CommentSchema.updatedAt],
+            text: row[CommentSchema.text],
             person: Person.newInstance(),
             optograph: Optograph.newInstance()
         )
@@ -67,8 +71,9 @@ extension Comment: SQLiteModel {
     func toSQL() -> [SQLiteSetter] {
         return [
             CommentSchema.ID <-- ID,
-            CommentSchema.text <-- text,
             CommentSchema.createdAt <-- createdAt,
+            CommentSchema.updatedAt <-- updatedAt,
+            CommentSchema.text <-- text,
             CommentSchema.personID <-- person.ID,
             CommentSchema.optographID <-- optograph.ID,
         ]

@@ -76,29 +76,35 @@ class Models {
     
 }
 
-class ModelCache<M: Model> {
-    typealias Box = ModelBox<M>
-    private var cache: [UUID: ModelBox<M>] = [:]
+protocol ModelCacheType: class {
+    typealias ModelType: Model
     
-    func create(model: M) -> Box {
+    var cache: [UUID: ModelBox<ModelType>] { get set }
+}
+
+extension ModelCacheType {
+    
+    func create(model: ModelType) -> ModelBox<ModelType> {
         assert(cache[model.ID] == nil)
         cache[model.ID] = ModelBox(model: model)
         return cache[model.ID]!
     }
     
-    func touch(model: M?) -> Box? {
+    func touch(model: ModelType?) -> ModelBox<ModelType>? {
         if let model = model {
             return touch(model)
         }
         return nil
     }
     
-    func touch(model: M) -> Box {
+    func touch(model: ModelType) -> ModelBox<ModelType> {
         guard let box = cache[model.ID] else {
             return create(model)
         }
         
-        box.replace(model)
+        if model.updatedAt > box.model.updatedAt {
+            box.replace(model)
+        }
         
         return box
     }
@@ -109,9 +115,43 @@ class ModelCache<M: Model> {
         }
     }
     
-    subscript(uuid: UUID) -> Box? {
+    subscript(uuid: UUID) -> ModelBox<ModelType>? {
         get {
             return cache[uuid]
         }
     }
+    
+}
+
+extension ModelCacheType where ModelType: MergeApiModel {
+    
+    func touch(apiModel: ApiModel) -> ModelBox<ModelType> {
+        let apiModel = apiModel as! ModelType.AM
+        
+        if let box = cache[apiModel.ID]  {
+            if apiModel.updatedAt > box.model.updatedAt {
+                box.model.mergeApiModel(apiModel)
+            }
+            return box
+        }
+        
+        var model = ModelType.newInstance()
+        model.mergeApiModel(apiModel)
+        
+        return create(model)
+    }
+    
+    func touch(apiModel: ApiModel?) -> ModelBox<ModelType>? {
+        if let apiModel = apiModel {
+            return touch(apiModel)
+        }
+        return nil
+    }
+    
+}
+
+class ModelCache<M: Model>: ModelCacheType {
+    typealias ModelType = M
+    
+    var cache: [UUID: ModelBox<ModelType>] = [:]
 }

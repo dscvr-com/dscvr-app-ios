@@ -98,7 +98,7 @@ class LoginViewModel {
             "facebook_user_id": userID,
             "facebook_token": token,
         ]
-        return ApiService<LoginMappable>.post("persons/facebook/signin", parameters: parameters)
+        return ApiService<LoginApiModel>.post("persons/facebook/signin", parameters: parameters)
             .flatMap(.Latest) { SessionService.handleSignin($0) }
             .on(
                 failed: { [weak self] _ in

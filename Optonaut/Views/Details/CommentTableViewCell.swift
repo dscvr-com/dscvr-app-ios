@@ -87,7 +87,7 @@ class CommentTableViewCell: UITableViewCell {
     }
     
     func pushProfile() {
-        navigationController?.pushViewController(ProfileTableViewController(personID: viewModel.personID.value), animated: true)
+//        navigationController?.pushViewController(ProfileTableViewController(personID: viewModel.personID.value), animated: true)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

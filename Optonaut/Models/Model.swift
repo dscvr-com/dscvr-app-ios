@@ -10,9 +10,32 @@ import Foundation
 
 typealias UUID = String
 
+protocol ApiModel {
+    var ID: UUID { get }
+    var createdAt: NSDate { get }
+    var updatedAt: NSDate { get }
+}
+
 protocol Model {
     var ID: UUID { get set }
     var createdAt: NSDate { get set }
+    var updatedAt: NSDate { get set }
+}
+
+protocol MergeApiModel: Model {
+    typealias AM: ApiModel
+    
+    mutating func mergeApiModel(apiModel: AM)
+    static func newInstance() -> Self
+    static func fromApiModel(apiModel: AM) -> Self
+}
+
+extension MergeApiModel {
+    static func fromApiModel(apiModel: AM) -> Self {
+        var model = newInstance()
+        model.mergeApiModel(apiModel)
+        return model
+    }
 }
 
 protocol DeletableModel: Model, Equatable {

@@ -51,7 +51,7 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     }
     
     func pushProfile() {
-        navigationController?.pushViewController(ProfileTableViewController(personID: activity.activityResourceStar!.causingPerson.ID), animated: true)
+//        navigationController?.pushViewController(ProfileTableViewController(personID: activity.activityResourceStar!.causingPerson.ID), animated: true)
     }
     
     func pushDetails() {

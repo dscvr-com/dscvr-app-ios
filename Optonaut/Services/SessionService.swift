@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import ObjectMapper
 import ReactiveCocoa
+import SQLite
 import Mixpanel
 import SwiftyUserDefaults
 import TwitterKit
@@ -35,6 +35,10 @@ class SessionService {
         return Defaults[.SessionPersonID] != nil && Defaults[.SessionToken] != nil
     }
     
+    static var personID: String? {
+        return Defaults[.SessionPersonID]
+    }
+    
     static var needsOnboarding: Bool {
         return Defaults[.SessionOnboardingVersion] < OnboardingVersion
     }
@@ -42,7 +46,14 @@ class SessionService {
     private static var logoutCallbacks: [(performAlways: Bool, fn: () -> ())] = []
     
     static func prepare() {
-        updateMixpanel()
+        
+        if isLoggedIn {
+            let query = PersonTable.filter(PersonTable[PersonSchema.ID] == personID!)
+            let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
+            Models.persons.create(person)
+            
+            updateMixpanel()
+        }
         
         if Defaults[.SessionVRGlasses].isEmpty {
             Defaults[.SessionVRGlasses] = DefaultVRGlasses
@@ -56,14 +67,14 @@ class SessionService {
         case .UserName(let userName): parameters["user_name"] = userName
         }
         
-        return ApiService<LoginMappable>.post("persons/login", parameters: parameters)
+        return ApiService<LoginApiModel>.post("persons/login", parameters: parameters)
             .on(next: { loginData in
                 Defaults[.SessionPassword] = password
             })
             .flatMap(.Latest) { handleSignin($0) }
     }
     
-    static func handleSignin(loginData: LoginMappable) -> SignalProducer<Void, ApiError> {
+    static func handleSignin(loginData: LoginApiModel) -> SignalProducer<Void, ApiError> {
        return SignalProducer(value: loginData)
             .on(next: { loginData in
                 Defaults[.SessionToken] = loginData.token
@@ -76,10 +87,11 @@ class SessionService {
                 Defaults[.SessionShareToggledTwitter] = false
                 Defaults[.SessionShareToggledInstagram] = false
             })
-            .flatMap(.Latest) { _ in ApiService<Person>.get("persons/me") }
+            .flatMap(.Latest) { _ in ApiService<PersonApiModel>.get("persons/me") }
+            .map(Person.fromApiModel)
             .on(
                 next: { person in
-                    try! person.insertOrUpdate()
+                    Models.persons.touch(person).insertOrUpdate()
                     Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
                     updateMixpanel()
                 },
@@ -130,38 +142,19 @@ class SessionService {
     }
     
     private static func updateMixpanel() {
-        guard let personID = Defaults[.SessionPersonID] else {
-            return
-        }
+        let person = Models.persons[personID!]!.model
         
-        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- personID)
-        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
-            Mixpanel.sharedInstance().identify(person.ID)
-            Mixpanel.sharedInstance().people.set([
-                "$first": person.displayName,
-                "$username": person.userName,
-                "$email": person.email!,
-                "$created": person.createdAt,
-                "Followers": person.followersCount,
-                "Followed": person.followedCount,
-            ])
-        }
+        Mixpanel.sharedInstance().identify(person.ID)
+        Mixpanel.sharedInstance().people.set([
+            "$first": person.displayName,
+            "$username": person.userName,
+            "$email": person.email!,
+            "$created": person.createdAt,
+            "Followers": person.followersCount,
+            "Followed": person.followedCount,
+        ])
     }
     
-}
-
-struct LoginMappable: Mappable {
-    var token: String = ""
-    var ID:  UUID = ""
-    var onboardingVersion: Int = 0
-    
-    init?(_ map: Map) {}
-    
-    mutating func mapping(map: Map) {
-        token              <- map["token"]
-        ID                 <- map["id"]
-        onboardingVersion  <- map["onboarding_version"]
-    }
 }
 
 enum LoginIdentifier {

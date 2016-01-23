@@ -9,10 +9,11 @@
 import Foundation
 import ObjectMapper
 
-struct LocationApiModel: Mappable {
+struct LocationApiModel: ApiModel, Mappable {
     
     var ID: UUID = ""
     var createdAt: NSDate = NSDate()
+    var updatedAt: NSDate = NSDate()
     var text: String = ""
     var country: String = ""
     var countryShort: String = ""
@@ -29,6 +30,7 @@ struct LocationApiModel: Mappable {
     mutating func mapping(map: Map) {
         ID              <- map["id"]
         createdAt       <- (map["created_at"], NSDateTransform())
+        updatedAt       <- (map["updated_at"], NSDateTransform())
         text            <- map["text"]
         country         <- map["country"]
         countryShort    <- map["country_short"]
@@ -37,19 +39,5 @@ struct LocationApiModel: Mappable {
         POI             <- map["poi"]
         latitude        <- map["latitude"]
         longitude       <- map["longitude"]
-    }
-    
-    func toModel() -> Location {
-        var model = Location.newInstance()
-        model.ID = ID
-        model.createdAt = createdAt
-        model.country = country
-        model.countryShort = countryShort
-        model.place = place
-        model.region = region
-        model.POI = POI
-        model.latitude = latitude
-        model.longitude = longitude
-        return model
     }
 }

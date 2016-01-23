@@ -20,6 +20,7 @@ struct Activity: DeletableModel {
     
     var ID: UUID
     var createdAt: NSDate
+    var updatedAt: NSDate
     var deletedAt: NSDate?
     var isRead: Bool
     var type: ActivityType
@@ -47,6 +48,7 @@ struct Activity: DeletableModel {
         return Activity(
             ID: uuid(),
             createdAt: NSDate(),
+            updatedAt: NSDate(),
             deletedAt: nil,
             isRead: false,
             type: .Nil,
@@ -91,6 +93,7 @@ extension Activity: Mappable {
         
         ID                          <- map["id"]
         createdAt                   <- (map["created_at"], NSDateTransform())
+        updatedAt                   <- (map["updated_at"], NSDateTransform())
         deletedAt                   <- (map["deleted_at"], NSDateTransform())
         isRead                      <- map["is_read"]
         type                        <- (map["type"], typeTransform)
@@ -116,6 +119,7 @@ extension Activity: SQLiteModel {
         return Activity(
             ID: row[ActivitySchema.ID],
             createdAt: row[ActivitySchema.createdAt],
+            updatedAt: row[ActivitySchema.updatedAt],
             deletedAt: row[ActivitySchema.deletedAt],
             isRead: row[ActivitySchema.isRead],
             type: ActivityType(rawValue: row[ActivitySchema.type])!,
@@ -130,6 +134,7 @@ extension Activity: SQLiteModel {
         return [
             ActivitySchema.ID <-- ID,
             ActivitySchema.createdAt <-- createdAt,
+            ActivitySchema.updatedAt <-- updatedAt,
             ActivitySchema.deletedAt <-- deletedAt,
             ActivitySchema.isRead <-- isRead,
             ActivitySchema.type <-- type.rawValue,

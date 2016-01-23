@@ -12,6 +12,7 @@ import ObjectMapper
 struct Hashtag: Model {
     var ID: UUID
     var createdAt: NSDate
+    var updatedAt: NSDate
     var name: String
     var previewAssetID: UUID
     var isFollowed: Bool
@@ -20,6 +21,7 @@ struct Hashtag: Model {
         return Hashtag(
             ID: uuid(),
             createdAt: NSDate(),
+            updatedAt: NSDate(),
             name: "",
             previewAssetID: "",
             isFollowed: false
@@ -36,6 +38,8 @@ extension Hashtag: Mappable {
     
     mutating func mapping(map: Map) {
         ID                  <- map["id"]
+        createdAt           <- (map["created_at"], NSDateTransform())
+        updatedAt           <- (map["updated_at"], NSDateTransform())
         name                <- map["name"]
         previewAssetID      <- map["preview_asset_id"]
         isFollowed          <- map["is_followed"]
@@ -56,7 +60,8 @@ extension Hashtag: SQLiteModel {
     static func fromSQL(row: SQLiteRow) -> Hashtag {
         return Hashtag(
             ID: row[HashtagSchema.ID],
-            createdAt: NSDate(),
+            createdAt: row[HashtagSchema.createdAt],
+            updatedAt: row[HashtagSchema.updatedAt],
             name: row[HashtagSchema.name],
             previewAssetID: row[HashtagSchema.previewAssetID],
             isFollowed: row[HashtagSchema.isFollowed]
@@ -66,6 +71,8 @@ extension Hashtag: SQLiteModel {
     func toSQL() -> [SQLiteSetter] {
         return [
             HashtagSchema.ID <-- ID,
+            HashtagSchema.createdAt <-- createdAt,
+            HashtagSchema.updatedAt <-- updatedAt,
             HashtagSchema.name <-- name,
             HashtagSchema.previewAssetID <-- previewAssetID,
             HashtagSchema.isFollowed <-- isFollowed,
