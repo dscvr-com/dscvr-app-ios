@@ -21,6 +21,7 @@ class ProfileViewModel {
     let postCount = MutableProperty<Int>(0)
     let isFollowed = MutableProperty<Bool>(false)
     let avatarImageUrl = MutableProperty<String>("")
+    let isMe: Bool
     
 //    var person = Person.newInstance()
     private var personBox: ModelBox<Person>!
@@ -28,12 +29,13 @@ class ProfileViewModel {
     init(personID: UUID) {
         personBox = Models.persons[personID]!
         
-//        SignalProducer<Bool, ApiError>(value: SessionService.personID == personID)
-//            .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
-//            .map { $0.toModel() }
-//            .startWithNext { [weak self] person in
-//                self?.personBox.replace(person)
-//            }
+        isMe = SessionService.personID == personID
+        
+        SignalProducer<Bool, ApiError>(value: SessionService.personID == personID)
+            .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
+            .startWithNext { [weak self] apiModel in
+                self?.personBox.model.mergeApiModel(apiModel)
+            }
         
         personBox.producer.startWithNext { [weak self] person in
             self?.displayName.value = person.displayName

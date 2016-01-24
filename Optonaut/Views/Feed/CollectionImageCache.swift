@@ -37,24 +37,24 @@ class CubeImageCache {
     private var items: [Index: InnerItem] = [:]
     private let optographID: UUID
     private let side: TextureSide
+    private let textureSize: CGFloat
     
-    init(optographID: UUID, side: TextureSide) {
+    init(optographID: UUID, side: TextureSide, textureSize: CGFloat) {
         self.optographID = optographID
         self.side = side
+        self.textureSize = textureSize
     }
     
     deinit {
+        dispose()
         logRetain()
     }
     
-    func get(index: Index, callback: Callback) {
+    func get(index: Index, callback: Callback?) {
         
-        if let item = items[index] {
-            if let image = item.image {
-                callback(image, index: index)
-            }
+        if let image = items[index]?.image {
+            callback?(image, index: index)
         } else {
-            let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
             let downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
                 NSURL(string: TextureURL(optographID, side: side, size: Int(textureSize), face: index.face, x: index.x, y: index.y, d: index.d))!,
 //                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(getTextureWidth(HorizontalFieldOfView) / Float(UIScreen.mainScreen().scale))))!,
@@ -62,12 +62,16 @@ class CubeImageCache {
 //                optionsInfo: [.Options(.LowPriority)],
                 progressBlock: nil,
                 completionHandler: { [weak self] (image, error, _, _) in
+                    if let error = error {
+                        print(error)
+                    }
                     Async.userInteractive {
                         if let image = image where self?.items[index] != nil {
+                            print(image.size)
                             let tex = SKTexture(image: image)
                             self?.items[index]?.image = tex
                             self?.items[index]?.downloadTask = nil
-                            callback(tex, index: index)
+                            callback?(tex, index: index)
                         }
                     }
                 }
@@ -77,7 +81,7 @@ class CubeImageCache {
         }
     }
     
-    func dispose() {
+    private func dispose() {
         items.values.forEach { $0.downloadTask?.cancel() }
     }
     
@@ -94,7 +98,11 @@ class CollectionImageCache {
     private let debouncerGet: Debouncer
     private let debouncerTouch: Debouncer
     
-    init() {
+    private let textureSize: CGFloat
+    
+    init(textureSize: CGFloat) {
+        self.textureSize = textureSize
+        
         items = [Item?](count: CollectionImageCache.cacheSize, repeatedValue: nil)
         
         let queue = dispatch_queue_create("collection_image_cache", DISPATCH_QUEUE_SERIAL)
@@ -105,6 +113,7 @@ class CollectionImageCache {
     func get(index: Int, optographID: UUID, side: TextureSide, cubeIndices: [CubeImageCache.Index], callback: CubeImageCache.Callback) {
         
         let cacheIndex = index % CollectionImageCache.cacheSize
+        let textureSize = self.textureSize
         
         if let item = items[cacheIndex] where item.index == index {
             for cubeIndex in cubeIndices {
@@ -113,27 +122,29 @@ class CollectionImageCache {
         } else {
             // debounce in order to avoid download/cancel when scrolling fast
             debouncerGet.debounce { [weak self] in
-                self?.items[cacheIndex]?.innerCache.dispose()
-                self?.items[cacheIndex] = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side))
+                self?.items[cacheIndex] = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))
                 self?.get(index, optographID: optographID, side: side, cubeIndices: cubeIndices, callback: callback)
             }
         }
         
     }
     
-//    func touch(activeIndex: Int) {
-//        self.activeIndex = activeIndex
-//        
-//        let startIndex = max(0, activeIndex - 2)
-//        let endIndex = min(optographs.count - 1, activeIndex + 2)
-//        
-//        for index in startIndex...endIndex {
-//            update(index, callback: nil)
-//        }
-//    }
+    func touch(index: Int, optographID: UUID, side: TextureSide, cubeIndices: [CubeImageCache.Index]) {
+        let cacheIndex = index % CollectionImageCache.cacheSize
+        let textureSize = self.textureSize
+        
+        if items[cacheIndex] == nil || items[cacheIndex]?.index != index {
+            debouncerTouch.debounce { [weak self] in
+                let item = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))
+                self?.items[cacheIndex] = item
+                for cubeIndex in cubeIndices {
+                    item.innerCache.get(cubeIndex, callback: nil)
+                }
+            }
+        }
+    }
     
     func reset() {
-        items.forEach { $0?.innerCache.dispose() }
         items = [Item?](count: CollectionImageCache.cacheSize, repeatedValue: nil)
     }
     
@@ -141,8 +152,7 @@ class CollectionImageCache {
         var count = 0
         for index in indices {
             let shiftedIndex = index - count
-            if let item = items.filter({ $0?.index == shiftedIndex }).first! {
-                item.innerCache.dispose()
+            if items.contains({ $0?.index == shiftedIndex }) {
                 
                 // shift remaining items down
                 let shiftLimit = CollectionImageCache.cacheSize - count - 1 // 1 because one gets deleted anyways

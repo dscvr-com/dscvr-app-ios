@@ -97,7 +97,7 @@ class SaveViewController: UIViewController, RedNavbar {
         let privateButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
         privateButton.textColor = .whiteColor()
         privateButton.font = UIFont.iconOfSize(18)
-        privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.Eye))
+        privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.World))
         privateButton.userInteractionEnabled = true
         privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "togglePrivate"))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: privateButton)
@@ -579,7 +579,8 @@ class SaveViewController: UIViewController, RedNavbar {
                     self?.tabController!.rightButton.loading = false
                     // set progress because stitching will start
 //                    self?.tabController!.cameraButton.progress = 0
-                    self?.navigationController?.popViewControllerAnimated(false)
+                    self?.tabController!.updateActiveTab(.Right)
+                    self?.navigationController!.popViewControllerAnimated(false)
                 }
             )
             .start()

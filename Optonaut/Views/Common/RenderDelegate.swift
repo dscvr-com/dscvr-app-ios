@@ -100,13 +100,20 @@ class CubeRenderDelegate: RenderDelegate {
         ]
         for face in 0..<6 {
             let node = createPlane(position: transforms[face].position, rotation: transforms[face].rotation)
+            node.geometry!.firstMaterial!.doubleSided = true
             planes[CubeImageCache.Index(face: face, x: 0, y: 0, d: 1)] = node
             scene.rootNode.addChildNode(node)
         }
     }
     
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
-        planes[index]!.geometry!.firstMaterial!.diffuse.contents = texture
+        print(texture.size())
+        if #available(iOS 9.0, *) {
+            let image = UIImage(CGImage: texture.CGImage())
+            planes[index]!.geometry!.firstMaterial!.diffuse.contents = image
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
     func reset() {

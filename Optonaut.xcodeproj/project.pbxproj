@@ -58,6 +58,9 @@
 		8F4185FF1C53C464009E1E3F /* LoginApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185FE1C53C463009E1E3F /* LoginApiModel.swift */; };
 		8F4186011C53C7EB009E1E3F /* ProfileCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186001C53C7EB009E1E3F /* ProfileCollectionViewController.swift */; };
 		8F4186031C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186021C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift */; };
+		8F4186071C552958009E1E3F /* TileCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186061C552957009E1E3F /* TileCollectionViewCell.swift */; };
+		8F4186091C552D02009E1E3F /* TileCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186081C552D02009E1E3F /* TileCollectionViewModel.swift */; };
+		8F41860B1C554437009E1E3F /* OpenGLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F41860A1C554437009E1E3F /* OpenGLView.swift */; };
 		8F47150E1C49648F00663684 /* TwitterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150D1C49648F00663684 /* TwitterKit.framework */; };
 		8F4715101C4964AD00663684 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150F1C4964AD00663684 /* TwitterCore.framework */; };
 		8F4715121C49688700663684 /* TwitterKitResources.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4715111C49688700663684 /* TwitterKitResources.bundle */; };
@@ -320,6 +323,9 @@
 		8F4185FE1C53C463009E1E3F /* LoginApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginApiModel.swift; sourceTree = "<group>"; };
 		8F4186001C53C7EB009E1E3F /* ProfileCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileCollectionViewController.swift; sourceTree = "<group>"; };
 		8F4186021C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCollectionViewCell.swift; sourceTree = "<group>"; };
+		8F4186061C552957009E1E3F /* TileCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TileCollectionViewCell.swift; sourceTree = "<group>"; };
+		8F4186081C552D02009E1E3F /* TileCollectionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TileCollectionViewModel.swift; sourceTree = "<group>"; };
+		8F41860A1C554437009E1E3F /* OpenGLView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenGLView.swift; sourceTree = "<group>"; };
 		8F47150D1C49648F00663684 /* TwitterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterKit.framework; path = Frameworks/TwitterKit.framework; sourceTree = "<group>"; };
 		8F47150F1C4964AD00663684 /* TwitterCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterCore.framework; path = Frameworks/TwitterCore.framework; sourceTree = "<group>"; };
 		8F4715111C49688700663684 /* TwitterKitResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TwitterKitResources.bundle; path = Frameworks/TwitterKitResources.bundle; sourceTree = "<group>"; };
@@ -898,6 +904,9 @@
 			isa = PBXGroup;
 			children = (
 				8F4186001C53C7EB009E1E3F /* ProfileCollectionViewController.swift */,
+				8F4186061C552957009E1E3F /* TileCollectionViewCell.swift */,
+				8F41860A1C554437009E1E3F /* OpenGLView.swift */,
+				8F4186081C552D02009E1E3F /* TileCollectionViewModel.swift */,
 				8F4186021C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift */,
 				8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */,
 				8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */,
@@ -1543,11 +1552,13 @@
 				8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */,
 				A55C80FB1BF91FDA00420E52 /* simpleSphereStitcher.cpp in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
+				8F41860B1C554437009E1E3F /* OpenGLView.swift in Sources */,
 				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
 				8FFB561E1C2CA43C00D2BE62 /* TabViewController.swift in Sources */,
 				A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */,
 				8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */,
 				A5FD5D891BEA5A4E0031ED1E /* ringStitcher.cpp in Sources */,
+				8F4186071C552958009E1E3F /* TileCollectionViewCell.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
 				8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */,
@@ -1653,6 +1664,7 @@
 				A5DE71EC1BE28A7400316F82 /* DistortionRenderer.swift in Sources */,
 				8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */,
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
+				8F4186091C552D02009E1E3F /* TileCollectionViewModel.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,

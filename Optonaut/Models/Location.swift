@@ -50,6 +50,7 @@ extension Location: MergeApiModel {
         ID = apiModel.ID
         createdAt = apiModel.createdAt
         updatedAt = apiModel.updatedAt
+        text = apiModel.text
         country = apiModel.country
         countryShort = apiModel.countryShort
         place = apiModel.place

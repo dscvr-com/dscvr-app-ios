@@ -185,6 +185,7 @@ class PipelineService {
         let query = OptographTable
             .select(*)
             .filter(!OptographTable[OptographSchema.isPublished]
+                && OptographTable[OptographSchema.isStitched]
                 && OptographTable[OptographSchema.shouldBePublished]
                 && OptographTable[OptographSchema.isSubmitted])
         

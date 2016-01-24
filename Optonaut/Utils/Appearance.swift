@@ -18,7 +18,7 @@ func setupAppearanceDefaults() {
     UINavigationBar.appearance().setBackgroundImage(UIImage(), forBarMetrics: .Default)
     UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: UIFont.displayOfSize(20, withType: .Regular)]
     
-    let image = UIImage.iconWithName(.Cancel, textColor: .whiteColor(), fontSize: 24, offset: CGSize(width: 15, height: 0))
+    let image = UIImage.iconWithName(.Back, textColor: .whiteColor(), fontSize: 18, offset: CGSize(width: 13, height: 0))
     UINavigationBar.appearance().backIndicatorImage = image
     UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffset(horizontal: -200, vertical: 0), forBarMetrics: .Default)
     UINavigationBar.appearance().backIndicatorTransitionMaskImage = UIImage()
