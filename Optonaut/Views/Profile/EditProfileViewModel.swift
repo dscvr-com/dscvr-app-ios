@@ -35,10 +35,10 @@ class EditProfileViewModel {
             updateProperties()
         }
         
-        ApiService<Person>.get("persons/me").startWithNext { person in
-            self.person = person
-            self.saveModel()
-            self.updateProperties()
+        ApiService<PersonApiModel>.get("persons/me").startWithNext { person in
+//            self.person = person
+//            self.saveModel()
+//            self.updateProperties()
         }
         
         userName.producer
@@ -91,8 +91,8 @@ class EditProfileViewModel {
             })
     }
     
-    func updatePassword(currentPassword: String, newPassword: String) -> SignalProducer<LoginMappable, ApiError> {
-        return ApiService<LoginMappable>.post("persons/me/change-password", parameters: ["current": currentPassword, "new": newPassword])
+    func updatePassword(currentPassword: String, newPassword: String) -> SignalProducer<LoginApiModel, ApiError> {
+        return ApiService<LoginApiModel>.post("persons/me/change-password", parameters: ["current": currentPassword, "new": newPassword])
             .on(next: { loginData in
                 Defaults[.SessionToken] = loginData.token
                 Defaults[.SessionPassword] = newPassword

@@ -17,67 +17,72 @@ class ProfileViewModel {
     let userName = MutableProperty<String>("")
     let text = MutableProperty<String>("")
     let followersCount = MutableProperty<Int>(0)
-    let followedCount = MutableProperty<Int>(0)
+    let followingCount = MutableProperty<Int>(0)
+    let postCount = MutableProperty<Int>(0)
     let isFollowed = MutableProperty<Bool>(false)
     let avatarImageUrl = MutableProperty<String>("")
+    let isMe: Bool
     
-    var person = Person.newInstance()
+//    var person = Person.newInstance()
+    private var personBox: ModelBox<Person>!
     
-    init(ID:  UUID) {
-        person.ID = ID
+    init(personID: UUID) {
+        personBox = Models.persons[personID]!
         
-        reloadModel()
-    }
-    
-    func reloadModel() {
-        let query = PersonTable.filter(PersonTable[PersonSchema.ID] == person.ID)
+        isMe = SessionService.personID == personID
         
-        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
-            self.person = person
-            updateProperties()
+        SignalProducer<Bool, ApiError>(value: SessionService.personID == personID)
+            .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
+            .startWithNext { [weak self] apiModel in
+                self?.personBox.model.mergeApiModel(apiModel)
+            }
+        
+        personBox.producer.startWithNext { [weak self] person in
+            self?.displayName.value = person.displayName
+            self?.userName.value = person.userName
+            self?.text.value = person.text
+            self?.followersCount.value = person.followersCount
+            self?.followingCount.value = person.followedCount
+            self?.isFollowed.value = person.isFollowed
+            self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/avatar.jpg", width: 84, height: 84)
         }
     }
     
-    func toggleFollow() {
-        let followedBefore = person.isFollowed
-        
-        SignalProducer<Bool, ApiError>(value: followedBefore)
-            .flatMap(.Latest) { followedBefore in
-                followedBefore
-                    ? ApiService<EmptyResponse>.delete("persons/\(self.person.ID)/follow")
-                    : ApiService<EmptyResponse>.post("persons/\(self.person.ID)/follow", parameters: nil)
-            }
-            .on(
-                started: {
-                    self.isFollowed.value = !followedBefore
-                },
-                failed: { _ in
-                    self.isFollowed.value = followedBefore
-                },
-                completed: {
-                    self.updateModel()
-                    self.saveModel()
-                }
-            )
-            .start()
-    }
-    
-    private func updateModel() {
-        person.isFollowed = isFollowed.value
-    }
-    
-    private func updateProperties() {
-        displayName.value = person.displayName
-        userName.value = person.userName
-        text.value = person.text
-        followersCount.value = person.followersCount
-        followedCount.value = person.followedCount
-        isFollowed.value = person.isFollowed
-        avatarImageUrl.value = ImageURL(person.avatarAssetID, width: 84, height: 84)
-    }
-    
-    private func saveModel() {
-        try! person.insertOrUpdate()
-    }
+//    func reloadModel() {
+//        let query = PersonTable.filter(PersonTable[PersonSchema.ID] == person.ID)
+//        
+//        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
+//            self.person = person
+////            updateProperties()
+//        }
+//    }
+//    
+//    func toggleFollow() {
+//        let followedBefore = person.isFollowed
+//        
+//        SignalProducer<Bool, ApiError>(value: followedBefore)
+//            .flatMap(.Latest) { followedBefore in
+//                followedBefore
+//                    ? ApiService<EmptyResponse>.delete("persons/\(self.person.ID)/follow")
+//                    : ApiService<EmptyResponse>.post("persons/\(self.person.ID)/follow", parameters: nil)
+//            }
+//            .on(
+//                started: {
+//                    self.isFollowed.value = !followedBefore
+//                },
+//                failed: { _ in
+//                    self.isFollowed.value = followedBefore
+//                },
+//                completed: {
+//                    self.updateModel()
+////                    self.saveModel()
+//                }
+//            )
+//            .start()
+//    }
+//    
+//    private func updateModel() {
+//        person.isFollowed = isFollowed.value
+//    }
     
 }

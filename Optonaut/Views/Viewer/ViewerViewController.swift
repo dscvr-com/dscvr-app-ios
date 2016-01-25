@@ -30,14 +30,14 @@ class ViewerViewController: UIViewController  {
     private var rightProgram: DistortionProgram!
     
     private var rotationDisposable: Disposable?
-    private var leftDownloadDisposable: Disposable?
-    private var rightDownloadDisposable: Disposable?
-    private let imageManager = KingfisherManager()
     
     private let settingsButtonView = BoundingButton()
     private var glassesSelectionView: GlassesSelectionView?
     private let leftLoadingView = UIActivityIndicatorView()
     private let rightLoadingView = UIActivityIndicatorView()
+    
+    private let leftCache: CubeImageCache
+    private let rightCache: CubeImageCache
     
     required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
         self.orientation = orientation
@@ -61,6 +61,13 @@ class ViewerViewController: UIViewController  {
     
         print("Headset: \(headset.vendor) \(headset.model)")
         
+        let textureSize = CGFloat(512)
+        
+        print(optograph.ID)
+        
+        leftCache = CubeImageCache(optographID: optograph.ID, side: .Left, textureSize: textureSize)
+        rightCache = CubeImageCache(optographID: optograph.ID, side: .Right, textureSize: textureSize)
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -81,6 +88,10 @@ class ViewerViewController: UIViewController  {
         
         for plane in leftRenderDelegate.planes {
             plane.1.geometry!.firstMaterial!.diffuse.contents = UIColor.redColor()
+        }
+        
+        for plane in rightRenderDelegate.planes {
+            plane.1.geometry!.firstMaterial!.diffuse.contents = UIColor.greenColor()
         }
         
         rightScnView.scene = rightRenderDelegate.scene
@@ -158,7 +169,6 @@ class ViewerViewController: UIViewController  {
         
         Mixpanel.sharedInstance().timeEvent("View.Viewer")
 
-        tabBarController?.tabBar.hidden = true
         navigationController?.setNavigationBarHidden(true, animated: false)
         ScreenService.sharedInstance.max()
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
@@ -184,21 +194,11 @@ class ViewerViewController: UIViewController  {
                 }
             }
         
-        if leftDownloadDisposable != nil {
-            leftDownloadDisposable?.dispose()
-            leftDownloadDisposable = nil
-        }
-        
-        if rightDownloadDisposable != nil {
-            rightDownloadDisposable?.dispose()
-            rightDownloadDisposable = nil
-        }
-        
         
         let leftImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
-            print(index)
             Async.main {
                 self?.leftRenderDelegate.setTexture(image, forIndex: index)
+                self?.leftScnView.prepareObject(self!.leftRenderDelegate!.scene, shouldAbortBlock: nil)
                 self?.leftLoadingView.stopAnimating()
             }
         }
@@ -220,12 +220,11 @@ class ViewerViewController: UIViewController  {
             CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
         ]
         
-        let leftCache = CubeImageCache(optographID: optograph.ID, side: .Left)
-        let rightCache = CubeImageCache(optographID: optograph.ID, side: .Right)
-        
-        for cubeIndex in defaultIndices {
-            leftCache.get(cubeIndex, callback: leftImageCallback)
-            rightCache.get(cubeIndex, callback: rightImageCallback)
+        Async.userInteractive { [weak self] in
+            for cubeIndex in defaultIndices {
+                self?.leftCache.get(cubeIndex, callback: leftImageCallback)
+                self?.rightCache.get(cubeIndex, callback: rightImageCallback)
+            }
         }
         
 //        leftDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))
@@ -274,11 +273,6 @@ class ViewerViewController: UIViewController  {
         ScreenService.sharedInstance.reset()
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = false
-        
-        leftDownloadDisposable?.dispose()
-        leftDownloadDisposable = nil
-        rightDownloadDisposable?.dispose()
-        rightDownloadDisposable = nil
         
         super.viewWillDisappear(animated)
     }

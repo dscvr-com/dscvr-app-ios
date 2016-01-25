@@ -288,7 +288,7 @@ class CollectionViewCell: UICollectionViewCell {
         renderDelegate.setTexture(texture, forIndex: index)
         scnView.prepareObject(renderDelegate!.planes[index]!, shouldAbortBlock: nil)
         Async.main { [weak self] in
-//            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
+////            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
             self?.loadingStatus.value = .Loaded
         }
     }

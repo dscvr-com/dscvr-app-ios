@@ -35,6 +35,10 @@ func identity<T>(el: T) -> T {
 }
 
 func calcTextHeight(text: String, withWidth width: CGFloat, andFont font: UIFont) -> CGFloat {
+    if text.isEmpty {
+        return 0
+    }
+    
     let attributes = [NSFontAttributeName: font]
     let textAS = NSAttributedString(string: text, attributes: attributes)
     let tmpSize = CGSize(width: width, height: 100000)
@@ -44,6 +48,10 @@ func calcTextHeight(text: String, withWidth width: CGFloat, andFont font: UIFont
 }
 
 func calcTextWidth(text: String, withFont font: UIFont) -> CGFloat {
+    if text.isEmpty {
+        return 0
+    }
+    
     let size = (text as NSString).sizeWithAttributes([NSFontAttributeName: font])
     return size.width
 }

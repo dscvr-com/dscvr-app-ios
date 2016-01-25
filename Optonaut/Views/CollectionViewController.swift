@@ -14,13 +14,14 @@ import Kingfisher
 
 private let reuseIdentifier = "Cell"
 
-private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
 
 class CollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
     
+    private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
+    
     private let viewModel = FeedViewModel()
-    internal var optographIDs: [UUID] = []
-    private var imageCache = CollectionImageCache()
+    private var optographIDs: [UUID] = []
+    private let imageCache: CollectionImageCache
     private let overlayDebouncer: Debouncer
     
     private let refreshControl = UIRefreshControl()
@@ -30,11 +31,11 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     private var overlayAnimating = false
     
-    private var disabled = false
-    
-    
     required override init(collectionViewLayout: UICollectionViewLayout) {
         overlayDebouncer = Debouncer(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), delay: 0.01)
+        
+        let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
+        imageCache = CollectionImageCache(textureSize: textureSize)
         
         super.init(collectionViewLayout: collectionViewLayout)
     }
@@ -46,6 +47,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.titleView = UIImageView(image: UIImage.iconWithName(.LogoText, textColor: .whiteColor(), fontSize: 26))
         title = String.iconWithName(.LogoText)
         
 //        let searchButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
@@ -86,9 +88,6 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         collectionView!.delaysContentTouches = false
         
         edgesForExtendedLayout = .None
-
-        
-        KingfisherManager.sharedManager.downloader.downloadTimeout = 60
         
         CoreMotionRotationSource.Instance.start()
         
@@ -165,8 +164,6 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         viewModel.refreshNotification.notify(())
         
-        tabController!.delegate = self
-        
         view.bounds = UIScreen.mainScreen().bounds
         
         RotationService.sharedInstance.rotationEnable()
@@ -182,15 +179,11 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        tabController!.delegate = self
+        
         updateNavbarAppear()
         
         updateTabs()
-        
-        navigationController?.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: UIFont.iconOfSize(26),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
-        ]
-        navigationController?.navigationBar.setTitleVerticalPositionAdjustment(3, forBarMetrics: .Default)
         
         tabController!.showUI()
         
@@ -203,6 +196,12 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                 .observeOn(UIScheduler())
                 .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
         }
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        viewModel.isActive.value = false
     }
 
     override func viewDidLayoutSubviews() {
@@ -265,6 +264,13 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                 CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
             ]
             self?.imageCache.get(indexPath.row, optographID: optographID, side: .Left, cubeIndices: defaultIndices, callback: imageCallback)
+            
+            if indexPath.row - 1 > 0, let id = self?.optographIDs[indexPath.row - 1] {
+                self?.imageCache.touch(indexPath.row - 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
+            }
+            if indexPath.row + 1 < self?.optographIDs.count, let id = self?.optographIDs[indexPath.row + 1] {
+                self?.imageCache.touch(indexPath.row + 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
+            }
         }
         
         if overlayView.optographID == nil {
@@ -354,10 +360,6 @@ extension CollectionViewController: DefaultTabControllerDelegate {
         collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
     }
     
-    func cleanup() {
-        viewModel.isActive.value = false
-    }
-    
 }
 
 private class OverlayViewModel {
@@ -426,7 +428,7 @@ private class OverlayView: UIView {
                 
                 viewModel.bind(optograph)
                 
-                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL(person.avatarAssetID, width: 47, height: 47))!)
+                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/avatar.jpg", width: 47, height: 47))!)
                 personNameView.text = person.displayName
                 dateView.text = optograph.createdAt.longDescription
                 textView.text = optograph.text
@@ -477,9 +479,9 @@ private class OverlayView: UIView {
         personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
         addSubview(personNameView)
         
-        optionsButtonView.titleLabel?.font = UIFont.iconOfSize(28)
+        optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setTitle(String.iconWithName(.More), forState: .Normal)
-        optionsButtonView.setTitleColor(UIColor.LightGrey, forState: .Normal)
+        optionsButtonView.setTitleColor(UIColor(0xc6c6c6), forState: .Normal)
         optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTapOptions"))
         addSubview(optionsButtonView)
         
@@ -487,8 +489,8 @@ private class OverlayView: UIView {
         locationTextView.textColor = UIColor(0x3c3c3c)
         addSubview(locationTextView)
         
-        likeButtonView.layer.cornerRadius = 14
-        likeButtonView.clipsToBounds = true
+//        likeButtonView.layer.cornerRadius = 14
+//        likeButtonView.clipsToBounds = true
         likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleLike"))
         likeButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
         addSubview(likeButtonView)
@@ -515,7 +517,7 @@ private class OverlayView: UIView {
             }
         }
         
-        dateView.font = UIFont.displayOfSize(11, withType: .Thin)
+        dateView.font = UIFont.displayOfSize(11, withType: .Regular)
         dateView.textColor = UIColor(0xbbbbbb)
         dateView.textAlignment = .Right
         addSubview(dateView)
@@ -580,7 +582,7 @@ private class OverlayView: UIView {
     
     @objc
     private func pushProfile() {
-//        navigationController?.pushViewController(ProfileTableViewController(personID: viewModel.optograph!.person.ID), animated: true)
+        navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optograph!.personID), animated: true)
     }
     
     @objc

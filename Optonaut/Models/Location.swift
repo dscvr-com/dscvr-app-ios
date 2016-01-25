@@ -11,6 +11,7 @@ import ObjectMapper
 struct Location: Model {
     var ID: UUID
     var createdAt: NSDate
+    var updatedAt: NSDate
     var text: String
     var country: String
     var countryShort: String
@@ -24,6 +25,7 @@ struct Location: Model {
         return Location(
             ID: uuid(),
             createdAt: NSDate(),
+            updatedAt: NSDate(),
             text: "",
             country: "",
             countryShort: "",
@@ -41,23 +43,21 @@ func ==(lhs: Location, rhs: Location) -> Bool {
     return lhs.ID == rhs.ID
 }
 
-extension Location: Mappable {
+extension Location: MergeApiModel {
+    typealias AM = LocationApiModel
     
-    init?(_ map: Map){
-        self = Location.newInstance()
-    }
-    
-    mutating func mapping(map: Map) {
-        ID              <- map["id"]
-        createdAt       <- (map["created_at"], NSDateTransform())
-        text            <- map["text"]
-        country         <- map["country"]
-        countryShort    <- map["country_short"]
-        place           <- map["place"]
-        region          <- map["region"]
-        POI             <- map["poi"]
-        latitude        <- map["latitude"]
-        longitude       <- map["longitude"]
+    mutating func mergeApiModel(apiModel: LocationApiModel) {
+        ID = apiModel.ID
+        createdAt = apiModel.createdAt
+        updatedAt = apiModel.updatedAt
+        text = apiModel.text
+        country = apiModel.country
+        countryShort = apiModel.countryShort
+        place = apiModel.place
+        region = apiModel.region
+        POI = apiModel.POI
+        latitude = apiModel.latitude
+        longitude = apiModel.longitude
     }
 }
 
@@ -75,6 +75,7 @@ extension Location: SQLiteModel {
         return Location(
             ID: row[LocationSchema.ID],
             createdAt: row[LocationSchema.createdAt],
+            updatedAt: row[LocationSchema.updatedAt],
             text: row[LocationSchema.text],
             country: row[LocationSchema.country],
             countryShort: row[LocationSchema.countryShort],
@@ -90,6 +91,7 @@ extension Location: SQLiteModel {
         return [
             LocationSchema.ID <-- ID,
             LocationSchema.createdAt <-- createdAt,
+            LocationSchema.updatedAt <-- updatedAt,
             LocationSchema.text <-- text,
             LocationSchema.country <-- country,
             LocationSchema.countryShort <-- countryShort,

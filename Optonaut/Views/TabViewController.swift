@@ -61,6 +61,9 @@ class TabViewController: UIViewController {
         addChildViewController(rightViewController)
         
         view.insertSubview(leftViewController.view, atIndex: 0)
+        indicatedSide = .Left
+//        view.insertSubview(rightViewController.view, atIndex: 0)
+//        indicatedSide = .Right
         
         let width = view.frame.width
         
@@ -159,8 +162,10 @@ class TabViewController: UIViewController {
         delegate?.onTouchEndCameraButton()
     }
     
-    private func updateActiveTab(side: ActiveSide) {
+    func updateActiveTab(side: ActiveSide) {
         let isLeft = side == .Left
+        
+        indicatedSide = side
         
         activeViewController.view.removeFromSuperview()
         activeViewController = isLeft ? leftViewController : rightViewController
@@ -421,7 +426,6 @@ protocol TabControllerDelegate {
     func onTapCameraButton()
     func onTapLeftButton()
     func onTapRightButton()
-    func cleanup()
 }
 
 extension TabControllerDelegate {
@@ -432,7 +436,6 @@ extension TabControllerDelegate {
     func onTapCameraButton() {}
     func onTapLeftButton() {}
     func onTapRightButton() {}
-    func cleanup() {}
 }
 
 protocol DefaultTabControllerDelegate: TabControllerDelegate {}
@@ -442,7 +445,6 @@ extension DefaultTabControllerDelegate {
     func onTapCameraButton() {
         switch PipelineService.stitchingStatus.value {
         case .Idle:
-            cleanup()
             tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
@@ -462,7 +464,6 @@ extension DefaultTabControllerDelegate {
             }
         } else {
             tabController?.updateActiveTab(.Left)
-            tabController?.indicatedSide = .Left
         }
     }
     
@@ -473,7 +474,6 @@ extension DefaultTabControllerDelegate {
             }
         } else {
             tabController?.updateActiveTab(.Right)
-            tabController?.indicatedSide = .Right
         }
     }
     
@@ -485,8 +485,6 @@ extension UIViewController {
     }
     
     func updateTabs() {
-        tabController!.indicatedSide = .Left
-        
         tabController!.leftButton.title = "HOME"
         tabController!.leftButton.icon = .Home
         tabController!.leftButton.hidden = false
@@ -500,6 +498,8 @@ extension UIViewController {
         tabController!.cameraButton.icon = .Camera
         tabController!.cameraButton.iconColor = .whiteColor()
         tabController!.cameraButton.backgroundColor = .Accent
+        
+        tabController!.bottomGradientOffset.value = 126
     }
 }
 

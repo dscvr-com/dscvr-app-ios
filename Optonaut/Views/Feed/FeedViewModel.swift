@@ -120,18 +120,16 @@ class FeedViewModel: NSObject {
                 ApiService<OptographApiModel>.get("optographs/feed")
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
-                        var optograph = apiModel.toModel()
-                        
-                        optograph.isInFeed = true
-                        optograph.isStitched = true
-                        optograph.isPublished = true
-                        optograph.isSubmitted = true
-                        
-                        Models.optographs.touch(optograph).insertOrUpdate()
-                        Models.persons.touch(apiModel.person.toModel()).insertOrUpdate()
-                        Models.locations.touch(apiModel.location?.toModel())?.insertOrUpdate()
+                        Models.optographs.touch(apiModel).insertOrUpdate { box in
+                            box.model.isInFeed = true
+                            box.model.isStitched = true
+                            box.model.isPublished = true
+                            box.model.isSubmitted = true
+                        }
+                        Models.persons.touch(apiModel.person).insertOrUpdate()
+                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
                     })
-                    .map { $0.toModel() }
+                    .map(Optograph.fromApiModel)
                     .ignoreError()
                     .collect()
                     .startOnUserInitiated()
@@ -150,18 +148,16 @@ class FeedViewModel: NSObject {
                 ApiService<OptographApiModel>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
-                        var optograph = apiModel.toModel()
-                        
-                        optograph.isInFeed = true
-                        optograph.isStitched = true
-                        optograph.isPublished = true
-                        optograph.isSubmitted = true
-                        
-                        Models.optographs.touch(optograph).insertOrUpdate()
-                        Models.persons.touch(apiModel.person.toModel()).insertOrUpdate()
-                        Models.locations.touch(apiModel.location?.toModel())?.insertOrUpdate()
+                        Models.optographs.touch(apiModel).insertOrUpdate { box in
+                            box.model.isInFeed = true
+                            box.model.isStitched = true
+                            box.model.isPublished = true
+                            box.model.isSubmitted = true
+                        }
+                        Models.persons.touch(apiModel.person).insertOrUpdate()
+                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
                     })
-                    .map { $0.toModel() }
+                    .map(Optograph.fromApiModel)
                     .ignoreError()
                     .collect()
                     .startOnUserInitiated()

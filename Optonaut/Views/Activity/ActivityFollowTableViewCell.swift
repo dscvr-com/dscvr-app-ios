@@ -31,7 +31,7 @@ class ActivityFollowTableViewCell: ActivityTableViewCell {
     }
     
     func pushProfile() {
-        navigationController?.pushViewController(ProfileTableViewController(personID: activity.activityResourceFollow!.causingPerson.ID), animated: true)
+//        navigationController?.pushViewController(ProfileTableViewController(personID: activity.activityResourceFollow!.causingPerson.ID), animated: true)
     }
     
 }
