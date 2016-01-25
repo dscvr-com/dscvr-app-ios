@@ -34,10 +34,12 @@ class CubeImageCache {
     typealias Callback = (SKTexture, index: Index) -> Void
     private typealias InnerItem = (image: SKTexture?, downloadTask: RetrieveImageTask?)
     
+    private let queue = dispatch_queue_create("collection_image_cube_cache", DISPATCH_QUEUE_CONCURRENT)
+    
     private var items: [Index: InnerItem] = [:]
     private let optographID: UUID
     private let side: TextureSide
-    private let textureSize: CGFloat
+    private var textureSize: CGFloat
     
     init(optographID: UUID, side: TextureSide, textureSize: CGFloat) {
         self.optographID = optographID
@@ -50,38 +52,62 @@ class CubeImageCache {
         logRetain()
     }
     
+    func updateTextureSize(textureSize: CGFloat) {
+        self.textureSize = textureSize
+        dispose()
+    }
+    
     func get(index: Index, callback: Callback?) {
         
         if let image = items[index]?.image {
             callback?(image, index: index)
         } else if items[index]?.downloadTask == nil {
-            let downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
-                NSURL(string: TextureURL(optographID, side: side, size: Int(textureSize), face: index.face, x: index.x, y: index.y, d: index.d))!,
-//                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(getTextureWidth(HorizontalFieldOfView) / Float(UIScreen.mainScreen().scale))))!,
-                optionsInfo: nil,
-//                optionsInfo: [.Options(.LowPriority)],
-                progressBlock: nil,
-                completionHandler: { [weak self] (image, error, _, _) in
-                    if let error = error {
-                        print(error)
-                    }
-                    Async.userInteractive {
-                        if let image = image where self?.items[index] != nil {
-                            let tex = SKTexture(image: image)
-                            self?.items[index]?.image = tex
-                            self?.items[index]?.downloadTask = nil
-                            callback?(tex, index: index)
+            if let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url(index, textureSize: 0)) {
+//                TODO check if async is needed here
+//                dispatch_async(queue) {
+                    let resizedImage = image.resized(.Width, value: textureSize)
+                    let tex = SKTexture(image: resizedImage)
+//                    items[index]?.image = tex
+//                    items[index]?.downloadTask = nil
+                    callback?(tex, index: index)
+//                }
+                
+                items[index] = (image: tex, downloadTask: nil)
+            } else {
+                let downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
+                    NSURL(string: url(index, textureSize: textureSize))!,
+                    //                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(getTextureWidth(HorizontalFieldOfView) / Float(UIScreen.mainScreen().scale))))!,
+                    optionsInfo: nil,
+                    //                optionsInfo: [.Options(.LowPriority)],
+                    progressBlock: nil,
+                    completionHandler: { [weak self] (image, error, _, _) in
+                        if let strongSelf = self {
+                            if let error = error where error.code != -999 {
+                                print(error)
+                            }
+                            dispatch_async(strongSelf.queue) {
+                                if let image = image where strongSelf.items[index] != nil {
+                                    let tex = SKTexture(image: image)
+                                    strongSelf.items[index]?.image = tex
+                                    strongSelf.items[index]?.downloadTask = nil
+                                    callback?(tex, index: index)
+                                }
+                            }
                         }
                     }
-                }
-            )
-            
-            items[index] = (image: nil, downloadTask: downloadTask)
+                )
+                
+                items[index] = (image: nil, downloadTask: downloadTask)
+            }
         }
     }
     
     private func dispose() {
         items.values.forEach { $0.downloadTask?.cancel() }
+    }
+    
+    private func url(index: Index, textureSize: CGFloat) -> String {
+        return TextureURL(optographID, side: side, size: Int(textureSize), face: index.face, x: index.x, y: index.y, d: index.d)
     }
     
 }

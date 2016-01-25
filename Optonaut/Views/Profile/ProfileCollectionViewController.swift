@@ -21,6 +21,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     private let editOverlayView = UIView()
     
+    private var originalBackButton: UIBarButtonItem?
     private let leftBarButton = UILabel()
     private let rightBarButton = UILabel()
     
@@ -45,14 +46,19 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             self?.title = userName.uppercaseString
         }
         
+        originalBackButton = navigationItem.leftBarButtonItem
+        
         leftBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
         leftBarButton.text = String.iconWithName(.Cancel)
-        leftBarButton.rac_hidden <~ profileViewModel.isEditing.producer.map(negate)
         leftBarButton.textColor = .whiteColor()
         leftBarButton.font = UIFont.iconOfSize(19)
         leftBarButton.userInteractionEnabled = true
         leftBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftBarButton"))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftBarButton)
+        let barButtonItem = UIBarButtonItem(customView: leftBarButton)
+        
+        profileViewModel.isEditing.producer.startWithNext { [weak self] isEditing in
+            self?.navigationItem.leftBarButtonItem = isEditing ? barButtonItem : self?.originalBackButton
+        }
         
         rightBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
         rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))

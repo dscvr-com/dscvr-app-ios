@@ -77,14 +77,14 @@ class PipelineService {
                         upload(optographID, side: side, face: face)
                     }
                     
-                    let screen = UIScreen.mainScreen()
-                    let textureSize = getTextureWidth(screen.bounds.width, hfov: HorizontalFieldOfView)
+//                    let screen = UIScreen.mainScreen()
+//                    let textureSize = getTextureWidth(screen.bounds.width, hfov: HorizontalFieldOfView)
                     // NOTE: this might be a bug in Kingfisher where UIImages automatically get scaled up
                     // https://github.com/onevcat/Kingfisher/issues/214
                     // let resizedData = UIImageJPEGRepresentation(image.resized(.Width, value: textureSize * screen.scale), 0.7)!
-                    let resizedData = UIImageJPEGRepresentation(image.resized(.Width, value: textureSize), 0.7)!
-                    let resizedURL = TextureURL(optographID, side: side, size: Int(textureSize), face: face, x: 0, y: 0, d: 1)
-                    KingfisherManager.sharedManager.cache.storeImage(UIImage(data: resizedData)!, originalData: resizedData, forKey: resizedURL)
+//                    let resizedData = UIImageJPEGRepresentation(image.resized(.Width, value: textureSize), 0.7)!
+//                    let resizedURL = TextureURL(optographID, side: side, size: Int(textureSize), face: face, x: 0, y: 0, d: 1)
+//                    KingfisherManager.sharedManager.cache.storeImage(UIImage(data: resizedData)!, originalData: resizedData, forKey: resizedURL)
                     
                 case .Progress(let progress):
                     stitchingStatus.value = .Stitching(min(0.99, progress))

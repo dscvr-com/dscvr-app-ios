@@ -51,6 +51,13 @@ class ProfileViewModel {
         }
     }
     
+    func saveEdit() {
+        
+    }
+    
+    func cancelEdit() {
+    }
+    
 //    func reloadModel() {
 //        let query = PersonTable.filter(PersonTable[PersonSchema.ID] == person.ID)
 //        
