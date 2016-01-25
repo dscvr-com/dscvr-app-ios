@@ -41,7 +41,7 @@ class PipelineService {
     static let stitchingStatus = MutableProperty<StitchingStatus>(.Uninitialized)
 //    static var uploadingStatus: [UUID: UploadSignal] = [:]
     
-    private static let uploadQueue = dispatch_queue_create("pipeline_upload", DISPATCH_QUEUE_CONCURRENT)
+    private static let uploadQueue = dispatch_queue_create("pipeline_upload", DISPATCH_QUEUE_SERIAL)
     
 //    static func check() {
 //        Async.main {

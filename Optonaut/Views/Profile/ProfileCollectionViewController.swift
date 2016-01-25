@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ReactiveCocoa
 import SpriteKit
 
 class ProfileCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
@@ -17,6 +18,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     private let collectionViewModel: OptographsViewModel
     private var optographIDs: [UUID] = []
     private let imageCache: CollectionImageCache
+    
+    private let editOverlayView = UIView()
+    
+    private let leftBarButton = UILabel()
+    private let rightBarButton = UILabel()
     
     init(personID: UUID) {
         profileViewModel = ProfileViewModel(personID: personID)
@@ -39,21 +45,50 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             self?.title = userName.uppercaseString
         }
         
-//        let searchButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-//        searchButton.text = String.iconWithName(.Cancel)
-//        searchButton.textColor = .whiteColor()
-//        searchButton.font = UIFont.iconOfSize(24)
-//        searchButton.userInteractionEnabled = true
-//        searchButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushSearch"))
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchButton)
+        leftBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
+        leftBarButton.text = String.iconWithName(.Cancel)
+        leftBarButton.rac_hidden <~ profileViewModel.isEditing.producer.map(negate)
+        leftBarButton.textColor = .whiteColor()
+        leftBarButton.font = UIFont.iconOfSize(19)
+        leftBarButton.userInteractionEnabled = true
+        leftBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftBarButton"))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftBarButton)
         
-        let moreButton = UILabel(frame: CGRect(x: 0, y: -2, width: 21, height: 21))
-        moreButton.text = String.iconWithName(.More)
-        moreButton.textColor = .whiteColor()
-        moreButton.font = UIFont.iconOfSize(21)
-        moreButton.userInteractionEnabled = true
-        moreButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showSettingsActions"))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: moreButton)
+        rightBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
+        rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))
+        rightBarButton.textColor = .whiteColor()
+        rightBarButton.font = UIFont.iconOfSize(21)
+        rightBarButton.userInteractionEnabled = true
+        rightBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapRightBarButton"))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButton)
+        
+        editOverlayView.backgroundColor = UIColor.blackColor().alpha(0.6)
+        editOverlayView.rac_hidden <~ profileViewModel.isEditing.producer.map(negate)
+        view.addSubview(editOverlayView)
+        
+        profileViewModel.isEditing.producer.skip(1).startWithNext { [weak self] isEditing in
+            if let strongSelf = self {
+                
+                CATransaction.begin()
+                CATransaction.setDisableActions(true)
+                strongSelf.collectionView!.performBatchUpdates({
+                    strongSelf.collectionView!.reloadItemsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)])
+                }, completion: { _ in
+                    CATransaction.commit()
+                })
+                
+                if isEditing {
+                    let collectionViewSize = strongSelf.collectionView!.frame.size
+                    let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
+                    let headerHeight = 248 + textHeight
+                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight)
+                    
+                    strongSelf.collectionView!.contentOffset = CGPointZero
+                }
+                
+                strongSelf.collectionView!.scrollEnabled = !isEditing
+            }
+        }
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -174,6 +209,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("top-cell", forIndexPath: indexPath) as! ProfileHeaderCollectionViewCell
             
             cell.bindViewModel(profileViewModel)
+            cell.navigationController = navigationController as? NavigationController
             
             return cell
         } else {
@@ -199,7 +235,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             return CGSize(width: collectionView.frame.width, height: 248 + textHeight)
         } else {
-            let width = (collectionView.frame.width - 4) / 3
+            let width = (collectionView.frame.width - 4) / 3 - 0.000001
             return CGSize(width: width, height: width)
         }
     }
@@ -280,29 +316,36 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
 //        (cell as! CollectionViewCell).didEndDisplay()
     }
     
-    @objc private func showSettingsActions() {
-        let settingsSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-        
-        if profileViewModel.isMe {
-            settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
-                SessionService.logout()
-            }))
-        } else {
-            settingsSheet.addAction(UIAlertAction(title: "Report user", style: .Destructive, handler: { _ in
-                let confirmAlert = UIAlertController(title: "Are you sure?", message: "This action will message one of the moderators.", preferredStyle: .Alert)
-                confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
-                confirmAlert.addAction(UIAlertAction(title: "Report", style: .Destructive, handler: { _ in
-//                    self.viewModel.person.report().start()
-                }))
-                self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
-            }))
-        }
-        
-        settingsSheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
-        
-        navigationController?.presentViewController(settingsSheet, animated: true, completion: nil)
+    dynamic private func tapLeftBarButton() {
     }
-
+    
+    dynamic private func tapRightBarButton() {
+        if profileViewModel.isEditing.value {
+            profileViewModel.isEditing.value = false
+        } else {
+            let settingsSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+            
+            if profileViewModel.isMe {
+                settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
+                    SessionService.logout()
+                }))
+            } else {
+                settingsSheet.addAction(UIAlertAction(title: "Report user", style: .Destructive, handler: { _ in
+                    let confirmAlert = UIAlertController(title: "Are you sure?", message: "This action will message one of the moderators.", preferredStyle: .Alert)
+                    confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+                    confirmAlert.addAction(UIAlertAction(title: "Report", style: .Destructive, handler: { _ in
+                        //                    self.viewModel.person.report().start()
+                    }))
+                    self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
+                }))
+            }
+            
+            settingsSheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+            
+            navigationController?.presentViewController(settingsSheet, animated: true, completion: nil)
+        }
+    }
+    
 }
 
 // MARK: - UITabBarControllerDelegate

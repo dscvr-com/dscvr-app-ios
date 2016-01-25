@@ -108,10 +108,10 @@ class OpenGLView: UIView {
             self.compileShaders()
             self.setupVBOs()
             
-            while true {
-                self.render()
-                usleep(20000)
-            }
+//            while true {
+//                self.render()
+//                usleep(20000)
+//            }
         }
     }
     

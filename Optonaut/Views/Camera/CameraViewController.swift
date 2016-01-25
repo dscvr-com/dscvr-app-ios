@@ -16,6 +16,7 @@ import SceneKit
 import Async
 import Mixpanel
 import SwiftyUserDefaults
+import Photos
 
 class CameraViewController: UIViewController {
     
@@ -446,17 +447,35 @@ class CameraViewController: UIViewController {
     }
     
     private func authorizeCamera() {
+        var alreadyFailed = false
+        let failAlert = {
+            Async.main { [weak self] in
+                if alreadyFailed {
+                    return
+                } else {
+                    alreadyFailed = true
+                }
+                
+                let alert = UIAlertController(title: "No access to camera", message: "Please enable permission to use the camera and photos.", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Enable", style: .Default, handler: { _ in
+                    UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
+                }))
+                self?.presentViewController(alert, animated: true, completion: nil)
+            }
+        }
+        
         AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: { granted in
             if !granted {
-                Async.main {
-                    UIAlertView(
-                        title: "Could not use camera!",
-                        message: "This application does not have permission to use camera. Please update your privacy settings.",
-                        delegate: self,
-                        cancelButtonTitle: "OK").show()
-                }
+                failAlert()
             }
         })
+        
+        PHPhotoLibrary.requestAuthorization { status in
+            switch status {
+            case .NotDetermined, .Restricted, .Denied: failAlert()
+            default: ()
+            }
+        }
     }
  
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {

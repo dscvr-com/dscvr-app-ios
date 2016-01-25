@@ -20,8 +20,10 @@ class ProfileViewModel {
     let followingCount = MutableProperty<Int>(0)
     let postCount = MutableProperty<Int>(0)
     let isFollowed = MutableProperty<Bool>(false)
+    let isEditing = MutableProperty<Bool>(false)
     let avatarImageUrl = MutableProperty<String>("")
     let isMe: Bool
+//    let personID: UUID
     
 //    var person = Person.newInstance()
     private var personBox: ModelBox<Person>!
@@ -29,6 +31,7 @@ class ProfileViewModel {
     init(personID: UUID) {
         personBox = Models.persons[personID]!
         
+//        self.personID = personID
         isMe = SessionService.personID == personID
         
         SignalProducer<Bool, ApiError>(value: SessionService.personID == personID)
