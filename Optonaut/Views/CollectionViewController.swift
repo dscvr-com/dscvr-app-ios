@@ -148,8 +148,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         viewModel.isActive.producer
             .skip(1)
-            .map(negate)
-            .filter(identity)
+            .filter(isFalse)
             .startWithNext { [weak self] _ in
                 self?.imageCache.reset()
             }

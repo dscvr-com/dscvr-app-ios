@@ -70,6 +70,13 @@ class NotificationSignal<T> {
     
 }
 
+func isTrue(val: Bool) -> Bool {
+    return val
+}
+
+func isFalse(val: Bool) -> Bool {
+    return !val
+}
 
 func negate(val: Bool) -> Bool {
     return !val

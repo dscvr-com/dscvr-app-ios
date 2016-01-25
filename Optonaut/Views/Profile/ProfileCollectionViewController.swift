@@ -78,7 +78,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 CATransaction.begin()
                 CATransaction.setDisableActions(true)
                 strongSelf.collectionView!.performBatchUpdates({
-                    strongSelf.collectionView!.reloadItemsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)])
+//                    strongSelf.collectionView!.reloadItemsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)])
                 }, completion: { _ in
                     CATransaction.commit()
                 })
@@ -322,11 +322,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
     
     dynamic private func tapLeftBarButton() {
+        profileViewModel.cancelEdit()
     }
     
     dynamic private func tapRightBarButton() {
         if profileViewModel.isEditing.value {
-            profileViewModel.isEditing.value = false
+            profileViewModel.saveEdit()
         } else {
             let settingsSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
             

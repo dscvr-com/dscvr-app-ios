@@ -52,10 +52,29 @@ class ProfileViewModel {
     }
     
     func saveEdit() {
-        
+        let parameters = [
+            "display_name": displayName.value,
+            "user_name": userName.value,
+            "text": text.value,
+        ]
+        ApiService<PersonApiModel>.put("persons/me", parameters: parameters)
+            .startWithCompleted { [weak self] in
+                if let strongSelf = self {
+                    strongSelf.personBox.insertOrUpdate { box in
+                        box.model.displayName = strongSelf.displayName.value
+                        box.model.userName = strongSelf.userName.value
+                        box.model.text = strongSelf.text.value
+                    }
+                    strongSelf.isEditing.value = false
+                }
+            }
     }
     
     func cancelEdit() {
+        displayName.value = personBox.model.displayName
+        userName.value = personBox.model.userName
+        text.value = personBox.model.text
+        isEditing.value = false
     }
     
 //    func reloadModel() {
