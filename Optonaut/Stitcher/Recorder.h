@@ -55,10 +55,10 @@ struct ExposureInfo {
 - (bool)isIdle;
 - (bool)hasStarted;
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b;
-- (GLKMatrix4)getNextKeyframePosition;
+- (GLKMatrix4)getBallPosition;
 - (bool)isFinished;
-- (double)getDistanceToNextKeyframe;
-- (GLKVector3)getAngularDistanceToNextKeyframe;
+- (double)getDistanceToBall;
+- (GLKVector3)getAngularDistanceToBall;
 - (uint32_t)getRecordedImagesCount;
 - (uint32_t)getImagesToRecordCount;
 - (void)finish;

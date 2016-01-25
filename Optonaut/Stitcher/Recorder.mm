@@ -221,7 +221,7 @@ optonaut::StitcherSink stitcherSink;
 }
 - (SelectionPoint*)lastKeyframe {
     assert(pipe != NULL);
-    return ConvertSelectionPoint(pipe->LastKeyframe().closestPoint);
+   return ConvertSelectionPoint(pipe->GetCurrentKeyframe().closestPoint);
 }
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
     assert(pipe != NULL);
@@ -252,22 +252,22 @@ optonaut::StitcherSink stitcherSink;
     assert(pipe != NULL);
     return pipe->HasResults();
 }
-- (GLKMatrix4)getNextKeyframePosition {
+- (GLKMatrix4)getBallPosition {
     assert(pipe != NULL);
-    return CVMatToGLK4(pipe->GetNextKeyframe());
+    return CVMatToGLK4(pipe->GetBallPosition());
 }
 - (bool)isFinished {
     assert(pipe != NULL);
     return pipe->IsFinished();
 }
-- (double)getDistanceToNextKeyframe {
+- (double)getDistanceToBall {
     assert(pipe != NULL);
-    return pipe->GetDistanceToNextKeyframe();
+    return pipe->GetDistanceToBall();
 }
-- (GLKVector3)getAngularDistanceToNextKeyframe {
+- (GLKVector3)getAngularDistanceToBall {
     assert(pipe != NULL);
     //Special coord remapping, so we respect the screen coord system.
-    const Mat &m = pipe->GetAngularDistanceToNextKeyframe();
+    const Mat &m = pipe->GetAngularDistanceToBall();
     return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
 }
 - (uint32_t)getRecordedImagesCount {
