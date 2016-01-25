@@ -63,8 +63,6 @@ class ViewerViewController: UIViewController  {
         
         let textureSize = CGFloat(512)
         
-        print(optograph.ID)
-        
         leftCache = CubeImageCache(optographID: optograph.ID, side: .Left, textureSize: textureSize)
         rightCache = CubeImageCache(optographID: optograph.ID, side: .Right, textureSize: textureSize)
         

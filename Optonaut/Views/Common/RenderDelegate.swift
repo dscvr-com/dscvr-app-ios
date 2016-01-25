@@ -107,11 +107,11 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
-        print(texture.size())
         if #available(iOS 9.0, *) {
             let image = UIImage(CGImage: texture.CGImage())
             planes[index]!.geometry!.firstMaterial!.diffuse.contents = image
         } else {
+            planes[index]!.geometry!.firstMaterial!.diffuse.contents = texture
             // Fallback on earlier versions
         }
     }

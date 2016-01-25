@@ -306,7 +306,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
 //        
         
         if indexPath.row % 3 == 1 && indexPath.row > optographIDs.count - 7 {
-            print(indexPath.row)
             collectionViewModel.loadMoreNotification.notify(())
         }
         

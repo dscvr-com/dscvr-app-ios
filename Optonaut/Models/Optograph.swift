@@ -205,7 +205,6 @@ extension Optograph: SQLiteModel {
     }
     
     func toSQL() -> [SQLiteSetter] {
-//        print("in feed \(isInFeed)")
         return [
             OptographSchema.ID <-- ID,
             OptographSchema.text <-- text,
