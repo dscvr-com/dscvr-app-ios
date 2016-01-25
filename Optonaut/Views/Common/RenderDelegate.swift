@@ -83,7 +83,12 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
 class CubeRenderDelegate: RenderDelegate {
     
-    var planes: [CubeImageCache.Index: SCNNode] = [:]
+    var planes: [CubeImageCache.Index: (node: SCNNode, visible: Bool)] = [:]
+    
+    var nodeEnterScene: (CubeImageCache.Index -> ())?
+    var nodeLeaveScene: (CubeImageCache.Index -> ())?
+    
+    weak var scnView: SCNView?
 
     private let d: CGFloat = 10
     
@@ -101,7 +106,7 @@ class CubeRenderDelegate: RenderDelegate {
         for face in 0..<6 {
             let node = createPlane(position: transforms[face].position, rotation: transforms[face].rotation)
             node.geometry!.firstMaterial!.doubleSided = true
-            planes[CubeImageCache.Index(face: face, x: 0, y: 0, d: 1)] = node
+            planes[CubeImageCache.Index(face: face, x: 0, y: 0, d: 1)] = (node: node, visible: false)
             scene.rootNode.addChildNode(node)
         }
     }
@@ -109,15 +114,31 @@ class CubeRenderDelegate: RenderDelegate {
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
         if #available(iOS 9.0, *) {
             let image = UIImage(CGImage: texture.CGImage())
-            planes[index]!.geometry!.firstMaterial!.diffuse.contents = image
+            planes[index]!.node.geometry!.firstMaterial!.diffuse.contents = image
         } else {
-            planes[index]!.geometry!.firstMaterial!.diffuse.contents = texture
+            planes[index]!.node.geometry!.firstMaterial!.diffuse.contents = texture
             // Fallback on earlier versions
         }
     }
     
     func reset() {
-        planes.values.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor() }
+        planes.values.forEach { $0.node.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor() }
+    }
+    
+    override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
+        super.renderer(aRenderer, updateAtTime: time)
+        
+        for (index, (node: node, visible: visible)) in planes {
+            if let nowVisible = scnView?.isNodeInsideFrustum(node, withPointOfView: cameraNode) {
+                if nowVisible && !visible {
+                    nodeEnterScene?(index)
+                } else if !nowVisible && visible {
+                    nodeLeaveScene?(index)
+                }
+            
+                planes[index]!.visible = nowVisible
+            }
+        }
     }
     
     private func createPlane(position position: SCNVector3, rotation: SCNVector3) -> SCNNode {
