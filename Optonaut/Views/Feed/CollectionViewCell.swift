@@ -286,7 +286,7 @@ class CollectionViewCell: UICollectionViewCell {
     
     func setImage(texture: SKTexture, forIndex index: CubeImageCache.Index) {
         renderDelegate.setTexture(texture, forIndex: index)
-        scnView.prepareObject(renderDelegate!.planes[index]!, shouldAbortBlock: nil)
+      //  scnView.prepareObject(renderDelegate!.planes[index]!, shouldAbortBlock: nil)
         Async.main { [weak self] in
 ////            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
             self?.loadingStatus.value = .Loaded

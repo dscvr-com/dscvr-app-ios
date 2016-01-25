@@ -84,14 +84,6 @@ class ViewerViewController: UIViewController  {
         leftScnView.scene = leftRenderDelegate.scene
         leftScnView.delegate = leftRenderDelegate
         
-        for plane in leftRenderDelegate.planes {
-            plane.1.geometry!.firstMaterial!.diffuse.contents = UIColor.redColor()
-        }
-        
-        for plane in rightRenderDelegate.planes {
-            plane.1.geometry!.firstMaterial!.diffuse.contents = UIColor.greenColor()
-        }
-        
         rightScnView.scene = rightRenderDelegate.scene
         rightScnView.delegate = rightRenderDelegate
     }

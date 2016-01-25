@@ -90,24 +90,33 @@ class CubeRenderDelegate: RenderDelegate {
     
     weak var scnView: SCNView?
 
-    private let d: CGFloat = 10
+    private let cubeScaling: CGFloat = 10
     
     override init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float) {
         super.init(rotationMatrixSource: rotationMatrixSource, fov: fov, cameraOffset: cameraOffset)
         
+        let subSurf = 8
+        let subW = 1.0 / Float(subSurf)
+        
         let transforms: [(position: SCNVector3, rotation: SCNVector3)] = [
-            (SCNVector3Make(0, 0, Float(d)), SCNVector3Make(0, 0, 0)),
-            (SCNVector3Make(Float(d), 0, 0), SCNVector3Make(0, Float(M_PI_2), 0)),
-            (SCNVector3Make(0, 0, Float(-d)), SCNVector3Make(0, Float(M_PI), 0)),
-            (SCNVector3Make(Float(-d), 0, 0), SCNVector3Make(0, Float(-M_PI_2), 0)),
-            (SCNVector3Make(0, Float(d), 0), SCNVector3Make(Float(-M_PI_2), Float(-M_PI_2), 0)),
-            (SCNVector3Make(0, Float(-d), 0), SCNVector3Make(Float(M_PI_2), Float(-M_PI_2), 0)),
+            (SCNVector3Make(0, 0, 1), SCNVector3Make(0, 0, 0)),
+            (SCNVector3Make(1, 0, 0), SCNVector3Make(0, Float(M_PI_2), 0)),
+            (SCNVector3Make(0, 0, -1), SCNVector3Make(0, Float(M_PI), 0)),
+            (SCNVector3Make(-1, 0, 0), SCNVector3Make(0, Float(-M_PI_2), 0)),
+            (SCNVector3Make(0, 1, 0), SCNVector3Make(Float(-M_PI_2), Float(-M_PI_2), 0)),
+            (SCNVector3Make(0, -1, 0), SCNVector3Make(Float(M_PI_2), Float(-M_PI_2), 0)),
         ]
+        
         for face in 0..<6 {
-            let node = createPlane(position: transforms[face].position, rotation: transforms[face].rotation)
-            node.geometry!.firstMaterial!.doubleSided = true
-            planes[CubeImageCache.Index(face: face, x: 0, y: 0, d: 1)] = (node: node, visible: false)
-            scene.rootNode.addChildNode(node)
+            for subX in 0..<subSurf {
+                for subY in 0..<subSurf {
+                    let node = createPlane(position: transforms[face].position, rotation: transforms[face].rotation,
+                        subX: Float(subX) * subW, subY: Float(subY) * subW, subW: subW)
+                    node.geometry!.firstMaterial!.doubleSided = true
+                    planes[CubeImageCache.Index(face: face, x: Float(subX) * subW, y: Float(subY) * subW, d: subW)] = (node: node, visible: false)
+                    scene.rootNode.addChildNode(node)
+                }
+            }
         }
     }
     
@@ -141,17 +150,21 @@ class CubeRenderDelegate: RenderDelegate {
         }
     }
     
-    private func createPlane(position position: SCNVector3, rotation: SCNVector3) -> SCNNode {
-        let geometry = SCNPlane(width: 2 * d, height: 2 * d)
+    private func createPlane(position position: SCNVector3, rotation: SCNVector3, subX: Float, subY: Float, subW: Float) -> SCNNode {
+        let geometry = SCNPlane(width: CGFloat(2 * subW), height: CGFloat(2 * subW))
         geometry.firstMaterial!.doubleSided = true
         
         let node = SCNNode(geometry: geometry)
+        
+        node.pivot = SCNMatrix4MakeTranslation((subX + subW / 2) * 2 - 1, (subY + subW / 2) * 2 - 1, 0)
         
         node.position = position
         node.eulerAngles = rotation
         
         let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
         node.transform = SCNMatrix4Mult(node.transform, transform)
+        
+        node.geometry!.firstMaterial!.diffuse.contents = UIColor(red: CGFloat(subX), green: CGFloat(subY), blue: 0, alpha: 1)
         
         return node
     }

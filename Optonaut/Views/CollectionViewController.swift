@@ -253,6 +253,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             }
         }
         
+        /*
         dispatch_async(queue) { [weak self] in
             let defaultIndices = [
                 CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
@@ -271,6 +272,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                 self?.imageCache.touch(indexPath.row + 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
             }
         }
+*/
         
         if overlayView.optographID == nil {
             overlayView.optographID = optographID
