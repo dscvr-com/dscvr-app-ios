@@ -61,7 +61,7 @@ class ViewerViewController: UIViewController  {
     
         print("Headset: \(headset.vendor) \(headset.model)")
         
-        let textureSize = CGFloat(512)
+        let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.height / 2, hfov: 65) // 90 is a guess. A better value might be needed
         
         leftCache = CubeImageCache(optographID: optograph.ID, side: .Left, textureSize: textureSize)
         rightCache = CubeImageCache(optographID: optograph.ID, side: .Right, textureSize: textureSize)
