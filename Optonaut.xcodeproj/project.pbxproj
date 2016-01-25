@@ -481,6 +481,8 @@
 		A5376ED31C4EBEF1004EFE88 /* stereoSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stereoSink.hpp; sourceTree = "<group>"; };
 		A5376ED41C4EBEF1004EFE88 /* storageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = storageSink.hpp; sourceTree = "<group>"; };
 		A5376ED51C4EBFEC004EFE88 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
+		A547FA101C5578D500FBC17D /* jumpFilter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = jumpFilter.hpp; sourceTree = "<group>"; };
+		A547FA111C5578D500FBC17D /* ringCloser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ringCloser.hpp; sourceTree = "<group>"; };
 		A55C80F61BF91FDA00420E52 /* simplePlaneStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simplePlaneStitcher.cpp; sourceTree = "<group>"; };
 		A55C80F71BF91FDA00420E52 /* simplePlaneStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simplePlaneStitcher.hpp; sourceTree = "<group>"; };
 		A55C80F81BF91FDA00420E52 /* simpleSphereStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simpleSphereStitcher.cpp; sourceTree = "<group>"; };
@@ -1261,6 +1263,8 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
+				A547FA101C5578D500FBC17D /* jumpFilter.hpp */,
+				A547FA111C5578D500FBC17D /* ringCloser.hpp */,
 				A5376ED31C4EBEF1004EFE88 /* stereoSink.hpp */,
 				A5376ED41C4EBEF1004EFE88 /* storageSink.hpp */,
 				A5376ECF1C4DA163004EFE88 /* asyncTolerantRingRecorder.hpp */,
