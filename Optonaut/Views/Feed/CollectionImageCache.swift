@@ -36,6 +36,7 @@ class CubeImageCache {
     private class Item {
         var image: SKTexture?
         var downloadTask: RetrieveImageTask?
+        var callback: Callback?
     }
     
     private let queue = dispatch_queue_create("collection_image_cube_cache", DISPATCH_QUEUE_CONCURRENT)
@@ -66,68 +67,75 @@ class CubeImageCache {
         if let image = items[index]?.image {
             callback?(image, index: index)
         } else if items[index]?.downloadTask == nil {
-            // Image resolve is by URL - query whole face and then get subface manually. 
+            // Image is resolved by URL - query whole face and then get subface manually.
+            // Occurs when image was just taken on this phone
             let queryIndex = Index(face: index.face, x: 0.0, y: 0.0, d: 1.0)
             if let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url(queryIndex, textureSize: 0)) {
-//                TODO check if async is needed here
-//                dispatch_async(queue) {
-                    let resizedImage = image.subface(CGFloat(index.x), y: CGFloat(index.y), w: CGFloat(index.d), d: Int(textureSize * CGFloat(index.d)))
-//                    let resizedImage = image.resized(.Width, value: textureSize)
-                    let tex = SKTexture(image: resizedImage)
-//                    items[index]?.image = tex
-//                    items[index]?.downloadTask = nil
-                    callback?(tex, index: index)
-//                }
+                let resizedImage = image.subface(CGFloat(index.x), y: CGFloat(index.y), w: CGFloat(index.d), d: Int(textureSize * CGFloat(index.d)))
+                let tex = SKTexture(image: resizedImage)
                 
-//                dispatch_async(queue) { [weak self] in
-                    let item = Item()
-                    item.image = tex
-                    items[index] = item
-//                }
+                callback?(tex, index: index)
+                
+                let item = Item()
+                item.image = tex
+                
+                sync(self) {
+                    self.items[index] = item
+                }
+                
             } else {
-                let downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
-                    NSURL(string: url(index, textureSize: textureSize))!,
-                    //                NSURL(string: ImageURL(optographs[index].leftTextureAssetID, width: Int(getTextureWidth(HorizontalFieldOfView) / Float(UIScreen.mainScreen().scale))))!,
-                    optionsInfo: nil,
-                    //                optionsInfo: [.Options(.LowPriority)],
-                    progressBlock: nil,
-                    completionHandler: { [weak self] (image, error, _, _) in
-                        if let strongSelf = self {
+                let item = Item()
+                item.callback = callback
+                
+                sync(self) {
+                    self.items[index] = item
+                    
+                    item.downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
+                        NSURL(string: self.url(index, textureSize: self.textureSize))!,
+                        optionsInfo: nil,
+                        progressBlock: nil,
+                        completionHandler: { (image, error, _, _) in
                             if let error = error where error.code != -999 {
                                 print(error)
                             }
-                            dispatch_async(strongSelf.queue) {
-                                if let image = image where strongSelf.items[index] != nil {
-                                    let tex = SKTexture(image: image)
-                                    strongSelf.items[index]?.image = tex
-                                    strongSelf.items[index]?.downloadTask = nil
-                                    callback?(tex, index: index)
+                            // needed because completionHandler is called on mainthread
+                            dispatch_async(self.queue) {
+                                sync(self) {
+                                    if let image = image, item = self.items[index] {
+                                        let tex = SKTexture(image: image)
+                                        item.image = tex
+                                        item.downloadTask = nil
+                                        item.callback?(tex, index: index)
+                                    }
                                 }
                             }
                         }
-                    }
-                )
+                    )
+                    
+                }
                 
-//                dispatch_async(queue) { [weak self] in
-                let item = Item()
-                item.downloadTask = downloadTask
-                items[index] = item
-//                }
             }
         }
     }
     
     func forget(index: Index) {
-//        dispatch_async(queue) { [weak self] in
-            items[index]?.downloadTask?.cancel()
-//            self?.items[index] = nil
-            items.removeValueForKey(index)
-//        }
+        sync(self) {
+            self.items[index]?.downloadTask?.cancel()
+            self.items.removeValueForKey(index)
+        }
+    }
+    
+    func disable() {
+        sync(self) {
+            self.items.values.forEach { $0.callback = nil }
+        }
     }
     
     private func dispose() {
-        items.values.forEach { $0.downloadTask?.cancel() }
-        items.removeAll()
+        sync(self) {
+            self.items.values.forEach { $0.downloadTask?.cancel() }
+            self.items.removeAll()
+        }
     }
     
     private func url(index: Index, textureSize: CGFloat) -> String {
@@ -143,8 +151,6 @@ class CollectionImageCache {
     private static let cacheSize = 5
     
     private var items: [Item?]
-//    private var activeIndex = 0
-    private let debouncerGet: Debouncer
     private let debouncerTouch: Debouncer
     
     private let textureSize: CGFloat
@@ -154,12 +160,12 @@ class CollectionImageCache {
         
         items = [Item?](count: CollectionImageCache.cacheSize, repeatedValue: nil)
         
-        let queue = dispatch_queue_create("collection_image_cache", DISPATCH_QUEUE_SERIAL)
-        debouncerGet = Debouncer(queue: queue, delay: 0.1)
-        debouncerTouch = Debouncer(queue: queue, delay: 0.1)
+        debouncerTouch = Debouncer(queue: dispatch_get_main_queue(), delay: 0.1)
     }
     
     func get(index: Int, optographID: UUID, side: TextureSide) -> CubeImageCache {
+        assertMainThread()
+        
         let cacheIndex = index % CollectionImageCache.cacheSize
         
         if let item = items[cacheIndex] where item.index == index {
@@ -171,14 +177,22 @@ class CollectionImageCache {
         }
     }
     
+    func disable(index: Int) {
+        assertMainThread()
+        
+        items[index % CollectionImageCache.cacheSize]?.innerCache.disable()
+    }
+    
     func touch(index: Int, optographID: UUID, side: TextureSide, cubeIndices: [CubeImageCache.Index]) {
+        assertMainThread()
+        
         let cacheIndex = index % CollectionImageCache.cacheSize
         let textureSize = self.textureSize
         
         if items[cacheIndex] == nil || items[cacheIndex]?.index != index {
-            debouncerTouch.debounce { [weak self] in
+            debouncerTouch.debounce {
                 let item = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))
-                self?.items[cacheIndex] = item
+                self.items[cacheIndex] = item
                 for cubeIndex in cubeIndices {
                     item.innerCache.get(cubeIndex, callback: nil)
                 }
@@ -187,10 +201,14 @@ class CollectionImageCache {
     }
     
     func reset() {
+        assertMainThread()
+        
         items = [Item?](count: CollectionImageCache.cacheSize, repeatedValue: nil)
     }
     
     func delete(indices: [Int]) {
+        assertMainThread()
+        
         var count = 0
         for index in indices {
             let shiftedIndex = index - count
@@ -211,6 +229,8 @@ class CollectionImageCache {
     }
     
     func insert(indices: [Int]) {
+        assertMainThread()
+        
         for index in indices {
             let sortedCacheIndices = items.flatMap({ $0?.index }).sort { $0.0 < $0.1 }
             guard let minIndex = sortedCacheIndices.first, maxIndex = sortedCacheIndices.last else {
@@ -229,7 +249,6 @@ class CollectionImageCache {
             }
             
             items[(minIndex + lowerShiftIndexOffset) % CollectionImageCache.cacheSize] = nil
-//            update(minIndex + lowerShiftIndexOffset, callback: nil)
         }
     }
 }

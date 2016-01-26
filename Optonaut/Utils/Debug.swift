@@ -13,8 +13,13 @@ func logRetain() {
     let results = caller.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: " -[]+?.,")).filter(isNotEmpty)
     print("Deinit \(results[3])")
 }
+
 func logInit() {
     let caller = NSThread.callStackSymbols()[1]
     let results = caller.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: " -[]+?.,")).filter(isNotEmpty)
     print("Init \(results[3])")
+}
+
+func assertMainThread() {
+    assert(NSThread.currentThread().isMainThread, "has to be called on main thread")
 }

@@ -154,6 +154,12 @@ func phiThetaToRotationMatrix(phi: Float, theta: Float) -> GLKMatrix4 {
     return GLKMatrix4Multiply(GLKMatrix4MakeZRotation(-phi), GLKMatrix4MakeXRotation(-theta))
 }
 
+func sync(obj: AnyObject, fn: () -> ()) {
+    objc_sync_enter(obj)
+    fn()
+    objc_sync_exit(obj)
+}
+
 //class NotificationSignal {
 //    
 //    let (signal, sink) =  Signal<Void, NoError>.pipe()

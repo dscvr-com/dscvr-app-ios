@@ -147,35 +147,35 @@ class CombinedMotionManager: RotationMatrixSource {
         touchRotationSource.reset()
     }
     
-    func setAlign(direction: Direction) {
+    func setDirection(direction: Direction) {
         touchRotationSource.phi = direction.phi
         touchRotationSource.theta = direction.theta
     }
     
-    func getAlign() -> Direction {
+    func getDirection() -> Direction {
         return (phi: touchRotationSource.phi, theta: touchRotationSource.theta)
     }
     
     func getRotationMatrix() -> GLKMatrix4 {
-        
-        let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
-        
-        if !touchRotationSource.isTouching {
-            // Update from motion and damping
-            if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
-                let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
-                
-                let diffRotationTheta = atan2(diffRotationMatrix.m21, diffRotationMatrix.m22)
-                let diffRotationPhi = atan2(-diffRotationMatrix.m20,
-                                            sqrt(diffRotationMatrix.m21 * diffRotationMatrix.m21 +
-                                                diffRotationMatrix.m22 * diffRotationMatrix.m22))
-                
-                touchRotationSource.phi += diffRotationPhi
-                touchRotationSource.theta += diffRotationTheta
-            }
-        }
-        
-        lastCoreMotionRotationMatrix = coreMotionRotationMatrix
+//        
+//        let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
+//        
+//        if !touchRotationSource.isTouching {
+//            // Update from motion and damping
+//            if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
+//                let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
+//                
+//                let diffRotationTheta = atan2(diffRotationMatrix.m21, diffRotationMatrix.m22)
+//                let diffRotationPhi = atan2(-diffRotationMatrix.m20,
+//                                            sqrt(diffRotationMatrix.m21 * diffRotationMatrix.m21 +
+//                                                diffRotationMatrix.m22 * diffRotationMatrix.m22))
+//                
+//                touchRotationSource.phi += diffRotationPhi
+//                touchRotationSource.theta += diffRotationTheta
+//            }
+//        }
+//        
+//        lastCoreMotionRotationMatrix = coreMotionRotationMatrix
         
         return touchRotationSource.getRotationMatrix()
     }
@@ -206,10 +206,10 @@ class CollectionViewCell: UICollectionViewCell {
     
     var direction: Direction {
         set(direction) {
-            combinedMotionManager.setAlign(direction)
+            combinedMotionManager.setDirection(direction)
         }
         get {
-            return combinedMotionManager.getAlign()
+            return combinedMotionManager.getDirection()
         }
     }
     

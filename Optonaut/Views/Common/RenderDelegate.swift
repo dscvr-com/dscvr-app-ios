@@ -118,7 +118,7 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     private func initScene() {
-        let subSurf = 3
+        let subSurf = 2
         
         let subW = 1.0 / Float(subSurf)
         
@@ -166,17 +166,35 @@ class CubeRenderDelegate: RenderDelegate {
         return [SCNNode](sorted.prefix(k))
     }
     
+    var setCount: [CubeImageCache.Index: Int] = [:]
+    
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
+        sync(self) {
+            if self.setCount[index] == nil {
+                self.setCount[index] = 1
+            } else {
+                self.setCount[index]!++
+            }
+        }
         if let node = planes[index]?.node {
             node.geometry!.firstMaterial!.diffuse.contents = texture
         }
     }
     
     func reset() {
-        nodeEnterScene = nil
-        nodeLeaveScene = nil
+        sync(self) {
+            print(self.setCount)
+            print("reset")
+            self.nodeEnterScene = nil
+            self.nodeLeaveScene = nil
+            
+            self.setCount = [:]
+        }
         
-        planes.values.forEach { $0.node.geometry?.firstMaterial?.diffuse.contents = UIColor.blackColor() }
+        for (_, plane) in planes {
+            plane.node.geometry?.firstMaterial?.diffuse.contents = UIColor.blackColor()
+            plane.visible = false
+        }
     }
     
     func getVisibleAndAdjacentPlaneIndicesFromRotationMatrix(rotation: GLKMatrix4) -> [CubeImageCache.Index] {
@@ -223,8 +241,6 @@ class CubeRenderDelegate: RenderDelegate {
                 
                 item.node.geometry!.firstMaterial!.diffuse.contents = nil
             }
-        
-            planes[index]!.visible = nowVisible
         }
         
     }

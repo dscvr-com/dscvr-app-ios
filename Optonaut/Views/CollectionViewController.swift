@@ -267,7 +267,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
 //        dispatch_async(queue) { [weak self] in
         let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
         cell.setCubeImageCache(cubeImageCache)
-            
+        
 //            if indexPath.row - 1 > 0, let id = self?.optographIDs[indexPath.row - 1] {
 //                self?.imageCache.touch(indexPath.row - 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
 //            }
@@ -295,6 +295,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         optographDirections[optographIDs[indexPath.row]] = cell.direction
         cell.didEndDisplay()
+        
+        imageCache.disable(indexPath.row)
     }
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
