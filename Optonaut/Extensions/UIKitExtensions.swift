@@ -20,11 +20,32 @@ extension UIImage {
         let newSize = resizeWidth ? CGSize(width: value, height: otherValue) : CGSize(width: otherValue, height: value)
         let newSizeAsInt = CGSize(width: Int(newSize.width), height: Int(newSize.height))
         
-        UIGraphicsBeginImageContextWithOptions(newSizeAsInt, false, 0.0)
+        UIGraphicsBeginImageContextWithOptions(newSizeAsInt, false, 1.0)
         drawInRect(CGRect(origin: CGPointZero, size: newSizeAsInt))
         let newImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         return newImage;
+    }
+    
+    
+    /// Extracts a texture subface from an UIImage.
+    /// - parameter x: Horizontal coordinate of the texture subface, between 0 and 1.
+    /// - parameter y: Vertical coordinate of the texture subface, between 0 and 1.
+    /// - parameter w: Width of the texture subface, between 0 and 1.
+    /// - parameter d: Width of the texture subface, in pixels.
+    /// - returns: The generated subface, as UIImage.
+    func subface(x: CGFloat, y: CGFloat, w: CGFloat, d: Int) -> UIImage{
+        let targetSize = CGSize(width: d, height: d)
+        
+        let sourceArea = CGRect(x: size.width * x, y: size.height * y, width: size.width * w, height: size.height * w)
+        let imagePart = CGImageCreateWithImageInRect(self.CGImage!, sourceArea)!
+        
+        UIGraphicsBeginImageContextWithOptions(targetSize, false, 1.0)
+        UIImage(CGImage: imagePart).drawInRect(CGRect(origin: CGPointZero, size: targetSize))
+        let subface = UIGraphicsGetImageFromCurrentImageContext();
+        
+        UIGraphicsEndImageContext();
+        return subface;
     }
     
     func centeredCropWithSize(targetSize: CGSize) -> UIImage {

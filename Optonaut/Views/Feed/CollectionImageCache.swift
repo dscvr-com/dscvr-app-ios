@@ -66,10 +66,13 @@ class CubeImageCache {
         if let image = items[index]?.image {
             callback?(image, index: index)
         } else if items[index]?.downloadTask == nil {
-            if let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url(index, textureSize: 0)) {
+            // Image resolve is by URL - query whole face and then get subface manually. 
+            let queryIndex = Index(face: index.face, x: 0.0, y: 0.0, d: 1.0)
+            if let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url(queryIndex, textureSize: 0)) {
 //                TODO check if async is needed here
 //                dispatch_async(queue) {
-                    let resizedImage = image.resized(.Width, value: textureSize)
+                    let resizedImage = image.subface(CGFloat(index.x), y: CGFloat(index.y), w: CGFloat(index.d), d: Int(textureSize * CGFloat(index.d)))
+//                    let resizedImage = image.resized(.Width, value: textureSize)
                     let tex = SKTexture(image: resizedImage)
 //                    items[index]?.image = tex
 //                    items[index]?.downloadTask = nil
