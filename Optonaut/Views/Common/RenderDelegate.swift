@@ -146,7 +146,7 @@ class CubeRenderDelegate: RenderDelegate {
         }
     }
     
-    func getDist(a: SCNNode, b: SCNNode) -> Float {
+    private func getDist(a: SCNNode, b: SCNNode) -> Float {
         let diff = GLKVector3Subtract(
             SCNVector3ToGLKVector3(a.position),
             SCNVector3ToGLKVector3(b.position))
@@ -154,9 +154,9 @@ class CubeRenderDelegate: RenderDelegate {
         return GLKVector3Length(diff)
     }
     
-    func getKNNGeometric(center: SCNNode, k: Int) -> [SCNNode] {
+    private func getKNNGeometric(center: SCNNode, k: Int) -> [SCNNode] {
         let allNodes = planes.values.map { $0.node }
-        let sorted = allNodes.sort( { (n1: SCNNode, n2: SCNNode) -> Bool in return getDist(center, b: n1) < getDist(center, b: n2) } )
+        let sorted = allNodes.sort { (n1: SCNNode, n2: SCNNode) in getDist(center, b: n1) < getDist(center, b: n2) }
         return [SCNNode](sorted.prefix(k))
     }
     
@@ -170,15 +170,13 @@ class CubeRenderDelegate: RenderDelegate {
         nodeEnterScene = nil
         nodeLeaveScene = nil
         
-        planes.values.forEach { $0.node.removeFromParentNode() }
-        planes.removeAll()
-        
-        initScene()
+        planes.values.forEach { $0.node.geometry?.firstMaterial?.diffuse.contents = UIColor.blackColor() }
     }
     
     override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         super.renderer(aRenderer, updateAtTime: time)
-        if scnView == nil {
+        
+        guard let scnView = scnView else {
             return
         }
         
@@ -188,7 +186,9 @@ class CubeRenderDelegate: RenderDelegate {
         // smallCamera.camera = RenderDelegate.setupCamera(smallFov)
         // smallCamera.transform = cameraNode.transform
         
-        let visiblePlanes: [SCNNode] = planes.values.map { $0.node }.filter { (self.scnView!.isNodeInsideFrustum($0, withPointOfView: self.cameraNode)) }
+        let visiblePlanes: [SCNNode] = planes.values
+            .map { $0.node }
+            .filter { scnView.isNodeInsideFrustum($0, withPointOfView: self.cameraNode) }
         let visibleAndAdjacentPlanes = Set(visiblePlanes.flatMap { self.adj[$0]! })
         
         // Use verbose colors for debugging.
@@ -204,11 +204,12 @@ class CubeRenderDelegate: RenderDelegate {
                     item.visible = true
                 }
             } else if !nowVisible && item.visible {
-                if let callback = nodeEnterScene {
+                if let callback = nodeLeaveScene {
                     item.visible = false
-                    item.node.geometry!.firstMaterial!.diffuse.contents = nil
                     callback(index)
                 }
+                
+                item.node.geometry!.firstMaterial!.diffuse.contents = nil
             }
         
             planes[index]!.visible = nowVisible
@@ -232,7 +233,6 @@ class CubeRenderDelegate: RenderDelegate {
         transform = SCNMatrix4Mult(node.transform, transform)
         node.transform = SCNMatrix4Mult(SCNMatrix4Invert(pivot), transform)
 
-        
         return node
     }
     

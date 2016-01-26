@@ -33,14 +33,14 @@ class CubeImageCache {
     
     typealias Callback = (SKTexture, index: Index) -> Void
 //    private typealias InnerItem = (image: SKTexture?, downloadTask: RetrieveImageTask?)
-    private class InnerItem {
+    private class Item {
         var image: SKTexture?
         var downloadTask: RetrieveImageTask?
     }
     
     private let queue = dispatch_queue_create("collection_image_cube_cache", DISPATCH_QUEUE_CONCURRENT)
     
-    private var items: [Index: InnerItem] = [:]
+    private var items: [Index: Item] = [:]
     private let optographID: UUID
     private let side: TextureSide
     private var textureSize: CGFloat
@@ -80,7 +80,7 @@ class CubeImageCache {
 //                }
                 
 //                dispatch_async(queue) { [weak self] in
-                    let item = InnerItem()
+                    let item = Item()
                     item.image = tex
                     items[index] = item
 //                }
@@ -109,7 +109,7 @@ class CubeImageCache {
                 )
                 
 //                dispatch_async(queue) { [weak self] in
-                let item = InnerItem()
+                let item = Item()
                 item.downloadTask = downloadTask
                 items[index] = item
 //                }

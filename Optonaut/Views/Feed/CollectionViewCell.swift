@@ -147,9 +147,13 @@ class CombinedMotionManager: RotationMatrixSource {
         touchRotationSource.reset()
     }
     
-    func align(direction: (phi: Float, theta: Float)) {
+    func setAlign(direction: Direction) {
         touchRotationSource.phi = direction.phi
         touchRotationSource.theta = direction.theta
+    }
+    
+    func getAlign() -> Direction {
+        return (phi: touchRotationSource.phi, theta: touchRotationSource.theta)
     }
     
     func getRotationMatrix() -> GLKMatrix4 {
@@ -200,6 +204,15 @@ class CollectionViewCell: UICollectionViewCell {
     private enum LoadingStatus { case Nothing, Preview, Loaded }
     private let loadingStatus = MutableProperty<LoadingStatus>(.Nothing)
     
+    var direction: Direction {
+        set(direction) {
+            combinedMotionManager.setAlign(direction)
+        }
+        get {
+            return combinedMotionManager.getAlign()
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -230,7 +243,7 @@ class CollectionViewCell: UICollectionViewCell {
         contentView.addSubview(loadingOverlayView)
         
         loadingIndicatorView.frame = contentView.frame
-        loadingIndicatorView.rac_animating <~ loadingStatus.producer.equalsTo(.Loaded).map(negate)
+        loadingIndicatorView.rac_animating <~ loadingStatus.producer.equalsTo(.Nothing)
         contentView.addSubview(loadingIndicatorView)
     }
     
@@ -287,13 +300,6 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
-    private func reset() {
-        combinedMotionManager.reset()
-        loadingStatus.value = .Nothing
-        renderDelegate.reset()
-//        scnView.prepareObject(renderDelegate!.scene, shouldAbortBlock: nil)
-    }
-    
     func setCubeImageCache(cache: CubeImageCache) {
         renderDelegate.nodeEnterScene = { [weak self] index in
             dispatch_async(queue) {
@@ -313,23 +319,15 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
-//    func setImage(texture: SKTexture, forIndex index: CubeImageCache.Index) {
-//        renderDelegate.setTexture(texture, forIndex: index)
-////        scnView.prepareObject(renderDelegate!.planes[index]!.node, shouldAbortBlock: nil)
-//        Async.main { [weak self] in
-//////            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
-//            self?.loadingStatus.value = .Loaded
-//        }
-//    }
-    
-    func willDisplay(direction: (phi: Float, theta: Float)) {
+    func willDisplay() {
         scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
-        combinedMotionManager.align(direction)
     }
     
     func didEndDisplay() {
-        reset()
         scnView.playing = false
+        combinedMotionManager.reset()
+        loadingStatus.value = .Nothing
+        renderDelegate.reset()
     }
     
 }

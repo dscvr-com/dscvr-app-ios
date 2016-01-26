@@ -187,6 +187,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
+        CoreMotionRotationSource.Instance.stop()
+        
         collectionViewModel.isActive.value = false
     }
 

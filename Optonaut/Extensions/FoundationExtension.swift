@@ -29,6 +29,18 @@ extension String {
     }
 }
 
+extension Array {
+    
+    func first<L: BooleanType>(predicate: Element -> L) -> Element? {
+        for item in self {
+            if predicate(item) {
+                return item
+            }
+        }
+        return nil
+    }
+}
+
 extension Double {
     func roundToPlaces(places: Int) -> Double {
         let divisor = pow(10, Double(places))

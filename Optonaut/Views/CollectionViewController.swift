@@ -14,6 +14,8 @@ import Kingfisher
 
 private let reuseIdentifier = "Cell"
 
+typealias Direction = (phi: Float, theta: Float)
+
 
 class CollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
     
@@ -21,6 +23,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     private let viewModel = FeedViewModel()
     private var optographIDs: [UUID] = []
+    private var optographDirections: [UUID: Direction] = [:]
     private let imageCache: CollectionImageCache
     private let overlayDebouncer: Debouncer
     
@@ -89,8 +92,6 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         edgesForExtendedLayout = .None
         
-        CoreMotionRotationSource.Instance.start()
-        
         viewModel.results.producer
             .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
             .delayAllUntil(viewModel.isActive.producer)
@@ -99,6 +100,11 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                 if let strongSelf = self {
                     let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
                     strongSelf.optographIDs = results.models.map { $0.ID }
+                    for optograph in results.models {
+                        if strongSelf.optographDirections[optograph.ID] == nil {
+                            strongSelf.optographDirections[optograph.ID] = (phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta))
+                        }
+                    }
                     
                     CATransaction.begin()
                     CATransaction.setDisableActions(true)
@@ -163,6 +169,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         viewModel.refreshNotification.notify(())
         
+        CoreMotionRotationSource.Instance.start()
+        
         view.bounds = UIScreen.mainScreen().bounds
         
         RotationService.sharedInstance.rotationEnable()
@@ -199,6 +207,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        
+        CoreMotionRotationSource.Instance.stop()
         
         viewModel.isActive.value = false
     }
@@ -243,7 +253,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         let optographID = optographIDs[indexPath.row]
         let optograph = Models.optographs[optographID]!.model
         
-        cell.willDisplay((phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta)))
+        cell.direction = optographDirections[optographID]!
+        cell.willDisplay()
         
         print("will disp \(indexPath.row)")
         
@@ -280,7 +291,10 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     }
     
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        (cell as! CollectionViewCell).didEndDisplay()
+        let cell = cell as! CollectionViewCell
+        
+        optographDirections[optographIDs[indexPath.row]] = cell.direction
+        cell.didEndDisplay()
     }
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
