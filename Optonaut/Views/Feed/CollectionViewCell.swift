@@ -295,7 +295,12 @@ class CollectionViewCell: UICollectionViewCell {
     func setCubeImageCache(cache: CubeImageCache) {
         renderDelegate.nodeEnterScene = { [weak self] index in
             dispatch_async(queue) {
-                cache.get(index, callback: self?.setImage)
+                cache.get(index) { [weak self] (texture: SKTexture, forIndex index: CubeImageCache.Index) in
+                    self?.renderDelegate.setTexture(texture, forIndex: index)
+                    Async.main { [weak self] in
+                        self?.loadingStatus.value = .Loaded
+                    }
+                }
             }
         }
         
@@ -306,14 +311,14 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func setImage(texture: SKTexture, forIndex index: CubeImageCache.Index) {
-        renderDelegate.setTexture(texture, forIndex: index)
-//        scnView.prepareObject(renderDelegate!.planes[index]!.node, shouldAbortBlock: nil)
-        Async.main { [weak self] in
-////            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
-            self?.loadingStatus.value = .Loaded
-        }
-    }
+//    func setImage(texture: SKTexture, forIndex index: CubeImageCache.Index) {
+//        renderDelegate.setTexture(texture, forIndex: index)
+////        scnView.prepareObject(renderDelegate!.planes[index]!.node, shouldAbortBlock: nil)
+//        Async.main { [weak self] in
+//////            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
+//            self?.loadingStatus.value = .Loaded
+//        }
+//    }
     
     func willDisplay(direction: (phi: Float, theta: Float)) {
         scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
