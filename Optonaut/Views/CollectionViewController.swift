@@ -247,32 +247,23 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         
         print("will disp \(indexPath.row)")
         
-        let imageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) in
-            if self?.collectionView?.indexPathsForVisibleItems().contains(indexPath) == true {
-                cell.setImage(image, forIndex: index)
-            }
-        }
+//        let imageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) in
+//            if self?.collectionView?.indexPathsForVisibleItems().contains(indexPath) == true {
+//                cell.setImage(image, forIndex: index)
+//            }
+//        }
         
-        /*
-        dispatch_async(queue) { [weak self] in
-            let defaultIndices = [
-                CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
-                CubeImageCache.Index(face: 1, x: 0, y: 0, d: 1),
-                CubeImageCache.Index(face: 2, x: 0, y: 0, d: 1),
-                CubeImageCache.Index(face: 3, x: 0, y: 0, d: 1),
-                CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
-                CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
-            ]
-            self?.imageCache.get(indexPath.row, optographID: optographID, side: .Left, cubeIndices: defaultIndices, callback: imageCallback)
+//        dispatch_async(queue) { [weak self] in
+        let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
+        cell.setCubeImageCache(cubeImageCache)
             
-            if indexPath.row - 1 > 0, let id = self?.optographIDs[indexPath.row - 1] {
-                self?.imageCache.touch(indexPath.row - 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
-            }
-            if indexPath.row + 1 < self?.optographIDs.count, let id = self?.optographIDs[indexPath.row + 1] {
-                self?.imageCache.touch(indexPath.row + 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
-            }
-        }
-*/
+//            if indexPath.row - 1 > 0, let id = self?.optographIDs[indexPath.row - 1] {
+//                self?.imageCache.touch(indexPath.row - 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
+//            }
+//            if indexPath.row + 1 < self?.optographIDs.count, let id = self?.optographIDs[indexPath.row + 1] {
+//                self?.imageCache.touch(indexPath.row + 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
+//            }
+//        }
         
         if overlayView.optographID == nil {
             overlayView.optographID = optographID

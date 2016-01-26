@@ -13,6 +13,8 @@ import SwiftyUserDefaults
 import Kingfisher
 import SpriteKit
 
+private let queue = dispatch_queue_create("viewer", DISPATCH_QUEUE_SERIAL)
+
 class ViewerViewController: UIViewController  {
     
     private let orientation: UIInterfaceOrientation
@@ -79,7 +81,9 @@ class ViewerViewController: UIViewController  {
     
     private func createRenderDelegates() {
         leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: leftProgram.fov, cameraOffset: Float(-0.2))
+        leftRenderDelegate.scnView = leftScnView
         rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: rightProgram.fov, cameraOffset: Float(0.2))
+        rightRenderDelegate.scnView = rightScnView
         
         leftScnView.scene = leftRenderDelegate.scene
         leftScnView.delegate = leftRenderDelegate
@@ -186,34 +190,41 @@ class ViewerViewController: UIViewController  {
         
         
         let leftImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
-            Async.main {
+            dispatch_async(queue) {
                 self?.leftRenderDelegate.setTexture(image, forIndex: index)
                 self?.leftScnView.prepareObject(self!.leftRenderDelegate!.scene, shouldAbortBlock: nil)
                 self?.leftLoadingView.stopAnimating()
             }
         }
         
+        leftRenderDelegate.nodeEnterScene = { [weak self] index in
+            dispatch_async(queue) {
+                self?.leftCache.get(index, callback: leftImageCallback)
+            }
+        }
+        
+        leftRenderDelegate.nodeLeaveScene = { index in
+            dispatch_async(queue) { [weak self] in
+                self?.leftCache.forget(index)
+            }
+        }
+        
         let rightImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
-            Async.main {
+            dispatch_async(queue) {
                 self?.rightRenderDelegate.setTexture(image, forIndex: index)
                 self?.rightLoadingView.stopAnimating()
             }
         }
         
+        rightRenderDelegate.nodeEnterScene = { [weak self] index in
+            dispatch_async(queue) {
+                self?.leftCache.get(index, callback: rightImageCallback)
+            }
+        }
         
-        let defaultIndices = [
-            CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
-            CubeImageCache.Index(face: 1, x: 0, y: 0, d: 1),
-            CubeImageCache.Index(face: 2, x: 0, y: 0, d: 1),
-            CubeImageCache.Index(face: 3, x: 0, y: 0, d: 1),
-            CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
-            CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
-        ]
-        
-        Async.userInteractive { [weak self] in
-            for cubeIndex in defaultIndices {
-                self?.leftCache.get(cubeIndex, callback: leftImageCallback)
-                self?.rightCache.get(cubeIndex, callback: rightImageCallback)
+        rightRenderDelegate.nodeLeaveScene = { index in
+            dispatch_async(queue) { [weak self] in
+                self?.rightCache.forget(index)
             }
         }
         

@@ -77,11 +77,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 
                 CATransaction.begin()
                 CATransaction.setDisableActions(true)
-                strongSelf.collectionView!.performBatchUpdates({
-//                    strongSelf.collectionView!.reloadItemsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 0)])
-                }, completion: { _ in
-                    CATransaction.commit()
-                })
+                strongSelf.collectionView!.performBatchUpdates(nil, completion: { _ in CATransaction.commit() })
                 
                 if isEditing {
                     let collectionViewSize = strongSelf.collectionView!.frame.size
@@ -251,26 +247,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if indexPath.row == 0 {
             
         } else {
-            let cell = cell as! TileCollectionViewCell
-            let optographID = optographIDs[indexPath.row - 1]
-            
-            let imageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) in
-                if self?.collectionView?.indexPathsForVisibleItems().contains(indexPath) == true {
-                    cell.setImage(image, forIndex: index)
-                }
-            }
-            
-            dispatch_async(queue) { [weak self] in
-                let defaultIndices = [
-                    CubeImageCache.Index(face: 0, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 1, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 2, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 3, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 4, x: 0, y: 0, d: 1),
-                    CubeImageCache.Index(face: 5, x: 0, y: 0, d: 1),
-                ]
-                self?.imageCache.get(indexPath.row, optographID: optographID, side: .Left, cubeIndices: defaultIndices, callback: imageCallback)
-            }
+//            let cell = cell as! TileCollectionViewCell
+//            let optographID = optographIDs[indexPath.row - 1]
         }
         
 //        guard let cell = cell as? CollectionViewCell else {

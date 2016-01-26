@@ -137,7 +137,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         KingfisherManager.sharedManager.downloader.downloadTimeout = 60
         KingfisherManager.sharedManager.cache.maxDiskCacheSize = 200000000 // 200mb
 //        KingfisherManager.sharedManager.cache.maxMemoryCost = 400000000 // 100mb = 4e+8 pixels
-        KingfisherManager.sharedManager.cache.maxMemoryCost = 25000000 // 100mb = 2.5e+7 pixels
+//        KingfisherManager.sharedManager.cache.maxMemoryCost = 25000000 // 100mb = 2.5e+7 pixels
+        KingfisherManager.sharedManager.cache.maxMemoryCost = 10 // 100mb = 2.5e+7 pixels
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         

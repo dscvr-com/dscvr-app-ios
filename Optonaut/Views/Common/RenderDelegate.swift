@@ -83,7 +83,17 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
 class CubeRenderDelegate: RenderDelegate {
     
-    var planes: [CubeImageCache.Index: (node: SCNNode, visible: Bool)] = [:]
+    class Item {
+        let node: SCNNode
+        var visible: Bool
+        
+        init(node: SCNNode, visible: Bool) {
+            self.node = node
+            self.visible = visible
+        }
+    }
+    
+    var planes: [CubeImageCache.Index: Item] = [:]
     
     var nodeEnterScene: (CubeImageCache.Index -> ())?
     var nodeLeaveScene: (CubeImageCache.Index -> ())?
@@ -95,7 +105,11 @@ class CubeRenderDelegate: RenderDelegate {
     override init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float) {
         super.init(rotationMatrixSource: rotationMatrixSource, fov: fov, cameraOffset: cameraOffset)
         
-        let subSurf = 8
+        initScene()
+    }
+    
+    private func initScene() {
+        let subSurf = 3
         let subW = 1.0 / Float(subSurf)
         
         let transforms: [(position: SCNVector3, rotation: SCNVector3)] = [
@@ -113,7 +127,7 @@ class CubeRenderDelegate: RenderDelegate {
                     let node = createPlane(position: transforms[face].position, rotation: transforms[face].rotation,
                         subX: Float(subX) * subW, subY: Float(subY) * subW, subW: subW)
                     node.geometry!.firstMaterial!.doubleSided = true
-                    planes[CubeImageCache.Index(face: face, x: Float(subX) * subW, y: Float(subY) * subW, d: subW)] = (node: node, visible: false)
+                    planes[CubeImageCache.Index(face: face, x: Float(subX) * subW, y: Float(subY) * subW, d: subW)] = Item(node: node, visible: false)
                     scene.rootNode.addChildNode(node)
                 }
             }
@@ -121,31 +135,38 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
-        if #available(iOS 9.0, *) {
-            let image = UIImage(CGImage: texture.CGImage())
-            planes[index]!.node.geometry!.firstMaterial!.diffuse.contents = image
-        } else {
-            planes[index]!.node.geometry!.firstMaterial!.diffuse.contents = texture
-            // Fallback on earlier versions
+        if let node = planes[index]?.node {
+            node.geometry!.firstMaterial!.diffuse.contents = texture
         }
     }
     
     func reset() {
-        planes.values.forEach { $0.node.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor() }
+        nodeEnterScene = nil
+        nodeLeaveScene = nil
+        
+        planes.values.forEach { $0.node.removeFromParentNode() }
+        planes.removeAll()
+        
+        initScene()
     }
     
     override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         super.renderer(aRenderer, updateAtTime: time)
         
-        for (index, (node: node, visible: visible)) in planes {
-            if let nowVisible = scnView?.isNodeInsideFrustum(node, withPointOfView: cameraNode) {
-                if nowVisible && !visible {
-                    nodeEnterScene?(index)
-                } else if !nowVisible && visible {
-                    nodeLeaveScene?(index)
+        for (index, item) in planes {
+            if let nowVisible = scnView?.isNodeInsideFrustum(item.node, withPointOfView: cameraNode) {
+                if nowVisible && !item.visible {
+                    if let callback = nodeEnterScene {
+                        callback(index)
+                        item.visible = true
+                    }
+                } else if !nowVisible && item.visible {
+                    if let callback = nodeEnterScene {
+                        item.visible = false
+                        item.node.geometry!.firstMaterial!.diffuse.contents = nil
+                        callback(index)
+                    }
                 }
-            
-                planes[index]!.visible = nowVisible
             }
         }
     }
@@ -153,18 +174,19 @@ class CubeRenderDelegate: RenderDelegate {
     private func createPlane(position position: SCNVector3, rotation: SCNVector3, subX: Float, subY: Float, subW: Float) -> SCNNode {
         let geometry = SCNPlane(width: CGFloat(2 * subW), height: CGFloat(2 * subW))
         geometry.firstMaterial!.doubleSided = true
+        geometry.firstMaterial!.diffuse.contents = UIColor(red: CGFloat(subX), green: CGFloat(subX), blue: 0, alpha: 1)
         
         let node = SCNNode(geometry: geometry)
         
-        node.pivot = SCNMatrix4MakeTranslation((subX + subW / 2) * 2 - 1, (subY + subW / 2) * 2 - 1, 0)
+        let pivot = SCNMatrix4MakeTranslation(-(subX + subW / 2) * 2 + 1, (subY + subW / 2) * 2 - 1, 0)
         
         node.position = position
         node.eulerAngles = rotation
         
-        let transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
-        node.transform = SCNMatrix4Mult(node.transform, transform)
+        var transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
+        transform = SCNMatrix4Mult(node.transform, transform)
         
-        node.geometry!.firstMaterial!.diffuse.contents = UIColor(red: CGFloat(subX), green: CGFloat(subY), blue: 0, alpha: 1)
+        node.transform = SCNMatrix4Mult(SCNMatrix4Invert(pivot), transform)
         
         return node
     }

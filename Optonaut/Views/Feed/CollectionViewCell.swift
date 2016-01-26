@@ -176,6 +176,8 @@ class CombinedMotionManager: RotationMatrixSource {
         return touchRotationSource.getRotationMatrix()
     }
 }
+    
+private let queue = dispatch_queue_create("collection_view_cell", DISPATCH_QUEUE_SERIAL)
 
 class CollectionViewCell: UICollectionViewCell {
     
@@ -203,15 +205,21 @@ class CollectionViewCell: UICollectionViewCell {
         
         contentView.backgroundColor = .blackColor()
         
-        scnView = SCNView(frame: contentView.frame)
+        if #available(iOS 9.0, *) {
+            scnView = SCNView(frame: contentView.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+        } else {
+            scnView = SCNView(frame: contentView.frame)
+        }
     
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: HorizontalFieldOfView)
     
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView))
+        renderDelegate.scnView = scnView
         
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
         scnView.backgroundColor = .clearColor()
+        scnView.hidden = false
         contentView.addSubview(scnView)
         
         loadingOverlayView.backgroundColor = .blackColor()
@@ -281,12 +289,26 @@ class CollectionViewCell: UICollectionViewCell {
         combinedMotionManager.reset()
         loadingStatus.value = .Nothing
         renderDelegate.reset()
-        scnView.prepareObject(renderDelegate!.scene, shouldAbortBlock: nil)
+//        scnView.prepareObject(renderDelegate!.scene, shouldAbortBlock: nil)
+    }
+    
+    func setCubeImageCache(cache: CubeImageCache) {
+        renderDelegate.nodeEnterScene = { [weak self] index in
+            dispatch_async(queue) {
+                cache.get(index, callback: self?.setImage)
+            }
+        }
+        
+        renderDelegate.nodeLeaveScene = { index in
+            dispatch_async(queue) {
+                cache.forget(index)
+            }
+        }
     }
     
     func setImage(texture: SKTexture, forIndex index: CubeImageCache.Index) {
         renderDelegate.setTexture(texture, forIndex: index)
-      //  scnView.prepareObject(renderDelegate!.planes[index]!, shouldAbortBlock: nil)
+//        scnView.prepareObject(renderDelegate!.planes[index]!.node, shouldAbortBlock: nil)
         Async.main { [weak self] in
 ////            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
             self?.loadingStatus.value = .Loaded
@@ -299,7 +321,6 @@ class CollectionViewCell: UICollectionViewCell {
     }
     
     func didEndDisplay() {
-//        renderDelegate.image = nil
         reset()
         scnView.playing = false
     }

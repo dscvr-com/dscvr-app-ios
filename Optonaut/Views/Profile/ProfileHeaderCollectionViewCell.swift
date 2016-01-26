@@ -38,8 +38,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        print("iniiit")
-        
         contentView.backgroundColor = .whiteColor()
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
@@ -163,8 +161,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             return
         }
         
-        print("Biiiind")
-        
         self.viewModel = viewModel
         
         isMe = viewModel.isMe
@@ -175,14 +171,16 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameView.rac_text <~ viewModel.displayName
         displayNameView.rac_hidden <~ viewModel.isEditing
         displayNameInputView.rac_hidden <~ viewModel.isEditing.producer.map(negate)
-        displayNameInputView.rac_textSignal().toSignalProducer().startWithNext { [weak self] val in
+        displayNameInputView.rac_textSignal().toSignalProducer().skip(1).startWithNext { [weak self] val in
             self?.viewModel.displayName.value = val as! String
         }
+        
+        viewModel.text.producer.startWithNext { print("some \($0)") }
         
         textView.rac_text <~ viewModel.text
         textView.rac_hidden <~ viewModel.isEditing
         textInputView.rac_hidden <~ viewModel.isEditing.producer.map(negate)
-        textInputView.rac_textSignal().toSignalProducer().startWithNext { [weak self] val in
+        textInputView.rac_textSignal().toSignalProducer().skip(1).startWithNext { [weak self] val in
             self?.viewModel.text.value = val as! String
         }
         
