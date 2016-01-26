@@ -196,8 +196,6 @@ class CubeRenderDelegate: RenderDelegate {
         // visibleAndAdjacentPlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.blueColor() }
         // visiblePlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.greenColor() }
         
-        
-        
         for (index, item) in planes {
             let nowVisible = visibleAndAdjacentPlanes.contains(item.node)
             if nowVisible && !item.visible {
