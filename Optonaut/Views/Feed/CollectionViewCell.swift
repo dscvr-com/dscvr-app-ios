@@ -216,6 +216,8 @@ class CollectionViewCell: UICollectionViewCell {
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView))
         renderDelegate.scnView = scnView
         
+        renderDelegate.scnView = scnView
+        
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
         scnView.backgroundColor = .clearColor()

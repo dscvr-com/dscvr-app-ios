@@ -40,25 +40,31 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         scene.rootNode.addChildNode(cameraNode)
         
-        cameraNode.pivot = SCNMatrix4MakeTranslation(0, cameraOffset, 0)
+        // TODO(ej): Check if this is necassary for 3D vision. If so, add it to transform
+        // in each render loop since pivot is broken.
+        // cameraNode.pivot = SCNMatrix4MakeTranslation(0, cameraOffset, 0)
         
         super.init()
     }
     
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double) {
-        let xFov = Float(fov)
-        let yFov = toDegrees(
-            atan(
-                tan(toRadians(xFov) / Float(2)) * Float(height / width)
-            ) * Float(2)
-        )
-        let angles = [xFov / Float(2.0), xFov / Float(2.0), yFov / Float(2.0), yFov / Float(2.0)]
-        let newFov = FieldOfView(angles: angles)
+        let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
         
         self.init(rotationMatrixSource: rotationMatrixSource, fov: newFov, cameraOffset: Float(0))
     }
     
-    private static func setupCamera(fov: FieldOfView) -> SCNCamera {
+    internal static func getFov(width: CGFloat, height: CGFloat, fov: Double) -> FieldOfView {
+        let xFov = Float(fov)
+        let yFov = toDegrees(
+            atan(
+                tan(toRadians(xFov) / Float(2)) * Float(height / width)
+                ) * Float(2)
+        )
+        let angles = [xFov / Float(2.0), xFov / Float(2.0), yFov / Float(2.0), yFov / Float(2.0)]
+        return FieldOfView(angles: angles)
+    }
+    
+    internal static func setupCamera(fov: FieldOfView) -> SCNCamera {
         let zNear = Float(0.01)
         let zFar = Float(10000)
         
@@ -94,6 +100,7 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     var planes: [CubeImageCache.Index: Item] = [:]
+    var adj: [SCNNode: [SCNNode]] = [:]
     
     var nodeEnterScene: (CubeImageCache.Index -> ())?
     var nodeLeaveScene: (CubeImageCache.Index -> ())?
@@ -110,6 +117,7 @@ class CubeRenderDelegate: RenderDelegate {
     
     private func initScene() {
         let subSurf = 3
+        
         let subW = 1.0 / Float(subSurf)
         
         let transforms: [(position: SCNVector3, rotation: SCNVector3)] = [
@@ -132,6 +140,24 @@ class CubeRenderDelegate: RenderDelegate {
                 }
             }
         }
+        
+        for o in planes.values {
+            adj[o.node] = getKNNGeometric(o.node, k: 9)
+        }
+    }
+    
+    func getDist(a: SCNNode, b: SCNNode) -> Float {
+        let diff = GLKVector3Subtract(
+            SCNVector3ToGLKVector3(a.position),
+            SCNVector3ToGLKVector3(b.position))
+
+        return GLKVector3Length(diff)
+    }
+    
+    func getKNNGeometric(center: SCNNode, k: Int) -> [SCNNode] {
+        let allNodes = planes.values.map { $0.node }
+        let sorted = allNodes.sort( { (n1: SCNNode, n2: SCNNode) -> Bool in return getDist(center, b: n1) < getDist(center, b: n2) } )
+        return [SCNNode](sorted.prefix(k))
     }
     
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
@@ -152,23 +178,44 @@ class CubeRenderDelegate: RenderDelegate {
     
     override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         super.renderer(aRenderer, updateAtTime: time)
+        if scnView == nil {
+            return
+        }
+        
+        // Use the small camera for debugging.
+        // let smallFov = RenderDelegate.getFov(scnView!.bounds.width, height: scnView!.bounds.height, fov: 10)
+        // let smallCamera = SCNNode()
+        // smallCamera.camera = RenderDelegate.setupCamera(smallFov)
+        // smallCamera.transform = cameraNode.transform
+        
+        let visiblePlanes: [SCNNode] = planes.values.map { $0.node }.filter { (self.scnView!.isNodeInsideFrustum($0, withPointOfView: self.cameraNode)) }
+        let visibleAndAdjacentPlanes = Set(visiblePlanes.flatMap { self.adj[$0]! })
+        
+        // Use verbose colors for debugging.
+        // planes.values.forEach { $0.node.geometry!.firstMaterial!.diffuse.contents = UIColor.redColor() }
+        // visibleAndAdjacentPlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.blueColor() }
+        // visiblePlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.greenColor() }
+        
+        
         
         for (index, item) in planes {
-            if let nowVisible = scnView?.isNodeInsideFrustum(item.node, withPointOfView: cameraNode) {
-                if nowVisible && !item.visible {
-                    if let callback = nodeEnterScene {
-                        callback(index)
-                        item.visible = true
-                    }
-                } else if !nowVisible && item.visible {
-                    if let callback = nodeEnterScene {
-                        item.visible = false
-                        item.node.geometry!.firstMaterial!.diffuse.contents = nil
-                        callback(index)
-                    }
+            let nowVisible = visibleAndAdjacentPlanes.contains(item.node)
+            if nowVisible && !item.visible {
+                if let callback = nodeEnterScene {
+                    callback(index)
+                    item.visible = true
+                }
+            } else if !nowVisible && item.visible {
+                if let callback = nodeEnterScene {
+                    item.visible = false
+                    item.node.geometry!.firstMaterial!.diffuse.contents = nil
+                    callback(index)
                 }
             }
+        
+            planes[index]!.visible = nowVisible
         }
+        
     }
     
     private func createPlane(position position: SCNVector3, rotation: SCNVector3, subX: Float, subY: Float, subW: Float) -> SCNNode {
@@ -185,8 +232,8 @@ class CubeRenderDelegate: RenderDelegate {
         
         var transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
         transform = SCNMatrix4Mult(node.transform, transform)
-        
         node.transform = SCNMatrix4Mult(SCNMatrix4Invert(pivot), transform)
+
         
         return node
     }
