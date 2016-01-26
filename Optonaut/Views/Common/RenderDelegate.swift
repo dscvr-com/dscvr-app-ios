@@ -117,8 +117,21 @@ class CubeRenderDelegate: RenderDelegate {
         initScene()
     }
     
+    
+    private static func getBlackTexture() -> UIImage {
+        UIGraphicsBeginImageContext(CGSize(width: 1, height: 1));
+        let contextRef = UIGraphicsGetCurrentContext()
+        UIColor.blackColor().setFill()
+        CGContextFillRect(contextRef, CGRect(x: 0, y: 0, width: 1, height: 1))
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    }
+    
+    private static let BlackTexture = CubeRenderDelegate.getBlackTexture()
+    
     private func initScene() {
-        let subSurf = 2
+        let subSurf = 4
         
         let subW = 1.0 / Float(subSurf)
         
@@ -169,14 +182,8 @@ class CubeRenderDelegate: RenderDelegate {
     var setCount: [CubeImageCache.Index: Int] = [:]
     
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
-        sync(self) {
-            if self.setCount[index] == nil {
-                self.setCount[index] = 1
-            } else {
-                self.setCount[index]!++
-            }
-        }
         if let node = planes[index]?.node {
+            assert(node.geometry!.firstMaterial!.diffuse.contents === CubeRenderDelegate.BlackTexture) // Don't overwrite textures!
             node.geometry!.firstMaterial!.diffuse.contents = texture
         }
     }
@@ -192,7 +199,7 @@ class CubeRenderDelegate: RenderDelegate {
         }
         
         for (_, plane) in planes {
-            plane.node.geometry?.firstMaterial?.diffuse.contents = UIColor.blackColor()
+            plane.node.geometry?.firstMaterial?.diffuse.contents = CubeRenderDelegate.BlackTexture
             plane.visible = false
         }
     }
@@ -239,7 +246,7 @@ class CubeRenderDelegate: RenderDelegate {
                     callback(index)
                 }
                 
-                item.node.geometry!.firstMaterial!.diffuse.contents = nil
+                item.node.geometry!.firstMaterial!.diffuse.contents = CubeRenderDelegate.BlackTexture
             }
         }
         
@@ -248,7 +255,8 @@ class CubeRenderDelegate: RenderDelegate {
     private func createPlane(position position: SCNVector3, rotation: SCNVector3, subX: Float, subY: Float, subW: Float) -> SCNNode {
         let geometry = SCNPlane(width: CGFloat(2 * subW), height: CGFloat(2 * subW))
         geometry.firstMaterial!.doubleSided = true
-        geometry.firstMaterial!.diffuse.contents = UIColor(red: CGFloat(subX), green: CGFloat(subX), blue: 0, alpha: 1)
+        
+        geometry.firstMaterial!.diffuse.contents = CubeRenderDelegate.BlackTexture
         
         let node = SCNNode(geometry: geometry)
         
