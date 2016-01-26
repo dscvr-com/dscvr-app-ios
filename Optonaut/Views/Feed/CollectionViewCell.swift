@@ -111,7 +111,7 @@ class TouchRotationSource: RotationMatrixSource {
         
         theta = max(minTheta, min(theta, maxTheta))
         
-        return GLKMatrix4Multiply(GLKMatrix4MakeZRotation(-phi), GLKMatrix4MakeXRotation(-theta))
+        return phiThetaToRotationMatrix(phi, theta: theta)
     }
 }
 

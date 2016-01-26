@@ -150,6 +150,10 @@ func safeOptional<T>(val: T!) -> T? {
     }
 }
 
+func phiThetaToRotationMatrix(phi: Float, theta: Float) -> GLKMatrix4 {
+    return GLKMatrix4Multiply(GLKMatrix4MakeZRotation(-phi), GLKMatrix4MakeXRotation(-theta))
+}
+
 //class NotificationSignal {
 //    
 //    let (signal, sink) =  Signal<Void, NoError>.pipe()

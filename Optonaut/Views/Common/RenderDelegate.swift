@@ -100,6 +100,8 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     var planes: [CubeImageCache.Index: Item] = [:]
+    // Inverse index lookup from node to index
+    var indices: [SCNNode: CubeImageCache.Index] = [:]
     var adj: [SCNNode: [SCNNode]] = [:]
     
     var nodeEnterScene: (CubeImageCache.Index -> ())?
@@ -135,7 +137,11 @@ class CubeRenderDelegate: RenderDelegate {
                     let node = createPlane(position: transforms[face].position, rotation: transforms[face].rotation,
                         subX: Float(subX) * subW, subY: Float(subY) * subW, subW: subW)
                     node.geometry!.firstMaterial!.doubleSided = true
-                    planes[CubeImageCache.Index(face: face, x: Float(subX) * subW, y: Float(subY) * subW, d: subW)] = Item(node: node, visible: false)
+                    
+                    let index = CubeImageCache.Index(face: face, x: Float(subX) * subW, y: Float(subY) * subW, d: subW)
+                    
+                    planes[index] = Item(node: node, visible: false)
+                    indices[node] = index
                     scene.rootNode.addChildNode(node)
                 }
             }
@@ -176,6 +182,19 @@ class CubeRenderDelegate: RenderDelegate {
         initScene()
     }
     
+    func getVisibleAndAdjacentPlaneIndicesFromRotationMatrix(rotation: GLKMatrix4) -> [CubeImageCache.Index] {
+        let dummyCam = SCNNode()
+        dummyCam.camera = cameraNode.camera
+        dummyCam.transform = SCNMatrix4FromGLKMatrix4(rotation)
+        
+        return getVisibleAndAdjacentPlanes(dummyCam).map { indices[$0]! }
+    }
+    
+    func getVisibleAndAdjacentPlanes(camera: SCNNode) -> Set<SCNNode> {
+        let visiblePlanes: [SCNNode] = planes.values.map { $0.node }.filter { (self.scnView!.isNodeInsideFrustum($0, withPointOfView: camera)) }
+        return Set(visiblePlanes.flatMap { self.adj[$0]! })
+    }
+    
     override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         super.renderer(aRenderer, updateAtTime: time)
         if scnView == nil {
@@ -188,8 +207,7 @@ class CubeRenderDelegate: RenderDelegate {
         // smallCamera.camera = RenderDelegate.setupCamera(smallFov)
         // smallCamera.transform = cameraNode.transform
         
-        let visiblePlanes: [SCNNode] = planes.values.map { $0.node }.filter { (self.scnView!.isNodeInsideFrustum($0, withPointOfView: self.cameraNode)) }
-        let visibleAndAdjacentPlanes = Set(visiblePlanes.flatMap { self.adj[$0]! })
+        let visibleAndAdjacentPlanes = getVisibleAndAdjacentPlanes(self.cameraNode)
         
         // Use verbose colors for debugging.
         // planes.values.forEach { $0.node.geometry!.firstMaterial!.diffuse.contents = UIColor.redColor() }
