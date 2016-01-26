@@ -91,7 +91,7 @@ class CubeImageCache {
                     completionHandler: { [weak self] (image, error, _, _) in
                         if let strongSelf = self {
                             if let error = error where error.code != -999 {
-//                                print(error)
+                                print(error)
                             }
                             dispatch_async(strongSelf.queue) {
                                 if let image = image where strongSelf.items[index] != nil {
@@ -115,11 +115,11 @@ class CubeImageCache {
     }
     
     func forget(index: Index) {
-        dispatch_async(queue) { [weak self] in
-            self?.items[index]?.downloadTask?.cancel()
+//        dispatch_async(queue) { [weak self] in
+            items[index]?.downloadTask?.cancel()
 //            self?.items[index] = nil
-            self?.items.removeValueForKey(index)
-        }
+            items.removeValueForKey(index)
+//        }
     }
     
     private func dispose() {
