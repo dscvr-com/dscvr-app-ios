@@ -163,6 +163,8 @@ optonaut::StitcherSink stitcherSink;
     Stores::right.Clear();
     Stores::common.Clear();
     
+    optonaut::CheckpointStore::DebugStore = &Stores::debug;
+    
     optonaut::StereoSink& sink = storageSink;
     
     int internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
