@@ -312,6 +312,12 @@ class CollectionViewCell: UICollectionViewCell {
     }
     
     func setCubeImageCache(cache: CubeImageCache) {
+        
+        renderDelegate.nodeEnterScene = nil
+        renderDelegate.nodeLeaveScene = nil
+        
+        renderDelegate.reset()
+        
         renderDelegate.nodeEnterScene = { [weak self] index in
             dispatch_async(queue) {
                 cache.get(index) { [weak self] (texture: SKTexture, forIndex index: CubeImageCache.Index) in

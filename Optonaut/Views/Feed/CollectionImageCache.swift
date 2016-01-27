@@ -64,7 +64,7 @@ class CubeImageCache {
     }
     
     func get(index: Index, callback: Callback?) {
-        print("index \(index)")
+        //print("index \(index)")
         sync(self) {
             if let image = self.items[index]?.image {
                 callback?(image, index: index)
@@ -121,6 +121,8 @@ class CubeImageCache {
                     }
                     
                 }
+            } else if self.items[index]?.callback == nil {
+                self.items[index]?.callback = callback
             }
         }
     }

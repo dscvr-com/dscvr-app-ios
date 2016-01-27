@@ -92,10 +92,14 @@ class CubeRenderDelegate: RenderDelegate {
     class Item {
         let node: SCNNode
         var visible: Bool
+        var requested: Bool
+        var hasTexture: Bool
         
         init(node: SCNNode, visible: Bool) {
             self.node = node
             self.visible = visible
+            self.requested = false
+            self.hasTexture = false
         }
     }
     
@@ -131,7 +135,7 @@ class CubeRenderDelegate: RenderDelegate {
     private static let BlackTexture = CubeRenderDelegate.getBlackTexture()
     
     private func initScene() {
-        let subSurf = 3
+        let subSurf = 5
         
         let subW = 1.0 / Float(subSurf)
         
@@ -180,12 +184,16 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
-        if let node = planes[index]?.node {
-            print("settex \(id) \(index)")
+        if let item = planes[index] {
+            //print("settex \(id) \(index)")
             sync(self) {
-                assert(node.geometry!.firstMaterial!.diffuse.contents !== texture) // Don't overwrite textures!
-                assert(node.geometry!.firstMaterial!.diffuse.contents === CubeRenderDelegate.BlackTexture) // Don't overwrite textures!
-                node.geometry!.firstMaterial!.diffuse.contents = texture
+                assert(item.node.geometry!.firstMaterial!.diffuse.contents !== texture) // Don't overwrite textures!
+                //assert(item.node.geometry!.firstMaterial!.diffuse.contents === CubeRenderDelegate.BlackTexture) // Don't overwrite textures!
+                
+                item.node.geometry!.firstMaterial!.diffuse.contents = texture
+                
+                item.hasTexture = true
+                item.requested = false
             }
         }
     }
@@ -198,9 +206,11 @@ class CubeRenderDelegate: RenderDelegate {
         
         sync(self) {
             for (index, plane) in self.planes {
-                print("resett \(self.id) \(index)")
+                //print("resett \(self.id) \(index)")
                 plane.node.geometry?.firstMaterial?.diffuse.contents = CubeRenderDelegate.BlackTexture
                 plane.visible = false
+                plane.hasTexture = false
+                plane.requested = false
             }
         }
     }
@@ -234,18 +244,28 @@ class CubeRenderDelegate: RenderDelegate {
         // visibleAndAdjacentPlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.blueColor() }
         // visiblePlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.greenColor() }
         
+        // TODO - Syncing here is not really fast. It's more like really slow. 
+        
         for (index, item) in planes {
             let nowVisible = visibleAndAdjacentPlanes.contains(item.node)
             if nowVisible && !item.visible {
-                if let callback = nodeEnterScene {
-                    callback(index)
-                    item.visible = true
+                sync(self) {
+                    if !item.requested && !item.hasTexture {
+                        //print("req \(self.id) \(index)")
+                        if let callback = self.nodeEnterScene {
+                            callback(index)
+                            item.visible = true
+                            item.requested = true
+                        }
+                    }
                 }
             } else if !nowVisible && item.visible {
                 sync(self) {
-                    if item.node.geometry!.firstMaterial!.diffuse.contents !== CubeRenderDelegate.BlackTexture {
-                        print("forget \(self.id) \(index)")
+                    if item.hasTexture {
+                        //print("forg \(self.id) \(index)")
                         item.node.geometry!.firstMaterial!.diffuse.contents = CubeRenderDelegate.BlackTexture
+                        
+                        item.hasTexture = false
                         
                         if let callback = self.nodeLeaveScene {
                             item.visible = false
@@ -284,6 +304,7 @@ class SphereRenderDelegate: RenderDelegate {
     
     let sphereNode: SCNNode
     
+    // TODO - Jojo, please clean up the duplicate code in here.
     var image: UIImage? {
         didSet {
             guard let image = image else {

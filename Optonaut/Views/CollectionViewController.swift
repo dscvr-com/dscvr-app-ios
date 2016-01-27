@@ -256,6 +256,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         cell.willDisplay()
         
         let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
+        cubeImageCache.disable()
         cell.setCubeImageCache(cubeImageCache)
         
         cell.id = indexPath.row
