@@ -474,7 +474,7 @@ class CameraViewController: UIViewController {
         
         try! videoDevice?.lockForConfiguration()
         
-        /*
+        
         var bestFormat: AVCaptureDeviceFormat?
         var bestFrameRate: AVFrameRateRange?
         
@@ -490,7 +490,7 @@ class CameraViewController: UIViewController {
         videoDevice!.activeFormat = bestFormat
         videoDevice!.activeVideoMinFrameDuration = bestFrameRate!.minFrameDuration
         videoDevice!.activeVideoMaxFrameDuration = bestFrameRate!.minFrameDuration
-        */        
+            
 
         if videoDevice!.activeFormat.videoHDRSupported.boolValue {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
