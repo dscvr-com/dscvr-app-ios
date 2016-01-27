@@ -131,7 +131,7 @@ class CubeRenderDelegate: RenderDelegate {
     private static let BlackTexture = CubeRenderDelegate.getBlackTexture()
     
     private func initScene() {
-        let subSurf = 4
+        let subSurf = 3
         
         let subW = 1.0 / Float(subSurf)
         
@@ -179,28 +179,29 @@ class CubeRenderDelegate: RenderDelegate {
         return [SCNNode](sorted.prefix(k))
     }
     
-    var setCount: [CubeImageCache.Index: Int] = [:]
-    
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
         if let node = planes[index]?.node {
-            assert(node.geometry!.firstMaterial!.diffuse.contents === CubeRenderDelegate.BlackTexture) // Don't overwrite textures!
-            node.geometry!.firstMaterial!.diffuse.contents = texture
+            print("settex \(id) \(index)")
+            sync(self) {
+                assert(node.geometry!.firstMaterial!.diffuse.contents !== texture) // Don't overwrite textures!
+                assert(node.geometry!.firstMaterial!.diffuse.contents === CubeRenderDelegate.BlackTexture) // Don't overwrite textures!
+                node.geometry!.firstMaterial!.diffuse.contents = texture
+            }
         }
     }
     
+    var id: Int = 0
+    
     func reset() {
-        sync(self) {
-            print(self.setCount)
-            print("reset")
-            self.nodeEnterScene = nil
-            self.nodeLeaveScene = nil
-            
-            self.setCount = [:]
-        }
+        self.nodeEnterScene = nil
+        self.nodeLeaveScene = nil
         
-        for (_, plane) in planes {
-            plane.node.geometry?.firstMaterial?.diffuse.contents = CubeRenderDelegate.BlackTexture
-            plane.visible = false
+        sync(self) {
+            for (index, plane) in self.planes {
+                print("resett \(self.id) \(index)")
+                plane.node.geometry?.firstMaterial?.diffuse.contents = CubeRenderDelegate.BlackTexture
+                plane.visible = false
+            }
         }
     }
     
@@ -241,12 +242,17 @@ class CubeRenderDelegate: RenderDelegate {
                     item.visible = true
                 }
             } else if !nowVisible && item.visible {
-                if let callback = nodeLeaveScene {
-                    item.visible = false
-                    callback(index)
+                sync(self) {
+                    if item.node.geometry!.firstMaterial!.diffuse.contents !== CubeRenderDelegate.BlackTexture {
+                        print("forget \(self.id) \(index)")
+                        item.node.geometry!.firstMaterial!.diffuse.contents = CubeRenderDelegate.BlackTexture
+                        
+                        if let callback = self.nodeLeaveScene {
+                            item.visible = false
+                            callback(index)
+                        }
+                    }
                 }
-                
-                item.node.geometry!.firstMaterial!.diffuse.contents = CubeRenderDelegate.BlackTexture
             }
         }
         

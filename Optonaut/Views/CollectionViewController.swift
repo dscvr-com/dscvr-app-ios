@@ -251,38 +251,24 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         }
         
         let optographID = optographIDs[indexPath.row]
-        let optograph = Models.optographs[optographID]!.model
         
         cell.direction = optographDirections[optographID]!
         cell.willDisplay()
         
-        print("will disp \(indexPath.row)")
-        
-//        let imageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) in
-//            if self?.collectionView?.indexPathsForVisibleItems().contains(indexPath) == true {
-//                cell.setImage(image, forIndex: index)
-//            }
-//        }
-        
-//        dispatch_async(queue) { [weak self] in
         let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
         cell.setCubeImageCache(cubeImageCache)
         
-//            if indexPath.row - 1 > 0, let id = self?.optographIDs[indexPath.row - 1] {
-//                self?.imageCache.touch(indexPath.row - 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
-//            }
-//            if indexPath.row + 1 < self?.optographIDs.count, let id = self?.optographIDs[indexPath.row + 1] {
-//                self?.imageCache.touch(indexPath.row + 1, optographID: id, side: .Left, cubeIndices: defaultIndices)
-//            }
-//        }
+        cell.id = indexPath.row
+        
+        for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
+            let id = optographIDs[indexPath.row + i]
+            let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
+            imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
+        }
         
         if overlayView.optographID == nil {
             overlayView.optographID = optographID
         }
-        
-//        cacheDebouncerTouch.debounce { [weak self] in
-//            self?.imageCache.touch(indexPath.row)
-//        }
         
         if indexPath.row > optographIDs.count - 3 {
             viewModel.loadMoreNotification.notify(())

@@ -157,25 +157,25 @@ class CombinedMotionManager: RotationMatrixSource {
     }
     
     func getRotationMatrix() -> GLKMatrix4 {
-//        
-//        let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
-//        
-//        if !touchRotationSource.isTouching {
-//            // Update from motion and damping
-//            if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
-//                let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
-//                
-//                let diffRotationTheta = atan2(diffRotationMatrix.m21, diffRotationMatrix.m22)
-//                let diffRotationPhi = atan2(-diffRotationMatrix.m20,
-//                                            sqrt(diffRotationMatrix.m21 * diffRotationMatrix.m21 +
-//                                                diffRotationMatrix.m22 * diffRotationMatrix.m22))
-//                
-//                touchRotationSource.phi += diffRotationPhi
-//                touchRotationSource.theta += diffRotationTheta
-//            }
-//        }
-//        
-//        lastCoreMotionRotationMatrix = coreMotionRotationMatrix
+        
+        let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
+        
+        if !touchRotationSource.isTouching {
+            // Update from motion and damping
+            if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
+                let diffRotationMatrix = GLKMatrix4Multiply(GLKMatrix4Invert(lastCoreMotionRotationMatrix, nil), coreMotionRotationMatrix)
+                
+                let diffRotationTheta = atan2(diffRotationMatrix.m21, diffRotationMatrix.m22)
+                let diffRotationPhi = atan2(-diffRotationMatrix.m20,
+                                            sqrt(diffRotationMatrix.m21 * diffRotationMatrix.m21 +
+                                                diffRotationMatrix.m22 * diffRotationMatrix.m22))
+                
+                touchRotationSource.phi += diffRotationPhi
+                touchRotationSource.theta += diffRotationTheta
+            }
+        }
+        
+        lastCoreMotionRotationMatrix = coreMotionRotationMatrix
         
         return touchRotationSource.getRotationMatrix()
     }
@@ -293,11 +293,22 @@ class CollectionViewCell: UICollectionViewCell {
         }
     }
     
+    var id: Int = 0 {
+        didSet {
+            renderDelegate.id = id
+        }
+    }
+    
     override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
         super.touchesCancelled(touches, withEvent: event)
         if let touches = touches where touches.count == 1 {
             combinedMotionManager.touchEnd()
         }
+    }
+    
+    func getVisibleAndAdjacentPlaneIndices(direction: Direction) -> [CubeImageCache.Index] {
+        let rotation = phiThetaToRotationMatrix(direction.phi, theta: direction.theta)
+        return renderDelegate.getVisibleAndAdjacentPlaneIndicesFromRotationMatrix(rotation)
     }
     
     func setCubeImageCache(cache: CubeImageCache) {

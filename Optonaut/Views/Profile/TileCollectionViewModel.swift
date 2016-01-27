@@ -18,6 +18,8 @@ class TileCollectionViewModel {
     let isStitched = MutableProperty<Bool>(false)
     let uploadStatus = MutableProperty<UploadStatus>(.Uploaded)
     
+    let imageURL = MutableProperty<String>("")
+    
     private var disposable: Disposable?
     
     func bind(optographID: UUID) {
@@ -29,6 +31,7 @@ class TileCollectionViewModel {
             self?.isPrivate.value = optograph.isPrivate
             self?.isStitched.value = optograph.isStitched
             self?.uploadStatus.value = optograph.isPublished ? .Uploaded : .Offline
+            self?.imageURL.value = TextureURL(optographID, side: .Left, size: 512, face: 0, x: 0, y: 0, d: 1)
         }
     }
     

@@ -17,14 +17,15 @@ class TileCollectionViewCell: UICollectionViewCell {
 //    private let scnView: SCNView
     private let iconView = UILabel()
     private let loadingView = UIActivityIndicatorView()
+    private let imageView = PlaceholderImageView()
     
     private let viewModel = TileCollectionViewModel()
     
-    private let glView: OpenGLView
+//    private let glView: OpenGLView
     
     override init(frame: CGRect) {
         
-        glView = OpenGLView(frame: CGRect(origin: CGPointZero, size: frame.size))
+//        glView = OpenGLView(frame: CGRect(origin: CGPointZero, size: frame.size))
         
 //        if #available(iOS 9.0, *) {
 //            scnView = SCNView(frame: CGRect(origin: CGPointZero, size: frame.size), options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
@@ -37,7 +38,11 @@ class TileCollectionViewCell: UICollectionViewCell {
         
         super.init(frame: frame)
         
-        contentView.addSubview(glView)
+        imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
+        imageView.rac_url <~ viewModel.imageURL
+        contentView.addSubview(imageView)
+        
+//        contentView.addSubview(glView)
         
 //        scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
 //        scnView.playing = false

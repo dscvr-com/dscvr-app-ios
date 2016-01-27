@@ -42,11 +42,12 @@ class CubeImageCache {
     private let queue = dispatch_queue_create("collection_image_cube_cache", DISPATCH_QUEUE_CONCURRENT)
     
     private var items: [Index: Item] = [:]
-    private let optographID: UUID
+    let optographID: UUID
     private let side: TextureSide
     private var textureSize: CGFloat
     
     init(optographID: UUID, side: TextureSide, textureSize: CGFloat) {
+        print(optographID)
         self.optographID = optographID
         self.side = side
         self.textureSize = textureSize
@@ -63,57 +64,63 @@ class CubeImageCache {
     }
     
     func get(index: Index, callback: Callback?) {
-        
-        if let image = items[index]?.image {
-            callback?(image, index: index)
-        } else if items[index]?.downloadTask == nil {
-            // Image is resolved by URL - query whole face and then get subface manually.
-            // Occurs when image was just taken on this phone
-            let queryIndex = Index(face: index.face, x: 0.0, y: 0.0, d: 1.0)
-            if let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url(queryIndex, textureSize: 0)) {
-                let resizedImage = image.subface(CGFloat(index.x), y: CGFloat(index.y), w: CGFloat(index.d), d: Int(textureSize * CGFloat(index.d)))
-                let tex = SKTexture(image: resizedImage)
+        print("index \(index)")
+        sync(self) {
+            if let image = self.items[index]?.image {
+                callback?(image, index: index)
+            } else if self.items[index]?.downloadTask == nil {
+                // Image is resolved by URL - query whole face and then get subface manually.
+                // Occurs when image was just taken on this phone
+                let queryIndex = Index(face: index.face, x: 0.0, y: 0.0, d: 1.0)
                 
-                callback?(tex, index: index)
+                objc_sync_enter(KingfisherManager.sharedManager)
+                let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(self.url(queryIndex, textureSize: 0))
+                objc_sync_exit(KingfisherManager.sharedManager)
                 
-                let item = Item()
-                item.image = tex
-                
-                sync(self) {
-                    self.items[index] = item
-                }
-                
-            } else {
-                let item = Item()
-                item.callback = callback
-                
-                sync(self) {
+                if let originalImage = originalImage {
+                    let resizedImage = originalImage.subface(CGFloat(index.x), y: CGFloat(index.y), w: CGFloat(index.d), d: Int(self.textureSize * CGFloat(index.d)))
+                    let tex = SKTexture(image: resizedImage)
+                    
+                    callback?(tex, index: index)
+                    
+                    let item = Item()
+                    item.image = tex
+                    
                     self.items[index] = item
                     
-                    item.downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
-                        NSURL(string: self.url(index, textureSize: self.textureSize))!,
-                        optionsInfo: nil,
-                        progressBlock: nil,
-                        completionHandler: { (image, error, _, _) in
-                            if let error = error where error.code != -999 {
-                                print(error)
-                            }
-                            // needed because completionHandler is called on mainthread
-                            dispatch_async(self.queue) {
-                                sync(self) {
-                                    if let image = image, item = self.items[index] {
-                                        let tex = SKTexture(image: image)
-                                        item.image = tex
-                                        item.downloadTask = nil
-                                        item.callback?(tex, index: index)
+                } else {
+                    let item = Item()
+                    item.callback = callback
+                    
+                    self.items[index] = item
+                    
+                    sync(KingfisherManager.sharedManager) {
+                        item.downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
+                            NSURL(string: self.url(index, textureSize: self.textureSize))!,
+                            optionsInfo: nil,
+                            progressBlock: nil,
+                            completionHandler: { (image, error, _, _) in
+                                if let error = error where error.code != -999 {
+                                    print(error)
+                                }
+                                // needed because completionHandler is called on mainthread
+                                dispatch_async(self.queue) {
+                                    sync(self) {
+                                        if let image = image, item = self.items[index] {
+                                            let tex = SKTexture(image: image)
+                                            item.image = tex
+                                            item.downloadTask = nil
+                                            item.callback?(tex, index: index)
+                                            item.callback = nil
+                                        }
                                     }
                                 }
                             }
-                        }
-                    )
+                        )
+                        
+                    }
                     
                 }
-                
             }
         }
     }
@@ -121,7 +128,7 @@ class CubeImageCache {
     func forget(index: Index) {
         sync(self) {
             self.items[index]?.downloadTask?.cancel()
-            self.items.removeValueForKey(index)
+//            self.items.removeValueForKey(index)
         }
     }
     
@@ -169,6 +176,7 @@ class CollectionImageCache {
         let cacheIndex = index % CollectionImageCache.cacheSize
         
         if let item = items[cacheIndex] where item.index == index {
+            assert(item.innerCache.optographID == optographID)
             return item.innerCache
         } else {
             let item = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))

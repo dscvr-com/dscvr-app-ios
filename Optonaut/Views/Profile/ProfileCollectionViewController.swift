@@ -101,6 +101,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         collectionView!.backgroundColor = .whiteColor()
         
+        collectionView!.alwaysBounceVertical = true
+        
         collectionView!.delegate = self
         
 //        collectionView!.pagingEnabled = true

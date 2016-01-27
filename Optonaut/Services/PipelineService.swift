@@ -73,8 +73,11 @@ class PipelineService {
                     
                     let originalData = UIImageJPEGRepresentation(image, 0.9)!
                     let originalURL = TextureURL(optographID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
-                    KingfisherManager.sharedManager.cache.storeImage(UIImage(data: originalData)!, originalData: originalData, forKey: originalURL, toDisk: true) {
-                        upload(optographID, side: side, face: face)
+                    
+                    sync(KingfisherManager.sharedManager) {
+                        KingfisherManager.sharedManager.cache.storeImage(UIImage(data: originalData)!, originalData: originalData, forKey: originalURL, toDisk: true) {
+                            upload(optographID, side: side, face: face)
+                        }
                     }
                     
 //                    let screen = UIScreen.mainScreen()
@@ -145,9 +148,12 @@ class PipelineService {
             default: return
             }
             
-            let url = TextureURL(optographID, side: .Left, size: 0, face: face, x: 0, y: 0, d: 1)
-            let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
             let sideLetter = side == .Left ? "l" : "r"
+            let url = TextureURL(optographID, side: .Left, size: 0, face: face, x: 0, y: 0, d: 1)
+            
+            objc_sync_enter(KingfisherManager.sharedManager)
+            let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
+            objc_sync_exit(KingfisherManager.sharedManager)
             
             let result = ApiService<EmptyResponse>.upload("optographs/\(optographID)/upload-asset", multipartFormData: { form in
                 form.appendBodyPart(data: "\(sideLetter)\(face)".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
