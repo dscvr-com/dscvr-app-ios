@@ -161,6 +161,7 @@
 		8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC869D1BB72AE900539D4E /* SF-UI-Display-Thin.otf */; };
 		8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FBC86A31BB7E1AD00539D4E /* OnboardingVRViewController.swift */; };
 		8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FBDE8B11B5D186800C78486 /* Device.framework */; };
+		8FC456C81C59108E0019107E /* UICollectionViewLeftAlignedLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC456C71C59108D0019107E /* UICollectionViewLeftAlignedLayout.m */; };
 		8FC7E3621BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC7E3611BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift */; };
 		8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC7E3631BCF158200E97CC3 /* ScreenService.swift */; };
 		8FC7E3731BD15B9D00E97CC3 /* HeadTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FC7E3671BD15B9D00E97CC3 /* HeadTracker.mm */; };
@@ -428,6 +429,8 @@
 		8FBC869D1BB72AE900539D4E /* SF-UI-Display-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Thin.otf"; sourceTree = "<group>"; };
 		8FBC86A31BB7E1AD00539D4E /* OnboardingVRViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingVRViewController.swift; sourceTree = "<group>"; };
 		8FBDE8B11B5D186800C78486 /* Device.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Device.framework; path = Carthage/Build/iOS/Device.framework; sourceTree = "<group>"; };
+		8FC456C61C59108D0019107E /* UICollectionViewLeftAlignedLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UICollectionViewLeftAlignedLayout.h; sourceTree = "<group>"; };
+		8FC456C71C59108D0019107E /* UICollectionViewLeftAlignedLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UICollectionViewLeftAlignedLayout.m; sourceTree = "<group>"; };
 		8FC7E3611BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSummaryViewModel.swift; sourceTree = "<group>"; };
 		8FC7E3631BCF158200E97CC3 /* ScreenService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenService.swift; sourceTree = "<group>"; };
 		8FC7E3661BD15B9D00E97CC3 /* HeadTracker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = HeadTracker.hpp; sourceTree = "<group>"; };
@@ -993,6 +996,15 @@
 			path = Optonaut/Services;
 			sourceTree = SOURCE_ROOT;
 		};
+		8FC456C51C59108D0019107E /* UICollectionViewLeftAlignedLayout */ = {
+			isa = PBXGroup;
+			children = (
+				8FC456C61C59108D0019107E /* UICollectionViewLeftAlignedLayout.h */,
+				8FC456C71C59108D0019107E /* UICollectionViewLeftAlignedLayout.m */,
+			);
+			path = UICollectionViewLeftAlignedLayout;
+			sourceTree = "<group>";
+		};
 		8FC7E3651BD15B9D00E97CC3 /* Sensors */ = {
 			isa = PBXGroup;
 			children = (
@@ -1132,6 +1144,7 @@
 		8FFCE4B61B4DBF1900832C88 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				8FC456C51C59108D0019107E /* UICollectionViewLeftAlignedLayout */,
 				8FC7E3651BD15B9D00E97CC3 /* Sensors */,
 				A56CA3D81BC05C4F0078D7E8 /* Shaders */,
 				8FE09F5E1BAEFD7100EA105D /* CWStatusBarNotification */,
@@ -1613,6 +1626,7 @@
 				8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */,
 				A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */,
 				8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */,
+				8FC456C81C59108E0019107E /* UICollectionViewLeftAlignedLayout.m in Sources */,
 				A5DE71EA1BE28A7400316F82 /* DistortionMesh.swift in Sources */,
 				8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,

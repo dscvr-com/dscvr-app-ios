@@ -10,6 +10,7 @@ import Foundation
 import SpriteKit
 import ReactiveCocoa
 import SceneKit
+import Kingfisher
 
 class TileCollectionViewCell: UICollectionViewCell {
     
@@ -39,7 +40,23 @@ class TileCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
-        imageView.rac_url <~ viewModel.imageURL
+        imageView.rac_url <~ viewModel.imageURL.producer.delayLatestUntil(viewModel.isStitched.producer)
+        imageView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
+        viewModel.uploadStatus.producer.equalsTo(.Uploaded).skipRepeats()
+            .combineLatestWith(viewModel.optographID.producer.skipRepeats())
+            .delayLatestUntil(viewModel.isStitched.producer)
+            .startWithNext { [weak self] (isUploaded, optographID) in
+                if isUploaded {
+                    let url = TextureURL(optographID, side: .Left, size: Int(frame.width), face: 0, x: 0, y: 0, d: 1)
+                    self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
+                } else {
+                    let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+                    let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self?.imageView.image = originalImage.resized(.Width, value: frame.width)
+                    }
+                }
+            }
         contentView.addSubview(imageView)
         
 //        contentView.addSubview(glView)
@@ -55,14 +72,14 @@ class TileCollectionViewCell: UICollectionViewCell {
         iconView.frame = CGRect(x: frame.width - 32, y: 14, width: 18, height: 18)
         iconView.textColor = .whiteColor()
         iconView.font = UIFont.iconOfSize(18)
+        iconView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
         iconView.rac_text <~ viewModel.isPrivate.producer
             .combineLatestWith(viewModel.uploadStatus.producer)
-            .combineLatestWith(viewModel.isStitched.producer).map { ($0.0, $0.1, $1) }
-            .map { isPrivate, uploadStatus, isStitched in
-                if isStitched {
-                    return ""
-                } else if isPrivate {
+            .map { isPrivate, uploadStatus in
+                if isPrivate {
                     return String.iconWithName(.Safe)
+                } else if uploadStatus == .Uploading {
+                    return String.iconWithName(.Home)
                 } else if uploadStatus == .Offline {
                     return String.iconWithName(.ArrowDown)
                 } else {
@@ -76,6 +93,8 @@ class TileCollectionViewCell: UICollectionViewCell {
         loadingView.hidesWhenStopped = true
         loadingView.rac_animating <~ viewModel.isStitched.producer.map(negate)
         contentView.addSubview(loadingView)
+        
+        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTap"))
         
         contentView.backgroundColor = UIColor(0xcacaca)
     }
@@ -99,6 +118,12 @@ class TileCollectionViewCell: UICollectionViewCell {
     
     func bind(optographID: UUID) {
         viewModel.bind(optographID)
+    }
+    
+    dynamic private func didTap() {
+        if viewModel.uploadStatus.value == .Offline {
+            viewModel.upload()
+        }
     }
     
 }

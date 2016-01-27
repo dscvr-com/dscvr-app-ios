@@ -40,8 +40,10 @@ class SaveViewModel {
         optograph.isPublished = false
         optograph.isStitched = false
         optograph.isSubmitted = false
-        optograph.leftCubeTextureUploadStatus = CubeTextureUploadStatus()
-        optograph.rightCubeTextureUploadStatus = CubeTextureUploadStatus()
+        optograph.leftCubeTextureStatusUpload = CubeTextureStatus()
+        optograph.rightCubeTextureStatusUpload = CubeTextureStatus()
+        optograph.leftCubeTextureStatusSave = CubeTextureStatus()
+        optograph.rightCubeTextureStatusSave = CubeTextureStatus()
         
         optographBox = Models.optographs.create(optograph)
         

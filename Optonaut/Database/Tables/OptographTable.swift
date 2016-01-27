@@ -35,8 +35,10 @@ struct OptographSchemaType: ModelSchema {
     let postTwitter = Expression<Bool>("optograph_post_twitter")
     let postInstagram = Expression<Bool>("optograph_post_instagram")
     let shouldBePublished = Expression<Bool>("optograph_should_be_published")
-    let leftCubeTextureUploadStatus = Expression<CubeTextureUploadStatus?>("optograph_left_cube_texture_upload_status")
-    let rightCubeTextureUploadStatus = Expression<CubeTextureUploadStatus?>("optograph_right_cube_texture_upload_status")
+    let leftCubeTextureStatusUpload = Expression<CubeTextureStatus?>("optograph_left_cube_texture_status_upload")
+    let rightCubeTextureStatusUpload = Expression<CubeTextureStatus?>("optograph_right_cube_texture_status_upload")
+    let leftCubeTextureStatusSave = Expression<CubeTextureStatus?>("optograph_left_cube_texture_status_save")
+    let rightCubeTextureStatusSave = Expression<CubeTextureStatus?>("optograph_right_cube_texture_status_save")
 }
 
 let OptographSchema = OptographSchemaType()

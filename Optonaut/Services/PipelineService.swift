@@ -76,6 +76,27 @@ class PipelineService {
                     
                     sync(KingfisherManager.sharedManager) {
                         KingfisherManager.sharedManager.cache.storeImage(UIImage(data: originalData)!, originalData: originalData, forKey: originalURL, toDisk: true) {
+                            optographBox.insertOrUpdate { box in
+                                switch side {
+                                case .Left:
+                                    box.model.leftCubeTextureStatusSave!.status[face] = true
+                                    if box.model.leftCubeTextureStatusSave!.completed {
+                                        box.model.leftCubeTextureStatusSave = nil
+                                    }
+                                case .Right:
+                                    box.model.rightCubeTextureStatusSave!.status[face] = true
+                                    if box.model.rightCubeTextureStatusSave!.completed {
+                                        box.model.rightCubeTextureStatusSave = nil
+                                    }
+                                }
+                                
+                                if box.model.leftCubeTextureStatusSave == nil && box.model.rightCubeTextureStatusSave == nil {
+                                    box.model.isStitched = true
+                                    box.model.stitcherVersion = StitcherVersion
+                                    box.model.isInFeed = true
+                                }
+                            }
+                            
                             upload(optographID, side: side, face: face)
                         }
                     }
@@ -100,11 +121,6 @@ class PipelineService {
             })
             .observeOnMain()
             .observeCompleted {
-                optographBox.insertOrUpdate { box in
-                    box.model.isStitched = true
-                    box.model.stitcherVersion = StitcherVersion
-                    box.model.isInFeed = true
-                }
                 stitchingStatus.value = .Stitching(1)
                 stitchingStatus.value = .StitchingFinished(optographID)
             }
@@ -119,7 +135,7 @@ class PipelineService {
         
         let optographBox = Models.optographs[optographID]!
         
-        if let leftCubeTextureUploadStatus = optographBox.model.leftCubeTextureUploadStatus {
+        if let leftCubeTextureUploadStatus = optographBox.model.leftCubeTextureStatusUpload {
             for (index, uploaded) in leftCubeTextureUploadStatus.status.enumerate() {
                 if !uploaded {
                     upload(optographID, side: .Left, face: index)
@@ -127,7 +143,7 @@ class PipelineService {
             }
         }
         
-        if let rightCubeTextureUploadStatus = optographBox.model.rightCubeTextureUploadStatus {
+        if let rightCubeTextureUploadStatus = optographBox.model.rightCubeTextureStatusUpload {
             for (index, uploaded) in rightCubeTextureUploadStatus.status.enumerate() {
                 if !uploaded {
                     upload(optographID, side: .Right, face: index)
@@ -143,8 +159,8 @@ class PipelineService {
             let optographBox = Models.optographs[optographID]!
             
             switch side {
-            case .Left where optographBox.model.leftCubeTextureUploadStatus?.status[face] == false: break
-            case .Right where optographBox.model.rightCubeTextureUploadStatus?.status[face] == false: break
+            case .Left where optographBox.model.leftCubeTextureStatusUpload?.status[face] == false: break
+            case .Right where optographBox.model.rightCubeTextureStatusUpload?.status[face] == false: break
             default: return
             }
             
@@ -166,18 +182,18 @@ class PipelineService {
                 if result?.value == true {
                     switch side {
                     case .Left:
-                        box.model.leftCubeTextureUploadStatus!.status[face] = true
-                        if box.model.leftCubeTextureUploadStatus!.completed {
-                            box.model.leftCubeTextureUploadStatus = nil
+                        box.model.leftCubeTextureStatusUpload!.status[face] = true
+                        if box.model.leftCubeTextureStatusUpload!.completed {
+                            box.model.leftCubeTextureStatusUpload = nil
                         }
                     case .Right:
-                        box.model.rightCubeTextureUploadStatus!.status[face] = true
-                        if box.model.rightCubeTextureUploadStatus!.completed {
-                            box.model.rightCubeTextureUploadStatus = nil
+                        box.model.rightCubeTextureStatusUpload!.status[face] = true
+                        if box.model.rightCubeTextureStatusUpload!.completed {
+                            box.model.rightCubeTextureStatusUpload = nil
                         }
                     }
                     
-                    if box.model.leftCubeTextureUploadStatus == nil && box.model.rightCubeTextureUploadStatus == nil {
+                    if box.model.leftCubeTextureStatusUpload == nil && box.model.rightCubeTextureStatusUpload == nil {
                         box.model.isPublished = true
                     }
                 } else {

@@ -17,7 +17,7 @@ enum OptographAsset {
 
 typealias HashtagStrings = Array<String>
 
-struct CubeTextureUploadStatus: SQLiteValue {
+struct CubeTextureStatus: SQLiteValue {
     var status: [Bool] = [false, false, false, false, false, false]
     
     var completed: Bool {
@@ -28,8 +28,8 @@ struct CubeTextureUploadStatus: SQLiteValue {
         return Int64.declaredDatatype
     }
     
-    static func fromDatatypeValue(datatypeValue: Int64) -> CubeTextureUploadStatus {
-        var status = CubeTextureUploadStatus()
+    static func fromDatatypeValue(datatypeValue: Int64) -> CubeTextureStatus {
+        var status = CubeTextureStatus()
         var val = datatypeValue
         for i in 0..<6 {
             status.status[i] = val % 2 == 1
@@ -64,8 +64,10 @@ struct Optograph: DeletableModel {
     var isPublished: Bool
     var stitcherVersion: String
     var shareAlias: String
-    var leftCubeTextureUploadStatus: CubeTextureUploadStatus?
-    var rightCubeTextureUploadStatus: CubeTextureUploadStatus?
+    var leftCubeTextureStatusUpload: CubeTextureStatus?
+    var rightCubeTextureStatusUpload: CubeTextureStatus?
+    var leftCubeTextureStatusSave: CubeTextureStatus?
+    var rightCubeTextureStatusSave: CubeTextureStatus?
     var isStaffPick: Bool
     var hashtagString: String
     var isInFeed: Bool
@@ -95,8 +97,10 @@ struct Optograph: DeletableModel {
             isPublished: true,
             stitcherVersion: "",
             shareAlias: "",
-            leftCubeTextureUploadStatus: nil,
-            rightCubeTextureUploadStatus: nil,
+            leftCubeTextureStatusUpload: nil,
+            rightCubeTextureStatusUpload: nil,
+            leftCubeTextureStatusSave: nil,
+            rightCubeTextureStatusSave: nil,
             isStaffPick: false,
             hashtagString: "",
             isInFeed: false,
@@ -169,8 +173,10 @@ extension Optograph: SQLiteModel {
     }
     
     static func fromSQL(row: SQLiteRow) -> Optograph {
-        let leftCubeTextureUploadStatus = row.get(OptographSchema.leftCubeTextureUploadStatus)
-        let rightCubeTextureUploadStatus = row.get(OptographSchema.rightCubeTextureUploadStatus)
+        let leftCubeTextureStatusUpload = row.get(OptographSchema.leftCubeTextureStatusUpload)
+        let rightCubeTextureStatusUpload = row.get(OptographSchema.rightCubeTextureStatusUpload)
+        let leftCubeTextureStatusSave = row.get(OptographSchema.leftCubeTextureStatusSave)
+        let rightCubeTextureStatusSave = row.get(OptographSchema.leftCubeTextureStatusSave)
         
         return Optograph(
             ID: row[OptographSchema.ID],
@@ -190,8 +196,10 @@ extension Optograph: SQLiteModel {
             isPublished: row[OptographSchema.isPublished],
             stitcherVersion: row[OptographSchema.stitcherVersion],
             shareAlias: row[OptographSchema.shareAlias],
-            leftCubeTextureUploadStatus: leftCubeTextureUploadStatus,
-            rightCubeTextureUploadStatus: rightCubeTextureUploadStatus,
+            leftCubeTextureStatusUpload: leftCubeTextureStatusUpload,
+            rightCubeTextureStatusUpload: rightCubeTextureStatusUpload,
+            leftCubeTextureStatusSave: leftCubeTextureStatusSave,
+            rightCubeTextureStatusSave: rightCubeTextureStatusSave,
             isStaffPick: row[OptographSchema.isStaffPick],
             hashtagString: row[OptographSchema.hashtagString],
             isInFeed: row[OptographSchema.isInFeed],
@@ -223,8 +231,10 @@ extension Optograph: SQLiteModel {
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.stitcherVersion <-- stitcherVersion,
             OptographSchema.shareAlias <-- shareAlias,
-            OptographSchema.leftCubeTextureUploadStatus <-- leftCubeTextureUploadStatus,
-            OptographSchema.rightCubeTextureUploadStatus <-- rightCubeTextureUploadStatus,
+            OptographSchema.leftCubeTextureStatusUpload <-- leftCubeTextureStatusUpload,
+            OptographSchema.rightCubeTextureStatusUpload <-- rightCubeTextureStatusUpload,
+            OptographSchema.leftCubeTextureStatusSave <-- leftCubeTextureStatusSave,
+            OptographSchema.rightCubeTextureStatusSave <-- rightCubeTextureStatusSave,
             OptographSchema.isStaffPick <-- isStaffPick,
             OptographSchema.hashtagString <-- hashtagString,
             OptographSchema.isInFeed <-- isInFeed,

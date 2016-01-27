@@ -32,7 +32,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         let textureSize = (getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView) - 4) / 3
         imageCache = CollectionImageCache(textureSize: textureSize)
         
-        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+//        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+        super.init(collectionViewLayout: UICollectionViewLeftAlignedLayout())
     }
     
     required init?(coder aDecoder: NSCoder) {

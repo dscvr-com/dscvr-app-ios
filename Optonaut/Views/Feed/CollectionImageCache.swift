@@ -47,7 +47,6 @@ class CubeImageCache {
     private var textureSize: CGFloat
     
     init(optographID: UUID, side: TextureSide, textureSize: CGFloat) {
-        print(optographID)
         self.optographID = optographID
         self.side = side
         self.textureSize = textureSize
@@ -71,10 +70,8 @@ class CubeImageCache {
             } else if self.items[index]?.downloadTask == nil {
                 // Image is resolved by URL - query whole face and then get subface manually.
                 // Occurs when image was just taken on this phone
-                let queryIndex = Index(face: index.face, x: 0.0, y: 0.0, d: 1.0)
-                
                 objc_sync_enter(KingfisherManager.sharedManager)
-                let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(self.url(queryIndex, textureSize: 0))
+                let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(self.url(Index(face: index.face, x: 0.0, y: 0.0, d: 1.0), textureSize: 0))
                 objc_sync_exit(KingfisherManager.sharedManager)
                 
                 if let originalImage = originalImage {
@@ -130,6 +127,7 @@ class CubeImageCache {
     func forget(index: Index) {
         sync(self) {
             self.items[index]?.downloadTask?.cancel()
+            self.items[index]?.callback = nil
 //            self.items.removeValueForKey(index)
         }
     }

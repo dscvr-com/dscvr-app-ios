@@ -17,15 +17,20 @@ class TileCollectionViewModel {
     let isPrivate = MutableProperty<Bool>(false)
     let isStitched = MutableProperty<Bool>(false)
     let uploadStatus = MutableProperty<UploadStatus>(.Uploaded)
+    let optographID = MutableProperty<UUID>("")
     
     let imageURL = MutableProperty<String>("")
     
     private var disposable: Disposable?
     
+    private var optographBox: ModelBox<Optograph>!
+    
     func bind(optographID: UUID) {
         disposable?.dispose()
         
-        let optographBox = Models.optographs[optographID]!
+        self.optographID.value = optographID
+        
+        optographBox = Models.optographs[optographID]!
         
         disposable = optographBox.producer.startWithNext { [weak self] optograph in
             self?.isPrivate.value = optograph.isPrivate
@@ -33,6 +38,16 @@ class TileCollectionViewModel {
             self?.uploadStatus.value = optograph.isPublished ? .Uploaded : .Offline
             self?.imageURL.value = TextureURL(optographID, side: .Left, size: 512, face: 0, x: 0, y: 0, d: 1)
         }
+    }
+    
+    func upload() {
+        optographBox.insertOrUpdate { box in
+            box.model.shouldBePublished = true
+        }
+        
+        PipelineService.checkUploading()
+        
+        uploadStatus.value = .Uploading
     }
     
 }

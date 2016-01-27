@@ -34,7 +34,7 @@ class SaveViewController: UIViewController, RedNavbar {
     }()
     private let dragTextView = UILabel()
     private let dragIconView = UILabel()
-    private let locationView = LocationView()
+    private let locationView: LocationView
     private let textInputView = UITextView()
     private let textPlaceholderView = UILabel()
     private let shareBackgroundView = UIView()
@@ -49,6 +49,8 @@ class SaveViewController: UIViewController, RedNavbar {
         let (placeholderSignal, placeholderSink) = Signal<UIImage, NoError>.pipe()
         
         viewModel = SaveViewModel(placeholderSignal: placeholderSignal)
+        
+        locationView = LocationView(isOnline: viewModel.isOnline)
         
         super.init(nibName: nil, bundle: nil)
         
@@ -656,7 +658,10 @@ private class LocationViewModel {
     
     var locationPermissionTimer: NSTimer?
     
-    init() {
+    weak var isOnline: MutableProperty<Bool>!
+    
+    init(isOnline: MutableProperty<Bool>) {
+        self.isOnline = isOnline
         
         locationEnabled.value = LocationService.enabled
         
@@ -678,17 +683,16 @@ private class LocationViewModel {
                     .ignoreError()
             }
             .flatMap(.Latest) { (lat, lon) -> SignalProducer<[GeocodePreview], NoError> in
-                if Reachability.connectedToNetwork() {
+                if isOnline.value {
                     return ApiService<GeocodePreview>.get("locations/geocode-reverse", queries: ["lat": "\(lat)", "lon": "\(lon)"])
-                        .on(failed: { _ in
-                            self.locationLoading.value = false
+                        .on(failed: { [weak self] _ in
+                            self?.isOnline.value = false
+                            self?.locationLoading.value = false
                         })
-                        .ignoreError()
+                        .failedAsNext { _ in GeocodePreview(name: "Use location (\(lat.roundToPlaces(1)), \(lon.roundToPlaces(1)))") }
                         .collect()
                 } else {
-                    var fallbackLocation = GeocodePreview()
-                    fallbackLocation.name = "Use location (\(lat.roundToPlaces(1)), \(lon.roundToPlaces(1)))"
-                    return SignalProducer(value: [fallbackLocation])
+                    return SignalProducer(value: [GeocodePreview(name: "Use location (\(lat.roundToPlaces(1)), \(lon.roundToPlaces(1)))")])
                 }
             }
             .observeNext { [weak self] locations in
@@ -724,6 +728,10 @@ private struct GeocodePreview: Mappable {
     var placeID = ""
     var name = ""
     var vicinity = ""
+    
+    init(name: String) {
+        self.name = name
+    }
     
     init() {}
     
@@ -785,12 +793,14 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
     
     var didSelectLocation: (String? -> ())?
     
-    private let viewModel = LocationViewModel()
+    var viewModel: LocationViewModel!
     
     private var locations: [GeocodePreview] = []
     
-    override init (frame: CGRect) {
-        super.init(frame: frame)
+    convenience init(isOnline: MutableProperty<Bool>) {
+        self.init(frame: CGRectZero)
+        
+        viewModel = LocationViewModel(isOnline: isOnline)
         
         bottomBorder.backgroundColor = UIColor(0xe6e6e6).CGColor
         layer.addSublayer(bottomBorder)
@@ -831,6 +841,10 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         statusText.rac_hidden <~ viewModel.locationEnabled
         statusText.text = "Add location"
         addSubview(statusText)
+    }
+    
+    private override init(frame: CGRect) {
+        super.init(frame: frame)
     }
 
     required init?(coder aDecoder: NSCoder) {
