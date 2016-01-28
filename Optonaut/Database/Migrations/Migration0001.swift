@@ -28,7 +28,7 @@ private func createPerson() -> String {
         t.column(PersonSchema.followedCount)
         t.column(PersonSchema.isFollowed)
         t.column(PersonSchema.createdAt)
-        t.column(PersonSchema.wantsNewsletter)
+//        t.column(PersonSchema.wantsNewsletter) // removed
         t.column(PersonSchema.avatarAssetID)
     }
 }
@@ -100,7 +100,7 @@ private func createGuestPerson() -> Insert {
         PersonSchema.followedCount <- 0,
         PersonSchema.isFollowed <- false,
         PersonSchema.createdAt <- NSDate(),
-        PersonSchema.wantsNewsletter <- false,
+//        PersonSchema.wantsNewsletter <- false, // removed
         PersonSchema.avatarAssetID <- uuid(),
     ])
 }

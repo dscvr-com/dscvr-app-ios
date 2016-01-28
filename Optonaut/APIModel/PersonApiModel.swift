@@ -18,6 +18,7 @@ struct PersonApiModel: ApiModel, Mappable {
     var displayName: String = ""
     var userName: String = ""
     var text: String = ""
+    var optographsCount: Int = 0
     var followersCount: Int = 0
     var followedCount: Int = 0
     var isFollowed: Bool = false
@@ -34,6 +35,7 @@ struct PersonApiModel: ApiModel, Mappable {
         displayName         <- map["display_name"]
         userName            <- map["user_name"]
         text                <- map["text"]
+        optographsCount     <- map["optographs_count"]
         followersCount      <- map["followers_count"]
         followedCount       <- map["followed_count"]
         isFollowed          <- map["is_followed"]

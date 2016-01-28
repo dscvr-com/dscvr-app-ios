@@ -32,22 +32,73 @@ class TileCollectionViewModel {
         
         optographBox = Models.optographs[optographID]!
         
-        disposable = optographBox.producer.startWithNext { [weak self] optograph in
-            self?.isPrivate.value = optograph.isPrivate
-            self?.isStitched.value = optograph.isStitched
-            self?.uploadStatus.value = optograph.isPublished ? .Uploaded : .Offline
-            self?.imageURL.value = TextureURL(optographID, side: .Left, size: 512, face: 0, x: 0, y: 0, d: 1)
-        }
+        disposable = optographBox.producer
+            .observeOnMain() // needed because of changes from PipelineService
+            .skipRepeats()
+            .startWithNext { [weak self] optograph in
+                self?.isPrivate.value = optograph.isPrivate
+                self?.isStitched.value = optograph.isStitched
+                self?.uploadStatus.value = optograph.isPublished ? .Uploaded : .Offline
+                self?.imageURL.value = TextureURL(optographID, side: .Left, size: 512, face: 0, x: 0, y: 0, d: 1)
+            }
     }
     
     func upload() {
-        optographBox.insertOrUpdate { box in
-            box.model.shouldBePublished = true
+        if !optographBox.model.isOnServer {
+            let optograph = optographBox.model
+            
+            let postParameters = [
+                "id": optograph.ID,
+                "stitcher_version": StitcherVersion,
+                "created_at": optograph.createdAt.toRFC3339String(),
+            ]
+            
+            var putParameters: [String: AnyObject] = [
+                "text": optograph.text,
+                "is_private": optograph.isPrivate,
+                "post_facebook": optograph.postFacebook,
+                "post_twitter": optograph.postTwitter,
+                "direction_phi": optograph.directionPhi,
+                "direction_theta": optograph.directionTheta,
+            ]
+            if let locationID = optograph.locationID, location = Models.locations[locationID]?.model {
+                putParameters["location"] = [
+                    "latitude": location.latitude,
+                    "longitude": location.longitude,
+                    "text": location.text,
+                    "country": location.country,
+                    "country_short": location.countryShort,
+                    "place": location.place,
+                    "region": location.region,
+                    "poi": location.POI,
+                ]
+            }
+            
+            ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
+                .on(next: { [weak self] optograph in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.shareAlias = optograph.shareAlias
+                    }
+                })
+                .flatMap(.Latest) { _ in ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: putParameters) }
+                .on(next: { [weak self] optograph in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.isOnServer = true
+                    }
+                })
+                .start()
+            
+            
+        } else {
+            optographBox.insertOrUpdate { box in
+                box.model.shouldBePublished = true
+            }
+            
+            PipelineService.checkUploading()
+            
+            uploadStatus.value = .Uploading
         }
         
-        PipelineService.checkUploading()
-        
-        uploadStatus.value = .Uploading
     }
     
 }

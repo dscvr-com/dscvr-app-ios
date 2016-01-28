@@ -16,10 +16,10 @@ struct PersonSchemaType: ModelSchema {
     let displayName = Expression<String>("person_display_name")
     let userName = Expression<String>("person_user_name")
     let text = Expression<String>("person_text")
+    let optographsCount = Expression<Int>("person_optographs_count")
     let followersCount = Expression<Int>("person_followers_count")
     let followedCount = Expression<Int>("person_followed_count")
     let isFollowed = Expression<Bool>("person_is_followed")
-    let wantsNewsletter = Expression<Bool>("person_wants_newsletter")
     let avatarAssetID = Expression<UUID>("person_avatar_asset_id")
 }
 

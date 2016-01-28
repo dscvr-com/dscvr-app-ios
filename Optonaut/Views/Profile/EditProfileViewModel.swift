@@ -121,7 +121,6 @@ class EditProfileViewModel {
         email.value = person.email ?? ""
         displayName.value = person.displayName
         userName.value = person.userName
-        wantsNewsletter.value = person.wantsNewsletter
         text.value = person.text
         avatarImageUrl.value = ImageURL(person.avatarAssetID, width: 60, height: 60)
     }
@@ -129,7 +128,6 @@ class EditProfileViewModel {
     private func updateModel() {
         person.displayName = displayName.value
         person.userName = userName.value
-        person.wantsNewsletter = wantsNewsletter.value
         person.text = text.value
     }
     

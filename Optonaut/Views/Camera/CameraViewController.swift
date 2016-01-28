@@ -255,9 +255,9 @@ class CameraViewController: UIViewController {
                 
                 let edgeNode = createLineNode(posA, posB: posB)
                 
-                if i % 20 > 9 {
-                    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor()
-                }
+//                if i % 20 > 9 {
+//                    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor()
+//                }
                 
                 edges[edge] = edgeNode
                 
@@ -403,7 +403,8 @@ class CameraViewController: UIViewController {
         
         let ball = SCNVector3ToGLKVector3(ballNode.position)
         
-        if true || !recorder.hasStarted() {
+//        if true || !recorder.hasStarted() {
+        if !recorder.hasStarted() {
             ballNode.position = SCNVector3FromGLKVector3(target)
         } else {
             // Speed per second

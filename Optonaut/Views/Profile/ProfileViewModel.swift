@@ -40,15 +40,18 @@ class ProfileViewModel {
                 self?.personBox.model.mergeApiModel(apiModel)
             }
         
-        personBox.producer.startWithNext { [weak self] person in
-            self?.displayName.value = person.displayName
-            self?.userName.value = person.userName
-            self?.text.value = person.text
-            self?.followersCount.value = person.followersCount
-            self?.followingCount.value = person.followedCount
-            self?.isFollowed.value = person.isFollowed
-            self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/avatar.jpg", width: 84, height: 84)
-        }
+        personBox.producer
+            .skipRepeats()
+            .startWithNext { [weak self] person in
+                self?.displayName.value = person.displayName
+                self?.userName.value = person.userName
+                self?.text.value = person.text
+                self?.postCount.value = person.optographsCount
+                self?.followersCount.value = person.followersCount
+                self?.followingCount.value = person.followedCount
+                self?.isFollowed.value = person.isFollowed
+                self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 84, height: 84)
+            }
     }
     
     func saveEdit() {
@@ -77,41 +80,17 @@ class ProfileViewModel {
         isEditing.value = false
     }
     
-//    func reloadModel() {
-//        let query = PersonTable.filter(PersonTable[PersonSchema.ID] == person.ID)
-//        
-//        if let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL) {
-//            self.person = person
-////            updateProperties()
-//        }
-//    }
-//    
-//    func toggleFollow() {
-//        let followedBefore = person.isFollowed
-//        
-//        SignalProducer<Bool, ApiError>(value: followedBefore)
-//            .flatMap(.Latest) { followedBefore in
-//                followedBefore
-//                    ? ApiService<EmptyResponse>.delete("persons/\(self.person.ID)/follow")
-//                    : ApiService<EmptyResponse>.post("persons/\(self.person.ID)/follow", parameters: nil)
-//            }
-//            .on(
-//                started: {
-//                    self.isFollowed.value = !followedBefore
-//                },
-//                failed: { _ in
-//                    self.isFollowed.value = followedBefore
-//                },
-//                completed: {
-//                    self.updateModel()
-////                    self.saveModel()
-//                }
-//            )
-//            .start()
-//    }
-//    
-//    private func updateModel() {
-//        person.isFollowed = isFollowed.value
-//    }
+    func updateAvatar(image: UIImage) -> SignalProducer<Void, ApiError> {
+        let avatarAssetID = uuid()
+        return ApiService<EmptyResponse>.upload("persons/me/upload-profile-image", multipartFormData: { form in
+            form.appendBodyPart(data: avatarAssetID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "avatar_asset_id")
+            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "avatar_asset", fileName: "image.jpg", mimeType: "image/jpeg")
+        })
+            .on(completed: { [weak self] _ in
+                self?.personBox.insertOrUpdate { box in
+                    box.model.avatarAssetID = avatarAssetID
+                }
+            })
+    }
     
 }

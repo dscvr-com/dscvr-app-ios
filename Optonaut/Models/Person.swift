@@ -17,10 +17,10 @@ struct Person: Model {
     var displayName: String
     var userName: String
     var text: String
+    var optographsCount: Int
     var followersCount: Int
     var followedCount: Int
     var isFollowed: Bool
-    var wantsNewsletter: Bool
     var avatarAssetID: UUID
     
     static let guestID: UUID = "00000000-0000-0000-0000-000000000000"
@@ -34,10 +34,10 @@ struct Person: Model {
             displayName: "",
             userName: "",
             text: "",
+            optographsCount: 0,
             followersCount: 0,
             followedCount: 0,
             isFollowed: false,
-            wantsNewsletter: false,
             avatarAssetID: ""
         )
     }
@@ -58,16 +58,25 @@ extension Person: MergeApiModel {
         displayName = apiModel.displayName
         userName = apiModel.userName
         text = apiModel.text
+        optographsCount = apiModel.optographsCount
         followersCount = apiModel.followersCount
         followedCount = apiModel.followedCount
         isFollowed = apiModel.isFollowed
     }
 }
 
+extension Person: Equatable {}
+
 func ==(lhs: Person, rhs: Person) -> Bool {
     return lhs.ID == rhs.ID
+        && lhs.createdAt == rhs.createdAt
+        && lhs.updatedAt == rhs.updatedAt
+        && lhs.email == rhs.email
         && lhs.displayName == rhs.displayName
         && lhs.userName == rhs.userName
+        && lhs.optographsCount == rhs.optographsCount
+        && lhs.followersCount == rhs.followersCount
+        && lhs.followedCount == rhs.followedCount
         && lhs.isFollowed == rhs.isFollowed
         && lhs.avatarAssetID == rhs.avatarAssetID
 }
@@ -91,10 +100,10 @@ extension Person: SQLiteModel {
             displayName: row[PersonSchema.displayName],
             userName: row[PersonSchema.userName],
             text: row[PersonSchema.text],
+            optographsCount: row[PersonSchema.optographsCount],
             followersCount: row[PersonSchema.followersCount],
             followedCount: row[PersonSchema.followedCount],
             isFollowed: row[PersonSchema.isFollowed],
-            wantsNewsletter: row[PersonSchema.wantsNewsletter],
             avatarAssetID: row[PersonSchema.avatarAssetID]
         )
     }
@@ -107,10 +116,10 @@ extension Person: SQLiteModel {
             PersonSchema.displayName <-- displayName,
             PersonSchema.userName <-- userName,
             PersonSchema.text <-- text,
+            PersonSchema.optographsCount <-- optographsCount,
             PersonSchema.followersCount <-- followersCount,
             PersonSchema.followedCount <-- followedCount,
             PersonSchema.isFollowed <-- isFollowed,
-            PersonSchema.wantsNewsletter <-- wantsNewsletter,
             PersonSchema.avatarAssetID <-- avatarAssetID
         ]
         

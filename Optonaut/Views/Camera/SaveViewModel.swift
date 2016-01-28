@@ -40,6 +40,7 @@ class SaveViewModel {
         optograph.isPublished = false
         optograph.isStitched = false
         optograph.isSubmitted = false
+        optograph.isOnServer = false
         optograph.leftCubeTextureStatusUpload = CubeTextureStatus()
         optograph.rightCubeTextureStatusUpload = CubeTextureStatus()
         optograph.leftCubeTextureStatusSave = CubeTextureStatus()
@@ -78,18 +79,23 @@ class SaveViewModel {
         }
         
         if isOnline.value && isLoggedIn.value {
-            ApiService<OptographApiModel>.post("optographs", parameters: ["id": optograph.ID, "stitcher_version": StitcherVersion])
+            let postParameters = [
+                "id": optograph.ID,
+                "stitcher_version": StitcherVersion,
+                "created_at": optograph.createdAt.toRFC3339String(),
+            ]
+            ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
                 .on(next: { [weak self] optograph in
                     self?.optographBox.insertOrUpdate { box in
                         box.model.shareAlias = optograph.shareAlias
-                        box.model.createdAt = optograph.createdAt
+                        box.model.isOnServer = true
                     }
                 })
                 .zipWith(placeholderSignal.mapError({ _ in ApiError.Nil }))
                 .flatMap(.Latest) { (optograph, image) in
                     return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
                         form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
-                        form.appendBodyPart(data: UIImageJPEGRepresentation(image, 0.7)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
+                        form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
                     })
                 }
                 .on(

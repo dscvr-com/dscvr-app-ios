@@ -17,7 +17,11 @@ enum OptographAsset {
 
 typealias HashtagStrings = Array<String>
 
-struct CubeTextureStatus: SQLiteValue {
+func ==(lhs: CubeTextureStatus, rhs: CubeTextureStatus) -> Bool {
+    return lhs.status == rhs.status
+}
+
+struct CubeTextureStatus: SQLiteValue, Equatable {
     var status: [Bool] = [false, false, false, false, false, false]
     
     var completed: Bool {
@@ -61,6 +65,7 @@ struct Optograph: DeletableModel {
     var isPrivate: Bool
     var isStitched: Bool
     var isSubmitted: Bool
+    var isOnServer: Bool
     var isPublished: Bool
     var stitcherVersion: String
     var shareAlias: String
@@ -94,6 +99,7 @@ struct Optograph: DeletableModel {
             isPrivate: false,
             isStitched: true,
             isSubmitted: true,
+            isOnServer: true,
             isPublished: true,
             stitcherVersion: "",
             shareAlias: "",
@@ -124,18 +130,37 @@ struct Optograph: DeletableModel {
 }
 
 func ==(lhs: Optograph, rhs: Optograph) -> Bool {
-    guard let lhsLocationID = lhs.locationID, rhsLocationID = rhs.locationID else {
-        return lhs.locationID == nil && rhs.locationID == nil
-    }
-    
-    return lhs.ID == rhs.ID
-        && lhs.isStitched == rhs.isStitched
-        && lhs.starsCount == rhs.starsCount
-        && lhs.isPublished == rhs.isPublished
-        && lhs.isStarred == rhs.isStarred
-        && lhs.starsCount == rhs.starsCount
-        && lhs.personID == rhs.personID
-        && lhsLocationID == rhsLocationID
+    return lhs.ID                             == rhs.ID
+        && lhs.text                           == rhs.text
+        && lhs.personID                       == rhs.personID
+        && lhs.createdAt                      == rhs.createdAt
+        && lhs.updatedAt                      == rhs.updatedAt
+        && lhs.deletedAt                      == rhs.deletedAt
+        && lhs.isStarred                      == rhs.isStarred
+        && lhs.starsCount                     == rhs.starsCount
+        && lhs.commentsCount                  == rhs.commentsCount
+        && lhs.viewsCount                     == rhs.viewsCount
+        && lhs.locationID                     == rhs.locationID
+        && lhs.isPrivate                      == rhs.isPrivate
+        && lhs.isStitched                     == rhs.isStitched
+        && lhs.isSubmitted                    == rhs.isSubmitted
+        && lhs.isOnServer                     == rhs.isOnServer
+        && lhs.isPublished                    == rhs.isPublished
+        && lhs.stitcherVersion                == rhs.stitcherVersion
+        && lhs.shareAlias                     == rhs.shareAlias
+        && lhs.leftCubeTextureStatusUpload    == rhs.leftCubeTextureStatusUpload
+        && lhs.rightCubeTextureStatusUpload   == rhs.rightCubeTextureStatusUpload
+        && lhs.leftCubeTextureStatusSave      == rhs.leftCubeTextureStatusSave
+        && lhs.rightCubeTextureStatusSave     == rhs.rightCubeTextureStatusSave
+        && lhs.isStaffPick                    == rhs.isStaffPick
+        && lhs.hashtagString                  == rhs.hashtagString
+        && lhs.isInFeed                       == rhs.isInFeed
+        && lhs.directionPhi                   == rhs.directionPhi
+        && lhs.directionTheta                 == rhs.directionTheta
+        && lhs.postFacebook                   == rhs.postFacebook
+        && lhs.postTwitter                    == rhs.postTwitter
+        && lhs.postInstagram                  == rhs.postInstagram
+        && lhs.shouldBePublished              == rhs.shouldBePublished
 }
 
 extension Optograph: MergeApiModel {
@@ -193,6 +218,7 @@ extension Optograph: SQLiteModel {
             isPrivate: row[OptographSchema.isPrivate],
             isStitched: row[OptographSchema.isStitched],
             isSubmitted: row[OptographSchema.isSubmitted],
+            isOnServer: row[OptographSchema.isOnServer],
             isPublished: row[OptographSchema.isPublished],
             stitcherVersion: row[OptographSchema.stitcherVersion],
             shareAlias: row[OptographSchema.shareAlias],
@@ -228,6 +254,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.isPrivate <-- isPrivate,
             OptographSchema.isStitched <-- isStitched,
             OptographSchema.isSubmitted <-- isSubmitted,
+            OptographSchema.isOnServer <-- isOnServer,
             OptographSchema.isPublished <-- isPublished,
             OptographSchema.stitcherVersion <-- stitcherVersion,
             OptographSchema.shareAlias <-- shareAlias,

@@ -910,8 +910,8 @@
 			children = (
 				8F4186001C53C7EB009E1E3F /* ProfileCollectionViewController.swift */,
 				8F4186061C552957009E1E3F /* TileCollectionViewCell.swift */,
-				8F41860A1C554437009E1E3F /* OpenGLView.swift */,
 				8F4186081C552D02009E1E3F /* TileCollectionViewModel.swift */,
+				8F41860A1C554437009E1E3F /* OpenGLView.swift */,
 				8F4186021C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift */,
 				8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */,
 				8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */,

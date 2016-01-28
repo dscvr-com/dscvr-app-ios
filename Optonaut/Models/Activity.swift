@@ -60,6 +60,8 @@ struct Activity: DeletableModel {
     }
 }
 
+extension Activity: Equatable {}
+
 func ==(lhs: Activity, rhs: Activity) -> Bool {
     return lhs.ID == rhs.ID
         && lhs.isRead == rhs.isRead

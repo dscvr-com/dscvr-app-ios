@@ -201,7 +201,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         followersCountView.rac_text <~ viewModel.followersCount.producer.map { "\($0)" }
         followersHeadingView.rac_hidden <~ viewModel.isEditing
         followersCountView.rac_hidden <~ viewModel.isEditing
-        postCountView.rac_text <~ viewModel.followersCount.producer.map { "\($0)" }
+        postCountView.rac_text <~ viewModel.postCount.producer.map { "\($0)" }
         postHeadingView.rac_hidden <~ viewModel.isEditing
         postCountView.rac_hidden <~ viewModel.isEditing
         followingCountView.rac_text <~ viewModel.followingCount.producer.map { "\($0)" }
@@ -273,9 +273,9 @@ extension ProfileHeaderCollectionViewCell: UIImagePickerControllerDelegate, UINa
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
         let fixedImage = image.fixedOrientation().centeredCropWithSize(CGSize(width: 1024, height: 1024))
         avatarImageView.image = fixedImage
-//        viewModel.updateAvatar(fixedImage).startWithCompleted {
-//            NotificationService.push("Profile image updated", level: .Success)
-//        }
+        viewModel.updateAvatar(fixedImage).startWithCompleted {
+            NotificationService.push("Profile image updated", level: .Success)
+        }
     }
     
 }

@@ -422,7 +422,7 @@ private class OverlayView: UIView {
                 
                 viewModel.bind(optograph)
                 
-                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/avatar.jpg", width: 47, height: 47))!)
+                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
                 personNameView.text = person.displayName
                 dateView.text = optograph.createdAt.longDescription
                 textView.text = optograph.text

@@ -13,21 +13,18 @@ class ModelBox<M: Model> {
     
     typealias ModelType = M
     
-    private weak var cache: ModelCache<M>?
+    // parent relationship
+    private weak var cache: ModelCache<ModelType>?
     
-    var model: M {
-        didSet {
-            property.value = model
-        }
-    }
+    var model: ModelType
     
-    var producer: SignalProducer<M, NoError> {
+    var producer: SignalProducer<ModelType, NoError> {
         return property.producer
     }
     
-    private let property: MutableProperty<M>
+    private let property: MutableProperty<ModelType>
     
-    private init(model: M) {
+    private init(model: ModelType) {
         self.model = model
         property = MutableProperty(model)
     }
@@ -35,13 +32,15 @@ class ModelBox<M: Model> {
     func update(closure: ModelBox -> ()) {
         objc_sync_enter(self)
         closure(self)
+        property.value = model
         objc_sync_exit(self)
     }
     
-    func replace(model: M) {
+    func replace(model: ModelType) {
         assert(model.ID == self.model.ID)
         objc_sync_enter(self)
         self.model = model
+        property.value = model
         objc_sync_exit(self)
     }
     
@@ -56,6 +55,7 @@ extension ModelBox where M: SQLiteModel {
     func insertOrUpdate() {
         objc_sync_enter(self)
         try! model.insertOrUpdate()
+        property.value = model
         objc_sync_exit(self)
     }
     
@@ -63,6 +63,7 @@ extension ModelBox where M: SQLiteModel {
         objc_sync_enter(self)
         closure(self)
         try! model.insertOrUpdate()
+        property.value = model
         objc_sync_exit(self)
     }
     
