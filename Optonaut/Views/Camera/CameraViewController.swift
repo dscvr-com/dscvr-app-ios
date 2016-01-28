@@ -217,7 +217,7 @@ class CameraViewController: UIViewController {
                 iso = videoDevice!.activeFormat.maxISO
             }
             videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
-            print("Video Settings. Iso: \(iso), exposure duration: \(exposureDuration)");
+            //print("Video Settings. Iso: \(iso), exposure duration: \(exposureDuration)");
         } else {
             videoDevice!.exposureMode = mode
         }
@@ -382,7 +382,10 @@ class CameraViewController: UIViewController {
     }
     
     private func setupBall() {
-        ballNode.geometry = SCNSphere(radius: CGFloat(0.04))
+        
+        let ballGeometry = SCNSphere(radius: CGFloat(0.04))
+        
+        ballNode.geometry = ballGeometry
         ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor.Accent
         
         scene.rootNode.addChildNode(ballNode)
@@ -391,10 +394,9 @@ class CameraViewController: UIViewController {
     private var time = Double(-1)
     
     private func updateBallPosition() {
-        
-        
-        let ballSphereRadius = Float(1);
-        let movementPerFrameInPixels = Double(400);
+
+        let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
+        let movementPerFrameInPixels = Double(400)
         
         let newTime = CACurrentMediaTime()
         
@@ -413,26 +415,42 @@ class CameraViewController: UIViewController {
             
             //print("exposure duration: \(exposureDuration), maxSpeed per second: \(maxRecordingSpeed), capturewidth: \(captureWidth)")
             
-            var maxSpeed = recorder.hasStarted() ? Float(maxRecordingSpeed) : Float(2.4)
-            var accelleration = recorder.hasStarted() ? Float(3) : Float(15)
-            
             let timeDiff = (newTime - time)
+            let maxSpeed = Float(maxRecordingSpeed) * Float(timeDiff)
+            let accelleration = (!recorder.isIdle() ? Float(0.2) : Float(2)) / Float(30)
             
-            maxSpeed *= Float(timeDiff)
-            accelleration *= Float(timeDiff)
+            let newHeading = GLKVector3Subtract(target, ball)
             
-            var newSpeed = GLKVector3Subtract(target, ball)
             
-            let dist = GLKVector3Length(newSpeed)
+            let dist = GLKVector3Length(newHeading)
+            var curSpeed = GLKVector3Length(ballSpeed)
             
-            if dist > maxSpeed {
-                newSpeed = GLKVector3MultiplyScalar(GLKVector3Normalize(newSpeed), maxSpeed)
+            // We have to actually break.
+            if sqrt(dist / accelleration) >= dist / curSpeed {
+                curSpeed -= accelleration
+            } else {
+                curSpeed += accelleration
             }
-            newSpeed = GLKVector3Subtract(newSpeed, ballSpeed)
-            newSpeed = GLKVector3MultiplyScalar(newSpeed, accelleration)
-            newSpeed = GLKVector3Add(newSpeed, ballSpeed)
-            //print("Ball Speed: \(newSpeed.x), \(newSpeed.y), \(newSpeed.z)")
-            ballSpeed = newSpeed;
+            
+            // Limit speed
+            if curSpeed < 0 {
+                curSpeed = 0
+            }
+            
+            if curSpeed > maxSpeed {
+                curSpeed = sign(curSpeed) * maxSpeed
+            }
+            
+            if curSpeed > dist {
+                curSpeed = dist
+            }
+            
+            //newSpeed = GLKVector3Subtract(newSpeed, ballSpeed)
+            if GLKVector3Length(newHeading) != 0 {
+                ballSpeed = GLKVector3MultiplyScalar(GLKVector3Normalize(newHeading), curSpeed)
+            } else {
+                ballSpeed = newHeading
+            }
             ballNode.position = SCNVector3FromGLKVector3(GLKVector3Add(ball, ballSpeed))
         }
         
@@ -485,7 +503,7 @@ class CameraViewController: UIViewController {
                     bestFormat = format
                     bestFrameRate = rate
                 }
-                print("Video: \(format.description), Max: \(rate.maxFrameDuration.seconds), min: \(rate.minFrameDuration.seconds)");
+                //print("Video: \(format.description), Max: \(rate.maxFrameDuration.seconds), min: \(rate.minFrameDuration.seconds)");
             }
         }
         videoDevice!.activeFormat = bestFormat

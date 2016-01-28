@@ -79,8 +79,9 @@ class PipelineService {
                             optographBox.insertOrUpdate { box in
                                 switch side {
                                 case .Left:
-                                    box.model.leftCubeTextureStatusSave!.status[face] = true
-                                    if box.model.leftCubeTextureStatusSave!.completed {
+                                    // optional needed for when stitching was restarted and left textures already saved
+                                    box.model.leftCubeTextureStatusSave?.status[face] = true
+                                    if box.model.leftCubeTextureStatusSave?.completed == true {
                                         box.model.leftCubeTextureStatusSave = nil
                                     }
                                 case .Right:
