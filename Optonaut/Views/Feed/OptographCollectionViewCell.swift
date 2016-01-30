@@ -62,6 +62,10 @@ class TouchRotationSource: RotationMatrixSource {
     }
     
     func touchMove(point: CGPoint) {
+        if !isTouching {
+            return
+        }
+        
         let x0 = Float(sceneWidth / 2)
         let y0 = Float(sceneHeight / 2)
         let flen = y0 / tan(vfov / 2 * Float(M_PI) / 180)
