@@ -147,15 +147,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SessionService.prepare()
         SessionService.onLogout(performAlways: true) { self.window?.rootViewController = LoginViewController() }
         
-        if SessionService.isLoggedIn || !requireLogin {
-            if SessionService.needsOnboarding && requireLogin {
-                window?.rootViewController = OnboardingInfoViewController()
-            } else {
+//        if SessionService.isLoggedIn || !requireLogin {
+//            if SessionService.needsOnboarding && requireLogin {
+//                window?.rootViewController = OnboardingInfoViewController()
+//            } else {
                 fn()
-            }
-        } else {
-            window?.rootViewController = LoginViewController()
-        }
+//            }
+//        } else {
+//            window?.rootViewController = LoginViewController()
+//        }
         
         VersionService.onOutdatedApiVersion {
             let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of Optonaut. Please update to the newest version.", preferredStyle: .Alert)
