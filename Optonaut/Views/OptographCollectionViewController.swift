@@ -663,15 +663,15 @@ private class OverlayView: UIView {
         
         viewModel.liked.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
-                if liked {
-                    strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 31, height: 28)
-                    strongSelf.likeButtonView.backgroundColor = .Accent
-                    strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(15)
-                } else {
+//                if liked {
+//                    strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 31, height: 28)
+//                    strongSelf.likeButtonView.backgroundColor = .Accent
+//                    strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(15)
+//                } else {
                     strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 28)
-                    strongSelf.likeButtonView.backgroundColor = .clearColor()
+                strongSelf.likeButtonView.setTitleColor(liked ? .Accent : .whiteColor(), forState: .Normal)
                     strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(24)
-                }
+//                }
                 strongSelf.likeCountView.align(.ToTheLeftCentered, relativeTo: strongSelf.likeButtonView, padding: 10, width: 40, height: 13)
                 strongSelf.uploadButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
                 strongSelf.uploadTextView.align(.ToTheLeftCentered, relativeTo: strongSelf.uploadButtonView, padding: 8, width: 60, height: 13)
