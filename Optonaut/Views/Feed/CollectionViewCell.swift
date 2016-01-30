@@ -226,7 +226,7 @@ class CollectionViewCell: UICollectionViewCell {
     
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: HorizontalFieldOfView)
     
-        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView))
+        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView), cubeFaceCount: 2, autoDispose: false)
         renderDelegate.scnView = scnView
         
         renderDelegate.scnView = scnView

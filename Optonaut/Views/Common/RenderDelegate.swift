@@ -114,9 +114,20 @@ class CubeRenderDelegate: RenderDelegate {
     weak var scnView: SCNView?
 
     private let cubeScaling: CGFloat = 10
+    private let cubeFaceCount: Int
+    private let autoDispose: Bool
     
-    override init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float) {
+    convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool) {
+        let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
+        
+        self.init(rotationMatrixSource: rotationMatrixSource, fov: newFov, cameraOffset: Float(0), cubeFaceCount: cubeFaceCount, autoDispose: autoDispose)
+    }
+    
+    init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float, cubeFaceCount: Int, autoDispose: Bool) {
+        self.cubeFaceCount = cubeFaceCount
+        self.autoDispose = autoDispose
         super.init(rotationMatrixSource: rotationMatrixSource, fov: fov, cameraOffset: cameraOffset)
+        
         
         initScene()
     }
@@ -135,7 +146,7 @@ class CubeRenderDelegate: RenderDelegate {
     private static let BlackTexture = CubeRenderDelegate.getBlackTexture()
     
     private func initScene() {
-        let subSurf = 5
+        let subSurf = cubeFaceCount
         
         let subW = 1.0 / Float(subSurf)
         
@@ -205,7 +216,7 @@ class CubeRenderDelegate: RenderDelegate {
         self.nodeLeaveScene = nil
         
         sync(self) {
-            for (index, plane) in self.planes {
+            for (_, plane) in self.planes {
                 //print("resett \(self.id) \(index)")
                 plane.node.geometry?.firstMaterial?.diffuse.contents = CubeRenderDelegate.BlackTexture
                 plane.visible = false
@@ -228,6 +239,45 @@ class CubeRenderDelegate: RenderDelegate {
         return Set(visiblePlanes.flatMap { self.adj[$0]! })
     }
     
+    func requestAll() {
+        for (index, plane) in self.planes {
+            request(plane, index: index)
+        }
+    }
+    
+    private func request(item: Item, index: CubeImageCache.Index) {
+        if !item.visible {
+            sync(self) {
+                if !item.requested && !item.hasTexture {
+                    //print("req \(self.id) \(index)")
+                    if let callback = self.nodeEnterScene {
+                        item.visible = true
+                        item.requested = true
+                        callback(index)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func forget(item: Item, index: CubeImageCache.Index) {
+        if item.visible {
+            sync(self) {
+                if item.hasTexture {
+                    //print("forg \(self.id) \(index)")
+                    item.node.geometry!.firstMaterial!.diffuse.contents = CubeRenderDelegate.BlackTexture
+                    
+                    item.hasTexture = false
+                    
+                    if let callback = self.nodeLeaveScene {
+                        item.visible = false
+                        callback(index)
+                    }
+                }
+            }
+        }
+    }
+    
     override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         super.renderer(aRenderer, updateAtTime: time)
         
@@ -248,31 +298,10 @@ class CubeRenderDelegate: RenderDelegate {
         
         for (index, item) in planes {
             let nowVisible = visibleAndAdjacentPlanes.contains(item.node)
-            if nowVisible && !item.visible {
-                sync(self) {
-                    if !item.requested && !item.hasTexture {
-                        //print("req \(self.id) \(index)")
-                        if let callback = self.nodeEnterScene {
-                            callback(index)
-                            item.visible = true
-                            item.requested = true
-                        }
-                    }
-                }
-            } else if !nowVisible && item.visible {
-                sync(self) {
-                    if item.hasTexture {
-                        //print("forg \(self.id) \(index)")
-                        item.node.geometry!.firstMaterial!.diffuse.contents = CubeRenderDelegate.BlackTexture
-                        
-                        item.hasTexture = false
-                        
-                        if let callback = self.nodeLeaveScene {
-                            item.visible = false
-                            callback(index)
-                        }
-                    }
-                }
+            if nowVisible {
+                request(item, index: index)
+            } else if autoDispose && !nowVisible {
+                forget(item, index: index)
             }
         }
         
@@ -304,7 +333,6 @@ class SphereRenderDelegate: RenderDelegate {
     
     let sphereNode: SCNNode
     
-    // TODO - Jojo, please clean up the duplicate code in here.
     var image: UIImage? {
         didSet {
             guard let image = image else {
@@ -312,77 +340,19 @@ class SphereRenderDelegate: RenderDelegate {
                 return
             }
             
-            if image.size.width == image.size.height {
-                // Classic case - quadratic texture
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
-            } else {
-                // Extended case - rectangular texture, need to center
-                let ratio = Float((image.size.width / CGFloat(2)) / image.size.height)
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
-                
-                // Yes, we calculate our transform ourselves.
-                // And yes, this matrix is inverted.
-                // Texture mapping from 0 to 1
-                let transform = SCNMatrix4FromGLKMatrix4(
-                    GLKMatrix4Make(
-                        1, 0, 0, 0,
-                        0, ratio, 0, 0,
-                        0, 0, 1, 0,
-                        0, (1 - ratio) / 2, 0, 1
-                    )
-                )
-                
-                sphereNode.geometry?.firstMaterial?.diffuse.contentsTransform = transform
-                if #available(iOS 9.0, *) {
-                    sphereNode.geometry?.firstMaterial?.diffuse.wrapS = .ClampToBorder
-                    sphereNode.geometry?.firstMaterial?.diffuse.wrapT = .ClampToBorder
-                } else {
-                    
-                }
-                sphereNode.geometry?.firstMaterial?.diffuse.borderColor =  UIColor.blackColor()
-                
-            }
+            sphereNode.geometry?.firstMaterial?.diffuse.contents = image
+            updateProjectionMatrix(image.size)
         }
     }
     var texture: SKTexture? {
         didSet {
-            guard let image = texture else {
+            guard let texture = texture else {
                 sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
                 return
             }
             
-            if image.size().width == image.size().height {
-                // Classic case - quadratic texture
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
-            } else {
-                // Extended case - rectangular texture, need to center
-                let ratio = Float((image.size().width / CGFloat(2)) / image.size().height)
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = image
-                
-                // Yes, we calculate our transform ourselves.
-                // And yes, this matrix is inverted.
-                // Texture mapping from 0 to 1
-                let transform = SCNMatrix4FromGLKMatrix4(
-                    GLKMatrix4Make(
-                        1, 0, 0, 0,
-                        0, -ratio, 0, 0,
-                        0, 0, 1, 0,
-                        0, 1 - (1 - ratio) / 2, 0, 1
-                    )
-                )
-                
-                sphereNode.geometry?.firstMaterial?.diffuse.contentsTransform = transform
-                if #available(iOS 9.0, *) {
-                    sphereNode.geometry?.firstMaterial?.diffuse.wrapS = .ClampToBorder
-                    sphereNode.geometry?.firstMaterial?.diffuse.wrapT = .ClampToBorder
-                } else {
-                    
-                }
-                sphereNode.geometry?.firstMaterial?.diffuse.borderColor =  UIColor.blackColor()
-                
-            }
+            sphereNode.geometry?.firstMaterial?.diffuse.contents = texture
+            updateProjectionMatrix(texture.size())
         }
     }
 
@@ -393,6 +363,39 @@ class SphereRenderDelegate: RenderDelegate {
         super.init(rotationMatrixSource: rotationMatrixSource, fov: fov, cameraOffset: cameraOffset)
         
         scene.rootNode.addChildNode(sphereNode)
+    }
+    
+    private func updateProjectionMatrix(size: CGSize) {
+        if size.width == size.height {
+            // Classic case - quadratic texture
+            sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
+        } else {
+            // Extended case - rectangular texture, need to center
+            let ratio = Float((size.width / CGFloat(2)) / size.height)
+            
+            // Yes, we calculate our transform ourselves.
+            // And yes, this matrix is inverted.
+            // Texture mapping from 0 to 1
+            let transform = SCNMatrix4FromGLKMatrix4(
+                GLKMatrix4Make(
+                    1, 0, 0, 0,
+                    0, -ratio, 0, 0,
+                    0, 0, 1, 0,
+                    0, 1 - (1 - ratio) / 2, 0, 1
+                )
+            )
+            
+            sphereNode.geometry?.firstMaterial?.diffuse.contentsTransform = transform
+            if #available(iOS 9.0, *) {
+                sphereNode.geometry?.firstMaterial?.diffuse.wrapS = .ClampToBorder
+                sphereNode.geometry?.firstMaterial?.diffuse.wrapT = .ClampToBorder
+            } else {
+                
+            }
+            sphereNode.geometry?.firstMaterial?.diffuse.borderColor =  UIColor.blackColor()
+            
+        }
+
     }
     
     private static func createSphere() -> SCNNode {

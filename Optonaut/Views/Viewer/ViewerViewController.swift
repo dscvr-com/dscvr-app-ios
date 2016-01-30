@@ -80,9 +80,9 @@ class ViewerViewController: UIViewController  {
     }
     
     private func createRenderDelegates() {
-        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: leftProgram.fov, cameraOffset: Float(-0.2))
+        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false)
         leftRenderDelegate.scnView = leftScnView
-        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: rightProgram.fov, cameraOffset: Float(0.2))
+        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 2, autoDispose: false)
         rightRenderDelegate.scnView = rightScnView
         
         leftScnView.scene = leftRenderDelegate.scene
@@ -190,27 +190,28 @@ class ViewerViewController: UIViewController  {
         
         
         let leftImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
-            dispatch_async(queue) {
+            dispatch_async(dispatch_get_main_queue()) {
                 self?.leftRenderDelegate.setTexture(image, forIndex: index)
-                self?.leftScnView.prepareObject(self!.leftRenderDelegate!.scene, shouldAbortBlock: nil)
                 self?.leftLoadingView.stopAnimating()
             }
         }
         
         leftRenderDelegate.nodeEnterScene = { [weak self] index in
             dispatch_async(queue) {
+                print("Left enter.")
                 self?.leftCache.get(index, callback: leftImageCallback)
             }
         }
-        
+    
         leftRenderDelegate.nodeLeaveScene = { index in
             dispatch_async(queue) { [weak self] in
+                print("Left leave.")
                 self?.leftCache.forget(index)
             }
         }
         
         let rightImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
-            dispatch_async(queue) {
+            dispatch_async(dispatch_get_main_queue()) {
                 self?.rightRenderDelegate.setTexture(image, forIndex: index)
                 self?.rightLoadingView.stopAnimating()
             }
@@ -218,31 +219,20 @@ class ViewerViewController: UIViewController  {
         
         rightRenderDelegate.nodeEnterScene = { [weak self] index in
             dispatch_async(queue) {
-                self?.leftCache.get(index, callback: rightImageCallback)
+                print("Right enter.")
+                self?.rightCache.get(index, callback: rightImageCallback)
             }
         }
         
         rightRenderDelegate.nodeLeaveScene = { index in
             dispatch_async(queue) { [weak self] in
+                print("Right leave.")
                 self?.rightCache.forget(index)
             }
         }
         
-//        leftDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.leftTextureAssetID))
-//            .observeOnMain()
-//            .startWithNext { [weak self] image in
-////                self?.leftRenderDelegate.image = image
-//                self?.imageManager.cache.clearMemoryCache()
-//                self?.leftLoadingView.stopAnimating()
-//            }
-//        
-//        rightDownloadDisposable = imageManager.downloader.downloadImageForURL(ImageURL(optograph.rightTextureAssetID))
-//            .observeOnMain()
-//            .startWithNext { [weak self] image in
-////                self?.rightRenderDelegate.image = image
-//                self?.imageManager.cache.clearMemoryCache()
-//                self?.rightLoadingView.stopAnimating()
-//            }
+        rightRenderDelegate.requestAll()
+        leftRenderDelegate.requestAll()
     }
     
     func setViewerParameters(headset: CardboardParams) {
