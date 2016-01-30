@@ -12,7 +12,7 @@ import ReactiveCocoa
 import SceneKit
 import Kingfisher
 
-class TileCollectionViewCell: UICollectionViewCell {
+class ProfileTileCollectionViewCell: UICollectionViewCell {
     
 //    private let renderDelegate: CubeRenderDelegate
 //    private let scnView: SCNView
@@ -20,9 +20,11 @@ class TileCollectionViewCell: UICollectionViewCell {
     private let loadingView = UIActivityIndicatorView()
     private let imageView = PlaceholderImageView()
     
-    private let viewModel = TileCollectionViewModel()
+    private let viewModel = ProfileTileCollectionViewModel()
     
 //    private let glView: OpenGLView
+    
+    var optographID: UUID?
     
     override init(frame: CGRect) {
         
@@ -42,18 +44,22 @@ class TileCollectionViewCell: UICollectionViewCell {
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
         imageView.rac_url <~ viewModel.imageURL.producer.delayLatestUntil(viewModel.isStitched.producer)
         imageView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
-        viewModel.uploadStatus.producer.equalsTo(.Uploaded).skipRepeats()
-            .combineLatestWith(viewModel.optographID.producer.skipRepeats())
+        viewModel.uploadStatus.producer.equalsTo(.Uploaded)
+            .combineLatestWith(viewModel.optographID.producer)
             .delayLatestUntil(viewModel.isStitched.producer)
+            .skipRepeats { $0.0 == $1.0 && $0.1 == $1.1 }
             .startWithNext { [weak self] (isUploaded, optographID) in
                 if isUploaded {
                     let url = TextureURL(optographID, side: .Left, size: Int(frame.width), face: 0, x: 0, y: 0, d: 1)
                     self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
                 } else {
                     let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
-                    let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self?.imageView.image = originalImage.resized(.Width, value: frame.width)
+                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self?.imageView.image = originalImage.resized(.Width, value: frame.width)
+                        }
+                    } else {
+                        // TODO this should never be possible
                     }
                 }
             }
@@ -73,15 +79,15 @@ class TileCollectionViewCell: UICollectionViewCell {
         iconView.textColor = .whiteColor()
         iconView.font = UIFont.iconOfSize(18)
         iconView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
-        iconView.rac_text <~ viewModel.isPrivate.producer
-            .combineLatestWith(viewModel.uploadStatus.producer)
+        iconView.rac_text <~ viewModel.isPrivate.producer.skipRepeats()
+            .combineLatestWith(viewModel.uploadStatus.producer.skipRepeats())
             .map { isPrivate, uploadStatus in
                 if isPrivate {
                     return String.iconWithName(.Safe)
                 } else if uploadStatus == .Uploading {
-                    return String.iconWithName(.Home)
+                    return String.iconWithName(.Loading)
                 } else if uploadStatus == .Offline {
-                    return String.iconWithName(.ArrowDown)
+                    return String.iconWithName(.Upload)
                 } else {
                     return ""
                 }
@@ -94,8 +100,6 @@ class TileCollectionViewCell: UICollectionViewCell {
         loadingView.rac_animating <~ viewModel.isStitched.producer.map(negate)
         contentView.addSubview(loadingView)
         
-        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTap"))
-        
         contentView.backgroundColor = UIColor(0xcacaca)
     }
     
@@ -107,23 +111,10 @@ class TileCollectionViewCell: UICollectionViewCell {
         super.layoutSubviews()
     }
     
-    func setImage(texture: SKTexture, forIndex index: CubeImageCache.Index) {
-//        renderDelegate.setTexture(texture, forIndex: index)
-//        scnView.prepareObject(renderDelegate.planes[index]!, shouldAbortBlock: nil)
-//        Async.main { [weak self] in
-////            self?.loadingStatus.value = isPreview ? .Preview : .Loaded
-//            self?.loadingStatus.value = .Loaded
-//        }
-    }
-    
     func bind(optographID: UUID) {
+//        print(optographID)
+        self.optographID = optographID
         viewModel.bind(optographID)
-    }
-    
-    dynamic private func didTap() {
-        if viewModel.uploadStatus.value == .Offline {
-            viewModel.upload()
-        }
     }
     
 }

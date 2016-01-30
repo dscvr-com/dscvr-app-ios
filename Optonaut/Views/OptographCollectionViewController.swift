@@ -12,46 +12,57 @@ import SpriteKit
 import Async
 import Kingfisher
 
-private let reuseIdentifier = "Cell"
-
 typealias Direction = (phi: Float, theta: Float)
 
+protocol OptographCollectionViewModel {
+    var isActive: MutableProperty<Bool> { get }
+    var results: MutableProperty<TableViewResults<Optograph>> { get }
+    func refresh()
+    func loadMore()
+}
 
-class CollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
+
+class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
     
     private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
     
-    private let viewModel = FeedViewModel()
-    private var optographIDs: [UUID] = []
-    private var optographDirections: [UUID: Direction] = [:]
+    private let viewModel: OptographCollectionViewModel
     private let imageCache: CollectionImageCache
     private let overlayDebouncer: Debouncer
+    
+    private var optographIDs: [UUID] = []
+    private var optographDirections: [UUID: Direction] = [:]
     
     private let refreshControl = UIRefreshControl()
     private let overlayView = OverlayView()
     
     private let uiHidden = MutableProperty<Bool>(false)
     
-    private var overlayAnimating = false
+    private var overlayIsAnimating = false
     
-    required override init(collectionViewLayout: UICollectionViewLayout) {
+    private var isVisible = false
+    
+    init(viewModel: OptographCollectionViewModel) {
+        self.viewModel = viewModel
+        
         overlayDebouncer = Debouncer(queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), delay: 0.01)
         
         let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
         imageCache = CollectionImageCache(textureSize: textureSize)
         
-        super.init(collectionViewLayout: collectionViewLayout)
+        super.init(collectionViewLayout: UICollectionViewFlowLayout())
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    deinit {
+        logRetain()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationItem.titleView = UIImageView(image: UIImage.iconWithName(.LogoText, textColor: .whiteColor(), fontSize: 26))
-        title = String.iconWithName(.LogoText)
         
 //        let searchButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
 //        searchButton.text = String.iconWithName(.Cancel)
@@ -72,15 +83,15 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         
-        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { _ in
-            self.viewModel.refreshNotification.notify(())
-            Async.main(after: 10) { self.refreshControl.endRefreshing() }
+        refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { [weak self] _ in
+            self?.viewModel.refresh()
+            Async.main(after: 10) { [weak self] in self?.refreshControl.endRefreshing() }
         }
         refreshControl.bounds = CGRect(x: refreshControl.bounds.origin.x, y: 5, width: refreshControl.bounds.width, height: refreshControl.bounds.height)
         collectionView!.addSubview(refreshControl)
 
         // Register cell classes
-        collectionView!.registerClass(CollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView!.registerClass(OptographCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         
         collectionView!.delegate = self
         
@@ -93,6 +104,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         edgesForExtendedLayout = .None
         
         viewModel.results.producer
+            .filter { $0.changed }
             .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
             .delayAllUntil(viewModel.isActive.producer)
             .observeOnMain()
@@ -106,24 +118,29 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
                         }
                     }
                     
-                    CATransaction.begin()
-                    CATransaction.setDisableActions(true)
-                        strongSelf.collectionView!.performBatchUpdates({
-                            strongSelf.imageCache.delete(results.delete)
-                            strongSelf.imageCache.insert(results.insert)
-                            strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0, inSection: 0) })
-                            strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0, inSection: 0) })
-                            strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0, inSection: 0) })
-                        }, completion: { _ in
-                            if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
-                                // preserves scroll position
-                                if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
-                                    strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
+                    if results.models.count == 1 {
+                        strongSelf.collectionView!.reloadData()
+                    } else {
+                        CATransaction.begin()
+                        CATransaction.setDisableActions(true)
+                            strongSelf.collectionView!.performBatchUpdates({
+                                strongSelf.imageCache.delete(results.delete)
+                                strongSelf.imageCache.insert(results.insert)
+                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection: 0) })
+                                strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
+                                strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
+                            }, completion: { _ in
+                                if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
+                                    // preserves scroll position
+                                    if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
+                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
+                                    }
                                 }
-                            }
-                            strongSelf.refreshControl.endRefreshing()
-                            CATransaction.commit()
-                        })
+                                strongSelf.refreshControl.endRefreshing()
+                                CATransaction.commit()
+                            })
+                    }
+                    
                 }
             })
             .start()
@@ -133,10 +150,10 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         overlayView.uiHidden = uiHidden
         overlayView.navigationController = navigationController as? NavigationController
         overlayView.rac_hidden <~ uiHidden
-        overlayView.deleteCallback = { [weak self] in
-            self?.overlayView.optographID = nil
-            self?.viewModel.refreshNotification.notify(())
-        }
+//        overlayView.deleteCallback = { [weak self] in
+//            self?.overlayView.optographID = nil
+//            self?.viewModel.refresh()
+//        }
         view.addSubview(overlayView)
         
         uiHidden.producer.startWithNext { [weak self] hidden in
@@ -164,10 +181,13 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         super.viewWillAppear(animated)
         
         uiHidden.value = false
+        overlayView.alpha = 0
+        
+        if !optographIDs.isEmpty {
+            lazyFadeInOverlay(delay: 0.3)
+        }
         
         viewModel.isActive.value = true
-        
-        viewModel.refreshNotification.notify(())
         
         CoreMotionRotationSource.Instance.start()
         
@@ -185,6 +205,12 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        isVisible = true
+        
+        if !optographIDs.isEmpty {
+            lazyFadeInOverlay(delay: 0)
+        }
         
         tabController!.delegate = self
         
@@ -208,6 +234,8 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
+        isVisible = false
+        
         CoreMotionRotationSource.Instance.stop()
         
         viewModel.isActive.value = false
@@ -230,7 +258,7 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! CollectionViewCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
     
         cell.uiHidden = uiHidden
     
@@ -242,11 +270,11 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return collectionView.frame.size
+        return UIScreen.mainScreen().bounds.size
     }
     
     override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        guard let cell = cell as? CollectionViewCell else {
+        guard let cell = cell as? OptographCollectionViewCell else {
             return
         }
         
@@ -270,14 +298,18 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
             overlayView.optographID = optographID
         }
         
+        if isVisible {
+            lazyFadeInOverlay(delay: 0)
+        }
+        
         if indexPath.row > optographIDs.count - 3 {
-            viewModel.loadMoreNotification.notify(())
+            viewModel.loadMore()
         }
         
     }
     
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        let cell = cell as! CollectionViewCell
+        let cell = cell as! OptographCollectionViewCell
         
         optographDirections[optographIDs[indexPath.row]] = cell.direction
         cell.didEndDisplay()
@@ -289,13 +321,13 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         let height = view.frame.height
         let offset = scrollView.contentOffset.y
         
-        if !overlayAnimating {
+        if !overlayIsAnimating {
             let relativeOffset = offset % height
             let percentage = relativeOffset / height
             var opacity: CGFloat = 0
             if percentage > 0.8 || percentage < 0.2 {
                 if scrollView.decelerating && overlayView.alpha == 0 {
-                    overlayAnimating = true
+                    overlayIsAnimating = true
                     dispatch_async(dispatch_get_main_queue()) {
                         UIView.animateWithDuration(0.2,
                             delay: 0,
@@ -321,12 +353,12 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
     }
     
     override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-        overlayAnimating = false
+        overlayIsAnimating = false
         overlayView.layer.removeAllAnimations()
     }
 
     override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        overlayAnimating = false
+        overlayIsAnimating = false
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
@@ -338,14 +370,31 @@ class CollectionViewController: UICollectionViewController, UICollectionViewDele
         navigationController?.pushViewController(viewerViewController, animated: false)
 //        viewModel.increaseViewsCount()
     }
+    
+    private func lazyFadeInOverlay(delay delay: NSTimeInterval) {
+        if overlayView.alpha == 0 && !overlayIsAnimating {
+            overlayIsAnimating = true
+//            dispatch_async(dispatch_get_main_queue()) {
+                UIView.animateWithDuration(0.2,
+                    delay: delay,
+                    options: [.AllowUserInteraction],
+                    animations: {
+                        self.overlayView.alpha = 1
+                    }, completion: { _ in
+                        self.overlayIsAnimating = false
+                    }
+                )
+//            }
+        }
+    }
 
 }
 
 // MARK: - UITabBarControllerDelegate
-extension CollectionViewController: DefaultTabControllerDelegate {
+extension OptographCollectionViewController: DefaultTabControllerDelegate {
     
     func jumpToTop() {
-        viewModel.refreshNotification.notify(())
+        viewModel.refresh()
         collectionView!.setContentOffset(CGPointZero, animated: true)
     }
     
@@ -358,51 +407,145 @@ extension CollectionViewController: DefaultTabControllerDelegate {
 
 private class OverlayViewModel {
     
-    var optograph: Optograph?
-    
     let likeCount = MutableProperty<Int>(0)
     let liked = MutableProperty<Bool>(false)
     let textToggled = MutableProperty<Bool>(false)
     
-    func bind(optograph: Optograph) {
-        self.optograph = optograph
+    enum UploadStatus { case Offline, Uploading, Uploaded }
+    let uploadStatus = MutableProperty<UploadStatus>(.Uploaded)
+    
+    var optographBox: ModelBox<Optograph>!
+    
+    var optograph: Optograph!
+    
+    func bind(optographID: UUID) {
         
-        likeCount.value = optograph.starsCount
-        liked.value = optograph.isStarred
+        optographBox = Models.optographs[optographID]!
+        
         textToggled.value = false
+        
+        optographBox.producer.startWithNext { [weak self] optograph in
+            self?.likeCount.value = optograph.starsCount
+            self?.liked.value = optograph.isStarred
+            
+            if optograph.isPublished {
+                self?.uploadStatus.value = .Uploaded
+            } else if optograph.isUploading {
+                self?.uploadStatus.value = .Uploading
+            } else {
+                self?.uploadStatus.value = .Offline
+            }
+        }
+        
     }
     
     func toggleLike() {
         let starredBefore = liked.value
         let starsCountBefore = likeCount.value
         
+        let optograph = optographBox.model
+        
         SignalProducer<Bool, ApiError>(value: starredBefore)
             .flatMap(.Latest) { followedBefore in
                 starredBefore
-                    ? ApiService<EmptyResponse>.delete("optographs/\(self.optograph!.ID)/star")
-                    : ApiService<EmptyResponse>.post("optographs/\(self.optograph!.ID)/star", parameters: nil)
+                    ? ApiService<EmptyResponse>.delete("optographs/\(optograph.ID)/star")
+                    : ApiService<EmptyResponse>.post("optographs/\(optograph.ID)/star", parameters: nil)
             }
             .on(
-                started: {
-                    self.liked.value = !starredBefore
-                    self.likeCount.value += starredBefore ? -1 : 1
+                started: { [weak self] in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.isStarred = !starredBefore
+                        box.model.starsCount += starredBefore ? -1 : 1
+                    }
                 },
-                failed: { _ in
-                    self.liked.value = starredBefore
-                    self.likeCount.value = starsCountBefore
-                },
-                completed: updateModel
+                failed: { [weak self] _ in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.isStarred = starredBefore
+                        box.model.starsCount = starsCountBefore
+                    }
+                }
             )
             .start()
     }
     
-    
-    private func updateModel() {
-        optograph!.isStarred = liked.value
-        optograph!.starsCount = likeCount.value
+    func upload() {
+        if !optographBox.model.isOnServer {
+            let optograph = optographBox.model
+            
+            optographBox.update { box in
+                box.model.isUploading = true
+            }
+            
+            let postParameters = [
+                "id": optograph.ID,
+                "stitcher_version": StitcherVersion,
+                "created_at": optograph.createdAt.toRFC3339String(),
+            ]
+            
+            var putParameters: [String: AnyObject] = [
+                "text": optograph.text,
+                "is_private": optograph.isPrivate,
+                "post_facebook": optograph.postFacebook,
+                "post_twitter": optograph.postTwitter,
+                "direction_phi": optograph.directionPhi,
+                "direction_theta": optograph.directionTheta,
+            ]
+            if let locationID = optograph.locationID, location = Models.locations[locationID]?.model {
+                putParameters["location"] = [
+                    "latitude": location.latitude,
+                    "longitude": location.longitude,
+                    "text": location.text,
+                    "country": location.country,
+                    "country_short": location.countryShort,
+                    "place": location.place,
+                    "region": location.region,
+                    "poi": location.POI,
+                ]
+            }
+            
+            SignalProducer<Bool, ApiError>(value: !optographBox.model.shareAlias.isEmpty)
+                .flatMap(.Latest) { alreadyPosted -> SignalProducer<Void, ApiError> in
+                    if alreadyPosted {
+                        return SignalProducer(value: ())
+                    } else {
+                        return ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
+                            .on(next: { [weak self] optograph in
+                                self?.optographBox.insertOrUpdate { box in
+                                    box.model.shareAlias = optograph.shareAlias
+                                }
+                            })
+                            .map { _ in () }
+                    }
+                }
+                .flatMap(.Latest) {
+                    ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: putParameters)
+                        .on(failed: { [weak self] _ in
+                            self?.optographBox.update { box in
+                                box.model.isUploading = false
+                            }
+                        })
+                }
+                .on(next: { [weak self] optograph in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.isOnServer = true
+                    }
+                })
+                .startWithCompleted {
+                    PipelineService.checkUploading()
+                }
+            
+            
+        } else {
+            optographBox.insertOrUpdate { box in
+                box.model.shouldBePublished = true
+                box.model.isUploading = true
+            }
+            
+            PipelineService.checkUploading()
+        }
         
-        try! optograph!.insertOrUpdate()
     }
+    
 }
 
 private class OverlayView: UIView {
@@ -420,7 +563,7 @@ private class OverlayView: UIView {
                 let optograph = Models.optographs[optographID]!.model
                 let person = Models.persons[optograph.personID]!.model
                 
-                viewModel.bind(optograph)
+                viewModel.bind(optographID)
                 
                 avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
                 personNameView.text = person.displayName
@@ -449,6 +592,9 @@ private class OverlayView: UIView {
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
     private let likeCountView = UILabel()
+    private let uploadButtonView = BoundingButton()
+    private let uploadTextView = BoundingLabel()
+    private let uploadingView = UIActivityIndicatorView()
     private let dateView = UILabel()
     private let textView = UILabel()
     
@@ -483,16 +629,35 @@ private class OverlayView: UIView {
         locationTextView.textColor = UIColor(0x3c3c3c)
         addSubview(locationTextView)
         
-//        likeButtonView.layer.cornerRadius = 14
-//        likeButtonView.clipsToBounds = true
         likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleLike"))
         likeButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
+        likeButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
         addSubview(likeButtonView)
         
         likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
         likeCountView.textColor = .whiteColor()
         likeCountView.textAlignment = .Right
+        likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
         addSubview(likeCountView)
+        
+        uploadButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "upload"))
+        uploadButtonView.setTitle(String.iconWithName(.Upload), forState: .Normal)
+        uploadButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Offline).map(negate)
+        uploadButtonView.titleLabel!.font = UIFont.iconOfSize(24)
+        addSubview(uploadButtonView)
+        
+        uploadTextView.font = UIFont.displayOfSize(11, withType: .Semibold)
+        uploadTextView.text = "Upload"
+        uploadTextView.textColor = .whiteColor()
+        uploadTextView.textAlignment = .Right
+        uploadTextView.userInteractionEnabled = true
+        uploadTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "upload"))
+        uploadTextView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Offline).map(negate)
+        addSubview(uploadTextView)
+        
+        uploadingView.hidesWhenStopped = true
+        uploadingView.rac_animating <~ viewModel.uploadStatus.producer.equalsTo(.Uploading)
+        addSubview(uploadingView)
         
         likeCountView.rac_text <~ viewModel.likeCount.producer.map { "\($0)" }
         
@@ -508,6 +673,9 @@ private class OverlayView: UIView {
                     strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(24)
                 }
                 strongSelf.likeCountView.align(.ToTheLeftCentered, relativeTo: strongSelf.likeButtonView, padding: 8, width: 40, height: 13)
+                strongSelf.uploadButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 152, width: 24, height: 24)
+                strongSelf.uploadTextView.align(.ToTheLeftCentered, relativeTo: strongSelf.uploadButtonView, padding: 8, width: 60, height: 13)
+                strongSelf.uploadingView.anchorInCorner(.BottomRight, xPad: 16, yPad: 152, width: 24, height: 24)
             }
         }
         
@@ -520,7 +688,7 @@ private class OverlayView: UIView {
         textView.textColor = .whiteColor()
         addSubview(textView)
         
-        viewModel.textToggled.producer.startWithNext { [weak self] toggled in
+//        viewModel.textToggled.producer.startWithNext { [weak self] toggled in
 //            if let strongSelf = self, text = strongSelf.optograph?.text {
 //                let textHeight = calcTextHeight(text, withWidth: strongSelf.frame.width - 36, andFont: UIFont.displayOfSize(13, withType: .Light))
 //                let displayedTextHeight = toggled && textHeight > 16 ? textHeight : 15
@@ -535,7 +703,7 @@ private class OverlayView: UIView {
 //                
 //                strongSelf.textView.numberOfLines = toggled ? 0 : 1
 //            }
-        }
+//        }
     }
     
     convenience init () {
@@ -564,33 +732,36 @@ private class OverlayView: UIView {
         return false
     }
     
-    @objc
-    private func toggleText() {
+    dynamic private func toggleText() {
         viewModel.textToggled.value = !viewModel.textToggled.value
     }
     
-    @objc
-    private func toggleLike() {
+    dynamic private func toggleLike() {
         viewModel.toggleLike()
     }
     
-    @objc
-    private func pushProfile() {
-        navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optograph!.personID), animated: true)
+    dynamic private func pushProfile() {
+        navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optographBox.model.personID), animated: true)
     }
     
-    @objc
-    private func pushSearch() {
-        navigationController?.pushViewController(SearchTableViewController(), animated: true)
+    dynamic private func pushSearch() {
+//        navigationController?.pushViewController(SearchTableViewController(), animated: true)
+    }
+    
+    dynamic private func upload() {
+        if Reachability.connectedToNetwork() {
+            viewModel.upload()
+        } else {
+            print("offline")
+        }
     }
     
 }
 
 extension OverlayView: OptographOptions {
     
-    @objc
-    func didTapOptions() {
-        showOptions(viewModel.optograph!, deleteCallback: deleteCallback)
+    dynamic func didTapOptions() {
+        showOptions(viewModel.optographBox.model.ID, deleteCallback: deleteCallback)
     }
     
 }

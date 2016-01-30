@@ -170,6 +170,10 @@ class CollectionImageCache {
         debouncerTouch = Debouncer(queue: dispatch_get_main_queue(), delay: 0.1)
     }
     
+    deinit {
+        logRetain()
+    }
+    
     func get(index: Int, optographID: UUID, side: TextureSide) -> CubeImageCache {
         assertMainThread()
         

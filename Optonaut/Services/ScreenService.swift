@@ -42,7 +42,7 @@ class ScreenService {
         fadeTimer = NSTimer.scheduledTimerWithTimeInterval(1 / 60, target: self, selector: "tick", userInfo: nil, repeats: true)
     }
     
-    @objc func tick() {
+    dynamic func tick() {
         guard let targetBrightness = targetBrightness else {
             fadeTimer?.invalidate()
             return

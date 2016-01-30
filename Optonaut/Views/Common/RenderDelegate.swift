@@ -187,7 +187,7 @@ class CubeRenderDelegate: RenderDelegate {
         if let item = planes[index] {
             //print("settex \(id) \(index)")
             sync(self) {
-                assert(item.node.geometry!.firstMaterial!.diffuse.contents !== texture) // Don't overwrite textures!
+//                assert(item.node.geometry!.firstMaterial!.diffuse.contents !== texture) // Don't overwrite textures!
                 //assert(item.node.geometry!.firstMaterial!.diffuse.contents === CubeRenderDelegate.BlackTexture) // Don't overwrite textures!
                 
                 item.node.geometry!.firstMaterial!.diffuse.contents = texture

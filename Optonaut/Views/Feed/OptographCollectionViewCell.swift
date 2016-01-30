@@ -183,7 +183,7 @@ class CombinedMotionManager: RotationMatrixSource {
     
 private let queue = dispatch_queue_create("collection_view_cell", DISPATCH_QUEUE_SERIAL)
 
-class CollectionViewCell: UICollectionViewCell {
+class OptographCollectionViewCell: UICollectionViewCell {
     
     weak var uiHidden: MutableProperty<Bool>!
     

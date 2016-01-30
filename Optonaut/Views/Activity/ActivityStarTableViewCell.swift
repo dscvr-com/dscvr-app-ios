@@ -55,7 +55,7 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     }
     
     func pushDetails() {
-        navigationController?.pushViewController(DetailsTableViewController(optographID: activity.activityResourceStar!.optograph.ID), animated: true)
+//        navigationController?.pushViewController(DetailsTableViewController(optographID: activity.activityResourceStar!.optograph.ID), animated: true)
     }
     
 }

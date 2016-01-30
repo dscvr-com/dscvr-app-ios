@@ -380,24 +380,18 @@ class SaveViewController: UIViewController, RedNavbar {
         }
     }
     
-    @objc
-    private func keyboardWillShow(notification: NSNotification) {
+    dynamic private func keyboardWillShow(notification: NSNotification) {
         scrollView.contentOffset = CGPoint(x: 0, y: scrollView.contentSize.height - scrollView.bounds.size.height)
     }
     
-    @objc
-    private func keyboardWillHide(notification: NSNotification) {
+    dynamic private func keyboardWillHide(notification: NSNotification) {
         scrollView.contentOffset = CGPoint(x: 0, y: 0)
     }
     
-    @objc
-    private func cancel() {
+    dynamic private func cancel() {
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
-        confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { [weak self] _ in
+        confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { _ in
             PipelineService.stopStitching()
-//            self?.viewModel.optograph.delete().startWithCompleted {
-//                self?.navigationController!.popViewControllerAnimated(false)
-//            }
         }))
         confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))
         navigationController!.presentViewController(confirmAlert, animated: true, completion: nil)
@@ -407,8 +401,7 @@ class SaveViewController: UIViewController, RedNavbar {
         view.endEditing(true)
     }
     
-    @objc
-    private func togglePrivate() {
+    dynamic private func togglePrivate() {
         let settingsSheet = UIAlertController(title: "Set Visibility", message: "Who should be able to see your moment?", preferredStyle: .ActionSheet)
         
         settingsSheet.addAction(UIAlertAction(title: "Everybody (Default)", style: .Default, handler: { [weak self] _ in
@@ -436,7 +429,7 @@ class SaveViewController: UIViewController, RedNavbar {
         presentViewController(alert, animated: true, completion: nil)
     }
     
-    @objc private func tapFacebookSocialButton() {
+    dynamic private func tapFacebookSocialButton() {
         if !viewModel.isLoggedIn.value {
             signupAlert()
             return
@@ -499,7 +492,7 @@ class SaveViewController: UIViewController, RedNavbar {
         }
     }
     
-    @objc private func tapTwitterSocialButton() {
+    dynamic private func tapTwitterSocialButton() {
         if !viewModel.isLoggedIn.value {
             signupAlert()
             return
@@ -539,7 +532,7 @@ class SaveViewController: UIViewController, RedNavbar {
         }
     }
     
-    @objc private func tapInstagramSocialButton() {
+    dynamic private func tapInstagramSocialButton() {
         if !viewModel.isLoggedIn.value {
             signupAlert()
             return
@@ -548,7 +541,7 @@ class SaveViewController: UIViewController, RedNavbar {
         viewModel.postInstagram.value = !viewModel.postInstagram.value
     }
     
-    @objc private func tapMoreSocialButton() {
+    dynamic private func tapMoreSocialButton() {
         if !viewModel.isLoggedIn.value {
             signupAlert()
             return
@@ -711,8 +704,7 @@ private class LocationViewModel {
         LocationService.askPermission()
     }
     
-    @objc
-    private func checkLocationPermission() {
+    dynamic private func checkLocationPermission() {
         let enabled = LocationService.enabled
         state.value = enabled ? .Selection : .Disabled
         if locationPermissionTimer != nil && enabled {
@@ -861,7 +853,7 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         collectionView.frame = CGRect(x: 54, y: 0, width: frame.width - 54, height: 68)
     }
     
-    @objc private func didTap() {
+    dynamic private func didTap() {
         if viewModel.locationEnabled.value {
             reloadLocation()
         } else {
@@ -869,16 +861,16 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         }
     }
     
-    @objc private func enableLocation() {
+    dynamic private func enableLocation() {
         viewModel.enableLocation()
     }
     
-    @objc func reloadLocation() {
+    dynamic func reloadLocation() {
         didSelectLocation?(nil)
         viewModel.locationSignal.notify(())
     }
     
-    @objc private func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    dynamic private func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! LocationCollectionViewCell
         let location = locations[indexPath.row]
         cell.text = "\(location.name)"
@@ -886,21 +878,21 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         return cell
     }
 
-    @objc func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    dynamic func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
 
-    @objc func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    dynamic func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return locations.count
     }
     
-    @objc private func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    dynamic private func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         let location = locations[indexPath.row]
         let text = "\(location.name)"
         return CGSize(width: calcTextWidth(text, withFont: .displayOfSize(11, withType: .Semibold)) + 20, height: 28)
     }
     
-    @objc private func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    dynamic private func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if viewModel.selectedLocation.value == indexPath.row {
             viewModel.selectedLocation.value = nil
             didSelectLocation?(nil)

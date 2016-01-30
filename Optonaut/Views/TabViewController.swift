@@ -42,7 +42,7 @@ class TabViewController: UIViewController {
     var delegate: TabControllerDelegate?
     
     required init() {
-        leftViewController = CollectionNavViewController()
+        leftViewController = FeedNavViewController()
         rightViewController = ProfileNavViewController()
         
         activeViewController = leftViewController
@@ -102,7 +102,8 @@ class TabViewController: UIViewController {
                 case let .Stitching(progress):
                     self?.cameraButton.progress = CGFloat(progress)
                 case .StitchingFinished(_):
-                    self?.cameraButton.progress = 1
+//                    self?.cameraButton.progress = 1
+                    self?.cameraButton.progress = nil
                 }
             }
 
@@ -136,28 +137,23 @@ class TabViewController: UIViewController {
         uiWrapper.hidden = true
     }
     
-    @objc
-    private func tapLeftButton() {
+    dynamic private func tapLeftButton() {
         delegate?.onTapLeftButton()
     }
     
-    @objc
-    private func tapRightButton() {
+    dynamic private func tapRightButton() {
         delegate?.onTapRightButton()
     }
     
-    @objc
-    private func tapCameraButton() {
+    dynamic private func tapCameraButton() {
         delegate?.onTapCameraButton()
     }
     
-    @objc
-    private func touchStartCameraButton() {
+    dynamic private func touchStartCameraButton() {
         delegate?.onTouchStartCameraButton()
     }
     
-    @objc
-    private func touchEndCameraButton() {
+    dynamic private func touchEndCameraButton() {
         delegate?.onTouchEndCameraButton()
     }
     
@@ -313,14 +309,12 @@ class RecordButton: UIButton {
         }
     }
     
-    @objc
-    private func buttonTouched() {
+    dynamic private func buttonTouched() {
         touched = true
         updateBackground()
     }
     
-    @objc
-    private func buttonUntouched() {
+    dynamic private func buttonUntouched() {
         touched = false
         updateBackground()
     }

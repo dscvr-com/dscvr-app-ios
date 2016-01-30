@@ -55,7 +55,7 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
     }
     
     func pushDetails() {
-        navigationController?.pushViewController(DetailsTableViewController(optographID: activity.activityResourceComment!.optograph.ID), animated: true)
+//        navigationController?.pushViewController(DetailsTableViewController(optographID: activity.activityResourceComment!.optograph.ID), animated: true)
     }
     
 }

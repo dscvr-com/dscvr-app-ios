@@ -35,8 +35,8 @@ class SessionService {
         return Defaults[.SessionPersonID] != nil && Defaults[.SessionToken] != nil
     }
     
-    static var personID: String? {
-        return Defaults[.SessionPersonID]
+    static var personID: String {
+        return Defaults[.SessionPersonID] ?? Person.guestID
     }
     
     static var needsOnboarding: Bool {
@@ -48,7 +48,7 @@ class SessionService {
     static func prepare() {
         
         if isLoggedIn {
-            let query = PersonTable.filter(PersonTable[PersonSchema.ID] == personID!)
+            let query = PersonTable.filter(PersonTable[PersonSchema.ID] == personID)
             let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
             Models.persons.create(person)
             
@@ -142,7 +142,7 @@ class SessionService {
     }
     
     private static func updateMixpanel() {
-        let person = Models.persons[personID!]!.model
+        let person = Models.persons[personID]!.model
         
         Mixpanel.sharedInstance().identify(person.ID)
         Mixpanel.sharedInstance().people.set([

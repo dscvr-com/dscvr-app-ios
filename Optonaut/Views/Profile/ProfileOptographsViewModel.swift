@@ -1,16 +1,16 @@
 //
-//  OptographsTableViewModel.swift
+//  ProfileOptographsViewModel.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 6/25/15.
-//  Copyright (c) 2015 Optonaut. All rights reserved.
+//  Created by Johannes Schickling on 28/01/2016.
+//  Copyright © 2016 Optonaut. All rights reserved.
 //
 
 import Foundation
 import ReactiveCocoa
 import SQLite
 
-class OptographsViewModel {
+class ProfileOptographsViewModel {
     
     let results = MutableProperty<TableViewResults<Optograph>>(.empty())
     

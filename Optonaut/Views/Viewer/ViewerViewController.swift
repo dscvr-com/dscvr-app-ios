@@ -147,7 +147,7 @@ class ViewerViewController: UIViewController  {
         view.addSubview(rightLoadingView)
         
         settingsButtonView.frame = CGRect(x: 10, y: view.frame.height / 2 - 15, width: 30, height: 30)
-//        settingsButtonView.setTitle(String.iconWithName(.Settings), forState: .Normal)
+        settingsButtonView.setTitle(String.iconWithName(.Settings), forState: .Normal)
         settingsButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         settingsButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))
@@ -347,7 +347,7 @@ private class GlassesSelectionView: UIView {
         
         addSubview(blurView)
         
-//        cancelButtonView.setTitle(String.iconWithName(.Cross), forState: .Normal)
+        cancelButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
         cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
@@ -359,7 +359,7 @@ private class GlassesSelectionView: UIView {
         titleTextView.font = UIFont.displayOfSize(35, withType: .Thin)
         addSubview(titleTextView)
         
-//        glassesIconView.text = String.iconWithName(.Cardboard)
+        glassesIconView.text = String.iconWithName(.Cardboard)
         glassesIconView.textColor = .whiteColor()
         glassesIconView.textAlignment = .Center
         glassesIconView.font = UIFont.iconOfSize(73)
@@ -374,7 +374,7 @@ private class GlassesSelectionView: UIView {
         glassesTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         addSubview(glassesTextView)
         
-//        qrcodeIconView.text = String.iconWithName(.Qrcode)
+        qrcodeIconView.text = String.iconWithName(.Qrcode)
         qrcodeIconView.font = UIFont.iconOfSize(50)
         qrcodeIconView.textColor = .whiteColor()
         qrcodeIconView.textAlignment = .Center
@@ -479,18 +479,18 @@ private class GlassesSelectionView: UIView {
         captureSession!.startRunning()
     }
     
-    @objc func cancel() {
+    dynamic func cancel() {
         captureSession?.stopRunning()
         closeCallback?()
     }
     
-    @objc func scan() {
+    dynamic func scan() {
         setupCamera()
     }
 }
 
 extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
-    @objc func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
+    dynamic func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
         if loading {
             return
         }

@@ -122,7 +122,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         followingCountView.textColor = UIColor(0xbdbdbd)
         contentView.addSubview(followingCountView)
         
-        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "hideKeyboard"))
+        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -175,8 +175,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             self?.viewModel.displayName.value = val as! String
         }
         
-        viewModel.text.producer.startWithNext { print("some \($0)") }
-        
         textView.rac_text <~ viewModel.text
         textView.rac_hidden <~ viewModel.isEditing
         textInputView.rac_hidden <~ viewModel.isEditing.producer.map(negate)
@@ -195,6 +193,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             buttonIconView.text = String.iconWithName(.Edit)
         } else {
             buttonView.rac_title <~ viewModel.isFollowed.producer.mapToTuple("FOLLOWING", "FOLLOW")
+            buttonView.rac_backgroundColor <~ viewModel.isFollowed.producer.mapToTuple(.Accent, UIColor(0xcacaca))
             buttonIconView.rac_text <~ viewModel.isFollowed.producer.mapToTuple(String.iconWithName(.Check), "")
         }
         
@@ -209,10 +208,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         followingCountView.rac_hidden <~ viewModel.isEditing
     }
     
-    func editProfile() {
-        navigationController?.pushViewController(EditProfileViewController(), animated: false)
-    }
-    
     dynamic private func tapButton() {
         if isMe {
             viewModel.isEditing.value = true
@@ -224,12 +219,13 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
             self.navigationController?.presentViewController(alert, animated: true, completion: nil)
             return
+        } else {
+            viewModel.toggleFollow()
         }
         
-//        viewModel.toggleFollow()
     }
     
-    dynamic private func hideKeyboard() {
+    dynamic private func dismissKeyboard() {
         contentView.endEditing(true)
     }
     

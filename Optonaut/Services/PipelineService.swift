@@ -31,15 +31,15 @@ class PipelineService {
         case Uninitialized
     }
     
-    enum UploadingStatus: Equatable {
-        case Uploading
-//        case
-    }
+//    enum UploadingStatus: Equatable {
+//        case Uploading
+////        case
+//    }
     
-    typealias UploadSignal = Signal<UploadingStatus, NoError>
+//    typealias UploadSignal = Signal<UploadingStatus, NoError>
+//    static var uploadingStatus: [UUID: UploadSignal] = [:]
     
     static let stitchingStatus = MutableProperty<StitchingStatus>(.Uninitialized)
-//    static var uploadingStatus: [UUID: UploadSignal] = [:]
     
     private static let uploadQueue = dispatch_queue_create("pipeline_upload", DISPATCH_QUEUE_SERIAL)
     
@@ -79,14 +79,15 @@ class PipelineService {
                             optographBox.insertOrUpdate { box in
                                 switch side {
                                 case .Left:
-                                    // optional needed for when stitching was restarted and left textures already saved
+                                    // optional needed for when stitching was restarted textures already saved (stitcher could deliver results twice)
                                     box.model.leftCubeTextureStatusSave?.status[face] = true
                                     if box.model.leftCubeTextureStatusSave?.completed == true {
                                         box.model.leftCubeTextureStatusSave = nil
                                     }
                                 case .Right:
-                                    box.model.rightCubeTextureStatusSave!.status[face] = true
-                                    if box.model.rightCubeTextureStatusSave!.completed {
+                                    // optional needed for when stitching was restarted textures already saved (stitcher could deliver results twice)
+                                    box.model.rightCubeTextureStatusSave?.status[face] = true
+                                    if box.model.rightCubeTextureStatusSave?.completed == true {
                                         box.model.rightCubeTextureStatusSave = nil
                                     }
                                 }
@@ -98,7 +99,9 @@ class PipelineService {
                                 }
                             }
                             
-                            upload(optographID, side: side, face: face)
+                            if optographBox.model.shouldBePublished {
+                                upload(optographID, side: side, face: face)
+                            }
                         }
                     }
                     
@@ -128,11 +131,6 @@ class PipelineService {
     }
     
     private static func upload(optographID: UUID) {
-//        if let signal = uploadingStatus[optograph.ID] {
-//            return signal
-//        }
-
-//        let (signal, observer) = UploadSignal.pipe()
         
         let optographBox = Models.optographs[optographID]!
         
@@ -151,18 +149,21 @@ class PipelineService {
                 }
             }
         }
-        
-//        return signal
     }
     
     private static func upload(optographID: UUID, side: TextureSide, face: Int) {
         Async.customQueue(uploadQueue) {
+            
             let optographBox = Models.optographs[optographID]!
             
             switch side {
             case .Left where optographBox.model.leftCubeTextureStatusUpload?.status[face] == false: break
             case .Right where optographBox.model.rightCubeTextureStatusUpload?.status[face] == false: break
             default: return
+            }
+            
+            optographBox.update { box in
+                box.model.isUploading = true
             }
             
             let sideLetter = side == .Left ? "l" : "r"
@@ -196,9 +197,11 @@ class PipelineService {
                     
                     if box.model.leftCubeTextureStatusUpload == nil && box.model.rightCubeTextureStatusUpload == nil {
                         box.model.isPublished = true
+                        box.model.isUploading = false
                     }
                 } else {
                     box.model.shouldBePublished = false
+                    box.model.isUploading = false
                 }
             }
         }

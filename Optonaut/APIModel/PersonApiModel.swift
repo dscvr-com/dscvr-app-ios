@@ -22,6 +22,7 @@ struct PersonApiModel: ApiModel, Mappable {
     var followersCount: Int = 0
     var followedCount: Int = 0
     var isFollowed: Bool = false
+    var avatarAssetID: UUID = ""
     
     init() {}
     
@@ -39,5 +40,6 @@ struct PersonApiModel: ApiModel, Mappable {
         followersCount      <- map["followers_count"]
         followedCount       <- map["followed_count"]
         isFollowed          <- map["is_followed"]
+        avatarAssetID       <- map["avatar_asset_id"]
     }
 }

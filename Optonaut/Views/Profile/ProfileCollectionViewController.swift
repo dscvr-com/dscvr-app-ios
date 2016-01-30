@@ -15,9 +15,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     private let queue = dispatch_queue_create("profile_collection_view", DISPATCH_QUEUE_SERIAL)
     
     private let profileViewModel: ProfileViewModel
-    private let collectionViewModel: OptographsViewModel
+    private let collectionViewModel: ProfileOptographsViewModel
     private var optographIDs: [UUID] = []
-    private let imageCache: CollectionImageCache
+//    private let imageCache: CollectionImageCache
     
     private let editOverlayView = UIView()
     
@@ -27,10 +27,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     init(personID: UUID) {
         profileViewModel = ProfileViewModel(personID: personID)
-        collectionViewModel = OptographsViewModel(personID: personID)
+        collectionViewModel = ProfileOptographsViewModel(personID: personID)
         
-        let textureSize = (getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView) - 4) / 3
-        imageCache = CollectionImageCache(textureSize: textureSize)
+//        let textureSize = (getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView) - 4) / 3
+//        imageCache = CollectionImageCache(textureSize: textureSize)
         
 //        super.init(collectionViewLayout: UICollectionViewFlowLayout())
         super.init(collectionViewLayout: UICollectionViewLeftAlignedLayout())
@@ -98,7 +98,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
 
         // Register cell classes
         collectionView!.registerClass(ProfileHeaderCollectionViewCell.self, forCellWithReuseIdentifier: "top-cell")
-        collectionView!.registerClass(TileCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell")
+        collectionView!.registerClass(ProfileTileCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell")
         
         collectionView!.backgroundColor = .whiteColor()
         
@@ -115,7 +115,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
 //        edgesForExtendedLayout = .None
         
         collectionViewModel.results.producer
-//            .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
+            .filter { $0.changed }
             .delayAllUntil(collectionViewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
@@ -128,9 +128,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                         strongSelf.collectionView!.performBatchUpdates({
 //                            strongSelf.imageCache.delete(results.delete)
 //                            strongSelf.imageCache.insert(results.insert)
-                            strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forRow: $0 + 1, inSection: 0) })
-                            strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forRow: $0 + 1, inSection: 0) })
-                            strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forRow: $0 + 1, inSection: 0) })
+                            strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+                            strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+                            strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
                         }, completion: { _ in
 //                            if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
 //                                // preserves scroll position
@@ -145,13 +145,17 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             })
             .start()
         
-        collectionViewModel.isActive.producer
-            .skip(1)
-            .map(negate)
-            .filter(identity)
-            .startWithNext { [weak self] _ in
-                self?.imageCache.reset()
-            }
+//        collectionViewModel.isActive.producer
+//            .skip(1)
+//            .map(negate)
+//            .filter(identity)
+//            .startWithNext { [weak self] _ in
+//                self?.imageCache.reset()
+//            }
+    }
+    
+    deinit {
+        logRetain()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -212,7 +216,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        if indexPath.row == 0 {
+        if indexPath.item == 0 {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("top-cell", forIndexPath: indexPath) as! ProfileHeaderCollectionViewCell
             
             cell.bindViewModel(profileViewModel)
@@ -220,9 +224,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             return cell
         } else {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! TileCollectionViewCell
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! ProfileTileCollectionViewCell
             
-            let optographID = optographIDs[indexPath.row - 1]
+            let optographID = optographIDs[indexPath.item - 1]
             cell.bind(optographID)
             
             return cell
@@ -238,7 +242,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        if indexPath.row == 0 {
+        if indexPath.item == 0 {
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             return CGSize(width: collectionView.frame.width, height: 248 + textHeight)
         } else {
@@ -249,23 +253,23 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         
-        if indexPath.row == 0 {
+        if indexPath.item == 0 {
             
         } else {
 //            let cell = cell as! TileCollectionViewCell
-//            let optographID = optographIDs[indexPath.row - 1]
+//            let optographID = optographIDs[indexPath.item - 1]
         }
         
 //        guard let cell = cell as? CollectionViewCell else {
 //            return
 //        }
 //        
-//        let optographID = optographIDs[indexPath.row]
+//        let optographID = optographIDs[indexPath.item]
 //        let optograph = Models.optographs[optographID]!.model
 //        
 //        cell.willDisplay((phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta)))
 //        
-//        print("will disp \(indexPath.row)")
+//        print("will disp \(indexPath.item)")
 //        
 //        let imageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) in
 //            if self?.collectionView?.indexPathsForVisibleItems().contains(indexPath) == true {
@@ -294,7 +298,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
 ////        }
 //        
         
-        if indexPath.row % 3 == 1 && indexPath.row > optographIDs.count - 7 {
+        if indexPath.item % 3 == 1 && indexPath.item > optographIDs.count - 7 {
             collectionViewModel.loadMoreNotification.notify(())
         }
         
@@ -302,6 +306,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
 //        (cell as! CollectionViewCell).didEndDisplay()
+    }
+    
+    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let profileOptographCollectionViewModel = ProfileOptographCollectionViewModel(personID: profileViewModel.personID, selectedOptographID: optographIDs[indexPath.item - 1])
+        let optographCollectionViewController = OptographCollectionViewController(viewModel: profileOptographCollectionViewModel)
+        navigationController!.pushViewController(optographCollectionViewController, animated: true)
     }
     
     dynamic private func tapLeftBarButton() {

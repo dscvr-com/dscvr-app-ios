@@ -32,7 +32,9 @@ class ModelBox<M: Model> {
     func update(closure: ModelBox -> ()) {
         objc_sync_enter(self)
         closure(self)
-        property.value = model
+        dispatch_async(dispatch_get_main_queue()) {
+            self.property.value = self.model
+        }
         objc_sync_exit(self)
     }
     
@@ -40,7 +42,9 @@ class ModelBox<M: Model> {
         assert(model.ID == self.model.ID)
         objc_sync_enter(self)
         self.model = model
-        property.value = model
+        dispatch_async(dispatch_get_main_queue()) {
+            self.property.value = model
+        }
         objc_sync_exit(self)
     }
     
@@ -55,7 +59,9 @@ extension ModelBox where M: SQLiteModel {
     func insertOrUpdate() {
         objc_sync_enter(self)
         try! model.insertOrUpdate()
-        property.value = model
+        dispatch_async(dispatch_get_main_queue()) {
+            self.property.value = self.model
+        }
         objc_sync_exit(self)
     }
     
@@ -63,7 +69,9 @@ extension ModelBox where M: SQLiteModel {
         objc_sync_enter(self)
         closure(self)
         try! model.insertOrUpdate()
-        property.value = model
+        dispatch_async(dispatch_get_main_queue()) {
+            self.property.value = self.model
+        }
         objc_sync_exit(self)
     }
     

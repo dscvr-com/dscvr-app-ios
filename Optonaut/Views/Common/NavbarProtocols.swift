@@ -40,6 +40,7 @@ extension RedNavbar where Self: UIViewController {
         
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
         navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.interactivePopGestureRecognizer?.enabled = false
     }
     
 }
