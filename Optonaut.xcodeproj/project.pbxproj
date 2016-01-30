@@ -20,7 +20,6 @@
 		8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E0AC51B98304F002E2FB5 /* VersionService.swift */; };
 		8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */; };
 		8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */; };
-		8F1E71801BCC188B00F3D6FB /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */; };
 		8F21F48F1C4405300075C8EC /* CollectionImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */; };
 		8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* FoundationExtension.swift */; };
 		8F23AA4C1BFF31B4008926A8 /* ActivityResourceCommentTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA421BFF31B4008926A8 /* ActivityResourceCommentTable.swift */; };
@@ -46,7 +45,7 @@
 		8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA791C077C1B008926A8 /* Migration0004.swift */; };
 		8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA7B1C07BC6D008926A8 /* BoundingButton.swift */; };
 		8F23AA7E1C08ADB4008926A8 /* Migration0005.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */; };
-		8F276F291C36DC4E003C348C /* CollectionNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F276F281C36DC4E003C348C /* CollectionNavViewController.swift */; };
+		8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F276F281C36DC4E003C348C /* FeedNavViewController.swift */; };
 		8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F276F2A1C3819A6003C348C /* ActivitiesService.swift */; };
 		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
@@ -58,9 +57,8 @@
 		8F4185FF1C53C464009E1E3F /* LoginApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185FE1C53C463009E1E3F /* LoginApiModel.swift */; };
 		8F4186011C53C7EB009E1E3F /* ProfileCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186001C53C7EB009E1E3F /* ProfileCollectionViewController.swift */; };
 		8F4186031C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186021C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift */; };
-		8F4186071C552958009E1E3F /* TileCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186061C552957009E1E3F /* TileCollectionViewCell.swift */; };
-		8F4186091C552D02009E1E3F /* TileCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186081C552D02009E1E3F /* TileCollectionViewModel.swift */; };
-		8F41860B1C554437009E1E3F /* OpenGLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F41860A1C554437009E1E3F /* OpenGLView.swift */; };
+		8F4186071C552958009E1E3F /* ProfileTileCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186061C552957009E1E3F /* ProfileTileCollectionViewCell.swift */; };
+		8F4186091C552D02009E1E3F /* ProfileTileCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4186081C552D02009E1E3F /* ProfileTileCollectionViewModel.swift */; };
 		8F47150E1C49648F00663684 /* TwitterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150D1C49648F00663684 /* TwitterKit.framework */; };
 		8F4715101C4964AD00663684 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150F1C4964AD00663684 /* TwitterCore.framework */; };
 		8F4715121C49688700663684 /* TwitterKitResources.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4715111C49688700663684 /* TwitterKitResources.bundle */; };
@@ -84,6 +82,8 @@
 		8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5FDA001B3EECB0007E073C /* Activity.swift */; };
 		8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6084831BC27DD400ADAFFC /* Mixpanel.framework */; };
 		8F6DCE161C091E2F0087F6FC /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6DCE151C091E2F0087F6FC /* SnapshotHelper.swift */; };
+		8F707C161C5A2A17000AF7BF /* TableViewResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F707C151C5A2A17000AF7BF /* TableViewResults.swift */; };
+		8F707C181C5A363F000AF7BF /* ProfileOptographsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F707C171C5A363F000AF7BF /* ProfileOptographsViewModel.swift */; };
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* Person.swift */; };
 		8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F77C5191BC45DE1003B1594 /* StitchingService.swift */; };
@@ -95,7 +95,6 @@
 		8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */; };
 		8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F966E0B1BCCF33900F5F5F8 /* SearchTableViewController.swift */; };
 		8F966E0E1BCCF33900F5F5F8 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F966E0C1BCCF33900F5F5F8 /* SearchViewModel.swift */; };
-		8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
 		8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA66BA41B80905C00EE5D44 /* SQLite.framework */; };
 		8FA86D4F1C08F2C80033CBA9 /* OptonautUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA86D4E1C08F2C80033CBA9 /* OptonautUITests.swift */; };
@@ -111,19 +110,8 @@
 		8FAB9F321B8F01DF00B4C8CB /* BottomLineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EF91B8F01DF00B4C8CB /* BottomLineTextField.swift */; };
 		8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFA1B8F01DF00B4C8CB /* InsetLabel.swift */; };
 		8FAB9F341B8F01DF00B4C8CB /* NavbarProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */; };
-		8FAB9F351B8F01DF00B4C8CB /* OptographTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */; };
-		8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */; };
-		8FAB9F371B8F01DF00B4C8CB /* OptographTableViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9EFE1B8F01DF00B4C8CB /* OptographTableViewCellModel.swift */; };
-		8FAB9F3A1B8F01DF00B4C8CB /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */; };
-		8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */; };
-		8FAB9F3E1B8F01DF00B4C8CB /* DetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */; };
-		8FAB9F3F1B8F01DF00B4C8CB /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F071B8F01DF00B4C8CB /* DetailsViewModel.swift */; };
-		8FAB9F401B8F01DF00B4C8CB /* NewCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */; };
-		8FAB9F411B8F01DF00B4C8CB /* NewCommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */; };
 		8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F0C1B8F01DF00B4C8CB /* ExploreNavViewController.swift */; };
-		8FAB9F461B8F01DF00B4C8CB /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */; };
-		8FAB9F471B8F01DF00B4C8CB /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */; };
-		8FAB9F481B8F01DF00B4C8CB /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F121B8F01DF00B4C8CB /* FeedViewModel.swift */; };
+		8FAB9F481B8F01DF00B4C8CB /* FeedOptographCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F121B8F01DF00B4C8CB /* FeedOptographCollectionViewModel.swift */; };
 		8FAB9F4B1B8F01DF00B4C8CB /* HashtagTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F161B8F01DF00B4C8CB /* HashtagTableViewController.swift */; };
 		8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F181B8F01DF00B4C8CB /* ForgotPasswordViewController.swift */; };
 		8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F191B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift */; };
@@ -131,7 +119,7 @@
 		8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1B1B8F01DF00B4C8CB /* LoginViewModel.swift */; };
 		8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */; };
 		8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */; };
-		8FAB9F541B8F01DF00B4C8CB /* OptographsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F211B8F01DF00B4C8CB /* OptographsViewModel.swift */; };
+		8FAB9F541B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F211B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift */; };
 		8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */; };
 		8FAB9F591B8F01DF00B4C8CB /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */; };
 		8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */; };
@@ -178,8 +166,6 @@
 		8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD5886F1BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift */; };
 		8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD588711BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift */; };
 		8FD845B81BC870B90064048D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845B71BC870B90064048D /* Debug.swift */; };
-		8FD845BD1BC92A600064048D /* OptographInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845BC1BC92A600064048D /* OptographInfoView.swift */; };
-		8FD845BF1BC92A6F0064048D /* OptographInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845BE1BC92A6F0064048D /* OptographInfoViewModel.swift */; };
 		8FD845C11BC9BBFF0064048D /* PipelineService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C01BC9BBFF0064048D /* PipelineService.swift */; };
 		8FD845C31BCA5AFA0064048D /* RenderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */; };
 		8FD845C51BCAA4530064048D /* WebImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C41BCAA4530064048D /* WebImage.swift */; };
@@ -191,10 +177,9 @@
 		8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEA6F201BA5969700153677 /* DatabaseService.swift */; };
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
-		8FFB561A1C2C2BA900D2BE62 /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB56191C2C2BA800D2BE62 /* CollectionViewController.swift */; };
-		8FFB561C1C2C371900D2BE62 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561B1C2C371900D2BE62 /* CollectionViewCell.swift */; };
+		8FFB561A1C2C2BA900D2BE62 /* OptographCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */; };
+		8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */; };
 		8FFB561E1C2CA43C00D2BE62 /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */; };
-		8FFB56201C2D59EB00D2BE62 /* CollectionViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561F1C2D59EB00D2BE62 /* CollectionViewCellModel.swift */; };
 		8FFB56501C2D8A4D00D2BE62 /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */; };
 		8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB565C1C3055D000D2BE62 /* Migration0006.swift */; };
 		8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */; };
@@ -286,7 +271,6 @@
 		8F1E0AC51B98304F002E2FB5 /* VersionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VersionService.swift; sourceTree = "<group>"; };
 		8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
 		8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RACExtensions.swift; sourceTree = "<group>"; };
-		8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionImageCache.swift; sourceTree = "<group>"; };
 		8F2214C21B976E6100E693CE /* FoundationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtension.swift; sourceTree = "<group>"; };
 		8F23AA421BFF31B4008926A8 /* ActivityResourceCommentTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceCommentTable.swift; sourceTree = "<group>"; };
@@ -312,7 +296,7 @@
 		8F23AA791C077C1B008926A8 /* Migration0004.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0004.swift; sourceTree = "<group>"; };
 		8F23AA7B1C07BC6D008926A8 /* BoundingButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingButton.swift; sourceTree = "<group>"; };
 		8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0005.swift; sourceTree = "<group>"; };
-		8F276F281C36DC4E003C348C /* CollectionNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionNavViewController.swift; sourceTree = "<group>"; };
+		8F276F281C36DC4E003C348C /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
 		8F276F2A1C3819A6003C348C /* ActivitiesService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivitiesService.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
@@ -324,9 +308,8 @@
 		8F4185FE1C53C463009E1E3F /* LoginApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginApiModel.swift; sourceTree = "<group>"; };
 		8F4186001C53C7EB009E1E3F /* ProfileCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileCollectionViewController.swift; sourceTree = "<group>"; };
 		8F4186021C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCollectionViewCell.swift; sourceTree = "<group>"; };
-		8F4186061C552957009E1E3F /* TileCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TileCollectionViewCell.swift; sourceTree = "<group>"; };
-		8F4186081C552D02009E1E3F /* TileCollectionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TileCollectionViewModel.swift; sourceTree = "<group>"; };
-		8F41860A1C554437009E1E3F /* OpenGLView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenGLView.swift; sourceTree = "<group>"; };
+		8F4186061C552957009E1E3F /* ProfileTileCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTileCollectionViewCell.swift; sourceTree = "<group>"; };
+		8F4186081C552D02009E1E3F /* ProfileTileCollectionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileTileCollectionViewModel.swift; sourceTree = "<group>"; };
 		8F47150D1C49648F00663684 /* TwitterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterKit.framework; path = Frameworks/TwitterKit.framework; sourceTree = "<group>"; };
 		8F47150F1C4964AD00663684 /* TwitterCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterCore.framework; path = Frameworks/TwitterCore.framework; sourceTree = "<group>"; };
 		8F4715111C49688700663684 /* TwitterKitResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = TwitterKitResources.bundle; path = Frameworks/TwitterKitResources.bundle; sourceTree = "<group>"; };
@@ -349,6 +332,8 @@
 		8F5FDA001B3EECB0007E073C /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		8F6084831BC27DD400ADAFFC /* Mixpanel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mixpanel.framework; path = Carthage/Build/iOS/Mixpanel.framework; sourceTree = "<group>"; };
 		8F6DCE151C091E2F0087F6FC /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
+		8F707C151C5A2A17000AF7BF /* TableViewResults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewResults.swift; sourceTree = "<group>"; };
+		8F707C171C5A363F000AF7BF /* ProfileOptographsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileOptographsViewModel.swift; sourceTree = "<group>"; };
 		8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Optonaut-Bridging-Header.h"; sourceTree = "<group>"; };
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F7738141B380F5D001F642B /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
@@ -361,7 +346,6 @@
 		8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
 		8F966E0B1BCCF33900F5F5F8 /* SearchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
 		8F966E0C1BCCF33900F5F5F8 /* SearchViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
-		8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		8FA66BA41B80905C00EE5D44 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
 		8FA86D4C1C08F2C80033CBA9 /* OptonautUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptonautUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -379,19 +363,8 @@
 		8FAB9EF91B8F01DF00B4C8CB /* BottomLineTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomLineTextField.swift; sourceTree = "<group>"; };
 		8FAB9EFA1B8F01DF00B4C8CB /* InsetLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InsetLabel.swift; sourceTree = "<group>"; };
 		8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavbarProtocols.swift; sourceTree = "<group>"; };
-		8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCell.swift; sourceTree = "<group>"; };
-		8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewController.swift; sourceTree = "<group>"; };
-		8FAB9EFE1B8F01DF00B4C8CB /* OptographTableViewCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTableViewCellModel.swift; sourceTree = "<group>"; };
-		8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
-		8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
-		8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewCell.swift; sourceTree = "<group>"; };
-		8FAB9F071B8F01DF00B4C8CB /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
-		8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentTableViewCell.swift; sourceTree = "<group>"; };
-		8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F0C1B8F01DF00B4C8CB /* ExploreNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreNavViewController.swift; sourceTree = "<group>"; };
-		8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
-		8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
-		8FAB9F121B8F01DF00B4C8CB /* FeedViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
+		8FAB9F121B8F01DF00B4C8CB /* FeedOptographCollectionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedOptographCollectionViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F161B8F01DF00B4C8CB /* HashtagTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashtagTableViewController.swift; sourceTree = "<group>"; };
 		8FAB9F181B8F01DF00B4C8CB /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		8FAB9F191B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewModel.swift; sourceTree = "<group>"; };
@@ -399,7 +372,7 @@
 		8FAB9F1B1B8F01DF00B4C8CB /* LoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
-		8FAB9F211B8F01DF00B4C8CB /* OptographsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographsViewModel.swift; sourceTree = "<group>"; };
+		8FAB9F211B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileOptographCollectionViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNavViewController.swift; sourceTree = "<group>"; };
 		8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraDebugService.swift; sourceTree = "<group>"; };
@@ -457,8 +430,6 @@
 		8FD5886F1BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagInfoViewController.swift; sourceTree = "<group>"; };
 		8FD588711BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSummaryViewController.swift; sourceTree = "<group>"; };
 		8FD845B71BC870B90064048D /* Debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
-		8FD845BC1BC92A600064048D /* OptographInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographInfoView.swift; sourceTree = "<group>"; };
-		8FD845BE1BC92A6F0064048D /* OptographInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographInfoViewModel.swift; sourceTree = "<group>"; };
 		8FD845C01BC9BBFF0064048D /* PipelineService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PipelineService.swift; sourceTree = "<group>"; };
 		8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderDelegate.swift; sourceTree = "<group>"; };
 		8FD845C41BCAA4530064048D /* WebImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebImage.swift; sourceTree = "<group>"; };
@@ -469,10 +440,9 @@
 		8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		8FEA6F201BA5969700153677 /* DatabaseService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
-		8FFB56191C2C2BA800D2BE62 /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CollectionViewController.swift; path = ../CollectionViewController.swift; sourceTree = "<group>"; };
-		8FFB561B1C2C371900D2BE62 /* CollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
+		8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OptographCollectionViewController.swift; path = ../OptographCollectionViewController.swift; sourceTree = "<group>"; };
+		8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographCollectionViewCell.swift; sourceTree = "<group>"; };
 		8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
-		8FFB561F1C2D59EB00D2BE62 /* CollectionViewCellModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewCellModel.swift; sourceTree = "<group>"; };
 		8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Icomoon.framework; path = Frameworks/Icomoon.framework; sourceTree = "<group>"; };
 		8FFB565C1C3055D000D2BE62 /* Migration0006.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0006.swift; sourceTree = "<group>"; };
 		8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHashtagTableViewCell.swift; sourceTree = "<group>"; };
@@ -783,7 +753,6 @@
 				8FAB9EED1B8F01DF00B4C8CB /* Activity */,
 				8FAB9EF31B8F01DF00B4C8CB /* Camera */,
 				8FAB9EF81B8F01DF00B4C8CB /* Common */,
-				8FAB9F001B8F01DF00B4C8CB /* Details */,
 				8FAB9F0B1B8F01DF00B4C8CB /* Explore */,
 				8FAB9F0F1B8F01DF00B4C8CB /* Feed */,
 				8FAB9F151B8F01DF00B4C8CB /* Hashtag */,
@@ -832,32 +801,13 @@
 				8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */,
 				8FAB9EFA1B8F01DF00B4C8CB /* InsetLabel.swift */,
 				8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */,
-				8FAB9EFC1B8F01DF00B4C8CB /* OptographTableViewCell.swift */,
-				8FAB9EFE1B8F01DF00B4C8CB /* OptographTableViewCellModel.swift */,
-				8FAB9EFD1B8F01DF00B4C8CB /* OptographTableViewController.swift */,
 				8FCA92E11BC7180B004913E5 /* OptographOptions.swift */,
-				8FD845BC1BC92A600064048D /* OptographInfoView.swift */,
-				8FD845BE1BC92A6F0064048D /* OptographInfoViewModel.swift */,
-				8F1E717F1BCC188B00F3D6FB /* ProgressView.swift */,
 				8F0B17851BAC193000FAF649 /* LineTextField.swift */,
 				8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */,
 				8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */,
+				8F707C151C5A2A17000AF7BF /* TableViewResults.swift */,
 			);
 			path = Common;
-			sourceTree = "<group>";
-		};
-		8FAB9F001B8F01DF00B4C8CB /* Details */ = {
-			isa = PBXGroup;
-			children = (
-				8FAB9F021B8F01DF00B4C8CB /* CommentTableViewCell.swift */,
-				8F9C53EF1B98771C00128EFE /* CommentViewModel.swift */,
-				8FAB9F071B8F01DF00B4C8CB /* DetailsViewModel.swift */,
-				8FAB9F061B8F01DF00B4C8CB /* DetailsTableViewCell.swift */,
-				8FAB9F051B8F01DF00B4C8CB /* DetailsTableViewController.swift */,
-				8FAB9F081B8F01DF00B4C8CB /* NewCommentTableViewCell.swift */,
-				8FAB9F091B8F01DF00B4C8CB /* NewCommentViewModel.swift */,
-			);
-			path = Details;
 			sourceTree = "<group>";
 		};
 		8FAB9F0B1B8F01DF00B4C8CB /* Explore */ = {
@@ -874,14 +824,11 @@
 		8FAB9F0F1B8F01DF00B4C8CB /* Feed */ = {
 			isa = PBXGroup;
 			children = (
-				8FFB56191C2C2BA800D2BE62 /* CollectionViewController.swift */,
 				8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */,
-				8FAB9F101B8F01DF00B4C8CB /* FeedNavViewController.swift */,
-				8F276F281C36DC4E003C348C /* CollectionNavViewController.swift */,
-				8FFB561B1C2C371900D2BE62 /* CollectionViewCell.swift */,
-				8FFB561F1C2D59EB00D2BE62 /* CollectionViewCellModel.swift */,
-				8FAB9F111B8F01DF00B4C8CB /* FeedTableViewController.swift */,
-				8FAB9F121B8F01DF00B4C8CB /* FeedViewModel.swift */,
+				8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */,
+				8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */,
+				8F276F281C36DC4E003C348C /* FeedNavViewController.swift */,
+				8FAB9F121B8F01DF00B4C8CB /* FeedOptographCollectionViewModel.swift */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -909,14 +856,14 @@
 			isa = PBXGroup;
 			children = (
 				8F4186001C53C7EB009E1E3F /* ProfileCollectionViewController.swift */,
-				8F4186061C552957009E1E3F /* TileCollectionViewCell.swift */,
-				8F4186081C552D02009E1E3F /* TileCollectionViewModel.swift */,
-				8F41860A1C554437009E1E3F /* OpenGLView.swift */,
+				8F707C171C5A363F000AF7BF /* ProfileOptographsViewModel.swift */,
+				8F4186061C552957009E1E3F /* ProfileTileCollectionViewCell.swift */,
+				8F4186081C552D02009E1E3F /* ProfileTileCollectionViewModel.swift */,
 				8F4186021C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift */,
 				8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */,
 				8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */,
 				8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */,
-				8FAB9F211B8F01DF00B4C8CB /* OptographsViewModel.swift */,
+				8FAB9F211B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift */,
 				8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */,
 			);
 			path = Profile;
@@ -1563,23 +1510,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				8FCA92E21BC7180B004913E5 /* OptographOptions.swift in Sources */,
-				8FAB9F471B8F01DF00B4C8CB /* FeedTableViewController.swift in Sources */,
 				8F23AA591BFF3229008926A8 /* Migration0002.swift in Sources */,
 				8F5335B21BDBE0910058961A /* ActivityFollowTableViewCell.swift in Sources */,
 				8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */,
 				A55C80FB1BF91FDA00420E52 /* simpleSphereStitcher.cpp in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
-				8F41860B1C554437009E1E3F /* OpenGLView.swift in Sources */,
 				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
 				8FFB561E1C2CA43C00D2BE62 /* TabViewController.swift in Sources */,
 				A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */,
 				8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */,
 				A5FD5D891BEA5A4E0031ED1E /* ringStitcher.cpp in Sources */,
-				8F4186071C552958009E1E3F /* TileCollectionViewCell.swift in Sources */,
+				8F4186071C552958009E1E3F /* ProfileTileCollectionViewCell.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
 				8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */,
-				8FAB9F371B8F01DF00B4C8CB /* OptographTableViewCellModel.swift in Sources */,
 				8F4185FB1C52DB08009E1E3F /* PersonApiModel.swift in Sources */,
 				8FC7E3731BD15B9D00E97CC3 /* HeadTracker.mm in Sources */,
 				8F4185F91C529C74009E1E3F /* OptographApiModel.swift in Sources */,
@@ -1592,7 +1536,6 @@
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
 				8F23AA511BFF31B4008926A8 /* CommentTable.swift in Sources */,
-				8FAB9F3E1B8F01DF00B4C8CB /* DetailsTableViewCell.swift in Sources */,
 				A5FD5D7D1BEA5A4E0031ED1E /* image.cpp in Sources */,
 				A5FD5D821BEA5A4E0031ED1E /* io.cpp in Sources */,
 				8F23AA521BFF31B4008926A8 /* HashtagTable.swift in Sources */,
@@ -1613,7 +1556,6 @@
 				8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */,
 				8F23AA531BFF31B4008926A8 /* LocationTable.swift in Sources */,
 				A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */,
-				8FAB9F461B8F01DF00B4C8CB /* FeedNavViewController.swift in Sources */,
 				8FAB9F321B8F01DF00B4C8CB /* BottomLineTextField.swift in Sources */,
 				8FAB9F301B8F01DF00B4C8CB /* SaveViewController.swift in Sources */,
 				8F23AA7E1C08ADB4008926A8 /* Migration0005.swift in Sources */,
@@ -1625,12 +1567,10 @@
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
 				8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */,
 				A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */,
-				8FAB9F3D1B8F01DF00B4C8CB /* DetailsTableViewController.swift in Sources */,
 				8FC456C81C59108E0019107E /* UICollectionViewLeftAlignedLayout.m in Sources */,
 				A5DE71EA1BE28A7400316F82 /* DistortionMesh.swift in Sources */,
 				8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
-				8FAB9F3F1B8F01DF00B4C8CB /* DetailsViewModel.swift in Sources */,
 				8F0B17841BAC084F00FAF649 /* OnboardingProfileViewModel.swift in Sources */,
 				8FC7E3621BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift in Sources */,
 				8F23AA4C1BFF31B4008926A8 /* ActivityResourceCommentTable.swift in Sources */,
@@ -1646,20 +1586,18 @@
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
-				8FFB561C1C2C371900D2BE62 /* CollectionViewCell.swift in Sources */,
-				8FAB9F361B8F01DF00B4C8CB /* OptographTableViewController.swift in Sources */,
+				8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */,
 				8F4185FF1C53C464009E1E3F /* LoginApiModel.swift in Sources */,
 				A5FD5D801BEA5A4E0031ED1E /* checkpointStore.cpp in Sources */,
 				8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */,
 				8FD845C11BC9BBFF0064048D /* PipelineService.swift in Sources */,
-				8F276F291C36DC4E003C348C /* CollectionNavViewController.swift in Sources */,
+				8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */,
 				A5FD5D871BEA5A4E0031ED1E /* dynamicSeamer.cpp in Sources */,
-				8FAB9F541B8F01DF00B4C8CB /* OptographsViewModel.swift in Sources */,
+				8FAB9F541B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift in Sources */,
 				8FC7E3771BD15B9D00E97CC3 /* Vector3d.mm in Sources */,
-				8F1E71801BCC188B00F3D6FB /* ProgressView.swift in Sources */,
 				8F5335AA1BDBC09A0058961A /* ActivityResourceFollow.swift in Sources */,
 				8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */,
-				8FFB561A1C2C2BA900D2BE62 /* CollectionViewController.swift in Sources */,
+				8FFB561A1C2C2BA900D2BE62 /* OptographCollectionViewController.swift in Sources */,
 				8F966E0E1BCCF33900F5F5F8 /* SearchViewModel.swift in Sources */,
 				8FAB9F7E1B8F03BE00B4C8CB /* UIKitRACExtensions.swift in Sources */,
 				A5FD5D811BEA5A4E0031ED1E /* inputImage.cpp in Sources */,
@@ -1676,18 +1614,17 @@
 				8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */,
 				8FAB9F341B8F01DF00B4C8CB /* NavbarProtocols.swift in Sources */,
 				8FAB9F2E1B8F01DF00B4C8CB /* CameraViewController.swift in Sources */,
-				8FAB9F481B8F01DF00B4C8CB /* FeedViewModel.swift in Sources */,
+				8FAB9F481B8F01DF00B4C8CB /* FeedOptographCollectionViewModel.swift in Sources */,
 				8FC7E3781BD15B9D00E97CC3 /* MagnetSensor.mm in Sources */,
 				8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */,
 				A5DE71EC1BE28A7400316F82 /* DistortionRenderer.swift in Sources */,
 				8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */,
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
-				8F4186091C552D02009E1E3F /* TileCollectionViewModel.swift in Sources */,
+				8F4186091C552D02009E1E3F /* ProfileTileCollectionViewModel.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
 				A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */,
-				8FFB56201C2D59EB00D2BE62 /* CollectionViewCellModel.swift in Sources */,
 				8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */,
 				8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */,
 				8F23AA4D1BFF31B4008926A8 /* ActivityResourceFollowTable.swift in Sources */,
@@ -1701,17 +1638,16 @@
 				8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
-				8F9C53F01B98771C00128EFE /* CommentViewModel.swift in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
-				8FAB9F351B8F01DF00B4C8CB /* OptographTableViewCell.swift in Sources */,
 				8FD845C51BCAA4530064048D /* WebImage.swift in Sources */,
+				8F707C181C5A363F000AF7BF /* ProfileOptographsViewModel.swift in Sources */,
 				8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */,
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
 				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
-				8FD845BD1BC92A600064048D /* OptographInfoView.swift in Sources */,
+				8F707C161C5A2A17000AF7BF /* TableViewResults.swift in Sources */,
 				8F23AA571BFF31EC008926A8 /* Migration0001.swift in Sources */,
 				8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */,
 				8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */,
@@ -1720,10 +1656,7 @@
 				8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */,
 				8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */,
 				8F5335A81BDBBFE30058961A /* ActivityResourceViews.swift in Sources */,
-				8FAB9F411B8F01DF00B4C8CB /* NewCommentViewModel.swift in Sources */,
 				8F8E32D01BFE043200E09392 /* DeviceTokenService.swift in Sources */,
-				8FD845BF1BC92A6F0064048D /* OptographInfoViewModel.swift in Sources */,
-				8FAB9F401B8F01DF00B4C8CB /* NewCommentTableViewCell.swift in Sources */,
 				8F23AA781C072702008926A8 /* BoundingLabel.swift in Sources */,
 				8FC7E3751BD15B9D00E97CC3 /* OrientationEKF.mm in Sources */,
 				8F7738161B380F5D001F642B /* Person.swift in Sources */,
@@ -1734,7 +1667,6 @@
 				8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,
 				A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */,
-				8FAB9F3A1B8F01DF00B4C8CB /* CommentTableViewCell.swift in Sources */,
 				8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */,
 				8FAB9F2A1B8F01DF00B4C8CB /* ActivityNavViewController.swift in Sources */,
 			);

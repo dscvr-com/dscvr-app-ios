@@ -119,7 +119,7 @@ extension ActivityTableViewController: UITableViewDelegate {
         markVisibleAsRead()
     }
     
-    @objc func markVisibleAsRead() {
+    dynamic func markVisibleAsRead() {
         guard let visibleCells = tableView.visibleCells as? [ActivityTableViewCell] else {
             return
         }

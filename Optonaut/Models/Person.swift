@@ -62,6 +62,7 @@ extension Person: MergeApiModel {
         followersCount = apiModel.followersCount
         followedCount = apiModel.followedCount
         isFollowed = apiModel.isFollowed
+        avatarAssetID = apiModel.avatarAssetID
     }
 }
 

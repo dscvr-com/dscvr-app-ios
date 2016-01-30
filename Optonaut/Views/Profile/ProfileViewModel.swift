@@ -23,7 +23,7 @@ class ProfileViewModel {
     let isEditing = MutableProperty<Bool>(false)
     let avatarImageUrl = MutableProperty<String>("")
     let isMe: Bool
-//    let personID: UUID
+    let personID: UUID
     
 //    var person = Person.newInstance()
     private var personBox: ModelBox<Person>!
@@ -31,10 +31,10 @@ class ProfileViewModel {
     init(personID: UUID) {
         personBox = Models.persons[personID]!
         
-//        self.personID = personID
+        self.personID = personID
         isMe = SessionService.personID == personID
         
-        SignalProducer<Bool, ApiError>(value: SessionService.personID == personID)
+        SignalProducer<Bool, ApiError>(value: isMe)
             .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
             .startWithNext { [weak self] apiModel in
                 self?.personBox.model.mergeApiModel(apiModel)
@@ -91,6 +91,31 @@ class ProfileViewModel {
                     box.model.avatarAssetID = avatarAssetID
                 }
             })
+    }
+    
+    func toggleFollow() {
+        let person = personBox.model
+        let followedBefore = person.isFollowed
+        
+        SignalProducer<Bool, ApiError>(value: followedBefore)
+            .flatMap(.Latest) { followedBefore in
+                followedBefore
+                    ? ApiService<EmptyResponse>.delete("persons/\(person.ID)/follow")
+                    : ApiService<EmptyResponse>.post("persons/\(person.ID)/follow", parameters: nil)
+            }
+            .on(
+                started: { [weak self] in
+                    self?.personBox.insertOrUpdate { box in
+                        box.model.isFollowed = !followedBefore
+                    }
+                },
+                failed: { [weak self] _ in
+                    self?.personBox.insertOrUpdate { box in
+                        box.model.isFollowed = followedBefore
+                    }
+                }
+            )
+            .start()
     }
     
 }

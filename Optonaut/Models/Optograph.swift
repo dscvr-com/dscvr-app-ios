@@ -67,6 +67,7 @@ struct Optograph: DeletableModel {
     var isSubmitted: Bool
     var isOnServer: Bool
     var isPublished: Bool
+    var isUploading: Bool // not saved in db
     var stitcherVersion: String
     var shareAlias: String
     var leftCubeTextureStatusUpload: CubeTextureStatus?
@@ -101,6 +102,7 @@ struct Optograph: DeletableModel {
             isSubmitted: true,
             isOnServer: true,
             isPublished: true,
+            isUploading: false,
             stitcherVersion: "",
             shareAlias: "",
             leftCubeTextureStatusUpload: nil,
@@ -146,6 +148,7 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
         && lhs.isSubmitted                    == rhs.isSubmitted
         && lhs.isOnServer                     == rhs.isOnServer
         && lhs.isPublished                    == rhs.isPublished
+        && lhs.isUploading                    == rhs.isUploading
         && lhs.stitcherVersion                == rhs.stitcherVersion
         && lhs.shareAlias                     == rhs.shareAlias
         && lhs.leftCubeTextureStatusUpload    == rhs.leftCubeTextureStatusUpload
@@ -154,12 +157,12 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
         && lhs.rightCubeTextureStatusSave     == rhs.rightCubeTextureStatusSave
         && lhs.isStaffPick                    == rhs.isStaffPick
         && lhs.hashtagString                  == rhs.hashtagString
-        && lhs.isInFeed                       == rhs.isInFeed
+//        && lhs.isInFeed                       == rhs.isInFeed // needs to be excluded since an optograph can be both in a profile and feed
         && lhs.directionPhi                   == rhs.directionPhi
         && lhs.directionTheta                 == rhs.directionTheta
-        && lhs.postFacebook                   == rhs.postFacebook
-        && lhs.postTwitter                    == rhs.postTwitter
-        && lhs.postInstagram                  == rhs.postInstagram
+        && lhs.postFacebook                   == rhs.postFacebook // needs to be excluded since this information is not exposed from REST api
+        && lhs.postTwitter                    == rhs.postTwitter // needs to be excluded since this information is not exposed from REST api
+        && lhs.postInstagram                  == rhs.postInstagram // needs to be excluded since this information is not exposed from REST api
         && lhs.shouldBePublished              == rhs.shouldBePublished
 }
 
@@ -220,6 +223,7 @@ extension Optograph: SQLiteModel {
             isSubmitted: row[OptographSchema.isSubmitted],
             isOnServer: row[OptographSchema.isOnServer],
             isPublished: row[OptographSchema.isPublished],
+            isUploading: false,
             stitcherVersion: row[OptographSchema.stitcherVersion],
             shareAlias: row[OptographSchema.shareAlias],
             leftCubeTextureStatusUpload: leftCubeTextureStatusUpload,

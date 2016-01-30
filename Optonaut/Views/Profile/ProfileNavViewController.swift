@@ -14,7 +14,7 @@ class ProfileNavViewController: NavigationController {
         super.init(nibName: nil, bundle: nil)
         
         if SessionService.isLoggedIn {
-            pushViewController(ProfileCollectionViewController(personID: SessionService.personID!), animated: false)
+            pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
         }
     }
     

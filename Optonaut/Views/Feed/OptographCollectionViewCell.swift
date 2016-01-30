@@ -62,6 +62,10 @@ class TouchRotationSource: RotationMatrixSource {
     }
     
     func touchMove(point: CGPoint) {
+        if !isTouching {
+            return
+        }
+        
         let x0 = Float(sceneWidth / 2)
         let y0 = Float(sceneHeight / 2)
         let flen = y0 / tan(vfov / 2 * Float(M_PI) / 180)
@@ -183,7 +187,7 @@ class CombinedMotionManager: RotationMatrixSource {
     
 private let queue = dispatch_queue_create("collection_view_cell", DISPATCH_QUEUE_SERIAL)
 
-class CollectionViewCell: UICollectionViewCell {
+class OptographCollectionViewCell: UICollectionViewCell {
     
     weak var uiHidden: MutableProperty<Bool>!
     
