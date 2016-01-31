@@ -74,8 +74,7 @@ class PipelineService {
                     let originalData = UIImageJPEGRepresentation(image, 0.9)!
                     let originalURL = TextureURL(optographID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
                     
-                    sync(KingfisherManager.sharedManager) {
-                        KingfisherManager.sharedManager.cache.storeImage(UIImage(data: originalData)!, originalData: originalData, forKey: originalURL, toDisk: true) {
+                    ImageManager.sharedInstance.addImageToCache(NSURL(string: originalURL)!, originalData: originalData, image: UIImage(data: originalData)!) {
                             optographBox.insertOrUpdate { box in
                                 switch side {
                                 case .Left:
@@ -103,7 +102,6 @@ class PipelineService {
                                 upload(optographID, side: side, face: face)
                             }
                         }
-                    }
                     
 //                    let screen = UIScreen.mainScreen()
 //                    let textureSize = getTextureWidth(screen.bounds.width, hfov: HorizontalFieldOfView)

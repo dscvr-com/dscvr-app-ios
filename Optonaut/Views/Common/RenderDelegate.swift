@@ -116,6 +116,7 @@ class CubeRenderDelegate: RenderDelegate {
     private let cubeScaling: CGFloat = 10
     private let cubeFaceCount: Int
     private let autoDispose: Bool
+    private var willRequestAll: Bool
     
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool) {
         let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
@@ -126,6 +127,7 @@ class CubeRenderDelegate: RenderDelegate {
     init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float, cubeFaceCount: Int, autoDispose: Bool) {
         self.cubeFaceCount = cubeFaceCount
         self.autoDispose = autoDispose
+        self.willRequestAll = false
         super.init(rotationMatrixSource: rotationMatrixSource, fov: fov, cameraOffset: cameraOffset)
         
         
@@ -240,9 +242,7 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     func requestAll() {
-        for (index, plane) in self.planes {
-            request(plane, index: index)
-        }
+        willRequestAll = true
     }
     
     private func request(item: Item, index: CubeImageCache.Index) {
@@ -302,6 +302,14 @@ class CubeRenderDelegate: RenderDelegate {
                 request(item, index: index)
             } else if autoDispose && !nowVisible {
                 forget(item, index: index)
+            }
+        }
+        
+        // Forced initialisation of ALL views. We do that past the 
+        // above code so faces we look at get priority.
+        if willRequestAll {
+            for (index, plane) in self.planes {
+               request(plane, index: index)
             }
         }
         

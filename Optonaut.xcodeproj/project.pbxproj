@@ -209,6 +209,7 @@
 		A5DE71EE1BE28A7400316F82 /* distortion.json in Resources */ = {isa = PBXBuildFile; fileRef = A5DE71E61BE28A7400316F82 /* distortion.json */; };
 		A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5DE71E71BE28A7400316F82 /* distortion.vsh */; };
 		A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */; };
+		A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E43B231C5D11F9005BBF1A /* ImageCacheService.swift */; };
 		A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F8AF231C4B1BA300072032 /* debugHook.cpp */; };
 		A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F8AF2B1C4B1BB200072032 /* static_counter.cpp */; };
 		A5FD5D7D1BEA5A4E0031ED1E /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D471BEA5A4E0031ED1E /* image.cpp */; };
@@ -491,6 +492,7 @@
 		A5DE71E61BE28A7400316F82 /* distortion.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = distortion.json; sourceTree = "<group>"; };
 		A5DE71E71BE28A7400316F82 /* distortion.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.vsh; sourceTree = "<group>"; };
 		A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewerViewController.swift; sourceTree = "<group>"; };
+		A5E43B231C5D11F9005BBF1A /* ImageCacheService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCacheService.swift; sourceTree = "<group>"; };
 		A5F8AF231C4B1BA300072032 /* debugHook.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debugHook.cpp; path = debug/debugHook.cpp; sourceTree = "<group>"; };
 		A5F8AF241C4B1BA300072032 /* debugHook.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = debugHook.hpp; path = debug/debugHook.hpp; sourceTree = "<group>"; };
 		A5F8AF261C4B1BB200072032 /* assert.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = assert.hpp; sourceTree = "<group>"; };
@@ -938,6 +940,7 @@
 				8FC7E3631BCF158200E97CC3 /* ScreenService.swift */,
 				8F1E0AC51B98304F002E2FB5 /* VersionService.swift */,
 				8F276F2A1C3819A6003C348C /* ActivitiesService.swift */,
+				A5E43B231C5D11F9005BBF1A /* ImageCacheService.swift */,
 			);
 			name = Services;
 			path = Optonaut/Services;
@@ -1586,6 +1589,7 @@
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
+				A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */,
 				8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */,
 				8F4185FF1C53C464009E1E3F /* LoginApiModel.swift in Sources */,
 				A5FD5D801BEA5A4E0031ED1E /* checkpointStore.cpp in Sources */,

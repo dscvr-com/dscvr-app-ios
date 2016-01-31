@@ -32,10 +32,10 @@ class CubeImageCache {
     }
     
     typealias Callback = (SKTexture, index: Index) -> Void
-//    private typealias InnerItem = (image: SKTexture?, downloadTask: RetrieveImageTask?)
+    
     private class Item {
         var image: SKTexture?
-        var downloadTask: RetrieveImageTask?
+        var downloadTask: ImageManager.DownloadTask?
         var callback: Callback?
     }
     
@@ -62,62 +62,97 @@ class CubeImageCache {
         dispose()
     }
     
+    private func fullfillImageCallback(index: CubeImageCache.Index, callback: Callback?, image: UIImage) {
+        let tex = SKTexture(image: image)
+        
+        callback?(tex, index: index)
+        
+        let item = Item()
+        item.image = tex
+        
+        self.items[index] = item
+        
+        return;
+    }
+    
     func get(index: Index, callback: Callback?) {
-        //print("index \(index)")
         sync(self) {
             if let image = self.items[index]?.image {
+                // Case 1 - Image is Pre-Fetched.
                 callback?(image, index: index)
             } else if self.items[index]?.downloadTask == nil {
+                // Case 2.1 - Image is not Pre-Fetched, but we have it in our disk cache.
+                let tiledUrl =  NSURL(string: self.url(index, textureSize: self.textureSize))!
+                let tiledImage = ImageManager.sharedInstance.retrieveImageFromCache(tiledUrl, requester: self)
+                
+                if let tiledImage = tiledImage {
+                    self.fullfillImageCallback(index, callback: callback, image: tiledImage)
+                    return;
+                } else {
+                    
+                    print("Cache Miss for small face: x: \(index.x), y: \(index.y), d: \(index.d)")
+                }
+                
+                // Case 2.2 - Image is not Pre-Fetched, but we have the full face in our disk cache.
+                
                 // Image is resolved by URL - query whole face and then get subface manually.
                 // Occurs when image was just taken on this phone
-                objc_sync_enter(KingfisherManager.sharedManager)
-                let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(self.url(Index(face: index.face, x: 0.0, y: 0.0, d: 1.0), textureSize: 0))
-                objc_sync_exit(KingfisherManager.sharedManager)
+                let fullFaceUrl = NSURL(string: self.url(Index(face: index.face, x: 0.0, y: 0.0, d: 1.0), textureSize: 0))!
+                let originalImage = ImageManager.sharedInstance.retrieveImageFromCache(fullFaceUrl, requester: self)
                 
                 if let originalImage = originalImage {
-                    let resizedImage = originalImage.subface(CGFloat(index.x), y: CGFloat(index.y), w: CGFloat(index.d), d: Int(self.textureSize * CGFloat(index.d)))
-                    let tex = SKTexture(image: resizedImage)
                     
-                    callback?(tex, index: index)
+                    let subfaceSize = index.d
+                    let subfaceCount = Int(Float(1) / subfaceSize + Float(0.5))
                     
-                    let item = Item()
-                    item.image = tex
+                    print("Creating Index from big face: x: \(index.x), y: \(index.y), d: \(index.d)")
+
                     
-                    self.items[index] = item
-                    
-                } else {
-                    let item = Item()
-                    item.callback = callback
-                    
-                    self.items[index] = item
-                    
-                    sync(KingfisherManager.sharedManager) {
-                        item.downloadTask = KingfisherManager.sharedManager.retrieveImageWithURL(
-                            NSURL(string: self.url(index, textureSize: self.textureSize))!,
-                            optionsInfo: nil,
-                            progressBlock: nil,
-                            completionHandler: { (image, error, _, _) in
-                                if let error = error where error.code != -999 {
-                                    print(error)
-                                }
-                                // needed because completionHandler is called on mainthread
-                                dispatch_async(self.queue) {
-                                    sync(self) {
-                                        if let image = image, item = self.items[index] {
-                                            let tex = SKTexture(image: image)
-                                            item.image = tex
-                                            item.downloadTask = nil
-                                            item.callback?(tex, index: index)
-                                            item.callback = nil
-                                        }
-                                    }
+                    // If we request a subface in this case, let's cheat and prepare all subfaces at once.
+                    for x in 0..<subfaceCount {
+                        for y in 0..<subfaceCount {
+                            let tiledIndex = Index(face: index.face, x: Float(x) * subfaceSize, y: Float(y) * subfaceSize, d: subfaceSize)
+                            let tiledImage = originalImage.subface(CGFloat(tiledIndex.x), y: CGFloat(tiledIndex.y), w: CGFloat(tiledIndex.d), d: Int(self.textureSize * CGFloat(tiledIndex.d)))
+                            
+                            print("Caching Index from big face: x: \(tiledIndex.x), y: \(tiledIndex.y), d: \(tiledIndex.d)")
+                            
+                            // Store subface - way faster loading next time.
+                            let tiledUrl = NSURL(string: self.url(tiledIndex, textureSize: self.textureSize))!
+                            ImageManager.sharedInstance.addImageToCache(tiledUrl, image: tiledImage)
+                            self.fullfillImageCallback(tiledIndex, callback: nil, image: tiledImage)
+                        }
+                    }
+                    callback?(self.items[index]!.image!, index: index)
+                    return;
+                }
+                
+                // Case 2.3 - We don't have anything. Download.
+                let item = Item()
+                item.callback = callback
+                
+                self.items[index] = item
+            
+                item.downloadTask = ImageManager.sharedInstance.downloadImage(
+                    tiledUrl, requester: self,
+                    completionHandler: { (image, error, _, _) in
+                        if let error = error where error.code != -999 {
+                            print(error)
+                        }
+                        // needed because completionHandler is called on mainthread
+                        dispatch_async(self.queue) {
+                            sync(self) {
+                                if let image = image, item = self.items[index] {
+                                    let tex = SKTexture(image: image)
+                                    item.image = tex
+                                    item.downloadTask = nil
+                                    item.callback?(tex, index: index)
+                                    item.callback = nil
                                 }
                             }
-                        )
-                        
+                        }
                     }
-                    
-                }
+                )
+    
             } else if self.items[index]?.callback == nil {
                 self.items[index]?.callback = callback
             }
