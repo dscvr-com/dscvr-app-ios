@@ -44,11 +44,13 @@ class SaveViewController: UIViewController, RedNavbar {
     private let moreSocialButton = SocialButton()
     private var placeholderImage: UIImage?
     
+    private let readyNotification = NotificationSignal<Void>()
+    
     required init(recorderCleanup: SignalProducer<UIImage, NoError>) {
         
         let (placeholderSignal, placeholderSink) = Signal<UIImage, NoError>.pipe()
         
-        viewModel = SaveViewModel(placeholderSignal: placeholderSignal)
+        viewModel = SaveViewModel(placeholderSignal: placeholderSignal, readyNotification: readyNotification)
         
         locationView = LocationView(isOnline: viewModel.isOnline)
         
@@ -69,6 +71,7 @@ class SaveViewController: UIViewController, RedNavbar {
                     }
                 },
                 completed: { [weak self] in
+                    ApiService<EmptyResponse>.get("completed").start()
                     self?.viewModel.stitcherFinished.value = true
                 }
             )
@@ -85,6 +88,10 @@ class SaveViewController: UIViewController, RedNavbar {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if SessionService.isLoggedIn {
+            readyNotification.notify(())
+        }
         
         title = "SAVE THE MOMENT"
         
@@ -243,7 +250,7 @@ class SaveViewController: UIViewController, RedNavbar {
         }
         
         viewModel.isReadyForStitching.producer
-            .filter(identity)
+            .filter(isTrue)
             .startWithNext { [weak self] _ in
                 if let strongSelf = self {
                     PipelineService.stitch(strongSelf.viewModel.optographBox.model.ID)
@@ -304,6 +311,24 @@ class SaveViewController: UIViewController, RedNavbar {
         
         // needed if user re-enabled location via Settings.app
         locationView.reloadLocation()
+        
+        if !SessionService.isLoggedIn {
+            tabController!.hideUI()
+            tabController!.lockUI()
+            
+            let loginOverlayViewController = LoginOverlayViewController(
+                title: "Login to save your moment",
+                successCallback: {
+                    self.readyNotification.notify(())
+                },
+                cancelCallback: { true },
+                alwaysCallback: {
+                    self.tabController!.unlockUI()
+                    self.tabController!.showUI()
+                }
+            )
+            presentViewController(loginOverlayViewController, animated: true, completion: nil)
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {

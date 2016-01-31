@@ -119,6 +119,7 @@ class PipelineService {
         
         stitchingSignal
             .on(completed: {
+                ApiService<EmptyResponse>.get("removed-unused-completed").start()
                 StitchingService.removeUnstitchedRecordings()
             })
             .observeOnMain()
@@ -256,6 +257,8 @@ class PipelineService {
                 // This happens when an optograph was recorded, but never
                 // inserted into the DB, for example due to cancel.
                 // So it needs to be removed.
+                
+                ApiService<EmptyResponse>.get("removed-unused-check").start()
                 StitchingService.removeUnstitchedRecordings()
             }
         }

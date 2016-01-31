@@ -26,17 +26,21 @@ class SaveViewModel {
     let postTwitter: MutableProperty<Bool>
     let postInstagram: MutableProperty<Bool>
     let isOnline: MutableProperty<Bool>
-    let isLoggedIn: MutableProperty<Bool>
+    let isLoggedIn = MutableProperty<Bool>(false)
     let placeID = MutableProperty<String?>(nil)
     
     let optographBox: ModelBox<Optograph>
     var locationBox: ModelBox<Location>?
     
-    init(placeholderSignal: Signal<UIImage, NoError>) {
+    private let placeholder = MutableProperty<UIImage?>(nil)
+    
+    init(placeholderSignal: Signal<UIImage, NoError>, readyNotification: NotificationSignal<Void>) {
+        
+        placeholder <~ placeholderSignal.map { image -> UIImage? in return image }
         
         var optograph = Optograph.newInstance()
         
-        optograph.personID = Defaults[.SessionPersonID] ?? Person.guestID
+        optograph.personID = SessionService.personID
         optograph.isPublished = false
         optograph.isStitched = false
         optograph.isSubmitted = false
@@ -53,7 +57,6 @@ class SaveViewModel {
         postInstagram = MutableProperty(Defaults[.SessionShareToggledInstagram])
         
         isOnline = MutableProperty(Reachability.connectedToNetwork())
-        isLoggedIn = MutableProperty(SessionService.isLoggedIn)
         
         postFacebook.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
             Defaults[.SessionShareToggledFacebook] = toggled
@@ -78,105 +81,110 @@ class SaveViewModel {
             self?.optographBox.insertOrUpdate { $0.model.text = text }
         }
         
-        if isOnline.value && isLoggedIn.value {
-            let postParameters = [
-                "id": optograph.ID,
-                "stitcher_version": StitcherVersion,
-                "created_at": optograph.createdAt.toRFC3339String(),
-            ]
-            ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
-                .on(next: { [weak self] optograph in
-                    self?.optographBox.insertOrUpdate { box in
-                        box.model.shareAlias = optograph.shareAlias
-                        box.model.isOnServer = true
-                    }
-                })
-                .zipWith(placeholderSignal.mapError({ _ in ApiError.Nil }))
-                .flatMap(.Latest) { (optograph, image) in
-                    return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
-                        form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
-                        form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
+        readyNotification.signal.observeNext {
+            self.isLoggedIn.value = SessionService.isLoggedIn
+            
+            if self.isOnline.value && self.isLoggedIn.value {
+                let postParameters = [
+                    "id": optograph.ID,
+                    "stitcher_version": StitcherVersion,
+                    "created_at": optograph.createdAt.toRFC3339String(),
+                ]
+                ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
+                    .on(next: { [weak self] optograph in
+                        self?.optographBox.insertOrUpdate { box in
+                            box.model.shareAlias = optograph.shareAlias
+                            box.model.isOnServer = true
+                            box.model.personID = SessionService.personID
+                        }
                     })
-                }
-                .on(
-                    completed: { [weak self] in
-                        self?.isInitialized.value = true
-                    },
-                    failed: { [weak self] _ in
-                        self?.isOnline.value = false
-                        self?.isInitialized.value = true
+                    .zipWith(self.placeholder.producer.ignoreNil().take(1).mapError({ _ in ApiError.Nil }))
+                    .flatMap(.Latest) { (optograph, image) in
+                        return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
+                            form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
+                            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
+                        })
                     }
-                )
-                .start()
-            
-            placeID.producer
-                .delayLatestUntil(isInitialized.producer)
-                .on(next: { [weak self] val in
-                    if val == nil {
+                    .on(
+                        completed: { [weak self] in
+                            self?.isInitialized.value = true
+                        },
+                        failed: { [weak self] _ in
+                            self?.isOnline.value = false
+                            self?.isInitialized.value = true
+                        }
+                    )
+                    .start()
+                
+                self.placeID.producer
+                    .delayLatestUntil(self.isInitialized.producer)
+                    .on(next: { [weak self] val in
+                        if val == nil {
+                            self?.locationBox?.removeFromCache()
+                            self?.optographBox.insertOrUpdate { $0.model.locationID = nil }
+                        }
+                    })
+                    .ignoreNil()
+                    .on(next: { [weak self] _ in
+                        self?.locationLoading.value = true
+                    })
+                    .flatMap(.Latest) { placeID -> SignalProducer<Location, NoError> in
+                        return ApiService<GeocodeDetails>.get("locations/geocode-details/\(placeID)")
+                            .map { geocodeDetails in
+                                let coords = LocationService.lastLocation()!
+                                var location = Location.newInstance()
+                                location.latitude = coords.latitude
+                                location.longitude = coords.longitude
+                                location.text = geocodeDetails.name
+                                location.country = geocodeDetails.country
+                                location.countryShort = geocodeDetails.countryShort
+                                location.place = geocodeDetails.place
+                                location.region = geocodeDetails.region
+                                return location
+                            }
+                            .failedAsNext {
+                                let coords = LocationService.lastLocation()!
+                                var location = Location.newInstance()
+                                location.latitude = coords.latitude
+                                location.longitude = coords.longitude
+                                return location
+                            }
+                    }
+                    .startWithNext { [weak self] location in
+                        self?.locationLoading.value = false
                         self?.locationBox?.removeFromCache()
-                        self?.optographBox.insertOrUpdate { $0.model.locationID = nil }
-                    }
-                })
-                .ignoreNil()
-                .on(next: { [weak self] _ in
-                    self?.locationLoading.value = true
-                })
-                .flatMap(.Latest) { placeID -> SignalProducer<Location, NoError> in
-                    return ApiService<GeocodeDetails>.get("locations/geocode-details/\(placeID)")
-                        .map { geocodeDetails in
-                            let coords = LocationService.lastLocation()!
-                            var location = Location.newInstance()
-                            location.latitude = coords.latitude
-                            location.longitude = coords.longitude
-                            location.text = geocodeDetails.name
-                            location.country = geocodeDetails.country
-                            location.countryShort = geocodeDetails.countryShort
-                            location.place = geocodeDetails.place
-                            location.region = geocodeDetails.region
-                            return location
+                        self?.locationBox = Models.locations.create(location)
+                        self?.locationBox!.insertOrUpdate()
+                        self?.optographBox.insertOrUpdate { box in
+                            box.model.locationID = location.ID
                         }
-                        .failedAsNext {
-                            let coords = LocationService.lastLocation()!
-                            var location = Location.newInstance()
-                            location.latitude = coords.latitude
-                            location.longitude = coords.longitude
-                            return location
+                    }
+            } else {
+                self.optographBox.insertOrUpdate()
+                
+                self.isInitialized.value = true
+                
+                self.placeID.producer
+                    .delayLatestUntil(self.isInitialized.producer)
+                    .ignoreNil()
+                    .startWithNext { [weak self] _ in
+                        let coords = LocationService.lastLocation()!
+                        var location = Location.newInstance()
+                        location.latitude = coords.latitude
+                        location.longitude = coords.longitude
+                        self?.locationBox?.removeFromCache()
+                        self?.locationBox = Models.locations.create(location)
+                        self?.locationBox!.insertOrUpdate()
+                        self?.optographBox.insertOrUpdate { box in
+                            box.model.locationID = location.ID
                         }
-                }
-                .startWithNext { [weak self] location in
-                    self?.locationLoading.value = false
-                    self?.locationBox?.removeFromCache()
-                    self?.locationBox = Models.locations.create(location)
-                    self?.locationBox!.insertOrUpdate()
-                    self?.optographBox.insertOrUpdate { box in
-                        box.model.locationID = location.ID
                     }
-                }
-        } else {
-            optographBox.insertOrUpdate()
-            
-            isInitialized.value = true
-            
-            placeID.producer
-                .delayLatestUntil(isInitialized.producer)
-                .ignoreNil()
-                .startWithNext { [weak self] _ in
-                    let coords = LocationService.lastLocation()!
-                    var location = Location.newInstance()
-                    location.latitude = coords.latitude
-                    location.longitude = coords.longitude
-                    self?.locationBox?.removeFromCache()
-                    self?.locationBox = Models.locations.create(location)
-                    self?.locationBox!.insertOrUpdate()
-                    self?.optographBox.insertOrUpdate { box in
-                        box.model.locationID = location.ID
-                    }
-                }
+            }
         }
         
         isReadyForStitching <~ stitcherFinished.producer
             .combineLatestWith(isInitialized.producer).map(and)
-            .filter(identity)
+            .filter(isTrue)
             .take(1)
         
         isReadyForSubmit <~ isInitialized.producer
@@ -193,7 +201,7 @@ class SaveViewModel {
             box.model.directionTheta = directionTheta
         }
         
-        if isOnline.value {
+        if isOnline.value && isLoggedIn.value {
             let optograph = optographBox.model
             var parameters: [String: AnyObject] = [
                 "text": optograph.text,

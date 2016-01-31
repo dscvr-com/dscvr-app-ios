@@ -67,7 +67,6 @@
 		8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F4B6FA11BE0F2A5005D2D68 /* CardboardParams.framework */; };
 		8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F4C6E311B4A70CD007508ED /* icomoon.ttf */; };
 		8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
-		8F50DCC51C485F8700A706A9 /* FBSDKMessengerShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F50DCC31C485F8700A706A9 /* FBSDKMessengerShareKit.framework */; };
 		8F50DCC61C485F8700A706A9 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F50DCC41C485F8700A706A9 /* FBSDKShareKit.framework */; };
 		8F5335A41BDBA7270058961A /* ActivityResourceStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5335A31BDBA7270058961A /* ActivityResourceStar.swift */; };
 		8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F5335A51BDBBF5D0058961A /* ActivityResourceComment.swift */; };
@@ -170,6 +169,8 @@
 		8FD845C31BCA5AFA0064048D /* RenderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */; };
 		8FD845C51BCAA4530064048D /* WebImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD845C41BCAA4530064048D /* WebImage.swift */; };
 		8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDBEADB1C39990F0055EA57 /* Debouncer.swift */; };
+		8FDBEE791C5D140F00696D3F /* LoginOverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDBEE781C5D140F00696D3F /* LoginOverlayViewController.swift */; };
+		8FDBEE7B1C5D2FF500696D3F /* LoginOverlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDBEE7A1C5D2FF500696D3F /* LoginOverlayViewModel.swift */; };
 		8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */; };
 		8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */; };
 		8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F631BAF680A00EA105D /* Hashtag.swift */; };
@@ -318,7 +319,6 @@
 		8F4B6FA11BE0F2A5005D2D68 /* CardboardParams.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CardboardParams.framework; path = Carthage/Build/iOS/CardboardParams.framework; sourceTree = "<group>"; };
 		8F4C6E311B4A70CD007508ED /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		8F4CE79F1B6CEEC700BD8A71 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
-		8F50DCC31C485F8700A706A9 /* FBSDKMessengerShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKMessengerShareKit.framework; path = Frameworks/FBSDKMessengerShareKit.framework; sourceTree = "<group>"; };
 		8F50DCC41C485F8700A706A9 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = Frameworks/FBSDKShareKit.framework; sourceTree = "<group>"; };
 		8F5335A31BDBA7270058961A /* ActivityResourceStar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceStar.swift; sourceTree = "<group>"; };
 		8F5335A51BDBBF5D0058961A /* ActivityResourceComment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceComment.swift; sourceTree = "<group>"; };
@@ -435,6 +435,8 @@
 		8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderDelegate.swift; sourceTree = "<group>"; };
 		8FD845C41BCAA4530064048D /* WebImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebImage.swift; sourceTree = "<group>"; };
 		8FDBEADB1C39990F0055EA57 /* Debouncer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
+		8FDBEE781C5D140F00696D3F /* LoginOverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginOverlayViewController.swift; sourceTree = "<group>"; };
+		8FDBEE7A1C5D2FF500696D3F /* LoginOverlayViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginOverlayViewModel.swift; sourceTree = "<group>"; };
 		8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
 		8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotificationUtils.swift; sourceTree = "<group>"; };
 		8FE09F631BAF680A00EA105D /* Hashtag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hashtag.swift; sourceTree = "<group>"; };
@@ -590,7 +592,6 @@
 				8F23AA601C01F8A5008926A8 /* Fabric.framework in Frameworks */,
 				8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */,
 				8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */,
-				8F50DCC51C485F8700A706A9 /* FBSDKMessengerShareKit.framework in Frameworks */,
 				8F50DCC61C485F8700A706A9 /* FBSDKShareKit.framework in Frameworks */,
 				8F23AA631C01F8A5008926A8 /* opencv2.framework in Frameworks */,
 				8F23AA651C021CA4008926A8 /* Neon.framework in Frameworks */,
@@ -646,7 +647,6 @@
 				8F4715111C49688700663684 /* TwitterKitResources.bundle */,
 				8F47150F1C4964AD00663684 /* TwitterCore.framework */,
 				8F47150D1C49648F00663684 /* TwitterKit.framework */,
-				8F50DCC31C485F8700A706A9 /* FBSDKMessengerShareKit.framework */,
 				8F50DCC41C485F8700A706A9 /* FBSDKShareKit.framework */,
 				8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */,
 				8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */,
@@ -804,6 +804,8 @@
 				8FAB9EFA1B8F01DF00B4C8CB /* InsetLabel.swift */,
 				8FAB9EFB1B8F01DF00B4C8CB /* NavbarProtocols.swift */,
 				8FCA92E11BC7180B004913E5 /* OptographOptions.swift */,
+				8FDBEE781C5D140F00696D3F /* LoginOverlayViewController.swift */,
+				8FDBEE7A1C5D2FF500696D3F /* LoginOverlayViewModel.swift */,
 				8F0B17851BAC193000FAF649 /* LineTextField.swift */,
 				8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */,
 				8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */,
@@ -1563,6 +1565,7 @@
 				8FAB9F301B8F01DF00B4C8CB /* SaveViewController.swift in Sources */,
 				8F23AA7E1C08ADB4008926A8 /* Migration0005.swift in Sources */,
 				8FAB9F591B8F01DF00B4C8CB /* ProfileViewModel.swift in Sources */,
+				8FDBEE791C5D140F00696D3F /* LoginOverlayViewController.swift in Sources */,
 				8F23AA761C0712ED008926A8 /* Migration0003.swift in Sources */,
 				8F23AA501BFF31B4008926A8 /* ActivityTable.swift in Sources */,
 				8FAB9F291B8F01DF00B4C8CB /* ActivitiesViewModel.swift in Sources */,
@@ -1595,6 +1598,7 @@
 				A5FD5D801BEA5A4E0031ED1E /* checkpointStore.cpp in Sources */,
 				8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */,
 				8FD845C11BC9BBFF0064048D /* PipelineService.swift in Sources */,
+				8FDBEE7B1C5D2FF500696D3F /* LoginOverlayViewModel.swift in Sources */,
 				8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */,
 				A5FD5D871BEA5A4E0031ED1E /* dynamicSeamer.cpp in Sources */,
 				8FAB9F541B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift in Sources */,

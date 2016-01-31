@@ -20,7 +20,7 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
     private let loadingView = UIActivityIndicatorView()
     private let imageView = PlaceholderImageView()
     
-    private let viewModel = ProfileTileCollectionViewModel()
+    private let viewModel: ProfileTileCollectionViewModel
     
 //    private let glView: OpenGLView
     
@@ -39,6 +39,8 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
         
 //        renderDelegate = CubeRenderDelegate(rotationMatrixSource: CoreMotionRotationSource.Instance, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView))
         
+        viewModel = ProfileTileCollectionViewModel(tileSize: frame.width)
+        
         super.init(frame: frame)
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
@@ -50,7 +52,7 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
             .skipRepeats { $0.0 == $1.0 && $0.1 == $1.1 }
             .startWithNext { [weak self] (isUploaded, optographID) in
                 if isUploaded {
-                    let url = TextureURL(optographID, side: .Left, size: Int(frame.width), face: 0, x: 0, y: 0, d: 1)
+                    let url = TextureURL(optographID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
                     self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
                 } else {
                     let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)

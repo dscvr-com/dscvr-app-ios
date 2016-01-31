@@ -181,7 +181,7 @@ class CubeImageCache {
     }
     
     private func url(index: Index, textureSize: CGFloat) -> String {
-        return TextureURL(optographID, side: side, size: Int(Float(textureSize) * index.d), face: index.face, x: index.x, y: index.y, d: index.d)
+        return TextureURL(optographID, side: side, size: textureSize * CGFloat(index.d), face: index.face, x: index.x, y: index.y, d: index.d)
     }
     
 }

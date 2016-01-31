@@ -38,6 +38,7 @@ class TabViewController: UIViewController {
     var activeViewController: NavigationController
     
     private var uiHidden = false
+    private var uiLocked = false
     
     var delegate: TabControllerDelegate?
     
@@ -118,23 +119,31 @@ class TabViewController: UIViewController {
         
         initNotificationIndicator()
         
+        PipelineService.checkStitching()
+        PipelineService.checkUploading()
+        
         uiWrapper.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
         view.addSubview(uiWrapper)
     }
     
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        PipelineService.checkStitching()
-        PipelineService.checkUploading()
-    }
-    
     func showUI() {
-        uiWrapper.hidden = false
+        if !uiLocked {
+            uiWrapper.hidden = false
+        }
     }
     
     func hideUI() {
-        uiWrapper.hidden = true
+        if !uiLocked {
+            uiWrapper.hidden = true
+        }
+    }
+    
+    func lockUI() {
+        uiLocked = true
+    }
+    
+    func unlockUI() {
+        uiLocked = false
     }
     
     dynamic private func tapLeftButton() {
@@ -159,6 +168,25 @@ class TabViewController: UIViewController {
     
     func updateActiveTab(side: ActiveSide) {
         let isLeft = side == .Left
+        
+        if !isLeft && !SessionService.isLoggedIn {
+            hideUI()
+            lockUI()
+            
+            let loginOverlayViewController = LoginOverlayViewController(
+                title: "Login to save your moment",
+                successCallback: {
+                    self.updateActiveTab(.Right)
+                },
+                cancelCallback: { true },
+                alwaysCallback: {
+                    self.unlockUI()
+                    self.showUI()
+                }
+            )
+            leftViewController.presentViewController(loginOverlayViewController, animated: true, completion: nil)
+            return
+        }
         
         indicatedSide = side
         
@@ -254,11 +282,11 @@ class RecordButton: UIButton {
                     backgroundColor = UIColor.Accent.mixWithColor(.blackColor(), amount: 0.3).alpha(0.5)
                     loading = progress != 1
                     
-                    if progress == 0 {
-                        icon = .Camera
-                    } else if progress == 1 {
-                        icon = .Next
-                    }
+//                    if progress == 0 {
+//                        icon = .Camera
+//                    } else if progress == 1 {
+//                        icon = .Next
+//                    }
                 } else {
                     backgroundColor = UIColor.Accent
                     loading = false
@@ -438,6 +466,8 @@ extension DefaultTabControllerDelegate {
     func onTapCameraButton() {
         switch PipelineService.stitchingStatus.value {
         case .Idle:
+            tabController!.leftViewController.cleanup()
+            tabController!.rightViewController.cleanup()
             tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
@@ -494,6 +524,8 @@ extension UIViewController {
         
         tabController!.bottomGradientOffset.value = 126
     }
+    
+    func cleanup() {}
 }
 
 class PassThroughView: UIView {

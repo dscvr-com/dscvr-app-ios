@@ -351,4 +351,8 @@ class OptographCollectionViewCell: UICollectionViewCell {
         renderDelegate.reset()
     }
     
+    func forgetTextures() {
+        renderDelegate.reset()
+    }
+    
 }

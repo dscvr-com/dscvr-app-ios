@@ -210,7 +210,7 @@ class ForgotPasswordViewController: UIViewController {
     }
     
     func cancel() {
-        view.window?.rootViewController = LoginViewController()
+        dismissViewControllerAnimated(false, completion: nil)
     }
     
 }

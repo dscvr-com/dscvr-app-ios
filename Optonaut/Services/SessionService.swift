@@ -45,6 +45,8 @@ class SessionService {
     
     private static var logoutCallbacks: [(performAlways: Bool, fn: () -> ())] = []
     
+    static let loginNotifiaction = NotificationSignal<Void>()
+    
     static func prepare() {
         
         if isLoggedIn {
@@ -94,12 +96,22 @@ class SessionService {
                     Models.persons.touch(person).insertOrUpdate()
                     Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
                     updateMixpanel()
+                    loginNotifiaction.notify(())
                 },
                 failed: { _ in
                     reset()
                 }
             )
             .flatMap(.Latest) { _ in SignalProducer.empty }
+    }
+    
+    static func facebookSignin(userID: String, token: String) -> SignalProducer<Void, ApiError> {
+        let parameters = [
+            "facebook_user_id": userID,
+            "facebook_token": token,
+        ]
+        return ApiService<LoginApiModel>.post("persons/facebook/signin", parameters: parameters)
+            .flatMap(.Latest) { SessionService.handleSignin($0) }
     }
     
     static func logout() {

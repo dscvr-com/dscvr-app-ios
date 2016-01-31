@@ -23,7 +23,7 @@ class LoginViewModel {
     let allowed = MutableProperty<Bool>(false)
     let pending = MutableProperty<Bool>(false)
     let facebookPending = MutableProperty<Bool>(false)
-    let selectedTab = MutableProperty<Tab>(.SignUp)
+    let selectedTab = MutableProperty<Tab>(.LogIn)
     
     init() {
         
@@ -94,12 +94,7 @@ class LoginViewModel {
     }
     
     func facebookSignin(userID: String, token: String) -> SignalProducer<Void, ApiError> {
-        let parameters = [
-            "facebook_user_id": userID,
-            "facebook_token": token,
-        ]
-        return ApiService<LoginApiModel>.post("persons/facebook/signin", parameters: parameters)
-            .flatMap(.Latest) { SessionService.handleSignin($0) }
+        return SessionService.facebookSignin(userID, token: token)
             .on(
                 failed: { [weak self] _ in
                     self?.facebookPending.value = false
@@ -108,7 +103,6 @@ class LoginViewModel {
                     self?.facebookPending.value = false
                 }
             )
-            .flatMap(.Latest) { _ in SignalProducer(value: ()) }
     }
     
     

@@ -22,12 +22,19 @@ class ProfileTileCollectionViewModel {
     
     private var disposable: Disposable?
     
+    private let tileSize: CGFloat
+    
+    init(tileSize: CGFloat) {
+        self.tileSize = tileSize
+    }
+    
     func bind(optographID: UUID) {
         disposable?.dispose()
         
         self.optographID.value = optographID
         
         let optographBox = Models.optographs[optographID]!
+        let tileSize = self.tileSize
         
         disposable = optographBox.producer
             .skipRepeats()
@@ -41,7 +48,7 @@ class ProfileTileCollectionViewModel {
                 } else {
                     self?.uploadStatus.value = .Offline
                 }
-                self?.imageURL.value = TextureURL(optographID, side: .Left, size: 512, face: 0, x: 0, y: 0, d: 1)
+                self?.imageURL.value = TextureURL(optographID, side: .Left, size: tileSize, face: 0, x: 0, y: 0, d: 1)
             }
     }
     

@@ -221,6 +221,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             cell.bindViewModel(profileViewModel)
             cell.navigationController = navigationController as? NavigationController
+            cell.parentViewController = self
             
             return cell
         } else {

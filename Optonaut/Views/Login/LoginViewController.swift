@@ -16,7 +16,8 @@ class LoginViewController: UIViewController {
     
     // subviews
     private let headView = UIView()
-    private let skipTextView = BoundingLabel()
+//    private let skipTextView = BoundingLabel()
+    private let backTextView = BoundingLabel()
     private let logoView = UILabel()
     private let signupTabView = BoundingLabel()
     private let loginTabView = BoundingLabel()
@@ -27,9 +28,23 @@ class LoginViewController: UIViewController {
     private let signupTextView = UILabel()
     private let signupHelpTextView = UILabel()
     private let loadingView = UIView()
-    private let facebookButtonView = ActionButton()
+//    private let facebookButtonView = ActionButton()
     
     private let viewModel = LoginViewModel()
+    
+    private let successCallback: () -> ()
+    
+    init(successCallback: () -> ()) {
+        self.successCallback = successCallback
+        
+        super.init(nibName: nil, bundle: nil)
+        
+        modalPresentationStyle = .OverCurrentContext
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     deinit {
         logRetain()
@@ -43,15 +58,23 @@ class LoginViewController: UIViewController {
         headView.backgroundColor = .Accent
         view.addSubview(headView)
         
-        skipTextView.textColor = .whiteColor()
-        skipTextView.textAlignment = .Right
-        skipTextView.text = "Try app without login"
-        skipTextView.font = .displayOfSize(14, withType: .Thin)
-        skipTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showApp"))
-        skipTextView.userInteractionEnabled = true
-        headView.addSubview(skipTextView)
+//        skipTextView.textColor = .whiteColor()
+//        skipTextView.textAlignment = .Right
+//        skipTextView.text = "Try app without login"
+//        skipTextView.font = .displayOfSize(14, withType: .Thin)
+//        skipTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showApp"))
+//        skipTextView.userInteractionEnabled = true
+//        headView.addSubview(skipTextView)
         
-//        logoView.text = String.iconWithName(.LogoText)
+        backTextView.textColor = .whiteColor()
+        backTextView.textAlignment = .Right
+        backTextView.text = "Back"
+        backTextView.font = .displayOfSize(14, withType: .Thin)
+        backTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        backTextView.userInteractionEnabled = true
+        headView.addSubview(backTextView)
+        
+        logoView.text = String.iconWithName(.LogoText)
         logoView.textAlignment = .Center
         logoView.textColor = .whiteColor()
         logoView.font = UIFont.iconOfSize(35)
@@ -137,17 +160,17 @@ class LoginViewController: UIViewController {
         loadingView.rac_hidden <~ viewModel.pending.producer.map(negate)
         view.addSubview(loadingView)
         
-        facebookButtonView.defaultBackgroundColor = UIColor(0x3C5193)
-        facebookButtonView.activeBackgroundColor = UIColor(0x405BB0)
-        facebookButtonView.disabledBackgroundColor = UIColor(0x405BB0)
-        facebookButtonView.titleLabel?.font = UIFont.displayOfSize(14, withType: .Semibold)
-        facebookButtonView.rac_title <~ viewModel.selectedTab.producer.equalsTo(.SignUp).mapToTuple("Sign up with Facebook", "Log in with Facebook")
-        facebookButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-        facebookButtonView.layer.cornerRadius = 4
-        facebookButtonView.clipsToBounds = true
-        facebookButtonView.rac_loading <~ viewModel.facebookPending
-        facebookButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "facebook"))
-        view.addSubview(facebookButtonView)
+//        facebookButtonView.defaultBackgroundColor = UIColor(0x3C5193)
+//        facebookButtonView.activeBackgroundColor = UIColor(0x405BB0)
+//        facebookButtonView.disabledBackgroundColor = UIColor(0x405BB0)
+//        facebookButtonView.titleLabel?.font = UIFont.displayOfSize(14, withType: .Semibold)
+//        facebookButtonView.rac_title <~ viewModel.selectedTab.producer.equalsTo(.SignUp).mapToTuple("Sign up with Facebook", "Log in with Facebook")
+//        facebookButtonView.setTitleColor(.whiteColor(), forState: .Normal)
+//        facebookButtonView.layer.cornerRadius = 4
+//        facebookButtonView.clipsToBounds = true
+//        facebookButtonView.rac_loading <~ viewModel.facebookPending
+//        facebookButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "facebook"))
+//        view.addSubview(facebookButtonView)
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
     }
@@ -155,7 +178,7 @@ class LoginViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         Mixpanel.sharedInstance().timeEvent("View.Login")
         
-        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
+//        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
         super.viewDidAppear(animated)
     }
@@ -172,7 +195,8 @@ class LoginViewController: UIViewController {
         let size = view.frame.size
         
         headView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: size.height - 216 - 137) // 216: keyboard, 127: input fields
-        skipTextView.anchorInCorner(.TopRight, xPad: 23, yPad: 23, width: 300, height: 20)
+//        skipTextView.anchorInCorner(.TopRight, xPad: 23, yPad: 23, width: 300, height: 20)
+        backTextView.anchorInCorner(.TopRight, xPad: 23, yPad: 23, width: 300, height: 20)
         logoView.anchorInCenter(width: 268, height: 84)
         signupTabView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
         loginTabView.anchorInCorner(.BottomRight, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
@@ -180,16 +204,16 @@ class LoginViewController: UIViewController {
         passwordInputView.align(.UnderCentered, relativeTo: emailOrUserNameInputView, padding: 12, width: size.width - 50, height: passwordInputView.frame.height)
         forgotPasswordView.align(.UnderMatchingRight, relativeTo: emailOrUserNameInputView, padding: 12, width: 50, height: 20)
         submitButtonView.align(.UnderMatchingRight, relativeTo: emailOrUserNameInputView, padding: 11, width: 20, height: 20)
-        facebookButtonView.anchorToEdge(.Bottom, padding: 25, width: size.width - 50, height: 50)
+//        facebookButtonView.anchorToEdge(.Bottom, padding: 25, width: size.width - 50, height: 50)
     }
     
     func showForgotPasswordViewController() {
-        view.window?.rootViewController = ForgotPasswordViewController()
+        presentViewController(ForgotPasswordViewController(), animated: false, completion: nil)
     }
     
-    func showApp() {
-        view.window?.rootViewController = TabViewController()
-    }
+//    func showApp() {
+//        view.window?.rootViewController = TabViewController()
+//    }
     
     func selectSignUpTab() {
         viewModel.selectedTab.value = .SignUp
@@ -201,6 +225,10 @@ class LoginViewController: UIViewController {
     
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func cancel() {
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
     func submit() {
@@ -226,63 +254,66 @@ class LoginViewController: UIViewController {
     }
     
     func forward() {
-        if SessionService.needsOnboarding {
-            view.window?.rootViewController = OnboardingInfoViewController()
-        } else {
-            showApp()
-        }
+        dismissViewControllerAnimated(true, completion: {
+            self.successCallback()
+        })
+//        if SessionService.needsOnboarding {
+//            view.window?.rootViewController = OnboardingInfoViewController()
+//        } else {
+//            showApp()
+//        }
     }
     
-    func facebook() {
-        let loginManager = FBSDKLoginManager()
-        let facebookReadPermissions = ["public_profile", "email"]
-        
-        viewModel.facebookPending.value = true
-        
-        let errorBlock = { [weak self] (message: String) in
-            self?.viewModel.facebookPending.value = false
-            
-            let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
-            self?.presentViewController(alert, animated: true, completion: nil)
-        }
-        
-        let successBlock = { [weak self] (token: FBSDKAccessToken!) in
-            self?.viewModel.facebookSignin(token.userID, token: token.tokenString)
-                .on(
-                    failed: { _ in
-                        loginManager.logOut()
-                        
-                        errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
-                    },
-                    completed: {
-                        self?.forward()
-                    }
-                )
-                .start()
-        }
-        
-        if let token = FBSDKAccessToken.currentAccessToken() where facebookReadPermissions.reduce(true, combine: { $0 && token.hasGranted($1) }) {
-            successBlock(token)
-            return
-        }
-        
-        loginManager.logInWithReadPermissions(facebookReadPermissions, fromViewController: self) { [weak self] result, error in
-            if error != nil || result.isCancelled {
-                self?.viewModel.facebookPending.value = false
-                loginManager.logOut()
-            } else {
-                let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
-                let allPermissionsGranted = facebookReadPermissions.reduce(true) { $0 && grantedPermissions.contains($1) }
-                
-                if allPermissionsGranted {
-                    successBlock(result.token)
-                } else {
-                    errorBlock("Please allow access to all points in the list. Don't worry, your data will be kept safe.")
-                }
-            }
-        }
-    }
+//    func facebook() {
+//        let loginManager = FBSDKLoginManager()
+//        let facebookReadPermissions = ["public_profile", "email"]
+//        
+//        viewModel.facebookPending.value = true
+//        
+//        let errorBlock = { [weak self] (message: String) in
+//            self?.viewModel.facebookPending.value = false
+//            
+//            let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
+//            alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
+//            self?.presentViewController(alert, animated: true, completion: nil)
+//        }
+//        
+//        let successBlock = { [weak self] (token: FBSDKAccessToken!) in
+//            self?.viewModel.facebookSignin(token.userID, token: token.tokenString)
+//                .on(
+//                    failed: { _ in
+//                        loginManager.logOut()
+//                        
+//                        errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
+//                    },
+//                    completed: {
+//                        self?.forward()
+//                    }
+//                )
+//                .start()
+//        }
+//        
+//        if let token = FBSDKAccessToken.currentAccessToken() where facebookReadPermissions.reduce(true, combine: { $0 && token.hasGranted($1) }) {
+//            successBlock(token)
+//            return
+//        }
+//        
+//        loginManager.logInWithReadPermissions(facebookReadPermissions, fromViewController: self) { [weak self] result, error in
+//            if error != nil || result.isCancelled {
+//                self?.viewModel.facebookPending.value = false
+//                loginManager.logOut()
+//            } else {
+//                let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
+//                let allPermissionsGranted = facebookReadPermissions.reduce(true) { $0 && grantedPermissions.contains($1) }
+//                
+//                if allPermissionsGranted {
+//                    successBlock(result.token)
+//                } else {
+//                    errorBlock("Please allow access to all points in the list. Don't worry, your data will be kept safe.")
+//                }
+//            }
+//        }
+//    }
     
 }
 

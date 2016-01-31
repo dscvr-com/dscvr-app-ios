@@ -149,6 +149,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         overlayView.frame = CGRect(x: 0, y: topOffset, width: view.frame.width, height: view.frame.height - topOffset)
         overlayView.uiHidden = uiHidden
         overlayView.navigationController = navigationController as? NavigationController
+        overlayView.parentViewController = self
         overlayView.rac_hidden <~ uiHidden
 //        overlayView.deleteCallback = { [weak self] in
 //            self?.overlayView.optographID = nil
@@ -169,12 +170,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             }
         }
         
-        viewModel.isActive.producer
-            .skip(1)
-            .filter(isFalse)
-            .startWithNext { [weak self] _ in
-                self?.imageCache.reset()
-            }
+//        viewModel.isActive.producer
+//            .skip(1)
+//            .filter(isFalse)
+//            .startWithNext { [weak self] _ in
+//                self?.imageCache.reset()
+//            }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -359,6 +360,14 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 
     override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         overlayIsAnimating = false
+    }
+    
+    override func cleanup() {
+        for cell in collectionView!.visibleCells().map({ $0 as! OptographCollectionViewCell }) {
+            cell.forgetTextures()
+        }
+        
+        imageCache.reset()
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
@@ -554,6 +563,7 @@ private class OverlayView: UIView {
     
     weak var uiHidden: MutableProperty<Bool>!
     weak var navigationController: NavigationController?
+    weak var parentViewController: UIViewController?
     
     var deleteCallback: (() -> ())?
     
@@ -739,7 +749,25 @@ private class OverlayView: UIView {
     }
     
     dynamic private func toggleLike() {
-        viewModel.toggleLike()
+        if SessionService.isLoggedIn {
+            viewModel.toggleLike()
+        } else {
+            parentViewController!.tabController!.hideUI()
+            parentViewController!.tabController!.lockUI()
+            
+            let loginOverlayViewController = LoginOverlayViewController(
+                title: "Login to like this moment",
+                successCallback: {
+                    self.viewModel.toggleLike()
+                },
+                cancelCallback: { true },
+                alwaysCallback: {
+                    self.parentViewController!.tabController!.unlockUI()
+                    self.parentViewController!.tabController!.showUI()
+                }
+            )
+            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
+        }
     }
     
     dynamic private func pushProfile() {

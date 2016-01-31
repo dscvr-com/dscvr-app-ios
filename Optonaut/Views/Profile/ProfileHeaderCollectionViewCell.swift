@@ -14,6 +14,7 @@ import KMPlaceholderTextView
 class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     
     weak var navigationController: NavigationController?
+    weak var parentViewController: UIViewController?
     
     private lazy var imagePickerController = UIImagePickerController()
     
@@ -212,13 +213,21 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         if isMe {
             viewModel.isEditing.value = true
         } else if !SessionService.isLoggedIn {
-            let alert = UIAlertController(title: "Please login first", message: "In order to follow \(viewModel.displayName.value) you need to login or signup.\nDon't worry, it just takes 30 seconds.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Sign in", style: .Cancel, handler: { [weak self] _ in
-                self?.window?.rootViewController = LoginViewController()
-            }))
-            alert.addAction(UIAlertAction(title: "Later", style: .Default, handler: { _ in return }))
-            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
-            return
+            parentViewController!.tabController!.hideUI()
+            parentViewController!.tabController!.lockUI()
+            
+            let loginOverlayViewController = LoginOverlayViewController(
+                title: "Login to follow \(viewModel.displayName.value)",
+                successCallback: {
+                    self.viewModel.toggleFollow()
+                },
+                cancelCallback: { true },
+                alwaysCallback: {
+                    self.parentViewController!.tabController!.unlockUI()
+                    self.parentViewController!.tabController!.showUI()
+                }
+            )
+            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
         } else {
             viewModel.toggleFollow()
         }

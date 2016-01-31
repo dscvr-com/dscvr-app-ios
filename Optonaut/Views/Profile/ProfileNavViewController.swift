@@ -15,6 +15,11 @@ class ProfileNavViewController: NavigationController {
         
         if SessionService.isLoggedIn {
             pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
+        } else {
+            SessionService.loginNotifiaction.signal.observeNext {
+                self.popToRootViewControllerAnimated(false)
+                self.pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
+            }
         }
     }
     

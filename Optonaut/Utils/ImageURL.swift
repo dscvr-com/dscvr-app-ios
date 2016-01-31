@@ -28,9 +28,9 @@ func ImageURL(uuid: String, size: Int, face: Int, x: Float, y: Float, d: Float) 
 
 enum TextureSide { case Left, Right }
 
-func TextureURL(optographID: String, side: TextureSide, size: Int, face: Int, x: Float, y: Float, d: Float) -> String {
+func TextureURL(optographID: String, side: TextureSide, size: CGFloat, face: Int, x: Float, y: Float, d: Float) -> String {
     let sideLetter = side == .Left ? "l" : "r"
-    let scaledSize = Int(CGFloat(size) * UIScreen.mainScreen().scale)
+    let scaledSize = Int(size * UIScreen.mainScreen().scale)
     return buildURL("textures/\(optographID)/\(sideLetter)\(face).jpg", width: 0, height: 0, filter: "subface(\(x),\(y),\(d),\(scaledSize))")
 }
 
