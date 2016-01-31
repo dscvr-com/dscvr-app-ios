@@ -124,8 +124,11 @@ extension ModelCacheType {
         }
     }
     
-    subscript(uuid: UUID) -> ModelBox<ModelType>? {
+    subscript(uuid: UUID?) -> ModelBox<ModelType>? {
         get {
+            guard let uuid = uuid else {
+                return nil
+            }
             return cache[uuid]
         }
     }
