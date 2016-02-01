@@ -17,8 +17,8 @@ import Neon
 import FBSDKCoreKit
 import Kingfisher
 
-let Env = EnvType.Development
-//let Env = EnvType.Staging
+//let Env = EnvType.Development
+let Env = EnvType.Staging
 //let Env = EnvType.Production
 
 @UIApplicationMain

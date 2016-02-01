@@ -119,13 +119,13 @@ class PipelineService {
         
         stitchingSignal
             .on(completed: {
-                ApiService<EmptyResponse>.get("removed-unused-completed").start()
                 StitchingService.removeUnstitchedRecordings()
             })
             .observeOnMain()
             .observeCompleted {
                 stitchingStatus.value = .Stitching(1)
                 stitchingStatus.value = .StitchingFinished(optographID)
+                upload(optographID)
             }
     }
     
@@ -258,7 +258,6 @@ class PipelineService {
                 // inserted into the DB, for example due to cancel.
                 // So it needs to be removed.
                 
-                ApiService<EmptyResponse>.get("removed-unused-check").start()
                 StitchingService.removeUnstitchedRecordings()
             }
         }

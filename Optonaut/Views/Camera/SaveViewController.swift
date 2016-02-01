@@ -522,14 +522,38 @@ class SaveViewController: UIViewController, RedNavbar {
             signupAlert()
             return
         }
+            
+        twitterSocialButton.state = .Loading
         
-        if Twitter.sharedInstance().sessionStore.session() == nil {
+        if let session = Twitter.sharedInstance().sessionStore.session() {
+            let newValue = !viewModel.postTwitter.value
+            
+            if !newValue {
+                viewModel.postTwitter.value = newValue
+                return
+            }
+            
+            let parameters  = [
+                "twitter_token": session.authToken,
+                "twitter_secret": session.authTokenSecret,
+            ]
+            ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
+                .on(
+                    failed: { [weak self] _ in
+                        //                                errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
+                        self?.viewModel.postTwitter.value = !newValue
+                    },
+                    completed: { [weak self] in
+                        self?.viewModel.postTwitter.value = newValue
+                    }
+                )
+                .start()
+            
+        } else {
             if !viewModel.isOnline.value {
                 offlineAlert()
                 return
             }
-            
-            twitterSocialButton.state = .Loading
             
             Twitter.sharedInstance().logInWithViewController(self) { [weak self] (session, error) in
                 if let session = session {
@@ -552,8 +576,6 @@ class SaveViewController: UIViewController, RedNavbar {
                     self?.viewModel.postTwitter.value = false
                 }
             }
-        } else {
-            viewModel.postTwitter.value = !viewModel.postTwitter.value
         }
     }
     
