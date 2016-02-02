@@ -20,11 +20,9 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
     private let loadingView = UIActivityIndicatorView()
     private let imageView = PlaceholderImageView()
     
-    private let viewModel: ProfileTileCollectionViewModel
+    private let viewModel = ProfileTileCollectionViewModel()
     
 //    private let glView: OpenGLView
-    
-    var optographID: UUID?
     
     override init(frame: CGRect) {
         
@@ -39,12 +37,9 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
         
 //        renderDelegate = CubeRenderDelegate(rotationMatrixSource: CoreMotionRotationSource.Instance, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView))
         
-        viewModel = ProfileTileCollectionViewModel(tileSize: frame.width)
-        
         super.init(frame: frame)
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
-        imageView.rac_url <~ viewModel.imageURL.producer.delayLatestUntil(viewModel.isStitched.producer)
         imageView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
         viewModel.uploadStatus.producer.equalsTo(.Uploaded)
             .combineLatestWith(viewModel.optographID.producer)
@@ -109,13 +104,15 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        logRetain()
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
     }
     
     func bind(optographID: UUID) {
-//        print(optographID)
-        self.optographID = optographID
         viewModel.bind(optographID)
     }
     

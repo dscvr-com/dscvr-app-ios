@@ -18,15 +18,8 @@ class ProfileTileCollectionViewModel {
     let isPrivate = MutableProperty<Bool>(false)
     let isStitched = MutableProperty<Bool>(false)
     let optographID = MutableProperty<UUID>("")
-    let imageURL = MutableProperty<String>("")
     
     private var disposable: Disposable?
-    
-    private let tileSize: CGFloat
-    
-    init(tileSize: CGFloat) {
-        self.tileSize = tileSize
-    }
     
     func bind(optographID: UUID) {
         disposable?.dispose()
@@ -34,7 +27,6 @@ class ProfileTileCollectionViewModel {
         self.optographID.value = optographID
         
         let optographBox = Models.optographs[optographID]!
-        let tileSize = self.tileSize
         
         disposable = optographBox.producer
             .skipRepeats()
@@ -48,7 +40,6 @@ class ProfileTileCollectionViewModel {
                 } else {
                     self?.uploadStatus.value = .Offline
                 }
-                self?.imageURL.value = TextureURL(optographID, side: .Left, size: tileSize, face: 0, x: 0, y: 0, d: 1)
             }
     }
     

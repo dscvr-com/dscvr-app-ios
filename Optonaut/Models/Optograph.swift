@@ -160,10 +160,10 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
 //        && lhs.isInFeed                       == rhs.isInFeed // needs to be excluded since an optograph can be both in a profile and feed
         && lhs.directionPhi                   == rhs.directionPhi
         && lhs.directionTheta                 == rhs.directionTheta
-        && lhs.postFacebook                   == rhs.postFacebook // needs to be excluded since this information is not exposed from REST api
-        && lhs.postTwitter                    == rhs.postTwitter // needs to be excluded since this information is not exposed from REST api
-        && lhs.postInstagram                  == rhs.postInstagram // needs to be excluded since this information is not exposed from REST api
-        && lhs.shouldBePublished              == rhs.shouldBePublished
+//        && lhs.postFacebook                   == rhs.postFacebook // needs to be excluded since this information is not exposed from REST api
+//        && lhs.postTwitter                    == rhs.postTwitter // needs to be excluded since this information is not exposed from REST api
+//        && lhs.postInstagram                  == rhs.postInstagram // needs to be excluded since this information is not exposed from REST api
+//        && lhs.shouldBePublished              == rhs.shouldBePublished // needs to be excluded since this information is not exposed from REST api
 }
 
 extension Optograph: MergeApiModel {
