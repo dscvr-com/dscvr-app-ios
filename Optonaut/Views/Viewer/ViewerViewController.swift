@@ -203,7 +203,7 @@ class ViewerViewController: UIViewController  {
             }
         }
     
-        leftRenderDelegate.nodeLeaveScene = { index in
+        leftRenderDelegate.nodeLeaveScene = { [weak self] index in
             dispatch_async(queue) { [weak self] in
                 //print("Left leave.")
                 self?.leftCache.forget(index)
@@ -224,7 +224,7 @@ class ViewerViewController: UIViewController  {
             }
         }
         
-        rightRenderDelegate.nodeLeaveScene = { index in
+        rightRenderDelegate.nodeLeaveScene = { [weak self] index in
             dispatch_async(queue) { [weak self] in
                 //print("Right leave.")
                 self?.rightCache.forget(index)
