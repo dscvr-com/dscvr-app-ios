@@ -77,14 +77,14 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //        searchButton.userInteractionEnabled = true
 //        searchButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushSearch"))
 //        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchButton)
-//        
-//        let activityButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-//        activityButton.text = String.iconWithName(.Notifications)
-//        activityButton.textColor = .whiteColor()
-//        activityButton.font = UIFont.iconOfSize(24)
-//        activityButton.userInteractionEnabled = true
-//        activityButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushActivity"))
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityButton)
+        
+        let cardboardButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
+        cardboardButton.text = String.iconWithName(.Cardboard)
+        cardboardButton.textColor = .whiteColor()
+        cardboardButton.font = UIFont.iconOfSize(24)
+        cardboardButton.userInteractionEnabled = true
+        cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showCardboardAlert"))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cardboardButton)
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -403,6 +403,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 )
 //            }
         }
+    }
+    
+    dynamic private func showCardboardAlert() {
+        let confirmAlert = UIAlertController(title: "Put phone in VR viewer", message: "Please turn your phone and put it into your VR viewer.", preferredStyle: .Alert)
+        confirmAlert.addAction(UIAlertAction(title: "Continue", style: .Cancel, handler: { _ in return }))
+        navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
     }
 
 }
