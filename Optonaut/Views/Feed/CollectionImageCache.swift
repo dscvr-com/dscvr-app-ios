@@ -31,25 +31,37 @@ class CubeImageCache {
         }
     }
     
+    enum MemoryPolicy {
+        case Aggressive // Agressive memory policy - dispose images as soon as they are no longer needed
+        case Elastic // Elastic memory policy - keep images in memory cache until memory warnings are received
+    }
+    
     typealias Callback = (SKTexture, index: Index) -> Void
     
     private class Item {
         var image: SKTexture?
         var downloadTask: ImageManager.DownloadTask?
         var callback: Callback?
+        var canDelete: Bool = false
     }
     
     private let queue = dispatch_queue_create("collection_image_cube_cache", DISPATCH_QUEUE_CONCURRENT)
-    
+    private let memoryPolicy: MemoryPolicy
     private var items: [Index: Item] = [:]
     let optographID: UUID
     private let side: TextureSide
     private var textureSize: CGFloat
+    private var disposed: Bool = false
     
-    init(optographID: UUID, side: TextureSide, textureSize: CGFloat) {
+    convenience init(optographID: UUID, side: TextureSide, textureSize: CGFloat) {
+        self.init(optographID: optographID, side: side, textureSize: textureSize, memoryPolicy: .Aggressive)
+    }
+    
+    init(optographID: UUID, side: TextureSide, textureSize: CGFloat, memoryPolicy: MemoryPolicy) {
         self.optographID = optographID
         self.side = side
         self.textureSize = textureSize
+        self.memoryPolicy = memoryPolicy
     }
     
     deinit {
@@ -77,6 +89,10 @@ class CubeImageCache {
     
     func get(index: Index, callback: Callback?) {
         sync(self) {
+            if self.disposed {
+                print("Warning: Called get on a disposed Image Cache")
+                return
+            }
             if let image = self.items[index]?.image {
                 // Case 1 - Image is Pre-Fetched.
                 callback?(image, index: index)
@@ -88,9 +104,6 @@ class CubeImageCache {
                 if let tiledImage = tiledImage {
                     self.fullfillImageCallback(index, callback: callback, image: tiledImage)
                     return;
-                } else {
-                    
-                    print("Cache Miss for small face: x: \(index.x), y: \(index.y), d: \(index.d)")
                 }
                 
                 // Case 2.2 - Image is not Pre-Fetched, but we have the full face in our disk cache.
@@ -104,17 +117,12 @@ class CubeImageCache {
                     
                     let subfaceSize = index.d
                     let subfaceCount = Int(Float(1) / subfaceSize + Float(0.5))
-                    
-                    print("Creating Index from big face: x: \(index.x), y: \(index.y), d: \(index.d)")
-
-                    
+                   
                     // If we request a subface in this case, let's cheat and prepare all subfaces at once.
                     for x in 0..<subfaceCount {
                         for y in 0..<subfaceCount {
                             let tiledIndex = Index(face: index.face, x: Float(x) * subfaceSize, y: Float(y) * subfaceSize, d: subfaceSize)
                             let tiledImage = originalImage.subface(CGFloat(tiledIndex.x), y: CGFloat(tiledIndex.y), w: CGFloat(tiledIndex.d), d: Int(self.textureSize * CGFloat(tiledIndex.d)))
-                            
-                            print("Caching Index from big face: x: \(tiledIndex.x), y: \(tiledIndex.y), d: \(tiledIndex.d)")
                             
                             // Store subface - way faster loading next time.
                             let tiledUrl = NSURL(string: self.url(tiledIndex, textureSize: self.textureSize))!
@@ -129,7 +137,6 @@ class CubeImageCache {
                 // Case 2.3 - We don't have anything. Download.
                 let item = Item()
                 item.callback = callback
-                
                 self.items[index] = item
             
                 item.downloadTask = ImageManager.sharedInstance.downloadImage(
@@ -143,10 +150,16 @@ class CubeImageCache {
                             sync(self) {
                                 if let image = image, item = self.items[index] {
                                     let tex = SKTexture(image: image)
-                                    item.image = tex
+                                    
                                     item.downloadTask = nil
-                                    item.callback?(tex, index: index)
-                                    item.callback = nil
+                                    
+                                    if item.callback != nil {
+                                        item.image = tex
+                                        item.callback?(tex, index: index)
+                                        item.callback = nil
+                                    } else {
+                                        self.forgetInternal(index)
+                                    }
                                 }
                             }
                         }
@@ -159,23 +172,60 @@ class CubeImageCache {
         }
     }
     
-    func forget(index: Index) {
-        sync(self) {
-            self.items[index]?.downloadTask?.cancel()
-            self.items[index]?.callback = nil
-//            self.items.removeValueForKey(index)
+    private func forgetInternal(index: Index) {
+        // This method needs to be called inside sync
+        switch memoryPolicy {
+        case .Aggressive:
+            self.items.removeValueForKey(index)
+            break
+        case .Elastic:
+            if let item = self.items[index] {
+                item.callback = nil
+                item.canDelete = true
+            }
+            break
         }
     }
     
+    func forget(index: Index) {
+        sync(self) {
+            self.items[index]?.downloadTask?.cancel()
+            self.forgetInternal(index)
+        }
+    }
+    
+    /*
+    * Disables all callbacks without freeing the memory.
+    */
     func disable() {
         sync(self) {
             self.items.values.forEach { $0.callback = nil }
         }
     }
     
-    private func dispose() {
+    /*
+    * Removes all images from in-memory cache if they are not currently in use.
+    */
+    func onMemoryWarning() {
         sync(self) {
-            self.items.values.forEach { $0.downloadTask?.cancel() }
+            for (index, value) in self.items {
+                if value.canDelete {
+                    self.items.removeValueForKey(index)
+                }
+            }
+        }
+    }
+    
+    /*
+    * Disables all callbacks and frees all memory.
+    */
+    func dispose() {
+        sync(self) {
+            self.items.values.forEach {
+                $0.downloadTask?.cancel()
+                $0.callback = nil
+            }
+            self.disposed = true
             self.items.removeAll()
         }
     }
@@ -219,6 +269,7 @@ class CollectionImageCache {
             return item.innerCache
         } else {
             let item = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))
+            items[cacheIndex]?.innerCache.dispose()
             items[cacheIndex] = item
             return item.innerCache
         }
@@ -250,7 +301,17 @@ class CollectionImageCache {
     func reset() {
         assertMainThread()
         
+        for item in items {
+            item?.innerCache.dispose() // Forcibly dispose internal data structures.
+        }
+        
         items = [Item?](count: CollectionImageCache.cacheSize, repeatedValue: nil)
+    }
+    
+    func onMemoryWarning() {
+        for item in items {
+            item?.innerCache.onMemoryWarning()
+        }
     }
     
     func delete(indices: [Int]) {

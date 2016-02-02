@@ -60,6 +60,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     deinit {
         logRetain()
     }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        
+        imageCache.onMemoryWarning()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -200,6 +206,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        imageCache.reset()
         
         RotationService.sharedInstance.rotationDisable()
     }

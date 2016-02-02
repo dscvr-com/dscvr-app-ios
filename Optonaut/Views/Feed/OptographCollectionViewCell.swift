@@ -230,7 +230,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
     
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: HorizontalFieldOfView)
     
-        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView), cubeFaceCount: 2, autoDispose: false)
+        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView), cubeFaceCount: 2, autoDispose: true)
         renderDelegate.scnView = scnView
         
         renderDelegate.scnView = scnView
@@ -355,4 +355,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         renderDelegate.reset()
     }
     
+    deinit {
+        logRetain()
+    }
 }

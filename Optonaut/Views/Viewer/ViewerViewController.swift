@@ -198,14 +198,14 @@ class ViewerViewController: UIViewController  {
         
         leftRenderDelegate.nodeEnterScene = { [weak self] index in
             dispatch_async(queue) {
-                print("Left enter.")
+                //print("Left enter.")
                 self?.leftCache.get(index, callback: leftImageCallback)
             }
         }
     
         leftRenderDelegate.nodeLeaveScene = { index in
             dispatch_async(queue) { [weak self] in
-                print("Left leave.")
+                //print("Left leave.")
                 self?.leftCache.forget(index)
             }
         }
@@ -219,14 +219,14 @@ class ViewerViewController: UIViewController  {
         
         rightRenderDelegate.nodeEnterScene = { [weak self] index in
             dispatch_async(queue) {
-                print("Right enter.")
+                //print("Right enter.")
                 self?.rightCache.get(index, callback: rightImageCallback)
             }
         }
         
         rightRenderDelegate.nodeLeaveScene = { index in
             dispatch_async(queue) { [weak self] in
-                print("Right leave.")
+                //print("Right leave.")
                 self?.rightCache.forget(index)
             }
         }
@@ -259,6 +259,11 @@ class ViewerViewController: UIViewController  {
     }
     
     override func viewWillDisappear(animated: Bool) {
+        leftCache.dispose()
+        rightCache.dispose()
+        leftRenderDelegate.dispose()
+        rightRenderDelegate.dispose()
+        
         tabBarController?.tabBar.hidden = false
         navigationController?.setNavigationBarHidden(false, animated: false)
         ScreenService.sharedInstance.reset()

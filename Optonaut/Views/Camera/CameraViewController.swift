@@ -37,7 +37,7 @@ class CameraViewController: UIViewController {
     private let estimatedArmLengthInMeters = Double(0.50)
     
     // stitcher pointer and variables
-    private var recorder: Recorder
+    private var recorder: Recorder!
     private var frameCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
@@ -78,8 +78,6 @@ class CameraViewController: UIViewController {
             Recorder.enableDebug(CameraDebugService().path)
         }
         
-        recorder = Recorder(.Center)
-        
         super.init(nibName: nil, bundle: nil)
         
         tapCameraButtonCallback = { [weak self] in
@@ -119,10 +117,6 @@ class CameraViewController: UIViewController {
         previewLayer.frame = view.bounds
         previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         view.layer.addSublayer(previewLayer)
-        
-        setupScene()
-        setupBall()
-        setupSelectionPoints()
         
         viewModel.tiltAngle.producer.startWithNext { [weak self] val in self?.tiltView.angle = val }
         viewModel.distXY.producer.startWithNext { [weak self] val in self?.tiltView.distXY = val }
@@ -178,23 +172,6 @@ class CameraViewController: UIViewController {
             view.addGestureRecognizer(tapGestureRecognizer)
         #endif
 //        }
-        
-        setupCamera()
-        
-        // Locks the focus as soon as the user starts recording.
-        // We do this to avoid re-focusing during recording, which breaks the Optograph
-        
-        viewModel.isRecording.producer
-            .map { $0 ? .Locked : .ContinuousAutoFocus }
-            .startWithNext { [unowned self] val in self.setFocusMode(val) }
-        
-        viewModel.isRecording.producer
-            .filter { $0 }
-            .take(1)
-            .startWithNext { [unowned self] val in
-                self.setExposureMode(.Custom)
-                self.setWhitebalanceMode(.Locked)
-        }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
@@ -270,6 +247,28 @@ class CameraViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        recorder = Recorder(.Center)
+        
+        setupScene()
+        setupBall()
+        setupSelectionPoints()
+        setupCamera()
+        
+        // Locks the focus as soon as the user starts recording.
+        // We do this to avoid re-focusing during recording, which breaks the Optograph
+        
+        viewModel.isRecording.producer
+            .map { $0 ? .Locked : .ContinuousAutoFocus }
+            .startWithNext { [unowned self] val in self.setFocusMode(val) }
+        
+        viewModel.isRecording.producer
+            .filter { $0 }
+            .take(1)
+            .startWithNext { [unowned self] val in
+                self.setExposureMode(.Custom)
+                self.setWhitebalanceMode(.Locked)
+        }
         
         tabController!.cameraButton.backgroundColor = .whiteColor()
         tabController!.cameraButton.iconColor = .blackColor()
