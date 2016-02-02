@@ -83,9 +83,7 @@ class ImageManager {
                 taskIndex = index
             }
         }
-        
-        print("Serving \(taskIndex)")
-        
+       
         let downloadTask = downloadQueue.removeAtIndex(taskIndex)
         lastRequester = downloadTask.requester
         
