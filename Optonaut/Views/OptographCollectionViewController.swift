@@ -207,7 +207,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        imageCache.reset()
+        //imageCache.reset()
         
         RotationService.sharedInstance.rotationDisable()
     }

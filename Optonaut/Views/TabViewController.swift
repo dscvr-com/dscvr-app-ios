@@ -525,7 +525,9 @@ extension UIViewController {
         tabController!.bottomGradientOffset.value = 126
     }
     
-    func cleanup() {}
+    func cleanup() {
+        print("cleanup")
+    }
 }
 
 class PassThroughView: UIView {
