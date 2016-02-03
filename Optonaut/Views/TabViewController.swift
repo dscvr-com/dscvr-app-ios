@@ -499,7 +499,6 @@ extension DefaultTabControllerDelegate {
             tabController?.updateActiveTab(.Right)
         }
     }
-    
 }
 
 extension UIViewController {

@@ -358,7 +358,7 @@ class SphereRenderDelegate: RenderDelegate {
             }
             
             sphereNode.geometry?.firstMaterial?.diffuse.contents = image
-            updateProjectionMatrix(image.size)
+            updateProjectionMatrix(image.size, isSKTexture: false)
         }
     }
     var texture: SKTexture? {
@@ -369,7 +369,7 @@ class SphereRenderDelegate: RenderDelegate {
             }
             
             sphereNode.geometry?.firstMaterial?.diffuse.contents = texture
-            updateProjectionMatrix(texture.size())
+            updateProjectionMatrix(texture.size(), isSKTexture: true)
         }
     }
 
@@ -382,7 +382,7 @@ class SphereRenderDelegate: RenderDelegate {
         scene.rootNode.addChildNode(sphereNode)
     }
     
-    private func updateProjectionMatrix(size: CGSize) {
+    private func updateProjectionMatrix(size: CGSize, isSKTexture: Bool) {
         if size.width == size.height {
             // Classic case - quadratic texture
             sphereNode.geometry?.firstMaterial?.diffuse.contents = nil
@@ -393,16 +393,29 @@ class SphereRenderDelegate: RenderDelegate {
             // Yes, we calculate our transform ourselves.
             // And yes, this matrix is inverted.
             // Texture mapping from 0 to 1
-            let transform = SCNMatrix4FromGLKMatrix4(
-                GLKMatrix4Make(
-                    1, 0, 0, 0,
-                    0, -ratio, 0, 0,
-                    0, 0, 1, 0,
-                    0, 1 - (1 - ratio) / 2, 0, 1
-                )
-            )
+            var transform: SCNMatrix4?;
             
-            sphereNode.geometry?.firstMaterial?.diffuse.contentsTransform = transform
+            if isSKTexture {
+                transform = SCNMatrix4FromGLKMatrix4(
+                    GLKMatrix4Make(
+                        1, 0, 0, 0,
+                        0, -ratio, 0, 0,
+                        0, 0, 1, 0,
+                        0, 1 - (1 - ratio) / 2, 0, 1
+                    )
+                )
+            } else {
+                transform = SCNMatrix4FromGLKMatrix4(
+                    GLKMatrix4Make(
+                        1, 0, 0, 0,
+                        0, ratio, 0, 0,
+                        0, 0, 1, 0,
+                        0, (1 - ratio) / 2, 0, 1
+                    )
+                )
+            }
+            
+            sphereNode.geometry?.firstMaterial?.diffuse.contentsTransform = transform!
             if #available(iOS 9.0, *) {
                 sphereNode.geometry?.firstMaterial?.diffuse.wrapS = .ClampToBorder
                 sphereNode.geometry?.firstMaterial?.diffuse.wrapT = .ClampToBorder
