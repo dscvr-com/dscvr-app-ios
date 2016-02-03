@@ -524,8 +524,15 @@ extension UIViewController {
         tabController!.bottomGradientOffset.value = 126
     }
     
-    func cleanup() {
-        print("cleanup")
+    func cleanup() {}
+}
+
+extension UINavigationController {
+    
+    override func cleanup() {
+        for vc in viewControllers ?? [] {
+            vc.cleanup()
+        }
     }
 }
 
