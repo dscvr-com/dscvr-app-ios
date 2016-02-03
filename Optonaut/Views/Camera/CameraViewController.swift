@@ -354,7 +354,6 @@ class CameraViewController: UIViewController {
         
         scene.rootNode.addChildNode(cameraNode)
         
-        scnView.frame = view.bounds
         scnView.backgroundColor = UIColor.clearColor()
         scnView.scene = scene
         scnView.playing = true
