@@ -80,9 +80,8 @@ class ViewerViewController: UIViewController  {
     }
     
     private func createRenderDelegates() {
-        if case .LandscapeLeft = orientation {
-            InvertableHeadTrackerRotationSource.InvertableInstance.inverted = true
-        }
+        InvertableHeadTrackerRotationSource.InvertableInstance.inverted = orientation == .LandscapeLeft
+        
         leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false)
         leftRenderDelegate.scnView = leftScnView
         rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 2, autoDispose: false)
