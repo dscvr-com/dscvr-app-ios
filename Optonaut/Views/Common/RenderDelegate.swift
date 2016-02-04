@@ -144,7 +144,8 @@ class CubeRenderDelegate: RenderDelegate {
     private static func getBlackTexture() -> UIImage {
         UIGraphicsBeginImageContext(CGSize(width: 1, height: 1));
         let contextRef = UIGraphicsGetCurrentContext()
-        UIColor.blackColor().setFill()
+        UIColor.purpleColor().setFill()
+//        UIColor.blackColor().setFill()
         CGContextFillRect(contextRef, CGRect(x: 0, y: 0, width: 1, height: 1))
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -220,8 +221,8 @@ class CubeRenderDelegate: RenderDelegate {
     var id: Int = 0
     
     func reset() {
-        self.nodeEnterScene = nil
-        self.nodeLeaveScene = nil
+        nodeEnterScene = nil
+        nodeLeaveScene = nil
         
         sync(self) {
             for (_, plane) in self.planes {

@@ -208,7 +208,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         super.viewWillDisappear(animated)
         
         // TODO - remove as soon as correct disposal is implemented. 
-        imageCache.reset()
+        // imageCache.reset()
         
         RotationService.sharedInstance.rotationDisable()
     }
@@ -287,6 +287,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         guard let cell = cell as? OptographCollectionViewCell else {
             return
         }
+        
+        print("will display \(indexPath.row)")
         
         let optographID = optographIDs[indexPath.row]
         
