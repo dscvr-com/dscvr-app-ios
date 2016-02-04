@@ -175,13 +175,14 @@ class ViewerViewController: UIViewController  {
         RotationService.sharedInstance.rotationEnable()
         
         rotationDisposable = RotationService.sharedInstance.rotationSignal?
-            .skipRepeats()
-            .observeOn(UIScheduler())
             .observeNext { [weak self] orientation in
                 switch orientation {
                 case .Portrait:
                     if popActivated {
-                        self?.navigationController?.popViewControllerAnimated(false)
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self?.navigationController?.popViewControllerAnimated(false)
+                        }
+                        popActivated = false
                     }
                 default:
                     popActivated = true

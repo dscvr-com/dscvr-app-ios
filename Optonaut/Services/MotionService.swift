@@ -131,10 +131,12 @@ class RotationService {
                 if let accelerometerData = accelerometerData {
                     let x = accelerometerData.acceleration.x
                     let y = accelerometerData.acceleration.y
-                    if -x > abs(y) + 0.5 {
-                        sink.sendNext(x > 0 ? .LandscapeLeft : .LandscapeRight)
-                    } else if abs(y) > -x + 0.5 {
-                        sink.sendNext(.Portrait)
+                    if sqrt(x * x + y * y) > 0.4 { // Motion is unambigous
+                        if abs(x) > abs(y) + 0.2 { // Turned enough
+                            sink.sendNext(x > 0 ? .LandscapeLeft : .LandscapeRight)
+                        } else if abs(y) > abs(x) + 0.2 {
+                            sink.sendNext(.Portrait)
+                        }
                     }
                 }
             })
