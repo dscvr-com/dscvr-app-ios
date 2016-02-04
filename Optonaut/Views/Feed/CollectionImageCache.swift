@@ -103,7 +103,7 @@ class CubeImageCache {
                 
                 if let tiledImage = tiledImage {
                     self.fullfillImageCallback(index, callback: callback, image: tiledImage)
-                    return;
+                    return
                 }
                 
                 // Case 2.2 - Image is not Pre-Fetched, but we have the full face in our disk cache.
@@ -112,6 +112,7 @@ class CubeImageCache {
                 // Occurs when image was just taken on this phone
                 let fullFaceUrl = NSURL(string: self.url(Index(face: index.face, x: 0.0, y: 0.0, d: 1.0), textureSize: 0))!
                 let originalImage = ImageManager.sharedInstance.retrieveImageFromCache(fullFaceUrl, requester: self)
+                
                 
                 if let originalImage = originalImage {
                     
@@ -122,7 +123,7 @@ class CubeImageCache {
                     for x in 0..<subfaceCount {
                         for y in 0..<subfaceCount {
                             let tiledIndex = Index(face: index.face, x: Float(x) * subfaceSize, y: Float(y) * subfaceSize, d: subfaceSize)
-                            let tiledImage = originalImage.subface(CGFloat(tiledIndex.x), y: CGFloat(tiledIndex.y), w: CGFloat(tiledIndex.d), d: Int(self.textureSize * CGFloat(tiledIndex.d)))
+                            let tiledImage = originalImage.subface(CGFloat(tiledIndex.x), y: CGFloat(tiledIndex.y), w: CGFloat(tiledIndex.d), d: Int(self.textureSize))
                             
                             // Store subface - way faster loading next time.
                             let tiledUrl = NSURL(string: self.url(tiledIndex, textureSize: self.textureSize))!

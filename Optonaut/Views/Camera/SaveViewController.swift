@@ -658,8 +658,8 @@ extension SaveViewController: TabControllerDelegate {
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the current recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Retry", style: .Destructive, handler: { [weak self] _ in
             if let strongSelf = self {
-                strongSelf.navigationController!.popViewControllerAnimated(false)
                 strongSelf.navigationController!.pushViewController(CameraViewController(), animated: false)
+                strongSelf.navigationController!.viewControllers.removeAtIndex(strongSelf.navigationController!.viewControllers.count - 2)
             }
         }))
         confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))
