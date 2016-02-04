@@ -34,7 +34,7 @@ extension UIImage {
     /// - parameter w: Width of the texture subface, between 0 and 1.
     /// - parameter d: Width of the texture subface, in pixels.
     /// - returns: The generated subface, as UIImage.
-    func subface(x: CGFloat, y: CGFloat, w: CGFloat, d: Int) -> UIImage{
+    func subface(x: CGFloat, y: CGFloat, w: CGFloat, d: Int) -> UIImage {
         let targetSize = CGSize(width: d, height: d)
         
         let sourceArea = CGRect(x: size.width * x, y: size.height * y, width: size.width * w, height: size.height * w)
@@ -42,9 +42,9 @@ extension UIImage {
         
         UIGraphicsBeginImageContextWithOptions(targetSize, false, 1.0)
         UIImage(CGImage: imagePart).drawInRect(CGRect(origin: CGPointZero, size: targetSize))
-        let subface = UIGraphicsGetImageFromCurrentImageContext();
+        let subface = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
         
-        UIGraphicsEndImageContext();
         return subface;
     }
     
