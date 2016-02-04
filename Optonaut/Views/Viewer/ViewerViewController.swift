@@ -80,9 +80,12 @@ class ViewerViewController: UIViewController  {
     }
     
     private func createRenderDelegates() {
-        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false)
+        if case .LandscapeLeft = orientation {
+            InvertableHeadTrackerRotationSource.InvertableInstance.inverted = true
+        }
+        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false)
         leftRenderDelegate.scnView = leftScnView
-        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: HeadTrackerRotationSource.Instance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 2, autoDispose: false)
+        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 2, autoDispose: false)
         rightRenderDelegate.scnView = rightScnView
         
         leftScnView.scene = leftRenderDelegate.scene
@@ -153,6 +156,10 @@ class ViewerViewController: UIViewController  {
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))
         view.addSubview(settingsButtonView)
         
+        if case .LandscapeLeft = orientation {
+            view.transform = CGAffineTransformRotate(view.transform, CGFloat(M_PI))
+        }
+        
         if !Defaults[.SessionVRGlassesSelected] {
             showGlassesSelection()
         }
@@ -171,7 +178,7 @@ class ViewerViewController: UIViewController  {
         tabController!.hideUI()
         
         var popActivated = false // needed when viewer was opened without rotation
-        HeadTrackerRotationSource.Instance.start()
+        InvertableHeadTrackerRotationSource.InvertableInstance.start()
         RotationService.sharedInstance.rotationEnable()
         
         rotationDisposable = RotationService.sharedInstance.rotationSignal?
@@ -250,7 +257,7 @@ class ViewerViewController: UIViewController  {
         
         rotationDisposable?.dispose()
         RotationService.sharedInstance.rotationDisable()
-        HeadTrackerRotationSource.Instance.stop()
+        InvertableHeadTrackerRotationSource.InvertableInstance.stop()
     }
     
     override func viewWillAppear(animated: Bool) {
