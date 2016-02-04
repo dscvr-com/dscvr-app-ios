@@ -563,7 +563,7 @@ class CameraViewController: UIViewController {
         
         if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
             
-            let r = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
+            let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
             var buf = ImageBuffer()
@@ -576,9 +576,10 @@ class CameraViewController: UIViewController {
             recorder.setIdle(!self.viewModel.isRecording.value)
             
             
-            recorder.push(r, buf, lastExposureInfo, lastAwbGains)
+            recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             
             let errorVec = recorder.getAngularDistanceToBall()
+            let r = recorder.getCurrentRotation()
             // let exposureHintC = recorder.getExposureHint()
             
             Async.main {
