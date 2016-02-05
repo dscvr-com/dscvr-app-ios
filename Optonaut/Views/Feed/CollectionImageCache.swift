@@ -299,6 +299,13 @@ class CollectionImageCache {
         }
     }
     
+    func resetExcept(index: Int) {
+        for i in 0..<CollectionImageCache.cacheSize where i != (index % CollectionImageCache.cacheSize) {
+            items[i]?.innerCache.dispose()
+            items[i] = nil
+        }
+    }
+    
     func reset() {
         assertMainThread()
         

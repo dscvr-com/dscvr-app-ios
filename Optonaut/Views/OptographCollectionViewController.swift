@@ -302,10 +302,14 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         cell.id = indexPath.row
         
-        for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
-            let id = optographIDs[indexPath.row + i]
-            let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
-            imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
+        if StitchingService.isStitching() {
+            imageCache.resetExcept(indexPath.row)
+        } else {
+            for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
+                let id = optographIDs[indexPath.row + i]
+                let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
+                imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
+            }
         }
         
         if overlayView.optographID == nil {
