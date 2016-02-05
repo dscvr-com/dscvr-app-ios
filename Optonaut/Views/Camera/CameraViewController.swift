@@ -392,6 +392,9 @@ class CameraViewController: UIViewController {
     private var time = Double(-1)
     
     private func updateBallPosition() {
+        
+         // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
+        let exposureDuration = max(self.exposureDuration, 0.006)
 
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
         let movementPerFrameInPixels = Double(400)
@@ -409,16 +412,17 @@ class CameraViewController: UIViewController {
         } else {
             // Speed per second
             let maxRecordingSpeedInRadiants = sensorWidthInMeters * movementPerFrameInPixels / (Double(captureWidth) * exposureDuration)
+            
             let maxRecordingSpeed = ballSphereRadius * Float(maxRecordingSpeedInRadiants)
             
             //print("exposure duration: \(exposureDuration), maxSpeed per second: \(maxRecordingSpeed), capturewidth: \(captureWidth)")
             
             let timeDiff = (newTime - time)
             let maxSpeed = Float(maxRecordingSpeed) * Float(timeDiff)
-            let accelleration = (!recorder.isIdle() ? Float(0.2) : Float(2)) / Float(30)
+            
+            let accelleration = (!recorder.isIdle() ? Float(maxRecordingSpeed / 10) : Float(maxRecordingSpeed)) / Float(30)
             
             let newHeading = GLKVector3Subtract(target, ball)
-            
             
             let dist = GLKVector3Length(newHeading)
             var curSpeed = GLKVector3Length(ballSpeed)
