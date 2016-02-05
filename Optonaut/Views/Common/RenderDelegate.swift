@@ -144,8 +144,7 @@ class CubeRenderDelegate: RenderDelegate {
     private static func getBlackTexture() -> UIImage {
         UIGraphicsBeginImageContext(CGSize(width: 1, height: 1));
         let contextRef = UIGraphicsGetCurrentContext()
-        UIColor.purpleColor().setFill()
-//        UIColor.blackColor().setFill()
+        UIColor.blackColor().setFill()
         CGContextFillRect(contextRef, CGRect(x: 0, y: 0, width: 1, height: 1))
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()

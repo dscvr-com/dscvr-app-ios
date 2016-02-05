@@ -115,7 +115,12 @@ class SaveViewController: UIViewController, RedNavbar {
         
         view.backgroundColor = .whiteColor()
         
-        scnView = SCNView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 0.46 * view.frame.width))
+        let scnFrame = CGRect(x: 0, y: 0, width: view.frame.width, height: 0.46 * view.frame.width)
+        if #available(iOS 9.0, *) {
+            scnView = SCNView(frame: scnFrame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+        } else {
+            scnView = SCNView(frame: scnFrame)
+        }
         
         let hfov: Float = 80
         

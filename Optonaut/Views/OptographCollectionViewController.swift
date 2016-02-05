@@ -201,6 +201,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         view.bounds = UIScreen.mainScreen().bounds
         
         RotationService.sharedInstance.rotationEnable()
+        
+        if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) {
+            collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
+        }
     }
     
     
@@ -287,8 +291,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         guard let cell = cell as? OptographCollectionViewCell else {
             return
         }
-        
-        print("will display \(indexPath.row)")
         
         let optographID = optographIDs[indexPath.row]
         
