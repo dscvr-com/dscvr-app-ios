@@ -62,6 +62,25 @@ class HeadTrackerRotationSource : RotationMatrixSource {
     }
 }
 
+class InvertableHeadTrackerRotationSource : HeadTrackerRotationSource {
+    
+    var inverted = false
+    
+    static let InvertableInstance = InvertableHeadTrackerRotationSource()
+    
+    override func getRotationMatrix() -> GLKMatrix4 {
+        let result = super.getRotationMatrix()
+        
+        if inverted {
+            return GLKMatrix4Scale(result, -1, -1, 1)
+        } else {
+            return result
+        }
+        
+    }
+    
+}
+
 class CoreMotionRotationSource : RotationMatrixSource {
     private let motionManager = CMMotionManager()
     private var retainCounter = 0

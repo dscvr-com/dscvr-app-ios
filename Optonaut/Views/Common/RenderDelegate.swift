@@ -220,8 +220,8 @@ class CubeRenderDelegate: RenderDelegate {
     var id: Int = 0
     
     func reset() {
-        self.nodeEnterScene = nil
-        self.nodeLeaveScene = nil
+        nodeEnterScene = nil
+        nodeLeaveScene = nil
         
         sync(self) {
             for (_, plane) in self.planes {

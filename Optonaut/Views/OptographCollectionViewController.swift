@@ -201,6 +201,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         view.bounds = UIScreen.mainScreen().bounds
         
         RotationService.sharedInstance.rotationEnable()
+        
+        if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) {
+            collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
+        }
     }
     
     
@@ -208,7 +212,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         super.viewWillDisappear(animated)
         
         // TODO - remove as soon as correct disposal is implemented. 
-        imageCache.reset()
+        // imageCache.reset()
         
         RotationService.sharedInstance.rotationDisable()
     }
