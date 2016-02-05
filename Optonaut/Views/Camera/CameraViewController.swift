@@ -773,6 +773,10 @@ extension CameraViewController: TabControllerDelegate {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
         
         stopSession()
+        
+        recorder.finish()
+        recorder.dispose()
+        
         if StitchingService.hasUnstitchedRecordings() {
             StitchingService.removeUnstitchedRecordings()
         }
