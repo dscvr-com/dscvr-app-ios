@@ -110,6 +110,7 @@ class PipelineService {
         
         stitchingSignal
             .on(completed: {
+                print("remove")
                 StitchingService.removeUnstitchedRecordings()
             })
             .observeOnMain()
@@ -233,6 +234,7 @@ class PipelineService {
             
             if !optographBox.model.isSubmitted {
                 stitchingStatus.value = .Idle
+                print("remove check")
                 StitchingService.removeUnstitchedRecordings()
                 optographBox.insertOrUpdate { box in
                     box.model.delete()
