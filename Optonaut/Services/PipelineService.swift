@@ -158,7 +158,7 @@ class PipelineService {
             }
             
             let sideLetter = side == .Left ? "l" : "r"
-            let url = TextureURL(optographID, side: .Left, size: 0, face: face, x: 0, y: 0, d: 1)
+            let url = TextureURL(optographID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
             
             objc_sync_enter(KingfisherManager.sharedManager)
             let image = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url)!
