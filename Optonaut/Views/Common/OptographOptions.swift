@@ -50,7 +50,8 @@ extension OptographOptions {
         
         if optograph.isPublished {
             actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
-                if let url = NSURL(string: "http://opto.space/\(optograph.shareAlias)") {
+                let baseURL = Env == .Staging ? "staging.opto.space:8005" : "opto.space"
+                if let url = NSURL(string: "http://\(baseURL)/\(optograph.shareAlias)") {
                     let textToShare = "Check out this awesome Optograph of \(person.displayName) on \(url)"
                     let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
                     activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]

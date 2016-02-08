@@ -603,9 +603,12 @@ class SaveViewController: UIViewController, RedNavbar {
         
         moreSocialButton.state = .Loading
         
+        let shareAlias = viewModel.optographBox.model.shareAlias
+        
         Async.main { [weak self] in
             let textToShare = "Check out this awesome Optograph"
-            let url = NSURL(string: "http://opto.space/uae")!
+            let baseURL = Env == .Staging ? "staging.opto.space:8005" : "opto.space"
+            let url = NSURL(string: "http://\(baseURL)/\(shareAlias)")!
             let activityVC = UIActivityViewController(activityItems: [textToShare, url], applicationActivities: nil)
             activityVC.excludedActivityTypes = [UIActivityTypeAirDrop]
             
