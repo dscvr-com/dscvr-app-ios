@@ -4,7 +4,7 @@ github "ReactiveCocoa/ReactiveCocoa" "v4.0.0-RC.1"
 github "Hearst-DD/ObjectMapper"
 github "schickling/Device.swift" >= 0.3.0
 github "artman/HexColor" ~> 1.0
-github "stephencelis/SQLite.swift" "master"
+github "stephencelis/SQLite.swift" "cocoapods-xcode-7-3"
 github "duemunk/Async"
 github "MoZhouqi/KMPlaceholderTextView"
 github "optonaut/ActiveLabel.swift"

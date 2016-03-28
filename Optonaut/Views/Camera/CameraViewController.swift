@@ -59,14 +59,17 @@ class CameraViewController: UIViewController {
     private let cameraNode = SCNNode()
     private var scnView : SCNView!
     private let scene = SCNScene()
+    private var currentDegree : Float
     
     // ball
     private let ballNode = SCNNode()
     private var ballSpeed = GLKVector3Make(0, 0, 0)
+    private let baseMatrix = GLKMatrix4Make(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1 , 0.0, 0.0, -1.0, 0.00, 0.0, 0.0, 0.0, 0.0, 1.0)
     
     private var tapCameraButtonCallback: (() -> ())?
     
     required init() {
+        currentDegree = 0.03
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
@@ -83,7 +86,7 @@ class CameraViewController: UIViewController {
         tapCameraButtonCallback = { [weak self] in
             let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
             confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-            self?.presentViewController(confirmAlert, animated: true, completion: nil)
+            //self?.presentViewController(confirmAlert, animated: true, completion: nil)
         }
     }
     
@@ -576,11 +579,24 @@ class CameraViewController: UIViewController {
             buf.height = UInt32(CVPixelBufferGetHeight(pixelBuffer))
             
             captureWidth = Int(buf.width)
-            
             recorder.setIdle(!self.viewModel.isRecording.value)
             
             
-            recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
+            
+            if (frameCount % 2 == 0 ) {
+                currentDegree -= 0.02
+            } else {
+                currentDegree += 0.02
+            }
+           
+            var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
+            
+            
+    
+        
+            var currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
+            
+            recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
             
             let errorVec = recorder.getAngularDistanceToBall()
             let r = recorder.getCurrentRotation()
@@ -677,7 +693,9 @@ class CameraViewController: UIViewController {
                     let recordedEdge = Edge(lastKeyframe!, currentKeyframe)
                     edges[recordedEdge]?.geometry!.firstMaterial!.diffuse.contents = UIColor.Accent
                     lastKeyframe = currentKeyframe
+                
                 }
+
             }
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
@@ -759,14 +777,20 @@ extension CameraViewController: TabControllerDelegate {
         viewModel.isRecording.value = true
         tabController!.cameraButton.backgroundColor = .Accent
         tabController!.cameraButton.iconColor = .whiteColor()
+        print("nagrerecxord")
+        
+        if let bleService = btDiscoverySharedInstance.bleService {
+            bleService.sendCommand("fe0401011c020000ffffffffffffffffffffffff")
+        }
     }
     
     func onTouchEndCameraButton() {
-        viewModel.isRecording.value = false
+        //viewModel.isRecording.value = false
         tabController!.cameraButton.backgroundColor = .whiteColor()
         tabController!.cameraButton.iconColor = .blackColor()
+        print("tapos na magrecord")
         
-        tapCameraButtonCallback = nil
+        //tapCameraButtonCallback = nil
     }
     
     func onTapCameraButton() {

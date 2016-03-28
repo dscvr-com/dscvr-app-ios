@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		490E1CA11CA13F560001CC85 /* BTDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490E1CA01CA13F560001CC85 /* BTDiscovery.swift */; };
+		490E1CA31CA140290001CC85 /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490E1CA21CA140290001CC85 /* BTService.swift */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
 		8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F085AFC1BF549FE00607A25 /* PlaceholderTableViewCell.swift */; };
 		8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */; };
@@ -260,6 +262,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		490E1CA01CA13F560001CC85 /* BTDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTDiscovery.swift; sourceTree = "<group>"; };
+		490E1CA21CA140290001CC85 /* BTService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTService.swift; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
 		8F085AFC1BF549FE00607A25 /* PlaceholderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTableViewCell.swift; sourceTree = "<group>"; };
 		8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
@@ -611,6 +615,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		490E1C9F1CA13F170001CC85 /* BluetoothServices */ = {
+			isa = PBXGroup;
+			children = (
+				490E1CA01CA13F560001CC85 /* BTDiscovery.swift */,
+				490E1CA21CA140290001CC85 /* BTService.swift */,
+			);
+			name = BluetoothServices;
+			sourceTree = "<group>";
+		};
 		8F23AA401BFF31B4008926A8 /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
@@ -1024,6 +1037,7 @@
 		8FCCA02D1B3806040091F1B1 /* Optonaut */ = {
 			isa = PBXGroup;
 			children = (
+				490E1C9F1CA13F170001CC85 /* BluetoothServices */,
 				8FCCA0511B3806680091F1B1 /* AppDelegate.swift */,
 				8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */,
 				8F740CF81B80DC6200FED1D0 /* Database */,
@@ -1369,7 +1383,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 5X3WW56JVE;
+						DevelopmentTeam = 4Y4J5JD5NJ;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -1613,6 +1627,7 @@
 				8FD845C31BCA5AFA0064048D /* RenderDelegate.swift in Sources */,
 				8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */,
 				8FC7E3741BD15B9D00E97CC3 /* Matrix3x3d.mm in Sources */,
+				490E1CA11CA13F560001CC85 /* BTDiscovery.swift in Sources */,
 				8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */,
 				8FAB9F761B8F02D500B4C8CB /* Reachability.swift in Sources */,
 				8FAB9F4C1B8F01DF00B4C8CB /* ForgotPasswordViewController.swift in Sources */,
@@ -1660,6 +1675,7 @@
 				8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */,
 				8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */,
 				8F21F48F1C4405300075C8EC /* CollectionImageCache.swift in Sources */,
+				490E1CA31CA140290001CC85 /* BTService.swift in Sources */,
 				A5FD5D841BEA5A4E0031ED1E /* support.cpp in Sources */,
 				8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */,
 				8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */,
@@ -1855,7 +1871,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam3602;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
@@ -1889,7 +1905,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.optonaut.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam3602;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
