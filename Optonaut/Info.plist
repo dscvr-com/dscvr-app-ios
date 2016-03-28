@@ -39,7 +39,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>84</string>
+	<string>87</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -108,6 +108,11 @@
 				<true/>
 			</dict>
 			<key>images.optonaut.co</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>api-staging.iam360.io</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
