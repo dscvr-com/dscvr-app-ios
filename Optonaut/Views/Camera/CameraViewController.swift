@@ -77,10 +77,10 @@ class CameraViewController: UIViewController {
         dispatch_set_target_queue(sessionQueue, high)
         screenScale = Float(UIScreen.mainScreen().scale)
         
-        if Defaults[.SessionDebuggingEnabled] {
+    //    if Defaults[.SessionDebuggingEnabled] {
             //Explicitely instantiate, so old data is removed. 
             Recorder.enableDebug(CameraDebugService().path)
-        }
+     //   }
         
         super.init(nibName: nil, bundle: nil)
         
@@ -596,7 +596,11 @@ class CameraViewController: UIViewController {
         
             var currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
             
-            recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
+            //recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
+         
+            if ( frameCount % 2 == 0 ) {
+                recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
+            }
             
             let errorVec = recorder.getAngularDistanceToBall()
             let r = recorder.getCurrentRotation()
@@ -708,7 +712,7 @@ class CameraViewController: UIViewController {
             if recorder.isFinished() {
                 // needed since processSampleBuffer doesn't run on UI thread
                 
-                print(currentDegree)
+             
                 Async.main {
                     self.finish()
                 }
@@ -788,7 +792,7 @@ extension CameraViewController: TabControllerDelegate {
     }
     
     func onTouchEndCameraButton() {
-        //viewModel.isRecording.value = false
+        viewModel.isRecording.value = false
         tabController!.cameraButton.backgroundColor = .whiteColor()
         tabController!.cameraButton.iconColor = .blackColor()
         print("tapos na magrecord")
