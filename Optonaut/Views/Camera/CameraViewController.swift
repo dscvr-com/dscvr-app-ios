@@ -11,6 +11,7 @@ import AVFoundation
 import CoreMotion
 import CoreGraphics
 import ReactiveCocoa
+import Result
 import Alamofire
 import SceneKit
 import Async
@@ -584,13 +585,12 @@ class CameraViewController: UIViewController {
             
             
             if (frameCount % 2 == 0 ) {
-                currentDegree -= 0.02
-            } else {
-                currentDegree += 0.02
+                currentDegree -= 0.1
             }
            
             var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
             
+
             
     
         
@@ -707,6 +707,8 @@ class CameraViewController: UIViewController {
             
             if recorder.isFinished() {
                 // needed since processSampleBuffer doesn't run on UI thread
+                
+                print(currentDegree)
                 Async.main {
                     self.finish()
                 }
@@ -780,7 +782,8 @@ extension CameraViewController: TabControllerDelegate {
         print("nagrerecxord")
         
         if let bleService = btDiscoverySharedInstance.bleService {
-            bleService.sendCommand("fe0401011c020000ffffffffffffffffffffffff")
+                                  //000102030405060708
+            bleService.sendCommand("fe04010108020000ffffffffffffffffffffffff")
         }
     }
     

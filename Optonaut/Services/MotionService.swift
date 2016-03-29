@@ -9,6 +9,7 @@
 import Foundation
 import CoreMotion
 import ReactiveCocoa
+import Result
 
 protocol RotationMatrixSource {
     func getRotationMatrix() -> GLKMatrix4

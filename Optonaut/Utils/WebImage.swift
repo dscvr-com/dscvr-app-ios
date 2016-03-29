@@ -9,6 +9,7 @@
 import Foundation
 import Kingfisher
 import ReactiveCocoa
+import Result
 import SpriteKit
 
 extension ImageDownloader {
