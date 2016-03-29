@@ -86,7 +86,6 @@
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F7738161B380F5D001F642B /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738141B380F5D001F642B /* Person.swift */; };
 		8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F77C5191BC45DE1003B1594 /* StitchingService.swift */; };
-		8F86D4F31B9A1858009F91EB /* ActiveLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */; };
 		8F86D4F71B9B9664009F91EB /* PureLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F61B9B9664009F91EB /* PureLayout.framework */; };
 		8F8E32D01BFE043200E09392 /* DeviceTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F8E32CF1BFE043200E09392 /* DeviceTokenService.swift */; };
 		8F8E32D21BFE152C00E09392 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F8E32D11BFE152C00E09392 /* SwiftyUserDefaults.framework */; };
@@ -339,7 +338,6 @@
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F7738141B380F5D001F642B /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		8F77C5191BC45DE1003B1594 /* StitchingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StitchingService.swift; sourceTree = "<group>"; };
-		8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActiveLabel.framework; path = Carthage/Build/iOS/ActiveLabel.framework; sourceTree = "<group>"; };
 		8F86D4F61B9B9664009F91EB /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/iOS/PureLayout.framework; sourceTree = "<group>"; };
 		8F8E32CF1BFE043200E09392 /* DeviceTokenService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceTokenService.swift; sourceTree = "<group>"; };
 		8F8E32D11BFE152C00E09392 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
@@ -575,7 +573,6 @@
 				8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */,
 				8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */,
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
-				8F86D4F31B9A1858009F91EB /* ActiveLabel.framework in Frameworks */,
 				8FC9EC3C1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework in Frameworks */,
 				8F86D4F71B9B9664009F91EB /* PureLayout.framework in Frameworks */,
 				8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */,
@@ -661,7 +658,6 @@
 				8F4B6F971BE004B9005D2D68 /* ProtocolBuffers.framework */,
 				8F6084831BC27DD400ADAFFC /* Mixpanel.framework */,
 				8F86D4F61B9B9664009F91EB /* PureLayout.framework */,
-				8F86D4F21B9A1858009F91EB /* ActiveLabel.framework */,
 				8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */,
 				8F29FB561B84C26500B2C005 /* Async.framework */,
 				8FA66BA41B80905C00EE5D44 /* SQLite.framework */,
@@ -1468,7 +1464,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/SQLite.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Async.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/KMPlaceholderTextView.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ActiveLabel.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Mixpanel.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/CardboardParams.framework",

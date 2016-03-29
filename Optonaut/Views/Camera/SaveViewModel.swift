@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactiveCocoa
+import Result
 import Alamofire
 import ObjectMapper
 import Async

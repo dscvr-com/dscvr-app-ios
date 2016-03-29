@@ -9,6 +9,7 @@
 import UIKit
 import Async
 import ReactiveCocoa
+import Result
 
 class ActivityTableViewController: UIViewController, RedNavbar {
     

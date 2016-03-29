@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactiveCocoa
+import Result
 
 private let userInteractiveQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
 private let userInitiatedQueue = dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)

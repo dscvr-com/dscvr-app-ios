@@ -11,6 +11,7 @@ import AVFoundation
 import CoreMotion
 import CoreGraphics
 import ReactiveCocoa
+import Result
 import Alamofire
 import SceneKit
 import Async

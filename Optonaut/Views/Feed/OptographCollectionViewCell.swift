@@ -326,7 +326,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         
         renderDelegate.nodeEnterScene = { [weak self] index in
             dispatch_async(queue) {
-                cache.get(index) { [weak self] (texture: SKTexture, forIndex index: CubeImageCache.Index) in
+                cache.get(index) { [weak self] (texture: SKTexture, index: CubeImageCache.Index) in
                     self?.renderDelegate.setTexture(texture, forIndex: index)
                     Async.main { [weak self] in
                         self?.loadingStatus.value = .Loaded
