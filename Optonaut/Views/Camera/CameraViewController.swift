@@ -68,6 +68,7 @@ class CameraViewController: UIViewController {
     private let baseMatrix = GLKMatrix4Make(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1 , 0.0, 0.0, -1.0, 0.00, 0.0, 0.0, 0.0, 0.0, 1.0)
     
     private var tapCameraButtonCallback: (() -> ())?
+    private var lastElapsedTime = CACurrentMediaTime() ;
     
     required init() {
         currentDegree = 0.03
@@ -584,9 +585,17 @@ class CameraViewController: UIViewController {
             
             
             
-            if (frameCount % 2 == 0 ) {
-                currentDegree -= 0.1
+          
+            let timeDiff = CACurrentMediaTime() - lastElapsedTime
+            
+           
+            
+            if (timeDiff > 0.023 ) {
+                currentDegree -= 0.5
+                lastElapsedTime = CACurrentMediaTime()
             }
+            
+           
            
             var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
             
@@ -775,16 +784,27 @@ class CameraViewController: UIViewController {
 
 extension CameraViewController: TabControllerDelegate {
     
+    func runThisAfterDelay(seconds seconds: Double, after: () -> ()) {
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(seconds * Double(NSEC_PER_SEC)))
+        dispatch_after(time, dispatch_get_main_queue(), after)
+    }
+    
     func onTouchStartCameraButton() {
-        viewModel.isRecording.value = true
-        tabController!.cameraButton.backgroundColor = .Accent
-        tabController!.cameraButton.iconColor = .whiteColor()
-        print("nagrerecxord")
+  
         
         if let bleService = btDiscoverySharedInstance.bleService {
                                   //000102030405060708
-            bleService.sendCommand("fe04010108020000ffffffffffffffffffffffff")
+            bleService.sendCommand("fe04010109020000ffffffffffffffffffffffff")
         }
+        
+        runThisAfterDelay(seconds: 1) { () -> () in
+                   self.viewModel.isRecording.value = true
+        self.tabController!.cameraButton.backgroundColor = .Accent
+        self.tabController!.cameraButton.iconColor = .whiteColor()
+        print("nagrerecxord")
+            print("Prints this 2 seconds later in main queue")
+        }
+
     }
     
     func onTouchEndCameraButton() {
