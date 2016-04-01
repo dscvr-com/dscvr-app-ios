@@ -249,7 +249,7 @@ class CameraViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        recorder = Recorder(.Center)
+        recorder = Recorder(.Truncated)
         
         setupScene()
         setupBall()
