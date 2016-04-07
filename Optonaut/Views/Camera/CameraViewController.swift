@@ -19,6 +19,11 @@ import Mixpanel
 import SwiftyUserDefaults
 import Photos
 
+
+struct staticVariables {
+    static var isCenter:Bool!
+}
+
 class CameraViewController: UIViewController {
     
     private let viewModel = CameraViewModel()
@@ -249,7 +254,17 @@ class CameraViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        recorder = Recorder(.Truncated)
+        switch Defaults[.SessionUseMultiRing] {
+        case true:
+            self.recorder = Recorder(.Truncated)
+        case false:
+            self.recorder = Recorder(.Center)
+        }
+        
+        tabController!.oneRingButton.hidden = true
+        tabController!.threeRingButton.hidden = true
+        
+        //recorder = Recorder(.Truncated)
         
         setupScene()
         setupBall()
@@ -781,6 +796,8 @@ extension CameraViewController: TabControllerDelegate {
         
         recorder.finish()
         recorder.dispose()
+        tabController!.oneRingButton.hidden = false
+        tabController!.threeRingButton.hidden = false
         
         if StitchingService.hasUnstitchedRecordings() {
             StitchingService.removeUnstitchedRecordings()

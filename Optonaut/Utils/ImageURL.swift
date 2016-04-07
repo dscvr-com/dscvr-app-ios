@@ -40,7 +40,7 @@ private func buildURL(path: String, width: Int, height: Int, filter: String?) ->
     switch Env {
 //    case .Development: s3Host = "optonaut-ios-beta-dev.s3.amazonaws.com"
 //    case .Staging: s3Host = "optonaut-ios-beta-staging.s3.amazonaws.com"
-    case .Production, .Staging, .Development: s3Host = "resources.optonaut.co.s3.amazonaws.com"
+    case .Production,.localStaging, .Staging, .Development: s3Host = "resources.staging-iam360.io.s3.amazonaws.com"
     }
     
     let scale = UIScreen.mainScreen().scale

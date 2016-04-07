@@ -19,7 +19,10 @@ class FeedNavViewController: NavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewController.navigationItem.titleView = UIImageView(image: UIImage.iconWithName(.LogoText, textColor: .whiteColor(), fontSize: 26))
+        //viewController.navigationItem.titleView = UIImageView(image: UIImage.iconWithName(.NewLogo, textColor: .whiteColor(), fontSize: 26))
+        let navTitle = UIImage(named:"iam360_navTitle")
+        let imageView = UIImageView(image:navTitle)
+        viewController.navigationItem.titleView = imageView
         
         pushViewController(viewController, animated: false)
     }

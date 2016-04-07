@@ -10,6 +10,7 @@ import UIKit
 import ReactiveCocoa
 import Async
 import Icomoon
+import SwiftyUserDefaults
 
 class TabViewController: UIViewController {
     
@@ -28,6 +29,8 @@ class TabViewController: UIViewController {
     let cameraButton = RecordButton()
     let leftButton = TabButton()
     let rightButton = TabButton()
+    let oneRingButton = UIButton()
+    let threeRingButton = UIButton()
     
     private let bottomGradient = CAGradientLayer()
     
@@ -49,6 +52,7 @@ class TabViewController: UIViewController {
         activeViewController = leftViewController
         
         super.init(nibName: nil, bundle: nil)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -89,6 +93,27 @@ class TabViewController: UIViewController {
         cameraButton.addTarget(self, action: "touchEndCameraButton", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
         uiWrapper.addSubview(cameraButton)
         
+        oneRingButton.frame = CGRect(x: cameraButton.frame.origin.x-35, y: cameraButton.frame.origin.y+23, width: 30, height: 30)
+        oneRingButton.addTarget(self, action: "touchOneRingButton", forControlEvents: [.TouchDown])
+        oneRingButton.setImage(UIImage(named: "oneRingButton"), forState: UIControlState.Normal)
+        oneRingButton.layer.cornerRadius = 5
+        uiWrapper.addSubview(oneRingButton)
+        
+        threeRingButton.frame = CGRect(x: cameraButton.frame.origin.x+cameraButton.frame.size.width+5, y: cameraButton.frame.origin.y+23, width: 30, height: 30)
+        threeRingButton.addTarget(self, action: "touchThreeRingButton", forControlEvents: [.TouchDown])
+        threeRingButton.setImage(UIImage(named: "threeRingButton"), forState: UIControlState.Normal)
+        threeRingButton.layer.cornerRadius = 5
+        uiWrapper.addSubview(threeRingButton)
+        
+        switch Defaults[.SessionUseMultiRing] {
+        case true:
+            threeRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
+            oneRingButton.backgroundColor = UIColor.grayColor()
+        case false:
+            threeRingButton.backgroundColor = UIColor.grayColor()
+            oneRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
+        }
+        
         PipelineService.stitchingStatus.producer
             .observeOnMain()
             .startWithNext { [weak self] status in
@@ -99,6 +124,8 @@ class TabViewController: UIViewController {
                     self?.cameraButton.progress = nil
                     if self?.cameraButton.progressLocked == false {
                         self?.cameraButton.icon = .Camera
+                        self?.oneRingButton.hidden = false
+                        self?.threeRingButton.hidden = false
                     }
                 case let .Stitching(progress):
                     self?.cameraButton.progress = CGFloat(progress)
@@ -160,6 +187,12 @@ class TabViewController: UIViewController {
     
     dynamic private func touchStartCameraButton() {
         delegate?.onTouchStartCameraButton()
+    }
+    dynamic private func touchOneRingButton() {
+        delegate?.onTouchOneRingButton()
+    }
+    dynamic private func touchThreeRingButton() {
+        delegate?.onTouchThreeRingButton()
     }
     
     dynamic private func touchEndCameraButton() {
@@ -231,6 +264,7 @@ class TabViewController: UIViewController {
     }
 
 }
+
 
 class RecordButton: UIButton {
     
@@ -447,6 +481,8 @@ protocol TabControllerDelegate {
     func onTapCameraButton()
     func onTapLeftButton()
     func onTapRightButton()
+    func onTouchOneRingButton()
+    func onTouchThreeRingButton()
 }
 
 extension TabControllerDelegate {
@@ -457,9 +493,13 @@ extension TabControllerDelegate {
     func onTapCameraButton() {}
     func onTapLeftButton() {}
     func onTapRightButton() {}
+    func onTouchOneRingButton() {}
+    func onTouchThreeRingButton() {}
 }
 
 protocol DefaultTabControllerDelegate: TabControllerDelegate {}
+
+
 
 extension DefaultTabControllerDelegate {
     
@@ -468,7 +508,8 @@ extension DefaultTabControllerDelegate {
         case .Idle:
             tabController!.leftViewController.cleanup()
             tabController!.rightViewController.cleanup()
-            tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
+            tabController!.activeViewController.pushViewController(CameraViewController(), animated: false)
+            //selectRingActivity()
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
@@ -478,6 +519,33 @@ extension DefaultTabControllerDelegate {
             PipelineService.stitchingStatus.value = .Idle
         case .Uninitialized: ()
         }
+    }
+    func onTouchOneRingButton() {
+        Defaults[.SessionUseMultiRing] = false
+        tabController!.oneRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
+        tabController!.threeRingButton.backgroundColor = UIColor.grayColor()
+    }
+    func onTouchThreeRingButton() {
+        Defaults[.SessionUseMultiRing] = true
+        tabController!.oneRingButton.backgroundColor = UIColor.grayColor()
+        tabController!.threeRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
+    }
+    
+    func selectRingActivity() {
+        
+        let alert = UIAlertController(title: "Ring", message: "How many ring do you want?", preferredStyle: .Alert)
+        
+        let firstAction = UIAlertAction(title: "one", style: .Default) { (alert: UIAlertAction!) -> Void in
+            self.tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
+        }
+        
+        let secondAction = UIAlertAction(title: "three", style: .Default) { (alert: UIAlertAction!) -> Void in
+            self.tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
+        }
+        
+        alert.addAction(firstAction)
+        alert.addAction(secondAction)
+        tabController?.activeViewController.presentViewController(alert, animated: true, completion:nil)
     }
     
     func onTapLeftButton() {

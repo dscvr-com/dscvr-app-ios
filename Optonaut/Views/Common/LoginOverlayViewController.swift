@@ -119,7 +119,7 @@ class LoginOverlayViewController: UIViewController {
     
     dynamic private func facebook() {
         let loginManager = FBSDKLoginManager()
-        let publishPermissions = ["publish_actions"]
+        let readPermission = ["public_profile","email"]
         
         viewModel.facebookPending.value = true
         
@@ -136,7 +136,6 @@ class LoginOverlayViewController: UIViewController {
                 .on(
                     failed: { _ in
                         loginManager.logOut()
-                        
                         errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
                     },
                     completed: {
@@ -148,14 +147,15 @@ class LoginOverlayViewController: UIViewController {
                 .start()
         }
         
-        loginManager.logInWithPublishPermissions(publishPermissions, fromViewController: self) { [weak self] result, error in
+        loginManager.logInWithReadPermissions(readPermission, fromViewController: self) { [weak self] result, error in
+            
             if error != nil || result.isCancelled {
                 print(error)
                 self?.viewModel.facebookPending.value = false
                 loginManager.logOut()
             } else {
                 let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
-                let allPermissionsGranted = publishPermissions.reduce(true) { $0 && grantedPermissions.contains($1) }
+                let allPermissionsGranted = readPermission.reduce(true) { $0 && grantedPermissions.contains($1) }
                 
                 if allPermissionsGranted {
                     successBlock(result.token)
