@@ -84,6 +84,9 @@ class StitchingService {
             Mixpanel.sharedInstance().track("Action.Stitching.Start")
             Mixpanel.sharedInstance().timeEvent("Action.Stitching.Finish")
             
+            let globalAligner = Alignment()
+            globalAligner.align()
+            
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
                 Async.main {

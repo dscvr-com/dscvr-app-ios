@@ -3,6 +3,7 @@
 //
 
 #import "Recorder.h"
+#import "Alignment.h"
 #import "Stitcher.h"
 #import "HeadTracker.h"
 #import "UICollectionViewLeftAlignedLayout.h"

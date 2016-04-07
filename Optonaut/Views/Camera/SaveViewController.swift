@@ -78,6 +78,7 @@ class SaveViewController: UIViewController, RedNavbar {
                 }
             )
             .start()
+     
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -255,6 +256,8 @@ class SaveViewController: UIViewController, RedNavbar {
             self?.tabController!.cameraButton.loading = !isReady
             self?.tabController!.rightButton.loading = !isReady
         }
+        
+        
         
         viewModel.isReadyForStitching.producer
             .filter(isTrue)

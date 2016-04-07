@@ -6,8 +6,9 @@
 #include <string>
 #define OPTONAUT_TARGET_PHONE
 
+#include "imageSink.hpp"
 #include "storageSink.hpp"
-#include "stitcherSink.hpp"
+//#include "stitcherSink.hpp"
 #include "recorder.hpp"
 #include "intrinsics.hpp"
 #include "Recorder.h"
@@ -146,8 +147,9 @@ std::string debugPath;
 
 // TODO - using static variables here is dangerous.
 // Promote to class variables instead (somehow). 
-optonaut::StorageSink storageSink(Stores::left, Stores::right);
-optonaut::StitcherSink stitcherSink;
+// optonaut::StorageSink storageSink(Stores::left, Stores::right);
+//optonaut::StitcherSink stitcherSink;
+optonaut::ImageSink imageSink(Stores::post);
 
 -(id)init:(RecorderMode)recorderMode {
     self = [super init];
@@ -162,10 +164,13 @@ optonaut::StitcherSink stitcherSink;
     Stores::left.Clear();
     Stores::right.Clear();
     Stores::common.Clear();
+    Stores::post.Clear();
     
     optonaut::CheckpointStore::DebugStore = &Stores::debug;
     
-    optonaut::StereoSink& sink = storageSink;
+  //  optonaut::StereoSink& sink = storageSink;
+    
+    optonaut::ImageSink& sink = imageSink;
     
     int internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
     
@@ -191,7 +196,7 @@ optonaut::StitcherSink stitcherSink;
     
     self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
                                         self->intrinsics, sink,
-                                        debugPath, internalRecordingMode, true);
+                                        debugPath, internalRecordingMode);
     
     counter = 0;
 

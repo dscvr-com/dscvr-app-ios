@@ -89,6 +89,7 @@ struct StitcherCancellation {
         panoBlur.Blur(sphere, blurred);
         sphere.release();
         
+        
         return [self getCubeFaces:blurred];
     } catch (StitcherCancellation c) { }
     return result;

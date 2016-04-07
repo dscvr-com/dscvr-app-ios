@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49ED09251CB64847004B1D5A /* Alignment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49ED09241CB64847004B1D5A /* Alignment.mm */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
 		8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F085AFC1BF549FE00607A25 /* PlaceholderTableViewCell.swift */; };
 		8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */; };
@@ -259,6 +260,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		49ED09231CB64847004B1D5A /* Alignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = Optonaut/Stitcher/Alignment.h; sourceTree = SOURCE_ROOT; };
+		49ED09241CB64847004B1D5A /* Alignment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alignment.mm; path = Optonaut/Stitcher/Alignment.mm; sourceTree = SOURCE_ROOT; };
+		49ED09261CB6485D004B1D5A /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
+		49ED09271CB64964004B1D5A /* imageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSink.hpp; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
 		8F085AFC1BF549FE00607A25 /* PlaceholderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTableViewCell.swift; sourceTree = "<group>"; };
 		8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
@@ -888,6 +893,8 @@
 		8FAB9F691B8F02D500B4C8CB /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				49ED09231CB64847004B1D5A /* Alignment.h */,
+				49ED09241CB64847004B1D5A /* Alignment.mm */,
 				A5233E281BC87F7500C9EFE5 /* CommonExternal.h */,
 				A5233E291BC87F7500C9EFE5 /* CommonInternal.h */,
 				A5233E2A1BC87F7500C9EFE5 /* Recorder.h */,
@@ -1236,6 +1243,7 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
+				49ED09271CB64964004B1D5A /* imageSink.hpp */,
 				A547FA101C5578D500FBC17D /* jumpFilter.hpp */,
 				A547FA111C5578D500FBC17D /* ringCloser.hpp */,
 				A5376ED31C4EBEF1004EFE88 /* stereoSink.hpp */,
@@ -1272,6 +1280,7 @@
 		A5FD5D731BEA5A4E0031ED1E /* stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				49ED09261CB6485D004B1D5A /* globalAlignment.hpp */,
 				A5376ED51C4EBFEC004EFE88 /* stitcherSink.hpp */,
 				A55C80F61BF91FDA00420E52 /* simplePlaneStitcher.cpp */,
 				A55C80F71BF91FDA00420E52 /* simplePlaneStitcher.hpp */,
@@ -1668,6 +1677,7 @@
 				8F4186031C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift in Sources */,
 				A55C80FA1BF91FDA00420E52 /* simplePlaneStitcher.cpp in Sources */,
 				8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */,
+				49ED09251CB64847004B1D5A /* Alignment.mm in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,
 				A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */,
 				8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */,
