@@ -52,7 +52,7 @@ private func buildURL(path: String, width: Int, height: Int, filter: String?) ->
     let urlPartToSign = "\(scaledWidth)x\(scaledHeight)/\(filterStr)\(s3Host)/\(path)"
     let hmacUrlPart = urlPartToSign.hmac(securityKey)
     
-    return "http://images.optonaut.co/\(hmacUrlPart)/\(urlPartToSign)"
+    return "http://images.iam360.io/\(hmacUrlPart)/\(urlPartToSign)"
 }
 
 private extension String {
