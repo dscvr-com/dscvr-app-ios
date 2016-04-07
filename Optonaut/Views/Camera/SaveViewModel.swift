@@ -164,7 +164,7 @@ class SaveViewModel {
                 self.optographBox.insertOrUpdate()
                 
                 self.isInitialized.value = true
-                
+                self.placeID.producer.startWithNext{ print("placeId \($0)") }
                 self.placeID.producer
                     .delayLatestUntil(self.isInitialized.producer)
                     .ignoreNil()
@@ -182,6 +182,10 @@ class SaveViewModel {
                     }
             }
         }
+        
+//        stitcherFinished.producer.startWithNext { print("stich \($0)") }
+//        isInitialized.producer.startWithNext{ print("is Initialized \($0)") }
+//        locationLoading.producer.startWithNext{ print("location loading \($0)") }
         
         isReadyForStitching <~ stitcherFinished.producer
             .combineLatestWith(isInitialized.producer).map(and)

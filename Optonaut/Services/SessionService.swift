@@ -25,6 +25,7 @@ extension DefaultsKeys {
     static let SessionShareToggledFacebook = DefaultsKey<Bool>("session_share_toggled_facebook")
     static let SessionShareToggledTwitter = DefaultsKey<Bool>("session_share_toggled_twitter")
     static let SessionShareToggledInstagram = DefaultsKey<Bool>("session_share_toggled_instagram")
+    static let SessionUseMultiRing = DefaultsKey<Bool>("session_use_multi_ring")
 }
 
 let DefaultVRGlasses = "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"
@@ -88,6 +89,8 @@ class SessionService {
                 Defaults[.SessionShareToggledFacebook] = safeOptional(FBSDKAccessToken.currentAccessToken())?.hasGranted("publish_actions") ?? false
                 Defaults[.SessionShareToggledTwitter] = false
                 Defaults[.SessionShareToggledInstagram] = false
+                Defaults[.SessionUseMultiRing] = false
+                
             })
             .flatMap(.Latest) { _ in ApiService<PersonApiModel>.get("persons/me") }
             .map(Person.fromApiModel)

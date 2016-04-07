@@ -18,6 +18,7 @@ import FBSDKCoreKit
 import Kingfisher
 
 //let Env = EnvType.Development
+//let Env = EnvType.localStaging
 let Env = EnvType.Staging
 //let Env = EnvType.Production
 
@@ -42,6 +43,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            self.window?.rootViewController = tabBarViewController
             self.window?.rootViewController = TabViewController()
         }
+        let notificationTypes: UIUserNotificationType = [UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound]
+        let pushNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: nil)
+        application.registerUserNotificationSettings(pushNotificationSettings)
+        application.registerForRemoteNotifications()
         
         return true
     }
@@ -75,10 +80,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
-    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
-        print(error)
-    }
-    
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
         if url.scheme.hasPrefix("fb\(FBSDKSettings.appID())") && url.host == "authorize" {
             return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
@@ -103,17 +104,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let tokenChars = UnsafePointer<CChar>(deviceToken.bytes)
         var tokenString = ""
         
+        print("DEVICE TOKEN = \(deviceToken)")
+        
         for var i = 0; i < deviceToken.length; i++ {
             tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
         }
         
         DeviceTokenService.deviceToken = tokenString
     }
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+        print("my error===",error)
+    }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject: AnyObject]) {
 //        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {
 //            tabBarViewController.activityNavViewController.activityTableViewController.viewModel.refreshNotification.notify(())
 //        }
+        print(userInfo)
     }
     
     private func prepareAndExecute(requireLogin requireLogin: Bool, fn: () -> ()) {

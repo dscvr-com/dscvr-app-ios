@@ -18,12 +18,14 @@ enum EnvType {
     case Development
     case Staging
     case Production
+    case localStaging
 }
 
 var S3URL: String {
     switch Env {
     case .Development: return "http://optonaut-ios-beta-dev.s3.amazonaws.com"
     case .Staging: return "http://optonaut-ios-beta-staging.s3.amazonaws.com"
+    case .localStaging: return "http://192.168.1.69:3000"
     case .Production: return "http://optonaut-ios-beta-production.s3.amazonaws.com"
     }
 }

@@ -252,6 +252,8 @@ class SaveViewController: UIViewController, RedNavbar {
         updateTabs()
         
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
+            print("isReady \(isReady)")
+            
             self?.tabController!.cameraButton.loading = !isReady
             self?.tabController!.rightButton.loading = !isReady
         }
@@ -328,7 +330,10 @@ class SaveViewController: UIViewController, RedNavbar {
                 successCallback: {
                     self.readyNotification.notify(())
                 },
-                cancelCallback: { true },
+                cancelCallback: {
+                    self.readyNotification.notify(())
+                    return true
+                },
                 alwaysCallback: {
                     self.tabController!.unlockUI()
                     self.tabController!.showUI()
@@ -668,7 +673,9 @@ extension SaveViewController: TabControllerDelegate {
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the current recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Retry", style: .Destructive, handler: { [weak self] _ in
             if let strongSelf = self {
-                strongSelf.navigationController!.pushViewController(CameraViewController(), animated: false)
+                let cameraViewController = CameraViewController()
+                strongSelf.navigationController!.pushViewController(cameraViewController, animated: false)
+                
                 strongSelf.navigationController!.viewControllers.removeAtIndex(strongSelf.navigationController!.viewControllers.count - 2)
             }
         }))
