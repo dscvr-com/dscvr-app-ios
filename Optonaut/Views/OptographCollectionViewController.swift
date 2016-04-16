@@ -165,7 +165,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         uiHidden.producer.startWithNext { [weak self] hidden in
             self?.navigationController?.setNavigationBarHidden(hidden, animated: false)
-            UIApplication.sharedApplication().setStatusBarHidden(hidden, withAnimation: .None)
+            //UIApplication.sharedApplication().setStatusBarHidden(hidden, withAnimation: .None)
             
             self?.collectionView!.scrollEnabled = !hidden
             

@@ -50,9 +50,8 @@
       "scale" : "1x"
     },
     {
-      "size" : "40x40",
       "idiom" : "ipad",
-      "filename" : "Icon-40@2x-1.png",
+      "size" : "40x40",
       "scale" : "2x"
     },
     {
@@ -71,9 +70,8 @@
       "scale" : "2x"
     },
     {
-      "size" : "60x60",
       "idiom" : "car",
-      "filename" : "Icon-60@2x-1.png",
+      "size" : "60x60",
       "scale" : "2x"
     },
     {

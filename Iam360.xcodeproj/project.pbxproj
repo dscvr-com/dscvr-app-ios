@@ -7,11 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590E05B21CBD3119000331CB /* SaveThetaViewController.swift */; };
+		590E05B51CBD3202000331CB /* theta.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 590E05B41CBD3202000331CB /* theta.JPG */; };
 		5936B1841CAD34F500F808D8 /* dynamicSeamer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */; };
 		5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */; };
 		5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */; };
 		5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */; };
 		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
+		598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598416411CBB896E00BD966D /* Icomoon.framework */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
 		8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F085AFC1BF549FE00607A25 /* PlaceholderTableViewCell.swift */; };
 		8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */; };
@@ -185,7 +188,6 @@
 		8FFB561A1C2C2BA900D2BE62 /* OptographCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */; };
 		8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */; };
 		8FFB561E1C2CA43C00D2BE62 /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */; };
-		8FFB56501C2D8A4D00D2BE62 /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */; };
 		8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB565C1C3055D000D2BE62 /* Migration0006.swift */; };
 		8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */; };
 		A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2B1BC87F7500C9EFE5 /* Recorder.mm */; };
@@ -259,6 +261,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		590E05B21CBD3119000331CB /* SaveThetaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveThetaViewController.swift; sourceTree = "<group>"; };
+		590E05B41CBD3202000331CB /* theta.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = theta.JPG; sourceTree = "<group>"; };
 		5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicSeamer.cpp; sourceTree = "<group>"; };
 		5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dynamicSeamer.hpp; sourceTree = "<group>"; };
 		5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = multiringStitcher.cpp; sourceTree = "<group>"; };
@@ -272,6 +276,7 @@
 		5936B1811CAD34F500F808D8 /* stitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcher.hpp; sourceTree = "<group>"; };
 		5936B1821CAD34F500F808D8 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
+		598416411CBB896E00BD966D /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
 		8F085AFC1BF549FE00607A25 /* PlaceholderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTableViewCell.swift; sourceTree = "<group>"; };
 		8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
@@ -457,7 +462,6 @@
 		8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OptographCollectionViewController.swift; path = ../OptographCollectionViewController.swift; sourceTree = "<group>"; };
 		8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographCollectionViewCell.swift; sourceTree = "<group>"; };
 		8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
-		8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Icomoon.framework; path = Frameworks/Icomoon.framework; sourceTree = "<group>"; };
 		8FFB565C1C3055D000D2BE62 /* Migration0006.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0006.swift; sourceTree = "<group>"; };
 		8FFCD5191BD833F200B39EF1 /* SearchHashtagTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchHashtagTableViewCell.swift; sourceTree = "<group>"; };
 		A5233E281BC87F7500C9EFE5 /* CommonExternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommonExternal.h; path = Optonaut/Stitcher/CommonExternal.h; sourceTree = SOURCE_ROOT; };
@@ -568,7 +572,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8FFB56501C2D8A4D00D2BE62 /* Icomoon.framework in Frameworks */,
 				8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */,
 				8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */,
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
@@ -586,6 +589,7 @@
 				8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */,
 				8F23AA5F1C01F8A5008926A8 /* Crashlytics.framework in Frameworks */,
 				8F23AA601C01F8A5008926A8 /* Fabric.framework in Frameworks */,
+				598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */,
 				8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */,
 				8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */,
 				8F50DCC61C485F8700A706A9 /* FBSDKShareKit.framework in Frameworks */,
@@ -660,11 +664,11 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				598416411CBB896E00BD966D /* Icomoon.framework */,
 				8F4715111C49688700663684 /* TwitterKitResources.bundle */,
 				8F47150F1C4964AD00663684 /* TwitterCore.framework */,
 				8F47150D1C49648F00663684 /* TwitterKit.framework */,
 				8F50DCC41C485F8700A706A9 /* FBSDKShareKit.framework */,
-				8FFB564F1C2D8A4D00D2BE62 /* Icomoon.framework */,
 				8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */,
 				8F23AA641C021CA4008926A8 /* Neon.framework */,
 				8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */,
@@ -799,10 +803,12 @@
 		8FAB9EF31B8F01DF00B4C8CB /* Camera */ = {
 			isa = PBXGroup;
 			children = (
+				590E05B41CBD3202000331CB /* theta.JPG */,
 				8FAB9EF41B8F01DF00B4C8CB /* CameraViewController.swift */,
 				8FAB9EF51B8F01DF00B4C8CB /* CameraViewModel.swift */,
 				8FAB9EF61B8F01DF00B4C8CB /* SaveViewController.swift */,
 				8FAB9EF71B8F01DF00B4C8CB /* SaveViewModel.swift */,
+				590E05B21CBD3119000331CB /* SaveThetaViewController.swift */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -1309,9 +1315,9 @@
 			productReference = 8FA86D4C1C08F2C80033CBA9 /* OptonautUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		8FCCA02A1B3806040091F1B1 /* Optonaut */ = {
+		8FCCA02A1B3806040091F1B1 /* Iam360 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "Optonaut" */;
+			buildConfigurationList = 8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "Iam360" */;
 			buildPhases = (
 				8FCCA0271B3806040091F1B1 /* Sources */,
 				8FCCA0281B3806040091F1B1 /* Frameworks */,
@@ -1324,7 +1330,7 @@
 			);
 			dependencies = (
 			);
-			name = Optonaut;
+			name = Iam360;
 			productName = Optonaut;
 			productReference = 8FCCA02B1B3806040091F1B1 /* IAM360.app */;
 			productType = "com.apple.product-type.application";
@@ -1376,7 +1382,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "Optonaut" */;
+			buildConfigurationList = 8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "Iam360" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1389,7 +1395,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8FCCA02A1B3806040091F1B1 /* Optonaut */,
+				8FCCA02A1B3806040091F1B1 /* Iam360 */,
 				8FCCA03F1B3806040091F1B1 /* OptonautTests */,
 				8FA86D4B1C08F2C80033CBA9 /* OptonautUITests */,
 			);
@@ -1411,6 +1417,7 @@
 				8F4715131C49698B00663684 /* TwitterKitResources.bundle in Resources */,
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
+				590E05B51CBD3202000331CB /* theta.JPG in Resources */,
 				A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
@@ -1551,6 +1558,7 @@
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,
 				8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */,
+				590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */,
 				8F23AA531BFF31B4008926A8 /* LocationTable.swift in Sources */,
 				A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */,
@@ -1688,12 +1696,12 @@
 /* Begin PBXTargetDependency section */
 		8FA86D521C08F2C80033CBA9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8FCCA02A1B3806040091F1B1 /* Optonaut */;
+			target = 8FCCA02A1B3806040091F1B1 /* Iam360 */;
 			targetProxy = 8FA86D511C08F2C80033CBA9 /* PBXContainerItemProxy */;
 		};
 		8FCCA0421B3806040091F1B1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8FCCA02A1B3806040091F1B1 /* Optonaut */;
+			target = 8FCCA02A1B3806040091F1B1 /* Iam360 */;
 			targetProxy = 8FCCA0411B3806040091F1B1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1851,7 +1859,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = IAM360;
-				PROVISIONING_PROFILE = "dc56005e-0f58-4bc8-9e11-cb17ce248bd2";
+				PROVISIONING_PROFILE = "e5070096-414c-4582-8bff-9825cd9b83a1";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1886,7 +1894,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = IAM360;
-				PROVISIONING_PROFILE = "dc56005e-0f58-4bc8-9e11-cb17ce248bd2";
+				PROVISIONING_PROFILE = "e5070096-414c-4582-8bff-9825cd9b83a1";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;
@@ -1939,7 +1947,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "Optonaut" */ = {
+		8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "Iam360" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FCCA0481B3806040091F1B1 /* Debug */,
@@ -1948,7 +1956,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "Optonaut" */ = {
+		8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "Iam360" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FCCA04B1B3806040091F1B1 /* Debug */,

@@ -26,6 +26,7 @@ extension DefaultsKeys {
     static let SessionShareToggledTwitter = DefaultsKey<Bool>("session_share_toggled_twitter")
     static let SessionShareToggledInstagram = DefaultsKey<Bool>("session_share_toggled_instagram")
     static let SessionUseMultiRing = DefaultsKey<Bool>("session_use_multi_ring")
+    static let SessionUploadMode = DefaultsKey<String?>("session_upload_mode")
 }
 
 let DefaultVRGlasses = "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"

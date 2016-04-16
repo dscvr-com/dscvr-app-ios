@@ -18,7 +18,8 @@ class LoginViewController: UIViewController {
     private let headView = UIView()
 //    private let skipTextView = BoundingLabel()
     private let backTextView = BoundingLabel()
-    private let logoView = UILabel()
+    //private let logoView = UILabel()
+    private var logoImageView = UIImageView()
     private let signupTabView = BoundingLabel()
     private let loginTabView = BoundingLabel()
     private let emailOrUserNameInputView = LineTextField()
@@ -74,11 +75,15 @@ class LoginViewController: UIViewController {
         backTextView.userInteractionEnabled = true
         headView.addSubview(backTextView)
         
-        logoView.text = String.iconWithName(.LogoText)
-        logoView.textAlignment = .Center
-        logoView.textColor = .whiteColor()
-        logoView.font = UIFont.iconOfSize(35)
-        headView.addSubview(logoView)
+//        logoView.text = String.iconWithName(.LogoText)
+//        logoView.textAlignment = .Center
+//        logoView.textColor = .whiteColor()
+//        logoView.font = UIFont.iconOfSize(35)
+//        headView.addSubview(logoView)
+        
+        let image: UIImage = UIImage(named: "logoLoginPage")!
+        logoImageView = UIImageView(image: image)
+        headView.addSubview(logoImageView)
         
         signupTabView.textColor = .whiteColor()
         signupTabView.textAlignment = .Center
@@ -197,7 +202,8 @@ class LoginViewController: UIViewController {
         headView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: size.height - 216 - 137) // 216: keyboard, 127: input fields
 //        skipTextView.anchorInCorner(.TopRight, xPad: 23, yPad: 23, width: 300, height: 20)
         backTextView.anchorInCorner(.TopRight, xPad: 23, yPad: 23, width: 300, height: 20)
-        logoView.anchorInCenter(width: 268, height: 84)
+        //logoView.anchorInCenter(width: 268, height: 84)
+        logoImageView.anchorInCenter(width: 150, height: 50)
         signupTabView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
         loginTabView.anchorInCorner(.BottomRight, xPad: 0, yPad: 21, width: size.width / 2, height: 20)
         emailOrUserNameInputView.align(.UnderCentered, relativeTo: headView, padding: 29, width: size.width - 50, height: emailOrUserNameInputView.frame.height)

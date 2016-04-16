@@ -11,8 +11,11 @@ import ReactiveCocoa
 import Async
 import Icomoon
 import SwiftyUserDefaults
+import Result
 
-class TabViewController: UIViewController {
+class TabViewController: UIViewController,
+                            UIImagePickerControllerDelegate,
+                            UINavigationControllerDelegate{
     
     enum ActiveSide: Equatable { case Left, Right }
     
@@ -44,6 +47,9 @@ class TabViewController: UIViewController {
     private var uiLocked = false
     
     var delegate: TabControllerDelegate?
+    
+    var imageView: UIImageView!
+    var imagePicker = UIImagePickerController()
     
     required init() {
         leftViewController = FeedNavViewController()
@@ -151,6 +157,42 @@ class TabViewController: UIViewController {
         
         uiWrapper.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
         view.addSubview(uiWrapper)
+        
+        imagePicker.delegate = self
+    }
+    
+    func openGallary()
+    {
+        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        self.presentViewController(imagePicker, animated: true, completion: nil)
+    }
+    
+    func uploadTheta(thetaImage:UIImage) {
+        
+        let createOptographViewController = SaveThetaViewController(thetaImage:thetaImage)
+        
+        createOptographViewController.hidesBottomBarWhenPushed = true
+        activeViewController.pushViewController(createOptographViewController, animated: false)
+        
+    }
+    
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            if pickedImage.size.height == 2688 && pickedImage.size.width == 5376 {
+                uploadTheta(pickedImage)
+            } else {
+                print("not a theta image")
+                let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+                activeViewController.presentViewController(alert, animated: true, completion: nil)
+            }
+        }
+        
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        //dismissViewControllerAnimated(true, completion: nil)
     }
     
     func showUI() {
@@ -508,8 +550,34 @@ extension DefaultTabControllerDelegate {
         case .Idle:
             tabController!.leftViewController.cleanup()
             tabController!.rightViewController.cleanup()
-            tabController!.activeViewController.pushViewController(CameraViewController(), animated: false)
-            //selectRingActivity()
+            
+            
+            let alert:UIAlertController=UIAlertController(title: "Select Mode", message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+            let cameraAction = UIAlertAction(title: "Optograph", style: UIAlertActionStyle.Default)
+            {
+                UIAlertAction in
+                Defaults[.SessionUploadMode] = "opto"
+                self.tabController!.activeViewController.pushViewController(CameraViewController(), animated: false)
+            }
+            let gallaryAction = UIAlertAction(title: "Upload Theta", style: UIAlertActionStyle.Default)
+            {
+                UIAlertAction in
+                Defaults[.SessionUploadMode] = "theta"
+                self.tabController!.openGallary()
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel)
+            {
+                UIAlertAction in
+            }
+            alert.addAction(cameraAction)
+            alert.addAction(gallaryAction)
+            alert.addAction(cancelAction)
+            
+            if UIDevice.currentDevice().userInterfaceIdiom == .Phone
+            {
+                self.tabController!.presentViewController(alert, animated: true, completion: nil)
+            }
+            
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
@@ -520,32 +588,17 @@ extension DefaultTabControllerDelegate {
         case .Uninitialized: ()
         }
     }
+    
     func onTouchOneRingButton() {
         Defaults[.SessionUseMultiRing] = false
         tabController!.oneRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
         tabController!.threeRingButton.backgroundColor = UIColor.grayColor()
+        tabController!.openGallary()
     }
     func onTouchThreeRingButton() {
         Defaults[.SessionUseMultiRing] = true
         tabController!.oneRingButton.backgroundColor = UIColor.grayColor()
         tabController!.threeRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
-    }
-    
-    func selectRingActivity() {
-        
-        let alert = UIAlertController(title: "Ring", message: "How many ring do you want?", preferredStyle: .Alert)
-        
-        let firstAction = UIAlertAction(title: "one", style: .Default) { (alert: UIAlertAction!) -> Void in
-            self.tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
-        }
-        
-        let secondAction = UIAlertAction(title: "three", style: .Default) { (alert: UIAlertAction!) -> Void in
-            self.tabController?.activeViewController.pushViewController(CameraViewController(), animated: false)
-        }
-        
-        alert.addAction(firstAction)
-        alert.addAction(secondAction)
-        tabController?.activeViewController.presentViewController(alert, animated: true, completion:nil)
     }
     
     func onTapLeftButton() {

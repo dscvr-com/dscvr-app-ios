@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Optonaut.xcodeproj">
+      location = "self:/Users/rjalkuino/Documents/BrewedConcepts/iam360_3/app-ios/Iam360.xcodeproj">
    </FileRef>
 </Workspace>

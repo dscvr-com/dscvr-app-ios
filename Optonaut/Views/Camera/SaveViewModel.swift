@@ -16,6 +16,7 @@ import SwiftyUserDefaults
 
 class SaveViewModel {
     
+    var optoId = MutableProperty<UUID>("")
     let text = MutableProperty<String>("")
     let isPrivate = MutableProperty<Bool>(false)
     let isReadyForSubmit = MutableProperty<Bool>(false)
@@ -32,6 +33,7 @@ class SaveViewModel {
     
     let optographBox: ModelBox<Optograph>
     var locationBox: ModelBox<Location>?
+    
     
     private let placeholder = MutableProperty<UIImage?>(nil)
     
@@ -83,6 +85,7 @@ class SaveViewModel {
         }
         
         readyNotification.signal.observeNext {
+            
             self.isLoggedIn.value = SessionService.isLoggedIn
             
             if self.isOnline.value && self.isLoggedIn.value {
@@ -90,7 +93,15 @@ class SaveViewModel {
                     "id": optograph.ID,
                     "stitcher_version": StitcherVersion,
                     "created_at": optograph.createdAt.toRFC3339String(),
+                    "optograph_type":"theta"
                 ]
+                var uploadModeStr = ""
+                if Defaults[.SessionUploadMode] == "theta" {
+                    uploadModeStr = "-theta"
+                } else {
+                    uploadModeStr = ""
+                }
+                
                 ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
                     .on(next: { [weak self] optograph in
                         self?.optographBox.insertOrUpdate { box in
@@ -101,7 +112,8 @@ class SaveViewModel {
                     })
                     .zipWith(self.placeholder.producer.ignoreNil().take(1).mapError({ _ in ApiError.Nil }))
                     .flatMap(.Latest) { (optograph, image) in
-                        return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset", multipartFormData: { form in
+                        
+                        return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset\(uploadModeStr)", multipartFormData: { form in
                             form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
                             form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
                         })
@@ -183,10 +195,6 @@ class SaveViewModel {
             }
         }
         
-//        stitcherFinished.producer.startWithNext { print("stich \($0)") }
-//        isInitialized.producer.startWithNext{ print("is Initialized \($0)") }
-//        locationLoading.producer.startWithNext{ print("location loading \($0)") }
-        
         isReadyForStitching <~ stitcherFinished.producer
             .combineLatestWith(isInitialized.producer).map(and)
             .filter(isTrue)
@@ -195,6 +203,41 @@ class SaveViewModel {
         isReadyForSubmit <~ isInitialized.producer
             .combineLatestWith(locationLoading.producer.map(negate)).map(and)
             .combineLatestWith(stitcherFinished.producer).map(and)
+        
+        isReadyForSubmit.producer
+            .filter(isTrue)
+            .startWithNext{_ in
+                self.uploadForThetaOk(optograph.ID)
+        }
+        
+    }
+    func uploadForThetaOk(optoId:UUID) {
+        let optographBox = Models.optographs[optoId]!
+        
+        optographBox.insertOrUpdate { box in
+            
+            box.model.isStitched = true
+            box.model.stitcherVersion = StitcherVersion
+            box.model.isInFeed = true
+            box.model.leftCubeTextureStatusUpload!.status[0] = true
+            box.model.leftCubeTextureStatusUpload!.status[1] = true
+            box.model.leftCubeTextureStatusUpload!.status[2] = true
+            box.model.leftCubeTextureStatusUpload!.status[3] = true
+            box.model.leftCubeTextureStatusUpload!.status[4] = true
+            box.model.leftCubeTextureStatusUpload!.status[5] = true
+            
+            box.model.rightCubeTextureStatusUpload!.status[0] = true
+            box.model.rightCubeTextureStatusUpload!.status[1] = true
+            box.model.rightCubeTextureStatusUpload!.status[2] = true
+            box.model.rightCubeTextureStatusUpload!.status[3] = true
+            box.model.rightCubeTextureStatusUpload!.status[4] = true
+            box.model.rightCubeTextureStatusUpload!.status[5] = true
+            
+            box.model.isPublished = true
+            box.model.isUploading = false
+        }
+        
+        
     }
     
     func submit(shouldBePublished: Bool, directionPhi: Double, directionTheta: Double) -> SignalProducer<Void, NoError> {

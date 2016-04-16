@@ -90,6 +90,7 @@ class CameraViewController: UIViewController {
             let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
             confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
             self?.presentViewController(confirmAlert, animated: true, completion: nil)
+            
         }
     }
     
@@ -764,7 +765,7 @@ class CameraViewController: UIViewController {
         let createOptographViewController = SaveViewController(recorderCleanup: recorderCleanup)
         createOptographViewController.hidesBottomBarWhenPushed = true
         navigationController!.pushViewController(createOptographViewController, animated: false)
-        navigationController!.viewControllers.removeAtIndex(1) // TODO remove at index: self
+        navigationController!.viewControllers.removeAtIndex(1)
     }
     
 }

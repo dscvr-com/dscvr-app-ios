@@ -150,9 +150,10 @@ class LoginOverlayViewController: UIViewController {
         loginManager.logInWithReadPermissions(readPermission, fromViewController: self) { [weak self] result, error in
             
             if error != nil || result.isCancelled {
-                print(error)
+                //print(error)
                 self?.viewModel.facebookPending.value = false
                 loginManager.logOut()
+                //self!.cancel()
             } else {
                 let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
                 let allPermissionsGranted = readPermission.reduce(true) { $0 && grantedPermissions.contains($1) }

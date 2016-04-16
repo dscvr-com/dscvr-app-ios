@@ -41,13 +41,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            }
             
 //            self.window?.rootViewController = tabBarViewController
+            
+            let notificationTypes: UIUserNotificationType = [UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound]
+            let pushNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: nil)
+            Mixpanel.sharedInstance().track("Launch.Notification")
+            application.registerUserNotificationSettings(pushNotificationSettings)
+            application.registerForRemoteNotifications()
             self.window?.rootViewController = TabViewController()
         }
-        let notificationTypes: UIUserNotificationType = [UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound]
-        let pushNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: nil)
-        application.registerUserNotificationSettings(pushNotificationSettings)
-        application.registerForRemoteNotifications()
-        
         return true
     }
     
@@ -74,6 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Re-register background task if necassary.
         StitchingService.onApplicationResuming()
+        UIApplication.sharedApplication().applicationIconBadgeNumber = 0;
     }
     
     func applicationWillTerminate(application: UIApplication) {
@@ -120,7 +122,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {
 //            tabBarViewController.activityNavViewController.activityTableViewController.viewModel.refreshNotification.notify(())
 //        }
-        print(userInfo)
     }
     
     private func prepareAndExecute(requireLogin requireLogin: Bool, fn: () -> ()) {
@@ -134,7 +135,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if case .Production = Env {
             Mixpanel.sharedInstanceWithToken("10ba57dae2871ca534c61f0f89bab97d")
         } else {
-            Mixpanel.sharedInstanceWithToken("544f3d4afdb4836ed2e070e33a328249")
+            //Mixpanel.sharedInstanceWithToken("544f3d4afdb4836ed2e070e33a328249")
+            Mixpanel.sharedInstanceWithToken("4acea0241fb1192f8f598174acbc8759")
         }
         
         try! DatabaseService.prepare()
@@ -165,7 +167,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        }
         
         VersionService.onOutdatedApiVersion {
-            let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of Optonaut. Please update to the newest version.", preferredStyle: .Alert)
+            let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of IAM360. Please update to the newest version.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Update", style: .Default, handler: { _ in
                 let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
                 let url = NSURL(string: "itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=\(appId!)&mt=8")
