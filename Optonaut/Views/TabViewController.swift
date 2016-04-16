@@ -593,7 +593,6 @@ extension DefaultTabControllerDelegate {
         Defaults[.SessionUseMultiRing] = false
         tabController!.oneRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
         tabController!.threeRingButton.backgroundColor = UIColor.grayColor()
-        tabController!.openGallary()
     }
     func onTouchThreeRingButton() {
         Defaults[.SessionUseMultiRing] = true
