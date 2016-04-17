@@ -130,8 +130,7 @@ class TabViewController: UIViewController,
                     self?.cameraButton.progress = nil
                     if self?.cameraButton.progressLocked == false {
                         self?.cameraButton.icon = .Camera
-                        self?.oneRingButton.hidden = false
-                        self?.threeRingButton.hidden = false
+                        self?.unhideRingButton()
                     }
                 case let .Stitching(progress):
                     self?.cameraButton.progress = CGFloat(progress)
@@ -164,6 +163,18 @@ class TabViewController: UIViewController,
     func openGallary()
     {
         imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        imagePicker.navigationBar.translucent = false
+        imagePicker.navigationBar.barTintColor = UIColor.Accent
+        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
+        imagePicker.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
+            NSForegroundColorAttributeName: UIColor.whiteColor(),
+        ]
+        
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+        imagePicker.setNavigationBarHidden(false, animated: false)
+        imagePicker.interactivePopGestureRecognizer?.enabled = false
+        
         self.presentViewController(imagePicker, animated: true, completion: nil)
     }
     
@@ -182,17 +193,16 @@ class TabViewController: UIViewController,
             if pickedImage.size.height == 2688 && pickedImage.size.width == 5376 {
                 uploadTheta(pickedImage)
             } else {
-                print("not a theta image")
                 let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-                activeViewController.presentViewController(alert, animated: true, completion: nil)
+                presentViewController(alert, animated: true, completion: nil)
             }
         }
         
         dismissViewControllerAnimated(true, completion: nil)
     }
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        //dismissViewControllerAnimated(true, completion: nil)
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
     func showUI() {
@@ -213,6 +223,14 @@ class TabViewController: UIViewController,
     
     func unlockUI() {
         uiLocked = false
+    }
+    func unhideRingButton() {
+        oneRingButton.hidden = false
+        threeRingButton.hidden = false
+    }
+    func hideRingButton() {
+        oneRingButton.hidden = true
+        threeRingButton.hidden = true
     }
     
     dynamic private func tapLeftButton() {

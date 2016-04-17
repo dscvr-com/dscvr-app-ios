@@ -262,9 +262,6 @@ class CameraViewController: UIViewController {
             self.recorder = Recorder(.Center)
         }
         
-        tabController!.oneRingButton.hidden = true
-        tabController!.threeRingButton.hidden = true
-        
         //recorder = Recorder(.Truncated)
         
         setupScene()
@@ -356,6 +353,8 @@ class CameraViewController: UIViewController {
         tabController!.leftButton.icon = .Cancel
         
         tabController!.rightButton.hidden = true
+        
+        tabController!.hideRingButton()
     }
     
     private func setupScene() {
