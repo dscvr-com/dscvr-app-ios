@@ -170,7 +170,6 @@ class TabViewController: UIViewController,
             NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
             NSForegroundColorAttributeName: UIColor.whiteColor(),
         ]
-        
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
         imagePicker.setNavigationBarHidden(false, animated: false)
         imagePicker.interactivePopGestureRecognizer?.enabled = false
@@ -184,9 +183,7 @@ class TabViewController: UIViewController,
         
         createOptographViewController.hidesBottomBarWhenPushed = true
         activeViewController.pushViewController(createOptographViewController, animated: false)
-        
     }
-    
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {

@@ -89,18 +89,29 @@ class SaveViewModel {
             self.isLoggedIn.value = SessionService.isLoggedIn
             
             if self.isOnline.value && self.isLoggedIn.value {
-                let postParameters = [
-                    "id": optograph.ID,
-                    "stitcher_version": StitcherVersion,
-                    "created_at": optograph.createdAt.toRFC3339String(),
-                    "optograph_type":"theta"
-                ]
+                
+                var postParameters = [String:String]()
+                
                 var uploadModeStr = ""
                 if Defaults[.SessionUploadMode] == "theta" {
                     uploadModeStr = "-theta"
+                    postParameters = [
+                        "id": optograph.ID,
+                        "stitcher_version": StitcherVersion,
+                        "created_at": optograph.createdAt.toRFC3339String(),
+                        "optograph_type":"theta"
+                    ]
                 } else {
                     uploadModeStr = ""
+                    postParameters = [
+                        "id": optograph.ID,
+                        "stitcher_version": StitcherVersion,
+                        "created_at": optograph.createdAt.toRFC3339String(),
+                        "optograph_type":"opto"
+                    ]
                 }
+                
+                print(postParameters)
                 
                 ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
                     .on(next: { [weak self] optograph in
@@ -207,12 +218,12 @@ class SaveViewModel {
         isReadyForSubmit.producer
             .filter(isTrue)
             .startWithNext{_ in
-                self.uploadForThetaOk(optograph.ID)
+                self.uploadForThetaOk()
         }
         
     }
-    func uploadForThetaOk(optoId:UUID) {
-        let optographBox = Models.optographs[optoId]!
+    func uploadForThetaOk() {
+        //let optographBox = Models.optographs[optoId]!
         
         optographBox.insertOrUpdate { box in
             

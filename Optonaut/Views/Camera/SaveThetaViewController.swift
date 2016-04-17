@@ -268,19 +268,10 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         updateTabs()
         
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
-            print("isReady \(isReady)")
             
             self?.tabController!.cameraButton.loading = !isReady
             self?.tabController!.rightButton.loading = !isReady
         }
-//
-//        viewModel.isReadyForStitching.producer
-//            .filter(isTrue)
-//            .startWithNext { [weak self] _ in
-//                if let strongSelf = self {
-//                    PipelineService.stitch(strongSelf.viewModel.optographBox.model.ID)
-//                }
-//        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -442,10 +433,21 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     }
     
     dynamic private func cancel() {
+        
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { _ in
             PipelineService.stopStitching()
-            self.dismissViewControllerAnimated(true, completion: nil)
+            
+            self.viewModel.optographBox.insertOrUpdate { box in
+                box.model.deletedAt = NSDate()
+            }
+            if StitchingService.hasUnstitchedRecordings() {
+                print("may hindi na stitch")
+                StitchingService.removeUnstitchedRecordings()
+            }
+            
+            self.navigationController!.popViewControllerAnimated(true)
+            
         }))
         confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))
         navigationController!.presentViewController(confirmAlert, animated: true, completion: nil)
