@@ -111,8 +111,6 @@ class SaveViewModel {
                     ]
                 }
                 
-                print(postParameters)
-                
                 ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
                     .on(next: { [weak self] optograph in
                         self?.optographBox.insertOrUpdate { box in
