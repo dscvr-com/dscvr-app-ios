@@ -8,7 +8,7 @@
 
 #include "imageSink.hpp"
 #include "storageSink.hpp"
-//#include "stitcherSink.hpp"
+#include "stitcherSink.hpp"
 #include "recorder.hpp"
 #include "intrinsics.hpp"
 #include "Recorder.h"
@@ -148,7 +148,7 @@ std::string debugPath;
 // TODO - using static variables here is dangerous.
 // Promote to class variables instead (somehow). 
 // optonaut::StorageSink storageSink(Stores::left, Stores::right);
-//optonaut::StitcherSink stitcherSink;
+optonaut::StitcherSink stitcherSink;
 optonaut::ImageSink imageSink(Stores::post);
 
 -(id)init:(RecorderMode)recorderMode {

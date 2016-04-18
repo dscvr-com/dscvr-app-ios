@@ -27,13 +27,13 @@
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>optonaut</string>
+				<string>iam360</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb1502357570058547</string>
+				<string>fb221219334902804</string>
 				<string>fbauth2</string>
 			</array>
 		</dict>
@@ -55,9 +55,9 @@
 		</array>
 	</dict>
 	<key>FacebookAppID</key>
-	<string>1502357570058547</string>
+	<string>221219334902804</string>
 	<key>FacebookDisplayName</key>
-	<string>Optonaut - Test</string>
+	<string>iam360-test</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -79,6 +79,8 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>akamaihd.net</key>

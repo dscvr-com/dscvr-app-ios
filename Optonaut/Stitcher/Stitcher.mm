@@ -95,7 +95,7 @@ struct StitcherCancellation {
     return result;
 }
 - (bool)hasUnstitchedRecordings {
-    return Stores::left.HasUnstitchedRecording() || Stores::right.HasUnstitchedRecording();
+    return Stores::post.HasUnstitchedRecording();
 }
 - (void)clear {
     if(callback != NULL) {

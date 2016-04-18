@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		49ED09251CB64847004B1D5A /* Alignment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49ED09241CB64847004B1D5A /* Alignment.mm */; };
+		5936B1841CAD34F500F808D8 /* dynamicSeamer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */; };
+		5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */; };
+		5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */; };
+		5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */; };
+		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
 		8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F085AFC1BF549FE00607A25 /* PlaceholderTableViewCell.swift */; };
 		8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */; };
@@ -188,8 +193,6 @@
 		A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2D1BC87F7500C9EFE5 /* Stitcher.mm */; };
 		A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */; };
 		A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E301BC87F7500C9EFE5 /* Stores.mm */; };
-		A55C80FA1BF91FDA00420E52 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55C80F61BF91FDA00420E52 /* simplePlaneStitcher.cpp */; };
-		A55C80FB1BF91FDA00420E52 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55C80F81BF91FDA00420E52 /* simpleSphereStitcher.cpp */; };
 		A568D4951BD12F5A008FF556 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4971BD13348008FF556 /* HeadTracker.mm */; };
 		A56CA4061BC070450078D7E8 /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FF1BC070450078D7E8 /* lut */; };
@@ -223,9 +226,6 @@
 		A5FD5D841BEA5A4E0031ED1E /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D611BEA5A4E0031ED1E /* support.cpp */; };
 		A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D681BEA5A4E0031ED1E /* recorder.cpp */; };
 		A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D711BEA5A4E0031ED1E /* monoStitcher.cpp */; };
-		A5FD5D871BEA5A4E0031ED1E /* dynamicSeamer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D741BEA5A4E0031ED1E /* dynamicSeamer.cpp */; };
-		A5FD5D881BEA5A4E0031ED1E /* multiringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D761BEA5A4E0031ED1E /* multiringStitcher.cpp */; };
-		A5FD5D891BEA5A4E0031ED1E /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D781BEA5A4E0031ED1E /* ringStitcher.cpp */; };
 		A5FD5D8B1BEA5A570031ED1E /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5FD5D8A1BEA5A570031ED1E /* lib */; };
 /* End PBXBuildFile section */
 
@@ -262,8 +262,21 @@
 /* Begin PBXFileReference section */
 		49ED09231CB64847004B1D5A /* Alignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = Optonaut/Stitcher/Alignment.h; sourceTree = SOURCE_ROOT; };
 		49ED09241CB64847004B1D5A /* Alignment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alignment.mm; path = Optonaut/Stitcher/Alignment.mm; sourceTree = SOURCE_ROOT; };
-		49ED09261CB6485D004B1D5A /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
 		49ED09271CB64964004B1D5A /* imageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSink.hpp; sourceTree = "<group>"; };
+		49ED09281CB661CC004B1D5A /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
+		5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicSeamer.cpp; sourceTree = "<group>"; };
+		5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dynamicSeamer.hpp; sourceTree = "<group>"; };
+		5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = multiringStitcher.cpp; sourceTree = "<group>"; };
+		5936B17A1CAD34F500F808D8 /* multiringStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = multiringStitcher.hpp; sourceTree = "<group>"; };
+		5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ringStitcher.cpp; sourceTree = "<group>"; };
+		5936B17C1CAD34F500F808D8 /* ringStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ringStitcher.hpp; sourceTree = "<group>"; };
+		5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simplePlaneStitcher.cpp; sourceTree = "<group>"; };
+		5936B17E1CAD34F500F808D8 /* simplePlaneStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simplePlaneStitcher.hpp; sourceTree = "<group>"; };
+		5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simpleSphereStitcher.cpp; sourceTree = "<group>"; };
+		5936B1801CAD34F500F808D8 /* simpleSphereStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simpleSphereStitcher.hpp; sourceTree = "<group>"; };
+		5936B1811CAD34F500F808D8 /* stitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcher.hpp; sourceTree = "<group>"; };
+		5936B1821CAD34F500F808D8 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
+		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
 		8F085AFC1BF549FE00607A25 /* PlaceholderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceholderTableViewCell.swift; sourceTree = "<group>"; };
 		8F0A79561BC47F2700BCD9E3 /* BackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
@@ -425,7 +438,7 @@
 		8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KMPlaceholderTextView.framework; path = Carthage/Build/iOS/KMPlaceholderTextView.framework; sourceTree = "<group>"; };
 		8FCA92E11BC7180B004913E5 /* OptographOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographOptions.swift; sourceTree = "<group>"; };
 		8FCADEDF1BAB1A080018674B /* OnboardingInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingInfoViewController.swift; sourceTree = "<group>"; };
-		8FCCA02B1B3806040091F1B1 /* Optonaut.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Optonaut.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FCCA02B1B3806040091F1B1 /* IAM360.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IAM360.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCCA02F1B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptonautTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCCA0451B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -467,13 +480,8 @@
 		A5376ED21C4DA163004EFE88 /* iterativeBundleAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = iterativeBundleAligner.hpp; sourceTree = "<group>"; };
 		A5376ED31C4EBEF1004EFE88 /* stereoSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stereoSink.hpp; sourceTree = "<group>"; };
 		A5376ED41C4EBEF1004EFE88 /* storageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = storageSink.hpp; sourceTree = "<group>"; };
-		A5376ED51C4EBFEC004EFE88 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
 		A547FA101C5578D500FBC17D /* jumpFilter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = jumpFilter.hpp; sourceTree = "<group>"; };
 		A547FA111C5578D500FBC17D /* ringCloser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ringCloser.hpp; sourceTree = "<group>"; };
-		A55C80F61BF91FDA00420E52 /* simplePlaneStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simplePlaneStitcher.cpp; sourceTree = "<group>"; };
-		A55C80F71BF91FDA00420E52 /* simplePlaneStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simplePlaneStitcher.hpp; sourceTree = "<group>"; };
-		A55C80F81BF91FDA00420E52 /* simpleSphereStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = simpleSphereStitcher.cpp; sourceTree = "<group>"; };
-		A55C80F91BF91FDA00420E52 /* simpleSphereStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = simpleSphereStitcher.hpp; sourceTree = "<group>"; };
 		A55C80FC1BF920D000420E52 /* planarCorrelator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = planarCorrelator.hpp; sourceTree = "<group>"; };
 		A568D4961BD13171008FF556 /* HeadTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeadTracker.h; path = Optonaut/Vendor/HeadTracker.h; sourceTree = SOURCE_ROOT; };
 		A568D4971BD13348008FF556 /* HeadTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HeadTracker.mm; path = Optonaut/Vendor/HeadTracker.mm; sourceTree = SOURCE_ROOT; };
@@ -550,15 +558,6 @@
 		A5FD5D6F1BEA5A4E0031ED1E /* trivialAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = trivialAligner.hpp; sourceTree = "<group>"; };
 		A5FD5D711BEA5A4E0031ED1E /* monoStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = monoStitcher.cpp; sourceTree = "<group>"; };
 		A5FD5D721BEA5A4E0031ED1E /* monoStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = monoStitcher.hpp; sourceTree = "<group>"; };
-		A5FD5D741BEA5A4E0031ED1E /* dynamicSeamer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicSeamer.cpp; sourceTree = "<group>"; };
-		A5FD5D751BEA5A4E0031ED1E /* dynamicSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dynamicSeamer.hpp; sourceTree = "<group>"; };
-		A5FD5D761BEA5A4E0031ED1E /* multiringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = multiringStitcher.cpp; sourceTree = "<group>"; };
-		A5FD5D771BEA5A4E0031ED1E /* multiringStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = multiringStitcher.hpp; sourceTree = "<group>"; };
-		A5FD5D781BEA5A4E0031ED1E /* ringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ringStitcher.cpp; sourceTree = "<group>"; };
-		A5FD5D791BEA5A4E0031ED1E /* ringStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ringStitcher.hpp; sourceTree = "<group>"; };
-		A5FD5D7A1BEA5A4E0031ED1E /* stitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcher.hpp; sourceTree = "<group>"; };
-		A5FD5D7B1BEA5A4E0031ED1E /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
-		A5FD5D7C1BEA5A4E0031ED1E /* thresholdSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = thresholdSeamer.hpp; sourceTree = "<group>"; };
 		A5FD5D8A1BEA5A570031ED1E /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -613,6 +612,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5936B1761CAD34F500F808D8 /* stitcher */ = {
+			isa = PBXGroup;
+			children = (
+				49ED09281CB661CC004B1D5A /* globalAlignment.hpp */,
+				5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */,
+				5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */,
+				5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */,
+				5936B17A1CAD34F500F808D8 /* multiringStitcher.hpp */,
+				5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */,
+				5936B17C1CAD34F500F808D8 /* ringStitcher.hpp */,
+				5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */,
+				5936B17E1CAD34F500F808D8 /* simplePlaneStitcher.hpp */,
+				5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */,
+				5936B1801CAD34F500F808D8 /* simpleSphereStitcher.hpp */,
+				5936B1811CAD34F500F808D8 /* stitcher.hpp */,
+				5936B1821CAD34F500F808D8 /* stitcherSink.hpp */,
+				5936B1831CAD34F500F808D8 /* stitchingResult.hpp */,
+			);
+			path = stitcher;
+			sourceTree = "<group>";
+		};
 		8F23AA401BFF31B4008926A8 /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
@@ -1017,7 +1037,7 @@
 		8FCCA02C1B3806040091F1B1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8FCCA02B1B3806040091F1B1 /* Optonaut.app */,
+				8FCCA02B1B3806040091F1B1 /* IAM360.app */,
 				8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */,
 				8FA86D4C1C08F2C80033CBA9 /* OptonautUITests.xctest */,
 			);
@@ -1073,6 +1093,7 @@
 		8FD7F85C1B5924D5001680AA /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				5936B1761CAD34F500F808D8 /* stitcher */,
 				A5F8AF221C4B1B9300072032 /* debug */,
 				A5FD5D8A1BEA5A570031ED1E /* lib */,
 				A5FD5D411BEA5A4E0031ED1E /* common */,
@@ -1081,7 +1102,6 @@
 				A5FD5D5C1BEA5A4E0031ED1E /* math */,
 				A5FD5D631BEA5A4E0031ED1E /* recorder */,
 				A5FD5D701BEA5A4E0031ED1E /* stereo */,
-				A5FD5D731BEA5A4E0031ED1E /* stitcher */,
 			);
 			name = Stitcher;
 			path = stitcher/src;
@@ -1277,28 +1297,6 @@
 			path = stereo;
 			sourceTree = "<group>";
 		};
-		A5FD5D731BEA5A4E0031ED1E /* stitcher */ = {
-			isa = PBXGroup;
-			children = (
-				49ED09261CB6485D004B1D5A /* globalAlignment.hpp */,
-				A5376ED51C4EBFEC004EFE88 /* stitcherSink.hpp */,
-				A55C80F61BF91FDA00420E52 /* simplePlaneStitcher.cpp */,
-				A55C80F71BF91FDA00420E52 /* simplePlaneStitcher.hpp */,
-				A55C80F81BF91FDA00420E52 /* simpleSphereStitcher.cpp */,
-				A55C80F91BF91FDA00420E52 /* simpleSphereStitcher.hpp */,
-				A5FD5D741BEA5A4E0031ED1E /* dynamicSeamer.cpp */,
-				A5FD5D751BEA5A4E0031ED1E /* dynamicSeamer.hpp */,
-				A5FD5D761BEA5A4E0031ED1E /* multiringStitcher.cpp */,
-				A5FD5D771BEA5A4E0031ED1E /* multiringStitcher.hpp */,
-				A5FD5D781BEA5A4E0031ED1E /* ringStitcher.cpp */,
-				A5FD5D791BEA5A4E0031ED1E /* ringStitcher.hpp */,
-				A5FD5D7A1BEA5A4E0031ED1E /* stitcher.hpp */,
-				A5FD5D7B1BEA5A4E0031ED1E /* stitchingResult.hpp */,
-				A5FD5D7C1BEA5A4E0031ED1E /* thresholdSeamer.hpp */,
-			);
-			path = stitcher;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1337,7 +1335,7 @@
 			);
 			name = Optonaut;
 			productName = Optonaut;
-			productReference = 8FCCA02B1B3806040091F1B1 /* Optonaut.app */;
+			productReference = 8FCCA02B1B3806040091F1B1 /* IAM360.app */;
 			productType = "com.apple.product-type.application";
 		};
 		8FCCA03F1B3806040091F1B1 /* OptonautTests */ = {
@@ -1522,13 +1520,11 @@
 				8F23AA591BFF3229008926A8 /* Migration0002.swift in Sources */,
 				8F5335B21BDBE0910058961A /* ActivityFollowTableViewCell.swift in Sources */,
 				8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */,
-				A55C80FB1BF91FDA00420E52 /* simpleSphereStitcher.cpp in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
 				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
 				8FFB561E1C2CA43C00D2BE62 /* TabViewController.swift in Sources */,
 				A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */,
 				8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */,
-				A5FD5D891BEA5A4E0031ED1E /* ringStitcher.cpp in Sources */,
 				8F4186071C552958009E1E3F /* ProfileTileCollectionViewCell.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
@@ -1550,9 +1546,11 @@
 				8F23AA521BFF31B4008926A8 /* HashtagTable.swift in Sources */,
 				8FC7E3761BD15B9D00E97CC3 /* SO3Util.mm in Sources */,
 				8F900B471B839E690085566C /* Location.swift in Sources */,
+				5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */,
 				8F1287E91BA8A9730098ED24 /* NSURLExtensions.swift in Sources */,
 				8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */,
 				A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */,
+				5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */,
 				8FD845B81BC870B90064048D /* Debug.swift in Sources */,
@@ -1586,6 +1584,7 @@
 				8F23AA4C1BFF31B4008926A8 /* ActivityResourceCommentTable.swift in Sources */,
 				8F23AA4F1BFF31B4008926A8 /* ActivityResourceViewsTable.swift in Sources */,
 				8FAB9F801B8F03E800B4C8CB /* UIKitExtensions.swift in Sources */,
+				5936B1841CAD34F500F808D8 /* dynamicSeamer.cpp in Sources */,
 				8F5335B01BDBE0840058961A /* ActivityViewsTableViewCell.swift in Sources */,
 				A5DE71E91BE28A7400316F82 /* Distortion.swift in Sources */,
 				8F5335AC1BDBCB610058961A /* ActivityTableViewCell.swift in Sources */,
@@ -1604,7 +1603,6 @@
 				8FD845C11BC9BBFF0064048D /* PipelineService.swift in Sources */,
 				8FDBEE7B1C5D2FF500696D3F /* LoginOverlayViewModel.swift in Sources */,
 				8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */,
-				A5FD5D871BEA5A4E0031ED1E /* dynamicSeamer.cpp in Sources */,
 				8FAB9F541B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift in Sources */,
 				8FC7E3771BD15B9D00E97CC3 /* Vector3d.mm in Sources */,
 				8F5335AA1BDBC09A0058961A /* ActivityResourceFollow.swift in Sources */,
@@ -1644,7 +1642,6 @@
 				8F7738151B380F5D001F642B /* Optograph.swift in Sources */,
 				8F4185FD1C52DBBD009E1E3F /* LocationApiModel.swift in Sources */,
 				8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */,
-				A5FD5D881BEA5A4E0031ED1E /* multiringStitcher.cpp in Sources */,
 				8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */,
@@ -1656,6 +1653,7 @@
 				8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */,
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
 				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
+				5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
@@ -1669,13 +1667,13 @@
 				8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */,
 				8F5335A81BDBBFE30058961A /* ActivityResourceViews.swift in Sources */,
 				8F8E32D01BFE043200E09392 /* DeviceTokenService.swift in Sources */,
+				5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */,
 				8F23AA781C072702008926A8 /* BoundingLabel.swift in Sources */,
 				8FC7E3751BD15B9D00E97CC3 /* OrientationEKF.mm in Sources */,
 				8F7738161B380F5D001F642B /* Person.swift in Sources */,
 				A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */,
 				A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */,
 				8F4186031C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift in Sources */,
-				A55C80FA1BF91FDA00420E52 /* simplePlaneStitcher.cpp in Sources */,
 				8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */,
 				49ED09251CB64847004B1D5A /* Alignment.mm in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,
@@ -1857,11 +1855,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/stitcher/vendor",
 				);
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.Optonaut;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
+				PRODUCT_NAME = IAM360;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1893,9 +1892,10 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/stitcher/vendor",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.Optonaut;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
+				PRODUCT_NAME = IAM360;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};

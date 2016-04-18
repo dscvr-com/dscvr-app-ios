@@ -65,7 +65,7 @@ class StitchingService {
         }
         
         assert(!isStitching())
-        assert(hasUnstitchedRecordings())
+        
         
         currentOptograph = optographID
         
@@ -86,6 +86,9 @@ class StitchingService {
             
             let globalAligner = Alignment()
             globalAligner.align()
+            
+            
+            assert(hasUnstitchedRecordings())
             
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
