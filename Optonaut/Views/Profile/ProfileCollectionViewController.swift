@@ -26,6 +26,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     private let rightBarButton = UILabel()
     
     init(personID: UUID) {
+        
         profileViewModel = ProfileViewModel(personID: personID)
         collectionViewModel = ProfileOptographsViewModel(personID: personID)
         

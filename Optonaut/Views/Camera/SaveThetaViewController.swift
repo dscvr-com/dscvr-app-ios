@@ -385,6 +385,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         tabController!.cameraButton.backgroundColor = .Accent
         
         tabController!.bottomGradientOffset.value = 0
+        tabController!.hideRingButton()
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -442,7 +443,6 @@ class SaveThetaViewController: UIViewController, RedNavbar {
                 box.model.deletedAt = NSDate()
             }
             if StitchingService.hasUnstitchedRecordings() {
-                print("may hindi na stitch")
                 StitchingService.removeUnstitchedRecordings()
             }
             

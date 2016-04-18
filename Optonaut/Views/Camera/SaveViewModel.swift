@@ -107,7 +107,7 @@ class SaveViewModel {
                         "id": optograph.ID,
                         "stitcher_version": StitcherVersion,
                         "created_at": optograph.createdAt.toRFC3339String(),
-                        "optograph_type":"opto"
+                        "optograph_type":"optograph"
                     ]
                 }
                 

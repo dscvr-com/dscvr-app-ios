@@ -23,7 +23,7 @@ protocol Model {
 }
 
 protocol MergeApiModel: Model {
-    typealias AM: ApiModel
+    associatedtype AM: ApiModel
     
     mutating func mergeApiModel(apiModel: AM)
     static func newInstance() -> Self

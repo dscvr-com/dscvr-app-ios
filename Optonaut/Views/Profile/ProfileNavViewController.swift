@@ -18,6 +18,8 @@ class ProfileNavViewController: NavigationController {
         } else {
             SessionService.loginNotifiaction.signal.observeNext {
                 self.popToRootViewControllerAnimated(false)
+                print("id ko ito",SessionService.personID)
+                
                 self.pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
             }
         }

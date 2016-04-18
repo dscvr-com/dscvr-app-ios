@@ -130,6 +130,7 @@ class TabViewController: UIViewController,
                     self?.cameraButton.progress = nil
                     if self?.cameraButton.progressLocked == false {
                         self?.cameraButton.icon = .Camera
+                        self?.rightButton.loading = false
                         self?.unhideRingButton()
                     }
                 case let .Stitching(progress):

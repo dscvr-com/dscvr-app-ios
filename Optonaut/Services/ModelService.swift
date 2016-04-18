@@ -112,6 +112,7 @@ extension ModelCacheType {
             return create(model)
         }
         
+        
         if model.updatedAt > box.model.updatedAt {
             box.replace(model)
         }
