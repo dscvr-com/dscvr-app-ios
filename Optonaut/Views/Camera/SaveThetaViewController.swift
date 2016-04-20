@@ -18,6 +18,7 @@ import ObjectMapper
 import FBSDKLoginKit
 import TwitterKit
 import SpriteKit
+import SwiftyUserDefaults
 
 class SaveThetaViewController: UIViewController, RedNavbar {
     
@@ -374,7 +375,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         tabController!.leftButton.icon = .Camera
         tabController!.leftButton.hidden = false
         tabController!.leftButton.color = .Light
-        
+    
         tabController!.rightButton.title = "POST LATER"
         tabController!.rightButton.icon = .Clock
         tabController!.rightButton.hidden = false
@@ -657,11 +658,14 @@ class SaveThetaViewController: UIViewController, RedNavbar {
                     //                    self?.tabController!.cameraButton.progress = 0
                     self?.tabController!.updateActiveTab(.Right)
                     self?.navigationController!.popViewControllerAnimated(false)
+                    
+                    if Defaults[.SessionUploadMode] == "theta" {
+                        self?.viewModel.uploadForThetaOk()
+                    }
                 }
             )
             .start()
     }
-    
 }
 
 

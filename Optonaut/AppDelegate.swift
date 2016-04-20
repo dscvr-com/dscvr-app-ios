@@ -125,6 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func prepareAndExecute(requireLogin requireLogin: Bool, fn: () -> ()) {
+        
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
 //        #if !DEBUG

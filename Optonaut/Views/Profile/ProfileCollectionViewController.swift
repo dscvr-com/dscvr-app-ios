@@ -14,8 +14,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     private let queue = dispatch_queue_create("profile_collection_view", DISPATCH_QUEUE_SERIAL)
     
-    private let profileViewModel: ProfileViewModel
-    private let collectionViewModel: ProfileOptographsViewModel
+    private var profileViewModel: ProfileViewModel
+    private var collectionViewModel: ProfileOptographsViewModel
     private var optographIDs: [UUID] = []
 //    private let imageCache: CollectionImageCache
     
@@ -166,6 +166,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         collectionViewModel.refreshNotification.notify(())
         
+        //profileViewModel = ProfileViewModel(personID: SessionService.personID)
+        
         collectionViewModel.isActive.value = true
         
 //        view.bounds = UIScreen.mainScreen().bounds
@@ -230,6 +232,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             let optographID = optographIDs[indexPath.item - 1]
             cell.bind(optographID)
+            cell.backgroundColor = UIColor.blackColor()
             
             return cell
         }
@@ -248,7 +251,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             return CGSize(width: collectionView.frame.width, height: 248 + textHeight)
         } else {
-            let width = (collectionView.frame.width - 4) / 3 - 0.000001
+//            let width = (collectionView.frame.width - 15) / 3 - 0.000001
+            let width = (self.view.frame.size.width-5) / 3 - 0.000001
             return CGSize(width: width, height: width)
         }
     }

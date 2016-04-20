@@ -40,6 +40,7 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
+        //imageView.frame = CGRect(x:0,y:0,width: frame.size.width-30,height:frame.size.height)
         imageView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
         viewModel.uploadStatus.producer.equalsTo(.Uploaded)
             .combineLatestWith(viewModel.optographID.producer)
@@ -48,6 +49,7 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
             .startWithNext { [weak self] (isUploaded, optographID) in
                 if isUploaded {
                     let url = TextureURL(optographID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
+                    print("image url >> \(url) <<")
                     self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
                 } else {
                     let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)

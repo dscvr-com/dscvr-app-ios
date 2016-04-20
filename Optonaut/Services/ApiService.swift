@@ -131,7 +131,6 @@ class ApiService<T: Mappable> {
             .on(failed: { error in
                 if error.suspicious {
 //                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
-                    print(error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
                 }
             })
@@ -182,7 +181,6 @@ class ApiService<T: Mappable> {
                         
                         do {
                             let data = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
-                            print(data)
                         } catch {}
                         
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode ?? -1, message: error.description, error: error)
@@ -192,7 +190,6 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-                                    print(json)
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
                                     } else if let array = Mapper<T>().mapArray(json) {
@@ -222,7 +219,6 @@ class ApiService<T: Mappable> {
             .on(failed: { error in
                 if error.suspicious {
 //                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
-                    print(error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
                 }
             })

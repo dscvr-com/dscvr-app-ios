@@ -16,7 +16,6 @@ import SwiftyUserDefaults
 
 class SaveViewModel {
     
-    var optoId = MutableProperty<UUID>("")
     let text = MutableProperty<String>("")
     let isPrivate = MutableProperty<Bool>(false)
     let isReadyForSubmit = MutableProperty<Bool>(false)
@@ -110,6 +109,7 @@ class SaveViewModel {
                         "optograph_type":"optograph"
                     ]
                 }
+                print(postParameters)
                 
                 ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
                     .on(next: { [weak self] optograph in
@@ -213,37 +213,43 @@ class SaveViewModel {
             .combineLatestWith(locationLoading.producer.map(negate)).map(and)
             .combineLatestWith(stitcherFinished.producer).map(and)
         
-        isReadyForSubmit.producer
-            .filter(isTrue)
-            .startWithNext{_ in
-                self.uploadForThetaOk()
-        }
-        
     }
     func uploadForThetaOk() {
-        //let optographBox = Models.optographs[optoId]!
+        
+        let optograph = optographBox.model
         
         optographBox.insertOrUpdate { box in
             
             box.model.isStitched = true
             box.model.stitcherVersion = StitcherVersion
             box.model.isInFeed = true
-            box.model.leftCubeTextureStatusUpload!.status[0] = true
-            box.model.leftCubeTextureStatusUpload!.status[1] = true
-            box.model.leftCubeTextureStatusUpload!.status[2] = true
-            box.model.leftCubeTextureStatusUpload!.status[3] = true
-            box.model.leftCubeTextureStatusUpload!.status[4] = true
-            box.model.leftCubeTextureStatusUpload!.status[5] = true
             
-            box.model.rightCubeTextureStatusUpload!.status[0] = true
-            box.model.rightCubeTextureStatusUpload!.status[1] = true
-            box.model.rightCubeTextureStatusUpload!.status[2] = true
-            box.model.rightCubeTextureStatusUpload!.status[3] = true
-            box.model.rightCubeTextureStatusUpload!.status[4] = true
-            box.model.rightCubeTextureStatusUpload!.status[5] = true
+            box.model.leftCubeTextureStatusUpload?.status[0] = true
+            box.model.leftCubeTextureStatusUpload?.status[1] = true
+            box.model.leftCubeTextureStatusUpload?.status[2] = true
+            box.model.leftCubeTextureStatusUpload?.status[3] = true
+            box.model.leftCubeTextureStatusUpload?.status[4] = true
+            box.model.leftCubeTextureStatusUpload?.status[5] = true
+            
+            box.model.rightCubeTextureStatusUpload?.status[0] = true
+            box.model.rightCubeTextureStatusUpload?.status[1] = true
+            box.model.rightCubeTextureStatusUpload?.status[2] = true
+            box.model.rightCubeTextureStatusUpload?.status[3] = true
+            box.model.rightCubeTextureStatusUpload?.status[4] = true
+            box.model.rightCubeTextureStatusUpload?.status[5] = true
+            
+            box.model.rightCubeTextureStatusSave = nil
+            box.model.leftCubeTextureStatusSave = nil
+            
+            box.model.rightCubeTextureStatusUpload = nil
+            box.model.rightCubeTextureStatusUpload = nil
             
             box.model.isPublished = true
             box.model.isUploading = false
+            
+            PipelineService.stitchingStatus.value = .Stitching(1)
+            PipelineService.stitchingStatus.value = .StitchingFinished(optograph.ID)
+            
         }
         
         
@@ -257,7 +263,6 @@ class SaveViewModel {
             box.model.directionPhi = directionPhi
             box.model.directionTheta = directionTheta
         }
-        
         if isOnline.value && isLoggedIn.value {
             let optograph = optographBox.model
             var parameters: [String: AnyObject] = [
@@ -280,6 +285,8 @@ class SaveViewModel {
                     "poi": location.POI,
                 ]
             }
+            
+            print("this is my paramteters \(parameters) this is my id \(optograph.ID)")
             
             return ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: parameters)
                 .ignoreError()
