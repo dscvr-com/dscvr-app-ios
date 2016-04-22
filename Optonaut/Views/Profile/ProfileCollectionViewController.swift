@@ -44,9 +44,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        profileViewModel.userName.producer.startWithNext { [weak self] userName in
-            self?.title = userName.uppercaseString
-        }
+//        profileViewModel.userName.producer.startWithNext { [weak self] userName in
+//            self?.title = userName.uppercaseString
+//        }
         
         originalBackButton = navigationItem.leftBarButtonItem
         

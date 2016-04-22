@@ -145,6 +145,11 @@ class PipelineService {
     private static func upload(optographID: UUID, side: TextureSide, face: Int) {
         Async.customQueue(uploadQueue) {
             
+            switch side {
+                case .Left: print("uploading left \(face)")
+                case .Right: print("uploading right \(face)")
+            }
+            
             let optographBox = Models.optographs[optographID]!
             
             switch side {

@@ -15,7 +15,7 @@ class ActivityFollowTableViewCell: ActivityTableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         causingImageView.userInteractionEnabled = true
-        causingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        causingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityFollowTableViewCell.pushProfile)))
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -38,6 +38,7 @@ class TabViewController: UIViewController,
     private let bottomGradient = CAGradientLayer()
     
     let bottomGradientOffset = MutableProperty<CGFloat>(126)
+    let isThetaImage = MutableProperty<Bool>(false)
     
     let leftViewController: NavigationController
     let rightViewController: NavigationController
@@ -160,6 +161,20 @@ class TabViewController: UIViewController,
         
         imagePicker.delegate = self
     }
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        isThetaImage.producer
+        .filter(isTrue)
+            .startWithNext{ _ in
+                let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler:{ _ in
+                    self.isThetaImage.value = false
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+    }
     
     func openGallary()
     {
@@ -191,9 +206,7 @@ class TabViewController: UIViewController,
             if pickedImage.size.height == 2688 && pickedImage.size.width == 5376 {
                 uploadTheta(pickedImage)
             } else {
-                let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-                presentViewController(alert, animated: true, completion: nil)
+                isThetaImage.value = true
             }
         }
         
@@ -589,10 +602,7 @@ extension DefaultTabControllerDelegate {
             alert.addAction(gallaryAction)
             alert.addAction(cancelAction)
             
-            if UIDevice.currentDevice().userInterfaceIdiom == .Phone
-            {
-                self.tabController!.presentViewController(alert, animated: true, completion: nil)
-            }
+            tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
             
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)

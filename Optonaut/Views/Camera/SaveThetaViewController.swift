@@ -440,14 +440,14 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { _ in
             PipelineService.stopStitching()
             
-            self.viewModel.optographBox.insertOrUpdate { box in
-                box.model.deletedAt = NSDate()
-            }
-            if StitchingService.hasUnstitchedRecordings() {
-                StitchingService.removeUnstitchedRecordings()
-            }
-            
-            self.navigationController!.popViewControllerAnimated(true)
+//            self.viewModel.optographBox.insertOrUpdate { box in
+//                box.model.deletedAt = NSDate()
+//            }
+//            if StitchingService.hasUnstitchedRecordings() {
+//                StitchingService.removeUnstitchedRecordings()
+//            }
+//            
+//            self.navigationController!.popViewControllerAnimated(true)
             
         }))
         confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))

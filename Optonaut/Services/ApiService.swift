@@ -40,7 +40,6 @@ class ApiService<T: Mappable> {
         switch Env {
         case .Development: return "optonaut.ngrok.io"
         case .Staging: return "api-staging.iam360.io"
-        //case .Staging: return "optonaut.ngrok.io"
         case .localStaging: return "192.168.1.69:3000"
         case .Production: return "api-v8-production.optonaut.co"
         }

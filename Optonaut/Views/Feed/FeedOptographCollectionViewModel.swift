@@ -126,7 +126,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
     dynamic func refresh() {
         refreshNotification.notify(())
         refreshTimer?.invalidate()
-        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: "refresh", userInfo: nil, repeats: true)
+        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: #selector(FeedOptographCollectionViewModel.refresh), userInfo: nil, repeats: true)
     }
     
     func loadMore() {

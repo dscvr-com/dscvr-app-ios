@@ -50,7 +50,7 @@ extension OptographOptions {
         
         if optograph.isPublished {
             actionAlert.addAction(UIAlertAction(title: "Share", style: .Default, handler: { _ in
-                let baseURL = Env == .Staging ? "staging.opto.space:8005" : "opto.space"
+                let baseURL = Env == .Staging ? "share.iam360.io" : "share.iam360.io"
                 if let url = NSURL(string: "http://\(baseURL)/\(optograph.shareAlias)") {
                     let textToShare = "Check out this awesome Optograph of \(person.displayName) on \(url)"
                     let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
@@ -61,7 +61,7 @@ extension OptographOptions {
             }))
         
             actionAlert.addAction(UIAlertAction(title: "Copy sharing URL", style: .Default, handler: { _ in
-                UIPasteboard.generalPasteboard().string = "http://opto.space/\(optograph.shareAlias)"
+                UIPasteboard.generalPasteboard().string = "https://share.iam360.io/\(optograph.shareAlias)"
             }))
         }
         
