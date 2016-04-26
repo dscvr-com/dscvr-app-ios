@@ -253,7 +253,13 @@ class SaveViewController: UIViewController, RedNavbar {
         updateTabs()
         
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
-            print("isReady \(isReady)")
+            print("isReadyz \(isReady)")
+            
+            
+            
+    
+            
+            
             
             self?.tabController!.cameraButton.loading = !isReady
             self?.tabController!.rightButton.loading = !isReady
