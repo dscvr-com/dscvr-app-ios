@@ -43,7 +43,7 @@ class OnboardingInfoViewController: UIViewController {
         view.addSubview(iconTextView)
         
         nextButtonView.setTitle("Get started", forState: .Normal)
-        nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showVROnboarding"))
+        nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OnboardingInfoViewController.showVROnboarding)))
         view.addSubview(nextButtonView)
         
         view.setNeedsUpdateConstraints()
@@ -71,7 +71,8 @@ class OnboardingInfoViewController: UIViewController {
     }
     
     func showVROnboarding() {
-        view.window?.rootViewController = OnboardingVRViewController()
+        //view.window?.rootViewController = OnboardingVRViewController()
+        view.window?.rootViewController = OnboardingProfileViewController()
     }
     
     override func viewDidAppear(animated: Bool) {

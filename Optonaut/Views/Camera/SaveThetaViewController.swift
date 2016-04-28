@@ -119,7 +119,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         cancelButton.textColor = .whiteColor()
         cancelButton.font = UIFont.iconOfSize(18)
         cancelButton.userInteractionEnabled = true
-        cancelButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        cancelButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.cancel)))
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
         
         let privateButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
@@ -127,7 +127,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         privateButton.font = UIFont.iconOfSize(18)
         privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.World))
         privateButton.userInteractionEnabled = true
-        privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "togglePrivate"))
+        privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.togglePrivate)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: privateButton)
         
         view.backgroundColor = .whiteColor()
@@ -223,7 +223,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         facebookSocialButton.text = "Facebook"
         facebookSocialButton.color = UIColor(0x3b5998)
         facebookSocialButton.userInteractionEnabled = true
-        facebookSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapFacebookSocialButton"))
+        facebookSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.tapFacebookSocialButton)))
         shareBackgroundView.addSubview(facebookSocialButton)
         
         viewModel.postFacebook.producer.startWithNext { [weak self] toggled in
@@ -234,7 +234,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         twitterSocialButton.text = "Twitter"
         twitterSocialButton.color = UIColor(0x55acee)
         twitterSocialButton.userInteractionEnabled = true
-        twitterSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapTwitterSocialButton"))
+        twitterSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.tapTwitterSocialButton)))
         shareBackgroundView.addSubview(twitterSocialButton)
         
         viewModel.postTwitter.producer.startWithNext { [weak self] toggled in
@@ -245,7 +245,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         instagramSocialButton.text = "Instagram"
         instagramSocialButton.color = UIColor(0x9b6954)
         instagramSocialButton.userInteractionEnabled = true
-        instagramSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapInstagramSocialButton"))
+        instagramSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.tapInstagramSocialButton)))
         shareBackgroundView.addSubview(instagramSocialButton)
         
         viewModel.postInstagram.producer.startWithNext { [weak self] toggled in
@@ -256,13 +256,13 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         moreSocialButton.text = "More"
         moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReadyForSubmit.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
         moreSocialButton.rac_alpha <~ viewModel.isReadyForSubmit.producer.mapToTuple(1, 0.2)
-        moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapMoreSocialButton"))
+        moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.tapMoreSocialButton)))
         shareBackgroundView.addSubview(moreSocialButton)
         
         scrollView.scnView = scnView
         view.addSubview(scrollView)
         
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.dismissKeyboard))
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
         
@@ -304,8 +304,8 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveThetaViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveThetaViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -375,6 +375,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         tabController!.leftButton.icon = .Camera
         tabController!.leftButton.hidden = false
         tabController!.leftButton.color = .Light
+        tabController!.leftButton.hidden = true
     
         tabController!.rightButton.title = "POST LATER"
         tabController!.rightButton.icon = .Clock
@@ -787,7 +788,7 @@ private class LocationViewModel {
     }
     
     func enableLocation() {
-        locationPermissionTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkLocationPermission"), userInfo: nil, repeats: true)
+        locationPermissionTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(LocationViewModel.checkLocationPermission), userInfo: nil, repeats: true)
         LocationService.askPermission()
     }
     

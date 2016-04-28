@@ -53,15 +53,15 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         headlineTextView.font = UIFont.displayOfSize(25, withType: .Thin)
         view.addSubview(headlineTextView)
         
-//        uploadButtonView.setTitle(String.icomoonWithName(.LnrCamera), forState: .Normal)
+        uploadButtonView.setTitle(String.iconWithName(.LnrCamera), forState: .Normal)
         uploadButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-//        uploadButtonView.titleLabel?.font = UIFont.icomoonOfSize(35)
+        uploadButtonView.titleLabel?.font = UIFont.iconOfSize(35)
         uploadButtonView.defaultBackgroundColor = UIColor.whiteColor().alpha(0.3)
         uploadButtonView.layer.cornerRadius = 52
         uploadButtonView.layer.borderColor = UIColor.whiteColor().CGColor
         uploadButtonView.layer.borderWidth = 1.5
         uploadButtonView.rac_hidden <~ viewModel.avatarUploaded
-        uploadButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "uploadImage"))
+        uploadButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OnboardingProfileViewController.uploadImage)))
         view.addSubview(uploadButtonView)
         
         avatarImageView.rac_hidden <~ viewModel.avatarUploaded.producer.map(negate)
@@ -72,7 +72,8 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         avatarImageView.clipsToBounds = true
         avatarImageView.contentMode = .ScaleAspectFill
         avatarImageView.userInteractionEnabled = true
-        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "uploadImage"))
+        avatarImageView.placeholderImage = UIImage.iconWithName(.Camera, textColor: .whiteColor(), fontSize: 26)
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OnboardingProfileViewController.uploadImage)))
         view.addSubview(avatarImageView)
         
         displayNameInputView.size = .Large
@@ -107,7 +108,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         
         nextButtonView.rac_loading <~ viewModel.loading
         nextButtonView.setTitle("Save profile", forState: .Normal)
-        nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showHashtagOnboarding"))
+        nextButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OnboardingProfileViewController.showHashtagOnboarding)))
         view.addSubview(nextButtonView)
         
         viewModel.nextStep.producer
@@ -124,7 +125,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
         imagePickerController.navigationBar.translucent = false
         imagePickerController.navigationBar.tintColor = UIColor.DarkGrey
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OnboardingProfileViewController.dismissKeyboard)))
         
         view.setNeedsUpdateConstraints()
     }
@@ -164,8 +165,8 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OnboardingProfileViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(OnboardingProfileViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -209,6 +210,7 @@ class OnboardingProfileViewController: UIViewController, UINavigationControllerD
     }
     
     func showHashtagOnboarding() {
+        viewModel.updateData()
 //        viewModel.updateData().startWithCompleted { [weak self] in
 //            self.presentViewController(OnboardingHashtagInfoViewController(), animated: false, completion: nil)
 //            self?.view.window?.rootViewController = TabBarViewController()

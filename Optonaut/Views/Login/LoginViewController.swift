@@ -11,6 +11,7 @@ import ReactiveCocoa
 import Async
 import Mixpanel
 import FBSDKLoginKit
+import SwiftyUserDefaults
 
 class LoginViewController: UIViewController {
     
@@ -217,9 +218,9 @@ class LoginViewController: UIViewController {
         presentViewController(ForgotPasswordViewController(), animated: false, completion: nil)
     }
     
-//    func showApp() {
-//        view.window?.rootViewController = TabViewController()
-//    }
+    func showApp() {
+        view.window?.rootViewController = TabViewController()
+    }
     
     func selectSignUpTab() {
         viewModel.selectedTab.value = .SignUp
@@ -261,6 +262,7 @@ class LoginViewController: UIViewController {
     
     func forward() {
         dismissViewControllerAnimated(true, completion: {
+            Defaults[.SessionNeedRefresh] = true
             self.successCallback()
         })
 //        if SessionService.needsOnboarding {

@@ -1,0 +1,10 @@
+framework module Icomoon {
+  umbrella header "Icomoon.h"
+
+  export *
+  module * { export * }
+}
+
+module Icomoon.Swift {
+    header "Icomoon-Swift.h"
+}

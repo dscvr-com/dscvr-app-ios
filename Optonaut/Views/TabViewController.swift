@@ -95,19 +95,19 @@ class TabViewController: UIViewController,
         }
         
         cameraButton.frame = CGRect(x: view.frame.width / 2 - 35, y: 126 / 2 - 35, width: 70, height: 70)
-        cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapCameraButton"))
-        cameraButton.addTarget(self, action: "touchStartCameraButton", forControlEvents: [.TouchDown])
-        cameraButton.addTarget(self, action: "touchEndCameraButton", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapCameraButton)))
+        cameraButton.addTarget(self, action: #selector(TabViewController.touchStartCameraButton), forControlEvents: [.TouchDown])
+        cameraButton.addTarget(self, action: #selector(TabViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
         uiWrapper.addSubview(cameraButton)
         
         oneRingButton.frame = CGRect(x: cameraButton.frame.origin.x-35, y: cameraButton.frame.origin.y+23, width: 30, height: 30)
-        oneRingButton.addTarget(self, action: "touchOneRingButton", forControlEvents: [.TouchDown])
+        oneRingButton.addTarget(self, action: #selector(TabViewController.touchOneRingButton), forControlEvents: [.TouchDown])
         oneRingButton.setImage(UIImage(named: "oneRingButton"), forState: UIControlState.Normal)
         oneRingButton.layer.cornerRadius = 5
         uiWrapper.addSubview(oneRingButton)
         
         threeRingButton.frame = CGRect(x: cameraButton.frame.origin.x+cameraButton.frame.size.width+5, y: cameraButton.frame.origin.y+23, width: 30, height: 30)
-        threeRingButton.addTarget(self, action: "touchThreeRingButton", forControlEvents: [.TouchDown])
+        threeRingButton.addTarget(self, action: #selector(TabViewController.touchThreeRingButton), forControlEvents: [.TouchDown])
         threeRingButton.setImage(UIImage(named: "threeRingButton"), forState: UIControlState.Normal)
         threeRingButton.layer.cornerRadius = 5
         uiWrapper.addSubview(threeRingButton)
@@ -144,11 +144,11 @@ class TabViewController: UIViewController,
 
         let buttonSpacing = (view.frame.width / 2 - 35) / 2 - 14
         leftButton.frame = CGRect(x: buttonSpacing, y: 126 / 2 - 23.5, width: 28, height: 28)
-        leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftButton"))
+        leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapLeftButton)))
         uiWrapper.addSubview(leftButton)
 
         rightButton.frame = CGRect(x: view.frame.width - buttonSpacing - 28, y: 126 / 2 - 23.5, width: 28, height: 28)
-        rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapRightButton"))
+        rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapRightButton)))
         uiWrapper.addSubview(rightButton)
         
         initNotificationIndicator()
@@ -419,8 +419,8 @@ class RecordButton: UIButton {
         setTitleColor(.whiteColor(), forState: .Normal)
         titleLabel?.font = UIFont.iconOfSize(33)
         
-        addTarget(self, action: "buttonTouched", forControlEvents: .TouchDown)
-        addTarget(self, action: "buttonUntouched", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        addTarget(self, action: #selector(RecordButton.buttonTouched), forControlEvents: .TouchDown)
+        addTarget(self, action: #selector(RecordButton.buttonUntouched), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -617,13 +617,13 @@ extension DefaultTabControllerDelegate {
     
     func onTouchOneRingButton() {
         Defaults[.SessionUseMultiRing] = false
-        tabController!.oneRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
-        tabController!.threeRingButton.backgroundColor = UIColor.grayColor()
+        tabController!.oneRingButton.backgroundColor = UIColor(red: 0.204, green: 0.204, blue: 0.204, alpha: 0.9)
+        tabController!.threeRingButton.backgroundColor = UIColor(red: 0.557, green: 0.557, blue: 0.553, alpha: 0.9)
     }
     func onTouchThreeRingButton() {
         Defaults[.SessionUseMultiRing] = true
-        tabController!.oneRingButton.backgroundColor = UIColor.grayColor()
-        tabController!.threeRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
+        tabController!.oneRingButton.backgroundColor = UIColor(red: 0.557, green: 0.557, blue: 0.553, alpha: 0.9)
+        tabController!.threeRingButton.backgroundColor = UIColor(red: 0.204, green: 0.204, blue: 0.204, alpha: 0.9)
     }
     
     func onTapLeftButton() {

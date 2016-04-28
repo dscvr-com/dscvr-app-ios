@@ -146,6 +146,7 @@ class OnboardingProfileViewModel {
             "avatar_asset": str!,
             "avatar_asset_id": avatarAssetID,
         ]
+        
         return ApiService.post("persons/me/upload-profile-image", parameters: parameters)
             .on(
                 started: {
@@ -158,7 +159,8 @@ class OnboardingProfileViewModel {
                     self.avatarUploaded.value = true
                     self.saveModel()
                 },
-                failed: { _ in
+                failed: { a in
+                    print("failed to upload image \(a)")
                     self.avatarUploaded.value = false
                     self.avatarImageUrl.value = ImageURL(avatarAssetID, width: 104, height: 104)
                 }

@@ -100,7 +100,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
         
-        
         isActive.producer.skipRepeats().startWithNext { [weak self] isActive in
             if isActive {
                 self?.refresh()

@@ -42,12 +42,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
 //            self.window?.rootViewController = tabBarViewController
             
-            let notificationTypes: UIUserNotificationType = [UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound]
-            let pushNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: nil)
-            Mixpanel.sharedInstance().track("Launch.Notification")
-            application.registerUserNotificationSettings(pushNotificationSettings)
-            application.registerForRemoteNotifications()
+//            let notificationTypes: UIUserNotificationType = [UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound]
+//            let pushNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: nil)
+
+//            application.registerUserNotificationSettings(pushNotificationSettings)
+//            application.registerForRemoteNotifications()
             self.window?.rootViewController = TabViewController()
+            Mixpanel.sharedInstance().track("Launch.Notification")
         }
         return true
     }

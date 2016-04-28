@@ -62,12 +62,16 @@ class SaveViewModel {
         
         postFacebook.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
             Defaults[.SessionShareToggledFacebook] = toggled
-            self?.optographBox.insertOrUpdate { $0.model.postFacebook = toggled }
+            self?.optographBox.insertOrUpdate {
+                return $0.model.postFacebook = toggled
+            }
         }
         
         postTwitter.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
             Defaults[.SessionShareToggledTwitter] = toggled
-            self?.optographBox.insertOrUpdate { $0.model.postTwitter = toggled }
+            self?.optographBox.insertOrUpdate {
+                return $0.model.postTwitter = toggled
+            }
         }
         
         postInstagram.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
@@ -286,7 +290,7 @@ class SaveViewModel {
                 ]
             }
             
-            print("this is my paramteters \(parameters) this is my id \(optograph.ID)")
+            print("this is my parameters \(parameters) this is my id \(optograph.ID)")
             
             return ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: parameters)
                 .ignoreError()

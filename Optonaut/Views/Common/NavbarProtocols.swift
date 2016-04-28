@@ -31,7 +31,7 @@ extension RedNavbar where Self: UIViewController {
 
     func updateNavbarAppear() {
         navigationController?.navigationBar.translucent = false
-        navigationController?.navigationBar.barTintColor = UIColor.Accent
+        navigationController?.navigationBar.barTintColor = UIColor(hex:0x343434)
         navigationController?.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
@@ -43,6 +43,15 @@ extension RedNavbar where Self: UIViewController {
         navigationController?.interactivePopGestureRecognizer?.enabled = false
     }
     
+}
+
+extension UIColor {
+    convenience init(hex: Int) {
+        let r = hex / 0x10000
+        let g = (hex - r*0x10000) / 0x100
+        let b = hex - r*0x10000 - g*0x100
+        self.init(red: CGFloat(r)/255, green: CGFloat(g)/255, blue: CGFloat(b)/255, alpha: 1)
+    }
 }
 
 protocol NoNavbar {

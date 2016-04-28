@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SpriteKit
+import SwiftyUserDefaults
 
 class ProfileCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
     
@@ -24,6 +25,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     private var originalBackButton: UIBarButtonItem?
     private let leftBarButton = UILabel()
     private let rightBarButton = UILabel()
+    
+    private var barButtonItem = UIBarButtonItem()
     
     init(personID: UUID) {
         
@@ -55,11 +58,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         leftBarButton.textColor = .whiteColor()
         leftBarButton.font = UIFont.iconOfSize(19)
         leftBarButton.userInteractionEnabled = true
-        leftBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapLeftBarButton"))
-        let barButtonItem = UIBarButtonItem(customView: leftBarButton)
+        leftBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapLeftBarButton)))
+        barButtonItem = UIBarButtonItem(customView: leftBarButton)
         
         profileViewModel.isEditing.producer.startWithNext { [weak self] isEditing in
-            self?.navigationItem.leftBarButtonItem = isEditing ? barButtonItem : self?.originalBackButton
+            self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
         }
         
         rightBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
@@ -67,7 +70,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         rightBarButton.textColor = .whiteColor()
         rightBarButton.font = UIFont.iconOfSize(21)
         rightBarButton.userInteractionEnabled = true
-        rightBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapRightBarButton"))
+        rightBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapRightBarButton)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButton)
         
         editOverlayView.backgroundColor = UIColor.blackColor().alpha(0.6)
@@ -116,7 +119,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
 //        edgesForExtendedLayout = .None
         
         collectionViewModel.results.producer
-            .filter { $0.changed }
+            .filter {$0.changed}
             .delayAllUntil(collectionViewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
@@ -158,16 +161,66 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     deinit {
         logRetain()
     }
+    func reloadView() {
+        collectionViewModel.refreshNotification.dispose()
+        profileViewModel = ProfileViewModel(personID: SessionService.personID)
+        collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID)
+        
+        rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))
+        
+        profileViewModel.isEditing.producer.startWithNext { [weak self] isEditing in
+            self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
+        }
+        
+        profileViewModel.isEditing.producer.skip(1).startWithNext { [weak self] isEditing in
+            if let strongSelf = self {
+                
+                CATransaction.begin()
+                CATransaction.setDisableActions(true)
+                strongSelf.collectionView!.performBatchUpdates(nil, completion: { _ in CATransaction.commit() })
+                
+                if isEditing {
+                    let collectionViewSize = strongSelf.collectionView!.frame.size
+                    let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
+                    let headerHeight = 248 + textHeight
+                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight)
+                    
+                    strongSelf.collectionView!.contentOffset = CGPointZero
+                }
+                
+                strongSelf.collectionView!.scrollEnabled = !isEditing
+            }
+        }
+        
+        collectionViewModel.results.producer
+            .filter {$0.changed}
+            .delayAllUntil(collectionViewModel.isActive.producer)
+            .observeOnMain()
+            .on(next: { [weak self] results in
+                if let strongSelf = self {
+                    strongSelf.optographIDs = results.models.map { $0.ID }
+                    strongSelf.collectionView!.performBatchUpdates({
+                        strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+                        strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+                        strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+                        }, completion: { _ in
+                    })
+                }
+                })
+            .start()
+    }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        if (Defaults[.SessionNeedRefresh]) {
+            self.reloadView()
+            Defaults[.SessionNeedRefresh] = false
+        }
+        
         CoreMotionRotationSource.Instance.start()
         
         collectionViewModel.refreshNotification.notify(())
-        
-        //profileViewModel = ProfileViewModel(personID: SessionService.personID)
-        
         collectionViewModel.isActive.value = true
         
 //        view.bounds = UIScreen.mainScreen().bounds
