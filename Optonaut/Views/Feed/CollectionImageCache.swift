@@ -335,11 +335,11 @@ class CollectionImageCache {
                 if shiftLimit >= 1 {
                     for shift in 0..<shiftLimit {
                         items[(shiftedIndex + shift) % CollectionImageCache.cacheSize] = items[(shiftedIndex + shift + 1) % CollectionImageCache.cacheSize]
-                        items[(shiftedIndex + shift) % CollectionImageCache.cacheSize]?.index--
+                        items[(shiftedIndex + shift) % CollectionImageCache.cacheSize]?.index -= 1
                     }
                     items[(shiftedIndex + shiftLimit) % CollectionImageCache.cacheSize] = nil
                 }
-                count++
+                count += 1
             }
         }
     }
@@ -361,7 +361,7 @@ class CollectionImageCache {
             let lowerShiftIndexOffset = max(0, index - minIndex)
             for shiftIndexOffset in (lowerShiftIndexOffset..<CollectionImageCache.cacheSize - 1).reverse() {
                 items[(minIndex + shiftIndexOffset + 1) % CollectionImageCache.cacheSize] = items[(minIndex + shiftIndexOffset) % CollectionImageCache.cacheSize]
-                items[(minIndex + shiftIndexOffset + 1) % CollectionImageCache.cacheSize]?.index++
+                items[(minIndex + shiftIndexOffset + 1) % CollectionImageCache.cacheSize]?.index+=1
             }
             
             items[(minIndex + lowerShiftIndexOffset) % CollectionImageCache.cacheSize] = nil

@@ -1863,7 +1863,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = IAM360;
-				PROVISIONING_PROFILE = "e5070096-414c-4582-8bff-9825cd9b83a1";
+				PROVISIONING_PROFILE = "8b9a0c7b-7c84-4c29-8466-ff8ac0217d0b";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1898,7 +1898,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = IAM360;
-				PROVISIONING_PROFILE = "e5070096-414c-4582-8bff-9825cd9b83a1";
+				PROVISIONING_PROFILE = "8b9a0c7b-7c84-4c29-8466-ff8ac0217d0b";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

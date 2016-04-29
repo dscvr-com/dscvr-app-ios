@@ -83,7 +83,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         cardboardButton.textColor = .whiteColor()
         cardboardButton.font = UIFont.iconOfSize(24)
         cardboardButton.userInteractionEnabled = true
-        cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showCardboardAlert"))
+        cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewController.showCardboardAlert)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cardboardButton)
 
         // Uncomment the following line to preserve selection between presentations
@@ -130,6 +130,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                         CATransaction.begin()
                         CATransaction.setDisableActions(true)
                             strongSelf.collectionView!.performBatchUpdates({
+                                print(results.delete)
                                 strongSelf.imageCache.delete(results.delete)
                                 strongSelf.imageCache.insert(results.insert)
                                 strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection: 0) })
@@ -643,26 +644,26 @@ private class OverlayView: UIView {
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
-        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
         addSubview(avatarImageView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
         personNameView.textColor = .Accent
         personNameView.userInteractionEnabled = true
-        personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
         addSubview(personNameView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setTitle(String.iconWithName(.More), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor(0xc6c6c6), forState: .Normal)
-        optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTapOptions"))
+        optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.didTapOptions)))
         addSubview(optionsButtonView)
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
         locationTextView.textColor = UIColor(0x3c3c3c)
         addSubview(locationTextView)
         
-        likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleLike"))
+        likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.toggleLike)))
         likeButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
         likeButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
         addSubview(likeButtonView)
@@ -673,7 +674,7 @@ private class OverlayView: UIView {
         likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
         addSubview(likeCountView)
         
-        uploadButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "upload"))
+        uploadButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.upload)))
         uploadButtonView.setTitle(String.iconWithName(.Upload), forState: .Normal)
         uploadButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Offline).map(negate)
         uploadButtonView.titleLabel!.font = UIFont.iconOfSize(24)
@@ -684,7 +685,7 @@ private class OverlayView: UIView {
         uploadTextView.textColor = .whiteColor()
         uploadTextView.textAlignment = .Right
         uploadTextView.userInteractionEnabled = true
-        uploadTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "upload"))
+        uploadTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.upload)))
         uploadTextView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Offline).map(negate)
         addSubview(uploadTextView)
         
@@ -720,7 +721,7 @@ private class OverlayView: UIView {
         textView.font = UIFont.displayOfSize(14, withType: .Regular)
         textView.textColor = .whiteColor()
         textView.userInteractionEnabled = true
-        textView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "toggleText"))
+        textView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.toggleText)))
         addSubview(textView)
         
         viewModel.textToggled.producer.startWithNext { [weak self] toggled in

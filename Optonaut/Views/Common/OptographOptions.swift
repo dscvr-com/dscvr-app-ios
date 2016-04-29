@@ -31,7 +31,9 @@ extension OptographOptions {
                 confirmAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
                     PipelineService.stopStitching()
                     optographBox.insertOrUpdate { box in
-                        box.model.deletedAt = NSDate()
+                        print("date today \(NSDate())")
+                        print(box.model.ID)
+                        return box.model.deletedAt = NSDate()
                     }
                     deleteCallback?()
                 }))

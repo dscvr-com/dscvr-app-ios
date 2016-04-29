@@ -87,7 +87,7 @@ class Models {
 }
 
 protocol ModelCacheType: class {
-    typealias ModelType: Model
+    associatedtype ModelType: Model
     
     var cache: [UUID: ModelBox<ModelType>] { get set }
 }

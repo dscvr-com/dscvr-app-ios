@@ -24,7 +24,7 @@ struct TableViewResults<T: DeletableModel> {
         var models = self.models
         
         var delete: [Int] = []
-        for deletedModel in newModels.filter({ $0.deletedAt != nil }) {
+        for deletedModel in newModels.filter({ print("delete this>> ",$0.deletedAt) ; return $0.deletedAt != nil }) {
             if let index = models.indexOf({ $0.ID == deletedModel.ID }) {
                 delete.append(index)
             }
