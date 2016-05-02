@@ -103,7 +103,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         collectionView!.delegate = self
         
-        collectionView!.pagingEnabled = true
+        collectionView!.pagingEnabled = false
         
         automaticallyAdjustsScrollViewInsets = false
         
@@ -624,8 +624,6 @@ private class OverlayView: UIView {
             }
         }
     }
-    
-    private let whiteBackground = UIView()
     private let avatarImageView = UIImageView()
     private let personNameView = BoundingLabel()
     private let locationTextView = UILabel()
@@ -640,24 +638,6 @@ private class OverlayView: UIView {
     
     override init (frame: CGRect) {
         super.init(frame: frame)
-        
-        whiteBackground.backgroundColor = UIColor.whiteColor().alpha(0.95)
-        addSubview(whiteBackground)
-        
-        avatarImageView.layer.cornerRadius = 23.5
-//        avatarImageView.layer.borderColor = UIColor.whiteColor().CGColor
-//        avatarImageView.layer.borderWidth = 1.5
-        avatarImageView.backgroundColor = .whiteColor()
-        avatarImageView.clipsToBounds = true
-        avatarImageView.userInteractionEnabled = true
-        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
-        addSubview(avatarImageView)
-        
-        personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
-        personNameView.textColor = .Accent
-        personNameView.userInteractionEnabled = true
-        personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
-        addSubview(personNameView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setTitle(String.iconWithName(.More), forState: .Normal)
@@ -703,15 +683,9 @@ private class OverlayView: UIView {
         
         viewModel.liked.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
-//                if liked {
-//                    strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 31, height: 28)
-//                    strongSelf.likeButtonView.backgroundColor = .Accent
-//                    strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(15)
-//                } else {
                     strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 28)
                 strongSelf.likeButtonView.setTitleColor(liked ? .Accent : .whiteColor(), forState: .Normal)
                     strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(24)
-//                }
                 strongSelf.likeCountView.align(.ToTheLeftCentered, relativeTo: strongSelf.likeButtonView, padding: 10, width: 40, height: 13)
                 strongSelf.uploadButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
                 strongSelf.uploadTextView.align(.ToTheLeftCentered, relativeTo: strongSelf.uploadButtonView, padding: 8, width: 60, height: 13)
@@ -734,12 +708,6 @@ private class OverlayView: UIView {
             if let strongSelf = self, optograph = Models.optographs[strongSelf.optographID]?.model {
                 let textHeight = calcTextHeight(optograph.text, withWidth: strongSelf.frame.width - 36 - 50, andFont: UIFont.displayOfSize(14, withType: .Regular))
                 let displayedTextHeight = toggled && textHeight > 16 ? textHeight : 15
-//                let bottomHeight: CGFloat = 50 + (optograph.text.isEmpty ? 0 : displayedTextHeight + 11)
-                
-//                UIView.setAnimationCurve(.EaseInOut)
-//                UIView.animateWithDuration(0.3) {
-//                    strongSelf.textView.frame = CGRect(x: 0, y: strongSelf.frame.height - bottomHeight, width: strongSelf.frame.width - 40, height: bottomHeight)
-//                }
                 
                 strongSelf.textView.anchorInCorner(.BottomLeft, xPad: 16, yPad: 136, width: strongSelf.frame.width - 36 - 50, height: displayedTextHeight)
                 
@@ -759,8 +727,6 @@ private class OverlayView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        whiteBackground.frame = CGRect(x: 0, y: 0, width: frame.width, height: 66)
-        avatarImageView.anchorInCorner(.TopLeft, xPad: 16, yPad: 9.5, width: 47, height: 47)
         optionsButtonView.anchorInCorner(.TopRight, xPad: 16, yPad: 21, width: 24, height: 24)
         dateView.anchorInCorner(.TopRight, xPad: 46, yPad: 27, width: 70, height: 13)
     }

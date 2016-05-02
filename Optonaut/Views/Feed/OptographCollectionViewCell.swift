@@ -208,6 +208,10 @@ class OptographCollectionViewCell: UICollectionViewCell {
     private enum LoadingStatus { case Nothing, Preview, Loaded }
     private let loadingStatus = MutableProperty<LoadingStatus>(.Nothing)
     
+    private let whiteBackground = UIView()
+    private let avatarImageView = UIImageView()
+    private let personNameView = BoundingLabel()
+    
     var direction: Direction {
         set(direction) {
             combinedMotionManager.setDirection(direction)
@@ -251,6 +255,30 @@ class OptographCollectionViewCell: UICollectionViewCell {
         loadingIndicatorView.frame = contentView.frame
         loadingIndicatorView.rac_animating <~ loadingStatus.producer.equalsTo(.Nothing)
         contentView.addSubview(loadingIndicatorView)
+        
+        whiteBackground.backgroundColor = UIColor.whiteColor().alpha(0.95)
+        contentView.addSubview(whiteBackground)
+        
+        avatarImageView.layer.cornerRadius = 23.5
+        avatarImageView.backgroundColor = .whiteColor()
+        avatarImageView.clipsToBounds = true
+        avatarImageView.userInteractionEnabled = true
+        //avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
+        contentView.addSubview(avatarImageView)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
+        avatarImageView.anchorInCorner(.BottomLeft, xPad: 16, yPad: 9.5, width: 47, height: 47)
+        
+        personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
+        personNameView.textColor = .Accent
+        personNameView.userInteractionEnabled = true
+        //personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
+        contentView.addSubview(personNameView)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
