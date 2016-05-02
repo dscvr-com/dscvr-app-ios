@@ -8,12 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590E05B21CBD3119000331CB /* SaveThetaViewController.swift */; };
-		590E05B51CBD3202000331CB /* theta.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 590E05B41CBD3202000331CB /* theta.JPG */; };
 		5936B1841CAD34F500F808D8 /* dynamicSeamer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */; };
 		5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */; };
 		5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */; };
 		5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */; };
 		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
+		595E70A61CD39743005CD441 /* SwipeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595E70A51CD39743005CD441 /* SwipeViewController.swift */; };
+		595E70A81CD39E81005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
+		595E70A91CD39F4F005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
+		595E70AA1CD39F4F005CD441 /* EZSwipeController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5980D51E1CCDEF100010B4ED /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5980D51D1CCDEF100010B4ED /* Icomoon.framework */; };
 		598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598416411CBB896E00BD966D /* Icomoon.framework */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
@@ -255,6 +258,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				595E70AA1CD39F4F005CD441 /* EZSwipeController.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -263,7 +267,6 @@
 
 /* Begin PBXFileReference section */
 		590E05B21CBD3119000331CB /* SaveThetaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveThetaViewController.swift; sourceTree = "<group>"; };
-		590E05B41CBD3202000331CB /* theta.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = theta.JPG; sourceTree = "<group>"; };
 		5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicSeamer.cpp; sourceTree = "<group>"; };
 		5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dynamicSeamer.hpp; sourceTree = "<group>"; };
 		5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = multiringStitcher.cpp; sourceTree = "<group>"; };
@@ -277,6 +280,8 @@
 		5936B1811CAD34F500F808D8 /* stitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcher.hpp; sourceTree = "<group>"; };
 		5936B1821CAD34F500F808D8 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
+		595E70A51CD39743005CD441 /* SwipeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeViewController.swift; sourceTree = "<group>"; };
+		595E70A71CD39E81005CD441 /* EZSwipeController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EZSwipeController.framework; path = Carthage/Build/iOS/EZSwipeController.framework; sourceTree = "<group>"; };
 		5980D51D1CCDEF100010B4ED /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		598416411CBB896E00BD966D /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
@@ -574,6 +579,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				595E70A81CD39E81005CD441 /* EZSwipeController.framework in Frameworks */,
 				8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */,
 				8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */,
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
@@ -584,6 +590,7 @@
 				8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */,
 				8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */,
 				8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */,
+				595E70A91CD39F4F005CD441 /* EZSwipeController.framework in Frameworks */,
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
@@ -667,6 +674,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				595E70A71CD39E81005CD441 /* EZSwipeController.framework */,
 				598416411CBB896E00BD966D /* Icomoon.framework */,
 				5980D51D1CCDEF100010B4ED /* Icomoon.framework */,
 				8F4715111C49688700663684 /* TwitterKitResources.bundle */,
@@ -774,6 +782,7 @@
 		8FAB9EEC1B8F01DF00B4C8CB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				595E70A51CD39743005CD441 /* SwipeViewController.swift */,
 				8FFB561D1C2CA43C00D2BE62 /* TabViewController.swift */,
 				8FAB9EED1B8F01DF00B4C8CB /* Activity */,
 				8FAB9EF31B8F01DF00B4C8CB /* Camera */,
@@ -807,7 +816,6 @@
 		8FAB9EF31B8F01DF00B4C8CB /* Camera */ = {
 			isa = PBXGroup;
 			children = (
-				590E05B41CBD3202000331CB /* theta.JPG */,
 				8FAB9EF41B8F01DF00B4C8CB /* CameraViewController.swift */,
 				8FAB9EF51B8F01DF00B4C8CB /* CameraViewModel.swift */,
 				8FAB9EF61B8F01DF00B4C8CB /* SaveViewController.swift */,
@@ -1421,7 +1429,6 @@
 				8F4715131C49698B00663684 /* TwitterKitResources.bundle in Resources */,
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
-				590E05B51CBD3202000331CB /* theta.JPG in Resources */,
 				A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
@@ -1658,6 +1665,7 @@
 				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
 				5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
+				595E70A61CD39743005CD441 /* SwipeViewController.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
 				8F707C161C5A2A17000AF7BF /* TableViewResults.swift in Sources */,

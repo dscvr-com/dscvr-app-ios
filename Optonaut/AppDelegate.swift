@@ -48,6 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            application.registerUserNotificationSettings(pushNotificationSettings)
 //            application.registerForRemoteNotifications()
             self.window?.rootViewController = TabViewController()
+            //self.window?.rootViewController = SwipeViewController()
+            
             Mixpanel.sharedInstance().track("Launch.Notification")
         }
         return true

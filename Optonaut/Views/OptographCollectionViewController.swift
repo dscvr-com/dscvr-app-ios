@@ -42,6 +42,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     private var isVisible = false
     
+    private let navigationBar = UINavigationBar()
+    
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
         
@@ -152,7 +154,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             })
             .start()
         
-        let topOffset = navigationController!.navigationBar.frame.height + 20
+        let topOffset = navigationBar.frame.height + 20
         overlayView.frame = CGRect(x: 0, y: topOffset, width: view.frame.width, height: view.frame.height - topOffset)
         overlayView.uiHidden = uiHidden
         overlayView.navigationController = navigationController as? NavigationController
@@ -169,12 +171,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             //UIApplication.sharedApplication().setStatusBarHidden(hidden, withAnimation: .None)
             
             self?.collectionView!.scrollEnabled = !hidden
-            
-            if hidden {
-                self?.tabController?.hideUI()
-            } else {
-                self?.tabController?.showUI()
-            }
+          
+        //hide for 1.6 version
+//            if hidden {
+//                self?.tabController?.hideUI()
+//            } else {
+//                self?.tabController?.showUI()
+//            }
         }
         
 //        viewModel.isActive.producer
@@ -226,14 +229,15 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if !optographIDs.isEmpty {
             lazyFadeInOverlay(delay: 0)
         }
-        
-        tabController!.delegate = self
+        //hide for 1.6 version
+        //tabController!.delegate = self
         
         updateNavbarAppear()
         
-        updateTabs()
-        
-        tabController!.showUI()
+        /*hide for 1.6 version
+        //updateTabs()
+        //tabController!.showUI()
+         */
         
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
             rotationSignal
@@ -285,7 +289,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return UIScreen.mainScreen().bounds.size
+        //return UIScreen.mainScreen().bounds.size
+        
+        return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/3)*2))
     }
     
     override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {

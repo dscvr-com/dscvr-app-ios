@@ -74,7 +74,6 @@ class TabViewController: UIViewController,
         
         view.insertSubview(leftViewController.view, atIndex: 0)
         indicatedSide = .Left
-        //updateActiveTab(.Right)
         
         let width = view.frame.width
         
