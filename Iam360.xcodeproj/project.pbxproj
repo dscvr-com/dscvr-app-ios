@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590E05B21CBD3119000331CB /* SaveThetaViewController.swift */; };
-		590E05B51CBD3202000331CB /* theta.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 590E05B41CBD3202000331CB /* theta.JPG */; };
 		5936B1841CAD34F500F808D8 /* dynamicSeamer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */; };
 		5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */; };
 		5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */; };
@@ -263,7 +262,6 @@
 
 /* Begin PBXFileReference section */
 		590E05B21CBD3119000331CB /* SaveThetaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveThetaViewController.swift; sourceTree = "<group>"; };
-		590E05B41CBD3202000331CB /* theta.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = theta.JPG; sourceTree = "<group>"; };
 		5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicSeamer.cpp; sourceTree = "<group>"; };
 		5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dynamicSeamer.hpp; sourceTree = "<group>"; };
 		5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = multiringStitcher.cpp; sourceTree = "<group>"; };
@@ -807,7 +805,6 @@
 		8FAB9EF31B8F01DF00B4C8CB /* Camera */ = {
 			isa = PBXGroup;
 			children = (
-				590E05B41CBD3202000331CB /* theta.JPG */,
 				8FAB9EF41B8F01DF00B4C8CB /* CameraViewController.swift */,
 				8FAB9EF51B8F01DF00B4C8CB /* CameraViewModel.swift */,
 				8FAB9EF61B8F01DF00B4C8CB /* SaveViewController.swift */,
@@ -1421,7 +1418,6 @@
 				8F4715131C49698B00663684 /* TwitterKitResources.bundle in Resources */,
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
-				590E05B51CBD3202000331CB /* theta.JPG in Resources */,
 				A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
