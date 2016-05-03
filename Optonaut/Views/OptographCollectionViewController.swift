@@ -22,7 +22,7 @@ protocol OptographCollectionViewModel {
 }
 
 
-class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
+class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
     
@@ -41,8 +41,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     private var overlayIsAnimating = false
     
     private var isVisible = false
-    
-    private let navigationBar = UINavigationBar()
     
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
@@ -79,14 +77,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //        searchButton.userInteractionEnabled = true
 //        searchButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushSearch"))
 //        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: searchButton)
-        
-        let cardboardButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-        cardboardButton.text = String.iconWithName(.Cardboard)
-        cardboardButton.textColor = .whiteColor()
-        cardboardButton.font = UIFont.iconOfSize(24)
-        cardboardButton.userInteractionEnabled = true
-        cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewController.showCardboardAlert)))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cardboardButton)
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -154,8 +144,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             })
             .start()
         
-        let topOffset = navigationBar.frame.height + 20
-        overlayView.frame = CGRect(x: 0, y: topOffset, width: view.frame.width, height: view.frame.height - topOffset)
+        let topOffset = navigationController?.navigationBar.frame.size.height
+        
+        overlayView.frame = CGRect(x: 0, y: topOffset!, width: view.frame.width, height: view.frame.height - topOffset!)
         overlayView.uiHidden = uiHidden
         overlayView.navigationController = navigationController as? NavigationController
         overlayView.parentViewController = self
@@ -229,15 +220,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if !optographIDs.isEmpty {
             lazyFadeInOverlay(delay: 0)
         }
-        //hide for 1.6 version
-        //tabController!.delegate = self
-        
-        updateNavbarAppear()
-        
-        /*hide for 1.6 version
-        //updateTabs()
-        //tabController!.showUI()
-         */
         
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
             rotationSignal
@@ -418,13 +400,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //            }
         }
     }
-    
-    dynamic private func showCardboardAlert() {
-        let confirmAlert = UIAlertController(title: "Put phone in VR viewer", message: "Please turn your phone and put it into your VR viewer.", preferredStyle: .Alert)
-        confirmAlert.addAction(UIAlertAction(title: "Continue", style: .Cancel, handler: { _ in return }))
-        navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
-    }
-
 }
 
 // MARK: - UITabBarControllerDelegate
@@ -602,10 +577,7 @@ private class OverlayView: UIView {
         }
     }
     private let avatarImageView = UIImageView()
-    private let personNameView = BoundingLabel()
     private let locationTextView = UILabel()
-    private let likeButtonView = BoundingButton()
-    private let likeCountView = UILabel()
     private let uploadButtonView = BoundingButton()
     private let uploadTextView = BoundingLabel()
     private let uploadingView = UIActivityIndicatorView()
@@ -614,16 +586,6 @@ private class OverlayView: UIView {
     
     override init (frame: CGRect) {
         super.init(frame: frame)
-        
-        locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
-        locationTextView.textColor = UIColor(0x3c3c3c)
-        addSubview(locationTextView)
-        
-        likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
-        likeCountView.textColor = .whiteColor()
-        likeCountView.textAlignment = .Right
-        likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
-        addSubview(likeCountView)
         
         uploadButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.upload)))
         uploadButtonView.setTitle(String.iconWithName(.Upload), forState: .Normal)
@@ -643,20 +605,6 @@ private class OverlayView: UIView {
         uploadingView.hidesWhenStopped = true
         uploadingView.rac_animating <~ viewModel.uploadStatus.producer.equalsTo(.Uploading)
         addSubview(uploadingView)
-        
-        likeCountView.rac_text <~ viewModel.likeCount.producer.map { "\($0)" }
-        
-        viewModel.liked.producer.startWithNext { [weak self] liked in
-            if let strongSelf = self {
-                    strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 28)
-                strongSelf.likeButtonView.setTitleColor(liked ? .Accent : .whiteColor(), forState: .Normal)
-                    strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(24)
-                strongSelf.likeCountView.align(.ToTheLeftCentered, relativeTo: strongSelf.likeButtonView, padding: 10, width: 40, height: 13)
-                strongSelf.uploadButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
-                strongSelf.uploadTextView.align(.ToTheLeftCentered, relativeTo: strongSelf.uploadButtonView, padding: 8, width: 60, height: 13)
-                strongSelf.uploadingView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
-            }
-        }
         
         dateView.font = UIFont.displayOfSize(11, withType: .Regular)
         dateView.textColor = UIColor(0xbbbbbb)
