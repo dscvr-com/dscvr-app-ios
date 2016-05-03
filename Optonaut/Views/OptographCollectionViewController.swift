@@ -309,6 +309,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         cell.id = indexPath.row
         
+        cell.OptoId = optographID
+        
         if StitchingService.isStitching() {
             imageCache.resetExcept(indexPath.row)
         } else {
@@ -317,10 +319,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
                 imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
             }
-        }
-        
-        if overlayView.optographID == nil {
-            overlayView.optographID = optographID
         }
         
         if isVisible {
@@ -441,7 +439,6 @@ extension OptographCollectionViewController: DefaultTabControllerDelegate {
         let row = optographIDs.indexOf(optographID)
         collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
     }
-    
 }
 
 private class OverlayViewModel {
@@ -600,34 +597,13 @@ private class OverlayView: UIView {
     private var optographID: UUID? {
         didSet {
             if let optographID = optographID  {
-                let optograph = Models.optographs[optographID]!.model
-                let person = Models.persons[optograph.personID]!.model
-                
-                viewModel.bind(optographID)
-                
-                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
-                personNameView.text = person.displayName
-                dateView.text = optograph.createdAt.longDescription
-                textView.text = optograph.text
-                
-                if let locationID = optograph.locationID {
-                    let location = Models.locations[locationID]!.model
-                    locationTextView.text = "\(location.text), \(location.countryShort)"
-                    personNameView.anchorInCorner(.TopLeft, xPad: 75, yPad: 17, width: 200, height: 18)
-                    locationTextView.anchorInCorner(.TopLeft, xPad: 75, yPad: 37, width: 200, height: 13)
-                    locationTextView.text = location.text
-                } else {
-                    personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
-                    locationTextView.text = ""
-                }
-                
+                print(optographID)
             }
         }
     }
     private let avatarImageView = UIImageView()
     private let personNameView = BoundingLabel()
     private let locationTextView = UILabel()
-    private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
     private let likeCountView = UILabel()
     private let uploadButtonView = BoundingButton()
@@ -639,20 +615,9 @@ private class OverlayView: UIView {
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
-        optionsButtonView.setTitle(String.iconWithName(.More), forState: .Normal)
-        optionsButtonView.setTitleColor(UIColor(0xc6c6c6), forState: .Normal)
-        optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.didTapOptions)))
-        addSubview(optionsButtonView)
-        
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
         locationTextView.textColor = UIColor(0x3c3c3c)
         addSubview(locationTextView)
-        
-        likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.toggleLike)))
-        likeButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
-        likeButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
-        addSubview(likeButtonView)
         
         likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
         likeCountView.textColor = .whiteColor()
@@ -726,8 +691,7 @@ private class OverlayView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        optionsButtonView.anchorInCorner(.TopRight, xPad: 16, yPad: 21, width: 24, height: 24)
+    
         dateView.anchorInCorner(.TopRight, xPad: 46, yPad: 27, width: 70, height: 13)
     }
     

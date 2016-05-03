@@ -187,9 +187,154 @@ class CombinedMotionManager: RotationMatrixSource {
     
 private let queue = dispatch_queue_create("collection_view_cell", DISPATCH_QUEUE_SERIAL)
 
+private class OverlayViewModel {
+    
+    let likeCount = MutableProperty<Int>(0)
+    let liked = MutableProperty<Bool>(false)
+    let textToggled = MutableProperty<Bool>(false)
+    
+    enum UploadStatus { case Offline, Uploading, Uploaded }
+    let uploadStatus = MutableProperty<UploadStatus>(.Uploaded)
+    
+    var optographBox: ModelBox<Optograph>!
+    
+    var optograph: Optograph!
+    
+    func bind(optographID: UUID) {
+        
+        optographBox = Models.optographs[optographID]!
+        
+        textToggled.value = false
+        
+        optographBox.producer.startWithNext { [weak self] optograph in
+            self?.likeCount.value = optograph.starsCount
+            self?.liked.value = optograph.isStarred
+            
+            if optograph.isPublished {
+                self?.uploadStatus.value = .Uploaded
+            } else if optograph.isUploading {
+                self?.uploadStatus.value = .Uploading
+            } else {
+                self?.uploadStatus.value = .Offline
+            }
+        }
+        
+    }
+    
+    func toggleLike() {
+        let starredBefore = liked.value
+        let starsCountBefore = likeCount.value
+        
+        let optograph = optographBox.model
+        
+        SignalProducer<Bool, ApiError>(value: starredBefore)
+            .flatMap(.Latest) { followedBefore in
+                starredBefore
+                    ? ApiService<EmptyResponse>.delete("optographs/\(optograph.ID)/star")
+                    : ApiService<EmptyResponse>.post("optographs/\(optograph.ID)/star", parameters: nil)
+            }
+            .on(
+                started: { [weak self] in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.isStarred = !starredBefore
+                        box.model.starsCount += starredBefore ? -1 : 1
+                    }
+                },
+                failed: { [weak self] _ in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.isStarred = starredBefore
+                        box.model.starsCount = starsCountBefore
+                    }
+                }
+            )
+            .start()
+    }
+    
+    func upload() {
+        if !optographBox.model.isOnServer {
+            let optograph = optographBox.model
+            
+            optographBox.update { box in
+                box.model.isUploading = true
+            }
+            
+            let postParameters = [
+                "id": optograph.ID,
+                "stitcher_version": StitcherVersion,
+                "created_at": optograph.createdAt.toRFC3339String(),
+                ]
+            
+            var putParameters: [String: AnyObject] = [
+                "text": optograph.text,
+                "is_private": optograph.isPrivate,
+                "post_facebook": optograph.postFacebook,
+                "post_twitter": optograph.postTwitter,
+                "direction_phi": optograph.directionPhi,
+                "direction_theta": optograph.directionTheta,
+                ]
+            if let locationID = optograph.locationID, location = Models.locations[locationID]?.model {
+                putParameters["location"] = [
+                    "latitude": location.latitude,
+                    "longitude": location.longitude,
+                    "text": location.text,
+                    "country": location.country,
+                    "country_short": location.countryShort,
+                    "place": location.place,
+                    "region": location.region,
+                    "poi": location.POI,
+                ]
+            }
+            
+            SignalProducer<Bool, ApiError>(value: !optographBox.model.shareAlias.isEmpty)
+                .flatMap(.Latest) { alreadyPosted -> SignalProducer<Void, ApiError> in
+                    if alreadyPosted {
+                        return SignalProducer(value: ())
+                    } else {
+                        return ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
+                            .on(next: { [weak self] optograph in
+                                self?.optographBox.insertOrUpdate { box in
+                                    box.model.shareAlias = optograph.shareAlias
+                                }
+                                })
+                            .map { _ in () }
+                    }
+                }
+                .flatMap(.Latest) {
+                    ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: putParameters)
+                        .on(failed: { [weak self] _ in
+                            self?.optographBox.update { box in
+                                box.model.isUploading = false
+                            }
+                            })
+                }
+                .on(next: { [weak self] optograph in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.isOnServer = true
+                    }
+                    })
+                .startWithCompleted {
+                    PipelineService.checkUploading()
+            }
+            
+            
+        } else {
+            optographBox.insertOrUpdate { box in
+                box.model.shouldBePublished = true
+                box.model.isUploading = true
+            }
+            
+            PipelineService.checkUploading()
+        }
+        
+    }
+    
+}
+
 class OptographCollectionViewCell: UICollectionViewCell {
     
     weak var uiHidden: MutableProperty<Bool>!
+    
+    private let viewModel = OverlayViewModel()
     
     // subviews
     private let topElements = UIView()
@@ -211,6 +356,8 @@ class OptographCollectionViewCell: UICollectionViewCell {
     private let whiteBackground = UIView()
     private let avatarImageView = UIImageView()
     private let personNameView = BoundingLabel()
+    private let optionsButtonView = BoundingButton()
+    private let likeButtonView = BoundingButton()
     
     var direction: Direction {
         set(direction) {
@@ -265,6 +412,24 @@ class OptographCollectionViewCell: UICollectionViewCell {
         avatarImageView.userInteractionEnabled = true
         //avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
         contentView.addSubview(avatarImageView)
+        
+        optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
+        optionsButtonView.setTitle(String.iconWithName(.More), forState: .Normal)
+        optionsButtonView.setTitleColor(UIColor(0xc6c6c6), forState: .Normal)
+        //optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.didTapOptions)))
+        contentView.addSubview(optionsButtonView)
+        
+        personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
+        personNameView.textColor = .Accent
+        personNameView.userInteractionEnabled = true
+        personNameView.text = "Robert"
+        //personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
+        contentView.addSubview(personNameView)
+        
+        //likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.toggleLike)))
+        likeButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
+        //likeButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
+        contentView.addSubview(likeButtonView)
     }
     
     override func layoutSubviews() {
@@ -273,11 +438,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
         avatarImageView.anchorInCorner(.BottomLeft, xPad: 16, yPad: 9.5, width: 47, height: 47)
         
-        personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
-        personNameView.textColor = .Accent
-        personNameView.userInteractionEnabled = true
-        //personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
-        contentView.addSubview(personNameView)
+        optionsButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 24)
         
     }
     
@@ -330,6 +491,33 @@ class OptographCollectionViewCell: UICollectionViewCell {
     var id: Int = 0 {
         didSet {
             renderDelegate.id = id
+        }
+    }
+    var OptoId: UUID? {
+        didSet {
+            if let optographID = OptoId  {
+                let optograph = Models.optographs[optographID]!.model
+                let person = Models.persons[optograph.personID]!.model
+                
+                //viewModel.bind(optographID)
+                
+                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
+                personNameView.text = person.displayName
+                //dateView.text = optograph.createdAt.longDescription
+                //textView.text = optograph.text
+                
+                if let locationID = optograph.locationID {
+                    let location = Models.locations[locationID]!.model
+                    //locationTextView.text = "\(location.text), \(location.countryShort)"
+                    personNameView.anchorInCorner(.TopLeft, xPad: 75, yPad: 17, width: 200, height: 18)
+                    //locationTextView.anchorInCorner(.TopLeft, xPad: 75, yPad: 37, width: 200, height: 13)
+                    //locationTextView.text = location.text
+                } else {
+                    personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+                    //locationTextView.text = ""
+                }
+                
+            }
         }
     }
     
