@@ -17,6 +17,13 @@
 		595E70A81CD39E81005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
 		595E70A91CD39F4F005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
 		595E70AA1CD39F4F005CD441 /* EZSwipeController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		597859CB1CD9BC4A0013383A /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597859C41CD9BC4A0013383A /* CommentTableViewCell.swift */; };
+		597859CC1CD9BC4A0013383A /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597859C51CD9BC4A0013383A /* CommentViewModel.swift */; };
+		597859CD1CD9BC4A0013383A /* DetailsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597859C61CD9BC4A0013383A /* DetailsTableViewCell.swift */; };
+		597859CE1CD9BC4A0013383A /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597859C71CD9BC4A0013383A /* DetailsTableViewController.swift */; };
+		597859CF1CD9BC4A0013383A /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597859C81CD9BC4A0013383A /* DetailsViewModel.swift */; };
+		597859D01CD9BC4A0013383A /* NewCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597859C91CD9BC4A0013383A /* NewCommentTableViewCell.swift */; };
+		597859D11CD9BC4A0013383A /* NewCommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597859CA1CD9BC4A0013383A /* NewCommentViewModel.swift */; };
 		5980D51E1CCDEF100010B4ED /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5980D51D1CCDEF100010B4ED /* Icomoon.framework */; };
 		598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598416411CBB896E00BD966D /* Icomoon.framework */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
@@ -282,6 +289,13 @@
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
 		595E70A51CD39743005CD441 /* SwipeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeViewController.swift; sourceTree = "<group>"; };
 		595E70A71CD39E81005CD441 /* EZSwipeController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EZSwipeController.framework; path = Carthage/Build/iOS/EZSwipeController.framework; sourceTree = "<group>"; };
+		597859C41CD9BC4A0013383A /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
+		597859C51CD9BC4A0013383A /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
+		597859C61CD9BC4A0013383A /* DetailsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewCell.swift; sourceTree = "<group>"; };
+		597859C71CD9BC4A0013383A /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
+		597859C81CD9BC4A0013383A /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
+		597859C91CD9BC4A0013383A /* NewCommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentTableViewCell.swift; sourceTree = "<group>"; };
+		597859CA1CD9BC4A0013383A /* NewCommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentViewModel.swift; sourceTree = "<group>"; };
 		5980D51D1CCDEF100010B4ED /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		598416411CBB896E00BD966D /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
@@ -641,6 +655,20 @@
 			path = stitcher;
 			sourceTree = "<group>";
 		};
+		597859C31CD9BC4A0013383A /* Details */ = {
+			isa = PBXGroup;
+			children = (
+				597859C41CD9BC4A0013383A /* CommentTableViewCell.swift */,
+				597859C51CD9BC4A0013383A /* CommentViewModel.swift */,
+				597859C61CD9BC4A0013383A /* DetailsTableViewCell.swift */,
+				597859C71CD9BC4A0013383A /* DetailsTableViewController.swift */,
+				597859C81CD9BC4A0013383A /* DetailsViewModel.swift */,
+				597859C91CD9BC4A0013383A /* NewCommentTableViewCell.swift */,
+				597859CA1CD9BC4A0013383A /* NewCommentViewModel.swift */,
+			);
+			path = Details;
+			sourceTree = "<group>";
+		};
 		8F23AA401BFF31B4008926A8 /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
@@ -861,6 +889,7 @@
 		8FAB9F0F1B8F01DF00B4C8CB /* Feed */ = {
 			isa = PBXGroup;
 			children = (
+				597859C31CD9BC4A0013383A /* Details */,
 				8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */,
 				8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */,
 				8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */,
@@ -1610,15 +1639,18 @@
 				8F4185FF1C53C464009E1E3F /* LoginApiModel.swift in Sources */,
 				A5FD5D801BEA5A4E0031ED1E /* checkpointStore.cpp in Sources */,
 				8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */,
+				597859CE1CD9BC4A0013383A /* DetailsTableViewController.swift in Sources */,
 				8FD845C11BC9BBFF0064048D /* PipelineService.swift in Sources */,
 				8FDBEE7B1C5D2FF500696D3F /* LoginOverlayViewModel.swift in Sources */,
 				8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */,
 				8FAB9F541B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift in Sources */,
+				597859CB1CD9BC4A0013383A /* CommentTableViewCell.swift in Sources */,
 				8FC7E3771BD15B9D00E97CC3 /* Vector3d.mm in Sources */,
 				8F5335AA1BDBC09A0058961A /* ActivityResourceFollow.swift in Sources */,
 				8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */,
 				8FFB561A1C2C2BA900D2BE62 /* OptographCollectionViewController.swift in Sources */,
 				8F966E0E1BCCF33900F5F5F8 /* SearchViewModel.swift in Sources */,
+				597859CC1CD9BC4A0013383A /* CommentViewModel.swift in Sources */,
 				8FAB9F7E1B8F03BE00B4C8CB /* UIKitRACExtensions.swift in Sources */,
 				A5FD5D811BEA5A4E0031ED1E /* inputImage.cpp in Sources */,
 				8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */,
@@ -1641,6 +1673,7 @@
 				8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */,
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
 				8F4186091C552D02009E1E3F /* ProfileTileCollectionViewModel.swift in Sources */,
+				597859CD1CD9BC4A0013383A /* DetailsTableViewCell.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
@@ -1654,6 +1687,7 @@
 				8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */,
 				8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
+				597859CF1CD9BC4A0013383A /* DetailsViewModel.swift in Sources */,
 				8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
@@ -1665,6 +1699,7 @@
 				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
 				5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
+				597859D11CD9BC4A0013383A /* NewCommentViewModel.swift in Sources */,
 				595E70A61CD39743005CD441 /* SwipeViewController.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
@@ -1679,6 +1714,7 @@
 				8F5335A81BDBBFE30058961A /* ActivityResourceViews.swift in Sources */,
 				8F8E32D01BFE043200E09392 /* DeviceTokenService.swift in Sources */,
 				5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */,
+				597859D01CD9BC4A0013383A /* NewCommentTableViewCell.swift in Sources */,
 				8F23AA781C072702008926A8 /* BoundingLabel.swift in Sources */,
 				8FC7E3751BD15B9D00E97CC3 /* OrientationEKF.mm in Sources */,
 				8F7738161B380F5D001F642B /* Person.swift in Sources */,

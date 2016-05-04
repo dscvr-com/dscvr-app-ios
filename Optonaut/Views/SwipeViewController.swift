@@ -12,11 +12,11 @@ import ReactiveCocoa
 
 class SwipeViewController: EZSwipeController {
     
-    private let navigationBar = UINavigationBar()
+    var viewOffset:CGFloat = 0
 
     override func setupView() {
         datasource = self
-        print("Pumasok dito")
+        view.backgroundColor = UIColor(hex:0x343434)
     }
     
     dynamic private func showCardboardAlert() {
@@ -25,14 +25,13 @@ class SwipeViewController: EZSwipeController {
         navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
     }
 }
-protocol appsNavigationBar {
-    func returnNavigationBar()
-}
-
 
 extension SwipeViewController: EZSwipeControllerDataSource {
     
     func navigationBarDataForPageIndex(index: Int) -> UINavigationBar {
+        
+        
+        let navigationBar = UINavigationBar()
         
         navigationBar.translucent = false
         navigationBar.barTintColor = UIColor(hex:0x343434)
@@ -45,20 +44,28 @@ extension SwipeViewController: EZSwipeControllerDataSource {
         navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.interactivePopGestureRecognizer?.enabled = false
         
-        let cardboardButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-        cardboardButton.text = String.iconWithName(.Cardboard)
-        cardboardButton.textColor = .whiteColor()
-        cardboardButton.font = UIFont.iconOfSize(24)
-        cardboardButton.userInteractionEnabled = true
-        cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SwipeViewController.showCardboardAlert)))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cardboardButton)
-        navigationBar.pushNavigationItem(navigationItem, animated: false)
+        if index == 0 {
+            let navTitle = UIImage(named:"iam360_navTitle")
+            let imageView = UIImageView(image:navTitle)
+            navigationItem.titleView = imageView
+        
+            let cardboardButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
+            cardboardButton.text = String.iconWithName(.Cardboard)
+            cardboardButton.textColor = .whiteColor()
+            cardboardButton.font = UIFont.iconOfSize(24)
+            cardboardButton.userInteractionEnabled = true
+            cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SwipeViewController.showCardboardAlert)))
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cardboardButton)
+            navigationBar.pushNavigationItem(navigationItem, animated: false)
+        }
         
         return navigationBar
     }
     
     func viewControllerData() -> [UIViewController] {
-        print("Pumasok dito 2")
+
+        let feedsVC = OptographCollectionViewController(viewModel: FeedOptographCollectionViewModel())
+        
         let redVC = UIViewController()
         redVC.view.backgroundColor = UIColor.redColor()
         
@@ -67,9 +74,8 @@ extension SwipeViewController: EZSwipeControllerDataSource {
         
         let greenVC = UIViewController()
         greenVC.view.backgroundColor = UIColor.greenColor()
-        //return [redVC,blueVC,greenVC]
         
-        return [OptographCollectionViewController(viewModel: FeedOptographCollectionViewModel()), blueVC, greenVC]
+        return [feedsVC, blueVC, greenVC]
     }
     
     

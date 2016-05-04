@@ -371,6 +371,10 @@ class OptographCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    dynamic private func pushProfile() {
+        print("pinindot ni user")
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -395,6 +399,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         scnView.delegate = renderDelegate
         scnView.backgroundColor = .clearColor()
         scnView.hidden = false
+        scnView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
         contentView.addSubview(scnView)
         
         loadingOverlayView.backgroundColor = .blackColor()

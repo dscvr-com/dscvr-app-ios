@@ -144,9 +144,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             })
             .start()
         
-        let topOffset = navigationController?.navigationBar.frame.size.height
-        
-        overlayView.frame = CGRect(x: 0, y: topOffset!, width: view.frame.width, height: view.frame.height - topOffset!)
+        //overlayView.frame = CGRect(x: 0, y: 20, width: view.frame.width, height: view.frame.height - 20)
         overlayView.uiHidden = uiHidden
         overlayView.navigationController = navigationController as? NavigationController
         overlayView.parentViewController = self
@@ -159,16 +157,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         uiHidden.producer.startWithNext { [weak self] hidden in
             self?.navigationController?.setNavigationBarHidden(hidden, animated: false)
-            //UIApplication.sharedApplication().setStatusBarHidden(hidden, withAnimation: .None)
             
             self?.collectionView!.scrollEnabled = !hidden
           
-        //hide for 1.6 version
-//            if hidden {
-//                self?.tabController?.hideUI()
-//            } else {
-//                self?.tabController?.showUI()
-//            }
         }
         
 //        viewModel.isActive.producer
