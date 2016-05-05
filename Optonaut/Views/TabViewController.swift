@@ -136,7 +136,6 @@ class TabViewController: UIViewController,
                 case let .Stitching(progress):
                     self?.cameraButton.progress = CGFloat(progress)
                 case .StitchingFinished(_):
-//                    self?.cameraButton.progress = 1
                     self?.cameraButton.progress = nil
                 }
             }

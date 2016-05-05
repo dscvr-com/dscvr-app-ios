@@ -144,7 +144,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             })
             .start()
         
-        //overlayView.frame = CGRect(x: 0, y: 20, width: view.frame.width, height: view.frame.height - 20)
+        overlayView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         overlayView.uiHidden = uiHidden
         overlayView.navigationController = navigationController as? NavigationController
         overlayView.parentViewController = self

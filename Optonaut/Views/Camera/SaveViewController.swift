@@ -102,7 +102,7 @@ class SaveViewController: UIViewController, RedNavbar {
         cancelButton.textColor = .whiteColor()
         cancelButton.font = UIFont.iconOfSize(18)
         cancelButton.userInteractionEnabled = true
-        cancelButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        cancelButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.cancel)))
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
         
         let privateButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
@@ -110,7 +110,7 @@ class SaveViewController: UIViewController, RedNavbar {
         privateButton.font = UIFont.iconOfSize(18)
         privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.World))
         privateButton.userInteractionEnabled = true
-        privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "togglePrivate"))
+        privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.togglePrivate)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: privateButton)
         
         view.backgroundColor = .whiteColor()
@@ -206,7 +206,7 @@ class SaveViewController: UIViewController, RedNavbar {
         facebookSocialButton.text = "Facebook"
         facebookSocialButton.color = UIColor(0x3b5998)
         facebookSocialButton.userInteractionEnabled = true
-        facebookSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapFacebookSocialButton"))
+        facebookSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapFacebookSocialButton)))
         shareBackgroundView.addSubview(facebookSocialButton)
         
         viewModel.postFacebook.producer.startWithNext { [weak self] toggled in
@@ -217,7 +217,7 @@ class SaveViewController: UIViewController, RedNavbar {
         twitterSocialButton.text = "Twitter"
         twitterSocialButton.color = UIColor(0x55acee)
         twitterSocialButton.userInteractionEnabled = true
-        twitterSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapTwitterSocialButton"))
+        twitterSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapTwitterSocialButton)))
         shareBackgroundView.addSubview(twitterSocialButton)
         
         viewModel.postTwitter.producer.startWithNext { [weak self] toggled in
@@ -228,7 +228,7 @@ class SaveViewController: UIViewController, RedNavbar {
         instagramSocialButton.text = "Instagram"
         instagramSocialButton.color = UIColor(0x9b6954)
         instagramSocialButton.userInteractionEnabled = true
-        instagramSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapInstagramSocialButton"))
+        instagramSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapInstagramSocialButton)))
         shareBackgroundView.addSubview(instagramSocialButton)
         
         viewModel.postInstagram.producer.startWithNext { [weak self] toggled in
@@ -239,13 +239,13 @@ class SaveViewController: UIViewController, RedNavbar {
         moreSocialButton.text = "More"
         moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReadyForSubmit.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
         moreSocialButton.rac_alpha <~ viewModel.isReadyForSubmit.producer.mapToTuple(1, 0.2)
-        moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapMoreSocialButton"))
+        moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapMoreSocialButton)))
         shareBackgroundView.addSubview(moreSocialButton)
         
         scrollView.scnView = scnView
         view.addSubview(scrollView)
         
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SaveViewController.dismissKeyboard))
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
         
@@ -296,8 +296,8 @@ class SaveViewController: UIViewController, RedNavbar {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -361,7 +361,7 @@ class SaveViewController: UIViewController, RedNavbar {
     }
     
     override func updateTabs() {
-        tabController!.indicatedSide = nil
+        //tabController!.indicatedSide = nil
         
         tabController!.leftButton.title = "RETRY"
         tabController!.leftButton.icon = .Camera
@@ -373,7 +373,7 @@ class SaveViewController: UIViewController, RedNavbar {
         tabController!.rightButton.hidden = false
         tabController!.rightButton.color = .Light
         
-        tabController!.cameraButton.icon = .Next
+        tabController!.cameraButton.icon = UIImage(named:"camera_icn")!
         tabController!.cameraButton.iconColor = .whiteColor()
         tabController!.cameraButton.backgroundColor = .Accent
         
@@ -636,7 +636,7 @@ class SaveViewController: UIViewController, RedNavbar {
                     self?.tabController!.rightButton.loading = false
                     // set progress because stitching will start
 //                    self?.tabController!.cameraButton.progress = 0
-                    self?.tabController!.updateActiveTab(.Right)
+//                    self?.tabController!.updateActiveTab(.Right)
                     self?.navigationController!.popViewControllerAnimated(false)
                 }
             )
@@ -764,7 +764,7 @@ private class LocationViewModel {
     }
     
     func enableLocation() {
-        locationPermissionTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("checkLocationPermission"), userInfo: nil, repeats: true)
+        locationPermissionTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(LocationViewModel.checkLocationPermission), userInfo: nil, repeats: true)
         LocationService.askPermission()
     }
     
@@ -885,14 +885,14 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         
         leftIconView.font = UIFont.iconOfSize(24)
         leftIconView.textColor = UIColor(0x919293)
-        leftIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTap"))
+        leftIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LocationView.didTap)))
         leftIconView.userInteractionEnabled = true
         leftIconView.text = String.iconWithName(.Location)
         addSubview(leftIconView)
         
         statusText.font = UIFont.displayOfSize(13, withType: .Semibold)
         statusText.textColor = UIColor(0x919293)
-        statusText.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTap"))
+        statusText.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LocationView.didTap)))
         statusText.userInteractionEnabled = true
         statusText.rac_hidden <~ viewModel.locationEnabled
         statusText.text = "Add location"

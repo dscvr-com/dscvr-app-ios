@@ -174,7 +174,7 @@ class CameraViewController: UIViewController {
         
 //        if Defaults[.SessionDebuggingEnabled] {
         #if DEBUG
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "finish")
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
             tapGestureRecognizer.numberOfTapsRequired = 3
             view.addGestureRecognizer(tapGestureRecognizer)
         #endif
@@ -347,14 +347,14 @@ class CameraViewController: UIViewController {
     }
     
     override func updateTabs() {
-        tabController!.indicatedSide = nil
+        //tabController!.indicatedSide = nil
         
         tabController!.leftButton.title = "CANCEL"
         tabController!.leftButton.icon = .Cancel
         
         tabController!.rightButton.hidden = true
         
-        tabController!.hideRingButton()
+        //tabController!.hideRingButton()
     }
     
     private func setupScene() {
@@ -766,7 +766,6 @@ class CameraViewController: UIViewController {
         navigationController!.pushViewController(createOptographViewController, animated: false)
         navigationController!.viewControllers.removeAtIndex(1)
     }
-    
 }
 
 extension CameraViewController: TabControllerDelegate {
@@ -796,8 +795,8 @@ extension CameraViewController: TabControllerDelegate {
         
         recorder.finish()
         recorder.dispose()
-        tabController!.oneRingButton.hidden = false
-        tabController!.threeRingButton.hidden = false
+        //tabController!.oneRingButton.hidden = false
+        //tabController!.threeRingButton.hidden = false
         
         if StitchingService.hasUnstitchedRecordings() {
             StitchingService.removeUnstitchedRecordings()

@@ -13,3 +13,4 @@ github "radex/SwiftyUserDefaults"
 github "onevcat/Kingfisher" "master"
 github "mamaral/Neon" "master"
 github "goktugyil/EZSwipeController"
+github "optonaut/ActiveLabel.swift = 0.3.6

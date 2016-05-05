@@ -54,6 +54,11 @@ extension UIColor {
             return UIColor(0xEEEEEE)
         }
     }
+    static var Clear: UIColor {
+        get {
+            return UIColor.clearColor()
+        }
+    }
     
 //    static var LightGreyActive: UIColor {
 //        get {

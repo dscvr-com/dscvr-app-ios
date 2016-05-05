@@ -99,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            }
 //            
 //            self.window?.rootViewController = tabBarViewController
-            self.window?.rootViewController = TabViewController()
+            self.window?.rootViewController = SwipeViewController()
         }
         
         return true
@@ -158,7 +158,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.backgroundColor = .whiteColor()
         
         SessionService.prepare()
-        SessionService.onLogout(performAlways: true) { self.window?.rootViewController = TabViewController() }
+        SessionService.onLogout(performAlways: true) { self.window?.rootViewController = SwipeViewController() }
         
 //        if SessionService.isLoggedIn || !requireLogin {
 //            if SessionService.needsOnboarding && requireLogin {

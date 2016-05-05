@@ -369,7 +369,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     }
     
     override func updateTabs() {
-        tabController!.indicatedSide = nil
+        //tabController!.indicatedSide = nil
         
         tabController!.leftButton.title = "RETRY"
         tabController!.leftButton.icon = .Camera
@@ -382,12 +382,11 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         tabController!.rightButton.hidden = false
         tabController!.rightButton.color = .Light
         
-        tabController!.cameraButton.icon = .Next
+        tabController!.cameraButton.icon = UIImage(named:"camera_icn")!
         tabController!.cameraButton.iconColor = .whiteColor()
         tabController!.cameraButton.backgroundColor = .Accent
         
         tabController!.bottomGradientOffset.value = 0
-        tabController!.hideRingButton()
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -657,7 +656,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
                     self?.tabController!.rightButton.loading = false
                     // set progress because stitching will start
                     //                    self?.tabController!.cameraButton.progress = 0
-                    self?.tabController!.updateActiveTab(.Right)
+                    //self?.tabController!.updateActiveTab(.Right)
                     self?.navigationController!.popViewControllerAnimated(false)
                     
                     if Defaults[.SessionUploadMode] == "theta" {
@@ -909,14 +908,14 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         
         leftIconView.font = UIFont.iconOfSize(24)
         leftIconView.textColor = UIColor(0x919293)
-        leftIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTap"))
+        leftIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LocationView.didTap)))
         leftIconView.userInteractionEnabled = true
         leftIconView.text = String.iconWithName(.Location)
         addSubview(leftIconView)
         
         statusText.font = UIFont.displayOfSize(13, withType: .Semibold)
         statusText.textColor = UIColor(0x919293)
-        statusText.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTap"))
+        statusText.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LocationView.didTap)))
         statusText.userInteractionEnabled = true
         statusText.rac_hidden <~ viewModel.locationEnabled
         statusText.text = "Add location"
