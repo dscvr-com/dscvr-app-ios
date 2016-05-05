@@ -102,7 +102,7 @@ class SaveViewController: UIViewController, RedNavbar {
         cancelButton.textColor = .whiteColor()
         cancelButton.font = UIFont.iconOfSize(18)
         cancelButton.userInteractionEnabled = true
-        cancelButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        cancelButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.cancel)))
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
         
         let privateButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
@@ -110,7 +110,7 @@ class SaveViewController: UIViewController, RedNavbar {
         privateButton.font = UIFont.iconOfSize(18)
         privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.World))
         privateButton.userInteractionEnabled = true
-        privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "togglePrivate"))
+        privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.togglePrivate)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: privateButton)
         
         view.backgroundColor = .whiteColor()
