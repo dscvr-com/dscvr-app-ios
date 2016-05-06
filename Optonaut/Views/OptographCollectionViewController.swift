@@ -22,7 +22,7 @@ protocol OptographCollectionViewModel {
 }
 
 
-class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout ,TransparentNavbarWithStatusBar{
     
     private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
     
@@ -80,6 +80,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
+        
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image:UIImage(named:"profile_icn"), style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { [weak self] _ in
             self?.viewModel.refresh()
@@ -221,6 +224,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 .observeOn(UIScheduler())
                 .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
         }
+        updateNavbarAppear()
     }
     
     override func viewDidDisappear(animated: Bool) {

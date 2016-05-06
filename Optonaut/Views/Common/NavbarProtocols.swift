@@ -23,6 +23,18 @@ extension TransparentNavbar where Self: UIViewController {
     
 }
 
+protocol TransparentNavbarWithStatusBar {
+    func updateNavbarAppear()
+}
+extension TransparentNavbarWithStatusBar where Self: UIViewController {
+    
+    func updateNavbarAppear() {
+        navigationController?.navigationBar.translucent = true
+        navigationController?.navigationBar.shadowImage = UIImage()
+    }
+    
+}
+
 protocol RedNavbar {
     func updateNavbarAppear()
 }

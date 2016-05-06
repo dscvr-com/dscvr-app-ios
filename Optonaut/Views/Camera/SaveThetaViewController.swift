@@ -382,7 +382,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         tabController!.rightButton.hidden = false
         tabController!.rightButton.color = .Light
         
-        tabController!.cameraButton.icon = UIImage(named:"camera_icn")!
+        //tabController!.cameraButton.icon = UIImage(named:"camera_icn")!
         tabController!.cameraButton.iconColor = .whiteColor()
         tabController!.cameraButton.backgroundColor = .Accent
         

@@ -13,6 +13,8 @@
 		5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */; };
 		5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */; };
 		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
+		594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594378FC1CDC472800C84E6F /* TabViewController.swift */; };
+		594379011CDC5BCA00C84E6F /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594379001CDC5BCA00C84E6F /* Fabric.framework */; };
 		595E70A61CD39743005CD441 /* SwipeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595E70A51CD39743005CD441 /* SwipeViewController.swift */; };
 		595E70A81CD39E81005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
 		595E70A91CD39F4F005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
@@ -47,7 +49,6 @@
 		8F23AA571BFF31EC008926A8 /* Migration0001.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA561BFF31EC008926A8 /* Migration0001.swift */; };
 		8F23AA591BFF3229008926A8 /* Migration0002.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA581BFF3229008926A8 /* Migration0002.swift */; };
 		8F23AA5F1C01F8A5008926A8 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */; };
-		8F23AA601C01F8A5008926A8 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5B1C01F8A5008926A8 /* Fabric.framework */; };
 		8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */; };
 		8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */; };
 		8F23AA631C01F8A5008926A8 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5E1C01F8A5008926A8 /* opencv2.framework */; };
@@ -279,6 +280,8 @@
 		5936B1811CAD34F500F808D8 /* stitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcher.hpp; sourceTree = "<group>"; };
 		5936B1821CAD34F500F808D8 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
+		594378FC1CDC472800C84E6F /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
+		594379001CDC5BCA00C84E6F /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		595E70A51CD39743005CD441 /* SwipeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeViewController.swift; sourceTree = "<group>"; };
 		595E70A71CD39E81005CD441 /* EZSwipeController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EZSwipeController.framework; path = Carthage/Build/iOS/EZSwipeController.framework; sourceTree = "<group>"; };
 		597859D81CD9E8500013383A /* ActiveLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ActiveLabel.framework; sourceTree = "<group>"; };
@@ -312,7 +315,6 @@
 		8F23AA561BFF31EC008926A8 /* Migration0001.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0001.swift; sourceTree = "<group>"; };
 		8F23AA581BFF3229008926A8 /* Migration0002.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0002.swift; sourceTree = "<group>"; };
 		8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Frameworks/Crashlytics.framework; sourceTree = "<group>"; };
-		8F23AA5B1C01F8A5008926A8 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Frameworks/Fabric.framework; sourceTree = "<group>"; };
 		8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = Frameworks/FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = Frameworks/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		8F23AA5E1C01F8A5008926A8 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Frameworks/opencv2.framework; sourceTree = "<group>"; };
@@ -597,9 +599,9 @@
 				8FE4BA191C2B059A00CD0068 /* Kingfisher.framework in Frameworks */,
 				8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */,
 				8F23AA5F1C01F8A5008926A8 /* Crashlytics.framework in Frameworks */,
-				8F23AA601C01F8A5008926A8 /* Fabric.framework in Frameworks */,
 				598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */,
 				8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */,
+				594379011CDC5BCA00C84E6F /* Fabric.framework in Frameworks */,
 				8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */,
 				8F50DCC61C485F8700A706A9 /* FBSDKShareKit.framework in Frameworks */,
 				8F23AA631C01F8A5008926A8 /* opencv2.framework in Frameworks */,
@@ -673,6 +675,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				594379001CDC5BCA00C84E6F /* Fabric.framework */,
 				597859D81CD9E8500013383A /* ActiveLabel.framework */,
 				595E70A71CD39E81005CD441 /* EZSwipeController.framework */,
 				598416411CBB896E00BD966D /* Icomoon.framework */,
@@ -684,7 +687,6 @@
 				8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */,
 				8F23AA641C021CA4008926A8 /* Neon.framework */,
 				8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */,
-				8F23AA5B1C01F8A5008926A8 /* Fabric.framework */,
 				8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */,
 				8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */,
 				8F23AA5E1C01F8A5008926A8 /* opencv2.framework */,
@@ -782,6 +784,7 @@
 		8FAB9EEC1B8F01DF00B4C8CB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				594378FC1CDC472800C84E6F /* TabViewController.swift */,
 				595E70A51CD39743005CD441 /* SwipeViewController.swift */,
 				8FAB9EED1B8F01DF00B4C8CB /* Activity */,
 				8FAB9EF31B8F01DF00B4C8CB /* Camera */,
@@ -1662,6 +1665,7 @@
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
 				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
 				5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */,
+				594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
 				595E70A61CD39743005CD441 /* SwipeViewController.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
