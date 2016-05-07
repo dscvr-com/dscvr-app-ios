@@ -26,7 +26,7 @@ let Env = EnvType.Staging
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 //            application.registerUserNotificationSettings(pushNotificationSettings)
 //            application.registerForRemoteNotifications()
-            //self.window?.rootViewController = TabViewController()
+            
             self.window?.rootViewController = SwipeViewController()
             
             Mixpanel.sharedInstance().track("Launch.Notification")

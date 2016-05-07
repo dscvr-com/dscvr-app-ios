@@ -196,7 +196,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         }
     }
     
-    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         

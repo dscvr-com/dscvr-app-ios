@@ -40,10 +40,6 @@ class TabViewController: UIViewController,
     let bottomGradientOffset = MutableProperty<CGFloat>(126)
     let isThetaImage = MutableProperty<Bool>(false)
     
-    let leftViewController: NavigationController
-    let rightViewController: NavigationController
-    var activeViewController: NavigationController
-    
     private var uiHidden = false
     private var uiLocked = false
     
@@ -53,10 +49,7 @@ class TabViewController: UIViewController,
     var imagePicker = UIImagePickerController()
     
     required init() {
-        leftViewController = FeedNavViewController()
-        rightViewController = ProfileNavViewController()
         
-        activeViewController = leftViewController
         
         super.init(nibName: nil, bundle: nil)
         
@@ -68,12 +61,6 @@ class TabViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        addChildViewController(leftViewController)
-        addChildViewController(rightViewController)
-        
-        view.insertSubview(leftViewController.view, atIndex: 0)
-        indicatedSide = .Left
         
         let width = view.frame.width
         
@@ -196,7 +183,7 @@ class TabViewController: UIViewController,
         let createOptographViewController = SaveThetaViewController(thetaImage:thetaImage)
         
         createOptographViewController.hidesBottomBarWhenPushed = true
-        activeViewController.pushViewController(createOptographViewController, animated: false)
+        navigationController?.pushViewController(createOptographViewController, animated: false)
     }
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
@@ -286,15 +273,9 @@ class TabViewController: UIViewController,
                     self.showUI()
                 }
             )
-            leftViewController.presentViewController(loginOverlayViewController, animated: true, completion: nil)
+            navigationController?.presentViewController(loginOverlayViewController, animated: true, completion: nil)
             return
         }
-        
-        indicatedSide = side
-        
-        activeViewController.view.removeFromSuperview()
-        activeViewController = isLeft ? leftViewController : rightViewController
-        view.insertSubview(activeViewController.view, atIndex: 0)
     }
     
     private func updateIndicatedSide() {
@@ -575,8 +556,8 @@ extension DefaultTabControllerDelegate {
     func onTapCameraButton() {
         switch PipelineService.stitchingStatus.value {
         case .Idle:
-            tabController!.leftViewController.cleanup()
-            tabController!.rightViewController.cleanup()
+            tabController!.navigationController!.cleanup()
+            //tabController!.rightViewController.cleanup()
             
             
             let alert:UIAlertController=UIAlertController(title: "Select Mode", message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
@@ -584,7 +565,7 @@ extension DefaultTabControllerDelegate {
             {
                 UIAlertAction in
                 Defaults[.SessionUploadMode] = "opto"
-                self.tabController!.activeViewController.pushViewController(CameraViewController(), animated: false)
+                //self.tabController!.activeViewController.pushViewController(CameraViewController(), animated: false)
             }
             let gallaryAction = UIAlertAction(title: "Upload Theta", style: UIAlertActionStyle.Default)
             {
@@ -600,12 +581,12 @@ extension DefaultTabControllerDelegate {
             alert.addAction(gallaryAction)
             alert.addAction(cancelAction)
             
-            tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
+            //tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
             
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
+            //tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
         case let .StitchingFinished(optographID):
             scrollToOptograph(optographID)
             PipelineService.stitchingStatus.value = .Idle
@@ -625,23 +606,23 @@ extension DefaultTabControllerDelegate {
     }
     
     func onTapLeftButton() {
-        if tabController?.activeViewController == tabController?.leftViewController {
-            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
-                jumpToTop()
-            }
-        } else {
-            tabController?.updateActiveTab(.Left)
-        }
+//        if tabController?.activeViewController == tabController?.leftViewController {
+//            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
+//                jumpToTop()
+//            }
+//        } else {
+//            tabController?.updateActiveTab(.Left)
+//        }
     }
     
     func onTapRightButton() {
-        if tabController?.activeViewController == tabController?.rightViewController {
-            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
-                jumpToTop()
-            }
-        } else {
-            tabController?.updateActiveTab(.Right)
-        }
+//        if tabController?.activeViewController == tabController?.rightViewController {
+//            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
+//                jumpToTop()
+//            }
+//        } else {
+//            tabController?.updateActiveTab(.Right)
+//        }
     }
 }
 

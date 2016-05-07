@@ -30,7 +30,6 @@ class SwipeViewController: UIViewController{
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -47,28 +46,27 @@ class SwipeViewController: UIViewController{
         let greenVC = UIViewController()
         greenVC.view.backgroundColor = UIColor.greenColor()
         
-        self.addChildViewController(leftViewController);
-        self.scrollView!.addSubview(leftViewController.view);
-        leftViewController.didMoveToParentViewController(self);
+        self.addChildViewController(leftViewController)
+        self.scrollView!.addSubview(leftViewController.view)
+        leftViewController.didMoveToParentViewController(self)
         
-        self.addChildViewController(blueVC);
-        self.scrollView!.addSubview(blueVC.view);
-        blueVC.didMoveToParentViewController(self);
+        self.addChildViewController(blueVC)
+        self.scrollView!.addSubview(blueVC.view)
+        blueVC.didMoveToParentViewController(self)
         
-        self.addChildViewController(greenVC);
-        self.scrollView!.addSubview(greenVC.view);
-        greenVC.didMoveToParentViewController(self);
+        self.addChildViewController(greenVC)
+        self.scrollView!.addSubview(greenVC.view)
+        greenVC.didMoveToParentViewController(self)
         
-        var adminFrame :CGRect = leftViewController.view.frame;
-        adminFrame.origin.x = adminFrame.width;
-        blueVC.view.frame = adminFrame;
+        var adminFrame :CGRect = leftViewController.view.frame
+        adminFrame.origin.x = adminFrame.width
+        blueVC.view.frame = adminFrame
         
-        var BFrame :CGRect = blueVC.view.frame;
-        BFrame.origin.x = 2*BFrame.width;
-        greenVC.view.frame = BFrame;
+        var BFrame :CGRect = blueVC.view.frame
+        BFrame.origin.x = 2*BFrame.width
+        greenVC.view.frame = BFrame
         
         view.addSubview(scrollView)
-        
     }
     
     override func viewDidAppear(animated: Bool) {
