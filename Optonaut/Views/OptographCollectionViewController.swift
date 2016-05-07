@@ -443,6 +443,7 @@ private class OverlayViewModel {
         }
         
     }
+
     
     func toggleLike() {
         let starredBefore = liked.value

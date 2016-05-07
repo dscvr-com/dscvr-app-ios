@@ -221,6 +221,7 @@ private class OverlayViewModel {
         
     }
     
+    
     func toggleLike() {
         let starredBefore = liked.value
         let starsCountBefore = likeCount.value
@@ -422,7 +423,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(avatarImageView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
-        optionsButtonView.setTitle(String.iconWithName(.More), forState: .Normal)
+        optionsButtonView.setImage(UIImage(named:"feeds_option_icn"), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         //optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.didTapOptions)))
         contentView.addSubview(optionsButtonView)
@@ -430,11 +431,12 @@ class OptographCollectionViewCell: UICollectionViewCell {
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
         personNameView.textColor = UIColor(0xffbc00)
         personNameView.userInteractionEnabled = true
+        personNameView.backgroundColor = UIColor.yellowColor()
         //personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
         contentView.addSubview(personNameView)
         
         //likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.toggleLike)))
-        likeButtonView.setTitle(String.iconWithName(.Heart), forState: .Normal)
+        likeButtonView.setImage(UIImage(named:"user_unlike_icn"), forState: .Normal)
         contentView.addSubview(likeButtonView)
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
@@ -446,6 +448,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         likeCountView.textAlignment = .Right
         contentView.addSubview(likeCountView)
     }
+    
     
     override func layoutSubviews() {
         super.layoutSubviews()

@@ -32,8 +32,6 @@ class TabViewController: UIViewController,
     let cameraButton = RecordButton()
     let leftButton = TabButton()
     let rightButton = TabButton()
-    let oneRingButton = UIButton()
-    let threeRingButton = UIButton()
     
     private let bottomGradient = CAGradientLayer()
     
@@ -86,27 +84,6 @@ class TabViewController: UIViewController,
         cameraButton.addTarget(self, action: #selector(TabViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
         uiWrapper.addSubview(cameraButton)
         
-        oneRingButton.frame = CGRect(x: cameraButton.frame.origin.x-35, y: cameraButton.frame.origin.y+23, width: 30, height: 30)
-        oneRingButton.addTarget(self, action: #selector(TabViewController.touchOneRingButton), forControlEvents: [.TouchDown])
-        oneRingButton.setImage(UIImage(named: "oneRingButton"), forState: UIControlState.Normal)
-        oneRingButton.layer.cornerRadius = 5
-        uiWrapper.addSubview(oneRingButton)
-        
-        threeRingButton.frame = CGRect(x: cameraButton.frame.origin.x+cameraButton.frame.size.width+5, y: cameraButton.frame.origin.y+23, width: 30, height: 30)
-        threeRingButton.addTarget(self, action: #selector(TabViewController.touchThreeRingButton), forControlEvents: [.TouchDown])
-        threeRingButton.setImage(UIImage(named: "threeRingButton"), forState: UIControlState.Normal)
-        threeRingButton.layer.cornerRadius = 5
-        uiWrapper.addSubview(threeRingButton)
-        
-        switch Defaults[.SessionUseMultiRing] {
-        case true:
-            threeRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
-            oneRingButton.backgroundColor = UIColor.grayColor()
-        case false:
-            threeRingButton.backgroundColor = UIColor.grayColor()
-            oneRingButton.backgroundColor = UIColor(red: 0.94, green: 0.28, blue: 0.21, alpha: 0.9)
-        }
-        
         PipelineService.stitchingStatus.producer
             .observeOnMain()
             .startWithNext { [weak self] status in
@@ -118,7 +95,6 @@ class TabViewController: UIViewController,
                     if self?.cameraButton.progressLocked == false {
                         self?.cameraButton.icon = .Camera
                         self?.rightButton.loading = false
-                        self?.unhideRingButton()
                     }
                 case let .Stitching(progress):
                     self?.cameraButton.progress = CGFloat(progress)
@@ -220,14 +196,6 @@ class TabViewController: UIViewController,
     func unlockUI() {
         uiLocked = false
     }
-    func unhideRingButton() {
-        oneRingButton.hidden = false
-        threeRingButton.hidden = false
-    }
-    func hideRingButton() {
-        oneRingButton.hidden = true
-        threeRingButton.hidden = true
-    }
     
     dynamic private func tapLeftButton() {
         delegate?.onTapLeftButton()
@@ -244,13 +212,6 @@ class TabViewController: UIViewController,
     dynamic private func touchStartCameraButton() {
         delegate?.onTouchStartCameraButton()
     }
-    dynamic private func touchOneRingButton() {
-        delegate?.onTouchOneRingButton()
-    }
-    dynamic private func touchThreeRingButton() {
-        delegate?.onTouchThreeRingButton()
-    }
-    
     dynamic private func touchEndCameraButton() {
         delegate?.onTouchEndCameraButton()
     }
@@ -531,8 +492,6 @@ protocol TabControllerDelegate {
     func onTapCameraButton()
     func onTapLeftButton()
     func onTapRightButton()
-    func onTouchOneRingButton()
-    func onTouchThreeRingButton()
 }
 
 extension TabControllerDelegate {
@@ -543,8 +502,6 @@ extension TabControllerDelegate {
     func onTapCameraButton() {}
     func onTapLeftButton() {}
     func onTapRightButton() {}
-    func onTouchOneRingButton() {}
-    func onTouchThreeRingButton() {}
 }
 
 protocol DefaultTabControllerDelegate: TabControllerDelegate {}
@@ -592,17 +549,6 @@ extension DefaultTabControllerDelegate {
             PipelineService.stitchingStatus.value = .Idle
         case .Uninitialized: ()
         }
-    }
-    
-    func onTouchOneRingButton() {
-        Defaults[.SessionUseMultiRing] = false
-        tabController!.oneRingButton.backgroundColor = UIColor(red: 0.204, green: 0.204, blue: 0.204, alpha: 0.9)
-        tabController!.threeRingButton.backgroundColor = UIColor(red: 0.557, green: 0.557, blue: 0.553, alpha: 0.9)
-    }
-    func onTouchThreeRingButton() {
-        Defaults[.SessionUseMultiRing] = true
-        tabController!.oneRingButton.backgroundColor = UIColor(red: 0.557, green: 0.557, blue: 0.553, alpha: 0.9)
-        tabController!.threeRingButton.backgroundColor = UIColor(red: 0.204, green: 0.204, blue: 0.204, alpha: 0.9)
     }
     
     func onTapLeftButton() {

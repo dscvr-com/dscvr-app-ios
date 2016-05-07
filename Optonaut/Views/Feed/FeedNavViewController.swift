@@ -188,11 +188,11 @@ class FeedNavViewController: NavigationController {
     func activeRingButtons(isMultiRing:Bool) {
         
         if isMultiRing {
-            threeRingButton.icon = UIImage(named: "motor_active_icn")!
-            oneRingButton.icon = UIImage(named: "motor_inactive_icn")!
+            threeRingButton.icon = UIImage(named: "threeRing_active_icn")!
+            oneRingButton.icon = UIImage(named: "oneRing_inactive_icn")!
         } else {
-            threeRingButton.icon = UIImage(named: "motor_inactive_icn")!
-            oneRingButton.icon = UIImage(named: "motor_active_icn")!
+            threeRingButton.icon = UIImage(named: "threeRing_inactive_icn")!
+            oneRingButton.icon = UIImage(named: "oneRing_active_icn")!
         }
     }
     
