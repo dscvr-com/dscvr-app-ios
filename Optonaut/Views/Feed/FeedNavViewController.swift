@@ -20,6 +20,7 @@ class FeedNavViewController: NavigationController {
     private var manualButton = SettingsButton()
     private var oneRingButton = SettingsButton()
     private var threeRingButton = SettingsButton()
+    private var pullButton = UIButton()
     
     deinit {
         logRetain()
@@ -28,7 +29,6 @@ class FeedNavViewController: NavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //viewController.navigationItem.titleView = UIImageView(image: UIImage.iconWithName(.NewLogo, textColor: .whiteColor(), fontSize: 26))
         let navTitle = UIImage(named:"iam360_navTitle")
         let imageView = UIImageView(image:navTitle)
         viewController.navigationItem.titleView = imageView
@@ -38,6 +38,8 @@ class FeedNavViewController: NavigationController {
         pushViewController(viewController, animated: false)
         self.settingsView()
     }
+    
+    
     func settingsView() {
         thisView.frame = CGRectMake(0, -(view.frame.height), view.frame.width, view.frame.height)
         thisView.backgroundColor = UIColor.blackColor()
@@ -54,7 +56,7 @@ class FeedNavViewController: NavigationController {
         let buttonsHeightMultiplier:CGFloat = 0.67 * bgImage!.frame.size.height
         
         let labelCamera = UILabel()
-        //labelCamera.textAlignment = NSTextAlignment.Center
+        labelCamera.textAlignment = NSTextAlignment.Center
         labelCamera.text = "Camera Settings"
         labelCamera.textColor = UIColor.whiteColor()
         let labelTextWidthCamera = calcTextWidth("Camera Settings", withFont: .displayOfSize(13, withType: .Semibold))
@@ -62,7 +64,7 @@ class FeedNavViewController: NavigationController {
         labelCamera.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: labelTextWidthCamera, height: labelHeightMultiplier)
         
         let labelMode = UILabel()
-        //labelMode.textAlignment = NSTextAlignment.Center
+        labelMode.textAlignment = NSTextAlignment.Center
         let labelModeWidth = calcTextWidth("Mode", withFont: .displayOfSize(11, withType: .Semibold))
         labelMode.textColor = UIColor.whiteColor()
         labelMode.text = "Mode"
@@ -130,8 +132,28 @@ class FeedNavViewController: NavigationController {
         labelMotor.align(.UnderCentered, relativeTo: motorButton, padding: 5, width: labelMotorWidth, height:labelHeightMultiplier)
         thisView.addSubview(labelMotor)
         
+        pullButton.backgroundColor = UIColor(hex:0xffbc00)
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(FeedNavViewController.handlePan(_:)))
+        pullButton.addGestureRecognizer(panGestureRecognizer)
+        //pullButton.addTarget(self, action: #selector(FeedNavViewController.pullButtonTap), forControlEvents:.TouchUpInside)
+        thisView.addSubview(pullButton)
+        pullButton.anchorToEdge(.Bottom, padding: 5, width: 20, height: 15)
+        
         self.activeRingButtons(Defaults[.SessionUseMultiRing])
         self.activeModeButtons(Defaults[.SessionMotor])
+    }
+    
+    
+    func pullButtonTap() {
+        UIView.animateWithDuration(1.0, delay: 1.2, options: .CurveEaseOut, animations: {
+                if var settingsViewCount:CGFloat = self.thisView.frame.origin.y {
+                    settingsViewCount -= self.view.frame.origin.y
+                    self.thisView.frame = CGRectMake(0, settingsViewCount , self.view.frame.width, self.view.frame.height)
+                }
+            }, completion: { finished in
+                self.isSettingsViewOpen = false
+                
+        })
     }
     
     func motorButtonTouched() {
@@ -184,8 +206,10 @@ class FeedNavViewController: NavigationController {
             if !isSettingsViewOpen {
                 thisView.frame = CGRectMake(0, translationY - self.view.frame.height , self.view.frame.width, self.view.frame.height)
             } else {
-                thisView.frame = CGRectMake(0,self.view.frame.height - translationY , self.view.frame.width, self.view.frame.height)
+                thisView.frame = CGRectMake(0,self.view.frame.height - (self.view.frame.height - translationY) , self.view.frame.width, self.view.frame.height)
             }
+        case .Cancelled:
+            print("cancelled")
         case .Ended:
             if !isSettingsViewOpen {
                 thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
