@@ -178,18 +178,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         uiHidden.value = false
         overlayView.alpha = 0
-        
-        if !optographIDs.isEmpty {
-            lazyFadeInOverlay(delay: 0.3)
-        }
-        
         viewModel.isActive.value = true
         
         CoreMotionRotationSource.Instance.start()
         
         view.bounds = UIScreen.mainScreen().bounds
         
-        RotationService.sharedInstance.rotationEnable()
+        //RotationService.sharedInstance.rotationEnable()
         
         if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) {
             collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
@@ -202,7 +197,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         // TODO - remove as soon as correct disposal is implemented. 
         // imageCache.reset()
         
-        RotationService.sharedInstance.rotationDisable()
+        //RotationService.sharedInstance.rotationDisable()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -210,19 +205,15 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         isVisible = true
         
-        if !optographIDs.isEmpty {
-            lazyFadeInOverlay(delay: 0)
-        }
-        
-        if let rotationSignal = RotationService.sharedInstance.rotationSignal {
-            rotationSignal
-                .skipRepeats()
-                .filter([.LandscapeLeft, .LandscapeRight])
-//                .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
-                .take(1)
-                .observeOn(UIScheduler())
-                .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
-        }
+//        if let rotationSignal = RotationService.sharedInstance.rotationSignal {
+//            rotationSignal
+//                .skipRepeats()
+//                .filter([.LandscapeLeft, .LandscapeRight])
+////                .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
+//                .take(1)
+//                .observeOn(UIScheduler())
+//                .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
+//        }
         updateNavbarAppear()
     }
     
@@ -254,8 +245,33 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
-    
-        cell.uiHidden = uiHidden
+        
+        cell.navigationController = navigationController as? NavigationController
+        
+        let optographID = optographIDs[indexPath.row]
+        
+        cell.direction = optographDirections[optographID]!
+        cell.willDisplay()
+        
+        let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
+        cell.setCubeImageCache(cubeImageCache)
+        
+        cell.id = indexPath.row
+        cell.bindModel(optographID)
+        
+        if StitchingService.isStitching() {
+            imageCache.resetExcept(indexPath.row)
+        } else {
+            for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
+                let id = optographIDs[indexPath.row + i]
+                let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
+                imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
+            }
+        }
+        
+        if indexPath.row > optographIDs.count - 3 {
+            viewModel.loadMore()
+        }
     
         return cell
     }
@@ -270,43 +286,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/3)*2))
     }
     
-    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        guard let cell = cell as? OptographCollectionViewCell else {
-            return
-        }
-        
-        let optographID = optographIDs[indexPath.row]
-        
-        cell.direction = optographDirections[optographID]!
-        cell.willDisplay()
-        
-        let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
-        cell.setCubeImageCache(cubeImageCache)
-        
-        cell.id = indexPath.row
-        
-        cell.OptoId = optographID
-        
-        if StitchingService.isStitching() {
-            imageCache.resetExcept(indexPath.row)
-        } else {
-            for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
-                let id = optographIDs[indexPath.row + i]
-                let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
-                imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
-            }
-        }
-        
-        if isVisible {
-            lazyFadeInOverlay(delay: 0)
-        }
-        
-        if indexPath.row > optographIDs.count - 3 {
-            viewModel.loadMore()
-        }
-        
-    }
-    
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         let cell = cell as! OptographCollectionViewCell
         
@@ -314,50 +293,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         cell.didEndDisplay()
         
         imageCache.disable(indexPath.row)
-    }
-    
-    override func scrollViewDidScroll(scrollView: UIScrollView) {
-        let height = view.frame.height
-        let offset = scrollView.contentOffset.y
-        
-        if !overlayIsAnimating {
-            let relativeOffset = offset % height
-            let percentage = relativeOffset / height
-            var opacity: CGFloat = 0
-            if percentage > 0.8 || percentage < 0.2 {
-                if scrollView.decelerating && overlayView.alpha == 0 {
-                    overlayIsAnimating = true
-                    dispatch_async(dispatch_get_main_queue()) {
-                        UIView.animateWithDuration(0.2,
-                            delay: 0,
-                            options: [.AllowUserInteraction],
-                            animations: {
-                                self.overlayView.alpha = 1
-                            }, completion: nil)
-                    }
-                    return
-                }
-                
-                let normalizedPercentage = percentage < 0.2 ? percentage : 1 - percentage
-                opacity = -10 * normalizedPercentage + 2
-            }
-            
-            overlayView.alpha = opacity
-        }
-        
-        let overlayOptographID = optographIDs[Int(round(offset / height))]
-        if overlayOptographID != overlayView.optographID {
-            overlayView.optographID = overlayOptographID
-        }
-    }
-    
-    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-        overlayIsAnimating = false
-        overlayView.layer.removeAllAnimations()
-    }
-
-    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        overlayIsAnimating = false
     }
     
     override func cleanup() {
@@ -376,23 +311,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographIDs[index]]!.model)
         navigationController?.pushViewController(viewerViewController, animated: false)
 //        viewModel.increaseViewsCount()
-    }
-    
-    private func lazyFadeInOverlay(delay delay: NSTimeInterval) {
-        if overlayView.alpha == 0 && !overlayIsAnimating {
-            overlayIsAnimating = true
-//            dispatch_async(dispatch_get_main_queue()) {
-                UIView.animateWithDuration(0.2,
-                    delay: delay,
-                    options: [.AllowUserInteraction],
-                    animations: {
-                        self.overlayView.alpha = 1
-                    }, completion: { _ in
-                        self.overlayIsAnimating = false
-                    }
-                )
-//            }
-        }
     }
 }
 

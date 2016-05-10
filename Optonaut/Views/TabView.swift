@@ -9,7 +9,7 @@
 import UIKit
 import ReactiveCocoa
 
-class TabView: PTView ,UIImagePickerControllerDelegate,UINavigationControllerDelegate{
+class TabView: PTView {
 
     private let indicatedSideLayer = CALayer()
     
@@ -20,14 +20,6 @@ class TabView: PTView ,UIImagePickerControllerDelegate,UINavigationControllerDel
     private let bottomGradient = CAGradientLayer()
     
     let bottomGradientOffset = MutableProperty<CGFloat>(126)
-    
-    private var uiHidden = false
-    private var uiLocked = false
-    
-    var delegate: TabControllerDelegate?
-    
-    var imageView: UIImageView!
-    var imagePicker = UIImagePickerController()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
@@ -75,24 +67,15 @@ class TabView: PTView ,UIImagePickerControllerDelegate,UINavigationControllerDel
         
         cameraButton.frame = CGRect(x: frame.width / 2 - 35, y: 126 / 2 - 35, width: 80, height: 80)
         cameraButton.icon = UIImage(named:"camera_icn")!
-        
-        //cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapCameraButton)))
-        //cameraButton.addTarget(self, action: #selector(TabViewController.touchStartCameraButton), forControlEvents: [.TouchDown])
-        //cameraButton.addTarget(self, action: #selector(TabViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
         addSubview(cameraButton)
         
-        
         let buttonSpacing = (frame.width / 2 - 35) / 2 - 40
-        //let buttonsSizeMultiplier = 0.07 * width
         leftButton.frame = CGRect(x: buttonSpacing, y: 126 / 2 - 12, width: 35, height: 35)
         leftButton.icon = UIImage(named:"photo_library_icn")!
-        
-        //leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapLeftButton)))
         addSubview(leftButton)
         
         rightButton.frame = CGRect(x: frame.width - buttonSpacing - 28, y: 126 / 2 - 12, width: 35, height: 35)
         rightButton.icon = UIImage(named:"settings_icn")!
-        //rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapRightButton)))
         addSubview(rightButton)
        
     }

@@ -218,9 +218,7 @@ private class OverlayViewModel {
                 self?.uploadStatus.value = .Offline
             }
         }
-        
     }
-    
     
     func toggleLike() {
         let starredBefore = liked.value
@@ -328,15 +326,14 @@ private class OverlayViewModel {
         }
         
     }
-    
 }
 
-class OptographCollectionViewCell: UICollectionViewCell {
+class OptographCollectionViewCell: UICollectionViewCell{
     
     weak var uiHidden: MutableProperty<Bool>!
     
     private let viewModel = OverlayViewModel()
-    
+    weak var navigationController: NavigationController?
     // subviews
     private let topElements = UIView()
     private let bottomElements = UIView()
@@ -361,7 +358,8 @@ class OptographCollectionViewCell: UICollectionViewCell {
     private let personNameView = BoundingLabel()
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
-    var OptoId: UUID?
+    
+    var deleteCallback: (() -> ())?
     
     var direction: Direction {
         set(direction) {
@@ -425,17 +423,17 @@ class OptographCollectionViewCell: UICollectionViewCell {
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setImage(UIImage(named:"feeds_option_icn"), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        //optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.didTapOptions)))
+        optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapOptions)))
         contentView.addSubview(optionsButtonView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
         personNameView.textColor = UIColor(0xffbc00)
         personNameView.userInteractionEnabled = true
-        personNameView.backgroundColor = UIColor.yellowColor()
         //personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
         contentView.addSubview(personNameView)
         
-        //likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.toggleLike)))
+        //likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector()))
+        likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
         likeButtonView.setImage(UIImage(named:"user_unlike_icn"), forState: .Normal)
         contentView.addSubview(likeButtonView)
         
@@ -455,107 +453,81 @@ class OptographCollectionViewCell: UICollectionViewCell {
         
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
         avatarImageView.anchorInCorner(.BottomLeft, xPad: 16, yPad: 9.5, width: 47, height: 47)
+        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width: 24, height: 24)
+        personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+    }
+    
+    func toggleStar() {
+        viewModel.toggleLike()
+//        if SessionService.isLoggedIn {
+//            viewModel.toggleLike()
+//        } else {
+//            parentViewController!.tabController!.hideUI()
+//            parentViewController!.tabController!.lockUI()
+//            
+//            let loginOverlayViewController = LoginOverlayViewController(
+//                title: "Login to like this moment",
+//                successCallback: {
+//                    self.viewModel.toggleLike()
+//                },
+//                cancelCallback: { true },
+//                alwaysCallback: {
+//                    self.parentViewController!.tabController!.unlockUI()
+//                    self.parentViewController!.tabController!.showUI()
+//                }
+//            )
+//            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
+//        }
+    }
+    
+    func bindModel(optographId:UUID) {
+        let optograph = Models.optographs[optographId]!.model
+        let person = Models.persons[optograph.personID]!.model
         
-        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 20, width: 24, height: 24)
+        viewModel.bind(optographId)
         
-        if let optographID = OptoId  {
-            let optograph = Models.optographs[optographID]!.model
-            let person = Models.persons[optograph.personID]!.model
-            
-            viewModel.bind(optographID)
-            
-            avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
-            personNameView.text = person.displayName
-            //dateView.text = optograph.createdAt.longDescription
-            //textView.text = optograph.text
-            
-            if let locationID = optograph.locationID {
-                let location = Models.locations[locationID]!.model
-                locationTextView.text = "\(location.text), \(location.countryShort)"
-                personNameView.align(.ToTheRightMatchingTop, relativeTo: avatarImageView, padding: 9.5, width: 50, height: 18)
-                locationTextView.align(.ToTheRightMatchingBottom, relativeTo: avatarImageView, padding: 9.5, width: 70, height: 18)
-                locationTextView.text = location.text
-            } else {
-                personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
-                locationTextView.text = ""
-            }
-            
-            likeButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
-            likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
-            likeCountView.rac_text <~ viewModel.likeCount.producer.map { "\($0)" }
-            
-            viewModel.liked.producer.startWithNext { [weak self] liked in
-                if let strongSelf = self {
-                    
-                    strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-                    strongSelf.likeButtonView.setTitleColor(liked ? UIColor(0xffbc00) : .whiteColor(), forState: .Normal)
-                    strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(24)
-                    strongSelf.likeCountView.align(.ToTheLeftCentered, relativeTo: strongSelf.likeButtonView, padding: 10, width: 40, height: 13)
-//                    strongSelf.uploadButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
-//                    strongSelf.uploadTextView.align(.ToTheLeftCentered, relativeTo: strongSelf.uploadButtonView, padding: 8, width: 60, height: 13)
-//                    strongSelf.uploadingView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
-                }
-            }
+        avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
+        personNameView.text = person.displayName
+        //dateView.text = optograph.createdAt.longDescription
+        //textView.text = optograph.text
+        
+        if let locationID = optograph.locationID {
+            let location = Models.locations[locationID]!.model
+            locationTextView.text = "\(location.text), \(location.countryShort)"
+            personNameView.align(.ToTheRightMatchingTop, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+            locationTextView.align(.ToTheRightMatchingBottom, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+            locationTextView.text = location.text
+        } else {
+            personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+            locationTextView.text = ""
         }
         
+        likeButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
+        likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
+        likeCountView.rac_text <~ viewModel.likeCount.producer.map { "\($0)" }
+        
+        viewModel.liked.producer.startWithNext { [weak self] liked in
+            if let strongSelf = self {
+                
+                strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
+                strongSelf.likeButtonView.setTitleColor(liked ? UIColor(0xffbc00) : .whiteColor(), forState: .Normal)
+                strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(24)
+                strongSelf.likeCountView.align(.ToTheLeftCentered, relativeTo: strongSelf.likeButtonView, padding: 10, width: 40, height: 13)
+                //                    strongSelf.uploadButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
+                //                    strongSelf.uploadTextView.align(.ToTheLeftCentered, relativeTo: strongSelf.uploadButtonView, padding: 8, width: 60, height: 13)
+                //                    strongSelf.uploadingView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
+            }
+        }
     }
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesBegan(touches, withEvent: event)
-        var point = touches.first!.locationInView(contentView)
-        touchStart = point
-        
-        if !uiHidden.value {
-            point.y = 0
-        }
-        
-        if touches.count == 1 {
-            combinedMotionManager.touchStart(point)
-        }
-    }
-    
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesMoved(touches, withEvent: event)
-        var point = touches.first!.locationInView(contentView)
-        
-        if !uiHidden.value {
-            if abs(point.x - touchStart!.x) > 20 {
-                uiHidden.value = true
-                combinedMotionManager.touchStart(point)
-                return
-            }
-            
-            point.y = 0
-        }
-        
-        combinedMotionManager.touchMove(point)
-    }
-    
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        let distance = touchStart!.distanceTo(touches.first!.locationInView(self))
-        if distance < 10 {
-            uiHidden.value = !uiHidden.value
-        }
-        super.touchesEnded(touches, withEvent: event)
-        if touches.count == 1 {
-            combinedMotionManager.touchEnd()
-        }
-    }
+    }   
     
     var id: Int = 0 {
         didSet {
             renderDelegate.id = id
-        }
-    }
-    
-    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-        super.touchesCancelled(touches, withEvent: event)
-        if let touches = touches where touches.count == 1 {
-            combinedMotionManager.touchEnd()
         }
     }
     
@@ -606,5 +578,11 @@ class OptographCollectionViewCell: UICollectionViewCell {
     
     deinit {
         logRetain()
+    }
+}
+
+extension OptographCollectionViewCell: OptographOptions {
+    dynamic func didTapOptions() {
+        showOptions(viewModel.optographBox.model.ID, deleteCallback: deleteCallback)
     }
 }

@@ -20,7 +20,7 @@ class FeedNavViewController: NavigationController {
     private var manualButton = SettingsButton()
     private var oneRingButton = SettingsButton()
     private var threeRingButton = SettingsButton()
-    private var pullButton = UIButton()
+    private var pullButton = SettingsButton()
     
     deinit {
         logRetain()
@@ -132,7 +132,7 @@ class FeedNavViewController: NavigationController {
         labelMotor.align(.UnderCentered, relativeTo: motorButton, padding: 5, width: labelMotorWidth, height:labelHeightMultiplier)
         thisView.addSubview(labelMotor)
         
-        pullButton.backgroundColor = UIColor(hex:0xffbc00)
+        pullButton.icon = UIImage(named:"arrow_pull")!
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(FeedNavViewController.handlePan(_:)))
         pullButton.addGestureRecognizer(panGestureRecognizer)
         //pullButton.addTarget(self, action: #selector(FeedNavViewController.pullButtonTap), forControlEvents:.TouchUpInside)
