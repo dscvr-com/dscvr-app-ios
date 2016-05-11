@@ -48,7 +48,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            application.registerUserNotificationSettings(pushNotificationSettings)
 //            application.registerForRemoteNotifications()
             
-            self.window?.rootViewController = TabViewController()
+            
+            let tabBarViewController = TabViewController()
+            self.window?.rootViewController = tabBarViewController
+            
+            
             
             Mixpanel.sharedInstance().track("Launch.Notification")
         }

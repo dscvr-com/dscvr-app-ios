@@ -459,28 +459,29 @@ extension DefaultTabControllerDelegate {
             //tabController!.rightViewController.cleanup()
             
             
-            let alert:UIAlertController=UIAlertController(title: "Select Mode", message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
-            let cameraAction = UIAlertAction(title: "Optograph", style: UIAlertActionStyle.Default)
-            {
-                UIAlertAction in
-                Defaults[.SessionUploadMode] = "opto"
-                //self.tabController!.activeViewController.pushViewController(CameraViewController(), animated: false)
-            }
-            let gallaryAction = UIAlertAction(title: "Upload Theta", style: UIAlertActionStyle.Default)
-            {
-                UIAlertAction in
-                Defaults[.SessionUploadMode] = "theta"
-                self.tabController!.openGallary()
-            }
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel)
-            {
-                UIAlertAction in
-            }
-            alert.addAction(cameraAction)
-            alert.addAction(gallaryAction)
-            alert.addAction(cancelAction)
+//            let alert:UIAlertController=UIAlertController(title: "Select Mode", message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+//            let cameraAction = UIAlertAction(title: "Optograph", style: UIAlertActionStyle.Default)
+//            {
+//                UIAlertAction in
+//                Defaults[.SessionUploadMode] = "opto"
+//                //self.tabController!.activeViewController.pushViewController(CameraViewController(), animated: false)
+//            }
+            self.tabController!.leftViewController.pushViewController(CameraViewController(), animated: false)
             
-            //tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
+//            let gallaryAction = UIAlertAction(title: "Upload Theta", style: UIAlertActionStyle.Default)
+//            {
+//                UIAlertAction in
+//                Defaults[.SessionUploadMode] = "theta"
+//                self.tabController!.openGallary()
+//            }
+//            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel)
+//            {
+//                UIAlertAction in
+//            }
+//            alert.addAction(cameraAction)
+//            alert.addAction(gallaryAction)
+//            alert.addAction(cancelAction)
+            
             
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
