@@ -186,9 +186,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         //RotationService.sharedInstance.rotationEnable()
         
-        if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) {
-            collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
-        }
+//        if let indexPath = self.collectionView!.indexPathsForVisibleItems().first, cell = self.collectionView!.cellForItemAtIndexPath(indexPath) {
+//            self.collectionView(self.collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
+//        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -573,8 +573,6 @@ private class OverlayView: UIView {
         if SessionService.isLoggedIn {
             viewModel.toggleLike()
         } else {
-            parentViewController!.tabController!.hideUI()
-            parentViewController!.tabController!.lockUI()
             
             let loginOverlayViewController = LoginOverlayViewController(
                 title: "Login to like this moment",
@@ -583,8 +581,6 @@ private class OverlayView: UIView {
                 },
                 cancelCallback: { true },
                 alwaysCallback: {
-                    self.parentViewController!.tabController!.unlockUI()
-                    self.parentViewController!.tabController!.showUI()
                 }
             )
             parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)

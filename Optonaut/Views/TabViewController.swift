@@ -17,29 +17,15 @@ class TabViewController: UIViewController,
                             UIImagePickerControllerDelegate,
                             UINavigationControllerDelegate{
     
-    enum ActiveSide: Equatable { case Left, Right }
-    
-    private let uiWrapper = PassThroughView()
-    
-    var indicatedSide: ActiveSide? {
-        didSet {
-            updateIndicatedSide()
-        }
-    }
-    
-    private let indicatedSideLayer = CALayer()
-    
-    let cameraButton = RecordButton()
-    let leftButton = TabButton()
-    let rightButton = TabButton()
+    var scrollView: UIScrollView!
+    var tabView = TabView()
+    let leftViewController: NavigationController
     
     private let bottomGradient = CAGradientLayer()
     
     let bottomGradientOffset = MutableProperty<CGFloat>(126)
     let isThetaImage = MutableProperty<Bool>(false)
     
-    private var uiHidden = false
-    private var uiLocked = false
     
     var delegate: TabControllerDelegate?
     
@@ -48,7 +34,7 @@ class TabViewController: UIViewController,
     
     required init() {
         
-        
+        leftViewController = FeedNavViewController()
         super.init(nibName: nil, bundle: nil)
         
     }
@@ -63,11 +49,7 @@ class TabViewController: UIViewController,
         let width = view.frame.width
         
         bottomGradient.colors = [UIColor.clearColor().CGColor, UIColor.blackColor().alpha(0.5).CGColor]
-        uiWrapper.layer.addSublayer(bottomGradient)
-        
-        indicatedSideLayer.backgroundColor = UIColor.Accent.CGColor
-        indicatedSideLayer.cornerRadius = 5
-        uiWrapper.layer.addSublayer(indicatedSideLayer)
+        tabView.layer.addSublayer(bottomGradient)
         
         bottomGradientOffset.producer.startWithNext { [weak self] offset in
             CATransaction.begin()
@@ -78,50 +60,90 @@ class TabViewController: UIViewController,
             CATransaction.commit()
         }
         
-        cameraButton.frame = CGRect(x: view.frame.width / 2 - 35, y: 126 / 2 - 35, width: 70, height: 70)
-        cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapCameraButton)))
-        cameraButton.addTarget(self, action: #selector(TabViewController.touchStartCameraButton), forControlEvents: [.TouchDown])
-        cameraButton.addTarget(self, action: #selector(TabViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
-        uiWrapper.addSubview(cameraButton)
-        
         PipelineService.stitchingStatus.producer
             .observeOnMain()
             .startWithNext { [weak self] status in
                 switch status {
                 case .Uninitialized:
-                    self?.cameraButton.loading = true
+                    self?.tabView.cameraButton.loading = true
                 case .Idle:
-                    self?.cameraButton.progress = nil
-                    if self?.cameraButton.progressLocked == false {
-                        self?.cameraButton.icon = .Camera
-                        self?.rightButton.loading = false
+                    self?.tabView.cameraButton.progress = nil
+                    if self?.tabView.cameraButton.progressLocked == false {
+                        self?.tabView.cameraButton.icon = UIImage(named:"camera_icn")!
+                        self?.tabView.rightButton.loading = false
                     }
                 case let .Stitching(progress):
-                    self?.cameraButton.progress = CGFloat(progress)
+                    self?.tabView.cameraButton.progress = CGFloat(progress)
                 case .StitchingFinished(_):
-                    self?.cameraButton.progress = nil
+                    self?.tabView.cameraButton.progress = nil
                 }
-            }
-
-        let buttonSpacing = (view.frame.width / 2 - 35) / 2 - 14
-        leftButton.frame = CGRect(x: buttonSpacing, y: 126 / 2 - 23.5, width: 28, height: 28)
-        leftButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapLeftButton)))
-        uiWrapper.addSubview(leftButton)
-
-        rightButton.frame = CGRect(x: view.frame.width - buttonSpacing - 28, y: 126 / 2 - 23.5, width: 28, height: 28)
-        rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapRightButton)))
-        uiWrapper.addSubview(rightButton)
+        }
         
         initNotificationIndicator()
         
         PipelineService.checkStitching()
         PipelineService.checkUploading()
         
-        uiWrapper.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
-        view.addSubview(uiWrapper)
+        imagePicker.delegate = self
+        
+        scrollView = UIScrollView(frame: view.bounds)
+        scrollView.backgroundColor = UIColor.blackColor()
+        let scrollWidth: CGFloat  = 3 * self.view.frame.width
+        let scrollHeight: CGFloat  = self.view.frame.size.height
+        self.scrollView!.contentSize = CGSizeMake(scrollWidth, scrollHeight);
+        self.scrollView!.pagingEnabled = true;
+        
+        let blueVC = UIViewController()
+        blueVC.view.backgroundColor = UIColor.blueColor()
+        
+        let greenVC = UIViewController()
+        greenVC.view.backgroundColor = UIColor.greenColor()
+        
+        self.addChildViewController(leftViewController)
+        self.scrollView!.addSubview(leftViewController.view)
+        leftViewController.didMoveToParentViewController(self)
+        
+        self.addChildViewController(blueVC)
+        self.scrollView!.addSubview(blueVC.view)
+        blueVC.didMoveToParentViewController(self)
+        
+        self.addChildViewController(greenVC)
+        self.scrollView!.addSubview(greenVC.view)
+        greenVC.didMoveToParentViewController(self)
+        
+        var adminFrame :CGRect = leftViewController.view.frame
+        adminFrame.origin.x = adminFrame.width
+        blueVC.view.frame = adminFrame
+        
+        var BFrame :CGRect = blueVC.view.frame
+        BFrame.origin.x = 2*BFrame.width
+        greenVC.view.frame = BFrame
+        
+        view.addSubview(scrollView)
+        
+        tabView.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
+        view.addSubview(tabView)
+        
+        isThetaImage.producer
+            .filter(isTrue)
+            .startWithNext{ _ in
+                let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler:{ _ in
+                    self.isThetaImage.value = false
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+        tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapCameraButton)))
+        //tabView.cameraButton.addTarget(self, action: #selector(SwipeViewController.touchStartCameraButton), forControlEvents: [.TouchDown])
+        //tabView.cameraButton.addTarget(self, action: #selector(SwipeViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        
+        tabView.leftButton.addTarget(self, action: #selector(TabViewController.tapLeftButton), forControlEvents: [.TouchDown])
+        tabView.rightButton.addTarget(self, action: #selector(TabViewController.tapRightButton), forControlEvents: [.TouchDown])
         
         imagePicker.delegate = self
     }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -134,11 +156,10 @@ class TabViewController: UIViewController,
                 }))
                 self.presentViewController(alert, animated: true, completion: nil)
         }
-        
     }
     
-    func openGallary()
-    {
+    func openGallary() {
+        
         imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         imagePicker.navigationBar.translucent = false
         imagePicker.navigationBar.barTintColor = UIColor.Accent
@@ -171,30 +192,18 @@ class TabViewController: UIViewController,
             }
         }
         
-        dismissViewControllerAnimated(true, completion: nil)
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        dismissViewControllerAnimated(true, completion: nil)
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     func showUI() {
-        if !uiLocked {
-            uiWrapper.hidden = false
-        }
+        tabView.hidden = false
     }
     
     func hideUI() {
-        if !uiLocked {
-            uiWrapper.hidden = true
-        }
-    }
-    
-    func lockUI() {
-        uiLocked = true
-    }
-    
-    func unlockUI() {
-        uiLocked = false
+        tabView.hidden = true
     }
     
     dynamic private func tapLeftButton() {
@@ -216,48 +225,9 @@ class TabViewController: UIViewController,
         delegate?.onTouchEndCameraButton()
     }
     
-    func updateActiveTab(side: ActiveSide) {
-        let isLeft = side == .Left
-        
-        if !isLeft && !SessionService.isLoggedIn {
-            hideUI()
-            lockUI()
-            
-            let loginOverlayViewController = LoginOverlayViewController(
-                title: "Login to save your moment",
-                successCallback: {
-                    self.updateActiveTab(.Right)
-                },
-                cancelCallback: { true },
-                alwaysCallback: {
-                    self.unlockUI()
-                    self.showUI()
-                }
-            )
-            navigationController?.presentViewController(loginOverlayViewController, animated: true, completion: nil)
-            return
-        }
-    }
-    
-    private func updateIndicatedSide() {
-        indicatedSideLayer.hidden = indicatedSide == nil
-        
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        
-        let spacing = (view.frame.width / 2 - 35) / 2 - 31
-        switch indicatedSide {
-        case .Left?: indicatedSideLayer.frame = CGRect(x: spacing, y: 121, width: 62, height: 10)
-        case .Right?: indicatedSideLayer.frame = CGRect(x: view.frame.width - spacing - 62, y: 121, width: 62, height: 10)
-        default: ()
-        }
-        
-        CATransaction.commit()
-    }
-    
     private func initNotificationIndicator() {
         let circle = UILabel()
-        circle.frame = CGRect(x: rightButton.frame.origin.x + 25, y: rightButton.frame.origin.y - 3, width: 16, height: 16)
+        circle.frame = CGRect(x: tabView.rightButton.frame.origin.x + 25, y: tabView.rightButton.frame.origin.y - 3, width: 16, height: 16)
         circle.backgroundColor = .Accent
         circle.font = UIFont.displayOfSize(10, withType: .Regular)
         circle.textAlignment = .Center
@@ -265,7 +235,7 @@ class TabViewController: UIViewController,
         circle.layer.cornerRadius = 8
         circle.clipsToBounds = true
         circle.hidden = true
-        uiWrapper.addSubview(circle)
+        tabView.addSubview(circle)
         
         ActivitiesService.unreadCount.producer.startWithNext { count in
             let hidden = count <= 0
@@ -276,17 +246,100 @@ class TabViewController: UIViewController,
 
 }
 
+class TButton: UIButton {
+    
+    enum Color { case Light, Dark }
+    
+    var title: String = "" {
+        didSet {
+            text.text = title
+        }
+    }
+    
+    var icon: UIImage = UIImage(named:"photo_library_icn")! {
+        didSet {
+            setImage(icon, forState: .Normal)
+        }
+    }
+    
+    var color: Color = .Dark {
+        didSet {
+            let actualColor = color == .Dark ? .whiteColor() : UIColor(0x919293)
+            setTitleColor(actualColor, forState: .Normal)
+            text.textColor = actualColor
+            loadingView.color = actualColor
+        }
+    }
+    
+    var loading = false {
+        didSet {
+            if loading {
+                loadingView.startAnimating()
+            } else {
+                loadingView.stopAnimating()
+            }
+            
+            setTitleColor(titleColorForState(.Normal)!.alpha(loading ? 0 : 1), forState: .Normal)
+            
+            userInteractionEnabled = !loading
+        }
+    }
+    
+    
+    private let text = UILabel()
+    private let loadingView = UIActivityIndicatorView()
+    
+    override init (frame: CGRect) {
+        super.init(frame: frame)
+        
+        setTitleColor(.whiteColor(), forState: .Normal)
+        titleLabel?.font = UIFont.iconOfSize(28)
+        
+        loadingView.hidesWhenStopped = true
+        addSubview(loadingView)
+        
+        text.font = UIFont.displayOfSize(9, withType: .Light)
+        text.textColor = .whiteColor()
+        text.textAlignment = .Center
+        addSubview(text)
+    }
+    
+    convenience init () {
+        self.init(frame: CGRectZero)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let textWidth: CGFloat = 50
+        text.frame = CGRect(x: (frame.width - textWidth) / 2, y: frame.height + 10, width: textWidth, height: 11)
+        
+        loadingView.fillSuperview()
+    }
+    
+    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+        let margin: CGFloat = 10
+        let area = CGRectInset(bounds, -margin, -margin)
+        return CGRectContainsPoint(area, point)
+    }
+    
+}
 
-class RecordButton: UIButton {
+
+class RecButton: UIButton {
     
     private var touched = false
     
     private let progressLayer = CALayer()
     private let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
     
-    var icon: Icon = .Camera {
+    var icon: UIImage = UIImage(named:"camera_icn")! {
         didSet {
-            setTitle(String.iconWithName(icon), forState: .Normal)
+            setImage(icon, forState: .Normal)
         }
     }
     
@@ -327,11 +380,11 @@ class RecordButton: UIButton {
                     backgroundColor = UIColor.Accent.mixWithColor(.blackColor(), amount: 0.3).alpha(0.5)
                     loading = progress != 1
                     
-//                    if progress == 0 {
-//                        icon = .Camera
-//                    } else if progress == 1 {
-//                        icon = .Next
-//                    }
+                    //                    if progress == 0 {
+                    //                        icon = .Camera
+                    //                    } else if progress == 1 {
+                    //                        icon = .Next
+                    //                    }
                 } else {
                     backgroundColor = UIColor.Accent
                     loading = false
@@ -351,18 +404,15 @@ class RecordButton: UIButton {
         loadingView.hidesWhenStopped = true
         addSubview(loadingView)
         
-        backgroundColor = .Accent
+        backgroundColor = UIColor.clearColor()
         clipsToBounds = true
         
         layer.cornerRadius = 12
         
         setTitleColor(.whiteColor(), forState: .Normal)
         titleLabel?.font = UIFont.iconOfSize(33)
-        
-        addTarget(self, action: #selector(RecordButton.buttonTouched), forControlEvents: .TouchDown)
-        addTarget(self, action: #selector(RecordButton.buttonUntouched), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -373,114 +423,6 @@ class RecordButton: UIButton {
         progressLayer.frame = CGRect(x: 0, y: 0, width: frame.width * (progress ?? 0), height: frame.height)
         loadingView.fillSuperview()
     }
-    
-    private func updateBackground() {
-        if touched {
-            backgroundColor = UIColor.Accent.alpha(0.7)
-        } else {
-            backgroundColor = .Accent
-        }
-    }
-    
-    dynamic private func buttonTouched() {
-        touched = true
-        updateBackground()
-    }
-    
-    dynamic private func buttonUntouched() {
-        touched = false
-        updateBackground()
-    }
-}
-
-class TabButton: UIButton {
-    
-    enum Color { case Light, Dark }
-    
-    var title: String = "" {
-        didSet {
-            text.text = title
-        }
-    }
-    
-    var icon: Icon = .Cancel {
-        didSet {
-            setTitle(String.iconWithName(icon), forState: .Normal)
-        }
-    }
-    
-    var color: Color = .Dark {
-        didSet {
-            let actualColor = color == .Dark ? .whiteColor() : UIColor(0x919293)
-            setTitleColor(actualColor, forState: .Normal)
-            text.textColor = actualColor
-            loadingView.color = actualColor
-        }
-    }
-    
-    var loading = false {
-        didSet {
-            if loading {
-                loadingView.startAnimating()
-            } else {
-                loadingView.stopAnimating()
-            }
-            
-            setTitleColor(titleColorForState(.Normal)!.alpha(loading ? 0 : 1), forState: .Normal)
-            
-            userInteractionEnabled = !loading
-        }
-    }
-    
-//    private let activeBorderLayer = CALayer()
-    
-    private let text = UILabel()
-    private let loadingView = UIActivityIndicatorView()
-    
-    override init (frame: CGRect) {
-        super.init(frame: frame)
-        
-        setTitleColor(.whiteColor(), forState: .Normal)
-        titleLabel?.font = UIFont.iconOfSize(28)
-        
-        loadingView.hidesWhenStopped = true
-        addSubview(loadingView)
-        
-        text.font = UIFont.displayOfSize(9, withType: .Light)
-        text.textColor = .whiteColor()
-        text.textAlignment = .Center
-        addSubview(text)
-        
-//        activeBorderLayer.backgroundColor = UIColor.whiteColor().alpha(0.2).CGColor
-//        layer.addSublayer(activeBorderLayer)
-    }
-    
-    convenience init () {
-        self.init(frame: CGRectZero)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        let textWidth: CGFloat = 50
-        text.frame = CGRect(x: (frame.width - textWidth) / 2, y: frame.height + 10, width: textWidth, height: 11)
-        
-        loadingView.fillSuperview()
-        
-//        activeBorderLayer.frame = CGRect(x: -5, y: -5, width: frame.width + 10, height: frame.height + 10)
-//        activeBorderLayer.cornerRadius = activeBorderLayer.frame.width / 2
-    }
-    
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
-        let margin: CGFloat = 10
-        let area = CGRectInset(bounds, -margin, -margin)
-        return CGRectContainsPoint(area, point)
-    }
-    
 }
 
 protocol TabControllerDelegate {
@@ -559,6 +501,7 @@ extension DefaultTabControllerDelegate {
 //        } else {
 //            tabController?.updateActiveTab(.Left)
 //        }
+        print("onTapLeftButton")
     }
     
     func onTapRightButton() {
@@ -569,6 +512,8 @@ extension DefaultTabControllerDelegate {
 //        } else {
 //            tabController?.updateActiveTab(.Right)
 //        }
+        
+        print("onTapRightButton")
     }
 }
 
@@ -578,31 +523,31 @@ extension UIViewController {
     }
     
     func updateTabs() {
-        tabController!.leftButton.title = "HOME"
-        tabController!.leftButton.icon = .Home
-        tabController!.leftButton.hidden = false
-        tabController!.leftButton.color = .Dark
+        tabController!.tabView.leftButton.title = "HOME"
+        tabController!.tabView.leftButton.icon = UIImage(named:"photo_library_icn")!
+        tabController!.tabView.leftButton.hidden = false
+        tabController!.tabView.leftButton.color = .Dark
         
-        tabController!.rightButton.title = "PROFILE"
-        tabController!.rightButton.icon = .User
-        tabController!.rightButton.hidden = false
-        tabController!.rightButton.color = .Dark
+        tabController!.tabView.rightButton.title = "PROFILE"
+        tabController!.tabView.rightButton.icon = UIImage(named:"settings_icn")!
+        tabController!.tabView.rightButton.hidden = false
+        tabController!.tabView.rightButton.color = .Dark
         
-        tabController!.cameraButton.icon = .Camera
-        tabController!.cameraButton.iconColor = .whiteColor()
-        tabController!.cameraButton.backgroundColor = .Accent
+        tabController!.tabView.cameraButton.icon = UIImage(named:"photo_library_icn")!
+        tabController!.tabView.cameraButton.iconColor = .whiteColor()
+        tabController!.tabView.cameraButton.backgroundColor = .Accent
         
         tabController!.bottomGradientOffset.value = 126
     }
     
-    func viewCleanup() {}
+    func cleanup() {}
 }
 
 extension UINavigationController {
     
-    override func viewCleanup() {
+    override func cleanup() {
         for vc in viewControllers ?? [] {
-            vc.viewCleanup()
+            vc.cleanup()
         }
     }
 }

@@ -15,7 +15,6 @@
 		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
 		594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594378FC1CDC472800C84E6F /* TabViewController.swift */; };
 		594379011CDC5BCA00C84E6F /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594379001CDC5BCA00C84E6F /* Fabric.framework */; };
-		595E70A61CD39743005CD441 /* SwipeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595E70A51CD39743005CD441 /* SwipeViewController.swift */; };
 		595E70A81CD39E81005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
 		595E70A91CD39F4F005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
 		595E70AA1CD39F4F005CD441 /* EZSwipeController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -283,7 +282,6 @@
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
 		594378FC1CDC472800C84E6F /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		594379001CDC5BCA00C84E6F /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
-		595E70A51CD39743005CD441 /* SwipeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeViewController.swift; sourceTree = "<group>"; };
 		595E70A71CD39E81005CD441 /* EZSwipeController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EZSwipeController.framework; path = Carthage/Build/iOS/EZSwipeController.framework; sourceTree = "<group>"; };
 		597859D81CD9E8500013383A /* ActiveLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ActiveLabel.framework; sourceTree = "<group>"; };
 		5980D51D1CCDEF100010B4ED /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
@@ -788,7 +786,6 @@
 			children = (
 				59F9226B1CDE0D0E005868A8 /* TabView.swift */,
 				594378FC1CDC472800C84E6F /* TabViewController.swift */,
-				595E70A51CD39743005CD441 /* SwipeViewController.swift */,
 				8FAB9EED1B8F01DF00B4C8CB /* Activity */,
 				8FAB9EF31B8F01DF00B4C8CB /* Camera */,
 				8FAB9EF81B8F01DF00B4C8CB /* Common */,
@@ -1671,7 +1668,6 @@
 				5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */,
 				594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
-				595E70A61CD39743005CD441 /* SwipeViewController.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
 				8F707C161C5A2A17000AF7BF /* TableViewResults.swift in Sources */,

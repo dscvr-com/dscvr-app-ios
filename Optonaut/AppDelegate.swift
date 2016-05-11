@@ -48,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            application.registerUserNotificationSettings(pushNotificationSettings)
 //            application.registerForRemoteNotifications()
             
-            self.window?.rootViewController = SwipeViewController()
+            self.window?.rootViewController = TabViewController()
             
             Mixpanel.sharedInstance().track("Launch.Notification")
         }
@@ -99,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            }
 //            
 //            self.window?.rootViewController = tabBarViewController
-            self.window?.rootViewController = SwipeViewController()
+            self.window?.rootViewController = TabViewController()
         }
         
         return true
@@ -158,7 +158,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.backgroundColor = .whiteColor()
         
         SessionService.prepare()
-        SessionService.onLogout(performAlways: true) { self.window?.rootViewController = SwipeViewController() }
+        SessionService.onLogout(performAlways: true) { self.window?.rootViewController = TabViewController() }
         
 //        if SessionService.isLoggedIn || !requireLogin {
 //            if SessionService.needsOnboarding && requireLogin {

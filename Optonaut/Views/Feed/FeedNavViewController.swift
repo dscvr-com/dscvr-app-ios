@@ -15,12 +15,13 @@ class FeedNavViewController: NavigationController {
     
     var thisView = UIView()
     var isSettingsViewOpen:Bool = false
-    
     private var motorButton = SettingsButton()
     private var manualButton = SettingsButton()
     private var oneRingButton = SettingsButton()
     private var threeRingButton = SettingsButton()
     private var pullButton = SettingsButton()
+    
+    //weak var parentViewController: UIViewController?
     
     deinit {
         logRetain()
@@ -53,25 +54,25 @@ class FeedNavViewController: NavigationController {
         bgImage!.anchorToEdge(.Top, padding: 60, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
         
         let labelHeightMultiplier:CGFloat = 0.3 * bgImage!.frame.size.height
-        let buttonsHeightMultiplier:CGFloat = 0.67 * bgImage!.frame.size.height
+        let buttonsHeightMultiplier:CGFloat = 0.9 * bgImage!.frame.size.height
         
         let labelCamera = UILabel()
         labelCamera.textAlignment = NSTextAlignment.Center
         labelCamera.text = "Camera Settings"
         labelCamera.textColor = UIColor.whiteColor()
-        let labelTextWidthCamera = calcTextWidth("Camera Settings", withFont: .displayOfSize(13, withType: .Semibold))
+        //let labelTextWidthCamera = calcTextWidth("Camera Settings", withFont: .displayOfSize(13, withType: .Semibold))
         thisView.addSubview(labelCamera)
-        labelCamera.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: labelTextWidthCamera, height: labelHeightMultiplier)
+        labelCamera.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: 200, height: labelHeightMultiplier)
         
         let labelMode = UILabel()
         labelMode.textAlignment = NSTextAlignment.Center
-        let labelModeWidth = calcTextWidth("Mode", withFont: .displayOfSize(11, withType: .Semibold))
+        //let labelModeWidth = calcTextWidth("Mode", withFont: .displayOfSize(11, withType: .Semibold))
         labelMode.textColor = UIColor.whiteColor()
         labelMode.text = "Mode"
         thisView.addSubview(labelMode)
-        labelMode.align(.UnderCentered, relativeTo: labelCamera, padding: 15, width: labelModeWidth, height: labelHeightMultiplier)
+        labelMode.align(.UnderCentered, relativeTo: labelCamera, padding: 15, width: 100, height: labelHeightMultiplier)
         
-        oneRingButton.frame = CGRect(x: self.view.frame.width*0.35 , y: labelMode.frame.origin.y + 40 , width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
+        oneRingButton.frame = CGRect(x: self.view.frame.width*0.25 , y: labelMode.frame.origin.y + 40 , width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
         oneRingButton.addTarget(self, action: #selector(FeedNavViewController.oneRingButtonTouched), forControlEvents:.TouchUpInside)
         thisView.addSubview(oneRingButton)
         
@@ -79,8 +80,8 @@ class FeedNavViewController: NavigationController {
         labelRing1.textAlignment = NSTextAlignment.Center
         labelRing1.text = "One Ring"
         labelRing1.textColor = UIColor(hex:0xffbc00)
-        let labelRing1Width = calcTextWidth("One Ring", withFont: .displayOfSize(11, withType: .Semibold))
-        labelRing1.align(.UnderCentered, relativeTo: oneRingButton, padding: 5, width: labelRing1Width, height: labelHeightMultiplier)
+        //let labelRing1Width = calcTextWidth("One Ring", withFont: .displayOfSize(11, withType: .Semibold))
+        labelRing1.align(.UnderCentered, relativeTo: oneRingButton, padding: 5, width: 200, height: labelHeightMultiplier)
         thisView.addSubview(labelRing1)
         
         threeRingButton.align(.ToTheRightMatchingTop, relativeTo: oneRingButton, padding: 40, width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
@@ -91,8 +92,8 @@ class FeedNavViewController: NavigationController {
         labelRing3.textAlignment = NSTextAlignment.Center
         labelRing3.text = "Three Ring"
         labelRing3.textColor = UIColor(hex:0xffbc00)
-        let labelRing3Width = calcTextWidth("Three Ring", withFont: .displayOfSize(11, withType: .Semibold))
-        labelRing3.align(.UnderCentered, relativeTo: threeRingButton, padding: 5, width: labelRing3Width, height: labelHeightMultiplier)
+        //let labelRing3Width = calcTextWidth("Three Ring", withFont: .displayOfSize(11, withType: .Semibold))
+        labelRing3.align(.UnderCentered, relativeTo: threeRingButton, padding: 5, width: 200, height: labelHeightMultiplier)
         thisView.addSubview(labelRing3)
         
         let line = UILabel()
@@ -104,11 +105,11 @@ class FeedNavViewController: NavigationController {
         labelCapture.textAlignment = NSTextAlignment.Center
         labelCapture.text = "Capture Type"
         labelCapture.textColor = UIColor.whiteColor()
-        let labelCaptureWidth = calcTextWidth("Capture Type", withFont: .displayOfSize(11, withType: .Semibold))
+        //let labelCaptureWidth = calcTextWidth("Capture Type", withFont: .displayOfSize(11, withType: .Semibold))
         thisView.addSubview(labelCapture)
-        labelCapture.align(.UnderCentered, relativeTo: line, padding: 15, width: labelCaptureWidth, height: labelHeightMultiplier)
+        labelCapture.align(.UnderCentered, relativeTo: line, padding: 15, width: 200, height: labelHeightMultiplier)
         
-        manualButton.frame = CGRect(x: self.view.frame.width*0.35 , y: labelCapture.frame.origin.y + 40 , width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
+        manualButton.frame = CGRect(x: self.view.frame.width*0.25 , y: labelCapture.frame.origin.y + 40 , width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
         manualButton.addTarget(self, action: #selector(FeedNavViewController.manualButtonTouched), forControlEvents:.TouchUpInside)
         thisView.addSubview(manualButton)
         
@@ -120,21 +121,23 @@ class FeedNavViewController: NavigationController {
         labelManual.textAlignment = NSTextAlignment.Center
         labelManual.text = "Manual"
         labelManual.textColor = UIColor(hex:0xffbc00)
-        let labelManualWidth = calcTextWidth("Manual", withFont: .displayOfSize(11, withType: .Semibold))
-        labelManual.align(.UnderCentered, relativeTo: manualButton, padding: 5, width: labelManualWidth, height:labelHeightMultiplier)
+        //let labelManualWidth = calcTextWidth("Manual", withFont: .displayOfSize(11, withType: .Semibold))
+        labelManual.align(.UnderCentered, relativeTo: manualButton, padding: 5, width: 200, height:labelHeightMultiplier)
         thisView.addSubview(labelManual)
         
         let labelMotor = UILabel()
         labelMotor.textAlignment = NSTextAlignment.Center
         labelMotor.text = "Motor"
         labelMotor.textColor = UIColor(hex:0xffbc00)
-        let labelMotorWidth = calcTextWidth("Motor", withFont: .displayOfSize(11, withType: .Semibold))
-        labelMotor.align(.UnderCentered, relativeTo: motorButton, padding: 5, width: labelMotorWidth, height:labelHeightMultiplier)
+        //let labelMotorWidth = calcTextWidth("Motor", withFont: .displayOfSize(11, withType: .Semibold))
+        labelMotor.align(.UnderCentered, relativeTo: motorButton, padding: 5, width: 200, height:labelHeightMultiplier)
         thisView.addSubview(labelMotor)
         
         pullButton.icon = UIImage(named:"arrow_pull")!
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(FeedNavViewController.handlePan(_:)))
         pullButton.addGestureRecognizer(panGestureRecognizer)
+        thisView.addGestureRecognizer(panGestureRecognizer)
+        
         //pullButton.addTarget(self, action: #selector(FeedNavViewController.pullButtonTap), forControlEvents:.TouchUpInside)
         thisView.addSubview(pullButton)
         pullButton.anchorToEdge(.Bottom, padding: 5, width: 20, height: 15)
@@ -197,11 +200,13 @@ class FeedNavViewController: NavigationController {
     }
     
     func handlePan(recognizer:UIPanGestureRecognizer) {
+        
+        let translationY = recognizer.translationInView(self.view).y
+        
         switch recognizer.state {
         case .Began:
             print("wew")
         case .Changed:
-            let translationY = recognizer.translationInView(self.view).y
             
             if !isSettingsViewOpen {
                 thisView.frame = CGRectMake(0, translationY - self.view.frame.height , self.view.frame.width, self.view.frame.height)
@@ -211,7 +216,7 @@ class FeedNavViewController: NavigationController {
         case .Cancelled:
             print("cancelled")
         case .Ended:
-            if !isSettingsViewOpen {
+            if !isSettingsViewOpen{
                 thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
                 isSettingsViewOpen = true
             } else {
@@ -240,6 +245,12 @@ class FeedNavViewController: NavigationController {
     }
     
 }
+//extension FeedNavViewController : DTControllerDelegate {
+//    func onTapCameraButton() {
+//        print("hello world")
+//    }
+//}
+
 
 private class SettingsButton : UIButton {
     

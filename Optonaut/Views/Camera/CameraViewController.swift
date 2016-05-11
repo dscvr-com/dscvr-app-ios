@@ -160,7 +160,7 @@ class CameraViewController: UIViewController {
             .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
         view.addSubview(arrowView)
         
-        tabController!.cameraButton
+        tabController!.tabView.cameraButton
         
 //        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
 //        recordButtonView.layer.cornerRadius = 35
@@ -284,8 +284,8 @@ class CameraViewController: UIViewController {
                 self.setWhitebalanceMode(.Locked)
         }
         
-        tabController!.cameraButton.backgroundColor = .whiteColor()
-        tabController!.cameraButton.iconColor = .blackColor()
+        tabController!.tabView.cameraButton.backgroundColor = .whiteColor()
+        tabController!.tabView.cameraButton.iconColor = .blackColor()
         
         updateTabs()
         
@@ -349,10 +349,10 @@ class CameraViewController: UIViewController {
     override func updateTabs() {
         //tabController!.indicatedSide = nil
         
-        tabController!.leftButton.title = "CANCEL"
-        tabController!.leftButton.icon = .Cancel
+        tabController!.tabView.leftButton.title = "CANCEL"
+        //tabController!.tabView.leftButton.icon = .Cancel
         
-        tabController!.rightButton.hidden = true
+        tabController!.tabView.rightButton.hidden = true
         
         //tabController!.hideRingButton()
     }
@@ -772,14 +772,14 @@ extension CameraViewController: TabControllerDelegate {
     
     func onTouchStartCameraButton() {
         viewModel.isRecording.value = true
-        tabController!.cameraButton.backgroundColor = .Accent
-        tabController!.cameraButton.iconColor = .whiteColor()
+        tabController!.tabView.cameraButton.backgroundColor = .Accent
+        tabController!.tabView.cameraButton.iconColor = .whiteColor()
     }
     
     func onTouchEndCameraButton() {
         viewModel.isRecording.value = false
-        tabController!.cameraButton.backgroundColor = .whiteColor()
-        tabController!.cameraButton.iconColor = .blackColor()
+        tabController!.tabView.cameraButton.backgroundColor = .whiteColor()
+        tabController!.tabView.cameraButton.iconColor = .blackColor()
         
         tapCameraButtonCallback = nil
     }

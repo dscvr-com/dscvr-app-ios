@@ -219,7 +219,7 @@ class LoginViewController: UIViewController {
     }
     
     func showApp() {
-        view.window?.rootViewController = SwipeViewController()
+        view.window?.rootViewController = TabViewController()
     }
     
     func selectSignUpTab() {

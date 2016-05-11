@@ -25,14 +25,14 @@ class SwipeViewController: UIViewController,UIImagePickerControllerDelegate, UIN
     
     let isThetaImage = MutableProperty<Bool>(false)
     
+    var delegate: TabControlDelegate?
+    
     required init() {
         leftViewController = FeedNavViewController()
         
         super.init(nibName: nil, bundle: nil)
         
     }
-    
-    var delegate: TabControlDelegate?
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -90,10 +90,13 @@ class SwipeViewController: UIViewController,UIImagePickerControllerDelegate, UIN
         }
         
         tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SwipeViewController.tapCameraButton)))
-        tabView.cameraButton.addTarget(self, action: #selector(SwipeViewController.touchStartCameraButton), forControlEvents: [.TouchDown])
-        tabView.cameraButton.addTarget(self, action: #selector(SwipeViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        //tabView.cameraButton.addTarget(self, action: #selector(SwipeViewController.touchStartCameraButton), forControlEvents: [.TouchDown])
+        //tabView.cameraButton.addTarget(self, action: #selector(SwipeViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
         
-        tabView.leftButton.addTarget(self, action: #selector(SwipeViewController.touchStartCameraButton), forControlEvents: [.TouchDown])
+        tabView.leftButton.addTarget(self, action: #selector(SwipeViewController.tapLeftButton), forControlEvents: [.TouchDown])
+        tabView.rightButton.addTarget(self, action: #selector(SwipeViewController.tapRightButton), forControlEvents: [.TouchDown])
+        
+        imagePicker.delegate = self
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -104,11 +107,11 @@ class SwipeViewController: UIViewController,UIImagePickerControllerDelegate, UIN
         // Dispose of any resources that can be recreated.
     }
     
-    func openGallary()
-    {
+    func openGallary(){
+        
         imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         imagePicker.navigationBar.translucent = false
-        imagePicker.navigationBar.barTintColor = UIColor.Accent
+        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
         imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
         imagePicker.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
@@ -118,7 +121,7 @@ class SwipeViewController: UIViewController,UIImagePickerControllerDelegate, UIN
         imagePicker.setNavigationBarHidden(false, animated: false)
         imagePicker.interactivePopGestureRecognizer?.enabled = false
         
-        self.presentViewController(imagePicker, animated: true, completion: nil)
+        leftViewController.presentViewController(imagePicker, animated: true, completion: nil)
     }
     
     func uploadTheta(thetaImage:UIImage) {
@@ -126,7 +129,7 @@ class SwipeViewController: UIViewController,UIImagePickerControllerDelegate, UIN
         let createOptographViewController = SaveThetaViewController(thetaImage:thetaImage)
         
         createOptographViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(createOptographViewController, animated: false)
+        leftViewController.pushViewController(createOptographViewController, animated: false)
     }
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
@@ -138,30 +141,36 @@ class SwipeViewController: UIViewController,UIImagePickerControllerDelegate, UIN
             }
         }
         
-        dismissViewControllerAnimated(true, completion: nil)
+        leftViewController.dismissViewControllerAnimated(true, completion: nil)
     }
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        dismissViewControllerAnimated(true, completion: nil)
+        leftViewController.dismissViewControllerAnimated(true, completion: nil)
+    }
+    func hideUI() {
+        tabView.hidden = true
     }
     
     dynamic private func tapLeftButton() {
-        delegate?.onTapLeftButton()
+        //delegate?.didTapLeftButton()
+        self.openGallary()
+
     }
     
     dynamic private func tapRightButton() {
-        delegate?.onTapRightButton()
+        delegate?.didTapRightButton()
     }
     
     dynamic private func tapCameraButton() {
-        delegate?.onTapCameraButton()
+        delegate?.didTapCameraButton()
     }
     
-    dynamic private func touchStartCameraButton() {
-        delegate?.onTouchStartCameraButton()
-    }
-    dynamic private func touchEndCameraButton() {
-        delegate?.onTouchEndCameraButton()
-    }
+//    dynamic private func touchStartCameraButton() {
+//        delegate?.didTouchStartCameraButton()
+//    }
+//    dynamic private func touchEndCameraButton() {
+//        delegate?.didTouchEndCameraButton()
+//    }
+    
 }
 
 class TButton: UIButton {
@@ -344,82 +353,74 @@ class RecButton: UIButton {
 }
 
 protocol TabControlDelegate {
-    var tabController: SwipeViewController? { get }
-    func jumpToTop()
-    func scrollToOptograph(optographID: UUID)
-    func onTouchStartCameraButton()
-    func onTouchEndCameraButton()
-    func onTapCameraButton()
-    func onTapLeftButton()
-    func onTapRightButton()
+    var tabControllers: SwipeViewController? { get }
+    func didJumpToTop()
+    //func didScrollToOptograph(optographID: UUID)
+    //func didTouchStartCameraButton()
+    //func didTouchEndCameraButton()
+    func didTapCameraButton()
+    func didTapLeftButton()
+    func didTapRightButton()
 }
 
 extension TabControlDelegate {
-    func scrollToOptograph(optographID: UUID) {}
-    func jumpToTop() {}
-    func onTouchStartCameraButton() {}
-    func onTouchEndCameraButton() {}
-    func onTapCameraButton() {}
-    func onTapLeftButton() {}
-    func onTapRightButton() {}
+    func didJumpToTop() {}
+    //func didScrollToOptograph(optographID: UUID) {}
+    //func didTouchStartCameraButton() {}
+    //func didTouchEndCameraButton() {}
+    func didTapCameraButton() {}
+    func didTapLeftButton() {}
+    func didTapRightButton() {}
 }
 
 protocol DTControllerDelegate: TabControlDelegate {}
 
 
-
 extension DTControllerDelegate {
     
-    func onTapCameraButton() {
+    func didTapCameraButton() {
         switch PipelineService.stitchingStatus.value {
         case .Idle:
-          self.tabController!.navigationController!.pushViewController(CameraViewController(), animated: false)
+          self.tabControllers!.navigationController!.pushViewController(CameraViewController(), animated: false)
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
         //tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
         case let .StitchingFinished(optographID):
-            scrollToOptograph(optographID)
+            //didScrollToOptograph(optographID)
             PipelineService.stitchingStatus.value = .Idle
         case .Uninitialized: ()
         }
     }
     
-    func onTapLeftButton() {
-        print("pumasok dito")
-        self.tabController!.openGallary()
+    func didTapLeftButton() {
+        print("onTapLeftButton")
+        self.tabControllers!.openGallary()
     }
     
-    func onTapRightButton() {
-        //        if tabController?.activeViewController == tabController?.rightViewController {
-        //            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
-        //                jumpToTop()
-        //            }
-        //        } else {
-        //            tabController?.updateActiveTab(.Right)
-        //        }
+    func didTapRightButton() {
+        print("ontaprightbutton")
     }
 }
-
 extension UIViewController {
     var tabControl: SwipeViewController? {
         return navigationController?.parentViewController as? SwipeViewController
     }
     
     func viewUpdateTabs() {
-        tabController!.leftButton.title = "HOME"
-        tabController!.leftButton.icon = .Home
-        tabController!.leftButton.hidden = false
-        tabController!.leftButton.color = .Dark
+        tabControl!.tabView.leftButton.title = "HOME"
+        //tabControl!.tabView.leftButton.icon = .Home
+        tabControl!.tabView.leftButton.hidden = false
+        tabControl!.tabView.leftButton.color = .Dark
         
-        tabController!.rightButton.title = "PROFILE"
-        tabController!.rightButton.icon = .User
-        tabController!.rightButton.hidden = false
-        tabController!.rightButton.color = .Dark
+        tabControl!.tabView.rightButton.title = "PROFILE"
+        //tabControl!.tabView.rightButton.icon = .User
+        tabControl!.tabView.rightButton.hidden = false
+        tabControl!.tabView.rightButton.color = .Dark
         
-        tabController!.cameraButton.icon = .Camera
-        tabController!.cameraButton.iconColor = .whiteColor()
-        tabController!.cameraButton.backgroundColor = .Accent
+        //tabControl!.tabView.cameraButton.icon = .Camera
+        tabControl!.tabView.cameraButton.iconColor = .whiteColor()
+        tabControl!.tabView.cameraButton.backgroundColor = .Accent
         
         tabController!.bottomGradientOffset.value = 126
     }

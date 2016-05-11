@@ -254,8 +254,8 @@ class SaveViewController: UIViewController, RedNavbar {
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
             print("isReady \(isReady)")
             
-            self?.tabController!.cameraButton.loading = !isReady
-            self?.tabController!.rightButton.loading = !isReady
+            self?.tabController!.tabView.cameraButton.loading = !isReady
+            self?.tabController!.tabView.rightButton.loading = !isReady
         }
         
         viewModel.isReadyForStitching.producer
@@ -314,7 +314,7 @@ class SaveViewController: UIViewController, RedNavbar {
         ]
         
         tabController!.delegate = self
-        tabController!.cameraButton.progressLocked = true
+        tabController!.tabView.cameraButton.progressLocked = true
         
         Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
         
@@ -323,7 +323,7 @@ class SaveViewController: UIViewController, RedNavbar {
         
         if !SessionService.isLoggedIn {
             tabController!.hideUI()
-            tabController!.lockUI()
+            //tabController!.lockUI()
             
             let loginOverlayViewController = LoginOverlayViewController(
                 title: "Login to save your moment",
@@ -335,7 +335,7 @@ class SaveViewController: UIViewController, RedNavbar {
                     return true
                 },
                 alwaysCallback: {
-                    self.tabController!.unlockUI()
+                    //self.tabController!.unlockUI()
                     self.tabController!.showUI()
                 }
             )
@@ -346,7 +346,7 @@ class SaveViewController: UIViewController, RedNavbar {
     override func viewWillDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        tabController!.cameraButton.progressLocked = false
+        tabController!.tabView.cameraButton.progressLocked = false
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
@@ -363,19 +363,19 @@ class SaveViewController: UIViewController, RedNavbar {
     override func updateTabs() {
         //tabController!.indicatedSide = nil
         
-        tabController!.leftButton.title = "RETRY"
-        tabController!.leftButton.icon = .Camera
-        tabController!.leftButton.hidden = false
-        tabController!.leftButton.color = .Light
+        tabController!.tabView.leftButton.title = "RETRY"
+        tabController!.tabView.leftButton.icon = UIImage(named:"camera_icn")!
+        tabController!.tabView.leftButton.hidden = false
+        tabController!.tabView.leftButton.color = .Light
         
-        tabController!.rightButton.title = "POST LATER"
-        tabController!.rightButton.icon = .Clock
-        tabController!.rightButton.hidden = false
-        tabController!.rightButton.color = .Light
+        tabController!.tabView.rightButton.title = "POST LATER"
+        //tabController!.tabView.rightButton.icon = .Clock
+        tabController!.tabView.rightButton.hidden = false
+        tabController!.tabView.rightButton.color = .Light
         
         //tabController!.cameraButton.icon = UIImage(named:"camera_icn")!
-        tabController!.cameraButton.iconColor = .whiteColor()
-        tabController!.cameraButton.backgroundColor = .Accent
+        tabController!.tabView.cameraButton.iconColor = .whiteColor()
+        tabController!.tabView.cameraButton.backgroundColor = .Accent
         
         tabController!.bottomGradientOffset.value = 0
     }
@@ -628,12 +628,12 @@ class SaveViewController: UIViewController, RedNavbar {
             .observeOnMain()
             .on(
                 started: { [weak self] in
-                    self?.tabController!.cameraButton.loading = true
-                    self?.tabController!.rightButton.loading = true
+                    self?.tabController!.tabView.cameraButton.loading = true
+                    self?.tabController!.tabView.rightButton.loading = true
                 },
                 completed: { [weak self] in
                     Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
-                    self?.tabController!.rightButton.loading = false
+                    self?.tabController!.tabView.rightButton.loading = false
                     // set progress because stitching will start
 //                    self?.tabController!.cameraButton.progress = 0
 //                    self?.tabController!.updateActiveTab(.Right)

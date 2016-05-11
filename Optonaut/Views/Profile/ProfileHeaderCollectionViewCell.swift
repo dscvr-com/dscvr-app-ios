@@ -214,7 +214,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             viewModel.isEditing.value = true
         } else if !SessionService.isLoggedIn {
             parentViewController!.tabController!.hideUI()
-            parentViewController!.tabController!.lockUI()
+            //parentViewController!.tabController!.lockUI()
             
             let loginOverlayViewController = LoginOverlayViewController(
                 title: "Login to follow \(viewModel.displayName.value)",
@@ -223,7 +223,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
                 },
                 cancelCallback: { true },
                 alwaysCallback: {
-                    self.parentViewController!.tabController!.unlockUI()
+                    //self.parentViewController!.tabController!.unlockUI()
                     self.parentViewController!.tabController!.showUI()
                 }
             )
