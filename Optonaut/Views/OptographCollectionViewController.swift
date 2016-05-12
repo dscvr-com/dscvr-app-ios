@@ -81,9 +81,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image:UIImage(named:"profile_icn"), style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
-        
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { [weak self] _ in
             self?.viewModel.refresh()
             Async.main(after: 10) { [weak self] in self?.refreshControl.endRefreshing() }
@@ -103,6 +100,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         collectionView!.delaysContentTouches = false
         
         edgesForExtendedLayout = .None
+        
+        tabController!.delegate = self
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image:UIImage(named:"profile_icn"), style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapRightButton))
         
         viewModel.results.producer
             .filter { $0.changed }
@@ -125,7 +126,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                         CATransaction.begin()
                         CATransaction.setDisableActions(true)
                             strongSelf.collectionView!.performBatchUpdates({
-                                print(results.delete)
                                 strongSelf.imageCache.delete(results.delete)
                                 strongSelf.imageCache.insert(results.insert)
                                 strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection: 0) })
@@ -171,6 +171,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //            .startWithNext { [weak self] _ in
 //                self?.imageCache.reset()
 //            }
+    }
+    
+    func tapRightButton() {
+        tabController!.rightButtonAction()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -226,6 +230,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         viewModel.isActive.value = false
     }
+    
+    
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -252,6 +258,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         cell.direction = optographDirections[optographID]!
         cell.willDisplay()
+        cell.optoId = optographID
         
         let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
         cell.setCubeImageCache(cubeImageCache)

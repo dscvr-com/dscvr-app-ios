@@ -56,7 +56,7 @@ class CameraViewController: UIViewController {
     
     // subviews
     private let tiltView = TiltView()
-    private let progressView = CameraProgressView()
+    //private let progressView = CameraProgressView()
     private let instructionView = UILabel()
     private let circleView = DashedCircleView()
     private let arrowView = UILabel()
@@ -130,9 +130,9 @@ class CameraViewController: UIViewController {
         tiltView.innerRadius = 35
         view.addSubview(tiltView)
     
-        viewModel.progress.producer.startWithNext { [weak self] val in self?.progressView.progress = val }
-        viewModel.isRecording.producer.startWithNext { [weak self] val in self?.progressView.isActive = val }
-        view.addSubview(progressView)
+        //viewModel.progress.producer.startWithNext { [weak self] val in self?.progressView.progress = val }
+        //viewModel.isRecording.producer.startWithNext { [weak self] val in self?.progressView.isActive = val }
+        //view.addSubview(progressView)
         
         instructionView.font = UIFont.robotoOfSize(22, withType: .Medium)
         instructionView.numberOfLines = 0
@@ -173,16 +173,40 @@ class CameraViewController: UIViewController {
 //        view.addSubview(recordButtonView)
         
 //        if Defaults[.SessionDebuggingEnabled] {
-        #if DEBUG
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
-            tapGestureRecognizer.numberOfTapsRequired = 3
-            view.addGestureRecognizer(tapGestureRecognizer)
-        #endif
-//        }
+        
+//        #if DEBUG
+//            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
+//            tapGestureRecognizer.numberOfTapsRequired = 3
+//            view.addGestureRecognizer(tapGestureRecognizer)
+//        #endif
+////        }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
+        
+        let cancelButton = UIButton()
+        cancelButton.addTarget(self, action: #selector(CameraViewController.onTapBackButton), forControlEvents: [.TouchDown])
+        cancelButton.setImage(UIImage(named: "camera_back_button"), forState: UIControlState.Normal)
+        self.view.addSubview(cancelButton)
+        
+        cancelButton.anchorInCorner(.TopLeft, xPad: 15, yPad: 10, width: 30, height: 30)
+    }
+    
+    func onTapBackButton() {
+        print("nagclose na!")
+        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
+        
+        stopSession()
+        
+        recorder.finish()
+        recorder.dispose()
+        
+        if StitchingService.hasUnstitchedRecordings() {
+            StitchingService.removeUnstitchedRecordings()
+        }
+        
+        navigationController?.popViewControllerAnimated(false)
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -247,7 +271,7 @@ class CameraViewController: UIViewController {
                 
                 scene.rootNode.addChildNode(edgeNode)
                 
-                i++;
+                i += 1;
             }
         }
     }
@@ -283,9 +307,6 @@ class CameraViewController: UIViewController {
                 self.setExposureMode(.Custom)
                 self.setWhitebalanceMode(.Locked)
         }
-        
-        tabController!.tabView.cameraButton.backgroundColor = .whiteColor()
-        tabController!.tabView.cameraButton.iconColor = .blackColor()
         
         updateTabs()
         
@@ -328,9 +349,9 @@ class CameraViewController: UIViewController {
         
         tiltView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
-        progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 15)
-        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -30)
-        progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        //progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 15)
+        //progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -30)
+        //progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         
         instructionView.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withMultiplier: 0.5)
         instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
@@ -347,14 +368,8 @@ class CameraViewController: UIViewController {
     }
     
     override func updateTabs() {
-        //tabController!.indicatedSide = nil
-        
-        tabController!.tabView.leftButton.title = "CANCEL"
-        //tabController!.tabView.leftButton.icon = .Cancel
-        
         tabController!.tabView.rightButton.hidden = true
-        
-        //tabController!.hideRingButton()
+        tabController!.tabView.leftButton.hidden = true
     }
     
     private func setupScene() {
@@ -787,31 +802,13 @@ extension CameraViewController: TabControllerDelegate {
     func onTapCameraButton() {
         tapCameraButtonCallback?()
     }
-    
-    func onTapLeftButton() {
-        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
-        
-        stopSession()
-        
-        recorder.finish()
-        recorder.dispose()
-        //tabController!.oneRingButton.hidden = false
-        //tabController!.threeRingButton.hidden = false
-        
-        if StitchingService.hasUnstitchedRecordings() {
-            StitchingService.removeUnstitchedRecordings()
-        }
-        
-        navigationController?.popViewControllerAnimated(false)
-    }
-    
 }
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         processSampleBuffer(sampleBuffer)
-        frameCount++
+        frameCount += 1
     }
 }
 

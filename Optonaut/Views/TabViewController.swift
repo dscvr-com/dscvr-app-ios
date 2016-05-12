@@ -19,7 +19,17 @@ class TabViewController: UIViewController,
     
     var scrollView: UIScrollView!
     var tabView = TabView()
+    let centerViewController: NavigationController
+    let rightViewController: NavigationController
     let leftViewController: NavigationController
+    
+    var thisView = UIView()
+    var isSettingsViewOpen:Bool = false
+    private var motorButton = SettingsButton()
+    private var manualButton = SettingsButton()
+    private var oneRingButton = SettingsButton()
+    private var threeRingButton = SettingsButton()
+    private var pullButton = SettingsButton()
     
     private let bottomGradient = CAGradientLayer()
     
@@ -32,11 +42,28 @@ class TabViewController: UIViewController,
     var imageView: UIImageView!
     var imagePicker = UIImagePickerController()
     
+    var BFrame:CGRect   = CGRect (
+        origin: CGPoint(x: 0, y: 0),
+        size: UIScreen.mainScreen().bounds.size
+    )
+    var adminFrame :CGRect = CGRect (
+        origin: CGPoint(x: 0, y: 0),
+        size: UIScreen.mainScreen().bounds.size
+    )
+    
+    let labelRing1 = UILabel()
+    let labelRing3 = UILabel()
+    let labelManual = UILabel()
+    let labelMotor = UILabel()
+    
     required init() {
         
-        leftViewController = FeedNavViewController()
-        super.init(nibName: nil, bundle: nil)
+        centerViewController = FeedNavViewController()
+        rightViewController =  ProfileNavViewController()
+        leftViewController = SharingNavViewController()
+    
         
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -66,16 +93,20 @@ class TabViewController: UIViewController,
                 switch status {
                 case .Uninitialized:
                     self?.tabView.cameraButton.loading = true
+                    print("uninitialized")
                 case .Idle:
                     self?.tabView.cameraButton.progress = nil
                     if self?.tabView.cameraButton.progressLocked == false {
                         self?.tabView.cameraButton.icon = UIImage(named:"camera_icn")!
                         self?.tabView.rightButton.loading = false
                     }
+                    print("Idle")
                 case let .Stitching(progress):
                     self?.tabView.cameraButton.progress = CGFloat(progress)
+                    print("Stitching")
                 case .StitchingFinished(_):
                     self?.tabView.cameraButton.progress = nil
+                    print("StitchingFinished")
                 }
         }
         
@@ -93,36 +124,31 @@ class TabViewController: UIViewController,
         self.scrollView!.contentSize = CGSizeMake(scrollWidth, scrollHeight);
         self.scrollView!.pagingEnabled = true;
         
-        let blueVC = UIViewController()
-        blueVC.view.backgroundColor = UIColor.blueColor()
-        
-        let greenVC = UIViewController()
-        greenVC.view.backgroundColor = UIColor.greenColor()
+        self.addChildViewController(centerViewController)
+        self.scrollView!.addSubview(centerViewController.view)
+        centerViewController.didMoveToParentViewController(self)
         
         self.addChildViewController(leftViewController)
         self.scrollView!.addSubview(leftViewController.view)
         leftViewController.didMoveToParentViewController(self)
         
-        self.addChildViewController(blueVC)
-        self.scrollView!.addSubview(blueVC.view)
-        blueVC.didMoveToParentViewController(self)
+        self.addChildViewController(rightViewController)
+        self.scrollView!.addSubview(rightViewController.view)
+        rightViewController.didMoveToParentViewController(self)
         
-        self.addChildViewController(greenVC)
-        self.scrollView!.addSubview(greenVC.view)
-        greenVC.didMoveToParentViewController(self)
-        
-        var adminFrame :CGRect = leftViewController.view.frame
+        adminFrame = leftViewController.view.frame
         adminFrame.origin.x = adminFrame.width
-        blueVC.view.frame = adminFrame
+        centerViewController.view.frame = adminFrame
         
-        var BFrame :CGRect = blueVC.view.frame
+        BFrame = centerViewController.view.frame
         BFrame.origin.x = 2*BFrame.width
-        greenVC.view.frame = BFrame
-        
+        rightViewController.view.frame = BFrame
         view.addSubview(scrollView)
         
         tabView.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
-        view.addSubview(tabView)
+        centerViewController.view.addSubview(tabView)
+        
+        scrollView.scrollRectToVisible(adminFrame,animated: false)
         
         isThetaImage.producer
             .filter(isTrue)
@@ -142,6 +168,11 @@ class TabViewController: UIViewController,
         tabView.rightButton.addTarget(self, action: #selector(TabViewController.tapRightButton), forControlEvents: [.TouchDown])
         
         imagePicker.delegate = self
+        
+        self.settingsView()
+        
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
+        self.centerViewController.navigationBar.addGestureRecognizer(panGestureRecognizer)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -157,12 +188,202 @@ class TabViewController: UIViewController,
                 self.presentViewController(alert, animated: true, completion: nil)
         }
     }
+    func rightButtonAction() {
+        
+        scrollView.scrollRectToVisible(BFrame,animated: false)
+    }
+    
+    func settingsView() {
+        thisView.frame = CGRectMake(0, -(view.frame.height), view.frame.width, view.frame.height)
+        thisView.backgroundColor = UIColor.blackColor()
+        self.view.addSubview(thisView)
+        
+        let image: UIImage = UIImage(named: "logo_big")!
+        var bgImage: UIImageView?
+        bgImage = UIImageView(image: image)
+        thisView.addSubview(bgImage!)
+        bgImage!.anchorToEdge(.Top, padding: 60, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
+        
+        let labelHeightMultiplier:CGFloat = 0.3 * bgImage!.frame.size.height
+        let buttonsHeightMultiplier:CGFloat = 0.9 * bgImage!.frame.size.height
+        
+        let labelCamera = UILabel()
+        labelCamera.textAlignment = NSTextAlignment.Center
+        labelCamera.text = "Camera Settings"
+        labelCamera.textColor = UIColor.whiteColor()
+        thisView.addSubview(labelCamera)
+        labelCamera.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: 200, height: labelHeightMultiplier)
+        
+        let labelMode = UILabel()
+        labelMode.textAlignment = NSTextAlignment.Center
+        labelMode.textColor = UIColor.whiteColor()
+        labelMode.text = "Mode"
+        thisView.addSubview(labelMode)
+        labelMode.align(.UnderCentered, relativeTo: labelCamera, padding: 15, width: 100, height: labelHeightMultiplier)
+        
+        oneRingButton.frame = CGRect(x: self.view.frame.width*0.25 , y: labelMode.frame.origin.y + 40 , width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
+        oneRingButton.addTarget(self, action: #selector(TabViewController.oneRingButtonTouched), forControlEvents:.TouchUpInside)
+        thisView.addSubview(oneRingButton)
+        
+        labelRing1.textAlignment = NSTextAlignment.Center
+        labelRing1.text = "One Ring"
+        labelRing1.align(.UnderCentered, relativeTo: oneRingButton, padding: 5, width: 200, height: labelHeightMultiplier)
+        thisView.addSubview(labelRing1)
+        
+        threeRingButton.align(.ToTheRightMatchingTop, relativeTo: oneRingButton, padding: 40, width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
+        threeRingButton.addTarget(self, action: #selector(TabViewController.threeRingButtonTouched), forControlEvents:.TouchUpInside)
+        thisView.addSubview(threeRingButton)
+        
+        labelRing3.textAlignment = NSTextAlignment.Center
+        labelRing3.text = "Three Ring"
+        labelRing3.align(.UnderCentered, relativeTo: threeRingButton, padding: 5, width: 200, height: labelHeightMultiplier)
+        thisView.addSubview(labelRing3)
+        
+        let line = UILabel()
+        line.frame = CGRect(x: 15 , y: labelRing3.frame.origin.y + labelRing3.frame.height + 50 , width: self.view.frame.width-15, height: 1)
+        line.backgroundColor = UIColor.grayColor()
+        thisView.addSubview(line)
+        
+        let labelCapture = UILabel()
+        labelCapture.textAlignment = NSTextAlignment.Center
+        labelCapture.text = "Capture Type"
+        labelCapture.textColor = UIColor.whiteColor()
+        thisView.addSubview(labelCapture)
+        labelCapture.align(.UnderCentered, relativeTo: line, padding: 15, width: 200, height: labelHeightMultiplier)
+        
+        manualButton.frame = CGRect(x: self.view.frame.width*0.25 , y: labelCapture.frame.origin.y + 40 , width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
+        manualButton.addTarget(self, action: #selector(TabViewController.manualButtonTouched), forControlEvents:.TouchUpInside)
+        thisView.addSubview(manualButton)
+        
+        motorButton.align(.ToTheRightMatchingTop, relativeTo: manualButton, padding: 40, width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
+        motorButton.addTarget(self, action: #selector(TabViewController.motorButtonTouched), forControlEvents:.TouchUpInside)
+        thisView.addSubview(motorButton)
+        
+        labelManual.textAlignment = NSTextAlignment.Center
+        labelManual.text = "Manual"
+        labelManual.textColor = UIColor(hex:0xffbc00)
+        labelManual.align(.UnderCentered, relativeTo: manualButton, padding: 5, width: 200, height:labelHeightMultiplier)
+        thisView.addSubview(labelManual)
+        
+        labelMotor.textAlignment = NSTextAlignment.Center
+        labelMotor.text = "Motor"
+        labelMotor.textColor = UIColor(hex:0xffbc00)
+        labelMotor.align(.UnderCentered, relativeTo: motorButton, padding: 5, width: 200, height:labelHeightMultiplier)
+        thisView.addSubview(labelMotor)
+        
+        pullButton.icon = UIImage(named:"arrow_pull")!
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
+        pullButton.addGestureRecognizer(panGestureRecognizer)
+        thisView.addGestureRecognizer(panGestureRecognizer)
+        
+        //pullButton.addTarget(self, action: #selector(FeedNavViewController.pullButtonTap), forControlEvents:.TouchUpInside)
+        thisView.addSubview(pullButton)
+        pullButton.anchorToEdge(.Bottom, padding: 5, width: 20, height: 15)
+        
+        self.activeRingButtons(Defaults[.SessionUseMultiRing])
+        self.activeModeButtons(Defaults[.SessionMotor])
+    }
+    
+    
+    func pullButtonTap() {
+        UIView.animateWithDuration(1.0, delay: 1.2, options: .CurveEaseOut, animations: {
+            if var settingsViewCount:CGFloat = self.thisView.frame.origin.y {
+                settingsViewCount -= self.view.frame.origin.y
+                self.thisView.frame = CGRectMake(0, settingsViewCount , self.view.frame.width, self.view.frame.height)
+            }
+            }, completion: { finished in
+                self.isSettingsViewOpen = false
+                
+        })
+    }
+    
+    func motorButtonTouched() {
+        Defaults[.SessionMotor] = true
+        self.activeModeButtons(true)
+    }
+    
+    func manualButtonTouched() {
+        Defaults[.SessionMotor] = false
+        self.activeModeButtons(false)
+    }
+    
+    func oneRingButtonTouched() {
+        Defaults[.SessionUseMultiRing] = false
+        self.activeRingButtons(false)
+    }
+    
+    func threeRingButtonTouched() {
+        Defaults[.SessionUseMultiRing] = true
+        self.activeRingButtons(true)
+    }
+    func activeModeButtons(isMotor:Bool) {
+        if isMotor {
+            motorButton.icon = UIImage(named: "motor_active_icn")!
+            manualButton.icon = UIImage(named: "manual_inactive_icn")!
+            
+            labelManual.textColor = UIColor.grayColor()
+            labelMotor.textColor = UIColor(hex:0xffbc00)
+        } else {
+            motorButton.icon = UIImage(named: "motor_inactive_icn")!
+            manualButton.icon = UIImage(named: "manual_active_icn")!
+            
+            labelManual.textColor = UIColor(hex:0xffbc00)
+            labelMotor.textColor = UIColor.grayColor()
+        }
+    }
+    
+    func activeRingButtons(isMultiRing:Bool) {
+        
+        if isMultiRing {
+            threeRingButton.icon = UIImage(named: "threeRing_active_icn")!
+            oneRingButton.icon = UIImage(named: "oneRing_inactive_icn")!
+            
+            labelRing3.textColor = UIColor(hex:0xffbc00)
+            labelRing1.textColor = UIColor.grayColor()
+            
+        } else {
+            threeRingButton.icon = UIImage(named: "threeRing_inactive_icn")!
+            oneRingButton.icon = UIImage(named: "oneRing_active_icn")!
+            
+            labelRing3.textColor = UIColor.grayColor()
+            labelRing1.textColor = UIColor(hex:0xffbc00)
+        }
+    }
+    
+    func handlePan(recognizer:UIPanGestureRecognizer) {
+        
+        let translationY = recognizer.translationInView(self.view).y
+        
+        switch recognizer.state {
+        case .Began:
+            print("wew")
+        case .Changed:
+            
+            if !isSettingsViewOpen {
+                thisView.frame = CGRectMake(0, translationY - self.view.frame.height , self.view.frame.width, self.view.frame.height)
+            } else {
+                thisView.frame = CGRectMake(0,self.view.frame.height - (self.view.frame.height - translationY) , self.view.frame.width, self.view.frame.height)
+            }
+        case .Cancelled:
+            print("cancelled")
+        case .Ended:
+            if !isSettingsViewOpen{
+                thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
+                isSettingsViewOpen = true
+            } else {
+                thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
+                isSettingsViewOpen = false
+            }
+            
+        default: break
+        }
+    }
     
     func openGallary() {
         
         imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         imagePicker.navigationBar.translucent = false
-        imagePicker.navigationBar.barTintColor = UIColor.Accent
+        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
         imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
         imagePicker.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
@@ -205,7 +426,6 @@ class TabViewController: UIViewController,
     func hideUI() {
         tabView.hidden = true
     }
-    
     dynamic private func tapLeftButton() {
         delegate?.onTapLeftButton()
     }
@@ -221,10 +441,10 @@ class TabViewController: UIViewController,
     dynamic private func touchStartCameraButton() {
         delegate?.onTouchStartCameraButton()
     }
+    
     dynamic private func touchEndCameraButton() {
         delegate?.onTouchEndCameraButton()
     }
-    
     private func initNotificationIndicator() {
         let circle = UILabel()
         circle.frame = CGRect(x: tabView.rightButton.frame.origin.x + 25, y: tabView.rightButton.frame.origin.y - 3, width: 16, height: 16)
@@ -328,7 +548,14 @@ class TButton: UIButton {
     }
     
 }
-
+private class SettingsButton : UIButton {
+    
+    var icon: UIImage = UIImage(named:"motor_active_icn")!{
+        didSet{
+            setImage(icon, forState: .Normal)
+        }
+    }
+}
 
 class RecButton: UIButton {
     
@@ -377,16 +604,10 @@ class RecButton: UIButton {
         didSet {
             if !progressLocked {
                 if let progress = progress {
-                    backgroundColor = UIColor.Accent.mixWithColor(.blackColor(), amount: 0.3).alpha(0.5)
+                    backgroundColor = UIColor.clearColor()
                     loading = progress != 1
-                    
-                    //                    if progress == 0 {
-                    //                        icon = .Camera
-                    //                    } else if progress == 1 {
-                    //                        icon = .Next
-                    //                    }
                 } else {
-                    backgroundColor = UIColor.Accent
+                    backgroundColor = UIColor.clearColor()
                     loading = false
                 }
                 
@@ -398,7 +619,7 @@ class RecButton: UIButton {
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        progressLayer.backgroundColor = UIColor.Accent.CGColor
+        //progressLayer.backgroundColor = UIColor.clearColor()
         layer.addSublayer(progressLayer)
         
         loadingView.hidesWhenStopped = true
@@ -444,44 +665,19 @@ extension TabControllerDelegate {
     func onTapCameraButton() {}
     func onTapLeftButton() {}
     func onTapRightButton() {}
+    func onTapRightTabBarItem(){}
 }
 
 protocol DefaultTabControllerDelegate: TabControllerDelegate {}
-
-
 
 extension DefaultTabControllerDelegate {
     
     func onTapCameraButton() {
         switch PipelineService.stitchingStatus.value {
         case .Idle:
-            tabController!.navigationController!.cleanup()
-            //tabController!.rightViewController.cleanup()
+            self.tabController!.centerViewController.cleanup()
             
-            
-//            let alert:UIAlertController=UIAlertController(title: "Select Mode", message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
-//            let cameraAction = UIAlertAction(title: "Optograph", style: UIAlertActionStyle.Default)
-//            {
-//                UIAlertAction in
-//                Defaults[.SessionUploadMode] = "opto"
-//                //self.tabController!.activeViewController.pushViewController(CameraViewController(), animated: false)
-//            }
-            self.tabController!.leftViewController.pushViewController(CameraViewController(), animated: false)
-            
-//            let gallaryAction = UIAlertAction(title: "Upload Theta", style: UIAlertActionStyle.Default)
-//            {
-//                UIAlertAction in
-//                Defaults[.SessionUploadMode] = "theta"
-//                self.tabController!.openGallary()
-//            }
-//            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel)
-//            {
-//                UIAlertAction in
-//            }
-//            alert.addAction(cameraAction)
-//            alert.addAction(gallaryAction)
-//            alert.addAction(cancelAction)
-            
+            self.tabController!.centerViewController.pushViewController(CameraViewController(), animated: false)
             
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
@@ -502,6 +698,7 @@ extension DefaultTabControllerDelegate {
 //        } else {
 //            tabController?.updateActiveTab(.Left)
 //        }
+        tabController!.openGallary()
         print("onTapLeftButton")
     }
     
@@ -524,19 +721,11 @@ extension UIViewController {
     }
     
     func updateTabs() {
-        tabController!.tabView.leftButton.title = "HOME"
         tabController!.tabView.leftButton.icon = UIImage(named:"photo_library_icn")!
-        tabController!.tabView.leftButton.hidden = false
-        tabController!.tabView.leftButton.color = .Dark
         
-        tabController!.tabView.rightButton.title = "PROFILE"
         tabController!.tabView.rightButton.icon = UIImage(named:"settings_icn")!
-        tabController!.tabView.rightButton.hidden = false
-        tabController!.tabView.rightButton.color = .Dark
         
-        tabController!.tabView.cameraButton.icon = UIImage(named:"photo_library_icn")!
-        tabController!.tabView.cameraButton.iconColor = .whiteColor()
-        tabController!.tabView.cameraButton.backgroundColor = .Accent
+        tabController!.tabView.cameraButton.icon = UIImage(named:"camera_icn")!
         
         tabController!.bottomGradientOffset.value = 126
     }

@@ -358,6 +358,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let personNameView = BoundingLabel()
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
+    var optoId:UUID = ""
     
     var deleteCallback: (() -> ())?
     
@@ -372,6 +373,11 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     dynamic private func pushProfile() {
         print("pinindot ni user")
+        
+        let detailsViewController = DetailsTableViewController()
+        detailsViewController.cellIndexpath = id
+        detailsViewController.optographId = optoId
+        self.navigationController!.pushViewController(detailsViewController, animated: true)
     }
     
     override init(frame: CGRect) {
@@ -392,8 +398,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
         renderDelegate.scnView = scnView
         
-        renderDelegate.scnView = scnView
-        
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
         scnView.backgroundColor = .clearColor()
@@ -410,7 +414,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         loadingIndicatorView.rac_animating <~ loadingStatus.producer.equalsTo(.Nothing)
         contentView.addSubview(loadingIndicatorView)
         
-        whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.95)
+        whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
         contentView.addSubview(whiteBackground)
         
         avatarImageView.layer.cornerRadius = 23.5
