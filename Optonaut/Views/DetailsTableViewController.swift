@@ -16,10 +16,9 @@ import SpriteKit
 
 let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
 
-class DetailsTableViewController: UIViewController, NoNavbar {
+class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate{
     
     //private let viewModel: DetailsViewModel
-    
     
     
     private var combinedMotionManager: CombinedMotionManager!
@@ -29,7 +28,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private var renderDelegate: CubeRenderDelegate!
     private var scnView: SCNView!
     
-    private let imageManager = KingfisherManager()
     private var imageDownloadDisposable: Disposable?
     
     private var rotationAlert: UIAlertController?
@@ -95,28 +93,9 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         scnView.hidden = false
         self.view.addSubview(scnView)
         
-        tableView.backgroundColor = .clearColor()
-        tableView.delegate = self
-        //tableView.dataSource = self
-        tableView.separatorStyle = .None
-        tableView.canCancelContentTouches = false
-        tableView.delaysContentTouches = false
-        tableView.exclusiveTouch = false
-        
-//        tableView.registerClass(DetailsTableViewCell.self, forCellReuseIdentifier: "details-cell")
-//        tableView.registerClass(CommentTableViewCell.self, forCellReuseIdentifier: "comment-cell")
-//        tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
-        tableView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-        tableView.scrollEnabled = true
-        view.addSubview(tableView)
-        
 //        viewModel.comments.producer.startWithNext { [weak self] _ in
 //            self?.tableView.reloadData()
 //        }
-        
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DetailsTableViewController.dismissKeyboard))
-        tapGestureRecognizer.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGestureRecognizer)
         
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographId, side: .Left)
@@ -127,6 +106,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         super.viewDidAppear(animated)
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
+        tabController!.delegate = self
         
         //viewModel.viewIsActive.value = true
         
@@ -155,10 +135,9 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         super.touchesBegan(touches, withEvent: event)
         var point = touches.first!.locationInView(self.view)
         touchStart = point
-        
-        if(false) {
-            point.y = 0
-        }
+    
+        print("nagtouch1")
+        point.y = 0
         
         if touches.count == 1 {
             combinedMotionManager.touchStart(point)
@@ -168,7 +147,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesMoved(touches, withEvent: event)
         var point = touches.first!.locationInView(self.view)
-        
+        print("nagtouch2")
         if abs(point.x - touchStart!.x) > 20 {
             combinedMotionManager.touchStart(point)
             return
@@ -184,6 +163,7 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         if distance < 10 {
             //uiHidden.value = !uiHidden.value
         }
+        print("nagtouch3")
         super.touchesEnded(touches, withEvent: event)
         if touches.count == 1 {
             combinedMotionManager.touchEnd()
@@ -206,6 +186,10 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        
+        tabController!.hideUI()
+        tabController!.disableScrollView()
         
         CoreMotionRotationSource.Instance.start()
         RotationService.sharedInstance.rotationEnable()

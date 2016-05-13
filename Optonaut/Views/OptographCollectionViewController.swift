@@ -184,6 +184,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         overlayView.alpha = 0
         viewModel.isActive.value = true
         
+        tabController!.showUI()
+        tabController!.enableScrollView()
+        
         CoreMotionRotationSource.Instance.start()
         
         view.bounds = UIScreen.mainScreen().bounds
@@ -206,6 +209,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
         
         isVisible = true
         
@@ -276,7 +280,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             }
         }
         
-        if indexPath.row > optographIDs.count - 3 {
+        if indexPath.row > optographIDs.count - 5 {
             viewModel.loadMore()
         }
     

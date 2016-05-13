@@ -358,6 +358,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let personNameView = BoundingLabel()
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
+    private let blackSpace = UIView()
     var optoId:UUID = ""
     
     var deleteCallback: (() -> ())?
@@ -417,48 +418,54 @@ class OptographCollectionViewCell: UICollectionViewCell{
         whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
         contentView.addSubview(whiteBackground)
         
+        blackSpace.backgroundColor = UIColor.blackColor()
+        contentView.addSubview(blackSpace)
+        
         avatarImageView.layer.cornerRadius = 23.5
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
         //avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
-        contentView.addSubview(avatarImageView)
+        whiteBackground.addSubview(avatarImageView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setImage(UIImage(named:"feeds_option_icn"), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapOptions)))
-        contentView.addSubview(optionsButtonView)
+        whiteBackground.addSubview(optionsButtonView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
         personNameView.textColor = UIColor(0xffbc00)
         personNameView.userInteractionEnabled = true
         //personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
-        contentView.addSubview(personNameView)
+        whiteBackground.addSubview(personNameView)
         
         //likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector()))
         likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
         likeButtonView.setImage(UIImage(named:"user_unlike_icn"), forState: .Normal)
-        contentView.addSubview(likeButtonView)
+        whiteBackground.addSubview(likeButtonView)
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
         locationTextView.textColor = UIColor.whiteColor()
-        contentView.addSubview(locationTextView)
+        whiteBackground.addSubview(locationTextView)
         
         likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
         likeCountView.textColor = .whiteColor()
         likeCountView.textAlignment = .Right
-        contentView.addSubview(likeCountView)
+        whiteBackground.addSubview(likeCountView)
     }
     
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
-        avatarImageView.anchorInCorner(.BottomLeft, xPad: 16, yPad: 9.5, width: 47, height: 47)
-        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width: 24, height: 24)
+        blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
+        whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 66)
+        avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+        likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
+        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:40, height: 13)
+        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:24, height: 24)
     }
     
     func toggleStar() {
@@ -513,10 +520,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
         viewModel.liked.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
                 
-                strongSelf.likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
                 strongSelf.likeButtonView.setTitleColor(liked ? UIColor(0xffbc00) : .whiteColor(), forState: .Normal)
                 strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(24)
-                strongSelf.likeCountView.align(.ToTheLeftCentered, relativeTo: strongSelf.likeButtonView, padding: 10, width: 40, height: 13)
                 //                    strongSelf.uploadButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
                 //                    strongSelf.uploadTextView.align(.ToTheLeftCentered, relativeTo: strongSelf.uploadButtonView, padding: 8, width: 60, height: 13)
                 //                    strongSelf.uploadingView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)

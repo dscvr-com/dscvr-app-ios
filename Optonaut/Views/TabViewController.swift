@@ -13,9 +13,7 @@ import Icomoon
 import SwiftyUserDefaults
 import Result
 
-class TabViewController: UIViewController,
-                            UIImagePickerControllerDelegate,
-                            UINavigationControllerDelegate{
+class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     
     var scrollView: UIScrollView!
     var tabView = TabView()
@@ -173,6 +171,7 @@ class TabViewController: UIViewController,
         
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
         self.centerViewController.navigationBar.addGestureRecognizer(panGestureRecognizer)
+        
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -189,8 +188,15 @@ class TabViewController: UIViewController,
         }
     }
     func rightButtonAction() {
-        
         scrollView.scrollRectToVisible(BFrame,animated: false)
+    }
+    
+    func disableScrollView() {
+        scrollView.scrollEnabled = false;
+    }
+    
+    func enableScrollView() {
+        scrollView.scrollEnabled = true;
     }
     
     func settingsView() {
