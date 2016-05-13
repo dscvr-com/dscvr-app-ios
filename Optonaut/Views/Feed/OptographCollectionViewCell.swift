@@ -328,12 +328,14 @@ private class OverlayViewModel {
     }
 }
 
-class OptographCollectionViewCell: UICollectionViewCell{
+class OptographCollectionViewCell: UICollectionViewCell {
     
     weak var uiHidden: MutableProperty<Bool>!
     
     private let viewModel = OverlayViewModel()
     weak var navigationController: NavigationController?
+    
+    weak var parentViewController: UIViewController?
     // subviews
     private let topElements = UIView()
     private let bottomElements = UIView()
@@ -359,6 +361,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
     private let blackSpace = UIView()
+    let shareImageAsset = UIImageView()
+    
     var optoId:UUID = ""
     
     var deleteCallback: (() -> ())?
@@ -371,9 +375,9 @@ class OptographCollectionViewCell: UICollectionViewCell{
             return combinedMotionManager.getDirection()
         }
     }
+    var hiddenGestureRecognizer:UIPanGestureRecognizer!
     
     dynamic private func pushProfile() {
-        print("pinindot ni user")
         
         let detailsViewController = DetailsTableViewController()
         detailsViewController.cellIndexpath = id
@@ -384,7 +388,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        contentView.backgroundColor = .blackColor()
+        contentView.backgroundColor = UIColor(hex:0xffbc00)
         
         if #available(iOS 9.0, *) {
             scnView = SCNView(frame: contentView.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
@@ -393,6 +397,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         }
         
         let hfov: Float = 35
+        
     
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
     
@@ -453,6 +458,17 @@ class OptographCollectionViewCell: UICollectionViewCell{
         likeCountView.textColor = .whiteColor()
         likeCountView.textAlignment = .Right
         whiteBackground.addSubview(likeCountView)
+
+        shareImageAsset.layer.cornerRadius = avatarImageView.frame.size.width / 2
+        shareImageAsset.image = UIImage(named: "share_hidden_icn")
+        contentView.addSubview(shareImageAsset)
+        
+        contentView.bringSubviewToFront(scnView)
+        contentView.bringSubviewToFront(whiteBackground)
+        contentView.bringSubviewToFront(blackSpace)
+        
+        hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
+        scnView.addGestureRecognizer(hiddenGestureRecognizer)
     }
     
     
@@ -466,6 +482,51 @@ class OptographCollectionViewCell: UICollectionViewCell{
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:40, height: 13)
         optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:24, height: 24)
+        shareImageAsset.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
+    }
+    
+    func handlePan(recognizer:UIPanGestureRecognizer) {
+        
+        let translationX = recognizer.translationInView(contentView).x
+        var xCoordBegin:CGFloat = 0.0
+        
+        switch recognizer.state {
+        case .Began:
+            xCoordBegin = translationX
+        case .Changed:
+            if (translationX > xCoordBegin) {
+                if (scnView.frame.origin.x <= 67) {
+                    scnView.frame.origin.x = translationX
+                    whiteBackground.frame.origin.x = translationX
+                } else {
+                    print("lols")
+                    parentViewController!.tabController!.swipeLeftView(translationX)
+                }
+            } else {
+            }
+            
+            
+//            if !isSettingsViewOpen {
+//                thisView.frame = CGRectMake(0, translationY - self.view.frame.height , self.view.frame.width, self.view.frame.height)
+//            } else {
+//                thisView.frame = CGRectMake(0,self.view.frame.height - (self.view.frame.height - translationY) , self.view.frame.width, self.view.frame.height)
+//            }
+        case .Cancelled:
+            print("cancelled")
+        case .Ended:
+            scnView.frame.origin.x = 0
+            whiteBackground.frame.origin.x = 0
+            
+//            if !isSettingsViewOpen{
+//                thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
+//                isSettingsViewOpen = true
+//            } else {
+//                thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
+//                isSettingsViewOpen = false
+//            }
+            
+        default: break
+        }
     }
     
     func toggleStar() {

@@ -188,7 +188,9 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         }
     }
     func rightButtonAction() {
-        scrollView.scrollRectToVisible(BFrame,animated: false)
+        UIView.animateWithDuration(0.5, animations: {
+            self.scrollView.scrollRectToVisible(self.BFrame,animated: false)
+            }, completion:nil)
     }
     
     func disableScrollView() {
@@ -197,6 +199,16 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     
     func enableScrollView() {
         scrollView.scrollEnabled = true;
+    }
+    
+    func swipeLeftView(xPoint:CGFloat) {
+        
+        print("pumasok dito")
+        self.scrollView.scrollRectToVisible(CGRect(x: self.view.frame.width - xPoint,y: 0,width:xPoint,height: self.view.frame.height),animated: false)
+    }
+    
+    func swipeRightView() {
+        scrollView.scrollRectToVisible(BFrame,animated: false)
     }
     
     func settingsView() {
@@ -302,6 +314,8 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
                 
         })
     }
+    
+    
     
     func motorButtonTouched() {
         Defaults[.SessionMotor] = true
