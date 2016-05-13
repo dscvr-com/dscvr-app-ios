@@ -25,8 +25,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
     private var combinedMotionManager: CombinedMotionManager!
     // subviews
     private let tableView = TableView()
-    private let blurView = OffsetBlurView()
-    private let glassesButtonView = ActionButton()
     
     private var renderDelegate: CubeRenderDelegate!
     private var scnView: SCNView!
@@ -95,15 +93,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         scnView.hidden = false
         self.view.addSubview(scnView)
         
-        glassesButtonView.setTitle(String.iconWithName(.Cardboard), forState: .Normal)
-        glassesButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-        glassesButtonView.defaultBackgroundColor = .Accent
-        glassesButtonView.titleLabel?.font = UIFont.iconOfSize(20)
-        glassesButtonView.layer.cornerRadius = 30
-        glassesButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(DetailsTableViewController.showRotationAlert)))
-        glassesButtonView.frame = CGRect(x: view.frame.width - 80, y: view.frame.height - 80 - 78 , width: 60, height: 60)
-        view.addSubview(glassesButtonView)
-        
         tableView.backgroundColor = .clearColor()
         tableView.delegate = self
         //tableView.dataSource = self
@@ -117,9 +106,6 @@ class DetailsTableViewController: UIViewController, NoNavbar {
 //        tableView.registerClass(NewCommentTableViewCell.self, forCellReuseIdentifier: "new-cell")
         tableView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         tableView.scrollEnabled = true
-        
-        tableView.backgroundView = blurView
-        
         view.addSubview(tableView)
         
 //        viewModel.comments.producer.startWithNext { [weak self] _ in
