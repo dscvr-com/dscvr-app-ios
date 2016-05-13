@@ -50,6 +50,8 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         }
     }
     
+    private var touchStart: CGPoint?
+    
     required init() {
         //viewModel = DetailsViewModel(optographID: optographID)
         let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
@@ -149,6 +151,52 @@ class DetailsTableViewController: UIViewController, NoNavbar {
 //        }
     }
     
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesBegan(touches, withEvent: event)
+        var point = touches.first!.locationInView(self.view)
+        touchStart = point
+        
+        if(false) {
+            point.y = 0
+        }
+        
+        if touches.count == 1 {
+            combinedMotionManager.touchStart(point)
+        }
+    }
+    
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesMoved(touches, withEvent: event)
+        var point = touches.first!.locationInView(self.view)
+        
+        if abs(point.x - touchStart!.x) > 20 {
+            combinedMotionManager.touchStart(point)
+            return
+        }
+        
+        point.y = 0
+        
+        combinedMotionManager.touchMove(point)
+    }
+    
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        let distance = touchStart!.distanceTo(touches.first!.locationInView(self.view))
+        if distance < 10 {
+            //uiHidden.value = !uiHidden.value
+        }
+        super.touchesEnded(touches, withEvent: event)
+        if touches.count == 1 {
+            combinedMotionManager.touchEnd()
+        }
+    }
+    
+    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+        super.touchesCancelled(touches, withEvent: event)
+        if let touches = touches where touches.count == 1 {
+            combinedMotionManager.touchEnd()
+        }
+    }
+    
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
@@ -234,6 +282,16 @@ class DetailsTableViewController: UIViewController, NoNavbar {
         scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
     }
     
+    func didEndDisplay() {
+        scnView.playing = false
+        combinedMotionManager.reset()
+        loadingStatus.value = .Nothing
+        renderDelegate.reset()
+    }
+    
+    func forgetTextures() {
+        renderDelegate.reset()
+    }
 //    private func pushViewer(orientation: UIInterfaceOrientation) {
 //        rotationAlert?.dismissViewControllerAnimated(true, completion: nil)
 //        let viewerViewController = ViewerViewController(orientation: orientation, optograph: viewModel.optograph)
