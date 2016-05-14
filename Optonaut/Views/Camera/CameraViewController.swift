@@ -56,7 +56,7 @@ class CameraViewController: UIViewController {
     
     // subviews
     private let tiltView = TiltView()
-    //private let progressView = CameraProgressView()
+    private let progressView = CameraProgressView()
     private let instructionView = UILabel()
     private let circleView = DashedCircleView()
     private let arrowView = UILabel()
@@ -130,9 +130,9 @@ class CameraViewController: UIViewController {
         tiltView.innerRadius = 35
         view.addSubview(tiltView)
     
-        //viewModel.progress.producer.startWithNext { [weak self] val in self?.progressView.progress = val }
-        //viewModel.isRecording.producer.startWithNext { [weak self] val in self?.progressView.isActive = val }
-        //view.addSubview(progressView)
+        viewModel.progress.producer.startWithNext { [weak self] val in self?.progressView.progress = val }
+        viewModel.isRecording.producer.startWithNext { [weak self] val in self?.progressView.isActive = val }
+        view.addSubview(progressView)
         
         instructionView.font = UIFont.robotoOfSize(22, withType: .Medium)
         instructionView.numberOfLines = 0
@@ -349,9 +349,9 @@ class CameraViewController: UIViewController {
         
         tiltView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
-        //progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 15)
-        //progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -30)
-        //progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 15)
+        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -30)
+        progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         
         instructionView.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withMultiplier: 0.5)
         instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)

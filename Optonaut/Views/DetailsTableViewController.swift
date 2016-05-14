@@ -133,9 +133,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesBegan(touches, withEvent: event)
-        var point = touches.first!.locationInView(self.view)
+        let point = touches.first!.locationInView(scnView)
         touchStart = point
-        point.y = 0
         
         if touches.count == 1 {
             combinedMotionManager.touchStart(point)
@@ -144,22 +143,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesMoved(touches, withEvent: event)
-        var point = touches.first!.locationInView(self.view)
-        if abs(point.x - touchStart!.x) > 20 {
-            combinedMotionManager.touchStart(point)
-            return
-        }
+        let point = touches.first!.locationInView(scnView)
         
-        point.y = 0
-        print(point)
         combinedMotionManager.touchMove(point)
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        let distance = touchStart!.distanceTo(touches.first!.locationInView(self.view))
-        if distance < 10 {
-            //uiHidden.value = !uiHidden.value
-        }
+        _ = touchStart!.distanceTo(touches.first!.locationInView(self.view))
         super.touchesEnded(touches, withEvent: event)
         if touches.count == 1 {
             combinedMotionManager.touchEnd()
