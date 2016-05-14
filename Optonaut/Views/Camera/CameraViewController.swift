@@ -80,7 +80,7 @@ class CameraViewController: UIViewController {
         screenScale = Float(UIScreen.mainScreen().scale)
         
         if Defaults[.SessionDebuggingEnabled] {
-            //Explicitely instantiate, so old data is removed. 
+            //Explicitely instantiate, so old data is removed.
             Recorder.enableDebug(CameraDebugService().path)
         }
         
@@ -117,8 +117,8 @@ class CameraViewController: UIViewController {
         } else {
             scnView = SCNView(frame: view.bounds)
         }
-
-    
+        
+        
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.frame = view.bounds
@@ -129,7 +129,7 @@ class CameraViewController: UIViewController {
         viewModel.distXY.producer.startWithNext { [weak self] val in self?.tiltView.distXY = val }
         tiltView.innerRadius = 35
         view.addSubview(tiltView)
-    
+        
         viewModel.progress.producer.startWithNext { [weak self] val in self?.progressView.progress = val }
         viewModel.isRecording.producer.startWithNext { [weak self] val in self?.progressView.isActive = val }
         view.addSubview(progressView)
@@ -156,57 +156,33 @@ class CameraViewController: UIViewController {
         }
         viewModel.headingToDot.producer
             .map { CGAffineTransformMakeRotation(CGFloat($0) + CGFloat(M_PI_2)) }
-//            .map { CGAffineTransformMakeRotation(CGFloat($0) - CGFloat(M_PI_2)) }
+            //            .map { CGAffineTransformMakeRotation(CGFloat($0) - CGFloat(M_PI_2)) }
             .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
         view.addSubview(arrowView)
         
         tabController!.tabView.cameraButton
         
-//        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
-//        recordButtonView.layer.cornerRadius = 35
-//        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
-//            .map { _ in true }
-//            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-//        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
-//            .map { _ in false }
-//            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-//        view.addSubview(recordButtonView)
+        //        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
+        //        recordButtonView.layer.cornerRadius = 35
+        //        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
+        //            .map { _ in true }
+        //            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+        //        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
+        //            .map { _ in false }
+        //            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+        //        view.addSubview(recordButtonView)
         
-//        if Defaults[.SessionDebuggingEnabled] {
-        
-//        #if DEBUG
-//            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
-//            tapGestureRecognizer.numberOfTapsRequired = 3
-//            view.addGestureRecognizer(tapGestureRecognizer)
-//        #endif
-////        }
+        //        if Defaults[.SessionDebuggingEnabled] {
+        #if DEBUG
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "finish")
+            tapGestureRecognizer.numberOfTapsRequired = 3
+            view.addGestureRecognizer(tapGestureRecognizer)
+        #endif
+        //        }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
-        
-        let cancelButton = UIButton()
-        cancelButton.addTarget(self, action: #selector(CameraViewController.onTapBackButton), forControlEvents: [.TouchDown])
-        cancelButton.setImage(UIImage(named: "camera_back_button"), forState: UIControlState.Normal)
-        self.view.addSubview(cancelButton)
-        
-        cancelButton.anchorInCorner(.TopLeft, xPad: 15, yPad: 10, width: 30, height: 30)
-    }
-    
-    func onTapBackButton() {
-        print("nagclose na!")
-        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
-        
-        stopSession()
-        
-        recorder.finish()
-        recorder.dispose()
-        
-        if StitchingService.hasUnstitchedRecordings() {
-            StitchingService.removeUnstitchedRecordings()
-        }
-        
-        navigationController?.popViewControllerAnimated(false)
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -217,7 +193,7 @@ class CameraViewController: UIViewController {
     
     private func setExposureMode(mode: AVCaptureExposureMode) {
         try! videoDevice!.lockForConfiguration()
-
+        
         if mode == AVCaptureExposureMode.Custom {
             exposureDuration = videoDevice!.exposureDuration.seconds
             var iso = videoDevice!.ISO
@@ -237,7 +213,7 @@ class CameraViewController: UIViewController {
         videoDevice!.whiteBalanceMode = mode
         videoDevice!.unlockForConfiguration()
     }
-
+    
     
     private func setupSelectionPoints() {
         let rawPoints = recorder.getSelectionPoints()
@@ -263,15 +239,15 @@ class CameraViewController: UIViewController {
                 
                 let edgeNode = createLineNode(posA, posB: posB)
                 
-//                if i % 20 > 9 {
-//                    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor()
-//                }
+                //                if i % 20 > 9 {
+                //                    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor()
+                //                }
                 
                 edges[edge] = edgeNode
                 
                 scene.rootNode.addChildNode(edgeNode)
                 
-                i += 1;
+                i++;
             }
         }
     }
@@ -321,7 +297,7 @@ class CameraViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
-
+        
         frameCount = 0
         
         UIApplication.sharedApplication().idleTimerDisabled = true
@@ -368,8 +344,14 @@ class CameraViewController: UIViewController {
     }
     
     override func updateTabs() {
-        tabController!.tabView.rightButton.hidden = true
-        tabController!.tabView.leftButton.hidden = true
+//        tabController!.indicatedSide = nil
+//        
+//        tabController!.leftButton.title = "CANCEL"
+//        tabController!.leftButton.icon = .Cancel
+//        
+//        tabController!.rightButton.hidden = true
+//        
+//        tabController!.hideRingButton()
     }
     
     private func setupScene() {
@@ -404,7 +386,7 @@ class CameraViewController: UIViewController {
         
         let line = SCNGeometry(sources: [source], elements: [element])
         let node = SCNNode(geometry: line)
-    
+        
         line.firstMaterial?.diffuse.contents = UIColor.whiteColor()
         
         return node
@@ -424,9 +406,9 @@ class CameraViewController: UIViewController {
     
     private func updateBallPosition() {
         
-         // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
+        // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
         let exposureDuration = max(self.exposureDuration, 0.006)
-
+        
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
         let movementPerFrameInPixels = Double(400)
         
@@ -437,7 +419,7 @@ class CameraViewController: UIViewController {
         
         let ball = SCNVector3ToGLKVector3(ballNode.position)
         
-//        if true || !recorder.hasStarted() {
+        //        if true || !recorder.hasStarted() {
         if !recorder.hasStarted() {
             ballNode.position = SCNVector3FromGLKVector3(target)
         } else {
@@ -542,13 +524,13 @@ class CameraViewController: UIViewController {
         videoDevice!.activeFormat = bestFormat
         videoDevice!.activeVideoMinFrameDuration = bestFrameRate!.minFrameDuration
         videoDevice!.activeVideoMaxFrameDuration = bestFrameRate!.minFrameDuration
-            
-
+        
+        
         if videoDevice!.activeFormat.videoHDRSupported.boolValue {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
             videoDevice!.videoHDREnabled = false
         }
-
+        
         videoDevice!.exposureMode = .ContinuousAutoExposure
         videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
         
@@ -587,7 +569,7 @@ class CameraViewController: UIViewController {
             }
         }
     }
- 
+    
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
         
         if recorder.isFinished() {
@@ -619,6 +601,7 @@ class CameraViewController: UIViewController {
             
             Async.main {
                 if self.isViewLoaded() {
+                    print("hello")
                     // This is safe, since the main thread also disposes the stitcher.
                     if self.recorder.isDisposed() || self.recorder.isFinished() {
                         return
@@ -648,52 +631,52 @@ class CameraViewController: UIViewController {
                     
                     let angularDiff = GLKVector2Make(asin(sin(angularBallHeading.s - angularCurrentHeading.s)),
                         asin(sin(angularBallHeading.t - angularCurrentHeading.t)))
-                
+                    
                     self.viewModel.headingToDot.value = atan2(angularDiff.x, angularDiff.y)
                 }
                 
                 // TODO: Re-enable this code as soon as apple fixes
                 // the memory leak in AVCaptureDevice.ISO and stuff.
                 
-//                var exposureHint = exposureHintC;
-//                
-//                if let videoDevice = self.videoDevice {
-//                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
-//                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
-//                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
-//                }
-//                
-//                if let videoDevice = self.videoDevice {
-//                    
-//                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
-//                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
-//                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
-//                    
-//                    if exposureHint.iso != 0 {
-//
-//                        if exposureHint.iso > UInt32(videoDevice.activeFormat.maxISO) {
-//                            exposureHint.iso = UInt32(videoDevice.activeFormat.maxISO)
-//                        }
-//                        if exposureHint.iso < UInt32(videoDevice.activeFormat.minISO) {
-//                            exposureHint.iso = UInt32(videoDevice.activeFormat.minISO)
-//                        }
-//                       
-//                        print("Hint: \(exposureHint.iso), Max: \(videoDevice.activeFormat.maxISO)")
-//                        try! videoDevice.lockForConfiguration()
-//                        videoDevice.exposureMode = .Custom
-//                        videoDevice.whiteBalanceMode = .Locked
-//
-//                        videoDevice.setExposureModeCustomWithDuration(
-//                            CMTimeMakeWithSeconds(exposureHint.exposureTime, 10000),
-//                            ISO: Float(exposureHint.iso), completionHandler: nil)
-//                        
-//                        videoDevice.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(exposureHint.gains, completionHandler: nil)
-//                        
-//                        
-//                        videoDevice.unlockForConfiguration()
-//                    }
-//                  
-//                }
+                //                var exposureHint = exposureHintC;
+                //
+                //                if let videoDevice = self.videoDevice {
+                //                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
+                //                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
+                //                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
+                //                }
+                //
+                //                if let videoDevice = self.videoDevice {
+                //
+                //                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
+                //                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
+                //                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
+                //
+                //                    if exposureHint.iso != 0 {
+                //
+                //                        if exposureHint.iso > UInt32(videoDevice.activeFormat.maxISO) {
+                //                            exposureHint.iso = UInt32(videoDevice.activeFormat.maxISO)
+                //                        }
+                //                        if exposureHint.iso < UInt32(videoDevice.activeFormat.minISO) {
+                //                            exposureHint.iso = UInt32(videoDevice.activeFormat.minISO)
+                //                        }
+                //
+                //                        print("Hint: \(exposureHint.iso), Max: \(videoDevice.activeFormat.maxISO)")
+                //                        try! videoDevice.lockForConfiguration()
+                //                        videoDevice.exposureMode = .Custom
+                //                        videoDevice.whiteBalanceMode = .Locked
+                //
+                //                        videoDevice.setExposureModeCustomWithDuration(
+                //                            CMTimeMakeWithSeconds(exposureHint.exposureTime, 10000),
+                //                            ISO: Float(exposureHint.iso), completionHandler: nil)
+                //
+                //                        videoDevice.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(exposureHint.gains, completionHandler: nil)
+                //
+                //
+                //                        videoDevice.unlockForConfiguration()
+                //                    }
+                //
+                //                }
             }
             
             updateBallPosition()
@@ -715,7 +698,7 @@ class CameraViewController: UIViewController {
             
             // Take transform from the stitcher.
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(recorder.getCurrentRotation())
-                
+            
             //print("New CM Transform {\(cameraNode.transform.m11), \(cameraNode.transform.m12), \(cameraNode.transform.m13), \(cameraNode.transform.m14)} \n {\(cameraNode.transform.m21), \(cameraNode.transform.m22), \(cameraNode.transform.m23), \(cameraNode.transform.m24)} \n {\(cameraNode.transform.m31), \(cameraNode.transform.m32), \(cameraNode.transform.m33), \(cameraNode.transform.m34)} \n {\(cameraNode.transform.m41), \(cameraNode.transform.m42), \(cameraNode.transform.m43), \(cameraNode.transform.m44)}");
             
             if recorder.isFinished() {
@@ -724,7 +707,7 @@ class CameraViewController: UIViewController {
                     self.finish()
                 }
             }
-
+            
             //We always need debug data, even when not recording - the aligner is not paused when idle.
             //debugHelper?.push(pixelBuffer, intrinsics: map(self.intrinsics.m) { Double($0) }, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
         }
@@ -753,7 +736,7 @@ class CameraViewController: UIViewController {
     func finish() {
         
         Mixpanel.sharedInstance().track("Action.Camera.FinishRecording")
-
+        
         stopSession()
         
         let recorder_ = recorder
@@ -781,20 +764,17 @@ class CameraViewController: UIViewController {
         navigationController!.pushViewController(createOptographViewController, animated: false)
         navigationController!.viewControllers.removeAtIndex(1)
     }
+    
 }
 
 extension CameraViewController: TabControllerDelegate {
     
     func onTouchStartCameraButton() {
         viewModel.isRecording.value = true
-        tabController!.tabView.cameraButton.backgroundColor = .Accent
-        tabController!.tabView.cameraButton.iconColor = .whiteColor()
     }
     
     func onTouchEndCameraButton() {
         viewModel.isRecording.value = false
-        tabController!.tabView.cameraButton.backgroundColor = .whiteColor()
-        tabController!.tabView.cameraButton.iconColor = .blackColor()
         
         tapCameraButtonCallback = nil
     }
@@ -802,6 +782,22 @@ extension CameraViewController: TabControllerDelegate {
     func onTapCameraButton() {
         tapCameraButtonCallback?()
     }
+    
+    func onTapLeftButton() {
+        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
+        
+        stopSession()
+        
+        recorder.finish()
+        recorder.dispose()
+        
+        if StitchingService.hasUnstitchedRecordings() {
+            StitchingService.removeUnstitchedRecordings()
+        }
+        
+        navigationController?.popViewControllerAnimated(false)
+    }
+    
 }
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
@@ -871,7 +867,7 @@ private class DashedCircleView: UIView {
     convenience init () {
         self.init(frame: CGRectZero)
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -924,7 +920,7 @@ private class CameraProgressView: UIView {
     convenience init () {
         self.init(frame: CGRectZero)
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -955,7 +951,7 @@ private class TiltView: UIView {
             updatePaths()
         }
     }
-
+    
     
     var innerRadius: Float = 0 {
         didSet {
@@ -994,7 +990,7 @@ private class TiltView: UIView {
     convenience init () {
         self.init(frame: CGRectZero)
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
