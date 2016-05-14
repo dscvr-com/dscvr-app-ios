@@ -59,12 +59,15 @@ class TouchRotationSource: RotationMatrixSource {
     func touchStart(point: CGPoint) {
         touchStartPoint = point
         isTouching = true
+        print("touchStart")
     }
     
     func touchMove(point: CGPoint) {
         if !isTouching {
             return
         }
+        
+        print("touchMove")
         
         let x0 = Float(sceneWidth / 2)
         let y0 = Float(sceneHeight / 2)
@@ -82,6 +85,7 @@ class TouchRotationSource: RotationMatrixSource {
     }
     
     func touchEnd() {
+        print("touchEnd")
         touchStartPoint = nil
         isTouching = false
     }
@@ -263,6 +267,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         touchStart = point
         
         if !uiHidden.value {
+            print("!hidden")
             point.y = 0
         }
         
@@ -276,6 +281,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         var point = touches.first!.locationInView(contentView)
         
         if !uiHidden.value {
+            print("!hidden")
             if abs(point.x - touchStart!.x) > 20 {
                 uiHidden.value = true
                 combinedMotionManager.touchStart(point)
