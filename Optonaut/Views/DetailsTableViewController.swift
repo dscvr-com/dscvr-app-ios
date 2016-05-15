@@ -61,7 +61,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private let hideSelectorButton = UIButton()
     private let littlePlanetButton = UIButton()
     private let gyroButton = UIButton()
-    private let isSelectorButtonOpen:Bool = true
+    private var isSelectorButtonOpen:Bool = true
     
     required init(optographId:UUID) {
         
@@ -203,7 +203,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         personNameView.rac_text <~ viewModel.creator_username
         
-        hideSelectorButton.setBackgroundImage(UIImage(named:"oval_down"), forState: .Normal)
+        hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
         scnView.addSubview(hideSelectorButton)
         
         
@@ -218,26 +218,52 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         
         hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
-        hideSelectorButton.addTarget(self, action: #selector(self.closeSelector), forControlEvents:.TouchUpInside)
+        hideSelectorButton.addTarget(self, action: #selector(self.selectorButton), forControlEvents:.TouchUpInside)
         
-        littlePlanetButton.align(.UnderMatchingRight, relativeTo: hideSelectorButton, padding: 10, width: 35, height: 35)
+        littlePlanetButton.align(.UnderCentered, relativeTo: hideSelectorButton, padding: 10, width: 35, height: 35)
         littlePlanetButton.addTarget(self, action: #selector(self.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
         
-        gyroButton.align(.UnderMatchingRight, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
+        gyroButton.align(.UnderCentered, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
         gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
     }
     
+    func selectorButton() {
+        if isSelectorButtonOpen {
+            closeSelector()
+            isSelectorButtonOpen = false
+        } else {
+            openSelector()
+            isSelectorButtonOpen = true
+        }
+    }
+    
+    
+    func openSelector() {
+        
+        self.hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
+        
+        UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
+            self.littlePlanetButton.hidden = false
+            self.littlePlanetButton.align(.UnderCentered, relativeTo: self.hideSelectorButton, padding: 10, width: 35, height: 35)
+            },completion: { finished in
+                UIView.animateWithDuration(0.4,delay: 0.2, options: .CurveEaseOut, animations: {
+                    self.gyroButton.hidden =  false
+                    self.gyroButton.align(.UnderCentered, relativeTo: self.littlePlanetButton, padding: 10, width: 35, height: 35)
+                    },completion: nil)
+        })
+    
+    }
     func closeSelector() {
-    
-        UIView.animateWithDuration(0.8, delay: 0.2, options: .CurveEaseOut, animations: { animation in
-    
-            self.littlePlanetButton.frame.origin.y = self.hideSelectorButton.frame.origin.y
-            self.gyroButton.frame.origin.y = self.hideSelectorButton.frame.origin.y
-    
-            }, completion: { finished in
-                self.littlePlanetButton.hidden = true
+        UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
+            self.gyroButton.frame.origin.y = self.littlePlanetButton.frame.origin.y
+            },completion: { finished in
                 self.gyroButton.hidden = true
-                self.hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
+                UIView.animateWithDuration(0.4,delay: 0.2, options: .CurveEaseOut, animations: {
+                    self.littlePlanetButton.frame.origin.y = self.hideSelectorButton.frame.origin.y
+                    },completion: { completed in
+                        self.littlePlanetButton.hidden = true
+                        self.hideSelectorButton.setBackgroundImage(UIImage(named:"oval_down"), forState: .Normal)
+                })
         })
     }
 
