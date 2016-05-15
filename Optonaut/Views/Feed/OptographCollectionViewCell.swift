@@ -379,9 +379,8 @@ class OptographCollectionViewCell: UICollectionViewCell {
     
     dynamic private func pushProfile() {
         
-        let detailsViewController = DetailsTableViewController()
+        let detailsViewController = DetailsTableViewController(optographId:optoId)
         detailsViewController.cellIndexpath = id
-        detailsViewController.optographId = optoId
         self.navigationController!.pushViewController(detailsViewController, animated: true)
     }
     
@@ -499,7 +498,6 @@ class OptographCollectionViewCell: UICollectionViewCell {
                     scnView.frame.origin.x = translationX
                     whiteBackground.frame.origin.x = translationX
                 } else {
-                    print("lols")
                     parentViewController!.tabController!.swipeLeftView(translationX)
                 }
             } else {
@@ -555,7 +553,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
     func bindModel(optographId:UUID) {
         let optograph = Models.optographs[optographId]!.model
         let person = Models.persons[optograph.personID]!.model
-        
+
         viewModel.bind(optographId)
         
         avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)

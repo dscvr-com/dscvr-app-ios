@@ -381,7 +381,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     
         tabController!.tabView.rightButton.title = "POST LATER"
         //tabController!.tabView.rightButton.icon = .Clock
-        tabController!.tabView.rightButton.hidden = false
+        tabController!.tabView.rightButton.hidden = true
         tabController!.tabView.rightButton.color = .Light
         
         //tabController!.cameraButton.icon = UIImage(named:"camera_icn")!

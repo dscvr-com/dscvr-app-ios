@@ -131,7 +131,7 @@ class CameraViewController: UIViewController {
         view.addSubview(tiltView)
         
         viewModel.progress.producer.startWithNext { [weak self] val in self?.progressView.progress = val }
-        viewModel.isRecording.producer.startWithNext { [weak self] val in self?.progressView.isActive = val }
+        viewModel.isRecording.producer.startWithNext { [weak self] val in self?.progressView.isActive = val}
         view.addSubview(progressView)
         
         instructionView.font = UIFont.robotoOfSize(22, withType: .Medium)
@@ -601,7 +601,6 @@ class CameraViewController: UIViewController {
             
             Async.main {
                 if self.isViewLoaded() {
-                    print("hello")
                     // This is safe, since the main thread also disposes the stitcher.
                     if self.recorder.isDisposed() || self.recorder.isFinished() {
                         return

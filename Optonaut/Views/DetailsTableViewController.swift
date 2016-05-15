@@ -13,17 +13,18 @@ import SceneKit
 import ReactiveCocoa
 import Kingfisher
 import SpriteKit
+import SwiftyUserDefaults
 
 let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
 
 class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate{
     
-    //private let viewModel: DetailsViewModel
+    private let viewModel: DetailsViewModel
     
     
     private var combinedMotionManager: CombinedMotionManager!
     // subviews
-    private let tableView = TableView()
+    //private let tableView = TableView()
     
     private var renderDelegate: CubeRenderDelegate!
     private var scnView: SCNView!
@@ -36,7 +37,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private let loadingStatus = MutableProperty<LoadingStatus>(.Nothing)
     let imageCache: CollectionImageCache
     
-    var optographId:UUID = ""
+    var optographID:UUID = ""
     var cellIndexpath:Int = 0
     
     var direction: Direction {
@@ -49,9 +50,24 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     private var touchStart: CGPoint?
+    private let whiteBackground = UIView()
+    private let avatarImageView = UIImageView()
+    private let locationTextView = UILabel()
+    private let likeCountView = UILabel()
+    private let personNameView = BoundingLabel()
+    private let optionsButtonView = BoundingButton()
+    private let likeButtonView = BoundingButton()
     
-    required init() {
-        //viewModel = DetailsViewModel(optographID: optographID)
+    private let hideSelectorButton = UIButton()
+    private let littlePlanetButton = UIButton()
+    private let gyroButton = UIButton()
+    private let isSelectorButtonOpen:Bool = true
+    
+    required init(optographId:UUID) {
+        
+        optographID = optographId
+        
+        viewModel = DetailsViewModel(optographID: optographId)
         let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
         imageCache = CollectionImageCache(textureSize: textureSize)
         
@@ -93,12 +109,24 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         scnView.hidden = false
         self.view.addSubview(scnView)
         
+//        tableView.backgroundColor = .clearColor()
+//        tableView.delegate = self
+//        tableView.dataSource = self
+//        tableView.separatorStyle = .None
+//        tableView.canCancelContentTouches = false
+//        tableView.delaysContentTouches = false
+//        tableView.exclusiveTouch = false
+//        tableView.registerClass(DetailsTableViewCell.self, forCellReuseIdentifier: "details-cell")
+//        tableView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - tabBarController!.tabBar.frame.height)
+//        tableView.scrollEnabled = true
+//        view.addSubview(tableView)
+//        
 //        viewModel.comments.producer.startWithNext { [weak self] _ in
 //            self?.tableView.reloadData()
 //        }
         
         self.willDisplay()
-        let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographId, side: .Left)
+        let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
     }
     
@@ -129,6 +157,109 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //                self?.navigationController?.popViewControllerAnimated(false)
 //            }
 //        }
+        whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
+        scnView.addSubview(whiteBackground)
+        
+        avatarImageView.layer.cornerRadius = 23.5
+        avatarImageView.backgroundColor = .whiteColor()
+        avatarImageView.clipsToBounds = true
+        avatarImageView.userInteractionEnabled = true
+        //avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
+        whiteBackground.addSubview(avatarImageView)
+        
+        optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
+        optionsButtonView.setImage(UIImage(named:"feeds_option_icn"), forState: .Normal)
+        optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        //optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapOptions)))
+        whiteBackground.addSubview(optionsButtonView)
+        
+        personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
+        personNameView.textColor = UIColor(0xffbc00)
+        personNameView.userInteractionEnabled = true
+        //personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
+        whiteBackground.addSubview(personNameView)
+        
+        //likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
+        likeButtonView.setImage(UIImage(named:"user_unlike_icn"), forState: .Normal)
+        whiteBackground.addSubview(likeButtonView)
+        
+        locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
+        locationTextView.textColor = UIColor.whiteColor()
+        whiteBackground.addSubview(locationTextView)
+        
+        likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
+        likeCountView.textColor = .whiteColor()
+        likeCountView.textAlignment = .Right
+        whiteBackground.addSubview(likeCountView)
+        
+        whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
+        avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
+        personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+        likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
+        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:40, height: 13)
+        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:24, height: 24)
+        personNameView.align(.ToTheRightMatchingTop, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+        locationTextView.align(.ToTheRightMatchingBottom, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+        
+        personNameView.rac_text <~ viewModel.creator_username
+        
+        hideSelectorButton.setBackgroundImage(UIImage(named:"oval_down"), forState: .Normal)
+        scnView.addSubview(hideSelectorButton)
+        
+        
+        if  Defaults[.SessionGyro] {
+            self.changeButtonIcon(true)
+        } else {
+            self.changeButtonIcon(false)
+        }
+        
+        scnView.addSubview(littlePlanetButton)
+        scnView.addSubview(gyroButton)
+        
+        
+        hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
+        hideSelectorButton.addTarget(self, action: #selector(self.closeSelector), forControlEvents:.TouchUpInside)
+        
+        littlePlanetButton.align(.UnderMatchingRight, relativeTo: hideSelectorButton, padding: 10, width: 35, height: 35)
+        littlePlanetButton.addTarget(self, action: #selector(self.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
+        
+        gyroButton.align(.UnderMatchingRight, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
+        gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
+    }
+    
+    func closeSelector() {
+    
+        UIView.animateWithDuration(0.8, delay: 0.2, options: .CurveEaseOut, animations: { animation in
+    
+            self.littlePlanetButton.frame.origin.y = self.hideSelectorButton.frame.origin.y
+            self.gyroButton.frame.origin.y = self.hideSelectorButton.frame.origin.y
+    
+            }, completion: { finished in
+                self.littlePlanetButton.hidden = true
+                self.gyroButton.hidden = true
+                self.hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
+        })
+    }
+
+    func littlePlanetButtonTouched() {
+        Defaults[.SessionGyro] = false
+        self.changeButtonIcon(false)
+    }
+    
+    func gyroButtonTouched() {
+        Defaults[.SessionGyro] = true
+        self.changeButtonIcon(true)
+    }
+    
+    func changeButtonIcon(isGyro:Bool) {
+        if isGyro {
+            littlePlanetButton.setBackgroundImage(UIImage(named:"littlePlanet_inactive_icn"), forState: .Normal)
+            gyroButton.setBackgroundImage(UIImage(named:"gyro_active_icn"), forState: .Normal)
+        
+        } else {
+            littlePlanetButton.setBackgroundImage(UIImage(named:"littlePlanet_active_icn"), forState: .Normal)
+            gyroButton.setBackgroundImage(UIImage(named:"gyro_inactive_icn"), forState: .Normal)
+        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -180,8 +311,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         CoreMotionRotationSource.Instance.start()
         RotationService.sharedInstance.rotationEnable()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
         updateNavbarAppear()
     }
@@ -202,18 +333,18 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        tableView.contentOffset = CGPoint(x: 0, y: -(tableView.frame.height - 78))
-        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
+//        tableView.contentOffset = CGPoint(x: 0, y: -(tableView.frame.height - 78))
+//        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
     }
     
-    func keyboardWillShow(notification: NSNotification) {
-        let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
-    }
-    
-    func keyboardWillHide(notification: NSNotification) {
-        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
-    }
+//    func keyboardWillShow(notification: NSNotification) {
+//        let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
+//        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+//    }
+//    
+//    func keyboardWillHide(notification: NSNotification) {
+//        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
+//    }
     
     func dismissKeyboard() {
         view.endEditing(true)
@@ -278,21 +409,21 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
 }
 
-// MARK: - UITableViewDelegate
-extension DetailsTableViewController: UITableViewDelegate {
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-//        let superView = tableView!.superview!
-        if indexPath.row == 0 {
-            let yOffset = max(0, tableView.frame.height - tableView.contentSize.height)
-            UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
-                animations: {
-                    self.tableView.contentOffset = CGPoint(x: 0, y: -yOffset)
-                },
-                completion: nil)
-        }
-    }
-    
+//// MARK: - UITableViewDelegate
+//extension DetailsTableViewController: UITableViewDelegate {
+//    
+//    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+////        let superView = tableView!.superview!
+//        if indexPath.row == 0 {
+//            let yOffset = max(0, tableView.frame.height - tableView.contentSize.height)
+//            UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
+//                animations: {
+//                    self.tableView.contentOffset = CGPoint(x: 0, y: -yOffset)
+//                },
+//                completion: nil)
+//        }
+//    }
+//    
 //    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 //        if indexPath.row == 0 {
 //            let infoHeight = CGFloat(78)
@@ -308,9 +439,9 @@ extension DetailsTableViewController: UITableViewDelegate {
 //            return max(textHeight, 60)
 //        }
 //    }
-    
-}
-
+//    
+//}
+//
 //// MARK: - UITableViewDataSource
 //extension DetailsTableViewController: UITableViewDataSource {
 //    
@@ -320,17 +451,6 @@ extension DetailsTableViewController: UITableViewDelegate {
 //            cell.viewModel = viewModel
 //            cell.navigationController = navigationController as? NavigationController
 //            cell.bindViewModel()
-//            return cell
-//        } else if indexPath.row == 1 {
-//            let cell = self.tableView.dequeueReusableCellWithIdentifier("new-cell") as! NewCommentTableViewCell
-//            cell.bindViewModel(viewModel.optograph.ID, commentsCount: viewModel.commentsCount.value)
-//            cell.navigationController = navigationController as? NavigationController
-//            cell.delegate = self
-//            return cell
-//        } else {
-//            let cell = self.tableView.dequeueReusableCellWithIdentifier("comment-cell") as! CommentTableViewCell
-//            cell.navigationController = navigationController as? NavigationController
-//            cell.bindViewModel(viewModel.comments.value[indexPath.row - 2])
 //            return cell
 //        }
 //    }
@@ -349,64 +469,26 @@ extension DetailsTableViewController: UITableViewDelegate {
 //    }
 //}
 
-private class TableView: UITableView {
-    
-    var horizontalScrollDistanceCallback: ((Float) -> ())?
-    
-    private override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesMoved(touches, withEvent: event)
-        
-        if let touch = touches.first {
-            let oldPoint = touch.previousLocationInView(self)
-            let newPoint = touch.locationInView(self)
-            self.horizontalScrollDistanceCallback?(Float(newPoint.x - oldPoint.x))
-        }
-    }
-    
-    private override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
-        // this took a lot of time. don't bother to understand this
-        if frame.height + contentOffset.y - 78 < 80 && point.y < 0 && frame.width - point.x < 100 {
-            return false
-        }
-        return true
-    }
-    
-}
-
-private class OffsetBlurView: UIView {
-    
-    private let blurView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .Dark)
-        return UIVisualEffectView(effect: blurEffect)
-    }()
-    
-    var fullscreen = true {
-        didSet {
-            updateBlurViewFrame()
-        }
-    }
-    
-    override var frame: CGRect {
-        didSet {
-            updateBlurViewFrame()
-        }
-    }
-    
-    init() {
-        super.init(frame: CGRectZero)
-        addSubview(blurView)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func updateBlurViewFrame() {
-        if fullscreen {
-            blurView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
-        } else {
-            blurView.frame = CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height + frame.origin.y)
-        }
-    }
-    
-}
+//private class TableView: UITableView {
+//    
+//    var horizontalScrollDistanceCallback: ((Float) -> ())?
+//    
+//    private override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+//        super.touchesMoved(touches, withEvent: event)
+//        
+//        if let touch = touches.first {
+//            let oldPoint = touch.previousLocationInView(self)
+//            let newPoint = touch.locationInView(self)
+//            self.horizontalScrollDistanceCallback?(Float(newPoint.x - oldPoint.x))
+//        }
+//    }
+//    
+//    private override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+//        // this took a lot of time. don't bother to understand this
+//        if frame.height + contentOffset.y - 78 < 80 && point.y < 0 && frame.width - point.x < 100 {
+//            return false
+//        }
+//        return true
+//    }
+//    
+//}

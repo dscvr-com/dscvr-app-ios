@@ -29,6 +29,7 @@ extension DefaultsKeys {
     static let SessionUploadMode = DefaultsKey<String?>("session_upload_mode")
     static let SessionNeedRefresh = DefaultsKey<Bool>("session_profile_need_refresh")
     static let SessionMotor = DefaultsKey<Bool>("session_use_motor")
+    static let SessionGyro = DefaultsKey<Bool>("session_use_gyro")
     
 }
 

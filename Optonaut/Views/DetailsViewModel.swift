@@ -29,13 +29,17 @@ class DetailsViewModel {
     let viewIsActive = MutableProperty<Bool>(false)
     let isLoading = MutableProperty<Bool>(true)
     let optographReloaded = MutableProperty<Void>()
+    let creator_username = MutableProperty<String>("")
     
     var optograph = Optograph.newInstance()
+    var personDetails = Person.newInstance()
+    var locationDetails = Location.newInstance()
+    
+    var locationBox: ModelBox<Location>?
     
     init(optographID: UUID) {
         
         logInit()
-        
         let query = OptographTable
             .select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
@@ -43,10 +47,15 @@ class DetailsViewModel {
             .filter(OptographTable[OptographSchema.ID] == optographID)
         
         if let optograph = DatabaseService.defaultConnection.pluck(query).map({ row -> Optograph in
-            var optograph = Optograph.fromSQL(row)
+            let optograph = Optograph.fromSQL(row)
+            personDetails = Person.fromSQL(row)
+            //locationDetails  = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
             
-            optograph.person = Person.fromSQL(row)
-            optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
+            print(personDetails)
+            //print(locationDetails)
+            
+//            optograph.personID = Person.fromSQL(row)
+//            optograph.location = row[OptographSchema.locationID] == nil ? nil : Location.fromSQL(row)
             
             return optograph
         }) {
@@ -58,12 +67,12 @@ class DetailsViewModel {
         }
         
         if optograph.isPublished {
-            ApiService<Optograph>.get("optographs/\(optographID)").startWithNext { optograph in
-                self.optograph = optograph
-                self.optographReloaded.value = ()
-                self.saveModel()
-                self.updateProperties()
-            }
+//            ApiService<Optograph>.get("optographs/\(optographID)").startWithNext { optograph in
+//                self.optograph = optograph
+//                self.optographReloaded.value = ()
+//                self.saveModel()
+//                self.updateProperties()
+//            }
         }
         
         let commentQuery = CommentTable
@@ -71,21 +80,28 @@ class DetailsViewModel {
             .join(PersonTable, on: CommentTable[CommentSchema.personID] == PersonTable[PersonSchema.ID])
             .filter(CommentTable[CommentSchema.optographID] == optographID)
         
-        DatabaseService.defaultConnection.prepare(commentQuery)
-            .map { row -> Comment in
-                let person = Person.fromSQL(row)
-                var comment = Comment.fromSQL(row)
-                
-                comment.person = person
-                
-                return comment
-            }
-            .forEach(insertNewComment)
         
-        ApiService<Comment>.get("optographs/\(optographID)/comments").startWithNext { (var comment) in
+        do {
+            try DatabaseService.defaultConnection.prepare(commentQuery)
+                .map { row -> Comment in
+                    let person = Person.fromSQL(row)
+                    var comment = Comment.fromSQL(row)
+                    
+                    comment.person = person
+                    
+                    return comment
+                }
+                .forEach(insertNewComment)
+            
+        } catch {
+            print(error)
+        }
+       
+        
+        ApiService<Comment>.get("optographs/\(optographID)/comments").startWithNext {  comment in
             self.insertNewComment(comment)
             
-            comment.optograph.ID = optographID
+            //comment.optograph.ID = optographID
             
             try! comment.insertOrUpdate()
             try! comment.person.insertOrUpdate()
@@ -127,29 +143,29 @@ class DetailsViewModel {
     
     func increaseViewsCount() {
         ApiService<EmptyResponse>.post("optographs/\(optograph.ID)/views", parameters: nil).startWithCompleted {
-            self.viewsCount.value++
+            self.viewsCount.value += 1
             self.updateModel()
             self.saveModel()
         }
     }
     
     func publish() {
-        optograph.publish()
-            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
-            .startWithCompleted {
-                self.isPublished.value = true
-                self.updateModel()
-                self.saveModel()
-            }
+//        optograph.publish()
+//            .startOn(QueueScheduler(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)))
+//            .startWithCompleted {
+//                self.isPublished.value = true
+//                self.updateModel()
+//                self.saveModel()
+//            }
     }
     
     func insertNewComment(comment: Comment) {
         comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
     }
     
-    func delete() -> SignalProducer<EmptyResponse, ApiError> {
-        return optograph.delete()
-    }
+//    func delete() -> SignalProducer<EmptyResponse, ApiError> {
+//        return optograph.delete()
+//    }
     
     private func updateModel() {
         optograph.isPublished = isPublished.value
@@ -161,8 +177,8 @@ class DetailsViewModel {
     
     private func saveModel() {
         try! optograph.insertOrUpdate()
-        try! optograph.location?.insertOrUpdate()
-        try! optograph.person.insertOrUpdate()
+//        try! optograph.location?.insertOrUpdate()
+//        try! optograph.person.insertOrUpdate()
     }
     
     private func updateProperties() {
@@ -173,10 +189,14 @@ class DetailsViewModel {
         timeSinceCreated.value = optograph.createdAt.longDescription
         text.value = optograph.isPrivate ? "[private] " + optograph.text : optograph.text
         hashtags.value = optograph.hashtagString
-        location.value = optograph.location?.text
+        
+        if let locationID = optograph.locationID {
+            let locationString = Models.locations[locationID]!.model
+            location.value = "\(locationString.text), \(locationString.countryShort)"
+        }
         isPublished.value = optograph.isPublished
-        avatarImageUrl.value = ImageURL(optograph.person.avatarAssetID, width: 40, height: 40)
-        textureImageUrl.value = ImageURL(optograph.leftTextureAssetID)
+        avatarImageUrl.value = ImageURL("persons/\(personDetails.ID)/\(personDetails.avatarAssetID).jpg", width: 47, height: 47)
+        
     }
     
 }
