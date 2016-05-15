@@ -92,5 +92,9 @@ class CameraDebugService {
         let imageProperties = [kCGImageDestinationLossyCompressionQuality as String: 0.8]
         CGImageDestinationAddImage(dest, cgImage, imageProperties)
         CGImageDestinationFinalize(dest)
+        
+    
+        
+        
     }
 }

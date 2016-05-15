@@ -43,7 +43,6 @@
 		8F23AA571BFF31EC008926A8 /* Migration0001.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA561BFF31EC008926A8 /* Migration0001.swift */; };
 		8F23AA591BFF3229008926A8 /* Migration0002.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA581BFF3229008926A8 /* Migration0002.swift */; };
 		8F23AA5F1C01F8A5008926A8 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */; };
-		8F23AA601C01F8A5008926A8 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5B1C01F8A5008926A8 /* Fabric.framework */; };
 		8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */; };
 		8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */; };
 		8F23AA631C01F8A5008926A8 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5E1C01F8A5008926A8 /* opencv2.framework */; };
@@ -228,6 +227,9 @@
 		A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D681BEA5A4E0031ED1E /* recorder.cpp */; };
 		A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D711BEA5A4E0031ED1E /* monoStitcher.cpp */; };
 		A5FD5D8B1BEA5A570031ED1E /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5FD5D8A1BEA5A570031ED1E /* lib */; };
+		B11A70E11CE30DDF00C26F04 /* BTDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11A70DF1CE30DDF00C26F04 /* BTDiscovery.swift */; };
+		B11A70E21CE30DDF00C26F04 /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11A70E01CE30DDF00C26F04 /* BTService.swift */; };
+		B1E759B31CDB390600EA0A68 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1E759B21CDB390600EA0A68 /* Fabric.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -305,7 +307,6 @@
 		8F23AA561BFF31EC008926A8 /* Migration0001.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0001.swift; sourceTree = "<group>"; };
 		8F23AA581BFF3229008926A8 /* Migration0002.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0002.swift; sourceTree = "<group>"; };
 		8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Frameworks/Crashlytics.framework; sourceTree = "<group>"; };
-		8F23AA5B1C01F8A5008926A8 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Frameworks/Fabric.framework; sourceTree = "<group>"; };
 		8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = Frameworks/FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = Frameworks/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		8F23AA5E1C01F8A5008926A8 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Frameworks/opencv2.framework; sourceTree = "<group>"; };
@@ -558,6 +559,9 @@
 		A5FD5D711BEA5A4E0031ED1E /* monoStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = monoStitcher.cpp; sourceTree = "<group>"; };
 		A5FD5D721BEA5A4E0031ED1E /* monoStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = monoStitcher.hpp; sourceTree = "<group>"; };
 		A5FD5D8A1BEA5A570031ED1E /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
+		B11A70DF1CE30DDF00C26F04 /* BTDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTDiscovery.swift; sourceTree = "<group>"; };
+		B11A70E01CE30DDF00C26F04 /* BTService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTService.swift; sourceTree = "<group>"; };
+		B1E759B21CDB390600EA0A68 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -577,6 +581,7 @@
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
 				8FC9EC3C1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework in Frameworks */,
 				8F86D4F71B9B9664009F91EB /* PureLayout.framework in Frameworks */,
+				B1E759B31CDB390600EA0A68 /* Fabric.framework in Frameworks */,
 				5980D51E1CCDEF100010B4ED /* Icomoon.framework in Frameworks */,
 				8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */,
 				8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */,
@@ -589,7 +594,6 @@
 				8FE4BA191C2B059A00CD0068 /* Kingfisher.framework in Frameworks */,
 				8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */,
 				8F23AA5F1C01F8A5008926A8 /* Crashlytics.framework in Frameworks */,
-				8F23AA601C01F8A5008926A8 /* Fabric.framework in Frameworks */,
 				598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */,
 				8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */,
 				8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */,
@@ -665,6 +669,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B1E759B21CDB390600EA0A68 /* Fabric.framework */,
 				598416411CBB896E00BD966D /* Icomoon.framework */,
 				5980D51D1CCDEF100010B4ED /* Icomoon.framework */,
 				8F4715111C49688700663684 /* TwitterKitResources.bundle */,
@@ -674,7 +679,6 @@
 				8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */,
 				8F23AA641C021CA4008926A8 /* Neon.framework */,
 				8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */,
-				8F23AA5B1C01F8A5008926A8 /* Fabric.framework */,
 				8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */,
 				8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */,
 				8F23AA5E1C01F8A5008926A8 /* opencv2.framework */,
@@ -1046,6 +1050,7 @@
 		8FCCA02D1B3806040091F1B1 /* Optonaut */ = {
 			isa = PBXGroup;
 			children = (
+				B11A70DE1CE30DA300C26F04 /* BluetoothServices */,
 				8FCCA0511B3806680091F1B1 /* AppDelegate.swift */,
 				8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */,
 				8F740CF81B80DC6200FED1D0 /* Database */,
@@ -1293,6 +1298,15 @@
 				A5FD5D721BEA5A4E0031ED1E /* monoStitcher.hpp */,
 			);
 			path = stereo;
+			sourceTree = "<group>";
+		};
+		B11A70DE1CE30DA300C26F04 /* BluetoothServices */ = {
+			isa = PBXGroup;
+			children = (
+				B11A70DF1CE30DDF00C26F04 /* BTDiscovery.swift */,
+				B11A70E01CE30DDF00C26F04 /* BTService.swift */,
+			);
+			name = BluetoothServices;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1605,6 +1619,7 @@
 				8FAB9F541B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift in Sources */,
 				8FC7E3771BD15B9D00E97CC3 /* Vector3d.mm in Sources */,
 				8F5335AA1BDBC09A0058961A /* ActivityResourceFollow.swift in Sources */,
+				B11A70E11CE30DDF00C26F04 /* BTDiscovery.swift in Sources */,
 				8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */,
 				8FFB561A1C2C2BA900D2BE62 /* OptographCollectionViewController.swift in Sources */,
 				8F966E0E1BCCF33900F5F5F8 /* SearchViewModel.swift in Sources */,
@@ -1664,6 +1679,7 @@
 				A5FD5D841BEA5A4E0031ED1E /* support.cpp in Sources */,
 				8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */,
 				8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */,
+				B11A70E21CE30DDF00C26F04 /* BTService.swift in Sources */,
 				8F5335A81BDBBFE30058961A /* ActivityResourceViews.swift in Sources */,
 				8F8E32D01BFE043200E09392 /* DeviceTokenService.swift in Sources */,
 				5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */,

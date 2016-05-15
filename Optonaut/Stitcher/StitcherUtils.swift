@@ -37,7 +37,22 @@ func ImageBufferToCompressedUIImage(input: ImageBuffer) -> UIImage {
     return UIImage(CGImage: cgImage)
 }
 
+
+/*func getDocumentsDirectory() -> NSString {
+    let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+    let documentsDirectory = paths[0]
+    return documentsDirectory
+}*/
+
+
+
 func ImageBufferToCompressedJPG(input: ImageBuffer, ratio: CGFloat) -> NSData? {
+    
+    /*if let data = UIImageJPEGRepresentation(ImageBufferToCompressedUIImage(input), ratio){
+        let filename = getDocumentsDirectory().stringByAppendingPathComponent("TEST.jpg")
+        data.writeToFile(filename, atomically: true)
+    }*/
+    
     return UIImageJPEGRepresentation(ImageBufferToCompressedUIImage(input), ratio)
 }
 

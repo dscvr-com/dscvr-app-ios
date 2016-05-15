@@ -318,4 +318,8 @@ optonaut::StitcherSink stitcherSink;
     return CVMatToImageBuffer(pipe->FinishPreview()->image.data);
     return result;
 }
+
+
+
+
 @end

@@ -57,6 +57,11 @@ class StitchingService {
         return storeRef.hasUnstitchedRecordings()
     }
     
+    
+
+    
+    
+    
     /// This function starts a new stitching process.
     static func startStitching(optographID: UUID) -> StitchingSignal {
         if isStitching() {
@@ -92,6 +97,14 @@ class StitchingService {
                 return !shallCancel
             }
             
+            
+            
+            func getDocumentsDirectory() -> NSString {
+                let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+                let documentsDirectory = paths[0]
+                return documentsDirectory
+            }
+            
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getLeftResult().enumerate() {
                     var leftFace = ImageBuffer()
@@ -106,6 +119,7 @@ class StitchingService {
                     Recorder.freeImageBuffer(leftFace)
                 }
             }
+            
             
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getRightResult().enumerate() {

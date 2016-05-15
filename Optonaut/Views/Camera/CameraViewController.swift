@@ -89,7 +89,7 @@ class CameraViewController: UIViewController {
         tapCameraButtonCallback = { [weak self] in
             let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
             confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-            self?.presentViewController(confirmAlert, animated: true, completion: nil)
+            //self?.presentViewController(confirmAlert, animated: true, completion: nil)
             
         }
     }
@@ -197,9 +197,12 @@ class CameraViewController: UIViewController {
         if mode == AVCaptureExposureMode.Custom {
             exposureDuration = videoDevice!.exposureDuration.seconds
             var iso = videoDevice!.ISO
+            
             if(iso > videoDevice!.activeFormat.maxISO) {
                 iso = videoDevice!.activeFormat.maxISO
             }
+            
+            
             videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
             //print("Video Settings. Iso: \(iso), exposure duration: \(exposureDuration)");
         } else {
@@ -735,6 +738,15 @@ class CameraViewController: UIViewController {
         scnView.removeFromSuperview()
     }
     
+    
+    func getDocumentsDirectory() -> NSString {
+     let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+     let documentsDirectory = paths[0]
+     return documentsDirectory
+     }
+
+    
+    
     func finish() {
         
         Mixpanel.sharedInstance().track("Action.Camera.FinishRecording")
@@ -747,8 +759,25 @@ class CameraViewController: UIViewController {
             
             if recorder_.previewAvailable() {
                 let previewData = recorder_.getPreviewImage()
+
+                
                 autoreleasepool {
                     sink.sendNext(UIImage(CGImage: ImageBufferToCGImage(previewData)))
+                    
+                    
+                    
+                    
+                    if let data = UIImagePNGRepresentation(UIImage(CGImage: ImageBufferToCGImage(previewData))){
+                        let filename = self.getDocumentsDirectory().stringByAppendingPathComponent("copy.png")
+                        data.writeToFile(filename, atomically: true)
+                    }
+                    
+
+                    
+                    
+                    
+                    
+                    
                 }
                 Recorder.freeImageBuffer(previewData)
             }
@@ -771,18 +800,37 @@ class CameraViewController: UIViewController {
 
 extension CameraViewController: TabControllerDelegate {
     
+    //delay function
+    func runThisAfterDelay(seconds seconds: Double, after: () -> ()) {
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(seconds * Double(NSEC_PER_SEC)))
+        dispatch_after(time, dispatch_get_main_queue(), after)
+    }
+    //
+    
     func onTouchStartCameraButton() {
-        viewModel.isRecording.value = true
-        tabController!.cameraButton.backgroundColor = .Accent
-        tabController!.cameraButton.iconColor = .whiteColor()
+        
+        //bluetooth com
+        if let bleService = btDiscoverySharedInstance.bleService {
+            //000102030405060708
+            bleService.sendCommand("fe040101100258Z00ffffffffffffffffffffffff")
+        }
+
+        runThisAfterDelay(seconds: 1) { () -> () in
+        
+        
+        
+        self.viewModel.isRecording.value = true
+        self.tabController!.cameraButton.backgroundColor = .Accent
+        self.tabController!.cameraButton.iconColor = .whiteColor()
+        }
     }
     
     func onTouchEndCameraButton() {
-        viewModel.isRecording.value = false
+        //viewModel.isRecording.value = false
         tabController!.cameraButton.backgroundColor = .whiteColor()
         tabController!.cameraButton.iconColor = .blackColor()
         
-        tapCameraButtonCallback = nil
+        //tapCameraButtonCallback = nil
     }
     
     func onTapCameraButton() {
