@@ -362,6 +362,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
     private let likeButtonView = BoundingButton()
     private let blackSpace = UIView()
     let shareImageAsset = UIImageView()
+    private let bouncingButton = UIButton()
     
     var optoId:UUID = ""
     
@@ -375,7 +376,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
             return combinedMotionManager.getDirection()
         }
     }
-    var hiddenGestureRecognizer:UIPanGestureRecognizer!
+    var hiddenGestureRecognizer:UISwipeGestureRecognizer!
     
     dynamic private func pushProfile() {
         
@@ -462,12 +463,18 @@ class OptographCollectionViewCell: UICollectionViewCell {
         shareImageAsset.image = UIImage(named: "share_hidden_icn")
         contentView.addSubview(shareImageAsset)
         
+        hiddenGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
+        hiddenGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        hiddenGestureRecognizer.cancelsTouchesInView = false;
+        scnView.addGestureRecognizer(hiddenGestureRecognizer)
+        
+        bouncingButton.addTarget(self, action: #selector(self.bouncingCell), forControlEvents:.TouchUpInside)
+        bouncingButton.setImage(UIImage(named: "bouncing_button")!, forState: .Normal)
+        scnView.addSubview(bouncingButton)
+        
         contentView.bringSubviewToFront(scnView)
         contentView.bringSubviewToFront(whiteBackground)
         contentView.bringSubviewToFront(blackSpace)
-        
-        hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
-        scnView.addGestureRecognizer(hiddenGestureRecognizer)
     }
     
     
@@ -482,11 +489,42 @@ class OptographCollectionViewCell: UICollectionViewCell {
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:40, height: 13)
         optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:24, height: 24)
         shareImageAsset.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
+        bouncingButton.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
     }
     
-    func handlePan(recognizer:UIPanGestureRecognizer) {
+    func bouncingCell() {
+        UIView.animateWithDuration(0.1, animations: {
+            self.scnView.frame.origin.x = 60
+            }, completion:{ finished in
+                UIView.animateWithDuration(0.1, animations: {
+                    self.scnView.frame.origin.x = 0
+                    }, completion:{ finished in
+                        UIView.animateWithDuration(0.1, animations: {
+                            self.scnView.frame.origin.x = 35
+                            }, completion:{ finished in
+                                UIView.animateWithDuration(0.1, animations: {
+                                    self.scnView.frame.origin.x = 0
+                                    }, completion:{ finished in
+                                        UIView.animateWithDuration(0.1, animations: {
+                                            self.scnView.frame.origin.x = 15
+                                            }, completion:{ finished in
+                                                UIView.animateWithDuration(0.1, animations: {
+                                                    self.scnView.frame.origin.x = 5
+                                                    }, completion:{ finished in
+                                                        self.scnView.frame.origin.x = 0
+                                                })
+                                        })
+                                })
+                        })
+                })
+        })
+    }
+    
+    func handlePan(recognizer:UISwipeGestureRecognizer) {
         
-        let translationX = recognizer.translationInView(contentView).x
+        let translationX = recognizer.locationInView(contentView).x
+        
+        print(translationX)
         var xCoordBegin:CGFloat = 0.0
         
         switch recognizer.state {

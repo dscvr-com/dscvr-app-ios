@@ -247,7 +247,7 @@ class CameraViewController: UIViewController {
                 
                 scene.rootNode.addChildNode(edgeNode)
                 
-                i++;
+                i += 1;
             }
         }
     }
@@ -262,7 +262,6 @@ class CameraViewController: UIViewController {
             self.recorder = Recorder(.Center)
         }
         
-        //recorder = Recorder(.Truncated)
         
         setupScene()
         setupBall()
@@ -344,14 +343,8 @@ class CameraViewController: UIViewController {
     }
     
     override func updateTabs() {
-//        tabController!.indicatedSide = nil
-//        
-//        tabController!.leftButton.title = "CANCEL"
-//        tabController!.leftButton.icon = .Cancel
-//        
-//        tabController!.rightButton.hidden = true
-//        
-//        tabController!.hideRingButton()
+        tabController!.tabView.leftButton.hidden = true
+        tabController!.tabView.rightButton.hidden = true
     }
     
     private func setupScene() {

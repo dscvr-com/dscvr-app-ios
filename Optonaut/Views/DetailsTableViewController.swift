@@ -19,7 +19,7 @@ let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
 
 class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate{
     
-    private let viewModel: DetailsViewModel
+    private let viewModel: DetailsViewModel!
     
     
     private var combinedMotionManager: CombinedMotionManager!
@@ -165,6 +165,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
         //avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
+        avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL(viewModel.avatarImageUrl.value, width: 47, height: 47))!)
         whiteBackground.addSubview(avatarImageView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
@@ -198,14 +199,26 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:40, height: 13)
         optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:24, height: 24)
-        personNameView.align(.ToTheRightMatchingTop, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
-        locationTextView.align(.ToTheRightMatchingBottom, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         
         personNameView.rac_text <~ viewModel.creator_username
+        likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
         
+        let optograph = Models.optographs[optographID]!.model
+        
+        if let locationID = optograph.locationID {
+            let location = Models.locations[locationID]!.model
+            locationTextView.text = "\(location.text), \(location.countryShort)"
+            self.personNameView.align(.ToTheRightMatchingTop, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
+            self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
+            locationTextView.text = location.text
+        } else {
+            personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+            locationTextView.text = ""
+        }
+        
+            
         hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
         scnView.addSubview(hideSelectorButton)
-        
         
         if  Defaults[.SessionGyro] {
             self.changeButtonIcon(true)

@@ -22,7 +22,7 @@ protocol OptographCollectionViewModel {
 }
 
 
-class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout ,TransparentNavbarWithStatusBar{
+class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout ,TransparentNavbarWithStatusBar,TabControllerDelegate{
     
     private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
     
@@ -164,13 +164,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             self?.collectionView!.scrollEnabled = !hidden
           
         }
-        
-//        viewModel.isActive.producer
-//            .skip(1)
-//            .filter(isFalse)
-//            .startWithNext { [weak self] _ in
-//                self?.imageCache.reset()
-//            }
+        tabController!.delegate = self
     }
     
     func tapRightButton() {
@@ -186,6 +180,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         tabController!.showUI()
         tabController!.enableScrollView()
+        tabController!.enableNavBarGesture()
         
         CoreMotionRotationSource.Instance.start()
         
@@ -233,6 +228,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         CoreMotionRotationSource.Instance.stop()
         
         viewModel.isActive.value = false
+        tabController!.disableNavBarGesture()
     }
     
     

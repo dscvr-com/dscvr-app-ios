@@ -54,6 +54,9 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     let labelManual = UILabel()
     let labelMotor = UILabel()
     
+    var panGestureRecognizer:UIPanGestureRecognizer!
+    var navBarTapGestureRecognizer:UITapGestureRecognizer!
+    
     required init() {
         
         centerViewController = FeedNavViewController()
@@ -169,9 +172,25 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         
         self.settingsView()
         
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
+        panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
         self.centerViewController.navigationBar.addGestureRecognizer(panGestureRecognizer)
         
+        navBarTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapNavBarTitle(_:)))
+        self.centerViewController.navigationBar.addGestureRecognizer(navBarTapGestureRecognizer)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+    }
+    
+    func disableNavBarGesture(){
+        panGestureRecognizer.enabled = false
+        navBarTapGestureRecognizer.enabled = false
+    }
+    func enableNavBarGesture(){
+        panGestureRecognizer.enabled = true
+        navBarTapGestureRecognizer.enabled = true
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -187,6 +206,7 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
                 self.presentViewController(alert, animated: true, completion: nil)
         }
     }
+    
     func rightButtonAction() {
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.BFrame,animated: false)
@@ -388,15 +408,43 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
             print("cancelled")
         case .Ended:
             if !isSettingsViewOpen{
-                thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
-                isSettingsViewOpen = true
+                UIView.animateWithDuration(0.5, animations: {
+                    self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
+                    }, completion:{ finished in
+                        self.isSettingsViewOpen = true
+                })
             } else {
-                thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
-                isSettingsViewOpen = false
+                UIView.animateWithDuration(0.5, animations: {
+                    self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
+                    }, completion:{ finished in
+                        self.isSettingsViewOpen = false
+                })
             }
             
         default: break
         }
+    }
+    
+    func tapNavBarTitle(recognizer:UITapGestureRecognizer) {
+        
+        if !isSettingsViewOpen{
+            UIView.animateWithDuration(0.3, animations: {
+                self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
+                }, completion:{ finished in
+                    self.isSettingsViewOpen = true
+            
+            })
+        } else {
+            UIView.animateWithDuration(0.3, animations: {
+                self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
+                }, completion:{ finished in
+                    self.isSettingsViewOpen = false
+                    
+            })
+            
+        }
+        
+       
     }
     
     func openGallary() {
@@ -447,6 +495,7 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         tabView.hidden = true
     }
     dynamic private func tapLeftButton() {
+        print("onTapLeftButton")
         delegate?.onTapLeftButton()
     }
     
