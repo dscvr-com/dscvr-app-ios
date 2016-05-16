@@ -60,7 +60,8 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     required init() {
         
         centerViewController = FeedNavViewController()
-        rightViewController =  ProfileNavViewController()
+        //rightViewController =  ProfileNavViewController()
+        rightViewController = LoginNavViewController()
         leftViewController = SharingNavViewController()
     
         

@@ -23,6 +23,8 @@
 		595E70AA1CD39F4F005CD441 /* EZSwipeController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5980D51E1CCDEF100010B4ED /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5980D51D1CCDEF100010B4ED /* Icomoon.framework */; };
 		598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598416411CBB896E00BD966D /* Icomoon.framework */; };
+		59848B231CEA204B00829963 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B221CEA204B00829963 /* LoginVC.swift */; };
+		59848B251CEA222800829963 /* LoginNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B241CEA222800829963 /* LoginNavViewController.swift */; };
 		59F9226C1CDE0D0E005868A8 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F9226B1CDE0D0E005868A8 /* TabView.swift */; };
 		59FAF2421CE7008500B9C2F4 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
@@ -293,6 +295,8 @@
 		597859D81CD9E8500013383A /* ActiveLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ActiveLabel.framework; sourceTree = "<group>"; };
 		5980D51D1CCDEF100010B4ED /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		598416411CBB896E00BD966D /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
+		59848B221CEA204B00829963 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
+		59848B241CEA222800829963 /* LoginNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginNavViewController.swift; sourceTree = "<group>"; };
 		59F9226B1CDE0D0E005868A8 /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
@@ -911,10 +915,12 @@
 		8FAB9F171B8F01DF00B4C8CB /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				59848B221CEA204B00829963 /* LoginVC.swift */,
 				8FAB9F181B8F01DF00B4C8CB /* ForgotPasswordViewController.swift */,
 				8FAB9F191B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift */,
 				8FAB9F1A1B8F01DF00B4C8CB /* LoginViewController.swift */,
 				8FAB9F1B1B8F01DF00B4C8CB /* LoginViewModel.swift */,
+				59848B241CEA222800829963 /* LoginNavViewController.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -1559,6 +1565,7 @@
 				8F23AA591BFF3229008926A8 /* Migration0002.swift in Sources */,
 				8F5335B21BDBE0910058961A /* ActivityFollowTableViewCell.swift in Sources */,
 				8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */,
+				59848B231CEA204B00829963 /* LoginVC.swift in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
 				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
 				A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */,
@@ -1680,6 +1687,7 @@
 				A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */,
 				8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */,
 				8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */,
+				59848B251CEA222800829963 /* LoginNavViewController.swift in Sources */,
 				8F23AA4D1BFF31B4008926A8 /* ActivityResourceFollowTable.swift in Sources */,
 				5917C8231CE4436900CD5A6D /* SharingNavViewController.swift in Sources */,
 				8F5335A41BDBA7270058961A /* ActivityResourceStar.swift in Sources */,

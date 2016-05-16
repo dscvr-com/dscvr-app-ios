@@ -72,6 +72,8 @@ class CameraViewController: UIViewController {
     
     private var tapCameraButtonCallback: (() -> ())?
     
+    private let cancelButton = UIButton()
+    
     required init() {
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
@@ -147,7 +149,7 @@ class CameraViewController: UIViewController {
         view.addSubview(circleView)
         
         arrowView.text = String.iconWithName(.Next)
-        arrowView.textColor = .Accent
+        arrowView.textColor = UIColor(hex:0xffbc00)
         arrowView.textAlignment = .Center
         arrowView.font = UIFont.iconOfSize(40)
         arrowView.rac_alpha <~ viewModel.distXY.producer.map { distXY in
@@ -160,8 +162,6 @@ class CameraViewController: UIViewController {
             .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
         view.addSubview(arrowView)
         
-        tabController!.tabView.cameraButton
-        
         //        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
         //        recordButtonView.layer.cornerRadius = 35
         //        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
@@ -173,16 +173,38 @@ class CameraViewController: UIViewController {
         //        view.addSubview(recordButtonView)
         
         //        if Defaults[.SessionDebuggingEnabled] {
-        #if DEBUG
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "finish")
-            tapGestureRecognizer.numberOfTapsRequired = 3
-            view.addGestureRecognizer(tapGestureRecognizer)
-        #endif
+//        #if DEBUG
+//            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
+//            tapGestureRecognizer.numberOfTapsRequired = 3
+//            view.addGestureRecognizer(tapGestureRecognizer)
+//        #endif
         //        }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
+        cancelButton.addTarget(self, action: #selector(CameraViewController.cancelRecording), forControlEvents: .TouchUpInside)
+        cancelButton.setImage(UIImage(named: "camera_back_button"), forState: .Normal)
+        scnView.addSubview(cancelButton)
+        
+        
+        cancelButton.anchorInCorner(.TopLeft, xPad: 0, yPad: 15, width: 40, height: 40)
+    }
+    
+    func cancelRecording() {
+        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
+        
+        stopSession()
+        
+        recorder.finish()
+        recorder.dispose()
+        
+        if StitchingService.hasUnstitchedRecordings() {
+            StitchingService.removeUnstitchedRecordings()
+        }
+        
+        navigationController?.popViewControllerAnimated(false)
+    
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -324,8 +346,8 @@ class CameraViewController: UIViewController {
         
         tiltView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
-        progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 15)
-        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -30)
+        progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 28)
+        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -80)
         progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         
         instructionView.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withMultiplier: 0.5)
@@ -390,7 +412,7 @@ class CameraViewController: UIViewController {
         let ballGeometry = SCNSphere(radius: CGFloat(0.04))
         
         ballNode.geometry = ballGeometry
-        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor.Accent
+        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor(hex:0xffbc00)
         
         scene.rootNode.addChildNode(ballNode)
     }
@@ -681,7 +703,7 @@ class CameraViewController: UIViewController {
                 }
                 else if currentKeyframe.globalId != lastKeyframe?.globalId {
                     let recordedEdge = Edge(lastKeyframe!, currentKeyframe)
-                    edges[recordedEdge]?.geometry!.firstMaterial!.diffuse.contents = UIColor.Accent
+                    edges[recordedEdge]?.geometry!.firstMaterial!.diffuse.contents = UIColor(hex:0xffbc00)
                     lastKeyframe = currentKeyframe
                 }
             }
@@ -834,7 +856,7 @@ private class DashedCircleView: UIView {
     
     var isActive = false {
         didSet {
-            border.strokeColor = isActive ? UIColor.Accent.CGColor : UIColor.whiteColor().CGColor
+            border.strokeColor = isActive ? UIColor(hex:0xffbc00).CGColor : UIColor.whiteColor().CGColor
         }
     }
     
@@ -882,8 +904,8 @@ private class CameraProgressView: UIView {
     }
     var isActive = false {
         didSet {
-            foregroundLine.backgroundColor = isActive ? UIColor.Accent.CGColor : UIColor.whiteColor().CGColor
-            trackingPoint.backgroundColor = isActive ? UIColor.Accent.CGColor : UIColor.whiteColor().CGColor
+            foregroundLine.backgroundColor = isActive ? UIColor(hex:0xffbc00).CGColor : UIColor.whiteColor().CGColor
+            trackingPoint.backgroundColor = isActive ? UIColor(hex:0xffbc00).CGColor : UIColor.whiteColor().CGColor
         }
     }
     
@@ -964,18 +986,18 @@ private class TiltView: UIView {
         diagonalLine.lineWidth = 2
         layer.addSublayer(diagonalLine)
         
-        verticalLine.strokeColor = UIColor.Accent.CGColor
+        verticalLine.strokeColor = UIColor(hex:0xffbc00).CGColor
         verticalLine.fillColor = UIColor.clearColor().CGColor
         verticalLine.lineWidth = 2
         layer.addSublayer(verticalLine)
         
-        ringSegment.strokeColor = UIColor.Accent.CGColor
-        ringSegment.fillColor = UIColor.clearColor().CGColor
+        ringSegment.strokeColor = UIColor(hex:0xffbc00).CGColor
+        ringSegment.fillColor = UIColor(hex:0xffbc00).CGColor
         ringSegment.lineWidth = 2
         layer.addSublayer(ringSegment)
         
         circleSegment.strokeColor = UIColor.clearColor().CGColor
-        circleSegment.fillColor = UIColor.Accent.hatched2.CGColor
+        circleSegment.fillColor = UIColor(hex:0xffbc00).hatched2.CGColor
         layer.addSublayer(circleSegment)
     }
     
