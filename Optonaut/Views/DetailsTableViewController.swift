@@ -62,6 +62,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private let littlePlanetButton = UIButton()
     private let gyroButton = UIButton()
     private var isSelectorButtonOpen:Bool = true
+    private var isUIHide:Bool = false
     
     required init(optographId:UUID) {
         
@@ -239,9 +240,41 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         gyroButton.align(.UnderCentered, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
         gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
         
-        let url = TextureURL(optographID, side: .Left, size: view.frame.width, face: 0, x: 0, y: 0, d: 1)
-        print("image url >> \(url) <<")
-        //self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
+        let oneTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.oneTap(_:)))
+        oneTapGestureRecognizer.numberOfTapsRequired = 1
+        self.view.addGestureRecognizer(oneTapGestureRecognizer)
+        
+        let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
+        twoTapGestureRecognizer.numberOfTapsRequired = 2
+        self.view.addGestureRecognizer(twoTapGestureRecognizer)
+    }
+    
+    func oneTap(recognizer:UITapGestureRecognizer) {
+        print("one tap")
+        if !isUIHide {
+            UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
+                self.whiteBackground.hidden = true
+                self.hideSelectorButton.hidden = true
+                self.gyroButton.hidden = true
+                self.littlePlanetButton.hidden = true
+                self.isUIHide = true
+                },completion: nil)
+            self.navigationController?.navigationBarHidden = true
+        } else {
+            UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
+                self.whiteBackground.hidden = false
+                self.hideSelectorButton.hidden = false
+                self.gyroButton.hidden = false
+                self.littlePlanetButton.hidden = false
+                self.isUIHide = false
+                },completion: nil)
+            self.navigationController?.navigationBarHidden = false
+        }
+    }
+    
+    func twoTap(recognizer:UITapGestureRecognizer) {
+        print("two tap")
+        navigationController?.popViewControllerAnimated(true)
     }
     
     func selectorButton() {
