@@ -203,8 +203,8 @@ class CameraViewController: UIViewController {
             StitchingService.removeUnstitchedRecordings()
         }
         
-        navigationController?.popViewControllerAnimated(false)
-    
+        //self.navigationController?.popViewControllerAnimated(false)
+        tabController!.centerViewController.popViewControllerAnimated(false)
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -328,13 +328,15 @@ class CameraViewController: UIViewController {
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        
         Mixpanel.sharedInstance().track("View.Camera")
-        
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        tabController!.tabView.leftButton.hidden = false
+        tabController!.tabView.rightButton.hidden = false
+        tabController!.delegate = nil
         
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         

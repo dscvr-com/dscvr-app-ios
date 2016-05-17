@@ -496,7 +496,6 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         tabView.hidden = true
     }
     dynamic private func tapLeftButton() {
-        print("onTapLeftButton")
         delegate?.onTapLeftButton()
     }
     
@@ -746,13 +745,12 @@ extension DefaultTabControllerDelegate {
         switch PipelineService.stitchingStatus.value {
         case .Idle:
             self.tabController!.centerViewController.cleanup()
-            
-            self.tabController!.centerViewController.pushViewController(CameraViewController(), animated: false)
+            self.tabController?.centerViewController.pushViewController(CameraViewController(), animated: false)
             
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            //tabController?.activeViewController.presentViewController(alert, animated: true, completion: nil)
+            tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
         case let .StitchingFinished(optographID):
             scrollToOptograph(optographID)
             PipelineService.stitchingStatus.value = .Idle
@@ -769,7 +767,6 @@ extension DefaultTabControllerDelegate {
 //            tabController?.updateActiveTab(.Left)
 //        }
         tabController!.openGallary()
-        print("onTapLeftButton")
     }
     
     func onTapRightButton() {
@@ -780,8 +777,6 @@ extension DefaultTabControllerDelegate {
 //        } else {
 //            tabController?.updateActiveTab(.Right)
 //        }
-        
-        print("onTapRightButton")
     }
 }
 
