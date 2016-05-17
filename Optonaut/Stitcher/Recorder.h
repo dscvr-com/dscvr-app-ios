@@ -68,4 +68,6 @@ struct ExposureInfo {
 - (bool)previewAvailable;
 - (struct ImageBuffer)getPreviewImage;
 
+
+
 @end

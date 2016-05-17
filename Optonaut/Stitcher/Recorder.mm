@@ -14,6 +14,7 @@
 #include "Recorder.h"
 #include "Stores.h"
 #include "CommonInternal.h"
+#import "mach/mach.h"
 
 int counter = 0;
 
@@ -31,6 +32,8 @@ GLKMatrix4 CVMatToGLK4(const cv::Mat &m) {
                           (float)m.at<double>(2, 0), (float)m.at<double>(2, 1), (float)m.at<double>(2, 2), (float)m.at<double>(2, 3),
                           (float)m.at<double>(3, 0), (float)m.at<double>(3, 1), (float)m.at<double>(3, 2), (float)m.at<double>(3, 3));
 }
+
+
 
 GLKMatrix3 CVMatToGLK3(const cv::Mat &m) {
     assert(m.cols == 3 && m.rows == 3 && m.type() == CV_64F);
@@ -56,6 +59,11 @@ GLKVector3 CVMatToGLK3Vec(const cv::Mat &m) {
 void ImageBufferToCVMat(ImageBuffer image, cv::Mat &output) {
     cv::cvtColor(cv::Mat(image.height, image.width, CV_8UC4, image.data), output, cv::COLOR_RGBA2RGB);
 }
+
+ 
+
+
+
 
 optonaut::InputImageRef ImageBufferToImageRef(ImageBuffer image) {
     optonaut::InputImageRef ref;
@@ -209,6 +217,7 @@ optonaut::ImageSink imageSink(Stores::post);
 - (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure  :(AVCaptureWhiteBalanceGains)gains{
     assert(pipe != NULL);
     optonaut::InputImageP oImage(new optonaut::InputImage());
+    
 
     oImage->dataRef = ImageBufferToImageRef(image);
     oImage->intrinsics = intrinsics;
@@ -221,6 +230,7 @@ optonaut::ImageSink imageSink(Stores::post);
     GLK4ToCVMat(extrinsics, oImage->originalExtrinsics);
 
     pipe->Push(oImage);
+   
 }
 - (GLKMatrix4)getCurrentRotation {
     assert(pipe != NULL);

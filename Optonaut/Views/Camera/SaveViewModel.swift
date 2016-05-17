@@ -90,7 +90,9 @@ class SaveViewModel {
                     "id": optograph.ID,
                     "stitcher_version": StitcherVersion,
                     "created_at": optograph.createdAt.toRFC3339String(),
+                    "optograph_type" : "optograph"
                 ]
+               
                 ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
                     .on(next: { [weak self] optograph in
                         self?.optographBox.insertOrUpdate { box in
