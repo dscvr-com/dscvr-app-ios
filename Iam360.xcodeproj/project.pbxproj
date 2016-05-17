@@ -17,7 +17,6 @@
 		5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */; };
 		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
 		594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594378FC1CDC472800C84E6F /* TabViewController.swift */; };
-		594379011CDC5BCA00C84E6F /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594379001CDC5BCA00C84E6F /* Fabric.framework */; };
 		595E70A81CD39E81005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
 		595E70A91CD39F4F005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
 		595E70AA1CD39F4F005CD441 /* EZSwipeController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -27,6 +26,7 @@
 		59848B251CEA222800829963 /* LoginNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B241CEA222800829963 /* LoginNavViewController.swift */; };
 		59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B271CEAE13D00829963 /* SettingsNavViewController.swift */; };
 		59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B291CEAE2B000829963 /* SettingsViewController.swift */; };
+		59848B2E1CEB2DC400829963 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59848B2D1CEB2DC400829963 /* Fabric.framework */; };
 		59F9226C1CDE0D0E005868A8 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F9226B1CDE0D0E005868A8 /* TabView.swift */; };
 		59FAF2421CE7008500B9C2F4 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
@@ -292,15 +292,14 @@
 		5936B1821CAD34F500F808D8 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
 		594378FC1CDC472800C84E6F /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
-		594379001CDC5BCA00C84E6F /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		595E70A71CD39E81005CD441 /* EZSwipeController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EZSwipeController.framework; path = Carthage/Build/iOS/EZSwipeController.framework; sourceTree = "<group>"; };
-		597859D81CD9E8500013383A /* ActiveLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ActiveLabel.framework; sourceTree = "<group>"; };
 		5980D51D1CCDEF100010B4ED /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		598416411CBB896E00BD966D /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		59848B221CEA204B00829963 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		59848B241CEA222800829963 /* LoginNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginNavViewController.swift; sourceTree = "<group>"; };
 		59848B271CEAE13D00829963 /* SettingsNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavViewController.swift; sourceTree = "<group>"; };
 		59848B291CEAE2B000829963 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		59848B2D1CEB2DC400829963 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = ../../../../Desktop/Fabric.framework; sourceTree = "<group>"; };
 		59F9226B1CDE0D0E005868A8 /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
@@ -596,6 +595,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59848B2E1CEB2DC400829963 /* Fabric.framework in Frameworks */,
 				595E70A81CD39E81005CD441 /* EZSwipeController.framework in Frameworks */,
 				8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */,
 				8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */,
@@ -617,7 +617,6 @@
 				8F23AA5F1C01F8A5008926A8 /* Crashlytics.framework in Frameworks */,
 				598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */,
 				8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */,
-				594379011CDC5BCA00C84E6F /* Fabric.framework in Frameworks */,
 				8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */,
 				8F50DCC61C485F8700A706A9 /* FBSDKShareKit.framework in Frameworks */,
 				8F23AA631C01F8A5008926A8 /* opencv2.framework in Frameworks */,
@@ -718,8 +717,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				594379001CDC5BCA00C84E6F /* Fabric.framework */,
-				597859D81CD9E8500013383A /* ActiveLabel.framework */,
+				59848B2D1CEB2DC400829963 /* Fabric.framework */,
 				595E70A71CD39E81005CD441 /* EZSwipeController.framework */,
 				598416411CBB896E00BD966D /* Icomoon.framework */,
 				5980D51D1CCDEF100010B4ED /* Icomoon.framework */,
@@ -1557,7 +1555,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Fabric.framework/run 859cb44d7e171dfdd9394a993cae92a1ed0d869b 3e494c903115808ffd283824f5fe18dac5b50dd7b210172092fd1a6f21cb415a";
+			shellScript = "";
 		};
 /* End PBXShellScriptBuildPhase section */
 
