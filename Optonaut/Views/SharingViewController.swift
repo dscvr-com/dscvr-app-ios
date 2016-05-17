@@ -8,12 +8,15 @@
 
 import UIKit
 
-class SharingViewController: UIViewController {
+class SharingViewController: UIViewController ,TabControllerDelegate{
     
     let buttonCopyLink = UIButton()
     let buttonFacebook = UIButton()
     let buttonMessenger = UIButton()
     let buttonTwitter = UIButton()
+    let buttonEmail = UIButton()
+    let titleText = UILabel()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,7 +25,22 @@ class SharingViewController: UIViewController {
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
         self.view.addSubview(bgImage!)
-        bgImage!.anchorToEdge(.Top, padding: 60, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
+        bgImage!.anchorToEdge(.Top, padding: (navigationController?.navigationBar.frame.height)! + 25, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
+        
+        let placeholderImageViewImage: UIImage = UIImage(named: "logo_big")!
+        var placeholderImageView: UIImageView?
+        placeholderImageView = UIImageView(image: placeholderImageViewImage)
+        placeholderImageView?.backgroundColor = UIColor.blackColor()
+        self.view.addSubview(placeholderImageView!)
+        placeholderImageView!.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: self.view.frame.width - 40, height: 130)
+        
+        titleText.text = "Share this IAM360 photo:"
+        titleText.textAlignment = .Center
+        self.view.addSubview(titleText)
+        titleText.align(.UnderCentered, relativeTo: placeholderImageView!, padding: 5, width: self.view.frame.width - 40, height: 40)
+        
+        buttonEmail.setImage(UIImage(named: "sharing_email") , forState: .Normal)
+        // buttonCopyLink.addTarget(self, action: #selector(myClass.pressed(_:)), forControlEvents: .TouchUpInside)
         
         buttonCopyLink.setImage(UIImage(named: "sharing_copyLink_btn") , forState: .Normal)
        // buttonCopyLink.addTarget(self, action: #selector(myClass.pressed(_:)), forControlEvents: .TouchUpInside)
@@ -36,28 +54,42 @@ class SharingViewController: UIViewController {
         buttonTwitter.setImage(UIImage(named: "sharing_twitter_btn") , forState: .Normal)
         // buttonCopyLink.addTarget(self, action: #selector(myClass.pressed(_:)), forControlEvents: .TouchUpInside)
         
+        self.view.addSubview(buttonEmail)
+        buttonEmail.align(.UnderCentered, relativeTo: titleText, padding: 10, width: self.view.frame.width - 40, height: 50)
         
         self.view.addSubview(buttonCopyLink)
-        buttonCopyLink.align(.UnderCentered, relativeTo: bgImage!, padding: 40, width: self.view.frame.width - 40, height: 60)
+        buttonCopyLink.align(.UnderCentered, relativeTo: buttonEmail, padding: 10, width: self.view.frame.width - 40, height: 50)
         
         self.view.addSubview(buttonFacebook)
-        buttonFacebook.align(.UnderCentered, relativeTo: buttonCopyLink, padding: 15, width: self.view.frame.width - 40, height: 60)
+        buttonFacebook.align(.UnderCentered, relativeTo: buttonCopyLink, padding: 10, width: self.view.frame.width - 40, height: 50)
         
         self.view.addSubview(buttonMessenger)
-        buttonMessenger.align(.UnderCentered, relativeTo: buttonFacebook, padding: 15, width: self.view.frame.width - 40, height: 60)
+        buttonMessenger.align(.UnderCentered, relativeTo: buttonFacebook, padding: 10, width: self.view.frame.width - 40, height: 50)
         
         self.view.addSubview(buttonTwitter)
-        buttonTwitter.align(.UnderCentered, relativeTo: buttonMessenger, padding: 15, width: self.view.frame.width - 40, height: 60)
+        buttonTwitter.align(.UnderCentered, relativeTo: buttonMessenger, padding: 10, width: self.view.frame.width - 40, height: 50)
         
 //        self.view.groupAndAlign(group: .Vertical, andAlign: .UnderCentered, views: [buttonCopyLink, buttonFacebook, buttonMessenger,buttonTwitter], relativeTo: bgImage!, padding: 15, width: self.view.frame.width - 40, height: 60)
         
+        self.view.backgroundColor = UIColor.whiteColor()
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image:UIImage(named:"feed_icn"), style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.tapRightButton))
+        
+        tabController!.delegate = self
+        
+        let optographID:UUID = "a28a5e49-b955-4093-8440-e3e29c61b669"
+        let url = TextureURL(optographID, side: .Left, size: self.view.frame.width, face: 0, x: 0, y: 0, d: 1)
+        print("image url >> \(url) <<")
+        placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
     }
 
+    func tapRightButton() {
+        tabController!.rightButtonAction()
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
 
     /*
     // MARK: - Navigation

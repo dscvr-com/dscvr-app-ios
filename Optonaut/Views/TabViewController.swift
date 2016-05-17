@@ -182,8 +182,12 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
     }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        print("pumasok dito")
+    }
+    
     
     func disableNavBarGesture(){
         panGestureRecognizer.enabled = false
@@ -211,6 +215,12 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     func rightButtonAction() {
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.BFrame,animated: false)
+            }, completion:nil)
+    }
+    
+    func leftButtonAction() {
+        UIView.animateWithDuration(0.5, animations: {
+            self.scrollView.scrollRectToVisible(self.adminFrame,animated: false)
             }, completion:nil)
     }
     

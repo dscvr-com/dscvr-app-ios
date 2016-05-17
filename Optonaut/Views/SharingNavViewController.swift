@@ -16,6 +16,7 @@ class SharingNavViewController: NavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        viewController.navigationItem.title = "Share"
         pushViewController(viewController, animated: false)
     }
 

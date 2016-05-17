@@ -495,23 +495,30 @@ class OptographCollectionViewCell: UICollectionViewCell {
     func bouncingCell() {
         UIView.animateWithDuration(0.1, animations: {
             self.scnView.frame.origin.x = 60
+            self.whiteBackground.frame.origin.x = 60
             }, completion:{ finished in
                 UIView.animateWithDuration(0.1, animations: {
                     self.scnView.frame.origin.x = 0
+                    self.whiteBackground.frame.origin.x = 0
                     }, completion:{ finished in
                         UIView.animateWithDuration(0.1, animations: {
                             self.scnView.frame.origin.x = 35
+                            self.whiteBackground.frame.origin.x = 30
                             }, completion:{ finished in
                                 UIView.animateWithDuration(0.1, animations: {
                                     self.scnView.frame.origin.x = 0
+                                    self.whiteBackground.frame.origin.x = 0
                                     }, completion:{ finished in
                                         UIView.animateWithDuration(0.1, animations: {
                                             self.scnView.frame.origin.x = 15
+                                            self.whiteBackground.frame.origin.x = 15
                                             }, completion:{ finished in
                                                 UIView.animateWithDuration(0.1, animations: {
                                                     self.scnView.frame.origin.x = 5
+                                                    self.whiteBackground.frame.origin.x = 5
                                                     }, completion:{ finished in
                                                         self.scnView.frame.origin.x = 0
+                                                        self.whiteBackground.frame.origin.x = 0
                                                 })
                                         })
                                 })

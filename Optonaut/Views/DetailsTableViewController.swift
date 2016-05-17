@@ -238,6 +238,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         gyroButton.align(.UnderCentered, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
         gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
+        
+        let url = TextureURL(optographID, side: .Left, size: view.frame.width, face: 0, x: 0, y: 0, d: 1)
+        print("image url >> \(url) <<")
+        //self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
     }
     
     func selectorButton() {
