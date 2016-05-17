@@ -25,6 +25,8 @@
 		598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598416411CBB896E00BD966D /* Icomoon.framework */; };
 		59848B231CEA204B00829963 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B221CEA204B00829963 /* LoginVC.swift */; };
 		59848B251CEA222800829963 /* LoginNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B241CEA222800829963 /* LoginNavViewController.swift */; };
+		59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B271CEAE13D00829963 /* SettingsNavViewController.swift */; };
+		59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B291CEAE2B000829963 /* SettingsViewController.swift */; };
 		59F9226C1CDE0D0E005868A8 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F9226B1CDE0D0E005868A8 /* TabView.swift */; };
 		59FAF2421CE7008500B9C2F4 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
@@ -297,6 +299,8 @@
 		598416411CBB896E00BD966D /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		59848B221CEA204B00829963 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		59848B241CEA222800829963 /* LoginNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginNavViewController.swift; sourceTree = "<group>"; };
+		59848B271CEAE13D00829963 /* SettingsNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavViewController.swift; sourceTree = "<group>"; };
+		59848B291CEAE2B000829963 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		59F9226B1CDE0D0E005868A8 /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
@@ -672,6 +676,15 @@
 			path = stitcher;
 			sourceTree = "<group>";
 		};
+		59848B261CEAE10F00829963 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				59848B271CEAE13D00829963 /* SettingsNavViewController.swift */,
+				59848B291CEAE2B000829963 /* SettingsViewController.swift */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
 		8F23AA401BFF31B4008926A8 /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
@@ -814,6 +827,7 @@
 		8FAB9EEC1B8F01DF00B4C8CB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				59848B261CEAE10F00829963 /* Settings */,
 				5917C8241CE49C3000CD5A6D /* Details */,
 				5917C81F1CE441C700CD5A6D /* Share */,
 				59F9226B1CDE0D0E005868A8 /* TabView.swift */,
@@ -1680,6 +1694,7 @@
 				A5DE71EC1BE28A7400316F82 /* DistortionRenderer.swift in Sources */,
 				8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */,
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
+				59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */,
 				8F4186091C552D02009E1E3F /* ProfileTileCollectionViewModel.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,
@@ -1695,6 +1710,7 @@
 				8F4185FD1C52DBBD009E1E3F /* LocationApiModel.swift in Sources */,
 				8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */,
 				8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */,
+				59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
