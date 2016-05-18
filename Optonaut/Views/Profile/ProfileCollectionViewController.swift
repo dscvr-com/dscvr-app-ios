@@ -170,7 +170,20 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         logRetain()
     }
     override func scrollViewDidScroll(scrollView: UIScrollView) {
-        print("wew")
+        let offsetY:CGFloat  = scrollView.contentOffset.y
+        //let contentHeight:CGFloat  = scrollView.contentSize.height;
+        print("offset ",offsetY)
+        if (offsetY == 270) {
+            print("pasado ka")
+            self.navigationController?.navigationBar.titleTextAttributes = [
+                NSForegroundColorAttributeName : UIColor.grayColor(),
+                NSFontAttributeName : UIFont(name: "Futura", size: 30)!
+            ]
+            self.navigationController?.navigationBar.tintColor = UIColor(hex:0x575757)
+        } else {
+        
+        
+        }
     }
     
     

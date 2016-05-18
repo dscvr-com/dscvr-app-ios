@@ -12,7 +12,6 @@ import SwiftyUserDefaults
 class SettingsViewController: UIViewController {
     
     var thisView = UIView()
-    var isSettingsViewOpen:Bool = false
     private var motorButton = SettingsButton()
     private var manualButton = SettingsButton()
     private var oneRingButton = SettingsButton()
@@ -63,19 +62,17 @@ class SettingsViewController: UIViewController {
         vrText.font = .displayOfSize(15, withType: .Semibold)
         thisView.addSubview(vrText)
         
-        
-        vrButton.icon = UIImage(named: "vr_button")!
         thisView.addSubview(vrButton)
         vrButton.addTarget(self, action: #selector(self.inVrMode), forControlEvents:.TouchUpInside)
         vrButton.align(.ToTheRightCentered, relativeTo: vrText, padding: 8, width: vrButton.icon.size.width, height: vrButton.icon.size.width)
         
         let labelCamera = UILabel()
         labelCamera.textAlignment = NSTextAlignment.Center
-        labelCamera.text = "Feed Display"
+        labelCamera.text = "FEED DISPLAY"
         labelCamera.font = .displayOfSize(15, withType: .Semibold)
         labelCamera.textColor = UIColor.blackColor()
         thisView.addSubview(labelCamera)
-        labelCamera.align(.UnderCentered, relativeTo: vrText, padding: 27, width: calcTextWidth("Feed Display", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
+        labelCamera.align(.UnderCentered, relativeTo: vrText, padding: 27, width: calcTextWidth("FEED DISPLAY", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
         
         let dividerOneHeight = (UIImage(named: "gyro_active_icn")!.size.height * 2) + 12
         
@@ -110,10 +107,10 @@ class SettingsViewController: UIViewController {
         let labelMode = UILabel()
         labelMode.textAlignment = NSTextAlignment.Center
         labelMode.textColor = UIColor.blackColor()
-        labelMode.text = "Mode"
+        labelMode.text = "MODE"
         labelMode.font = .displayOfSize(15, withType: .Semibold)
         thisView.addSubview(labelMode)
-        labelMode.align(.UnderCentered, relativeTo: dividerOne, padding: 10, width: calcTextWidth("Mode", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
+        labelMode.align(.UnderCentered, relativeTo: dividerOne, padding: 10, width: calcTextWidth("MODE", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
         
         let dividerTwo = UILabel()
         dividerTwo.backgroundColor = UIColor(hex:0x595959)
@@ -142,11 +139,11 @@ class SettingsViewController: UIViewController {
         
         let labelCapture = UILabel()
         labelCapture.textAlignment = NSTextAlignment.Center
-        labelCapture.text = "Capture Type"
+        labelCapture.text = "CAPTURE TYPE"
         labelCapture.textColor = UIColor.blackColor()
         labelCapture.font = .displayOfSize(15, withType: .Semibold)
         thisView.addSubview(labelCapture)
-        labelCapture.align(.UnderCentered, relativeTo: dividerTwo, padding: 10, width: calcTextWidth("Capture Type", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
+        labelCapture.align(.UnderCentered, relativeTo: dividerTwo, padding: 10, width: calcTextWidth("CAPTURE TYPE", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
         
         let dividerThree = UILabel()
         dividerThree.backgroundColor = UIColor(hex:0x595959)

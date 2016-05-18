@@ -131,6 +131,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.setCubeImageCache(cubeImageCache)
     }
     
+    private func pushViewer(orientation: UIInterfaceOrientation) {
+        
+        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographID]!.model)
+        navigationController?.pushViewController(viewerViewController, animated: false)
+        //        viewModel.increaseViewsCount()
+    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -139,19 +146,17 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         //viewModel.viewIsActive.value = true
         
-//        if let rotationSignal = RotationService.sharedInstance.rotationSignal {
-//            self.viewModel.isLoading.producer.startWithSignal { isLoadingSignal, disposable in
-//                isLoadingSignal.combineLatestWith(rotationSignal)
-//                    //.filter { (isLoading, _) in return !isLoading } // Uncomment this line to only allow invoking the viewer when loading is finished
-//                    .map { (_, rotation) in return rotation }
-//                    .skipRepeats()
-//                    .filter([.LandscapeLeft, .LandscapeRight])
-//                    .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
-//                    .take(1)
-//                    .observeOn(UIScheduler())
-//                    .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
-//            }
-//        }
+
+        
+        if let rotationSignal = RotationService.sharedInstance.rotationSignal {
+            rotationSignal
+                .skipRepeats()
+                .filter([.LandscapeLeft, .LandscapeRight])
+        //               .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
+                .take(1)
+                .observeOn(UIScheduler())
+                .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
+                }
         
 //        viewModel.optographReloaded.producer.startWithNext { [weak self] in
 //            if self?.viewModel.optograph.deletedAt != nil {
@@ -178,7 +183,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
         personNameView.textColor = UIColor(0xffbc00)
         personNameView.userInteractionEnabled = true
-        //personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
+        personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pushProfile)))
         whiteBackground.addSubview(personNameView)
         
         //likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
@@ -247,6 +252,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
         twoTapGestureRecognizer.numberOfTapsRequired = 2
         self.view.addGestureRecognizer(twoTapGestureRecognizer)
+    }
+    dynamic private func pushProfile() {
+        navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optographBox.model.personID), animated: true)
     }
     
     func oneTap(recognizer:UITapGestureRecognizer) {

@@ -152,7 +152,7 @@ class ViewerViewController: UIViewController  {
         settingsButtonView.setTitle(String.iconWithName(.Settings), forState: .Normal)
         settingsButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         settingsButtonView.titleLabel?.font = UIFont.iconOfSize(20)
-        settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))
+        settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ViewerViewController.showGlassesSelection)))
         view.addSubview(settingsButtonView)
         
         if case .LandscapeLeft = orientation {
