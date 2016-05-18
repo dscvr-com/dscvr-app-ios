@@ -23,11 +23,18 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     
     var thisView = UIView()
     var isSettingsViewOpen:Bool = false
+    var panGestureRecognizer:UIPanGestureRecognizer!
+    var navBarTapGestureRecognizer:UITapGestureRecognizer!
+    var inVr:Bool = false
+    
     private var motorButton = SettingsButton()
     private var manualButton = SettingsButton()
     private var oneRingButton = SettingsButton()
     private var threeRingButton = SettingsButton()
+    private var vrButton = SettingsButton()
     private var pullButton = SettingsButton()
+    private var gyroButton = SettingsButton()
+    private var littlePlanet = SettingsButton()
     
     private let bottomGradient = CAGradientLayer()
     
@@ -53,15 +60,13 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     let labelRing3 = UILabel()
     let labelManual = UILabel()
     let labelMotor = UILabel()
-    
-    var panGestureRecognizer:UIPanGestureRecognizer!
-    var navBarTapGestureRecognizer:UITapGestureRecognizer!
+    let labelGyro = UILabel()
+    let planet = UILabel()
     
     required init() {
         
         centerViewController = FeedNavViewController()
-        //rightViewController =  ProfileNavViewController()
-        rightViewController = LoginNavViewController()
+        rightViewController =  ProfileNavViewController()
         leftViewController = SharingNavViewController()
     
         
@@ -234,7 +239,6 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     
     func swipeLeftView(xPoint:CGFloat) {
         
-        print("pumasok dito")
         self.scrollView.scrollRectToVisible(CGRect(x: self.view.frame.width - xPoint,y: 0,width:xPoint,height: self.view.frame.height),animated: false)
     }
     
@@ -242,95 +246,166 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         scrollView.scrollRectToVisible(BFrame,animated: false)
     }
     
+    func heightForView(text:String, font:UIFont, width:CGFloat) -> CGFloat{
+        let label:UILabel = UILabel(frame: CGRectMake(0, 0, width, CGFloat.max))
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        label.font = font
+        label.text = text
+        label.sizeToFit()
+        return label.frame.height
+    }
+    
+    
     func settingsView() {
+        
         thisView.frame = CGRectMake(0, -(view.frame.height), view.frame.width, view.frame.height)
-        thisView.backgroundColor = UIColor.blackColor()
+        thisView.backgroundColor = UIColor.whiteColor()
         self.view.addSubview(thisView)
         
-        let image: UIImage = UIImage(named: "logo_big")!
-        var bgImage: UIImageView?
-        bgImage = UIImageView(image: image)
-        thisView.addSubview(bgImage!)
-        bgImage!.anchorToEdge(.Top, padding: 60, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
+        let titleSettings = UILabel()
+        titleSettings.text = "Settings"
+        titleSettings.textAlignment = .Center
+        titleSettings.textColor = UIColor.blackColor()
+        titleSettings.font = .displayOfSize(25, withType: .Light)
+        thisView.addSubview(titleSettings)
+        titleSettings.anchorToEdge(.Top, padding: 30, width: calcTextWidth(titleSettings.text!, withFont: .displayOfSize(25, withType: .Light)), height: 30)
         
-        let labelHeightMultiplier:CGFloat = 0.3 * bgImage!.frame.size.height
-        let buttonsHeightMultiplier:CGFloat = 0.9 * bgImage!.frame.size.height
+        let vrText = UILabel()
+        vrText.frame = CGRect(x: 38,y: titleSettings.frame.origin.y + 30+50,width: calcTextWidth("CAPTURE IAM360 IMAGES IN", withFont: .displayOfSize(15, withType: .Semibold)),height: 25)
+        vrText.text = "CAPTURE IAM360 IMAGES IN"
+        vrText.textAlignment = .Center
+        vrText.textColor = UIColor.blackColor()
+        vrText.font = .displayOfSize(15, withType: .Semibold)
+        thisView.addSubview(vrText)
+        
+        
+        vrButton.icon = UIImage(named: "vr_button")!
+        thisView.addSubview(vrButton)
+        vrButton.addTarget(self, action: #selector(TabViewController.inVrMode), forControlEvents:.TouchUpInside)
+        vrButton.align(.ToTheRightCentered, relativeTo: vrText, padding: 8, width: vrButton.icon.size.width, height: vrButton.icon.size.width)
         
         let labelCamera = UILabel()
         labelCamera.textAlignment = NSTextAlignment.Center
-        labelCamera.text = "Camera Settings"
-        labelCamera.textColor = UIColor.whiteColor()
+        labelCamera.text = "Feed Display"
+        labelCamera.font = .displayOfSize(15, withType: .Semibold)
+        labelCamera.textColor = UIColor.blackColor()
         thisView.addSubview(labelCamera)
-        labelCamera.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: 200, height: labelHeightMultiplier)
+        labelCamera.align(.UnderCentered, relativeTo: vrText, padding: 27, width: calcTextWidth("Feed Display", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
+        
+        let dividerOneHeight = (UIImage(named: "gyro_active_icn")!.size.height * 2) + 12
+        
+        let dividerOne = UILabel()
+        dividerOne.backgroundColor = UIColor(hex:0x595959)
+        thisView.addSubview(dividerOne)
+        dividerOne.align(.UnderCentered, relativeTo: labelCamera, padding: 10, width:2, height: dividerOneHeight)
+        
+        gyroButton.addTarget(self, action: #selector(TabViewController.gyroButtonTouched), forControlEvents:.TouchUpInside)
+        thisView.addSubview(gyroButton)
+        gyroButton.align(.ToTheLeftMatchingTop, relativeTo: dividerOne, padding: 38, width: gyroButton.icon.size.width, height: gyroButton.icon.size.height)
+        
+        
+        labelGyro.textAlignment = NSTextAlignment.Center
+        labelGyro.textColor = UIColor.blackColor()
+        labelGyro.text = "GYRO"
+        labelGyro.font = .displayOfSize(20, withType: .Semibold)
+        thisView.addSubview(labelGyro)
+        labelGyro.align(.ToTheRightCentered, relativeTo: gyroButton, padding: 50, width: calcTextWidth("GYRO", withFont: .displayOfSize(20, withType: .Semibold)), height: 25)
+        
+        littlePlanet.addTarget(self, action: #selector(TabViewController.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
+        thisView.addSubview(littlePlanet)
+        littlePlanet.align(.UnderCentered, relativeTo: gyroButton, padding: 12, width: littlePlanet.icon.size.width, height: littlePlanet.icon.size.height)
+        
+        planet.textAlignment = NSTextAlignment.Center
+        planet.textColor = UIColor.blackColor()
+        planet.text = "LITTLE PLANET"
+        planet.font = .displayOfSize(20, withType: .Semibold)
+        thisView.addSubview(planet)
+        planet.align(.ToTheRightCentered, relativeTo: littlePlanet, padding: 50, width: calcTextWidth("LITTLE PLANET", withFont: .displayOfSize(20, withType: .Semibold)), height: 25)
         
         let labelMode = UILabel()
         labelMode.textAlignment = NSTextAlignment.Center
-        labelMode.textColor = UIColor.whiteColor()
+        labelMode.textColor = UIColor.blackColor()
         labelMode.text = "Mode"
+        labelMode.font = .displayOfSize(15, withType: .Semibold)
         thisView.addSubview(labelMode)
-        labelMode.align(.UnderCentered, relativeTo: labelCamera, padding: 15, width: 100, height: labelHeightMultiplier)
+        labelMode.align(.UnderCentered, relativeTo: dividerOne, padding: 10, width: calcTextWidth("Mode", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
         
-        oneRingButton.frame = CGRect(x: self.view.frame.width*0.25 , y: labelMode.frame.origin.y + 40 , width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
+        let dividerTwo = UILabel()
+        dividerTwo.backgroundColor = UIColor(hex:0x595959)
+        thisView.addSubview(dividerTwo)
+        dividerTwo.align(.UnderCentered, relativeTo: labelMode, padding: 10, width:2, height: dividerOneHeight)
+        
         oneRingButton.addTarget(self, action: #selector(TabViewController.oneRingButtonTouched), forControlEvents:.TouchUpInside)
         thisView.addSubview(oneRingButton)
+        oneRingButton.align(.ToTheLeftMatchingTop, relativeTo: dividerTwo, padding: 38, width: oneRingButton.icon.size.width, height: oneRingButton.icon.size.height)
         
         labelRing1.textAlignment = NSTextAlignment.Center
-        labelRing1.text = "One Ring"
-        labelRing1.align(.UnderCentered, relativeTo: oneRingButton, padding: 5, width: 200, height: labelHeightMultiplier)
+        labelRing1.text = "ONE RING"
+        labelRing1.font = .displayOfSize(20, withType: .Semibold)
         thisView.addSubview(labelRing1)
+        labelRing1.align(.ToTheRightCentered, relativeTo: oneRingButton, padding: 50, width: calcTextWidth("ONE RING", withFont: .displayOfSize(20, withType: .Semibold)), height: 25)
         
-        threeRingButton.align(.ToTheRightMatchingTop, relativeTo: oneRingButton, padding: 40, width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
+        threeRingButton.align(.UnderCentered, relativeTo: oneRingButton, padding: 12, width: threeRingButton.icon.size.width, height: threeRingButton.icon.size.height)
         threeRingButton.addTarget(self, action: #selector(TabViewController.threeRingButtonTouched), forControlEvents:.TouchUpInside)
         thisView.addSubview(threeRingButton)
         
         labelRing3.textAlignment = NSTextAlignment.Center
-        labelRing3.text = "Three Ring"
-        labelRing3.align(.UnderCentered, relativeTo: threeRingButton, padding: 5, width: 200, height: labelHeightMultiplier)
+        labelRing3.text = "THREE RING"
+        labelRing3.font = .displayOfSize(20, withType: .Semibold)
+        labelRing3.align(.ToTheRightCentered, relativeTo: threeRingButton, padding: 50, width: calcTextWidth("THREE RING", withFont: .displayOfSize(20, withType: .Semibold)), height: 25)
         thisView.addSubview(labelRing3)
-        
-        let line = UILabel()
-        line.frame = CGRect(x: 15 , y: labelRing3.frame.origin.y + labelRing3.frame.height + 50 , width: self.view.frame.width-15, height: 1)
-        line.backgroundColor = UIColor.grayColor()
-        thisView.addSubview(line)
         
         let labelCapture = UILabel()
         labelCapture.textAlignment = NSTextAlignment.Center
         labelCapture.text = "Capture Type"
-        labelCapture.textColor = UIColor.whiteColor()
+        labelCapture.textColor = UIColor.blackColor()
+        labelCapture.font = .displayOfSize(15, withType: .Semibold)
         thisView.addSubview(labelCapture)
-        labelCapture.align(.UnderCentered, relativeTo: line, padding: 15, width: 200, height: labelHeightMultiplier)
+        labelCapture.align(.UnderCentered, relativeTo: dividerTwo, padding: 10, width: calcTextWidth("Capture Type", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
         
-        manualButton.frame = CGRect(x: self.view.frame.width*0.25 , y: labelCapture.frame.origin.y + 40 , width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
+        let dividerThree = UILabel()
+        dividerThree.backgroundColor = UIColor(hex:0x595959)
+        thisView.addSubview(dividerThree)
+        dividerThree.align(.UnderCentered, relativeTo: labelCapture, padding: 10, width:2, height: dividerOneHeight)
+        
         manualButton.addTarget(self, action: #selector(TabViewController.manualButtonTouched), forControlEvents:.TouchUpInside)
         thisView.addSubview(manualButton)
-        
-        motorButton.align(.ToTheRightMatchingTop, relativeTo: manualButton, padding: 40, width: buttonsHeightMultiplier, height: buttonsHeightMultiplier)
-        motorButton.addTarget(self, action: #selector(TabViewController.motorButtonTouched), forControlEvents:.TouchUpInside)
-        thisView.addSubview(motorButton)
+        manualButton.align(.ToTheLeftMatchingTop, relativeTo: dividerThree, padding: 38, width: manualButton.icon.size.width, height: manualButton.icon.size.height)
         
         labelManual.textAlignment = NSTextAlignment.Center
-        labelManual.text = "Manual"
+        labelManual.text = "MANUAL"
         labelManual.textColor = UIColor(hex:0xffbc00)
-        labelManual.align(.UnderCentered, relativeTo: manualButton, padding: 5, width: 200, height:labelHeightMultiplier)
+        labelManual.font = .displayOfSize(20, withType: .Semibold)
         thisView.addSubview(labelManual)
+        labelManual.align(.ToTheRightCentered, relativeTo: manualButton, padding: 50, width: calcTextWidth("MANUAL", withFont: .displayOfSize(20, withType: .Semibold)), height: 25)
+        
+        motorButton.addTarget(self, action: #selector(TabViewController.motorButtonTouched), forControlEvents:.TouchUpInside)
+        motorButton.align(.UnderCentered, relativeTo: manualButton, padding: 12, width: motorButton.icon.size.width, height: motorButton.icon.size.height)
+        thisView.addSubview(motorButton)
         
         labelMotor.textAlignment = NSTextAlignment.Center
-        labelMotor.text = "Motor"
+        labelMotor.text = "MOTOR"
         labelMotor.textColor = UIColor(hex:0xffbc00)
-        labelMotor.align(.UnderCentered, relativeTo: motorButton, padding: 5, width: 200, height:labelHeightMultiplier)
+        labelMotor.font = .displayOfSize(20, withType: .Semibold)
+        labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 50, width: calcTextWidth("MOTOR", withFont: .displayOfSize(20, withType: .Semibold)), height: 25)
         thisView.addSubview(labelMotor)
         
+        self.activeRingButtons(Defaults[.SessionUseMultiRing])
+        self.activeModeButtons(Defaults[.SessionMotor])
+        self.activeVrMode()
+        self.activeDisplayButtons(Defaults[.SessionGyro])
+        
+
         pullButton.icon = UIImage(named:"arrow_pull")!
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
         pullButton.addGestureRecognizer(panGestureRecognizer)
         thisView.addGestureRecognizer(panGestureRecognizer)
         
-        //pullButton.addTarget(self, action: #selector(FeedNavViewController.pullButtonTap), forControlEvents:.TouchUpInside)
+        pullButton.addTarget(self, action: #selector(self.pullButtonTap), forControlEvents:.TouchUpInside)
         thisView.addSubview(pullButton)
         pullButton.anchorToEdge(.Bottom, padding: 5, width: 20, height: 15)
-        
-        self.activeRingButtons(Defaults[.SessionUseMultiRing])
-        self.activeModeButtons(Defaults[.SessionMotor])
+ 
     }
     
     
@@ -345,7 +420,14 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
                 
         })
     }
-    
+    func gyroButtonTouched() {
+        Defaults[.SessionGyro] = true
+        self.activeDisplayButtons(true)
+    }
+    func littlePlanetButtonTouched() {
+        Defaults[.SessionGyro] = false
+        self.activeDisplayButtons(false)
+    }
     
     
     func motorButtonTouched() {
@@ -367,6 +449,23 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         Defaults[.SessionUseMultiRing] = true
         self.activeRingButtons(true)
     }
+    func inVrMode() {
+        if Defaults[.SessionVRMode] {
+            vrButton.icon = UIImage(named: "vr_inactive_btn")!
+            Defaults[.SessionVRMode] = false
+        } else {
+            vrButton.icon = UIImage(named: "vr_button")!
+            Defaults[.SessionVRMode] = true
+        }
+    }
+    func activeVrMode() {
+        if Defaults[.SessionVRMode] {
+            vrButton.icon = UIImage(named: "vr_inactive_btn")!
+        } else {
+            vrButton.icon = UIImage(named: "vr_button")!
+        }
+    }
+    
     func activeModeButtons(isMotor:Bool) {
         if isMotor {
             motorButton.icon = UIImage(named: "motor_active_icn")!
@@ -398,6 +497,23 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
             
             labelRing3.textColor = UIColor.grayColor()
             labelRing1.textColor = UIColor(hex:0xffbc00)
+        }
+    }
+    func activeDisplayButtons(isGyro:Bool) {
+        
+        if isGyro {
+            gyroButton.icon = UIImage(named: "gyro_active_icn")!
+            littlePlanet.icon = UIImage(named: "littlePlanet_inactive_icn")!
+            
+            labelGyro.textColor = UIColor(hex:0xffbc00)
+            planet.textColor = UIColor.grayColor()
+            
+        } else {
+            gyroButton.icon = UIImage(named: "gyro_inactive_icn")!
+            littlePlanet.icon = UIImage(named: "littlePlanet_active_icn")!
+            
+            labelGyro.textColor = UIColor.grayColor()
+            planet.textColor = UIColor(hex:0xffbc00)
         }
     }
     
@@ -627,7 +743,7 @@ class TButton: UIButton {
     }
     
 }
-private class SettingsButton : UIButton {
+class SettingsButton : UIButton {
     
     var icon: UIImage = UIImage(named:"motor_active_icn")!{
         didSet{
@@ -787,6 +903,11 @@ extension DefaultTabControllerDelegate {
 //        } else {
 //            tabController?.updateActiveTab(.Right)
 //        }
+//        let settingsNavViewController:NavigationController!
+//        settingsNavViewController = SettingsNavViewController()
+//        settingsNavViewController.pushViewController(SettingsViewController(), animated: true)
+        let settingsVC = SettingsViewController()
+        tabController!.presentViewController(settingsVC, animated: true, completion: nil)
     }
 }
 

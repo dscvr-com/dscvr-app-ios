@@ -43,7 +43,6 @@ class ProfileViewModel {
         personBox.producer
             .skipRepeats()
             .startWithNext { [weak self] person in
-                print("person name is \(person.displayName)")
                 self?.displayName.value = person.displayName
                 self?.userName.value = person.userName
                 self?.text.value = person.text

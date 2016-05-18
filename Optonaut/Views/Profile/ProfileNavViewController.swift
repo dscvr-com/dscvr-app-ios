@@ -16,10 +16,13 @@ class ProfileNavViewController: NavigationController {
         if SessionService.isLoggedIn {
             pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
         } else {
+            let loginOverlayViewController = LoginOverlayViewController()
+            
+            pushViewController(loginOverlayViewController, animated: true)
+            
             SessionService.loginNotifiaction.signal.observeNext {
-                self.popToRootViewControllerAnimated(false)
-                
-                self.pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
+               self.popViewControllerAnimated(true)
+               self.pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
             }
         }
     }

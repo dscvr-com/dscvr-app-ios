@@ -28,27 +28,28 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     private let textView = UILabel()
     private let textInputView = KMPlaceholderTextView()
     private let buttonView = UIButton()
-    private let buttonIconView = UILabel()
+    //private let buttonIconView = UIImageView()
     private let postHeadingView = UILabel()
-    private let postCountView = UILabel()
-    private let followersHeadingView = UILabel()
-    private let followersCountView = UILabel()
-    private let followingHeadingView = UILabel()
-    private let followingCountView = UILabel()
+    //private let postCountView = UILabel()
+   
+    private let divider = UILabel()
+    private let dividerDescription = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        contentView.backgroundColor = .whiteColor()
+        contentView.backgroundColor = UIColor(hex:0xf7f7f7)
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
-        avatarImageView.layer.cornerRadius = 42
+        avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        avatarImageView.layer.borderWidth = 3.0
+        avatarImageView.layer.cornerRadius = 50
         avatarImageView.clipsToBounds = true
-        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "updateImage"))
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.updateImage)))
         contentView.addSubview(avatarImageView)
         
         displayNameView.font = UIFont.displayOfSize(15, withType: .Semibold)
-        displayNameView.textColor = .Accent
+        displayNameView.textColor = UIColor(0xffbc00)
         displayNameView.textAlignment = .Center
         contentView.addSubview(displayNameView)
         
@@ -78,52 +79,36 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         textInputView.delegate = self
         contentView.addSubview(textInputView)
         
-        buttonIconView.font = UIFont.iconOfSize(12)
-        buttonIconView.textColor = .whiteColor()
-        buttonView.addSubview(buttonIconView)
+//        buttonIconView.image = UIImage(named: "")
+//        buttonView.addSubview(buttonIconView)
         
-        buttonView.backgroundColor = UIColor(0xcacaca)
+        buttonView.backgroundColor = UIColor(0xffbc00)
         buttonView.layer.cornerRadius = 5
         buttonView.layer.masksToBounds = true
         buttonView.setTitleColor(.whiteColor(), forState: .Normal)
         buttonView.titleLabel?.font = .displayOfSize(11, withType: .Semibold)
-        buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapButton"))
+        buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
         contentView.addSubview(buttonView)
         
-        postHeadingView.text = "Posts"
+        divider.backgroundColor = UIColor(hex:0x595959)
+        contentView.addSubview(divider)
+        
+//        dividerDescription.backgroundColor = UIColor(0xffbc00)
+//        contentView.addSubview(dividerDescription)
+        
+        //postHeadingView.text = "0 Posts"
+        postHeadingView.text = "IAM360 Images"
         postHeadingView.textAlignment = .Center
-        postHeadingView.font = .displayOfSize(12, withType: .Semibold)
-        postHeadingView.textColor = UIColor(0xbdbdbd)
+        postHeadingView.font = UIFont(name: "Avenir LT 45 Book_0", size: 18)
+        postHeadingView.backgroundColor = UIColor(hex:0xf7f7f7)
         contentView.addSubview(postHeadingView)
         
-        postCountView.font = .displayOfSize(12, withType: .Semibold)
-        postCountView.textAlignment = .Center
-        postCountView.textColor = UIColor(0xbdbdbd)
-        contentView.addSubview(postCountView)
+//        postCountView.font = .displayOfSize(12, withType: .Semibold)
+//        postCountView.textAlignment = .Center
+//        postCountView.textColor = UIColor(0xbdbdbd)
+//        contentView.addSubview(postCountView)
         
-        followersHeadingView.text = "Followers"
-        followersHeadingView.textAlignment = .Center
-        followersHeadingView.font = .displayOfSize(12, withType: .Semibold)
-        followersHeadingView.textColor = UIColor(0xbdbdbd)
-        contentView.addSubview(followersHeadingView)
-        
-        followersCountView.font = .displayOfSize(12, withType: .Semibold)
-        followersCountView.textAlignment = .Center
-        followersCountView.textColor = UIColor(0xbdbdbd)
-        contentView.addSubview(followersCountView)
-        
-        followingHeadingView.text = "Following"
-        followingHeadingView.textAlignment = .Center
-        followingHeadingView.font = .displayOfSize(12, withType: .Semibold)
-        followingHeadingView.textColor = UIColor(0xbdbdbd)
-        contentView.addSubview(followingHeadingView)
-        
-        followingCountView.font = .displayOfSize(12, withType: .Semibold)
-        followingCountView.textAlignment = .Center
-        followingCountView.textColor = UIColor(0xbdbdbd)
-        contentView.addSubview(followingCountView)
-        
-        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
+        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.dismissKeyboard)))
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -139,21 +124,21 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         let size = contentView.frame.size
         
-        avatarImageView.frame = CGRect(x: size.width / 2 - 42, y: 20, width: 84, height: 84)
-        displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 17)
+        avatarImageView.frame = CGRect(x: size.width / 2 - 42, y: 20, width: 100, height: 100)
+        displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
         displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 17)
-        textView.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
         textInputView.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font) + 50)
-        buttonView.align(.UnderCentered, relativeTo: textView, padding: 15, width: 180, height: 27)
-        buttonIconView.anchorToEdge(.Right, padding: 12, width: 12, height: 12)
+        //buttonIconView.anchorToEdge(.Right, padding: 12, width: 12, height: 12)
         
-        let metricWidth = size.width / 3
-        postCountView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 33, width: metricWidth, height: 14)
-        postHeadingView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 19, width: metricWidth, height: 14)
-        followersCountView.anchorToEdge(.Bottom, padding: 33, width: metricWidth, height: 14)
-        followersHeadingView.anchorToEdge(.Bottom, padding: 19, width: metricWidth, height: 14)
-        followingCountView.anchorInCorner(.BottomRight, xPad: 0, yPad: 33, width: metricWidth, height: 14)
-        followingHeadingView.anchorInCorner(.BottomRight, xPad: 0, yPad: 19, width: metricWidth, height: 14)
+        buttonView.align(.UnderCentered, relativeTo: displayNameView, padding: 15, width: 100, height: 27)
+        //dividerDescription.align(.UnderCentered, relativeTo: buttonView, padding: 15, width: size.width, height: 2)
+        textView.align(.UnderCentered, relativeTo: buttonView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
+        divider.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width, height: 2)
+        
+        //let metricWidth = size.width / 3
+        //postCountView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 33, width: metricWidth, height: 14)
+        postHeadingView.align(.UnderCentered, relativeTo: divider, padding: 0, width: size.width , height: 50)
+        
     }
     
     func bindViewModel(viewModel: ProfileViewModel) {
@@ -190,23 +175,22 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         if isMe {
             buttonView.rac_hidden <~ viewModel.isEditing
-            buttonView.setTitle("EDIT", forState: .Normal)
-            buttonIconView.text = String.iconWithName(.Edit)
+            buttonView.setBackgroundImage(UIImage(named:"edit_btn"), forState: .Normal)
         } else {
-            buttonView.rac_title <~ viewModel.isFollowed.producer.mapToTuple("FOLLOWING", "FOLLOW")
-            buttonView.rac_backgroundColor <~ viewModel.isFollowed.producer.mapToTuple(.Accent, UIColor(0xcacaca))
-            buttonIconView.rac_text <~ viewModel.isFollowed.producer.mapToTuple(String.iconWithName(.Check), "")
+//            buttonView.rac_title <~ viewModel.isFollowed.producer.mapToTuple("FOLLOWING", "FOLLOW")
+//            buttonView.rac_backgroundColor <~ viewModel.isFollowed.producer.mapToTuple(.Accent, UIColor(0xcacaca))
+//            buttonIconView.rac_text <~ viewModel.isFollowed.producer.mapToTuple(String.iconWithName(.Check), "")
         }
         
-        followersCountView.rac_text <~ viewModel.followersCount.producer.map { "\($0)" }
-        followersHeadingView.rac_hidden <~ viewModel.isEditing
-        followersCountView.rac_hidden <~ viewModel.isEditing
-        postCountView.rac_text <~ viewModel.postCount.producer.map { "\($0)" }
+        //postCountView.rac_text <~ viewModel.postCount.producer.map { "\($0)" }
+        
+//        viewModel.postCount.producer.startWithNext {
+//            self.postHeadingView.text = "\($0) Posts"
+//        }
+        
         postHeadingView.rac_hidden <~ viewModel.isEditing
-        postCountView.rac_hidden <~ viewModel.isEditing
-        followingCountView.rac_text <~ viewModel.followingCount.producer.map { "\($0)" }
-        followingHeadingView.rac_hidden <~ viewModel.isEditing
-        followingCountView.rac_hidden <~ viewModel.isEditing
+        //postCountView.rac_hidden <~ viewModel.isEditing
+        
     }
     
     dynamic private func tapButton() {
@@ -214,19 +198,8 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             viewModel.isEditing.value = true
         } else if !SessionService.isLoggedIn {
             parentViewController!.tabController!.hideUI()
-            //parentViewController!.tabController!.lockUI()
             
-            let loginOverlayViewController = LoginOverlayViewController(
-                title: "Login to follow \(viewModel.displayName.value)",
-                successCallback: {
-                    self.viewModel.toggleFollow()
-                },
-                cancelCallback: { true },
-                alwaysCallback: {
-                    //self.parentViewController!.tabController!.unlockUI()
-                    self.parentViewController!.tabController!.showUI()
-                }
-            )
+            let loginOverlayViewController = LoginOverlayViewController()
             parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
         } else {
             viewModel.toggleFollow()

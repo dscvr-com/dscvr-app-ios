@@ -30,6 +30,7 @@ extension DefaultsKeys {
     static let SessionNeedRefresh = DefaultsKey<Bool>("session_profile_need_refresh")
     static let SessionMotor = DefaultsKey<Bool>("session_use_motor")
     static let SessionGyro = DefaultsKey<Bool>("session_use_gyro")
+    static let SessionVRMode = DefaultsKey<Bool>("session_use_vr")
     
 }
 

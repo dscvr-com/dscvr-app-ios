@@ -420,7 +420,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         loadingIndicatorView.rac_animating <~ loadingStatus.producer.equalsTo(.Nothing)
         contentView.addSubview(loadingIndicatorView)
         
-        whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
+        whiteBackground.backgroundColor = UIColor(hex:0x595959).alpha(0.80)
         contentView.addSubview(whiteBackground)
         
         blackSpace.backgroundColor = UIColor.blackColor()
@@ -482,7 +482,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         super.layoutSubviews()
         
         blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
-        whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 66)
+        whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 70)
         avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)

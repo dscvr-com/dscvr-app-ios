@@ -11,7 +11,7 @@ import ReactiveCocoa
 import SpriteKit
 import SwiftyUserDefaults
 
-class ProfileCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
+class ProfileCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, TransparentNavbarWithStatusBar {
     
     private let queue = dispatch_queue_create("profile_collection_view", DISPATCH_QUEUE_SERIAL)
     
@@ -22,7 +22,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     private let editOverlayView = UIView()
     
-    private var originalBackButton: UIBarButtonItem?
     private let leftBarButton = UILabel()
     private let rightBarButton = UILabel()
     
@@ -37,6 +36,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
 //        imageCache = CollectionImageCache(textureSize: textureSize)
         
 //        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+        
         super.init(collectionViewLayout: UICollectionViewLeftAlignedLayout())
     }
     
@@ -51,7 +51,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
 //            self?.title = userName.uppercaseString
 //        }
         
-        originalBackButton = navigationItem.leftBarButtonItem
+        //originalBackButton = navigationItem.leftBarButtonItem
+        
+        title = "My Profile"
+        var image = UIImage(named: "logo_small")
+        image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
         
         leftBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
         leftBarButton.text = String.iconWithName(.Cancel)
@@ -62,12 +67,15 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         barButtonItem = UIBarButtonItem(customView: leftBarButton)
         
         profileViewModel.isEditing.producer.startWithNext { [weak self] isEditing in
-            self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
+            
+            if isEditing {
+                self?.navigationItem.leftBarButtonItem = self!.barButtonItem
+            }
+            //self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
         }
         
         rightBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
         rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))
-        rightBarButton.textColor = .whiteColor()
         rightBarButton.font = UIFont.iconOfSize(21)
         rightBarButton.userInteractionEnabled = true
         rightBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapRightBarButton)))
@@ -161,6 +169,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     deinit {
         logRetain()
     }
+    override func scrollViewDidScroll(scrollView: UIScrollView) {
+        print("wew")
+    }
+    
+    
     func reloadView() {
         collectionViewModel.refreshNotification.dispose()
         profileViewModel = ProfileViewModel(personID: SessionService.personID)
@@ -169,7 +182,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))
         
         profileViewModel.isEditing.producer.startWithNext { [weak self] isEditing in
-            self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
+            if isEditing {
+                self?.navigationItem.leftBarButtonItem = self!.barButtonItem
+            }
+            //self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
+            
         }
         
         profileViewModel.isEditing.producer.skip(1).startWithNext { [weak self] isEditing in
@@ -239,12 +256,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         super.viewDidAppear(animated)
         
         updateNavbarAppear()
-        
-        tabController!.delegate = self
-        
-        updateTabs()
-        
-        tabController!.showUI()
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -302,10 +313,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         if indexPath.item == 0 {
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
-            return CGSize(width: collectionView.frame.width, height: 248 + textHeight)
+            //return CGSize(width: self.view.frame.width, height: 248 + textHeight)
+            return CGSize(width: self.view.frame.width, height: 270 + textHeight)
         } else {
-//            let width = (collectionView.frame.width - 15) / 3 - 0.000001
-            let width = (self.view.frame.size.width-5) / 3 - 0.000001
+            let width = (self.view.frame.size.width)
             return CGSize(width: width, height: width)
         }
     }
@@ -386,6 +397,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             if profileViewModel.isMe {
                 settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
                     SessionService.logout()
+                    self.navigationController?.popViewControllerAnimated(true)
+                    //self.navigationController?.pushViewController(LoginOverlayViewController(), animated: true)
                 }))
             } else {
                 settingsSheet.addAction(UIAlertAction(title: "Report user", style: .Destructive, handler: { _ in
@@ -412,6 +425,5 @@ extension ProfileCollectionViewController: DefaultTabControllerDelegate {
     func jumpToTop() {
         collectionViewModel.refreshNotification.notify(())
         collectionView!.setContentOffset(CGPointZero, animated: true)
-    }
-    
+    } 
 }

@@ -27,6 +27,18 @@
 		59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B271CEAE13D00829963 /* SettingsNavViewController.swift */; };
 		59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B291CEAE2B000829963 /* SettingsViewController.swift */; };
 		59848B2E1CEB2DC400829963 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59848B2D1CEB2DC400829963 /* Fabric.framework */; };
+		598F57101CEC63B1002229AF /* Avenir LT 35 Light Oblique_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F57041CEC631F002229AF /* Avenir LT 35 Light Oblique_0.ttf */; };
+		598F57111CEC63B1002229AF /* Avenir LT 35 Light_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F57051CEC631F002229AF /* Avenir LT 35 Light_0.ttf */; };
+		598F57121CEC63B1002229AF /* Avenir LT 45 Book Oblique_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F57061CEC631F002229AF /* Avenir LT 45 Book Oblique_0.ttf */; };
+		598F57131CEC63B1002229AF /* Avenir LT 45 Book_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F57071CEC631F002229AF /* Avenir LT 45 Book_0.ttf */; };
+		598F57141CEC63B1002229AF /* Avenir LT 55 Oblique_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F57081CEC631F002229AF /* Avenir LT 55 Oblique_0.ttf */; };
+		598F57151CEC63B1002229AF /* Avenir LT 55 Roman_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F57091CEC631F002229AF /* Avenir LT 55 Roman_0.ttf */; };
+		598F57161CEC63B1002229AF /* Avenir LT 65 Medium Oblique_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F570A1CEC631F002229AF /* Avenir LT 65 Medium Oblique_0.ttf */; };
+		598F57171CEC63B1002229AF /* Avenir LT 65 Medium_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F570B1CEC631F002229AF /* Avenir LT 65 Medium_0.ttf */; };
+		598F57181CEC63B1002229AF /* Avenir LT 85 Heavy_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F570C1CEC631F002229AF /* Avenir LT 85 Heavy_0.ttf */; };
+		598F57191CEC63B1002229AF /* Avenir LT 86 Heavy Oblique_0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 598F570D1CEC631F002229AF /* Avenir LT 86 Heavy Oblique_0.ttf */; };
+		598F571A1CEC63B1002229AF /* Avenir-Book_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F570E1CEC631F002229AF /* Avenir-Book_0.otf */; };
+		598F571B1CEC63B1002229AF /* Avenir-Heavy_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F570F1CEC631F002229AF /* Avenir-Heavy_0.otf */; };
 		59F9226C1CDE0D0E005868A8 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F9226B1CDE0D0E005868A8 /* TabView.swift */; };
 		59FAF2421CE7008500B9C2F4 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
@@ -300,6 +312,18 @@
 		59848B271CEAE13D00829963 /* SettingsNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavViewController.swift; sourceTree = "<group>"; };
 		59848B291CEAE2B000829963 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		59848B2D1CEB2DC400829963 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = ../../../../Desktop/Fabric.framework; sourceTree = "<group>"; };
+		598F57041CEC631F002229AF /* Avenir LT 35 Light Oblique_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 35 Light Oblique_0.ttf"; sourceTree = "<group>"; };
+		598F57051CEC631F002229AF /* Avenir LT 35 Light_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 35 Light_0.ttf"; sourceTree = "<group>"; };
+		598F57061CEC631F002229AF /* Avenir LT 45 Book Oblique_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 45 Book Oblique_0.ttf"; sourceTree = "<group>"; };
+		598F57071CEC631F002229AF /* Avenir LT 45 Book_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 45 Book_0.ttf"; sourceTree = "<group>"; };
+		598F57081CEC631F002229AF /* Avenir LT 55 Oblique_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 55 Oblique_0.ttf"; sourceTree = "<group>"; };
+		598F57091CEC631F002229AF /* Avenir LT 55 Roman_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 55 Roman_0.ttf"; sourceTree = "<group>"; };
+		598F570A1CEC631F002229AF /* Avenir LT 65 Medium Oblique_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 65 Medium Oblique_0.ttf"; sourceTree = "<group>"; };
+		598F570B1CEC631F002229AF /* Avenir LT 65 Medium_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 65 Medium_0.ttf"; sourceTree = "<group>"; };
+		598F570C1CEC631F002229AF /* Avenir LT 85 Heavy_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 85 Heavy_0.ttf"; sourceTree = "<group>"; };
+		598F570D1CEC631F002229AF /* Avenir LT 86 Heavy Oblique_0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir LT 86 Heavy Oblique_0.ttf"; sourceTree = "<group>"; };
+		598F570E1CEC631F002229AF /* Avenir-Book_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Book_0.otf"; sourceTree = "<group>"; };
+		598F570F1CEC631F002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
 		59F9226B1CDE0D0E005868A8 /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
@@ -773,6 +797,18 @@
 		8F4C6E301B4A70CD007508ED /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				598F57041CEC631F002229AF /* Avenir LT 35 Light Oblique_0.ttf */,
+				598F57051CEC631F002229AF /* Avenir LT 35 Light_0.ttf */,
+				598F57061CEC631F002229AF /* Avenir LT 45 Book Oblique_0.ttf */,
+				598F57071CEC631F002229AF /* Avenir LT 45 Book_0.ttf */,
+				598F57081CEC631F002229AF /* Avenir LT 55 Oblique_0.ttf */,
+				598F57091CEC631F002229AF /* Avenir LT 55 Roman_0.ttf */,
+				598F570A1CEC631F002229AF /* Avenir LT 65 Medium Oblique_0.ttf */,
+				598F570B1CEC631F002229AF /* Avenir LT 65 Medium_0.ttf */,
+				598F570C1CEC631F002229AF /* Avenir LT 85 Heavy_0.ttf */,
+				598F570D1CEC631F002229AF /* Avenir LT 86 Heavy Oblique_0.ttf */,
+				598F570E1CEC631F002229AF /* Avenir-Book_0.otf */,
+				598F570F1CEC631F002229AF /* Avenir-Heavy_0.otf */,
 				8F4C6E311B4A70CD007508ED /* icomoon.ttf */,
 				8FBC869B1BB72A2600539D4E /* SF-UI-Display-Light.otf */,
 				8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */,
@@ -1474,6 +1510,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				598F57101CEC63B1002229AF /* Avenir LT 35 Light Oblique_0.ttf in Resources */,
+				598F57111CEC63B1002229AF /* Avenir LT 35 Light_0.ttf in Resources */,
+				598F57121CEC63B1002229AF /* Avenir LT 45 Book Oblique_0.ttf in Resources */,
+				598F57131CEC63B1002229AF /* Avenir LT 45 Book_0.ttf in Resources */,
+				598F57141CEC63B1002229AF /* Avenir LT 55 Oblique_0.ttf in Resources */,
+				598F57151CEC63B1002229AF /* Avenir LT 55 Roman_0.ttf in Resources */,
+				598F57161CEC63B1002229AF /* Avenir LT 65 Medium Oblique_0.ttf in Resources */,
+				598F57171CEC63B1002229AF /* Avenir LT 65 Medium_0.ttf in Resources */,
+				598F57181CEC63B1002229AF /* Avenir LT 85 Heavy_0.ttf in Resources */,
+				598F57191CEC63B1002229AF /* Avenir LT 86 Heavy Oblique_0.ttf in Resources */,
+				598F571A1CEC63B1002229AF /* Avenir-Book_0.otf in Resources */,
+				598F571B1CEC63B1002229AF /* Avenir-Heavy_0.otf in Resources */,
 				8F4715131C49698B00663684 /* TwitterKitResources.bundle in Resources */,
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,

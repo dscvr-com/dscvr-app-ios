@@ -333,23 +333,22 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         
         if !SessionService.isLoggedIn {
             tabController!.hideUI()
-           // tabController!.lockUI()
             
-            let loginOverlayViewController = LoginOverlayViewController(
-                title: "Login to save your moment",
-                successCallback: {
-                    self.readyNotification.notify(())
-                },
-                cancelCallback: {
-                    self.readyNotification.notify(())
-                    return true
-                },
-                alwaysCallback: {
-                    //self.tabController!.unlockUI()
-                    self.tabController!.showUI()
-                }
-            )
-            presentViewController(loginOverlayViewController, animated: true, completion: nil)
+//            let loginOverlayViewController = LoginOverlayViewController(
+//                title: "Login to save your moment",
+//                successCallback: {
+//                    self.readyNotification.notify(())
+//                },
+//                cancelCallback: {
+//                    self.readyNotification.notify(())
+//                    return true
+//                },
+//                alwaysCallback: {
+//                    //self.tabController!.unlockUI()
+//                    self.tabController!.showUI()
+//                }
+//            )
+//            presentViewController(loginOverlayViewController, animated: true, completion: nil)
         }
     }
     

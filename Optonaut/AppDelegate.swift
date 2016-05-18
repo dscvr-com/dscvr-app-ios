@@ -162,7 +162,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.backgroundColor = .whiteColor()
         
         SessionService.prepare()
-        SessionService.onLogout(performAlways: true) { self.window?.rootViewController = TabViewController() }
+        //SessionService.onLogout(performAlways: true) { self.window?.rootViewController = TabViewController() }
         
 //        if SessionService.isLoggedIn || !requireLogin {
 //            if SessionService.needsOnboarding && requireLogin {

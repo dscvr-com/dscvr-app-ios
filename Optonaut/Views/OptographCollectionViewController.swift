@@ -581,16 +581,16 @@ private class OverlayView: UIView {
             viewModel.toggleLike()
         } else {
             
-            let loginOverlayViewController = LoginOverlayViewController(
-                title: "Login to like this moment",
-                successCallback: {
-                    self.viewModel.toggleLike()
-                },
-                cancelCallback: { true },
-                alwaysCallback: {
-                }
-            )
-            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
+//            let loginOverlayViewController = LoginOverlayViewController(
+//                title: "Login to like this moment",
+//                successCallback: {
+//                    self.viewModel.toggleLike()
+//                },
+//                cancelCallback: { true },
+//                alwaysCallback: {
+//                }
+//            )
+//            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
         }
     }
     

@@ -10,30 +10,20 @@ import Foundation
 import ReactiveCocoa
 import FBSDKLoginKit
 
-class LoginOverlayViewController: UIViewController {
+class LoginOverlayViewController: UIViewController{
     
-    private let containerView = UIView()
-    private let backgroundImageView = UIImageView()
-    private let titleView = UILabel()
-    private let continueView = UILabel()
-    private let cancelView = BoundingLabel()
-    private let loginView = BoundingLabel()
-    private let facebookButtonView = ActionButton()
+    private let logoImageView = UIImageView()
+    private let facebookButtonView = UIButton()
+    private let signIn = UILabel()
+    private let dividerView = UILabel()
+    
+    private let contentView = UIView()
     
     private let viewModel = LoginOverlayViewModel()
     
-    private let successCallback: () -> ()
-    private let cancelCallback: () -> Bool
-    private let alwaysCallback: () -> ()
-    
-    init(title: String, successCallback: () -> (), cancelCallback: () -> Bool, alwaysCallback: () -> ()) {
-        titleView.text = title
-        self.successCallback = successCallback
-        self.cancelCallback = cancelCallback
-        self.alwaysCallback = alwaysCallback
+    init() {
         
         super.init(nibName: nil, bundle: nil)
-        
         modalPresentationStyle = .OverCurrentContext
     }
     
@@ -44,77 +34,33 @@ class LoginOverlayViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.blackColor().alpha(0.7)
+        navigationController?.navigationBar.translucent = true
         
-        backgroundImageView.image = UIImage(named: "onboarding")
-        containerView.addSubview(backgroundImageView)
+        contentView.frame = UIScreen.mainScreen().bounds
+        contentView.backgroundColor = UIColor(hex:0xf7f7f7)
+        view.addSubview(contentView)
         
-        titleView.font = UIFont.displayOfSize(21, withType: .Light)
-        titleView.textAlignment = .Center
-        titleView.textColor = .DarkGrey
-        containerView.addSubview(titleView)
+        logoImageView.image = UIImage(named: "logo_big")
+        contentView.addSubview(logoImageView)
         
-        continueView.text = "Continue with..."
-        continueView.font = UIFont.displayOfSize(15, withType: .Light)
-        continueView.textAlignment = .Center
-        continueView.textColor = .DarkGrey
-        containerView.addSubview(continueView)
+        signIn.text = "Sign In"
+        signIn.font = UIFont (name: "Avenir LT 45 Book_0", size: 18)
+        signIn.textAlignment = .Center
+        contentView.addSubview(signIn)
         
-        facebookButtonView.defaultBackgroundColor = UIColor(0x3C5193)
-        facebookButtonView.activeBackgroundColor = UIColor(0x405BB0)
-        facebookButtonView.disabledBackgroundColor = UIColor(0x405BB0)
-        facebookButtonView.setTitle("FACEBOOK", forState: .Normal)
-        facebookButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-        facebookButtonView.titleLabel!.font = UIFont.displayOfSize(16, withType: .Semibold)
-        facebookButtonView.layer.cornerRadius = 8
-        facebookButtonView.rac_loading <~ viewModel.facebookPending
-        facebookButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "facebook"))
-        containerView.addSubview(facebookButtonView)
+        dividerView.backgroundColor = UIColor.grayColor()
+        contentView.addSubview(dividerView)
         
-        cancelView.text = "Back"
-        cancelView.font = UIFont.displayOfSize(16, withType: .Semibold)
-        cancelView.textAlignment = .Left
-        cancelView.textColor = .DarkGrey
-        cancelView.userInteractionEnabled = true
-        cancelView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
-        containerView.addSubview(cancelView)
+        //facebookButtonView.rac_loading <~ viewModel.facebookPending
+        facebookButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LoginOverlayViewController.facebook)))
+        facebookButtonView.setBackgroundImage(UIImage(named:"facebook_btn"), forState: .Normal)
+        contentView.addSubview(facebookButtonView)
         
-        loginView.text = "Use existing account"
-        loginView.font = UIFont.displayOfSize(16, withType: .Semibold)
-        loginView.textAlignment = .Right
-        loginView.textColor = .DarkGrey
-        loginView.userInteractionEnabled = true
-        loginView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "login"))
-        containerView.addSubview(loginView)
+        logoImageView.anchorToEdge(.Top, padding: 200, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
+        signIn.align(.UnderCentered, relativeTo: logoImageView, padding: 20, width: 100, height: 25)
+        dividerView.align(.UnderCentered, relativeTo: signIn, padding: 22, width: contentView.frame.width - 48, height: 2)
+        facebookButtonView.align(.UnderCentered, relativeTo: dividerView, padding: 8, width: contentView.frame.width - 85, height: 50)
         
-        view.addSubview(containerView)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        let screenBounds = UIScreen.mainScreen().bounds
-        let aspectRatio: CGFloat = 1.535
-        let width, height: CGFloat
-        if screenBounds.height / screenBounds.width < aspectRatio {
-            height = screenBounds.height - 10
-            width = height * (screenBounds.width / screenBounds.height)
-        } else {
-            width = screenBounds.width - 10
-            height = width * aspectRatio
-        }
-        
-        containerView.frame = CGRect(x: (screenBounds.width - width) / 2, y: (screenBounds.height - height) / 2, width: width, height: height)
-        
-        backgroundImageView.fillSuperview()
-        
-        titleView.anchorToEdge(.Top, padding: height * 0.1 - 10, width: width, height: 23)
-        
-        facebookButtonView.anchorToEdge(.Bottom, padding: height * 0.22 - 30, width: width * 0.8, height: 60)
-        continueView.alignAndFillWidth(align: .AboveCentered, relativeTo: facebookButtonView, padding: 15, height: 18)
-        
-        cancelView.anchorInCorner(.BottomLeft, xPad: 20, yPad: 20, width: 100, height: 18)
-        loginView.anchorInCorner(.BottomRight, xPad: 20, yPad: 20, width: 160, height: 18)
     }
     
     dynamic private func facebook() {
@@ -139,9 +85,8 @@ class LoginOverlayViewController: UIViewController {
                         errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
                     },
                     completed: {
-                        self?.successCallback()
-                        self?.dismissViewControllerAnimated(true, completion: nil)
-                        self?.alwaysCallback()
+                        //self?.dismissViewControllerAnimated(true, completion: nil)
+                        //self?.navigationController?.popViewControllerAnimated(false)
                     }
                 )
                 .start()
@@ -167,20 +112,5 @@ class LoginOverlayViewController: UIViewController {
         }
     }
     
-    dynamic private func login() {
-        presentViewController(LoginViewController(successCallback: {
-            self.dismissViewControllerAnimated(true, completion: {
-                self.successCallback()
-                self.alwaysCallback()
-            })
-        }), animated: false, completion: nil)
-    }
-    
-    dynamic private func cancel() {
-        if cancelCallback() {
-            dismissViewControllerAnimated(true, completion: nil)
-            alwaysCallback()
-        }
-    }
     
 }
