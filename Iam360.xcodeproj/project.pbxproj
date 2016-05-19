@@ -27,8 +27,8 @@
 		59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B271CEAE13D00829963 /* SettingsNavViewController.swift */; };
 		59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B291CEAE2B000829963 /* SettingsViewController.swift */; };
 		59848B2E1CEB2DC400829963 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59848B2D1CEB2DC400829963 /* Fabric.framework */; };
-		598F571A1CEC63B1002229AF /* Avenir-Book_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F570E1CEC631F002229AF /* Avenir-Book_0.otf */; };
-		598F571B1CEC63B1002229AF /* Avenir-Heavy_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F570F1CEC631F002229AF /* Avenir-Heavy_0.otf */; };
+		598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571C1CEDA771002229AF /* Avenir-Book_0.otf */; };
+		598F571F1CEDA771002229AF /* Avenir-Heavy_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */; };
 		59F9226C1CDE0D0E005868A8 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F9226B1CDE0D0E005868A8 /* TabView.swift */; };
 		59FAF2421CE7008500B9C2F4 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */; };
 		8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */; };
@@ -302,8 +302,8 @@
 		59848B271CEAE13D00829963 /* SettingsNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavViewController.swift; sourceTree = "<group>"; };
 		59848B291CEAE2B000829963 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		59848B2D1CEB2DC400829963 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = ../../../../Desktop/Fabric.framework; sourceTree = "<group>"; };
-		598F570E1CEC631F002229AF /* Avenir-Book_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Book_0.otf"; sourceTree = "<group>"; };
-		598F570F1CEC631F002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
+		598F571C1CEDA771002229AF /* Avenir-Book_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Book_0.otf"; sourceTree = "<group>"; };
+		598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
 		59F9226B1CDE0D0E005868A8 /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		8F004A9B1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingHashtagSelectViewModel.swift; sourceTree = "<group>"; };
@@ -777,8 +777,8 @@
 		8F4C6E301B4A70CD007508ED /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				598F570E1CEC631F002229AF /* Avenir-Book_0.otf */,
-				598F570F1CEC631F002229AF /* Avenir-Heavy_0.otf */,
+				598F571C1CEDA771002229AF /* Avenir-Book_0.otf */,
+				598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */,
 				8F4C6E311B4A70CD007508ED /* icomoon.ttf */,
 				8FBC869B1BB72A2600539D4E /* SF-UI-Display-Light.otf */,
 				8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */,
@@ -1480,10 +1480,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				598F571A1CEC63B1002229AF /* Avenir-Book_0.otf in Resources */,
-				598F571B1CEC63B1002229AF /* Avenir-Heavy_0.otf in Resources */,
 				8F4715131C49698B00663684 /* TwitterKitResources.bundle in Resources */,
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
+				598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
 				A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
@@ -1503,6 +1502,7 @@
 				8FBC86981BB723E600539D4E /* SF-UI-Display-Ultralight.otf in Resources */,
 				A56CA4061BC070450078D7E8 /* lut in Resources */,
 				8FBC86991BB723E600539D4E /* SF-UI-Text-Regular.otf in Resources */,
+				598F571F1CEDA771002229AF /* Avenir-Heavy_0.otf in Resources */,
 				8FBC869A1BB723E600539D4E /* SF-UI-Text-Semibold.otf in Resources */,
 				8F4C6E441B4A70CD007508ED /* icomoon.ttf in Resources */,
 				A56CA40B1BC070450078D7E8 /* zeiss_displacement_right.json in Resources */,

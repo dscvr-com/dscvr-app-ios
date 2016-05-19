@@ -11,7 +11,7 @@ import ReactiveCocoa
 import SpriteKit
 import SwiftyUserDefaults
 
-class ProfileCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, TransparentNavbarWithStatusBar {
+class ProfileCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, TransparentNavbarWithStatusBar ,TabControllerDelegate{
     
     private let queue = dispatch_queue_create("profile_collection_view", DISPATCH_QUEUE_SERIAL)
     
@@ -27,6 +27,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     private let rightBarButton = UILabel()
     
     private var barButtonItem = UIBarButtonItem()
+    let headerView = UIView()
     
     init(personID: UUID) {
         
@@ -48,16 +49,30 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        headerView.frame = CGRect(x: 0,y: 0,width: view.frame.width ,height: 50)
+        headerView.backgroundColor = UIColor(hex:0x3E3D3D)
+        headerView.hidden = true
+        view.addSubview(headerView)
+        let texttext = UILabel()
+        texttext.frame = CGRect(x: view.frame.width / 2 - (150/2),y: 15,width: 150,height: 20)
+        texttext.text = "IAM360 Images"
+        texttext.textAlignment = .Center
+        texttext.textColor = UIColor.whiteColor()
+        headerView.addSubview(texttext)
+        
 //        profileViewModel.userName.producer.startWithNext { [weak self] userName in
 //            self?.title = userName.uppercaseString
 //        }
         
         //originalBackButton = navigationItem.leftBarButtonItem
         
+        tabController?.delegate = self
+        
         title = "My Profile"
         var image = UIImage(named: "logo_small")
         image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
         
         leftBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
         leftBarButton.text = String.iconWithName(.Cancel)
@@ -170,16 +185,33 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     deinit {
         logRetain()
     }
+    func goToFeeds() {
+        tabController!.leftButtonAction()
+    }
+    
     override func scrollViewDidScroll(scrollView: UIScrollView) {
         let offsetY:CGFloat  = scrollView.contentOffset.y
         //let contentHeight:CGFloat  = scrollView.contentSize.height;
-        print("offset ",offsetY)
-        if (offsetY >= 270) {
-            self.navigationController?.navigationItem.title = "IAM360 Images"
-            self.navigationController?.navigationBar.tintColor = UIColor(hex:0x575757)
-        } else {
-            self.navigationController?.navigationItem.title = "My Profile"
-            self.navigationController?.navigationBar.barTintColor = UIColor.whiteColor()
+        
+//        if (offsetY >= 270) {
+//            self.navigationController?.navigationItem.title = "IAM360 Images"
+//            self.navigationController?.navigationBar.tintColor = UIColor(hex:0x575757)
+//        } else {
+//            self.navigationController?.navigationItem.title = "My Profile"
+//            self.navigationController?.navigationBar.barTintColor = UIColor.whiteColor()
+//        }
+        
+        
+        if (offsetY > 263) {
+            UIView.animateWithDuration(0.5, animations: {
+                self.headerView.hidden = false
+                self.navigationController?.navigationBarHidden = true
+                }, completion:nil)
+        } else if  (offsetY < 263){
+            UIView.animateWithDuration(0.5, animations: {
+                self.headerView.hidden = true
+                self.navigationController?.navigationBarHidden = false
+                }, completion:nil)
         }
     }
     

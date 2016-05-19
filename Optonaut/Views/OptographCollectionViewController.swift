@@ -103,7 +103,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         tabController!.delegate = self
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image:UIImage(named:"profile_page_icn"), style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapRightButton))
+        
+        var image = UIImage(named: "profile_page_icn")
+        image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapRightButton))
         
         viewModel.results.producer
             .filter { $0.changed }

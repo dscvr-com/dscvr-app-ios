@@ -21,7 +21,7 @@
       "extent" : "full-screen",
       "idiom" : "iphone",
       "subtype" : "667h",
-      "filename" : "iPhone6@2x-1.png",
+      "filename" : "0-splash_screen@2x.png",
       "minimum-system-version" : "8.0",
       "orientation" : "portrait",
       "scale" : "2x"
@@ -61,6 +61,10 @@
       "extent" : "full-screen",
       "subtype" : "retina4",
       "scale" : "2x"
+    },
+    {
+      "filename" : "0-splash_screen@3x.png",
+      "unassigned" : true
     }
   ],
   "info" : {

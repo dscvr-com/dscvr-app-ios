@@ -140,6 +140,7 @@ class CombinedMotionManager: RotationMatrixSource {
     }
     
     func touchMove(point: CGPoint) {
+        print("touched")
         touchRotationSource.touchMove(point)
     }
     
@@ -397,7 +398,6 @@ class OptographCollectionViewCell: UICollectionViewCell {
         }
         
         let hfov: Float = 35
-        
     
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
     

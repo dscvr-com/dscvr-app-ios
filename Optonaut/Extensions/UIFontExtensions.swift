@@ -82,6 +82,10 @@ public extension UIFont {
 
         return UIFont(name: fontName, size: fontSize)!
     }
+    public class func fontDisplay(fontSize: CGFloat, withType type: DisplayFontType) -> UIFont {
+        
+        return UIFont(name: "Avenir-Book", size: fontSize)!
+    }
     
 }
 

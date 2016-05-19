@@ -13,6 +13,8 @@ class ProfileNavViewController: NavigationController {
     required init() {
         super.init(nibName: nil, bundle: nil)
         
+        navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont(name: "Avenir-Book", size: 20)!]
+        
         if SessionService.isLoggedIn {
             pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
         } else {

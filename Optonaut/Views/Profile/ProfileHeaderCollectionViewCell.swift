@@ -48,13 +48,13 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.updateImage)))
         contentView.addSubview(avatarImageView)
         
-        displayNameView.font = UIFont.displayOfSize(15, withType: .Semibold)
+        displayNameView.font = UIFont.fontDisplay(15, withType: .Semibold)
         displayNameView.textColor = UIColor(0xffbc00)
         displayNameView.textAlignment = .Center
         contentView.addSubview(displayNameView)
         
         displayNameInputView.placeholder = "Enter your name"
-        displayNameInputView.font = UIFont.displayOfSize(15, withType: .Semibold)
+        displayNameInputView.font = UIFont.fontDisplay(15, withType: .Semibold)
         displayNameInputView.textAlignment = .Center
         displayNameInputView.textColor = .Accent
         displayNameInputView.textContainer.lineFragmentPadding = 0 // remove left padding
@@ -65,12 +65,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         textView.numberOfLines = 0
         textView.textAlignment = .Center
-        textView.font = UIFont.displayOfSize(12, withType: .Regular)
+        textView.font = UIFont.fontDisplay(12, withType: .Regular)
         textView.textColor = UIColor(0x979797)
         contentView.addSubview(textView)
         
         textInputView.placeholder = "Add description"
-        textInputView.font = UIFont.displayOfSize(12, withType: .Regular)
+        textInputView.font = UIFont.fontDisplay(12, withType: .Regular)
         textInputView.textAlignment = .Center
         textInputView.textColor = UIColor(0x979797)
         textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
@@ -86,7 +86,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         buttonView.layer.cornerRadius = 5
         buttonView.layer.masksToBounds = true
         buttonView.setTitleColor(.whiteColor(), forState: .Normal)
-        buttonView.titleLabel?.font = .displayOfSize(11, withType: .Semibold)
+        buttonView.titleLabel?.font = .fontDisplay(11, withType: .Semibold)
         buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
         contentView.addSubview(buttonView)
         
@@ -98,9 +98,10 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         //postHeadingView.text = "0 Posts"
         postHeadingView.text = "IAM360 Images"
+        postHeadingView.textColor = UIColor.whiteColor()
         postHeadingView.textAlignment = .Center
         postHeadingView.font = UIFont(name: "Avenir-Book", size: 18)
-        postHeadingView.backgroundColor = UIColor(hex:0xf7f7f7)
+        postHeadingView.backgroundColor = UIColor(hex:0x3E3D3D)
         contentView.addSubview(postHeadingView)
         
 //        postCountView.font = .displayOfSize(12, withType: .Semibold)

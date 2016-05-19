@@ -17,6 +17,8 @@ class SharingNavViewController: NavigationController {
         super.viewDidLoad()
         
         viewController.navigationItem.title = "Share"
+        
+        navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont(name: "Avenir-Book", size: 20)!]
         pushViewController(viewController, animated: false)
     }
 

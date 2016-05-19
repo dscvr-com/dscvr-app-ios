@@ -32,10 +32,11 @@ class SharingViewController: UIViewController ,TabControllerDelegate{
         placeholderImageView = UIImageView(image: placeholderImageViewImage)
         placeholderImageView?.backgroundColor = UIColor.blackColor()
         self.view.addSubview(placeholderImageView!)
-        placeholderImageView!.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: self.view.frame.width - 40, height: 130)
+        placeholderImageView!.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: self.view.frame.width - 56, height: 130)
         
         titleText.text = "Share this IAM360 photo:"
         titleText.textAlignment = .Center
+        titleText.font = UIFont(name: "Avenir-Book", size: 25)
         self.view.addSubview(titleText)
         titleText.align(.UnderCentered, relativeTo: placeholderImageView!, padding: 5, width: self.view.frame.width - 40, height: 40)
         
@@ -73,7 +74,11 @@ class SharingViewController: UIViewController ,TabControllerDelegate{
         
         self.view.backgroundColor = UIColor.whiteColor()
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image:UIImage(named:"feed_icn"), style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.tapRightButton))
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(image:UIImage(named:"feed_icn"), style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.tapRightButton))
+        
+        var leftBarImage = UIImage(named: "feed_icn")
+        leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.tapRightButton))
         
         tabController!.delegate = self
         
@@ -84,7 +89,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate{
     }
 
     func tapRightButton() {
-        tabController!.rightButtonAction()
+        tabController!.leftButtonAction()
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
