@@ -356,7 +356,7 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         labelMode.align(.UnderMatchingLeft, relativeTo: littlePlanet, padding: 13, width: calcTextWidth("CAPTURE MODE", withFont: .displayOfSize(15, withType: .Semibold)), height: 25)
         
         let dividerTwo = UILabel()
-        dividerTwo.backgroundColor = UIColor(hex:0x595959)
+        dividerTwo.backgroundColor = UIColor(hex:0xa5a5a5)
         thisView.addSubview(dividerTwo)
         dividerTwo.align(.UnderCentered, relativeTo: dividerOne, padding: textHeight+2, width:1, height: dividerOneHeight)
         
@@ -419,7 +419,6 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         self.activeModeButtons(Defaults[.SessionMotor])
         self.activeVrMode()
         self.activeDisplayButtons(Defaults[.SessionGyro])
-        
 
         pullButton.icon = UIImage(named:"arrow_pull")!
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
@@ -599,12 +598,8 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
                 self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
                     self.isSettingsViewOpen = false
-                    
             })
-            
         }
-        
-       
     }
     
     func openGallary() {

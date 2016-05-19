@@ -18,7 +18,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     private var profileViewModel: ProfileViewModel
     private var collectionViewModel: ProfileOptographsViewModel
     private var optographIDs: [UUID] = []
-//    private let imageCache: CollectionImageCache
+    
+    weak var parentVC: UIViewController?
     
     private let editOverlayView = UIView()
     
@@ -112,7 +113,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         collectionView!.registerClass(ProfileHeaderCollectionViewCell.self, forCellWithReuseIdentifier: "top-cell")
         collectionView!.registerClass(ProfileTileCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell")
         
-        collectionView!.backgroundColor = .whiteColor()
+        collectionView!.backgroundColor = UIColor(hex:0xf7f7f7)
         
         collectionView!.alwaysBounceVertical = true
         
@@ -330,6 +331,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         }
     }
     
+//    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+//        return UIEdgeInsetsMake(0, 100, self.view.frame.width, 0)
+//    }
     override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         
         if indexPath.item == 0 {
@@ -388,9 +392,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let profileOptographCollectionViewModel = ProfileOptographCollectionViewModel(personID: profileViewModel.personID, selectedOptographID: optographIDs[indexPath.item - 1])
-        let optographCollectionViewController = OptographCollectionViewController(viewModel: profileOptographCollectionViewModel)
-        navigationController!.pushViewController(optographCollectionViewController, animated: true)
+//        let profileOptographCollectionViewModel = ProfileOptographCollectionViewModel(personID: profileViewModel.personID, selectedOptographID: optographIDs[indexPath.item - 1])
+//        let optographCollectionViewController = OptographCollectionViewController(viewModel: profileOptographCollectionViewModel)
+//        navigationController!.pushViewController(optographCollectionViewController, animated: true)
+        let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item - 1])
+        detailsViewController.cellIndexpath = indexPath.item
+        navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
     dynamic private func tapLeftBarButton() {

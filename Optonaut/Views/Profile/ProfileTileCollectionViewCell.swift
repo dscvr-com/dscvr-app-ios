@@ -22,6 +22,8 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
     
     private let viewModel = ProfileTileCollectionViewModel()
     
+    private let whiteBackground = UIView()
+    
 //    private let glView: OpenGLView
     
     override init(frame: CGRect) {
@@ -49,7 +51,6 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
             .startWithNext { [weak self] (isUploaded, optographID) in
                 if isUploaded {
                     let url = TextureURL(optographID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
-                    print("image url >> \(url) <<")
                     self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
                 } else {
                     let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
@@ -100,6 +101,10 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(loadingView)
         
         contentView.backgroundColor = UIColor(0xcacaca)
+        
+        whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
+        contentView.addSubview(whiteBackground)
+        whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
     }
     
     required init?(coder aDecoder: NSCoder) {

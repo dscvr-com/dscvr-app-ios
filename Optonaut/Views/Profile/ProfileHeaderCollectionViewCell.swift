@@ -99,7 +99,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //postHeadingView.text = "0 Posts"
         postHeadingView.text = "IAM360 Images"
         postHeadingView.textAlignment = .Center
-        postHeadingView.font = UIFont(name: "Avenir-Book_0", size: 18)
+        postHeadingView.font = UIFont(name: "Avenir-Book", size: 18)
         postHeadingView.backgroundColor = UIColor(hex:0xf7f7f7)
         contentView.addSubview(postHeadingView)
         
@@ -124,7 +124,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         let size = contentView.frame.size
         
-        avatarImageView.frame = CGRect(x: size.width / 2 - 42, y: 20, width: 100, height: 100)
+        avatarImageView.frame = CGRect(x: size.width / 2 - 50, y: 20, width: 100, height: 100)
         displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
         displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 17)
         textInputView.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font) + 50)
@@ -133,7 +133,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         buttonView.align(.UnderCentered, relativeTo: displayNameView, padding: 15, width: 100, height: 27)
         //dividerDescription.align(.UnderCentered, relativeTo: buttonView, padding: 15, width: size.width, height: 2)
         textView.align(.UnderCentered, relativeTo: buttonView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
-        divider.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width, height: 2)
+        divider.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width, height: 1)
         
         //let metricWidth = size.width / 3
         //postCountView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 33, width: metricWidth, height: 14)
