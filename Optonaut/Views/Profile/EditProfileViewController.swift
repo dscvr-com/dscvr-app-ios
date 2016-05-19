@@ -196,7 +196,6 @@ class EditProfileViewController: UIViewController, RedNavbar {
             debugLabelView.hidden = false
             debugSwitchView.hidden = false
         #endif
-        
 //        newsletterIconView.font = .icomoonOfSize(20)
 //        newsletterIconView.text = .icomoonWithName(.Cog)
 //        newsletterIconView.textColor = UIColor(0xe5e5e5)

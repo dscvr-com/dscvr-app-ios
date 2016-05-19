@@ -44,7 +44,7 @@ class LoginOverlayViewController: UIViewController{
         contentView.addSubview(logoImageView)
         
         signIn.text = "Sign In"
-        signIn.font = UIFont (name: "Avenir LT 45 Book_0", size: 18)
+        signIn.font = UIFont (name: "Avenir-Book_0", size: 18)
         signIn.textAlignment = .Center
         contentView.addSubview(signIn)
         

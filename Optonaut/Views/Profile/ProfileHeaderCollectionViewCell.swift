@@ -99,7 +99,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //postHeadingView.text = "0 Posts"
         postHeadingView.text = "IAM360 Images"
         postHeadingView.textAlignment = .Center
-        postHeadingView.font = UIFont(name: "Avenir LT 45 Book_0", size: 18)
+        postHeadingView.font = UIFont(name: "Avenir-Book_0", size: 18)
         postHeadingView.backgroundColor = UIColor(hex:0xf7f7f7)
         contentView.addSubview(postHeadingView)
         

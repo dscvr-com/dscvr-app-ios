@@ -173,16 +173,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         let offsetY:CGFloat  = scrollView.contentOffset.y
         //let contentHeight:CGFloat  = scrollView.contentSize.height;
         print("offset ",offsetY)
-        if (offsetY == 270) {
-            print("pasado ka")
-            self.navigationController?.navigationBar.titleTextAttributes = [
-                NSForegroundColorAttributeName : UIColor.grayColor(),
-                NSFontAttributeName : UIFont(name: "Futura", size: 30)!
-            ]
+        if (offsetY >= 270) {
+            self.navigationController?.navigationItem.title = "IAM360 Images"
             self.navigationController?.navigationBar.tintColor = UIColor(hex:0x575757)
         } else {
-        
-        
+            self.navigationController?.navigationItem.title = "My Profile"
+            self.navigationController?.navigationBar.barTintColor = UIColor.whiteColor()
         }
     }
     

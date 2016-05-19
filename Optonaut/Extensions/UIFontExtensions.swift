@@ -72,6 +72,8 @@ public extension UIFont {
 
         let fileName = "SF-UI-Display-\(type.rawValue)"
         let fontName = "SFUIDisplay-\(type.rawValue)"
+//        let fileName = "Avenir-Book_0"
+//        let fontName = "Avenir-Book_0"
         if (UIFont.fontNamesForFamilyName(fontName).count == 0) {
             dispatch_once(&Static.onceTokens[type]!) {
                 FontLoader.loadFont(fileName)
