@@ -13,7 +13,7 @@ import Icomoon
 import SwiftyUserDefaults
 import Result
 
-class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate{
+class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIGestureRecognizerDelegate{
     
     var scrollView: UIScrollView!
     var tabView = TabView()
@@ -43,6 +43,7 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     
     
     var delegate: TabControllerDelegate?
+    var delegates: TCDelegate?
     
     var imageView: UIImageView!
     var imagePicker = UIImagePickerController()
@@ -432,6 +433,11 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
 //            }
 //        }
  
+    }
+    
+    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer,shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        print("gestureRecognizer wew")
+        return true
     }
     
     
@@ -863,6 +869,18 @@ class RecButton: UIButton {
     }
 }
 
+protocol TCDelegate: class {
+    //var myTabDelegate: TabViewController? { get }
+    func didFinishTask(sender: TabViewController)
+}
+
+extension TabViewController: TCDelegate {
+    func didFinishTask(sender: TabViewController) {
+        print("tangina")
+    }
+}
+
+
 protocol TabControllerDelegate {
     var tabController: TabViewController? { get }
     func jumpToTop()
@@ -872,6 +890,7 @@ protocol TabControllerDelegate {
     func onTapCameraButton()
     func onTapLeftButton()
     func onTapRightButton()
+    func scrollToLeft(xPoint:CGFloat)
 }
 
 extension TabControllerDelegate {
@@ -883,6 +902,7 @@ extension TabControllerDelegate {
     func onTapLeftButton() {}
     func onTapRightButton() {}
     func onTapRightTabBarItem(){}
+    func scrollToLeft(xPoint:CGFloat) {}
 }
 
 protocol DefaultTabControllerDelegate: TabControllerDelegate {}
@@ -904,6 +924,9 @@ extension DefaultTabControllerDelegate {
             PipelineService.stitchingStatus.value = .Idle
         case .Uninitialized: ()
         }
+    }
+    func scrollToLeft(xPoint:CGFloat) {
+        print(xPoint)
     }
     
     func onTapLeftButton() {
@@ -945,6 +968,7 @@ extension UIViewController {
     
     func cleanup() {}
 }
+
 
 extension UINavigationController {
     

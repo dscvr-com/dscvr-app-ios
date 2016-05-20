@@ -14,8 +14,6 @@ class LoginOverlayViewController: UIViewController{
     
     private let logoImageView = UIImageView()
     private let facebookButtonView = UIButton()
-    private let signIn = UILabel()
-    private let dividerView = UILabel()
     
     private let contentView = UIView()
     
@@ -43,13 +41,6 @@ class LoginOverlayViewController: UIViewController{
         logoImageView.image = UIImage(named: "logo_big")
         contentView.addSubview(logoImageView)
         
-        signIn.text = "Sign In"
-        signIn.font = .displayOfSize(18, withType: .Semibold)
-        signIn.textAlignment = .Center
-        contentView.addSubview(signIn)
-        
-        dividerView.backgroundColor = UIColor.grayColor()
-        contentView.addSubview(dividerView)
         
         //facebookButtonView.rac_loading <~ viewModel.facebookPending
         facebookButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LoginOverlayViewController.facebook)))
@@ -57,10 +48,7 @@ class LoginOverlayViewController: UIViewController{
         contentView.addSubview(facebookButtonView)
         
         logoImageView.anchorToEdge(.Top, padding: 200, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
-        signIn.align(.UnderCentered, relativeTo: logoImageView, padding: 20, width: 100, height: 25)
-        dividerView.align(.UnderCentered, relativeTo: signIn, padding: 22, width: contentView.frame.width - 48, height: 2)
-        facebookButtonView.align(.UnderCentered, relativeTo: dividerView, padding: 8, width: contentView.frame.width - 85, height: 50)
-        
+        facebookButtonView.align(.UnderCentered, relativeTo: logoImageView, padding: 30, width: contentView.frame.width - 85, height: 50)
     }
     
     dynamic private func facebook() {

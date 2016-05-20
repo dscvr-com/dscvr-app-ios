@@ -329,7 +329,7 @@ private class OverlayViewModel {
     }
 }
 
-class OptographCollectionViewCell: UICollectionViewCell {
+class OptographCollectionViewCell: UICollectionViewCell{
     
     weak var uiHidden: MutableProperty<Bool>!
     
@@ -372,6 +372,8 @@ class OptographCollectionViewCell: UICollectionViewCell {
     var phi: Float = 0
     var theta: Float = Float(-M_PI_2)
     
+    weak var delegate:TCDelegate?
+    
     var optoId:UUID = ""
     
     var deleteCallback: (() -> ())?
@@ -384,7 +386,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
             return combinedMotionManager.getDirection()
         }
     }
-    var hiddenGestureRecognizer:UISwipeGestureRecognizer!
+    var hiddenGestureRecognizer:UIPanGestureRecognizer!
     
     
     dynamic private func pushProfile() {
@@ -482,10 +484,10 @@ class OptographCollectionViewCell: UICollectionViewCell {
         shareImageAsset.image = UIImage(named: "share_hidden_icn")
         contentView.addSubview(shareImageAsset)
         
-        hiddenGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
-        hiddenGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
-        hiddenGestureRecognizer.cancelsTouchesInView = false;
-        scnView.addGestureRecognizer(hiddenGestureRecognizer)
+        hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
+        //hiddenGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        //hiddenGestureRecognizer.cancelsTouchesInView = false;
+        bouncingButton.addGestureRecognizer(hiddenGestureRecognizer)
         
         bouncingButton.addTarget(self, action: #selector(self.bouncingCell), forControlEvents:.TouchUpInside)
         bouncingButton.setImage(UIImage(named: "bouncing_button")!, forState: .Normal)
@@ -494,6 +496,12 @@ class OptographCollectionViewCell: UICollectionViewCell {
         contentView.bringSubviewToFront(scnView)
         contentView.bringSubviewToFront(whiteBackground)
         contentView.bringSubviewToFront(blackSpace)
+        
+//        hiddenGestureRecognizer.cancelsTouchesInView = false
+//        hiddenGestureRecognizer.delaysTouchesBegan = false
+//        hiddenGestureRecognizer.delaysTouchesEnded = false
+//        hiddenGestureRecognizer.delegate = self
+        
     }
     
     
@@ -554,46 +562,33 @@ class OptographCollectionViewCell: UICollectionViewCell {
         })
     }
     
-    func handlePan(recognizer:UISwipeGestureRecognizer) {
+    func handlePan(recognizer:UIPanGestureRecognizer) {
         
         let translationX = recognizer.locationInView(contentView).x
         
-        print(translationX)
-        var xCoordBegin:CGFloat = 0.0
+        let xCoordBegin:CGFloat = 0.0
         
         switch recognizer.state {
         case .Began:
-            xCoordBegin = translationX
+            //xCoordBegin = translationX
+            print("wew")
         case .Changed:
             if (translationX > xCoordBegin) {
                 if (scnView.frame.origin.x <= 67) {
                     scnView.frame.origin.x = translationX
                     whiteBackground.frame.origin.x = translationX
                 } else {
-                    parentViewController!.tabController!.swipeLeftView(translationX)
+                    //delegate?.scrollToLeft(translationX)
                 }
             } else {
             }
             
-            
-//            if !isSettingsViewOpen {
-//                thisView.frame = CGRectMake(0, translationY - self.view.frame.height , self.view.frame.width, self.view.frame.height)
-//            } else {
-//                thisView.frame = CGRectMake(0,self.view.frame.height - (self.view.frame.height - translationY) , self.view.frame.width, self.view.frame.height)
-//            }
         case .Cancelled:
             print("cancelled")
         case .Ended:
             scnView.frame.origin.x = 0
             whiteBackground.frame.origin.x = 0
             
-//            if !isSettingsViewOpen{
-//                thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
-//                isSettingsViewOpen = true
-//            } else {
-//                thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
-//                isSettingsViewOpen = false
-//            }
             
         default: break
         }
