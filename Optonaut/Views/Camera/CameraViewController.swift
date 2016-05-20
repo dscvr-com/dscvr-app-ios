@@ -812,7 +812,8 @@ extension CameraViewController: TabControllerDelegate {
         //bluetooth com
         if let bleService = btDiscoverySharedInstance.bleService {
             //000102030405060708
-            bleService.sendCommand("fe040101100258Z00ffffffffffffffffffffffff")
+          //bleService.sendCommand("fe04010110020000ffffffffffffffffffffffff")
+            bleService.sendCommand("fe04010110020000ffffffffffffffffffffffff")
         }
 
         runThisAfterDelay(seconds: 1) { () -> () in

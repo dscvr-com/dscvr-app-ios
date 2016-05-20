@@ -12,7 +12,7 @@ class Distortion {
     let coefficients : [Float]
     
     init() {
-        coefficients = [0.441, 0.156]
+        coefficients = [0.441, 0.156] //0.156
     }
     
     init(coefficients : [Float]) {

@@ -324,6 +324,7 @@ private class GlassesSelectionView: UIView {
     private let cancelButtonView = UIButton()
     private let titleTextView = UILabel()
     private let glassesIconView = UILabel()
+    
     private let glassesTextView = UILabel()
     private let qrcodeIconView = UILabel()
     private let qrcodeTextView = UILabel()
