@@ -128,7 +128,6 @@ class SessionService {
         for (_, fn) in logoutCallbacks {
             fn()
         }
-        
         // logout twitter
         if let session = Twitter.sharedInstance().sessionStore.session() {
             Twitter.sharedInstance().sessionStore.logOutUserID(session.userID)
@@ -145,6 +144,9 @@ class SessionService {
     static func onLogout(performAlways performAlways: Bool = false, fn: () -> ()) {
         logoutCallbacks.append((performAlways, fn))
     }
+    static func logoutReset() {
+        reset()
+    }
     
     private static func reset() {
         Defaults[.SessionToken] = nil
@@ -159,7 +161,6 @@ class SessionService {
         Defaults[.SessionShareToggledInstagram] = false
         
         Mixpanel.sharedInstance().reset()
-        
         UIApplication.sharedApplication().applicationIconBadgeNumber = 0
     }
     

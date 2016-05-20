@@ -444,9 +444,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             if profileViewModel.isMe {
                 settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
+                    SessionService.logoutReset()
                     SessionService.logout()
-                    self.navigationController?.popViewControllerAnimated(true)
-                    //self.navigationController?.pushViewController(LoginOverlayViewController(), animated: true)
                 }))
             } else {
                 settingsSheet.addAction(UIAlertAction(title: "Report user", style: .Destructive, handler: { _ in

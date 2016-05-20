@@ -10,6 +10,7 @@ import UIKit
 import ReactiveCocoa
 import SceneKit
 import SpriteKit
+import Foundation
 import Async
 
 class TouchRotationSource: RotationMatrixSource {
@@ -140,7 +141,6 @@ class CombinedMotionManager: RotationMatrixSource {
     }
     
     func touchMove(point: CGPoint) {
-        print("touched")
         touchRotationSource.touchMove(point)
     }
     
@@ -364,6 +364,13 @@ class OptographCollectionViewCell: UICollectionViewCell {
     private let blackSpace = UIView()
     let shareImageAsset = UIImageView()
     private let bouncingButton = UIButton()
+    var pointX:CGFloat = 214.0
+    var pointY:CGFloat = 260.0
+    var phiDamp: Float = 0
+    var dampFactor: Float = 0.9
+    var thetaDamp: Float = 0
+    var phi: Float = 0
+    var theta: Float = Float(-M_PI_2)
     
     var optoId:UUID = ""
     
@@ -378,6 +385,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         }
     }
     var hiddenGestureRecognizer:UISwipeGestureRecognizer!
+    
     
     dynamic private func pushProfile() {
         
@@ -400,7 +408,18 @@ class OptographCollectionViewCell: UICollectionViewCell {
         let hfov: Float = 35
     
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
-    
+        
+        //combinedMotionManager.touchStart(CGPoint(x: pointX,y: pointY))
+        
+//        _ = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(OptographCollectionViewCell.panStart), userInfo: nil, repeats: true)
+        
+//        phiDamp *= dampFactor
+//        thetaDamp *= dampFactor
+//        phi += phiDamp
+//        theta += thetaDamp
+        
+        combinedMotionManager.getRotationMatrix()
+        
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
         renderDelegate.scnView = scnView
         
@@ -434,7 +453,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         whiteBackground.addSubview(avatarImageView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
-        optionsButtonView.setImage(UIImage(named:"feeds_option_icn"), forState: .Normal)
+        optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapOptions)))
         whiteBackground.addSubview(optionsButtonView)
@@ -478,6 +497,12 @@ class OptographCollectionViewCell: UICollectionViewCell {
     }
     
     
+    func panStart() {
+        pointX += 10
+        combinedMotionManager.touchMove(CGPointMake(pointX, pointY))
+    
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -486,8 +511,10 @@ class OptographCollectionViewCell: UICollectionViewCell {
         avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:40, height: 13)
-        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:24, height: 24)
+        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:10, height: 13)
+        let followSizeWidth = UIImage(named:"follow_active")!.size.width
+        let followSizeHeight = UIImage(named:"follow_active")!.size.height
+        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding:10, width:followSizeWidth, height: followSizeHeight)
         shareImageAsset.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
         bouncingButton.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
     }
@@ -573,7 +600,6 @@ class OptographCollectionViewCell: UICollectionViewCell {
     }
     
     func toggleStar() {
-        viewModel.toggleLike()
 //        if SessionService.isLoggedIn {
 //            viewModel.toggleLike()
 //        } else {
@@ -593,6 +619,14 @@ class OptographCollectionViewCell: UICollectionViewCell {
 //            )
 //            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
 //        }
+        
+        if SessionService.isLoggedIn {
+            viewModel.toggleLike()
+        } else {
+            let alert = UIAlertController(title:"", message: "Please login to like this moment.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+        }
     }
     
     func bindModel(optographId:UUID) {
@@ -623,12 +657,7 @@ class OptographCollectionViewCell: UICollectionViewCell {
         
         viewModel.liked.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
-                
-                strongSelf.likeButtonView.setTitleColor(liked ? UIColor(0xffbc00) : .whiteColor(), forState: .Normal)
-                strongSelf.likeButtonView.titleLabel?.font = UIFont.iconOfSize(24)
-                //                    strongSelf.uploadButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
-                //                    strongSelf.uploadTextView.align(.ToTheLeftCentered, relativeTo: strongSelf.uploadButtonView, padding: 8, width: 60, height: 13)
-                //                    strongSelf.uploadingView.anchorInCorner(.BottomRight, xPad: 16, yPad: 130, width: 24, height: 24)
+                strongSelf.likeButtonView.setImage(liked ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), forState: .Normal)
             }
         }
     }

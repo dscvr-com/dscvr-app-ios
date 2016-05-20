@@ -34,7 +34,7 @@ class LoginOverlayViewController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController?.navigationBar.translucent = true
+        navigationController?.navigationBarHidden = true
         
         contentView.frame = UIScreen.mainScreen().bounds
         contentView.backgroundColor = UIColor(hex:0xf7f7f7)

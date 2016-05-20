@@ -187,15 +187,6 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         
         tabView.rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapNavBarTitle(_:))))
         
-        for family: String in UIFont.familyNames()
-        {
-            print("\(family)")
-            for names: String in UIFont.fontNamesForFamilyName(family)
-            {
-                print("== \(names)")
-            }
-        }
-        
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -203,7 +194,6 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     }
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        print("pumasok dito")
     }
     
     
@@ -218,16 +208,6 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
-        isThetaImage.producer
-        .filter(isTrue)
-            .startWithNext{ _ in
-                let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler:{ _ in
-                    self.isThetaImage.value = false
-                }))
-                self.presentViewController(alert, animated: true, completion: nil)
-        }
     }
     
     func rightButtonAction() {
@@ -284,36 +264,40 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         thisView.addSubview(titleSettings)
         titleSettings.anchorToEdge(.Top, padding: 30, width: calcTextWidth(titleSettings.text!, withFont: .fontDisplay(25, withType: .Light)), height: 30)
         
+        let image: UIImage = UIImage(named: "logo_settings")!
+        var bgImage: UIImageView?
+        bgImage = UIImageView(image: image)
+        thisView.addSubview(bgImage!)
+        bgImage!.align(.UnderCentered, relativeTo: titleSettings,padding: 25, width: image.size.width, height: image.size.height)
+        
+        let textHeight = calcTextHeight("VR IMAGE VIEW STYLE", withWidth: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Light)), andFont: .fontDisplay(12, withType: .Semibold))
+        
         let vrImageLabel = UILabel()
-        vrImageLabel.frame = CGRect(x: 70,y: titleSettings.frame.origin.y + 50,width: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(15, withType: .Semibold)),height: 25)
+        vrImageLabel.frame = CGRect(x: 70,y: bgImage!.frame.origin.y + (bgImage?.frame.height)! + 16 ,width: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Semibold)),height: textHeight)
         vrImageLabel.text = "VR IMAGE VIEW STYLE"
         vrImageLabel.textAlignment = .Center
         vrImageLabel.textColor = UIColor.blackColor()
-        vrImageLabel.font = .fontDisplay(15, withType: .Semibold)
+        vrImageLabel.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(vrImageLabel)
         
-        gyroButton.icon.size.width
         let dividerFour = UILabel()
         dividerFour.backgroundColor = UIColor(hex:0xa5a5a5)
         thisView.addSubview(dividerFour)
-        dividerFour.frame = CGRect(x: 70 + gyroButton.icon.size.width + 12 ,y: vrImageLabel.frame.origin.y + vrImageLabel.frame.height+2,width: 1,height: 20)
-        //dividerFour.align(.UnderCentered, relativeTo: vrImageLabel, padding: 2, width:1, height: 20)
+        dividerFour.frame = CGRect(x: 70 + gyroButton.icon.size.width + 12 ,y: vrImageLabel.frame.origin.y + vrImageLabel.frame.height+2,width: 1,height: 12)
         
         let vrText = UILabel()
-        vrText.frame = CGRect(x: 38,y: titleSettings.frame.origin.y + 30+50,width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(15, withType: .Semibold)),height: 25)
+//        vrText.frame = CGRect(x: 38,y: titleSettings.frame.origin.y + 30+50,width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(18, withType: .Semibold)),height: 30)
         vrText.text = "VIEW IAM360 IN"
         vrText.textAlignment = .Center
         vrText.textColor = UIColor.grayColor()
-        vrText.font = .fontDisplay(20, withType: .Semibold)
+        vrText.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(vrText)
-        vrText.align(.UnderMatchingLeft, relativeTo: vrImageLabel, padding: 24, width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(20, withType: .Semibold)), height: 30)
-        
-        let textHeight = vrText.frame.height
+        vrText.align(.UnderMatchingLeft, relativeTo: vrImageLabel, padding: 16, width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         let dividerFive = UILabel()
         dividerFive.backgroundColor = UIColor(hex:0xa5a5a5)
         thisView.addSubview(dividerFive)
-        dividerFive.align(.UnderCentered, relativeTo: dividerFour, padding: textHeight+4, width:1, height: 20)
+        dividerFive.align(.UnderCentered, relativeTo: dividerFour, padding: 29, width:1, height: 12)
         
         thisView.addSubview(vrButton)
         vrButton.addTarget(self, action: #selector(TabViewController.inVrMode), forControlEvents:.TouchUpInside)
@@ -322,12 +306,12 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         let labelCamera = UILabel()
         labelCamera.textAlignment = NSTextAlignment.Center
         labelCamera.text = "FEED DEFAULT DISPLAY"
-        labelCamera.font = .fontDisplay(15, withType: .Semibold)
+        labelCamera.font = .fontDisplay(12, withType: .Semibold)
         labelCamera.textColor = UIColor.blackColor()
         thisView.addSubview(labelCamera)
-        labelCamera.align(.UnderMatchingLeft, relativeTo: vrText, padding: 24, width: calcTextWidth("FEED DEFAULT DISPLAY", withFont: .fontDisplay(15, withType: .Semibold)), height: 25)
+        labelCamera.align(.UnderMatchingLeft, relativeTo: vrText, padding: 14, width: calcTextWidth("FEED DEFAULT DISPLAY", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
         
-        let dividerOneHeight:CGFloat = 110 //(UIImage(named: "gyro_active_icn")!.size.height * 2) + 12
+        let dividerOneHeight:CGFloat = 100
         
         let dividerOne = UILabel()
         dividerOne.backgroundColor = UIColor(hex:0xa5a5a5)
@@ -342,9 +326,9 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         labelGyro.textAlignment = NSTextAlignment.Center
         labelGyro.textColor = UIColor.blackColor()
         labelGyro.text = "GYRO"
-        labelGyro.font = .fontDisplay(20, withType: .Semibold)
+        labelGyro.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(labelGyro)
-        labelGyro.align(.ToTheRightCentered, relativeTo: gyroButton, padding: 24, width: calcTextWidth("GYRO", withFont: .fontDisplay(20, withType: .Semibold)), height: 25)
+        labelGyro.align(.ToTheRightCentered, relativeTo: gyroButton, padding: 24, width: calcTextWidth("GYRO", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         littlePlanet.addTarget(self, action: #selector(TabViewController.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
         thisView.addSubview(littlePlanet)
@@ -353,17 +337,17 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         planet.textAlignment = NSTextAlignment.Center
         planet.textColor = UIColor.blackColor()
         planet.text = "LITTLE PLANET"
-        planet.font = .fontDisplay(20, withType: .Semibold)
+        planet.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(planet)
-        planet.align(.ToTheRightCentered, relativeTo: littlePlanet, padding: 24, width: calcTextWidth("LITTLE PLANET", withFont: .fontDisplay(20, withType: .Semibold)), height: 25)
+        planet.align(.ToTheRightCentered, relativeTo: littlePlanet, padding: 24, width: calcTextWidth("LITTLE PLANET", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         let labelMode = UILabel()
         labelMode.textAlignment = NSTextAlignment.Center
         labelMode.textColor = UIColor.blackColor()
         labelMode.text = "CAPTURE MODE"
-        labelMode.font = .fontDisplay(15, withType: .Semibold)
+        labelMode.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(labelMode)
-        labelMode.align(.UnderMatchingLeft, relativeTo: littlePlanet, padding: 13, width: calcTextWidth("CAPTURE MODE", withFont: .fontDisplay(15, withType: .Semibold)), height: 25)
+        labelMode.align(.UnderMatchingLeft, relativeTo: littlePlanet, padding: 4, width: calcTextWidth("CAPTURE MODE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
         
         let dividerTwo = UILabel()
         dividerTwo.backgroundColor = UIColor(hex:0xa5a5a5)
@@ -376,9 +360,9 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         
         labelRing1.textAlignment = NSTextAlignment.Center
         labelRing1.text = "ONE RING"
-        labelRing1.font = .fontDisplay(20, withType: .Semibold)
+        labelRing1.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(labelRing1)
-        labelRing1.align(.ToTheRightCentered, relativeTo: oneRingButton, padding: 24, width: calcTextWidth("ONE RING", withFont: .fontDisplay(20, withType: .Semibold)), height: 25)
+        labelRing1.align(.ToTheRightCentered, relativeTo: oneRingButton, padding: 24, width: calcTextWidth("ONE RING", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         threeRingButton.align(.UnderCentered, relativeTo: oneRingButton, padding: 7, width: threeRingButton.icon.size.width, height: threeRingButton.icon.size.height)
         threeRingButton.addTarget(self, action: #selector(TabViewController.threeRingButtonTouched), forControlEvents:.TouchUpInside)
@@ -386,17 +370,17 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         
         labelRing3.textAlignment = NSTextAlignment.Center
         labelRing3.text = "THREE RING"
-        labelRing3.font = .fontDisplay(20, withType: .Semibold)
-        labelRing3.align(.ToTheRightCentered, relativeTo: threeRingButton, padding: 24, width: calcTextWidth("THREE RING", withFont: .fontDisplay(20, withType: .Semibold)), height: 25)
+        labelRing3.font = .fontDisplay(18, withType: .Semibold)
+        labelRing3.align(.ToTheRightCentered, relativeTo: threeRingButton, padding: 24, width: calcTextWidth("THREE RING", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         thisView.addSubview(labelRing3)
         
         let labelCapture = UILabel()
         labelCapture.textAlignment = NSTextAlignment.Center
-        labelCapture.text = "CAPTURE STYLE"
+        labelCapture.text = "CAPTURE TYPE"
         labelCapture.textColor = UIColor.blackColor()
-        labelCapture.font = .fontDisplay(15, withType: .Semibold)
+        labelCapture.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(labelCapture)
-        labelCapture.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 12, width: calcTextWidth("CAPTURE STYLE", withFont: .fontDisplay(15, withType: .Semibold)), height: 25)
+        labelCapture.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 4, width: calcTextWidth("CAPTURE TYPE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
         
         let dividerThree = UILabel()
         dividerThree.backgroundColor = UIColor(hex:0xa5a5a5)
@@ -410,9 +394,9 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         labelManual.textAlignment = NSTextAlignment.Center
         labelManual.text = "MANUAL"
         labelManual.textColor = UIColor(hex:0xffbc00)
-        labelManual.font = .fontDisplay(20, withType: .Semibold)
+        labelManual.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(labelManual)
-        labelManual.align(.ToTheRightCentered, relativeTo: manualButton, padding: 24, width: calcTextWidth("MANUAL", withFont: .fontDisplay(20, withType: .Semibold)), height: 25)
+        labelManual.align(.ToTheRightCentered, relativeTo: manualButton, padding: 24, width: calcTextWidth("MANUAL", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         motorButton.addTarget(self, action: #selector(TabViewController.motorButtonTouched), forControlEvents:.TouchUpInside)
         motorButton.align(.UnderCentered, relativeTo: manualButton, padding: 7, width: motorButton.icon.size.width, height: motorButton.icon.size.height)
@@ -421,8 +405,8 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         labelMotor.textAlignment = NSTextAlignment.Center
         labelMotor.text = "MOTOR"
         labelMotor.textColor = UIColor(hex:0xffbc00)
-        labelMotor.font = .fontDisplay(20, withType: .Semibold)
-        labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 24, width: calcTextWidth("MOTOR", withFont: .fontDisplay(20, withType: .Semibold)), height: 25)
+        labelMotor.font = .fontDisplay(18, withType: .Semibold)
+        labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 24, width: calcTextWidth("MOTOR", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         thisView.addSubview(labelMotor)
         
         self.activeRingButtons(Defaults[.SessionUseMultiRing])
@@ -941,11 +925,6 @@ extension DefaultTabControllerDelegate {
 //        } else {
 //            tabController?.updateActiveTab(.Right)
 //        }
-//        let settingsNavViewController:NavigationController!
-//        settingsNavViewController = SettingsNavViewController()
-//        settingsNavViewController.pushViewController(SettingsViewController(), animated: true)
-        let settingsVC = SettingsViewController()
-        tabController!.presentViewController(settingsVC, animated: true, completion: nil)
     }
 }
 

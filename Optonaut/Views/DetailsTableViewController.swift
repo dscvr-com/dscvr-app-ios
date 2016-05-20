@@ -175,7 +175,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(avatarImageView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
-        optionsButtonView.setImage(UIImage(named:"feeds_option_icn"), forState: .Normal)
+        optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         //optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapOptions)))
         whiteBackground.addSubview(optionsButtonView)
@@ -187,7 +187,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(personNameView)
         
         //likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
-        likeButtonView.setImage(UIImage(named:"user_unlike_icn"), forState: .Normal)
+        //likeButtonView.setImage(UIImage(named:"user_unlike_icn"), forState: .Normal)
         whiteBackground.addSubview(likeButtonView)
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
@@ -203,11 +203,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:40, height: 13)
-        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:24, height: 24)
+        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:10, height: 13)
+        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:UIImage(named:"follow_active")!.size.width, height: UIImage(named:"follow_active")!.size.height)
         
         personNameView.rac_text <~ viewModel.creator_username
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
+        viewModel.isStarred.producer.startWithNext { [weak self] liked in
+            if let strongSelf = self {
+                strongSelf.likeButtonView.setImage(liked ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), forState: .Normal)
+            }
+        }
         
         let optograph = Models.optographs[optographID]!.model
         
@@ -359,7 +364,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesMoved(touches, withEvent: event)
         let point = touches.first!.locationInView(scnView)
-        
+        print("point \(point)")
         combinedMotionManager.touchMove(point)
     }
     
