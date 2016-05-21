@@ -63,6 +63,10 @@
       "scale" : "2x"
     },
     {
+      "filename" : "0-splash_screen@3x-1.png",
+      "unassigned" : true
+    },
+    {
       "filename" : "0-splash_screen@3x.png",
       "unassigned" : true
     }

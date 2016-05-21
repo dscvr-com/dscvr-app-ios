@@ -13,10 +13,20 @@ import Icomoon
 import SwiftyUserDefaults
 import Result
 
-class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIGestureRecognizerDelegate{
+
+enum ScrollDirection {
+    case ScrollDirectionNone
+    case ScrollDirectionRight
+    case ScrollDirectionLeft
+    case ScrollDirectionUp
+    case ScrollDirectionDown
+    case ScrollDirectionCrazy
+}
+
+
+class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollViewDelegate{
     
     var scrollView: UIScrollView!
-    var tabView = TabView()
     let centerViewController: NavigationController
     let rightViewController: NavigationController
     let leftViewController: NavigationController
@@ -36,17 +46,7 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     private var gyroButton = SettingsButton()
     private var littlePlanet = SettingsButton()
     
-    private let bottomGradient = CAGradientLayer()
-    
-    let bottomGradientOffset = MutableProperty<CGFloat>(126)
-    let isThetaImage = MutableProperty<Bool>(false)
-    
-    
     var delegate: TabControllerDelegate?
-    var delegates: TCDelegate?
-    
-    var imageView: UIImageView!
-    var imagePicker = UIImagePickerController()
     
     var BFrame:CGRect   = CGRect (
         origin: CGPoint(x: 0, y: 0),
@@ -64,6 +64,8 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     let labelGyro = UILabel()
     let planet = UILabel()
     
+    var lastContentOffset:CGFloat = 0
+    
     required init() {
         
         centerViewController = FeedNavViewController()
@@ -80,50 +82,6 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let width = view.frame.width
-        
-        bottomGradient.colors = [UIColor.clearColor().CGColor, UIColor.blackColor().alpha(0.5).CGColor]
-        tabView.layer.addSublayer(bottomGradient)
-        
-        bottomGradientOffset.producer.startWithNext { [weak self] offset in
-            CATransaction.begin()
-            CATransaction.setDisableActions(true)
-//            CATransaction.setAnimationDuration(0.3)
-//            CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut))
-            self?.bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: offset)
-            CATransaction.commit()
-        }
-        
-        PipelineService.stitchingStatus.producer
-            .observeOnMain()
-            .startWithNext { [weak self] status in
-                switch status {
-                case .Uninitialized:
-                    self?.tabView.cameraButton.loading = true
-                    print("uninitialized")
-                case .Idle:
-                    self?.tabView.cameraButton.progress = nil
-                    if self?.tabView.cameraButton.progressLocked == false {
-                        self?.tabView.cameraButton.icon = UIImage(named:"camera_icn")!
-                        self?.tabView.rightButton.loading = false
-                    }
-                    print("Idle")
-                case let .Stitching(progress):
-                    self?.tabView.cameraButton.progress = CGFloat(progress)
-                    print("Stitching")
-                case .StitchingFinished(_):
-                    self?.tabView.cameraButton.progress = nil
-                    print("StitchingFinished")
-                }
-        }
-        
-        initNotificationIndicator()
-        
-        PipelineService.checkStitching()
-        PipelineService.checkUploading()
-        
-        imagePicker.delegate = self
         
         scrollView = UIScrollView(frame: view.bounds)
         scrollView.backgroundColor = UIColor.blackColor()
@@ -153,29 +111,7 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         rightViewController.view.frame = BFrame
         view.addSubview(scrollView)
         
-        tabView.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
-        centerViewController.view.addSubview(tabView)
-        
         scrollView.scrollRectToVisible(adminFrame,animated: false)
-        
-        isThetaImage.producer
-            .filter(isTrue)
-            .startWithNext{ _ in
-                let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler:{ _ in
-                    self.isThetaImage.value = false
-                }))
-                self.presentViewController(alert, animated: true, completion: nil)
-        }
-        
-        tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapCameraButton)))
-        tabView.cameraButton.addTarget(self, action: #selector(TabViewController.touchStartCameraButton), forControlEvents: [.TouchDown])
-        tabView.cameraButton.addTarget(self, action: #selector(TabViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
-        
-        tabView.leftButton.addTarget(self, action: #selector(TabViewController.tapLeftButton), forControlEvents: [.TouchDown])
-        //tabView.rightButton.addTarget(self, action: #selector(TabViewController.tapRightButton), forControlEvents: [.TouchDown])
-        
-        imagePicker.delegate = self
         
         self.settingsView()
         
@@ -185,9 +121,8 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         navBarTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapNavBarTitle(_:)))
         self.centerViewController.navigationBar.addGestureRecognizer(navBarTapGestureRecognizer)
         
-        
-        tabView.rightButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapNavBarTitle(_:))))
-        
+        scrollView.delegate = self
+        scrollView.showsHorizontalScrollIndicator = false
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -196,7 +131,6 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
     }
-    
     
     func disableNavBarGesture(){
         panGestureRecognizer.enabled = false
@@ -434,12 +368,29 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
 //        }
  
     }
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        
+        var scrollDirection:ScrollDirection
+        
+        if (self.lastContentOffset > scrollView.contentOffset.x){
+            scrollDirection = .ScrollDirectionRight
+            if scrollView.directionalLockEnabled {
+                scrollView.directionalLockEnabled = false
+            }
+        } else if (lastContentOffset < scrollView.contentOffset.x){
+            scrollDirection = .ScrollDirectionLeft
+            if !scrollView.directionalLockEnabled {
+                scrollView.directionalLockEnabled = true
+            }
+        }
+        
+        lastContentOffset = scrollView.contentOffset.x;
+    }
     
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer,shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         print("gestureRecognizer wew")
         return true
     }
-    
     
     func pullButtonTap() {
         UIView.animateWithDuration(1.0, delay: 1.2, options: .CurveEaseOut, animations: {
@@ -583,6 +534,23 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         default: break
         }
     }
+    func tapNavBarTitleForFeedClass() {
+        
+        if !isSettingsViewOpen{
+            UIView.animateWithDuration(0.3, animations: {
+                self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
+                }, completion:{ finished in
+                    self.isSettingsViewOpen = true
+                    
+            })
+        } else {
+            UIView.animateWithDuration(0.3, animations: {
+                self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
+                }, completion:{ finished in
+                    self.isSettingsViewOpen = false
+            })
+        }
+    }
     
     func tapNavBarTitle(recognizer:UITapGestureRecognizer) {
         
@@ -602,53 +570,7 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         }
     }
     
-    func openGallary() {
-        
-        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-        imagePicker.navigationBar.translucent = false
-        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
-        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
-        imagePicker.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
-        ]
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
-        imagePicker.setNavigationBarHidden(false, animated: false)
-        imagePicker.interactivePopGestureRecognizer?.enabled = false
-        
-        self.presentViewController(imagePicker, animated: true, completion: nil)
-    }
     
-    func uploadTheta(thetaImage:UIImage) {
-        
-        let createOptographViewController = SaveThetaViewController(thetaImage:thetaImage)
-        
-        createOptographViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(createOptographViewController, animated: false)
-    }
-    
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            if pickedImage.size.height == 2688 && pickedImage.size.width == 5376 {
-                uploadTheta(pickedImage)
-            } else {
-                isThetaImage.value = true
-            }
-        }
-        
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func showUI() {
-        tabView.hidden = false
-    }
-    
-    func hideUI() {
-        tabView.hidden = true
-    }
     dynamic private func tapLeftButton() {
         delegate?.onTapLeftButton()
     }
@@ -668,25 +590,6 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     dynamic private func touchEndCameraButton() {
         delegate?.onTouchEndCameraButton()
     }
-    private func initNotificationIndicator() {
-        let circle = UILabel()
-        circle.frame = CGRect(x: tabView.rightButton.frame.origin.x + 25, y: tabView.rightButton.frame.origin.y - 3, width: 16, height: 16)
-        circle.backgroundColor = .Accent
-        circle.font = UIFont.displayOfSize(10, withType: .Regular)
-        circle.textAlignment = .Center
-        circle.textColor = .whiteColor()
-        circle.layer.cornerRadius = 8
-        circle.clipsToBounds = true
-        circle.hidden = true
-        tabView.addSubview(circle)
-        
-        ActivitiesService.unreadCount.producer.startWithNext { count in
-            let hidden = count <= 0
-            circle.hidden = hidden
-            circle.text = "\(count)"
-        }
-    }
-
 }
 
 class TButton: UIButton {
@@ -869,17 +772,6 @@ class RecButton: UIButton {
     }
 }
 
-protocol TCDelegate: class {
-    //var myTabDelegate: TabViewController? { get }
-    func didFinishTask(sender: TabViewController)
-}
-
-extension TabViewController: TCDelegate {
-    func didFinishTask(sender: TabViewController) {
-        print("tangina")
-    }
-}
-
 
 protocol TabControllerDelegate {
     var tabController: TabViewController? { get }
@@ -890,7 +782,6 @@ protocol TabControllerDelegate {
     func onTapCameraButton()
     func onTapLeftButton()
     func onTapRightButton()
-    func scrollToLeft(xPoint:CGFloat)
 }
 
 extension TabControllerDelegate {
@@ -901,8 +792,6 @@ extension TabControllerDelegate {
     func onTapCameraButton() {}
     func onTapLeftButton() {}
     func onTapRightButton() {}
-    func onTapRightTabBarItem(){}
-    func scrollToLeft(xPoint:CGFloat) {}
 }
 
 protocol DefaultTabControllerDelegate: TabControllerDelegate {}
@@ -925,9 +814,6 @@ extension DefaultTabControllerDelegate {
         case .Uninitialized: ()
         }
     }
-    func scrollToLeft(xPoint:CGFloat) {
-        print(xPoint)
-    }
     
     func onTapLeftButton() {
 //        if tabController?.activeViewController == tabController?.leftViewController {
@@ -937,7 +823,6 @@ extension DefaultTabControllerDelegate {
 //        } else {
 //            tabController?.updateActiveTab(.Left)
 //        }
-        tabController!.openGallary()
     }
     
     func onTapRightButton() {
@@ -956,16 +841,6 @@ extension UIViewController {
         return navigationController?.parentViewController as? TabViewController
     }
     
-    func updateTabs() {
-        tabController!.tabView.leftButton.icon = UIImage(named:"photo_library_icn")!
-        
-        tabController!.tabView.rightButton.icon = UIImage(named:"settings_icn")!
-        
-        tabController!.tabView.cameraButton.icon = UIImage(named:"camera_icn")!
-        
-        tabController!.bottomGradientOffset.value = 126
-    }
-    
     func cleanup() {}
 }
 
@@ -976,6 +851,7 @@ extension UINavigationController {
         for vc in viewControllers ?? [] {
             vc.cleanup()
         }
+        print(viewControllers)
     }
 }
 

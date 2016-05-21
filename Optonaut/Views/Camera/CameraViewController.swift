@@ -74,6 +74,8 @@ class CameraViewController: UIViewController {
     
     private let cancelButton = UIButton()
     
+    private let tabView = TabView()
+    
     required init() {
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
@@ -334,8 +336,8 @@ class CameraViewController: UIViewController {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        tabController!.tabView.leftButton.hidden = false
-        tabController!.tabView.rightButton.hidden = false
+        tabView.leftButton.hidden = false
+        tabView.rightButton.hidden = false
         tabController!.delegate = nil
         
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
@@ -366,9 +368,9 @@ class CameraViewController: UIViewController {
         super.updateViewConstraints()
     }
     
-    override func updateTabs() {
-        tabController!.tabView.leftButton.hidden = true
-        tabController!.tabView.rightButton.hidden = true
+    func updateTabs() {
+        tabView.leftButton.hidden = true
+        tabView.rightButton.hidden = true
     }
     
     private func setupScene() {

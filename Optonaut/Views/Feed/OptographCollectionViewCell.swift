@@ -372,8 +372,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
     var phi: Float = 0
     var theta: Float = Float(-M_PI_2)
     
-    weak var delegate:TCDelegate?
-    
     var optoId:UUID = ""
     
     var deleteCallback: (() -> ())?
@@ -447,7 +445,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
         blackSpace.backgroundColor = UIColor.blackColor()
         contentView.addSubview(blackSpace)
         
+        avatarImageView.image = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 23.5
+        avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        avatarImageView.layer.borderWidth = 2.0
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
@@ -519,7 +520,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:10, height: 13)
+        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 20, width:10, height: 13)
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
         optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding:10, width:followSizeWidth, height: followSizeHeight)

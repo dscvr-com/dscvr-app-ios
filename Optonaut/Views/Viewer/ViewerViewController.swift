@@ -174,8 +174,6 @@ class ViewerViewController: UIViewController  {
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
         UIApplication.sharedApplication().idleTimerDisabled = true
         
-        tabController!.hideUI()
-        
         var popActivated = false // needed when viewer was opened without rotation
         InvertableHeadTrackerRotationSource.InvertableInstance.start()
         RotationService.sharedInstance.rotationEnable()

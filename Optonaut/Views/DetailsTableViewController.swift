@@ -167,6 +167,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         scnView.addSubview(whiteBackground)
         
         avatarImageView.layer.cornerRadius = 23.5
+        avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        avatarImageView.layer.borderWidth = 2.0
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
@@ -203,7 +205,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:10, height: 13)
+        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 20, width:10, height: 13)
         optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:UIImage(named:"follow_active")!.size.width, height: UIImage(named:"follow_active")!.size.height)
         
         personNameView.rac_text <~ viewModel.creator_username
@@ -342,12 +344,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func changeButtonIcon(isGyro:Bool) {
         if isGyro {
-            littlePlanetButton.setBackgroundImage(UIImage(named:"littlePlanet_inactive_icn"), forState: .Normal)
-            gyroButton.setBackgroundImage(UIImage(named:"gyro_active_icn"), forState: .Normal)
+            littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_inactive"), forState: .Normal)
+            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_active"), forState: .Normal)
         
         } else {
-            littlePlanetButton.setBackgroundImage(UIImage(named:"littlePlanet_active_icn"), forState: .Normal)
-            gyroButton.setBackgroundImage(UIImage(named:"gyro_inactive_icn"), forState: .Normal)
+            littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_active"), forState: .Normal)
+            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_inactive"), forState: .Normal)
         }
     }
     
@@ -394,7 +396,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         super.viewWillAppear(animated)
         
         
-        tabController!.hideUI()
+        //tabController!.hideUI()
         tabController!.disableScrollView()
         
         CoreMotionRotationSource.Instance.start()

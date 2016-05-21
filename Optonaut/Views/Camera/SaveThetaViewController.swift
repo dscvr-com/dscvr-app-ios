@@ -45,12 +45,11 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     private let instagramSocialButton = SocialButton()
     private let moreSocialButton = SocialButton()
     private var placeholderImage: SKTexture?
+    var tabView = TabView()
     
     private let readyNotification = NotificationSignal<Void>()
     
     required init(thetaImage:UIImage) {
-        
-        print("savethetaviewcontroller")
         
         let recorderCleanup = SignalProducer<UIImage, NoError> { sink, disposable in
             
@@ -124,13 +123,23 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         cancelButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.cancel)))
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
         
-        let privateButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-        privateButton.textColor = .whiteColor()
-        privateButton.font = UIFont.iconOfSize(18)
-        privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.World))
-        privateButton.userInteractionEnabled = true
-        privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.togglePrivate)))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: privateButton)
+//        let privateButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
+//        privateButton.textColor = .whiteColor()
+//        privateButton.font = UIFont.iconOfSize(18)
+//        privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.World))
+//        privateButton.userInteractionEnabled = true
+//        privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.togglePrivate)))
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: privateButton)
+        
+        
+        viewModel.isPrivate.producer.startWithNext { [weak self] isPrivate in
+            if let strongSelf = self {
+                //strongSelf.likeButtonView.setImage(liked ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), forState: .Normal)
+                //leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+                
+                strongSelf.navigationItem.rightBarButtonItem = UIBarButtonItem(image: isPrivate ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), style: UIBarButtonItemStyle.Plain, target: self, action: #selector(strongSelf.togglePrivate))
+            }
+        }
         
         view.backgroundColor = .whiteColor()
         
@@ -268,12 +277,14 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
         
+        
+        tabView.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
+        view.addSubview(tabView)
+        
         updateTabs()
         
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
-            
-            self?.tabController!.tabView.cameraButton.loading = !isReady
-            self?.tabController!.tabView.rightButton.loading = !isReady
+            self!.tabView.cameraButton.loading = !isReady
         }
     }
     
@@ -322,9 +333,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
             NSFontAttributeName: UIFont.displayOfSize(14, withType: .Regular),
             NSForegroundColorAttributeName: UIColor.whiteColor(),
         ]
-        
-        tabController!.delegate = self
-        tabController!.tabView.cameraButton.progressLocked = true
+
         
         Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
         
@@ -332,7 +341,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         locationView.reloadLocation()
         
         if !SessionService.isLoggedIn {
-            tabController!.hideUI()
+            //tabController!.hideUI()
             
 //            let loginOverlayViewController = LoginOverlayViewController(
 //                title: "Login to save your moment",
@@ -355,8 +364,6 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     override func viewWillDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        tabController!.tabView.cameraButton.progressLocked = false
-        
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
         
@@ -369,25 +376,11 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         Mixpanel.sharedInstance().track("View.CreateOptograph")
     }
     
-    override func updateTabs() {
-        //tabController!.indicatedSide = nil
+    func updateTabs() {
         
-        tabController!.tabView.leftButton.title = "RETRY"
-        tabController!.tabView.leftButton.icon = UIImage(named:"camera_icn")!
-        tabController!.tabView.leftButton.hidden = false
-        tabController!.tabView.leftButton.color = .Light
-        tabController!.tabView.leftButton.hidden = true
-    
-        tabController!.tabView.rightButton.title = "POST LATER"
-        //tabController!.tabView.rightButton.icon = .Clock
-        tabController!.tabView.rightButton.hidden = true
-        tabController!.tabView.rightButton.color = .Light
-        
-        //tabController!.cameraButton.icon = UIImage(named:"camera_icn")!
-        tabController!.tabView.cameraButton.iconColor = .whiteColor()
-        tabController!.tabView.cameraButton.backgroundColor = .Accent
-        
-        tabController!.bottomGradientOffset.value = 0
+        tabView.bottomGradientOffset.value = 0
+        tabView.leftButton.hidden = true
+        tabView.rightButton.hidden = true
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -649,15 +642,11 @@ class SaveThetaViewController: UIViewController, RedNavbar {
             .observeOnMain()
             .on(
                 started: { [weak self] in
-                    self?.tabController!.tabView.cameraButton.loading = true
-                    self?.tabController!.tabView.rightButton.loading = true
+                    self?.tabView.cameraButton.loading = true
                 },
                 completed: { [weak self] in
                     Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
-                    self?.tabController!.tabView.rightButton.loading = false
-                    // set progress because stitching will start
-                    //                    self?.tabController!.cameraButton.progress = 0
-                    //self?.tabController!.updateActiveTab(.Right)
+                    self?.tabView.rightButton.loading = false
                     self?.navigationController!.popViewControllerAnimated(false)
                     
                     if Defaults[.SessionUploadMode] == "theta" {

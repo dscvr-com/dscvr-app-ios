@@ -23,26 +23,6 @@ class TabView: PTView {
     
     override init (frame: CGRect) {
         super.init(frame: frame)
-        /*
-        PipelineService.stitchingStatus.producer
-            .observeOnMain()
-            .startWithNext { [weak self] status in
-                switch status {
-                case .Uninitialized:
-                    self?.cameraButton.loading = true
-                case .Idle:
-                    self?.cameraButton.progress = nil
-                    if self?.cameraButton.progressLocked == false {
-                        self?.cameraButton.icon = UIImage(named:"camera_icn")!
-                        self?.rightButton.loading = false
-                    }
-                case let .Stitching(progress):
-                    self?.cameraButton.progress = CGFloat(progress)
-                case .StitchingFinished(_):
-                    self?.cameraButton.progress = nil
-                }
-        }*/
-        
     }
     
     required init?(coder aDecoder: NSCoder) {

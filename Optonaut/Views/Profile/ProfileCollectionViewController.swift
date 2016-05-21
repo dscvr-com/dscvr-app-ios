@@ -27,6 +27,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     private let rightBarButton = UILabel()
     
     private var barButtonItem = UIBarButtonItem()
+    private var originalBackButton: UIBarButtonItem?
     let headerView = UIView()
     
     init(personID: UUID) {
@@ -61,18 +62,15 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         texttext.textColor = UIColor.whiteColor()
         headerView.addSubview(texttext)
         
-//        profileViewModel.userName.producer.startWithNext { [weak self] userName in
-//            self?.title = userName.uppercaseString
-//        }
         
-        //originalBackButton = navigationItem.leftBarButtonItem
+        originalBackButton = navigationItem.leftBarButtonItem
         
         tabController?.delegate = self
         
         title = "My Profile"
         var image = UIImage(named: "logo_small")
         image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
+        originalBackButton = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
         
         leftBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
         leftBarButton.text = String.iconWithName(.Cancel)
@@ -87,7 +85,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             if isEditing {
                 self?.navigationItem.leftBarButtonItem = self!.barButtonItem
             }
-            //self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
+            self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
         }
         
         rightBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
@@ -191,23 +189,13 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
         let offsetY:CGFloat  = scrollView.contentOffset.y
-        //let contentHeight:CGFloat  = scrollView.contentSize.height;
         
-//        if (offsetY >= 270) {
-//            self.navigationController?.navigationItem.title = "IAM360 Images"
-//            self.navigationController?.navigationBar.tintColor = UIColor(hex:0x575757)
-//        } else {
-//            self.navigationController?.navigationItem.title = "My Profile"
-//            self.navigationController?.navigationBar.barTintColor = UIColor.whiteColor()
-//        }
-        
-        
-        if (offsetY > 263) {
+        if (offsetY > 230) {
             UIView.animateWithDuration(0.5, animations: {
                 self.headerView.hidden = false
                 self.navigationController?.navigationBarHidden = true
                 }, completion:nil)
-        } else if  (offsetY < 263){
+        } else if  (offsetY < 230){
             UIView.animateWithDuration(0.5, animations: {
                 self.headerView.hidden = true
                 self.navigationController?.navigationBarHidden = false
@@ -230,7 +218,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             //self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
             
         }
-        
         profileViewModel.isEditing.producer.skip(1).startWithNext { [weak self] isEditing in
             if let strongSelf = self {
                 
@@ -356,7 +343,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if indexPath.item == 0 {
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             //return CGSize(width: self.view.frame.width, height: 248 + textHeight)
-            return CGSize(width: self.view.frame.width, height: 270 + textHeight)
+            return CGSize(width: self.view.frame.width, height: 242 + textHeight)
         } else {
             let width = (self.view.frame.size.width)
             return CGSize(width: width, height: width)

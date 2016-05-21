@@ -46,6 +46,7 @@ class SaveViewController: UIViewController, RedNavbar {
     private var placeholderImage: SKTexture?
     
     private let readyNotification = NotificationSignal<Void>()
+    private let tabView = TabView()
     
     required init(recorderCleanup: SignalProducer<UIImage, NoError>) {
         
@@ -96,6 +97,8 @@ class SaveViewController: UIViewController, RedNavbar {
         }
         
         title = "SAVE THE MOMENT"
+        
+        navigationController?.navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont.fontDisplay(20, withType: .Semibold),NSForegroundColorAttributeName: UIColor(0xffbc00)]
         
         let cancelButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
         cancelButton.text = String.iconWithName(.Cancel)
@@ -252,10 +255,8 @@ class SaveViewController: UIViewController, RedNavbar {
         updateTabs()
         
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
-            print("isReady \(isReady)")
-            
-            self?.tabController!.tabView.cameraButton.loading = !isReady
-            self?.tabController!.tabView.rightButton.loading = !isReady
+            self?.tabView.cameraButton.loading = !isReady
+            self?.tabView.rightButton.loading = !isReady
         }
         
         viewModel.isReadyForStitching.producer
@@ -314,7 +315,7 @@ class SaveViewController: UIViewController, RedNavbar {
         ]
         
         tabController!.delegate = self
-        tabController!.tabView.cameraButton.progressLocked = true
+        tabView.cameraButton.progressLocked = true
         
         Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
         
@@ -322,7 +323,7 @@ class SaveViewController: UIViewController, RedNavbar {
         locationView.reloadLocation()
         
         if !SessionService.isLoggedIn {
-            tabController!.hideUI()
+            hideUI()
             //tabController!.lockUI()
             
 //            let loginOverlayViewController = LoginOverlayViewController(
@@ -346,7 +347,7 @@ class SaveViewController: UIViewController, RedNavbar {
     override func viewWillDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        tabController!.tabView.cameraButton.progressLocked = false
+        tabView.cameraButton.progressLocked = false
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
@@ -360,24 +361,30 @@ class SaveViewController: UIViewController, RedNavbar {
         Mixpanel.sharedInstance().track("View.CreateOptograph")
     }
     
-    override func updateTabs() {
-        //tabController!.indicatedSide = nil
+    func showUI() {
+        tabView.hidden = false
+    }
+    
+    func hideUI() {
+        tabView.hidden = true
+    }
+    
+    func updateTabs() {
+        tabView.leftButton.title = "RETRY"
+        tabView.leftButton.icon = UIImage(named:"camera_icn")!
+        tabView.leftButton.hidden = false
+        tabView.leftButton.color = .Light
         
-        tabController!.tabView.leftButton.title = "RETRY"
-        tabController!.tabView.leftButton.icon = UIImage(named:"camera_icn")!
-        tabController!.tabView.leftButton.hidden = false
-        tabController!.tabView.leftButton.color = .Light
-        
-        tabController!.tabView.rightButton.title = "POST LATER"
+        tabView.rightButton.title = "POST LATER"
         //tabController!.tabView.rightButton.icon = .Clock
-        tabController!.tabView.rightButton.hidden = false
-        tabController!.tabView.rightButton.color = .Light
+        tabView.rightButton.hidden = false
+        tabView.rightButton.color = .Light
         
         //tabController!.cameraButton.icon = UIImage(named:"camera_icn")!
-        tabController!.tabView.cameraButton.iconColor = .whiteColor()
-        tabController!.tabView.cameraButton.backgroundColor = .Accent
+        tabView.cameraButton.iconColor = .whiteColor()
+        tabView.cameraButton.backgroundColor = .Accent
         
-        tabController!.bottomGradientOffset.value = 0
+        tabView.bottomGradientOffset.value = 0
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -628,15 +635,12 @@ class SaveViewController: UIViewController, RedNavbar {
             .observeOnMain()
             .on(
                 started: { [weak self] in
-                    self?.tabController!.tabView.cameraButton.loading = true
-                    self?.tabController!.tabView.rightButton.loading = true
+                    self?.tabView.cameraButton.loading = true
+                    self?.tabView.rightButton.loading = true
                 },
                 completed: { [weak self] in
                     Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
-                    self?.tabController!.tabView.rightButton.loading = false
-                    // set progress because stitching will start
-//                    self?.tabController!.cameraButton.progress = 0
-//                    self?.tabController!.updateActiveTab(.Right)
+                    self?.tabView.rightButton.loading = false
                     self?.navigationController!.popViewControllerAnimated(false)
                 }
             )

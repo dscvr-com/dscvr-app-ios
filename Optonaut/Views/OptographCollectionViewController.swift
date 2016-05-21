@@ -22,7 +22,7 @@ protocol OptographCollectionViewModel {
 }
 
 
-class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout ,TransparentNavbarWithStatusBar,TabControllerDelegate{
+class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout ,TransparentNavbarWithStatusBar,TabControllerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     
     private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
     
@@ -34,13 +34,19 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     private var optographDirections: [UUID: Direction] = [:]
     
     private let refreshControl = UIRefreshControl()
-    private let overlayView = OverlayView()
     
     private let uiHidden = MutableProperty<Bool>(false)
     
     private var overlayIsAnimating = false
     
     private var isVisible = false
+    
+    private var tabView = TabView()
+    
+    let isThetaImage = MutableProperty<Bool>(false)
+    
+    var imageView: UIImageView!
+    var imagePicker = UIImagePickerController()
     
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
@@ -150,17 +156,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             })
             .start()
         
-        overlayView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-        overlayView.uiHidden = uiHidden
-        overlayView.navigationController = navigationController as? NavigationController
-        overlayView.parentViewController = self
-        overlayView.rac_hidden <~ uiHidden
-//        overlayView.deleteCallback = { [weak self] in
-//            self?.overlayView.optographID = nil
-//            self?.viewModel.refresh()
-//        }
-        view.addSubview(overlayView)
-        
         uiHidden.producer.startWithNext { [weak self] hidden in
             self?.navigationController?.setNavigationBarHidden(hidden, animated: false)
             
@@ -168,20 +163,173 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
           
         }
         tabController!.delegate = self
+        tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
+        view.addSubview(tabView)
+        
+        
+        tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
+        tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
+        tabView.cameraButton.addTarget(self, action: #selector(touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        
+        tabView.leftButton.addTarget(self, action: #selector(tapLeftButton), forControlEvents: [.TouchDown])
+        
+        tabView.rightButton.addTarget(self, action: #selector(tapRightButtonTab), forControlEvents: [.TouchUpInside])
+        
+        PipelineService.checkStitching()
+        PipelineService.checkUploading()
+        
+        PipelineService.stitchingStatus.producer
+            .observeOnMain()
+            .startWithNext { [weak self] status in
+                switch status {
+                case .Uninitialized:
+                    self?.tabView.cameraButton.loading = true
+                    print("uninitialized")
+                case .Idle:
+                    self?.tabView.cameraButton.progress = nil
+                    if self?.tabView.cameraButton.progressLocked == false {
+                        self?.tabView.cameraButton.icon = UIImage(named:"camera_icn")!
+                        self?.tabView.rightButton.loading = false
+                    }
+                    print("Idle")
+                case let .Stitching(progress):
+                    self?.tabView.cameraButton.progress = CGFloat(progress)
+                    print("Stitching")
+                case .StitchingFinished(_):
+                    self?.tabView.cameraButton.progress = nil
+                    print("StitchingFinished")
+                }
+        }
+        updateTabs()
+        initNotificationIndicator()
+        imagePicker.delegate = self
+        
+        isThetaImage.producer
+            .filter(isTrue)
+            .startWithNext{ _ in
+                let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler:{ _ in
+                    self.isThetaImage.value = false
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+    }
+    func openGallary() {
+        
+        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        imagePicker.navigationBar.translucent = false
+        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
+        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
+        imagePicker.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
+            NSForegroundColorAttributeName: UIColor.whiteColor(),
+        ]
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+        imagePicker.setNavigationBarHidden(false, animated: false)
+        imagePicker.interactivePopGestureRecognizer?.enabled = false
+        
+        self.presentViewController(imagePicker, animated: true, completion: nil)
+    }
+    
+    func uploadTheta(thetaImage:UIImage) {
+        
+        let createOptographViewController = SaveThetaViewController(thetaImage:thetaImage)
+        
+        createOptographViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(createOptographViewController, animated: false)
+    }
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            if pickedImage.size.height == 2688 && pickedImage.size.width == 5376 {
+                uploadTheta(pickedImage)
+            } else {
+                isThetaImage.value = true
+            }
+        }
+        
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func tapCameraButton() {
+        
+        switch PipelineService.stitchingStatus.value {
+        case .Idle:
+            self.tabController?.centerViewController.cleanup()
+            navigationController?.pushViewController(CameraViewController(), animated: false)
+            
+        case .Stitching(_):
+            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
+        case let .StitchingFinished(optographID):
+            scrollToOptograph(optographID)
+            PipelineService.stitchingStatus.value = .Idle
+        case .Uninitialized: ()
+        }
+    }
+    func touchStartCameraButton() {
+        print("")
+    }
+    func touchEndCameraButton() {
+        print("")
+    }
+    func tapLeftButton() {
+        openGallary()
+    }
+    func tapRightButtonTab() {
+        tabController!.tapNavBarTitleForFeedClass()
     }
     
     func tapRightButton() {
         tabController!.rightButtonAction()
     }
     
+    func showUI() {
+        tabView.hidden = false
+    }
+    
+    func hideUI() {
+        tabView.hidden = true
+    }
+    
+    private func initNotificationIndicator() {
+        let circle = UILabel()
+        circle.frame = CGRect(x: tabView.rightButton.frame.origin.x + 25, y: tabView.rightButton.frame.origin.y - 3, width: 16, height: 16)
+        circle.backgroundColor = .Accent
+        circle.font = UIFont.displayOfSize(10, withType: .Regular)
+        circle.textAlignment = .Center
+        circle.textColor = .whiteColor()
+        circle.layer.cornerRadius = 8
+        circle.clipsToBounds = true
+        circle.hidden = true
+        tabView.addSubview(circle)
+        
+        ActivitiesService.unreadCount.producer.startWithNext { count in
+            let hidden = count <= 0
+            circle.hidden = hidden
+            circle.text = "\(count)"
+        }
+    }
+    
+    func updateTabs() {
+        tabView.leftButton.icon = UIImage(named:"photo_library_icn")!
+        tabView.rightButton.icon = UIImage(named:"settings_icn")!
+        tabView.cameraButton.icon = UIImage(named:"camera_icn")!
+        tabView.bottomGradientOffset.value = 126
+    }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
         uiHidden.value = false
-        overlayView.alpha = 0
         viewModel.isActive.value = true
         
-        tabController!.showUI()
+        showUI()
         tabController!.enableScrollView()
         tabController!.enableNavBarGesture()
         
@@ -311,16 +459,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         }
         
         imageCache.reset()
-    }
-    
-    private func pushViewer(orientation: UIInterfaceOrientation) {
-        guard let index = collectionView!.indexPathsForVisibleItems().first?.row else {
-            return
-        }
-        
-        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographIDs[index]]!.model)
-        navigationController?.pushViewController(viewerViewController, animated: false)
-//        viewModel.increaseViewsCount()
     }
 }
 
@@ -478,147 +616,6 @@ private class OverlayViewModel {
             PipelineService.checkUploading()
         }
         
-    }
-    
-}
-
-private class OverlayView: UIView {
-    
-    private let viewModel = OverlayViewModel()
-    
-    weak var uiHidden: MutableProperty<Bool>!
-    weak var navigationController: NavigationController?
-    weak var parentViewController: UIViewController?
-    
-    var deleteCallback: (() -> ())?
-    
-    private var optographID: UUID? {
-        didSet {
-            if let optographID = optographID  {
-                print(optographID)
-            }
-        }
-    }
-    private let avatarImageView = UIImageView()
-    private let locationTextView = UILabel()
-    private let uploadButtonView = BoundingButton()
-    private let uploadTextView = BoundingLabel()
-    private let uploadingView = UIActivityIndicatorView()
-    private let dateView = UILabel()
-    private let textView = BoundingLabel()
-    
-    override init (frame: CGRect) {
-        super.init(frame: frame)
-        
-        uploadButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.upload)))
-        uploadButtonView.setTitle(String.iconWithName(.Upload), forState: .Normal)
-        uploadButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Offline).map(negate)
-        uploadButtonView.titleLabel!.font = UIFont.iconOfSize(24)
-        addSubview(uploadButtonView)
-        
-        uploadTextView.font = UIFont.displayOfSize(11, withType: .Semibold)
-        uploadTextView.text = "Upload"
-        uploadTextView.textColor = .whiteColor()
-        uploadTextView.textAlignment = .Right
-        uploadTextView.userInteractionEnabled = true
-        uploadTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.upload)))
-        uploadTextView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Offline).map(negate)
-        addSubview(uploadTextView)
-        
-        uploadingView.hidesWhenStopped = true
-        uploadingView.rac_animating <~ viewModel.uploadStatus.producer.equalsTo(.Uploading)
-        addSubview(uploadingView)
-        
-        dateView.font = UIFont.displayOfSize(11, withType: .Regular)
-        dateView.textColor = UIColor(0xbbbbbb)
-        dateView.textAlignment = .Right
-        addSubview(dateView)
-        
-        textView.font = UIFont.displayOfSize(14, withType: .Regular)
-        textView.textColor = .whiteColor()
-        textView.userInteractionEnabled = true
-        textView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.toggleText)))
-        addSubview(textView)
-        
-        viewModel.textToggled.producer.startWithNext { [weak self] toggled in
-            if let strongSelf = self, optograph = Models.optographs[strongSelf.optographID]?.model {
-                let textHeight = calcTextHeight(optograph.text, withWidth: strongSelf.frame.width - 36 - 50, andFont: UIFont.displayOfSize(14, withType: .Regular))
-                let displayedTextHeight = toggled && textHeight > 16 ? textHeight : 15
-                
-                strongSelf.textView.anchorInCorner(.BottomLeft, xPad: 16, yPad: 136, width: strongSelf.frame.width - 36 - 50, height: displayedTextHeight)
-                
-                strongSelf.textView.numberOfLines = toggled ? 0 : 1
-            }
-        }
-    }
-    
-    convenience init () {
-        self.init(frame: CGRectZero)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-    
-        dateView.anchorInCorner(.TopRight, xPad: 46, yPad: 27, width: 70, height: 13)
-    }
-    
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
-        for subview in subviews as [UIView] {
-            if !subview.hidden && subview.alpha > 0 && subview.userInteractionEnabled && subview.pointInside(convertPoint(point, toView: subview), withEvent: event) {
-                return true
-            }
-        }
-        return false
-    }
-    
-    dynamic private func toggleText() {
-        viewModel.textToggled.value = !viewModel.textToggled.value
-    }
-    
-    dynamic private func toggleLike() {
-        if SessionService.isLoggedIn {
-            viewModel.toggleLike()
-        } else {
-            
-//            let loginOverlayViewController = LoginOverlayViewController(
-//                title: "Login to like this moment",
-//                successCallback: {
-//                    self.viewModel.toggleLike()
-//                },
-//                cancelCallback: { true },
-//                alwaysCallback: {
-//                }
-//            )
-//            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
-        }
-    }
-    
-    dynamic private func pushProfile() {
-        navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optographBox.model.personID), animated: true)
-    }
-    
-    dynamic private func pushSearch() {
-//        navigationController?.pushViewController(SearchTableViewController(), animated: true)
-    }
-    
-    dynamic private func upload() {
-        if Reachability.connectedToNetwork() {
-            viewModel.upload()
-        } else {
-            print("offline")
-        }
-    }
-    
-}
-
-extension OverlayView: OptographOptions {
-    
-    dynamic func didTapOptions() {
-        showOptions(viewModel.optographBox.model.ID, deleteCallback: deleteCallback)
     }
     
 }

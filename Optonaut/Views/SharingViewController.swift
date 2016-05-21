@@ -70,13 +70,9 @@ class SharingViewController: UIViewController ,TabControllerDelegate{
         self.view.addSubview(buttonTwitter)
         buttonTwitter.align(.UnderCentered, relativeTo: buttonMessenger, padding: 10, width: self.view.frame.width - 40, height: 50)
         
-//        self.view.groupAndAlign(group: .Vertical, andAlign: .UnderCentered, views: [buttonCopyLink, buttonFacebook, buttonMessenger,buttonTwitter], relativeTo: bgImage!, padding: 15, width: self.view.frame.width - 40, height: 60)
-        
         self.view.backgroundColor = UIColor.whiteColor()
         
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(image:UIImage(named:"feed_icn"), style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.tapRightButton))
-        
-        var leftBarImage = UIImage(named: "feed_icn")
+        var leftBarImage = UIImage(named: "logo_small")
         leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.tapRightButton))
         
@@ -84,7 +80,6 @@ class SharingViewController: UIViewController ,TabControllerDelegate{
         
         let optographID:UUID = "a28a5e49-b955-4093-8440-e3e29c61b669"
         let url = TextureURL(optographID, side: .Left, size: self.view.frame.width, face: 0, x: 0, y: 0, d: 1)
-        print("image url >> \(url) <<")
         placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
     }
 

@@ -59,14 +59,14 @@ class EditProfileViewController: UIViewController, RedNavbar {
         cancelButton.title = "Cancel"
         cancelButton.setTitleTextAttributes(attributes, forState: .Normal)
         cancelButton.target = self
-        cancelButton.action = "cancel"
+        cancelButton.action = #selector(EditProfileViewController.cancel)
         navigationItem.setLeftBarButtonItem(cancelButton, animated: false)
         
         let saveButton = UIBarButtonItem()
         saveButton.title = "Save"
         saveButton.setTitleTextAttributes(attributes, forState: .Normal)
         saveButton.target = self
-        saveButton.action = "save"
+        saveButton.action = #selector(EditProfileViewController.save)
         navigationItem.setRightBarButtonItem(saveButton, animated: false)
         
         navigationItem.title = "Edit Profile"
@@ -75,7 +75,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         avatarImageView.layer.cornerRadius = 30
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
-        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "updateImage"))
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.updateImage)))
         avatarImageView.rac_url <~ viewModel.avatarImageUrl
         view.addSubview(avatarImageView)
         
@@ -145,7 +145,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         emailButtonView.contentHorizontalAlignment = .Left
         emailButtonView.setTitleColor(UIColor(0x4d4d4d), forState: .Normal)
         emailButtonView.setTitle("Change", forState: .Normal)
-        emailButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showEmailAlert"))
+        emailButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.showEmailAlert)))
         view.addSubview(emailButtonView)
         
 //        passwordIconView.font = .icomoonOfSize(20)
@@ -163,7 +163,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         passwordButtonView.contentHorizontalAlignment = .Left
         passwordButtonView.setTitleColor(UIColor(0x4d4d4d), forState: .Normal)
         passwordButtonView.setTitle("Change", forState: .Normal)
-        passwordButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showPasswordAlert"))
+        passwordButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.showPasswordAlert)))
         view.addSubview(passwordButtonView)
         
         settingsHeaderView.text = "SETTINGS"
@@ -186,7 +186,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
         view.addSubview(debugLabelView)
         
         debugSwitchView.on = viewModel.debugEnabled.value
-        debugSwitchView.addTarget(self, action: "toggleDebug", forControlEvents: .ValueChanged)
+        debugSwitchView.addTarget(self, action: #selector(EditProfileViewController.toggleDebug), forControlEvents: .ValueChanged)
         debugSwitchView.hidden = true
         view.addSubview(debugSwitchView)
         
@@ -217,7 +217,7 @@ class EditProfileViewController: UIViewController, RedNavbar {
             NSForegroundColorAttributeName: UIColor.whiteColor(),
         ]
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(EditProfileViewController.dismissKeyboard)))
         
         view.setNeedsUpdateConstraints()
     }

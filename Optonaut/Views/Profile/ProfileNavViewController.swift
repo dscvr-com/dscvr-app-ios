@@ -16,20 +16,15 @@ class ProfileNavViewController: NavigationController {
         
         let loginOverlayViewController = LoginOverlayViewController()
         navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont(name: "Avenir-Book", size: 20)!]
-        print(SessionService.isLoggedIn)
-        print(SessionService.personID)
         
         if SessionService.isLoggedIn {
-            print("session is logged in")
             viewControllers.insert(loginOverlayViewController, atIndex: 0)
             pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
         } else {
-            print("pumsok dito after reload tab")
             pushViewController(loginOverlayViewController, animated: false)
             SessionService.loginNotifiaction.signal.observeNext {
 //               self.popViewControllerAnimated(false)
                self.pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
-                print("pumasok dito")
             }
         }
     }
