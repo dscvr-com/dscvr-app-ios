@@ -13,17 +13,6 @@ import Icomoon
 import SwiftyUserDefaults
 import Result
 
-
-enum ScrollDirection {
-    case ScrollDirectionNone
-    case ScrollDirectionRight
-    case ScrollDirectionLeft
-    case ScrollDirectionUp
-    case ScrollDirectionDown
-    case ScrollDirectionCrazy
-}
-
-
 class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollViewDelegate{
     
     var scrollView: UIScrollView!
@@ -367,24 +356,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
 //            }
 //        }
  
-    }
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        
-        var scrollDirection:ScrollDirection
-        
-        if (self.lastContentOffset > scrollView.contentOffset.x){
-            scrollDirection = .ScrollDirectionRight
-            if scrollView.directionalLockEnabled {
-                scrollView.directionalLockEnabled = false
-            }
-        } else if (lastContentOffset < scrollView.contentOffset.x){
-            scrollDirection = .ScrollDirectionLeft
-            if !scrollView.directionalLockEnabled {
-                scrollView.directionalLockEnabled = true
-            }
-        }
-        
-        lastContentOffset = scrollView.contentOffset.x;
     }
     
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer,shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -782,6 +753,7 @@ protocol TabControllerDelegate {
     func onTapCameraButton()
     func onTapLeftButton()
     func onTapRightButton()
+    func swipeToShare()
 }
 
 extension TabControllerDelegate {
@@ -792,6 +764,7 @@ extension TabControllerDelegate {
     func onTapCameraButton() {}
     func onTapLeftButton() {}
     func onTapRightButton() {}
+    func swipeToShare(){}
 }
 
 protocol DefaultTabControllerDelegate: TabControllerDelegate {}
@@ -813,6 +786,9 @@ extension DefaultTabControllerDelegate {
             PipelineService.stitchingStatus.value = .Idle
         case .Uninitialized: ()
         }
+    }
+    func swipeToShare(){
+        print("swipe")
     }
     
     func onTapLeftButton() {

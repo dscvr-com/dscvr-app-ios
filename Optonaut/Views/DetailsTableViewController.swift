@@ -205,7 +205,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 20, width:10, height: 13)
+        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:UIImage(named:"follow_active")!.size.width, height: UIImage(named:"follow_active")!.size.height)
         
         personNameView.rac_text <~ viewModel.creator_username

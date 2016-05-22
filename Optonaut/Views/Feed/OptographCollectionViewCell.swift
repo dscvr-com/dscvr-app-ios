@@ -385,6 +385,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
         }
     }
     var hiddenGestureRecognizer:UIPanGestureRecognizer!
+    var swipeView:UIScrollView?
+    var isShareOpen = MutableProperty<Bool>(false)
     
     
     dynamic private func pushProfile() {
@@ -502,7 +504,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
 //        hiddenGestureRecognizer.delaysTouchesBegan = false
 //        hiddenGestureRecognizer.delaysTouchesEnded = false
 //        hiddenGestureRecognizer.delegate = self
-        
     }
     
     
@@ -520,7 +521,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 20, width:10, height: 13)
+        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
         optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding:10, width:followSizeWidth, height: followSizeHeight)
@@ -579,17 +580,18 @@ class OptographCollectionViewCell: UICollectionViewCell{
                     scnView.frame.origin.x = translationX
                     whiteBackground.frame.origin.x = translationX
                 } else {
-                    //delegate?.scrollToLeft(translationX)
+                    if !isShareOpen.value {
+                        swipeView?.scrollRectToVisible(CGRect(x: 0,y: 0,width: contentView.frame.width,height: 100), animated: true)
+                        isShareOpen.value = true
+                    }
                 }
-            } else {
             }
-            
         case .Cancelled:
             print("cancelled")
         case .Ended:
             scnView.frame.origin.x = 0
             whiteBackground.frame.origin.x = 0
-            
+            isShareOpen.value = false
             
         default: break
         }

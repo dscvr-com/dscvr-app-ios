@@ -48,6 +48,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     var imageView: UIImageView!
     var imagePicker = UIImagePickerController()
     
+    let shareData = ShareData.sharedInstance
+    
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
         
@@ -416,6 +418,18 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         cell.id = indexPath.row
         cell.bindModel(optographID)
+        cell.swipeView = tabController!.scrollView
+        
+        
+        cell.isShareOpen.producer
+            .startWithNext{ val in
+                if val{
+                    print("optographid =",optographID)
+                    self.shareData.optographId.value = optographID
+                } else {
+                    print("close")
+                }
+            }
         
         if StitchingService.isStitching() {
             imageCache.resetExcept(indexPath.row)

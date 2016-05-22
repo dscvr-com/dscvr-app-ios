@@ -7,6 +7,26 @@
 //
 
 import UIKit
+import ReactiveCocoa
+import Social
+import FBSDKShareKit
+
+class ShareData {
+    class var sharedInstance: ShareData {
+        struct Static {
+            static var instance: ShareData?
+            static var token: dispatch_once_t = 0
+        }
+        
+        dispatch_once(&Static.token) {
+            Static.instance = ShareData()
+        }
+        
+        return Static.instance!
+    }
+    var optographId = MutableProperty<UUID?>(nil)
+}
+
 
 class SharingViewController: UIViewController ,TabControllerDelegate{
     
@@ -16,8 +36,9 @@ class SharingViewController: UIViewController ,TabControllerDelegate{
     let buttonTwitter = UIButton()
     let buttonEmail = UIButton()
     let titleText = UILabel()
+    var textToShare:String?
+    var shareUrl:NSURL?
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -47,13 +68,13 @@ class SharingViewController: UIViewController ,TabControllerDelegate{
        // buttonCopyLink.addTarget(self, action: #selector(myClass.pressed(_:)), forControlEvents: .TouchUpInside)
         
         buttonFacebook.setImage(UIImage(named: "sharing_facebook_btn") , forState: .Normal)
-        // buttonCopyLink.addTarget(self, action: #selector(myClass.pressed(_:)), forControlEvents: .TouchUpInside)
+        buttonFacebook.addTarget(self, action: #selector(shareFacebook), forControlEvents: .TouchUpInside)
         
         buttonMessenger.setImage(UIImage(named: "sharing_messenger_btn") , forState: .Normal)
-        // buttonCopyLink.addTarget(self, action: #selector(myClass.pressed(_:)), forControlEvents: .TouchUpInside)
+        buttonMessenger.addTarget(self, action: #selector(shareMessenger), forControlEvents: .TouchUpInside)
         
         buttonTwitter.setImage(UIImage(named: "sharing_twitter_btn") , forState: .Normal)
-        // buttonCopyLink.addTarget(self, action: #selector(myClass.pressed(_:)), forControlEvents: .TouchUpInside)
+        buttonTwitter.addTarget(self, action: #selector(shareTwitter), forControlEvents: .TouchUpInside)
         
         self.view.addSubview(buttonEmail)
         buttonEmail.align(.UnderCentered, relativeTo: titleText, padding: 10, width: self.view.frame.width - 40, height: 50)
@@ -78,9 +99,24 @@ class SharingViewController: UIViewController ,TabControllerDelegate{
         
         tabController!.delegate = self
         
-        let optographID:UUID = "a28a5e49-b955-4093-8440-e3e29c61b669"
-        let url = TextureURL(optographID, side: .Left, size: self.view.frame.width, face: 0, x: 0, y: 0, d: 1)
-        placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
+        let shareData = ShareData.sharedInstance
+        
+        shareData.optographId.producer.startWithNext{ val in
+            
+            if val != nil {
+                let url = TextureURL(val!, side: .Left, size: self.view.frame.width, face: 0, x: 0, y: 0, d: 1)
+                placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
+                let optographBox = Models.optographs[val]!
+                let optograph = optographBox.model
+                let person = Models.persons[optograph.personID]!.model
+                
+                let baseURL = Env == .Staging ? "share.iam360.io" : "share.iam360.io"
+                self.shareUrl = NSURL(string: "http://\(baseURL)/\(optograph.shareAlias)")
+                self.textToShare = "Check out this awesome IAM360 image of \(person.displayName) on \(url)"
+            }
+            
+        }
+        
     }
 
     func tapRightButton() {
@@ -90,15 +126,36 @@ class SharingViewController: UIViewController ,TabControllerDelegate{
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    func shareTwitter() {
+        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeTwitter){
+            let twitterSheet:SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+            twitterSheet.setInitialText(self.textToShare)
+            twitterSheet.addURL(self.shareUrl)
+            self.presentViewController(twitterSheet, animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController(title: "Accounts", message: "Please login to a Twitter account to share.", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
     }
-    */
-
+    
+    func shareFacebook() {
+        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook){
+            let facebookSheet:SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+            facebookSheet.setInitialText(self.textToShare)
+            facebookSheet.addURL(self.shareUrl)
+            self.presentViewController(facebookSheet, animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController(title: "Accounts", message: "Please login to a Facebook account to share.", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    func shareMessenger() {
+        
+        let content = FBSDKShareLinkContent()
+        content.contentTitle = self.textToShare
+        content.contentURL = self.shareUrl
+    }
 }
