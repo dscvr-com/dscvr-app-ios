@@ -27,13 +27,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     private let displayNameInputView = KMPlaceholderTextView()
     private let textView = UILabel()
     private let textInputView = KMPlaceholderTextView()
-//    private let buttonView = UIButton()
+    private let buttonFollow = UIButton()
     //private let buttonIconView = UIImageView()
     private let postHeadingView = UILabel()
     //private let postCountView = UILabel()
     private let editSubView = UIImageView()
    
-    private let divider = UILabel()
     private let dividerDescription = UILabel()
     
     override init(frame: CGRect) {
@@ -94,8 +93,8 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
 //        buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
 //        contentView.addSubview(buttonView)
         
-        divider.backgroundColor = UIColor(hex:0x595959)
-        contentView.addSubview(divider)
+        //buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
+        contentView.addSubview(buttonFollow)
         
 //        dividerDescription.backgroundColor = UIColor(0xffbc00)
 //        contentView.addSubview(dividerDescription)
@@ -134,17 +133,19 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 17)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)
+        textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
         textInputView.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font) + 50)
+        
         //buttonIconView.anchorToEdge(.Right, padding: 12, width: 12, height: 12)
         
         //buttonView.align(.UnderCentered, relativeTo: displayNameView, padding: 15, width: 100, height: 27)
         //dividerDescription.align(.UnderCentered, relativeTo: buttonView, padding: 15, width: size.width, height: 2)
-        textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
-        divider.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width, height: 1)
         
         //let metricWidth = size.width / 3
         //postCountView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 33, width: metricWidth, height: 14)
-        postHeadingView.align(.UnderCentered, relativeTo: divider, padding: 0, width: size.width , height: 55)
+        //postHeadingView.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width , height: 55)
+        postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize:55)
+        
         
     }
     
@@ -184,14 +185,19 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             self?.textInputView.text = viewModel.text.value
         }
         
-//        if isMe {
-//            buttonView.rac_hidden <~ viewModel.isEditing
-//            buttonView.setBackgroundImage(UIImage(named:"edit_btn"), forState: .Normal)
-//        } else {
-////            buttonView.rac_title <~ viewModel.isFollowed.producer.mapToTuple("FOLLOWING", "FOLLOW")
-////            buttonView.rac_backgroundColor <~ viewModel.isFollowed.producer.mapToTuple(.Accent, UIColor(0xcacaca))
-////            buttonIconView.rac_text <~ viewModel.isFollowed.producer.mapToTuple(String.iconWithName(.Check), "")
-//        }
+        let size = contentView.frame.size
+        
+        if isMe {
+            buttonFollow.hidden = true
+            
+        } else {
+            buttonFollow.hidden = false
+            buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
+            textView.align(.UnderCentered, relativeTo: buttonFollow, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
+            viewModel.isFollowed.producer.startWithNext{
+                $0 ? self.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
+            }
+        }
         
         //postCountView.rac_text <~ viewModel.postCount.producer.map { "\($0)" }
         

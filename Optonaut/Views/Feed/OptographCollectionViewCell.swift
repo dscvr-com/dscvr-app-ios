@@ -198,12 +198,22 @@ private class OverlayViewModel {
     let uploadStatus = MutableProperty<UploadStatus>(.Uploaded)
     
     var optographBox: ModelBox<Optograph>!
+    var personBox:ModelBox<Person>!
     
     var optograph: Optograph!
+    
+    let isFollowed = MutableProperty<Bool>(false)
+    let avatarImageUrl = MutableProperty<String>("")
+    let displayName = MutableProperty<String>("")
+    let locationID = MutableProperty<UUID?>("")
+    var isMe = false
     
     func bind(optographID: UUID) {
         
         optographBox = Models.optographs[optographID]!
+        personBox = Models.persons[optographBox.model.personID]!
+        
+        locationID.value = optographBox.model.locationID
         
         textToggled.value = false
         
@@ -219,6 +229,49 @@ private class OverlayViewModel {
                 self?.uploadStatus.value = .Offline
             }
         }
+        
+        print("personid \(SessionService.personID)")
+        print("personOptoId \(optographBox.model.personID)")
+        isMe = SessionService.personID == optographBox.model.personID
+        
+        personBox.producer
+            .skipRepeats()
+            .startWithNext { [weak self] person in
+                self?.displayName.value = person.displayName
+//                self?.userName.value = person.userName
+//                self?.text.value = person.text
+//                self?.postCount.value = person.optographsCount
+//                self?.followersCount.value = person.followersCount
+//                self?.followingCount.value = person.followedCount
+                self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47)
+                self?.isFollowed.value = person.isFollowed
+                
+        }
+    }
+    
+    func toggleFollow() {
+        let person = personBox.model
+        let followedBefore = person.isFollowed
+        
+        SignalProducer<Bool, ApiError>(value: followedBefore)
+            .flatMap(.Latest) { followedBefore in
+                followedBefore
+                    ? ApiService<EmptyResponse>.delete("persons/\(person.ID)/follow")
+                    : ApiService<EmptyResponse>.post("persons/\(person.ID)/follow", parameters: nil)
+            }
+            .on(
+                started: { [weak self] in
+                    self?.personBox.insertOrUpdate { box in
+                        box.model.isFollowed = !followedBefore
+                    }
+                },
+                failed: { [weak self] _ in
+                    self?.personBox.insertOrUpdate { box in
+                        box.model.isFollowed = followedBefore
+                    }
+                }
+            )
+            .start()
     }
     
     func toggleLike() {
@@ -371,6 +424,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     var thetaDamp: Float = 0
     var phi: Float = 0
     var theta: Float = Float(-M_PI_2)
+    var isMe = false
     
     var optoId:UUID = ""
     
@@ -448,7 +502,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         contentView.addSubview(blackSpace)
         
         avatarImageView.image = UIImage(named: "avatar-placeholder")!
-        avatarImageView.layer.cornerRadius = 23.5
+        avatarImageView.layer.cornerRadius = 25
         avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
         avatarImageView.layer.borderWidth = 2.0
         avatarImageView.backgroundColor = .whiteColor()
@@ -458,9 +512,9 @@ class OptographCollectionViewCell: UICollectionViewCell{
         whiteBackground.addSubview(avatarImageView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
-        optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal)
+        optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapOptions)))
+        optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(followUser)))
         whiteBackground.addSubview(optionsButtonView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
@@ -518,15 +572,17 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
         whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 70)
-        avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
+        avatarImageView.anchorToEdge(.Left, padding: 20, width: 50, height: 50)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
-        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding:10, width:followSizeWidth, height: followSizeHeight)
+        optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.width / 2) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight)
         shareImageAsset.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
         bouncingButton.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
+        personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+        locationTextView.text = ""
     }
     
     func bouncingCell() {
@@ -601,8 +657,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
 //        if SessionService.isLoggedIn {
 //            viewModel.toggleLike()
 //        } else {
-//            parentViewController!.tabController!.hideUI()
-//            parentViewController!.tabController!.lockUI()
 //            
 //            let loginOverlayViewController = LoginOverlayViewController(
 //                title: "Login to like this moment",
@@ -626,29 +680,46 @@ class OptographCollectionViewCell: UICollectionViewCell{
             self.navigationController!.presentViewController(alert, animated: true, completion: nil)
         }
     }
+    func followUser() {
+        
+        if SessionService.isLoggedIn {
+            viewModel.toggleFollow()
+        } else {
+            let alert = UIAlertController(title:"", message: "Please login to follow this user", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
     
     func bindModel(optographId:UUID) {
-        let optograph = Models.optographs[optographId]!.model
-        let person = Models.persons[optograph.personID]!.model
+        
+        //let optograph = Models.optographs[optographId]!.model
+        //let person = Models.persons[optograph.personID]!.model
 
         viewModel.bind(optographId)
-        
-        avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
-        personNameView.text = person.displayName
-        //dateView.text = optograph.createdAt.longDescription
-        //textView.text = optograph.text
-        
-        if let locationID = optograph.locationID {
-            let location = Models.locations[locationID]!.model
-            locationTextView.text = "\(location.text), \(location.countryShort)"
-            personNameView.align(.ToTheRightMatchingTop, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
-            locationTextView.align(.ToTheRightMatchingBottom, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
-            locationTextView.text = location.text
-        } else {
-            personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
-            locationTextView.text = ""
+        viewModel.avatarImageUrl.producer.startWithNext{
+            self.avatarImageView.kf_setImageWithURL(NSURL(string:$0)!)
         }
         
+        isMe = viewModel.isMe
+        
+//        avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
+//        personNameView.text = person.displayName
+        personNameView.rac_text <~ viewModel.displayName
+        
+        viewModel.locationID.producer.startWithNext{
+            //if $0 != nil {
+            if let locationID = $0 {
+                let location = Models.locations[locationID]!.model
+                self.locationTextView.text = "\(location.text), \(location.countryShort)"
+                self.personNameView.align(.ToTheRightMatchingTop, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)
+                self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)
+                self.locationTextView.text = location.text
+            } else {
+                self.personNameView.align(.ToTheRightCentered, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)
+                self.locationTextView.text = ""
+            }
+        }
         likeButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
         likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
         likeCountView.rac_text <~ viewModel.likeCount.producer.map { "\($0)" }
@@ -656,6 +727,14 @@ class OptographCollectionViewCell: UICollectionViewCell{
         viewModel.liked.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
                 strongSelf.likeButtonView.setImage(liked ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), forState: .Normal)
+            }
+        }
+        if isMe {
+            optionsButtonView.hidden = true
+        } else {
+            optionsButtonView.hidden = false
+            viewModel.isFollowed.producer.startWithNext{
+                $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
             }
         }
     }

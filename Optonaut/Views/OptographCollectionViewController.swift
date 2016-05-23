@@ -441,7 +441,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             }
         }
         
-        if indexPath.row > optographIDs.count - 5 {
+        if indexPath.row > optographIDs.count - 3 {
             viewModel.loadMore()
         }
     
