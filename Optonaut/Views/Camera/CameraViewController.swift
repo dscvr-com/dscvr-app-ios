@@ -45,6 +45,7 @@ class CameraViewController: UIViewController {
     // stitcher pointer and variables
     private var recorder: Recorder!
     private var frameCount = 0
+    private var debugCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
     private var lastKeyframe: SelectionPoint?
@@ -70,6 +71,11 @@ class CameraViewController: UIViewController {
     private let ballNode = SCNNode()
     private var ballSpeed = GLKVector3Make(0, 0, 0)
     
+    let mem_usage = UILabel()
+    let mem_usage_text = MutableProperty<String>("")
+    
+    
+    
     private var tapCameraButtonCallback: (() -> ())?
     
     required init() {
@@ -78,6 +84,7 @@ class CameraViewController: UIViewController {
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
         dispatch_set_target_queue(sessionQueue, high)
         screenScale = Float(UIScreen.mainScreen().scale)
+        debugCount = 0
         
         if Defaults[.SessionDebuggingEnabled] {
             //Explicitely instantiate, so old data is removed. 
@@ -181,6 +188,12 @@ class CameraViewController: UIViewController {
 //        }
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+        
+        mem_usage.frame = CGRect(x: 40,y: 50,width: 80,height: 20)
+        mem_usage.backgroundColor = UIColor.whiteColor()
+        mem_usage.textColor = UIColor.blackColor()
+        mem_usage.rac_text <~ mem_usage_text
+        view.addSubview(mem_usage)
         
         view.setNeedsUpdateConstraints()
     }
@@ -575,12 +588,64 @@ class CameraViewController: UIViewController {
             }
         }
     }
+    
+    func report_memory() {
+        
+            // constant
+            let MACH_TASK_BASIC_INFO_COUNT = (sizeof(mach_task_basic_info_data_t) / sizeof(natural_t))
+        
+                // prepare parameters
+                let name   = mach_task_self_
+                let flavor = task_flavor_t(MACH_TASK_BASIC_INFO)
+                var size   = mach_msg_type_number_t(MACH_TASK_BASIC_INFO_COUNT)
+        
+               // allocate pointer to mach_task_basic_info
+                var infoPointer = UnsafeMutablePointer<mach_task_basic_info>.alloc(1)
+        
+                // call task_info - note extra UnsafeMutablePointer(...) call
+                let kerr = task_info(name, flavor, UnsafeMutablePointer(infoPointer), &size)
+        
+                // get mach_task_basic_info struct out of pointer
+                let info = infoPointer.move()
+        
+                // deallocate pointer
+                infoPointer.dealloc(1)
+        
+                // check return value for success / failure
+                if kerr == KERN_SUCCESS {
+                        //mem_usage.text  = "\(info.resident_size / 1000000)"
+                        if (debugCount > 50) {
+                
+                                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                    
+                                        dispatch_async(dispatch_get_main_queue()) {
+                                            self.mem_usage_text.value = "\(info.virtual_size / 1000000 )"
+                                        }
+                                    }
+                    
+                                   // print("Memory in use (in MB): \(info.resident_size/1000000)")
+                                    debugCount = 0
+                                    
+                            }
+                        debugCount++
+                        
+                    } else {
+                        let errorString = String(CString: mach_error_string(kerr), encoding: NSASCIIStringEncoding)
+                        print(errorString ?? "Error: couldn't parse error string")
+                    }
+        
+            }
+    
+    
  
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
         
         if recorder.isFinished() {
             return; //Dirt return here. Recording is running on the main thread.
         }
+        
+        
+        report_memory()
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         
@@ -596,7 +661,7 @@ class CameraViewController: UIViewController {
             
             captureWidth = Int(buf.width)
             
-            recorder.setIdle(!self.viewModel.isRecording.value)
+            recorder.setIdle(!self.viewModel.isRecording.value);
             
             
             recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
@@ -757,6 +822,7 @@ class CameraViewController: UIViewController {
         
         let recorderCleanup = SignalProducer<UIImage, NoError> { sink, disposable in
             
+            recorder_.finish()
             if recorder_.previewAvailable() {
                 let previewData = recorder_.getPreviewImage()
 
@@ -782,7 +848,7 @@ class CameraViewController: UIViewController {
                 Recorder.freeImageBuffer(previewData)
             }
             
-            recorder_.finish()
+        
             sink.sendCompleted()
             
             // TODO - get images

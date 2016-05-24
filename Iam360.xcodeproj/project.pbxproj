@@ -229,6 +229,7 @@
 		A5FD5D8B1BEA5A570031ED1E /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5FD5D8A1BEA5A570031ED1E /* lib */; };
 		B11A70E11CE30DDF00C26F04 /* BTDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11A70DF1CE30DDF00C26F04 /* BTDiscovery.swift */; };
 		B11A70E21CE30DDF00C26F04 /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11A70E01CE30DDF00C26F04 /* BTService.swift */; };
+		B1857D4D1CF30E64009C032B /* Alignment.mm in Sources */ = {isa = PBXBuildFile; fileRef = B1857D4C1CF30E64009C032B /* Alignment.mm */; };
 		B1E759B31CDB390600EA0A68 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1E759B21CDB390600EA0A68 /* Fabric.framework */; };
 /* End PBXBuildFile section */
 
@@ -561,6 +562,12 @@
 		A5FD5D8A1BEA5A570031ED1E /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		B11A70DF1CE30DDF00C26F04 /* BTDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTDiscovery.swift; sourceTree = "<group>"; };
 		B11A70E01CE30DDF00C26F04 /* BTService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTService.swift; sourceTree = "<group>"; };
+		B1857D491CF30CC9009C032B /* Alignment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = Optonaut/Stitcher/Alignment.h; sourceTree = SOURCE_ROOT; };
+		B1857D4C1CF30E64009C032B /* Alignment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alignment.mm; path = Optonaut/Stitcher/Alignment.mm; sourceTree = SOURCE_ROOT; };
+		B1893F861CF3191A00BB7110 /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
+		B1893F871CF31A3500BB7110 /* imageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSink.hpp; sourceTree = "<group>"; };
+		B1893F881CF31A3500BB7110 /* recorderMotor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderMotor.hpp; sourceTree = "<group>"; };
+		B1893F891CF31A3500BB7110 /* visualStabilizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualStabilizer.hpp; sourceTree = "<group>"; };
 		B1E759B21CDB390600EA0A68 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -619,6 +626,7 @@
 		5936B1761CAD34F500F808D8 /* stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				B1893F861CF3191A00BB7110 /* globalAlignment.hpp */,
 				5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */,
 				5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */,
 				5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */,
@@ -929,6 +937,8 @@
 				A5233E301BC87F7500C9EFE5 /* Stores.mm */,
 				A568D4961BD13171008FF556 /* HeadTracker.h */,
 				A568D4971BD13348008FF556 /* HeadTracker.mm */,
+				B1857D491CF30CC9009C032B /* Alignment.h */,
+				B1857D4C1CF30E64009C032B /* Alignment.mm */,
 			);
 			name = Stitcher;
 			path = Utils/Stitcher;
@@ -1267,6 +1277,9 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
+				B1893F871CF31A3500BB7110 /* imageSink.hpp */,
+				B1893F881CF31A3500BB7110 /* recorderMotor.hpp */,
+				B1893F891CF31A3500BB7110 /* visualStabilizer.hpp */,
 				A547FA101C5578D500FBC17D /* jumpFilter.hpp */,
 				A547FA111C5578D500FBC17D /* ringCloser.hpp */,
 				A5376ED31C4EBEF1004EFE88 /* stereoSink.hpp */,
@@ -1650,6 +1663,7 @@
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
 				A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */,
 				8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */,
+				B1857D4D1CF30E64009C032B /* Alignment.mm in Sources */,
 				8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */,
 				8F23AA4D1BFF31B4008926A8 /* ActivityResourceFollowTable.swift in Sources */,
 				8F5335A41BDBA7270058961A /* ActivityResourceStar.swift in Sources */,

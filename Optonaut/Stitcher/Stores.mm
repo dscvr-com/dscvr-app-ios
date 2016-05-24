@@ -12,3 +12,4 @@ optonaut::CheckpointStore Stores::left = MakeStore("left");
 optonaut::CheckpointStore Stores::right = MakeStore("right");
 optonaut::CheckpointStore Stores::common = MakeStore("common");
 optonaut::CheckpointStore Stores::debug = MakeStore("debug");
+optonaut::CheckpointStore Stores::post = MakeStore("post");
