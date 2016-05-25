@@ -425,7 +425,6 @@ class SphereRenderDelegate: RenderDelegate {
             sphereNode.geometry?.firstMaterial?.diffuse.borderColor =  UIColor.blackColor()
             
         }
-
     }
     
     private static func createSphere() -> SCNNode {

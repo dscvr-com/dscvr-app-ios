@@ -66,6 +66,9 @@ class StitchingService {
         
         assert(!isStitching())
         assert(hasUnstitchedRecordings())
+//        if hasUnstitchedRecordings() {
+//            storeRef.clear()
+//        }
         
         currentOptograph = optographID
         

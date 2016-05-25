@@ -100,7 +100,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             scnView = SCNView(frame: self.view.frame)
         }
         
-        let hfov: Float = 35
+        let hfov: Float = 55
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
         renderDelegate.scnView = scnView
@@ -256,9 +256,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         oneTapGestureRecognizer.numberOfTapsRequired = 1
         self.view.addGestureRecognizer(oneTapGestureRecognizer)
         
-        let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
-        twoTapGestureRecognizer.numberOfTapsRequired = 2
-        self.view.addGestureRecognizer(twoTapGestureRecognizer)
+//        let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
+//        twoTapGestureRecognizer.numberOfTapsRequired = 2
+//        self.view.addGestureRecognizer(twoTapGestureRecognizer)
     }
     dynamic private func pushProfile() {
         navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optographBox.model.personID), animated: true)

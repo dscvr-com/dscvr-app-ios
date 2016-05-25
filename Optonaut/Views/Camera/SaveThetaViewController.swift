@@ -45,7 +45,8 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     private let instagramSocialButton = SocialButton()
     private let moreSocialButton = SocialButton()
     private var placeholderImage: SKTexture?
-    var tabView = TabView()
+    //private var tabView = TabView()
+    private var cameraButton = TButton()
     
     private let readyNotification = NotificationSignal<Void>()
     
@@ -114,30 +115,23 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         }
         
         title = "SAVE THE MOMENT"
+
         
-        let cancelButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-        cancelButton.text = String.iconWithName(.Cancel)
-        cancelButton.textColor = .whiteColor()
-        cancelButton.font = UIFont.iconOfSize(18)
-        cancelButton.userInteractionEnabled = true
-        cancelButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.cancel)))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: cancelButton)
+        var privateButton = UIImage(named: "privacy_me")
+        var publicButton = UIImage(named: "privacy_world")
+        var cancelButton = UIImage(named: "camera_back_button")
         
-//        let privateButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
-//        privateButton.textColor = .whiteColor()
-//        privateButton.font = UIFont.iconOfSize(18)
-//        privateButton.rac_text <~ viewModel.isPrivate.producer.mapToTuple(.iconWithName(.Safe), .iconWithName(.World))
-//        privateButton.userInteractionEnabled = true
-//        privateButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.togglePrivate)))
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: privateButton)
+        privateButton = privateButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        publicButton = publicButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        cancelButton = cancelButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: cancelButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.cancel))
         
         
         viewModel.isPrivate.producer.startWithNext { [weak self] isPrivate in
             if let strongSelf = self {
-                //strongSelf.likeButtonView.setImage(liked ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), forState: .Normal)
-                //leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
                 
-                strongSelf.navigationItem.rightBarButtonItem = UIBarButtonItem(image: isPrivate ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), style: UIBarButtonItemStyle.Plain, target: self, action: #selector(strongSelf.togglePrivate))
+                strongSelf.navigationItem.rightBarButtonItem = UIBarButtonItem(image: isPrivate ? privateButton : publicButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(strongSelf.togglePrivate))
             }
         }
         
@@ -230,7 +224,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         shareBackgroundView.layer.borderColor = UIColor(0xe6e6e6).CGColor
         scrollView.addSubview(shareBackgroundView)
         
-        facebookSocialButton.icon = String.iconWithName(.Facebook)
+        //facebookSocialButton.icon = String.iconWithName(.Facebook)
         facebookSocialButton.text = "Facebook"
         facebookSocialButton.color = UIColor(0x3b5998)
         facebookSocialButton.userInteractionEnabled = true
@@ -239,9 +233,9 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         
         viewModel.postFacebook.producer.startWithNext { [weak self] toggled in
             self?.facebookSocialButton.state = toggled ? .Selected : .Unselected
+            self?.facebookSocialButton.icon2 = toggled ? UIImage(named:"facebook_save_active")! : UIImage(named:"facebook_save_inactive")!
         }
         
-        twitterSocialButton.icon = String.iconWithName(.Twitter)
         twitterSocialButton.text = "Twitter"
         twitterSocialButton.color = UIColor(0x55acee)
         twitterSocialButton.userInteractionEnabled = true
@@ -250,9 +244,9 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         
         viewModel.postTwitter.producer.startWithNext { [weak self] toggled in
             self?.twitterSocialButton.state = toggled ? .Selected : .Unselected
+            self?.twitterSocialButton.icon2 = toggled ? UIImage(named:"twitter_save_active")! : UIImage(named:"twitter_save_inactive")!
         }
         
-        instagramSocialButton.icon = String.iconWithName(.Instagram)
         instagramSocialButton.text = "Instagram"
         instagramSocialButton.color = UIColor(0x9b6954)
         instagramSocialButton.userInteractionEnabled = true
@@ -261,9 +255,10 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         
         viewModel.postInstagram.producer.startWithNext { [weak self] toggled in
             self?.instagramSocialButton.state = toggled ? .Selected : .Unselected
+            self?.instagramSocialButton.icon2 = toggled ? UIImage(named:"instagram_save_active")! : UIImage(named:"instagram_save_inactive")!
         }
         
-        moreSocialButton.icon = String.iconWithName(.ShareAlt)
+        moreSocialButton.icon2 = UIImage(named:"more_save_active")!
         moreSocialButton.text = "More"
         moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReadyForSubmit.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
         moreSocialButton.rac_alpha <~ viewModel.isReadyForSubmit.producer.mapToTuple(1, 0.2)
@@ -276,22 +271,30 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.dismissKeyboard))
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
-        
-        
-        tabView.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
-        view.addSubview(tabView)
-        
-        updateTabs()
+    
+        cameraButton.icon = UIImage(named:"camera_icn")!
+        cameraButton.addTarget(self, action: #selector(readyToSubmit), forControlEvents: .TouchUpInside)
+        scrollView.addSubview(cameraButton)
         
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
-            self!.tabView.cameraButton.loading = !isReady
+            self!.cameraButton.loading = !isReady
+            if isReady {
+                self?.cameraButton.icon = UIImage(named:"upload_next")!
+            }
+        }
+        
+        tabController!.delegate = self
+    }
+    func readyToSubmit(){
+        if viewModel.isReadyForSubmit.value {
+            submit(true)
         }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        let contentHeight = 0.46 * view.frame.width + 85 + 68 + 105 + 126
+        let contentHeight = 0.46 * view.frame.width + 85 + 68 + 120 + 126
         let scrollEnabled = contentHeight > view.frame.height
         scrollView.contentSize = CGSize(width: view.frame.width, height: scrollEnabled ? contentHeight : view.frame.height)
         scrollView.scrollEnabled = scrollEnabled
@@ -302,16 +305,18 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         textPlaceholderView.anchorInCorner(.TopLeft, xPad: 16, yPad: 7, width: 250, height: 20)
         
         if scrollEnabled {
-            shareBackgroundView.align(.UnderCentered, relativeTo: textInputView, padding: 0, width: view.frame.width + 2, height: 105)
+            shareBackgroundView.align(.UnderCentered, relativeTo: textInputView, padding: 0, width: view.frame.width + 2, height: 120)
         } else {
-            shareBackgroundView.anchorInCorner(.BottomLeft, xPad: -1, yPad: 126, width: view.frame.width + 2, height: 105)
+            shareBackgroundView.anchorInCorner(.BottomLeft, xPad: -1, yPad: 126, width: view.frame.width + 2, height: 120)
         }
         
         let socialPadX = (view.frame.width - 2 * 120) / 3
-        facebookSocialButton.anchorInCorner(.TopLeft, xPad: socialPadX, yPad: 20, width: 120, height: 23)
-        twitterSocialButton.anchorInCorner(.TopRight, xPad: socialPadX, yPad: 20, width: 120, height: 23)
-        instagramSocialButton.anchorInCorner(.BottomLeft, xPad: socialPadX, yPad: 20, width: 120, height: 23)
-        moreSocialButton.anchorInCorner(.BottomRight, xPad: socialPadX, yPad: 20, width: 120, height: 23)
+        facebookSocialButton.anchorInCorner(.TopLeft, xPad: socialPadX, yPad: 10, width: 120, height: 23)
+        twitterSocialButton.anchorInCorner(.TopRight, xPad: socialPadX, yPad: 10, width: 120, height: 23)
+        instagramSocialButton.anchorInCorner(.BottomLeft, xPad: socialPadX, yPad: 30, width: 120, height: 23)
+        moreSocialButton.anchorInCorner(.BottomRight, xPad: socialPadX, yPad: 30, width: 120, height: 23)
+        
+        cameraButton.align(.UnderCentered, relativeTo: shareBackgroundView, padding: 25, width: 80, height: 80)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -319,6 +324,8 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveThetaViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveThetaViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        
+        tabController!.disableScrollView()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -330,8 +337,8 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
         navigationController?.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: UIFont.displayOfSize(14, withType: .Regular),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
+            NSFontAttributeName: UIFont.fontDisplay(14, withType: .Regular),
+            NSForegroundColorAttributeName: UIColor(hex:0xffbc00),
         ]
 
         
@@ -368,6 +375,9 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
         
         navigationController?.interactivePopGestureRecognizer?.enabled = true
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+        
+        tabController?.enableScrollView()
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -378,9 +388,9 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     
     func updateTabs() {
         
-        tabView.bottomGradientOffset.value = 0
-        tabView.leftButton.hidden = true
-        tabView.rightButton.hidden = true
+        //tabView.bottomGradientOffset.value = 0
+        //tabView.leftButton.hidden = true
+        //tabView.rightButton.hidden = true
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -642,12 +652,11 @@ class SaveThetaViewController: UIViewController, RedNavbar {
             .observeOnMain()
             .on(
                 started: { [weak self] in
-                    self?.tabView.cameraButton.loading = true
+                    self?.cameraButton.loading = true
                 },
                 completed: { [weak self] in
                     Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
-                    self?.tabView.rightButton.loading = false
-                    self?.navigationController!.popViewControllerAnimated(false)
+                    self?.navigationController!.popViewControllerAnimated(true)
                     
                     if Defaults[.SessionUploadMode] == "theta" {
                         self?.viewModel.uploadForThetaOk()
@@ -855,7 +864,7 @@ private class LocationCollectionViewCell: UICollectionViewCell {
 private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     private let bottomBorder = CALayer()
-    private let leftIconView = UILabel()
+    private let leftIconView = UIImageView()
     private let statusText = UILabel()
     private let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
     private let loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
@@ -896,11 +905,12 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         loadingIndicator.hidesWhenStopped = true
         addSubview(loadingIndicator)
         
-        leftIconView.font = UIFont.iconOfSize(24)
-        leftIconView.textColor = UIColor(0x919293)
+//        leftIconView.font = UIFont.iconOfSize(24)
+//        leftIconView.textColor = UIColor(0x919293)
         leftIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LocationView.didTap)))
         leftIconView.userInteractionEnabled = true
-        leftIconView.text = String.iconWithName(.Location)
+        leftIconView.image = UIImage(named:"location_pin")
+        //leftIconView.text = String.iconWithName(.Location)
         addSubview(leftIconView)
         
         statusText.font = UIFont.displayOfSize(13, withType: .Semibold)
@@ -923,8 +933,9 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
     override func layoutSubviews() {
         super.layoutSubviews()
         
+        
         bottomBorder.frame = CGRect(x: 0, y: frame.height - 1, width: frame.width, height: 1)
-        leftIconView.frame = CGRect(x: 16, y: 22, width: 24, height: 24)
+        leftIconView.frame = CGRect(x: 16, y: 22, width: leftIconView.image!.size.width, height: leftIconView.image!.size.height)
         statusText.frame = CGRect(x: 54, y: 22, width: 200, height: 24)
         loadingIndicator.frame = CGRect(x: 54, y: 20, width: 28, height: 28)
         collectionView.frame = CGRect(x: 54, y: 0, width: frame.width - 54, height: 68)
@@ -983,10 +994,10 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
 
 private class SocialButton: UIView {
     
-    private let iconView = UILabel()
     private let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
     private let textView = UILabel()
     private var touched = false
+    private var iconView2 = UIImageView()
     
     var text = "" {
         didSet {
@@ -994,9 +1005,9 @@ private class SocialButton: UIView {
         }
     }
     
-    var icon = "" {
+    var icon2:UIImage = UIImage(named:"facebook_save_active")! {
         didSet {
-            iconView.text = icon
+            iconView2.image = icon2
         }
     }
     
@@ -1017,14 +1028,13 @@ private class SocialButton: UIView {
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        iconView.font = UIFont.iconOfSize(23)
-        addSubview(iconView)
-        
         loadingView.hidesWhenStopped = true
         addSubview(loadingView)
         
         textView.font = UIFont.displayOfSize(16, withType: .Semibold)
         addSubview(textView)
+
+        addSubview(iconView2)
         
         updateColors()
     }
@@ -1036,9 +1046,16 @@ private class SocialButton: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        iconView.frame = CGRect(x: 0, y: 0, width: 23, height: 23)
-        loadingView.frame = CGRect(x: 0, y: 0, width: 23, height: 23)
-        textView.frame = CGRect(x: 34, y: 3, width: 77, height: 17)
+        
+        let iconHeight = UIImage(named:"facebook_save_active")!.size.height
+        let iconWidth = UIImage(named:"facebook_save_active")!.size.width
+        
+        loadingView.frame = CGRect(x: 0, y: 0, width: iconHeight, height: iconHeight)
+        textView.frame = CGRect(x: 45, y: 10, width: 77, height: 17)
+    
+        
+        iconView2.frame = CGRect(x: 0,y: 0,width: iconWidth,height: iconHeight)
+        
     }
     
     private override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -1068,10 +1085,10 @@ private class SocialButton: UIView {
     private func updateColors() {
         if state == .Loading {
             loadingView.startAnimating()
-            iconView.hidden = true
+            iconView2.hidden = true
         } else {
             loadingView.stopAnimating()
-            iconView.hidden = false
+            iconView2.hidden = false
         }
         
         var textColor = UIColor(0x919293)
@@ -1082,6 +1099,5 @@ private class SocialButton: UIView {
         }
         
         textView.textColor = textColor
-        iconView.textColor = textColor
     }
 }

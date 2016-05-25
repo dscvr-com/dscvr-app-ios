@@ -24,7 +24,7 @@ struct staticVariables {
     static var isCenter:Bool!
 }
 
-class CameraViewController: UIViewController {
+class CameraViewController: UIViewController,TabControllerDelegate {
     
     private let viewModel = CameraViewModel()
     private let motionManager = CMMotionManager()
@@ -175,23 +175,43 @@ class CameraViewController: UIViewController {
         //        view.addSubview(recordButtonView)
         
         //        if Defaults[.SessionDebuggingEnabled] {
-//        #if DEBUG
-//            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
-//            tapGestureRecognizer.numberOfTapsRequired = 3
-//            view.addGestureRecognizer(tapGestureRecognizer)
-//        #endif
+        #if DEBUG
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
+            tapGestureRecognizer.numberOfTapsRequired = 3
+            view.addGestureRecognizer(tapGestureRecognizer)
+        #endif
         //        }
+        //tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
+        tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
+        scnView.addSubview(tabView)
         
         motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
+        
         cancelButton.addTarget(self, action: #selector(CameraViewController.cancelRecording), forControlEvents: .TouchUpInside)
         cancelButton.setImage(UIImage(named: "camera_back_button"), forState: .Normal)
         scnView.addSubview(cancelButton)
-        
-        
         cancelButton.anchorInCorner(.TopLeft, xPad: 0, yPad: 15, width: 40, height: 40)
+        
+        tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
+        tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
+        tabView.cameraButton.addTarget(self, action: #selector(touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
+    
+    func tapCameraButton() {
+        tapCameraButtonCallback?()
+    }
+    
+    func touchStartCameraButton() {
+        viewModel.isRecording.value = true
+    }
+    
+    func touchEndCameraButton() {
+        viewModel.isRecording.value = false
+        tapCameraButtonCallback = nil
+    }
+    
     
     func cancelRecording() {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
@@ -205,8 +225,7 @@ class CameraViewController: UIViewController {
             StitchingService.removeUnstitchedRecordings()
         }
         
-        //self.navigationController?.popViewControllerAnimated(false)
-        tabController!.centerViewController.popViewControllerAnimated(false)
+        self.navigationController?.popViewControllerAnimated(false)
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -336,10 +355,6 @@ class CameraViewController: UIViewController {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        tabView.leftButton.hidden = false
-        tabView.rightButton.hidden = false
-        tabController!.delegate = nil
-        
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
         UIApplication.sharedApplication().idleTimerDisabled = false
@@ -364,6 +379,10 @@ class CameraViewController: UIViewController {
         circleView.autoAlignAxis(.Horizontal, toSameAxisOfView: view)
         circleView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         circleView.autoSetDimensionsToSize(CGSize(width: 70, height: 70))
+        
+        //tabView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: 126)
+        tabView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view)
+        tabView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset:0)
         
         super.updateViewConstraints()
     }
@@ -776,44 +795,11 @@ class CameraViewController: UIViewController {
             
             recorder_.dispose()
         }
-        
         let createOptographViewController = SaveViewController(recorderCleanup: recorderCleanup)
         createOptographViewController.hidesBottomBarWhenPushed = true
         navigationController!.pushViewController(createOptographViewController, animated: false)
         navigationController!.viewControllers.removeAtIndex(1)
-    }
-    
-}
-
-extension CameraViewController: TabControllerDelegate {
-    
-    func onTouchStartCameraButton() {
-        viewModel.isRecording.value = true
-    }
-    
-    func onTouchEndCameraButton() {
-        viewModel.isRecording.value = false
-        
-        tapCameraButtonCallback = nil
-    }
-    
-    func onTapCameraButton() {
-        tapCameraButtonCallback?()
-    }
-    
-    func onTapLeftButton() {
-        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
-        
-        stopSession()
-        
-        recorder.finish()
-        recorder.dispose()
-        
-        if StitchingService.hasUnstitchedRecordings() {
-            StitchingService.removeUnstitchedRecordings()
-        }
-        
-        navigationController?.popViewControllerAnimated(false)
+        print(navigationController!.viewControllers)
     }
     
 }

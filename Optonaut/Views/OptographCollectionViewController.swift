@@ -11,6 +11,7 @@ import ReactiveCocoa
 import SpriteKit
 import Async
 import Kingfisher
+import SwiftyUserDefaults
 
 typealias Direction = (phi: Float, theta: Float)
 
@@ -203,7 +204,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 }
         }
         updateTabs()
-        initNotificationIndicator()
+        //initNotificationIndicator()
         imagePicker.delegate = self
         
         isThetaImage.producer
@@ -219,22 +220,28 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     func openGallary() {
         
-        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-        imagePicker.navigationBar.translucent = false
-        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
-        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
-        imagePicker.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
-        ]
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
-        imagePicker.setNavigationBarHidden(false, animated: false)
-        imagePicker.interactivePopGestureRecognizer?.enabled = false
+//        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+//        imagePicker.navigationBar.translucent = false
+//        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
+//        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
+//        imagePicker.navigationBar.titleTextAttributes = [
+//            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
+//            NSForegroundColorAttributeName: UIColor.whiteColor(),
+//        ]
+//        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+//        imagePicker.setNavigationBarHidden(false, animated: false)
+//        imagePicker.interactivePopGestureRecognizer?.enabled = false
+//        
+//        self.presentViewController(imagePicker, animated: true, completion: nil)
         
-        self.presentViewController(imagePicker, animated: true, completion: nil)
+        
+        let imagePickVC = ViewController()
+        self.presentViewController(imagePickVC, animated: true, completion: nil)
     }
     
     func uploadTheta(thetaImage:UIImage) {
+        
+        Defaults[.SessionUploadMode] = "theta"
         
         let createOptographViewController = SaveThetaViewController(thetaImage:thetaImage)
         
@@ -262,6 +269,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         switch PipelineService.stitchingStatus.value {
         case .Idle:
             self.tabController?.centerViewController.cleanup()
+            self.tabController?.rightViewController.cleanup()
+            self.tabController?.leftViewController.cleanup()
+            
+            Defaults[.SessionUploadMode] = "opto"
             navigationController?.pushViewController(CameraViewController(), animated: false)
             
         case .Stitching(_):
@@ -560,148 +571,4 @@ extension OptographCollectionViewController: DefaultTabControllerDelegate {
         let row = optographIDs.indexOf(optographID)
         collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
     }
-}
-
-private class OverlayViewModel {
-    
-    let likeCount = MutableProperty<Int>(0)
-    let liked = MutableProperty<Bool>(false)
-    let textToggled = MutableProperty<Bool>(false)
-    
-    enum UploadStatus { case Offline, Uploading, Uploaded }
-    let uploadStatus = MutableProperty<UploadStatus>(.Uploaded)
-    
-    var optographBox: ModelBox<Optograph>!
-    
-    var optograph: Optograph!
-    
-    func bind(optographID: UUID) {
-        
-        optographBox = Models.optographs[optographID]!
-        
-        textToggled.value = false
-        
-        optographBox.producer.startWithNext { [weak self] optograph in
-            self?.likeCount.value = optograph.starsCount
-            self?.liked.value = optograph.isStarred
-            
-            if optograph.isPublished {
-                self?.uploadStatus.value = .Uploaded
-            } else if optograph.isUploading {
-                self?.uploadStatus.value = .Uploading
-            } else {
-                self?.uploadStatus.value = .Offline
-            }
-        }
-        
-    }
-
-    
-    func toggleLike() {
-        let starredBefore = liked.value
-        let starsCountBefore = likeCount.value
-        
-        let optograph = optographBox.model
-        
-        SignalProducer<Bool, ApiError>(value: starredBefore)
-            .flatMap(.Latest) { followedBefore in
-                starredBefore
-                    ? ApiService<EmptyResponse>.delete("optographs/\(optograph.ID)/star")
-                    : ApiService<EmptyResponse>.post("optographs/\(optograph.ID)/star", parameters: nil)
-            }
-            .on(
-                started: { [weak self] in
-                    self?.optographBox.insertOrUpdate { box in
-                        box.model.isStarred = !starredBefore
-                        box.model.starsCount += starredBefore ? -1 : 1
-                    }
-                },
-                failed: { [weak self] _ in
-                    self?.optographBox.insertOrUpdate { box in
-                        box.model.isStarred = starredBefore
-                        box.model.starsCount = starsCountBefore
-                    }
-                }
-            )
-            .start()
-    }
-    
-    func upload() {
-        if !optographBox.model.isOnServer {
-            let optograph = optographBox.model
-            
-            optographBox.update { box in
-                box.model.isUploading = true
-            }
-            
-            let postParameters = [
-                "id": optograph.ID,
-                "stitcher_version": StitcherVersion,
-                "created_at": optograph.createdAt.toRFC3339String(),
-            ]
-            
-            var putParameters: [String: AnyObject] = [
-                "text": optograph.text,
-                "is_private": optograph.isPrivate,
-                "post_facebook": optograph.postFacebook,
-                "post_twitter": optograph.postTwitter,
-                "direction_phi": optograph.directionPhi,
-                "direction_theta": optograph.directionTheta,
-            ]
-            if let locationID = optograph.locationID, location = Models.locations[locationID]?.model {
-                putParameters["location"] = [
-                    "latitude": location.latitude,
-                    "longitude": location.longitude,
-                    "text": location.text,
-                    "country": location.country,
-                    "country_short": location.countryShort,
-                    "place": location.place,
-                    "region": location.region,
-                    "poi": location.POI,
-                ]
-            }
-            
-            SignalProducer<Bool, ApiError>(value: !optographBox.model.shareAlias.isEmpty)
-                .flatMap(.Latest) { alreadyPosted -> SignalProducer<Void, ApiError> in
-                    if alreadyPosted {
-                        return SignalProducer(value: ())
-                    } else {
-                        return ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
-                            .on(next: { [weak self] optograph in
-                                self?.optographBox.insertOrUpdate { box in
-                                    box.model.shareAlias = optograph.shareAlias
-                                }
-                            })
-                            .map { _ in () }
-                    }
-                }
-                .flatMap(.Latest) {
-                    ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: putParameters)
-                        .on(failed: { [weak self] _ in
-                            self?.optographBox.update { box in
-                                box.model.isUploading = false
-                            }
-                        })
-                }
-                .on(next: { [weak self] optograph in
-                    self?.optographBox.insertOrUpdate { box in
-                        box.model.isOnServer = true
-                    }
-                })
-                .startWithCompleted {
-                    PipelineService.checkUploading()
-                }
-            
-            
-        } else {
-            optographBox.insertOrUpdate { box in
-                box.model.shouldBePublished = true
-                box.model.isUploading = true
-            }
-            
-            PipelineService.checkUploading()
-        }
-        
-    }
-    
 }

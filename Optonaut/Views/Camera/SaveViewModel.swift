@@ -113,7 +113,6 @@ class SaveViewModel {
                         "optograph_type":"optograph"
                     ]
                 }
-                print(postParameters)
                 
                 ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
                     .on(next: { [weak self] optograph in
