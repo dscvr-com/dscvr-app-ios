@@ -230,8 +230,6 @@ private class OverlayViewModel {
             }
         }
         
-        print("personid \(SessionService.personID)")
-        print("personOptoId \(optographBox.model.personID)")
         isMe = SessionService.personID == optographBox.model.personID
         
         personBox.producer
@@ -465,15 +463,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
         
-        //combinedMotionManager.touchStart(CGPoint(x: pointX,y: pointY))
-        
-//        _ = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(OptographCollectionViewCell.panStart), userInfo: nil, repeats: true)
-        
-//        phiDamp *= dampFactor
-//        thetaDamp *= dampFactor
-//        phi += phiDamp
-//        theta += thetaDamp
-        
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
         renderDelegate.scnView = scnView
         
@@ -552,17 +541,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
         contentView.bringSubviewToFront(whiteBackground)
         contentView.bringSubviewToFront(blackSpace)
         
-//        hiddenGestureRecognizer.cancelsTouchesInView = false
-//        hiddenGestureRecognizer.delaysTouchesBegan = false
-//        hiddenGestureRecognizer.delaysTouchesEnded = false
-//        hiddenGestureRecognizer.delegate = self
-    }
-    
-    
-    func panStart() {
-        pointX += 10
-        combinedMotionManager.touchMove(CGPointMake(pointX, pointY))
-    
     }
     
     override func layoutSubviews() {

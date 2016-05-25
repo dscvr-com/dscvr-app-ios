@@ -369,6 +369,7 @@ class SaveViewController: UIViewController, RedNavbar {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
         
         navigationController?.interactivePopGestureRecognizer?.enabled = true
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
     }
     
     override func viewDidDisappear(animated: Bool) {
