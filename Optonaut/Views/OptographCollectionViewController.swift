@@ -419,15 +419,18 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         cell.id = indexPath.row
         cell.bindModel(optographID)
         cell.swipeView = tabController!.scrollView
+        print(cell.id)
         
         
         cell.isShareOpen.producer
             .startWithNext{ val in
                 if val{
                     print("optographid =",optographID)
+                   // cell.setRotation(true)
                     self.shareData.optographId.value = optographID
                 } else {
                     print("close")
+                    //cell.setRotation(false)
                 }
             }
         
@@ -467,9 +470,78 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         imageCache.disable(indexPath.row)
     }
     
+    
+    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+       /*
+        let cell4 = collectionView!.visibleCells().first as! OptographCollectionViewCell
+        cell4.setRotation(true)
+        print("scrollViewWillBeginDragging")
+ */
+            /*
+        if visibleIndexPath.row > 1 {
+        
+            let cell0 = collectionView!.cellForItemAtIndexPath(visibleIndexPath.indexPathByAddingIndex(-1)) as! OptographCollectionViewCell
+            cell0.setRotation(false)
+        }
+ */
+        
+       
+        var cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+      //  cells.removeFirst()
+        for cell in cells {
+            // look at data
+            cell.setRotation(false)
+        }
+        
+        var visibleRect = CGRect()
+        
+        visibleRect.origin = collectionView!.contentOffset
+        visibleRect.size = collectionView!.bounds.size
+        
+        let visiblePoint = CGPointMake(CGRectGetMidX(visibleRect), CGRectGetMaxY(visibleRect))
+        
+        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(visiblePoint)!
+        
+        let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
+        cell.setRotation(true)
+
+    }
+    
+    
+    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        
+    /*
+        let cell4 = collectionView!.visibleCells().last as! OptographCollectionViewCell
+        cell4.setRotation(true)
+        print("scrollViewWillBeginDragging")
+ */
+        var cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+   //     cells.removeLast()
+ 
+        for cell in cells {
+            // look at data
+            cell.setRotation(false)
+        }
+        
+        var visibleRect = CGRect()
+        
+        visibleRect.origin = collectionView!.contentOffset
+        visibleRect.size = collectionView!.bounds.size
+        
+        let visiblePoint = CGPointMake(CGRectGetMidX(visibleRect), CGRectGetMaxY(visibleRect))
+        
+        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(visiblePoint)!
+        
+        let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
+        cell.setRotation(true)
+        
+    }
+ 
+    
     override func cleanup() {
         for cell in collectionView!.visibleCells().map({ $0 as! OptographCollectionViewCell }) {
             cell.forgetTextures()
+            cell.setRotation(false)
         }
         
         imageCache.reset()
