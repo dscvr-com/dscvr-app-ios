@@ -45,7 +45,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     private let instagramSocialButton = SocialButton()
     private let moreSocialButton = SocialButton()
     private var placeholderImage: SKTexture?
-    var tabView = TabView()
+    private var tabView = TabView()
     
     private let readyNotification = NotificationSignal<Void>()
     
@@ -230,7 +230,8 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         shareBackgroundView.layer.borderColor = UIColor(0xe6e6e6).CGColor
         scrollView.addSubview(shareBackgroundView)
         
-        facebookSocialButton.icon = String.iconWithName(.Facebook)
+        //facebookSocialButton.icon = String.iconWithName(.Facebook)
+        facebookSocialButton.icon2 = UIImage(named:"facebook_save_active")!
         facebookSocialButton.text = "Facebook"
         facebookSocialButton.color = UIColor(0x3b5998)
         facebookSocialButton.userInteractionEnabled = true
@@ -241,7 +242,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
             self?.facebookSocialButton.state = toggled ? .Selected : .Unselected
         }
         
-        twitterSocialButton.icon = String.iconWithName(.Twitter)
+        twitterSocialButton.icon2 = UIImage(named:"twitter_save_active")!
         twitterSocialButton.text = "Twitter"
         twitterSocialButton.color = UIColor(0x55acee)
         twitterSocialButton.userInteractionEnabled = true
@@ -252,7 +253,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
             self?.twitterSocialButton.state = toggled ? .Selected : .Unselected
         }
         
-        instagramSocialButton.icon = String.iconWithName(.Instagram)
+        instagramSocialButton.icon2 = UIImage(named:"instagram_save_active")!
         instagramSocialButton.text = "Instagram"
         instagramSocialButton.color = UIColor(0x9b6954)
         instagramSocialButton.userInteractionEnabled = true
@@ -263,7 +264,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
             self?.instagramSocialButton.state = toggled ? .Selected : .Unselected
         }
         
-        moreSocialButton.icon = String.iconWithName(.ShareAlt)
+        moreSocialButton.icon2 = UIImage(named:"more_save_active")!
         moreSocialButton.text = "More"
         moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReadyForSubmit.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
         moreSocialButton.rac_alpha <~ viewModel.isReadyForSubmit.producer.mapToTuple(1, 0.2)
@@ -276,12 +277,11 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.dismissKeyboard))
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
+    
+        tabView.frame  = CGRect(x: 0,y: view.frame.height - 126 ,width: view.frame.width,height: 126)
+        scrollView.addSubview(tabView)
         
-        
-        tabView.frame = CGRect(x: 0, y: view.frame.height - 126, width: view.frame.width, height: 126)
-        view.addSubview(tabView)
-        
-        updateTabs()
+       // updateTabs()
         
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
             self!.tabView.cameraButton.loading = !isReady
@@ -291,7 +291,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        let contentHeight = 0.46 * view.frame.width + 85 + 68 + 105 + 126
+        let contentHeight = 0.46 * view.frame.width + 85 + 68 + 120 + 126
         let scrollEnabled = contentHeight > view.frame.height
         scrollView.contentSize = CGSize(width: view.frame.width, height: scrollEnabled ? contentHeight : view.frame.height)
         scrollView.scrollEnabled = scrollEnabled
@@ -300,18 +300,23 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         locationView.alignAndFillWidth(align: .UnderCentered, relativeTo: scnView, padding: 0, height: 68)
         textInputView.alignAndFillWidth(align: .UnderCentered, relativeTo: locationView, padding: 0, height: 85)
         textPlaceholderView.anchorInCorner(.TopLeft, xPad: 16, yPad: 7, width: 250, height: 20)
+        textInputView.backgroundColor = UIColor.yellowColor()
         
         if scrollEnabled {
-            shareBackgroundView.align(.UnderCentered, relativeTo: textInputView, padding: 0, width: view.frame.width + 2, height: 105)
+            shareBackgroundView.align(.UnderCentered, relativeTo: textInputView, padding: 0, width: view.frame.width + 2, height: 120)
+            shareBackgroundView.backgroundColor = UIColor.redColor()
         } else {
-            shareBackgroundView.anchorInCorner(.BottomLeft, xPad: -1, yPad: 126, width: view.frame.width + 2, height: 105)
+            shareBackgroundView.anchorInCorner(.BottomLeft, xPad: -1, yPad: 126, width: view.frame.width + 2, height: 120)
+            shareBackgroundView.backgroundColor = UIColor.blueColor()
         }
         
         let socialPadX = (view.frame.width - 2 * 120) / 3
-        facebookSocialButton.anchorInCorner(.TopLeft, xPad: socialPadX, yPad: 20, width: 120, height: 23)
-        twitterSocialButton.anchorInCorner(.TopRight, xPad: socialPadX, yPad: 20, width: 120, height: 23)
-        instagramSocialButton.anchorInCorner(.BottomLeft, xPad: socialPadX, yPad: 20, width: 120, height: 23)
-        moreSocialButton.anchorInCorner(.BottomRight, xPad: socialPadX, yPad: 20, width: 120, height: 23)
+        facebookSocialButton.anchorInCorner(.TopLeft, xPad: socialPadX, yPad: 10, width: 120, height: 23)
+        twitterSocialButton.anchorInCorner(.TopRight, xPad: socialPadX, yPad: 10, width: 120, height: 23)
+        instagramSocialButton.anchorInCorner(.BottomLeft, xPad: socialPadX, yPad: 30, width: 120, height: 23)
+        moreSocialButton.anchorInCorner(.BottomRight, xPad: socialPadX, yPad: 30, width: 120, height: 23)
+        
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -378,7 +383,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     
     func updateTabs() {
         
-        tabView.bottomGradientOffset.value = 0
+        //tabView.bottomGradientOffset.value = 0
         tabView.leftButton.hidden = true
         tabView.rightButton.hidden = true
     }
@@ -983,10 +988,10 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
 
 private class SocialButton: UIView {
     
-    private let iconView = UILabel()
     private let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
     private let textView = UILabel()
     private var touched = false
+    private var iconView2 = UIImageView()
     
     var text = "" {
         didSet {
@@ -994,9 +999,9 @@ private class SocialButton: UIView {
         }
     }
     
-    var icon = "" {
+    var icon2:UIImage = UIImage(named:"facebook_save_active")! {
         didSet {
-            iconView.text = icon
+            iconView2.image = icon2
         }
     }
     
@@ -1017,14 +1022,13 @@ private class SocialButton: UIView {
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        iconView.font = UIFont.iconOfSize(23)
-        addSubview(iconView)
-        
         loadingView.hidesWhenStopped = true
         addSubview(loadingView)
         
         textView.font = UIFont.displayOfSize(16, withType: .Semibold)
         addSubview(textView)
+
+        addSubview(iconView2)
         
         updateColors()
     }
@@ -1036,9 +1040,16 @@ private class SocialButton: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        iconView.frame = CGRect(x: 0, y: 0, width: 23, height: 23)
-        loadingView.frame = CGRect(x: 0, y: 0, width: 23, height: 23)
-        textView.frame = CGRect(x: 34, y: 3, width: 77, height: 17)
+        
+        let iconHeight = UIImage(named:"facebook_save_active")!.size.height
+        let iconWidth = UIImage(named:"facebook_save_active")!.size.width
+        
+        loadingView.frame = CGRect(x: 0, y: 0, width: iconHeight, height: iconHeight)
+        textView.frame = CGRect(x: 45, y: 10, width: 77, height: 17)
+    
+        
+        iconView2.frame = CGRect(x: 0,y: 0,width: iconWidth,height: iconHeight)
+        
     }
     
     private override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -1068,10 +1079,10 @@ private class SocialButton: UIView {
     private func updateColors() {
         if state == .Loading {
             loadingView.startAnimating()
-            iconView.hidden = true
+            iconView2.hidden = true
         } else {
             loadingView.stopAnimating()
-            iconView.hidden = false
+            iconView2.hidden = false
         }
         
         var textColor = UIColor(0x919293)
@@ -1082,6 +1093,6 @@ private class SocialButton: UIView {
         }
         
         textView.textColor = textColor
-        iconView.textColor = textColor
+        //iconView.textColor = textColor
     }
 }

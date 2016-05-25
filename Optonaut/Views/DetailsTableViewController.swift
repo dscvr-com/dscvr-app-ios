@@ -100,7 +100,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             scnView = SCNView(frame: self.view.frame)
         }
         
-        let hfov: Float = 35
+        let hfov: Float = 55
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
         renderDelegate.scnView = scnView

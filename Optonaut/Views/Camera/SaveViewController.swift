@@ -1027,8 +1027,9 @@ private class SocialButton: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        iconView.frame = CGRect(x: 0, y: 0, width: 23, height: 23)
-        loadingView.frame = CGRect(x: 0, y: 0, width: 23, height: 23)
+        let buttonSize = UIImage(named:"facebook_save_active")!.size.width
+        iconView.frame = CGRect(x: 0, y: 0, width: buttonSize, height: buttonSize)
+        loadingView.frame = CGRect(x: 0, y: 0, width: buttonSize, height: buttonSize)
         textView.frame = CGRect(x: 34, y: 3, width: 77, height: 17)
     }
     

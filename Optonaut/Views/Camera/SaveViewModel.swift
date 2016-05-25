@@ -113,34 +113,33 @@ class SaveViewModel {
                         "optograph_type":"optograph"
                     ]
                 }
-                print(postParameters)
                 
-                ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
-                    .on(next: { [weak self] optograph in
-                        self?.optographBox.insertOrUpdate { box in
-                            box.model.shareAlias = optograph.shareAlias
-                            box.model.isOnServer = true
-                            box.model.personID = SessionService.personID
-                        }
-                    })
-                    .zipWith(self.placeholder.producer.ignoreNil().take(1).mapError({ _ in ApiError.Nil }))
-                    .flatMap(.Latest) { (optograph, image) in
-                        
-                        return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset\(uploadModeStr)", multipartFormData: { form in
-                            form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
-                            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
-                        })
-                    }
-                    .on(
-                        completed: { [weak self] in
-                            self?.isInitialized.value = true
-                        },
-                        failed: { [weak self] _ in
-                            self?.isOnline.value = false
-                            self?.isInitialized.value = true
-                        }
-                    )
-                    .start()
+//                ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
+//                    .on(next: { [weak self] optograph in
+//                        self?.optographBox.insertOrUpdate { box in
+//                            box.model.shareAlias = optograph.shareAlias
+//                            box.model.isOnServer = true
+//                            box.model.personID = SessionService.personID
+//                        }
+//                    })
+//                    .zipWith(self.placeholder.producer.ignoreNil().take(1).mapError({ _ in ApiError.Nil }))
+//                    .flatMap(.Latest) { (optograph, image) in
+//                        
+//                        return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset\(uploadModeStr)", multipartFormData: { form in
+//                            form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
+//                            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
+//                        })
+//                    }
+//                    .on(
+//                        completed: { [weak self] in
+//                            self?.isInitialized.value = true
+//                        },
+//                        failed: { [weak self] _ in
+//                            self?.isOnline.value = false
+//                            self?.isInitialized.value = true
+//                        }
+//                    )
+//                    .start()
                 
                 self.placeID.producer
                     .delayLatestUntil(self.isInitialized.producer)
