@@ -778,6 +778,7 @@ extension DefaultTabControllerDelegate {
             self.tabController?.centerViewController.pushViewController(CameraViewController(), animated: false)
             
         case .Stitching(_):
+            
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
             tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
@@ -827,7 +828,6 @@ extension UINavigationController {
         for vc in viewControllers ?? [] {
             vc.cleanup()
         }
-        print(viewControllers)
     }
 }
 

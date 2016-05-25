@@ -11,6 +11,7 @@ import ReactiveCocoa
 import SpriteKit
 import Async
 import Kingfisher
+import SwiftyUserDefaults
 
 typealias Direction = (phi: Float, theta: Float)
 
@@ -203,7 +204,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 }
         }
         updateTabs()
-        initNotificationIndicator()
+        //initNotificationIndicator()
         imagePicker.delegate = self
         
         isThetaImage.producer
@@ -219,22 +220,28 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     func openGallary() {
         
-        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-        imagePicker.navigationBar.translucent = false
-        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
-        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
-        imagePicker.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
-        ]
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
-        imagePicker.setNavigationBarHidden(false, animated: false)
-        imagePicker.interactivePopGestureRecognizer?.enabled = false
+//        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+//        imagePicker.navigationBar.translucent = false
+//        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
+//        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
+//        imagePicker.navigationBar.titleTextAttributes = [
+//            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
+//            NSForegroundColorAttributeName: UIColor.whiteColor(),
+//        ]
+//        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+//        imagePicker.setNavigationBarHidden(false, animated: false)
+//        imagePicker.interactivePopGestureRecognizer?.enabled = false
+//        
+//        self.presentViewController(imagePicker, animated: true, completion: nil)
         
-        self.presentViewController(imagePicker, animated: true, completion: nil)
+        
+        let imagePickVC = ViewController()
+        self.presentViewController(imagePickVC, animated: true, completion: nil)
     }
     
     func uploadTheta(thetaImage:UIImage) {
+        
+        Defaults[.SessionUploadMode] = "theta"
         
         let createOptographViewController = SaveThetaViewController(thetaImage:thetaImage)
         
@@ -262,6 +269,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         switch PipelineService.stitchingStatus.value {
         case .Idle:
             self.tabController?.centerViewController.cleanup()
+            self.tabController?.rightViewController.cleanup()
+            self.tabController?.leftViewController.cleanup()
+            
+            Defaults[.SessionUploadMode] = "opto"
             navigationController?.pushViewController(CameraViewController(), animated: false)
             
         case .Stitching(_):

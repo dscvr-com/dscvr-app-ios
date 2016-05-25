@@ -24,7 +24,7 @@ struct staticVariables {
     static var isCenter:Bool!
 }
 
-class CameraViewController: UIViewController {
+class CameraViewController: UIViewController,TabControllerDelegate {
     
     private let viewModel = CameraViewModel()
     private let motionManager = CMMotionManager()
@@ -225,8 +225,7 @@ class CameraViewController: UIViewController {
             StitchingService.removeUnstitchedRecordings()
         }
         
-        //self.navigationController?.popViewControllerAnimated(false)
-        tabController!.centerViewController.popViewControllerAnimated(false)
+        self.navigationController?.popViewControllerAnimated(false)
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -355,8 +354,6 @@ class CameraViewController: UIViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        tabController!.delegate = nil
         
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
@@ -798,44 +795,10 @@ class CameraViewController: UIViewController {
             
             recorder_.dispose()
         }
-        
         let createOptographViewController = SaveViewController(recorderCleanup: recorderCleanup)
         createOptographViewController.hidesBottomBarWhenPushed = true
         navigationController!.pushViewController(createOptographViewController, animated: false)
         navigationController!.viewControllers.removeAtIndex(1)
-    }
-    
-}
-
-extension CameraViewController: TabControllerDelegate {
-    
-    func onTouchStartCameraButton() {
-        viewModel.isRecording.value = true
-    }
-    
-    func onTouchEndCameraButton() {
-        viewModel.isRecording.value = false
-        
-        tapCameraButtonCallback = nil
-    }
-    
-    func onTapCameraButton() {
-        tapCameraButtonCallback?()
-    }
-    
-    func onTapLeftButton() {
-        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
-        
-        stopSession()
-        
-        recorder.finish()
-        recorder.dispose()
-        
-        if StitchingService.hasUnstitchedRecordings() {
-            StitchingService.removeUnstitchedRecordings()
-        }
-        
-        navigationController?.popViewControllerAnimated(false)
     }
     
 }
