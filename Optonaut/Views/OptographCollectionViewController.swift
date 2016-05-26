@@ -220,23 +220,22 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     func openGallary() {
         
-//        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-//        imagePicker.navigationBar.translucent = false
-//        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
-//        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
-//        imagePicker.navigationBar.titleTextAttributes = [
-//            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
-//            NSForegroundColorAttributeName: UIColor.whiteColor(),
-//        ]
-//        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
-//        imagePicker.setNavigationBarHidden(false, animated: false)
-//        imagePicker.interactivePopGestureRecognizer?.enabled = false
-//        
-//        self.presentViewController(imagePicker, animated: true, completion: nil)
+        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
+        imagePicker.navigationBar.translucent = false
+        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
+        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
+        imagePicker.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
+            NSForegroundColorAttributeName: UIColor.whiteColor(),
+        ]
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+        imagePicker.setNavigationBarHidden(false, animated: false)
+        imagePicker.interactivePopGestureRecognizer?.enabled = false
         
+        self.presentViewController(imagePicker, animated: true, completion: nil)
         
-        let imagePickVC = ViewController()
-        self.presentViewController(imagePickVC, animated: true, completion: nil)
+//        let imagePickVC = ViewController()
+//        self.presentViewController(imagePickVC, animated: true, completion: nil)
     }
     
     func uploadTheta(thetaImage:UIImage) {
@@ -497,7 +496,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
  */
         
        
-        var cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
       //  cells.removeFirst()
         for cell in cells {
             // look at data
@@ -526,7 +525,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         cell4.setRotation(true)
         print("scrollViewWillBeginDragging")
  */
-        var cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
    //     cells.removeLast()
  
         for cell in cells {

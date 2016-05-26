@@ -4,7 +4,7 @@
       "extent" : "full-screen",
       "idiom" : "iphone",
       "subtype" : "736h",
-      "filename" : "iPhone6+@3x-1.png",
+      "filename" : "0-splash_screen@1.5x-3.png",
       "minimum-system-version" : "8.0",
       "orientation" : "portrait",
       "scale" : "3x"
@@ -64,6 +64,10 @@
     },
     {
       "filename" : "0-splash_screen@3x-1.png",
+      "unassigned" : true
+    },
+    {
+      "filename" : "0-splash_screen@3x-2.png",
       "unassigned" : true
     },
     {

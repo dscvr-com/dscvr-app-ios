@@ -112,6 +112,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         scrollView.delegate = self
         scrollView.showsHorizontalScrollIndicator = false
+        
     }
     
     override func viewWillDisappear(animated: Bool) {

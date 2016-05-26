@@ -63,6 +63,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private let gyroButton = UIButton()
     private var isSelectorButtonOpen:Bool = true
     private var isUIHide:Bool = false
+    var isMe = false
     
     required init(optographId:UUID) {
         
@@ -172,14 +173,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
-        //avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pushProfile)))
         avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL(viewModel.avatarImageUrl.value, width: 47, height: 47))!)
         whiteBackground.addSubview(avatarImageView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        //optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didTapOptions)))
+        optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.followUser)))
         whiteBackground.addSubview(optionsButtonView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
@@ -202,11 +203,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(likeCountView)
         
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
-        avatarImageView.anchorToEdge(.Left, padding: 10, width: 47, height: 47)
+        avatarImageView.anchorToEdge(.Left, padding: 20, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
-        optionsButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 15, width:UIImage(named:"follow_active")!.size.width, height: UIImage(named:"follow_active")!.size.height)
+        
+        let followSizeWidth = UIImage(named:"follow_active")!.size.width
+        let followSizeHeight = UIImage(named:"follow_active")!.size.height
+        
+        optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x + 2 - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.height * 0.75) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight)
         
         personNameView.rac_text <~ viewModel.creator_username
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
@@ -259,9 +264,31 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //        let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
 //        twoTapGestureRecognizer.numberOfTapsRequired = 2
 //        self.view.addGestureRecognizer(twoTapGestureRecognizer)
+        
+        isMe = viewModel.isMe
+        
+        if isMe {
+            optionsButtonView.hidden = true
+        } else {
+            optionsButtonView.hidden = false
+            viewModel.isFollowed.producer.startWithNext{
+                $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
+            }
+        }
     }
     dynamic private func pushProfile() {
         navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optographBox.model.personID), animated: true)
+    }
+    
+    func followUser() {
+        
+        if SessionService.isLoggedIn {
+            viewModel.toggleFollow()
+        } else {
+            let alert = UIAlertController(title:"", message: "Please login to follow this user", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+        }
     }
     
     func oneTap(recognizer:UITapGestureRecognizer) {
