@@ -196,20 +196,22 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         cancelButton.anchorInCorner(.TopLeft, xPad: 0, yPad: 15, width: 40, height: 40)
         
         tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
-        tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
+//        tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
         tabView.cameraButton.addTarget(self, action: #selector(touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
     
     func tapCameraButton() {
-        tapCameraButtonCallback?()
-    }
-    
-    func touchStartCameraButton() {
+        //tapCameraButtonCallback?()
+        tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true
     }
     
+//    func touchStartCameraButton() {
+//        viewModel.isRecording.value = true
+//    }
+//    
     func touchEndCameraButton() {
-        viewModel.isRecording.value = false
+        //viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
     }
     
@@ -676,45 +678,45 @@ class CameraViewController: UIViewController,TabControllerDelegate {
                 // TODO: Re-enable this code as soon as apple fixes
                 // the memory leak in AVCaptureDevice.ISO and stuff.
                 
-                //                var exposureHint = exposureHintC;
-                //
-                //                if let videoDevice = self.videoDevice {
-                //                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
-                //                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
-                //                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
-                //                }
-                //
-                //                if let videoDevice = self.videoDevice {
-                //
-                //                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
-                //                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
-                //                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
-                //
-                //                    if exposureHint.iso != 0 {
-                //
-                //                        if exposureHint.iso > UInt32(videoDevice.activeFormat.maxISO) {
-                //                            exposureHint.iso = UInt32(videoDevice.activeFormat.maxISO)
-                //                        }
-                //                        if exposureHint.iso < UInt32(videoDevice.activeFormat.minISO) {
-                //                            exposureHint.iso = UInt32(videoDevice.activeFormat.minISO)
-                //                        }
-                //
-                //                        print("Hint: \(exposureHint.iso), Max: \(videoDevice.activeFormat.maxISO)")
-                //                        try! videoDevice.lockForConfiguration()
-                //                        videoDevice.exposureMode = .Custom
-                //                        videoDevice.whiteBalanceMode = .Locked
-                //
-                //                        videoDevice.setExposureModeCustomWithDuration(
-                //                            CMTimeMakeWithSeconds(exposureHint.exposureTime, 10000),
-                //                            ISO: Float(exposureHint.iso), completionHandler: nil)
-                //
-                //                        videoDevice.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(exposureHint.gains, completionHandler: nil)
-                //
-                //
-                //                        videoDevice.unlockForConfiguration()
-                //                    }
-                //
-                //                }
+//                               var exposureHint = exposureHintC;
+//            
+//                                if let videoDevice = self.videoDevice {
+//                                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
+//                                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
+//                                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
+//                               }
+//                
+//                                if let videoDevice = self.videoDevice {
+//                
+//                                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
+//                                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
+//                                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
+//                
+//                                    if exposureHint.iso != 0 {
+//                
+//                                        if exposureHint.iso > UInt32(videoDevice.activeFormat.maxISO) {
+//                                            exposureHint.iso = UInt32(videoDevice.activeFormat.maxISO)
+//                                        }
+//                                        if exposureHint.iso < UInt32(videoDevice.activeFormat.minISO) {
+//                                            exposureHint.iso = UInt32(videoDevice.activeFormat.minISO)
+//                                        }
+//                
+//                                        print("Hint: \(exposureHint.iso), Max: \(videoDevice.activeFormat.maxISO)")
+//                                        try! videoDevice.lockForConfiguration()
+//                                        videoDevice.exposureMode = .Custom
+//                                        videoDevice.whiteBalanceMode = .Locked
+//                
+//                                        videoDevice.setExposureModeCustomWithDuration(
+//                                            CMTimeMakeWithSeconds(exposureHint.exposureTime, 10000),
+//                                            ISO: Float(exposureHint.iso), completionHandler: nil)
+//                
+//                                        videoDevice.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(exposureHint.gains, completionHandler: nil)
+//                
+//                
+//                                        videoDevice.unlockForConfiguration()
+//                                    }
+//                
+//                                }
             }
             
             updateBallPosition()

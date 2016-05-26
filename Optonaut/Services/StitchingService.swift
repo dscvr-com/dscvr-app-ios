@@ -65,7 +65,7 @@ class StitchingService {
         }
         
         assert(!isStitching())
-        assert(hasUnstitchedRecordings())
+        //assert(hasUnstitchedRecordings())
         currentOptograph = optographID
         
         shallCancel = false
@@ -82,6 +82,11 @@ class StitchingService {
             
             Mixpanel.sharedInstance().track("Action.Stitching.Start")
             Mixpanel.sharedInstance().timeEvent("Action.Stitching.Finish")
+            
+            let globalAligner = Alignment()
+            globalAligner.align()
+            
+            assert(hasUnstitchedRecordings())
             
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
