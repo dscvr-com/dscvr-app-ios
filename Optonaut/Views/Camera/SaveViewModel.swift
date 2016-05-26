@@ -33,7 +33,6 @@ class SaveViewModel {
     let optographBox: ModelBox<Optograph>
     var locationBox: ModelBox<Location>?
     
-    
     private let placeholder = MutableProperty<UIImage?>(nil)
     
     init(placeholderSignal: Signal<UIImage, NoError>, readyNotification: NotificationSignal<Void>) {

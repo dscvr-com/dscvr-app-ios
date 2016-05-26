@@ -876,7 +876,7 @@ extension CameraViewController: TabControllerDelegate {
     func onTouchStartCameraButton() {
         
         //bluetooth com
-        if let bleService = btDiscoverySharedInstance.bleService {
+        /*if let bleService = btDiscoverySharedInstance.bleService {
             //000102030405060708
           //bleService.sendCommand("fe04010110020000ffffffffffffffffffffffff")
             bleService.sendCommand("fe04010110020000ffffffffffffffffffffffff")
@@ -889,7 +889,14 @@ extension CameraViewController: TabControllerDelegate {
         self.viewModel.isRecording.value = true
         self.tabController!.cameraButton.backgroundColor = .Accent
         self.tabController!.cameraButton.iconColor = .whiteColor()
-        }
+        }*/
+        
+        self.viewModel.isRecording.value = true
+        self.tabController!.cameraButton.backgroundColor = .Accent
+        self.tabController!.cameraButton.iconColor = .whiteColor()
+        
+        
+        
     }
     
     func onTouchEndCameraButton() {

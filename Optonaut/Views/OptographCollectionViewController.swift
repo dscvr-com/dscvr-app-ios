@@ -513,6 +513,7 @@ private class OverlayViewModel {
                 "id": optograph.ID,
                 "stitcher_version": StitcherVersion,
                 "created_at": optograph.createdAt.toRFC3339String(),
+                "optograph_type" : "optograph"
             ]
             
             var putParameters: [String: AnyObject] = [

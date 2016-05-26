@@ -57,11 +57,6 @@ class StitchingService {
         return storeRef.hasUnstitchedRecordings()
     }
     
-    
-
-    
-    
-    
     /// This function starts a new stitching process.
     static func startStitching(optographID: UUID) -> StitchingSignal {
         if isStitching() {
@@ -70,7 +65,7 @@ class StitchingService {
         }
         
         assert(!isStitching())
-        assert(hasUnstitchedRecordings())
+        //assert(hasUnstitchedRecordings())
         
         currentOptograph = optographID
         
@@ -89,6 +84,13 @@ class StitchingService {
             Mixpanel.sharedInstance().track("Action.Stitching.Start")
             Mixpanel.sharedInstance().timeEvent("Action.Stitching.Finish")
             
+            let globalAligner = Alignment()
+            globalAligner.align()
+            
+            
+            assert(hasUnstitchedRecordings())
+            
+            
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
                 Async.main {
@@ -99,11 +101,11 @@ class StitchingService {
             
             
             
-            func getDocumentsDirectory() -> NSString {
+            /*func getDocumentsDirectory() -> NSString {
                 let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
                 let documentsDirectory = paths[0]
                 return documentsDirectory
-            }
+            }*/
             
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getLeftResult().enumerate() {
