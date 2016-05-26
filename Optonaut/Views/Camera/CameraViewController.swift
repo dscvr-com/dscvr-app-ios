@@ -45,6 +45,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     // stitcher pointer and variables
     private var recorder: Recorder!
     private var frameCount = 0
+    private var debugCount = 0
     private var previewImageCount = 0
     private let intrinsics = CameraIntrinsics
     private var lastKeyframe: SelectionPoint?
@@ -780,6 +781,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         let recorderCleanup = SignalProducer<UIImage, NoError> { sink, disposable in
             
+            recorder_.finish()
             if recorder_.previewAvailable() {
                 let previewData = recorder_.getPreviewImage()
                 autoreleasepool {
@@ -788,7 +790,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
                 Recorder.freeImageBuffer(previewData)
             }
             
-            recorder_.finish()
             sink.sendCompleted()
             
             // TODO - get images

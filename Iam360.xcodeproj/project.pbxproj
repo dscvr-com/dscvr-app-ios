@@ -241,6 +241,7 @@
 		A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D681BEA5A4E0031ED1E /* recorder.cpp */; };
 		A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D711BEA5A4E0031ED1E /* monoStitcher.cpp */; };
 		A5FD5D8B1BEA5A570031ED1E /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5FD5D8A1BEA5A570031ED1E /* lib */; };
+		B170421B1CF6D124004E2F26 /* Alignment.mm in Sources */ = {isa = PBXBuildFile; fileRef = B170421A1CF6D124004E2F26 /* Alignment.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -584,6 +585,12 @@
 		A5FD5D711BEA5A4E0031ED1E /* monoStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = monoStitcher.cpp; sourceTree = "<group>"; };
 		A5FD5D721BEA5A4E0031ED1E /* monoStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = monoStitcher.hpp; sourceTree = "<group>"; };
 		A5FD5D8A1BEA5A570031ED1E /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
+		B17042151CF6CF04004E2F26 /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
+		B17042161CF6CF6F004E2F26 /* imageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSink.hpp; sourceTree = "<group>"; };
+		B17042171CF6CF7A004E2F26 /* recorderMotor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderMotor.hpp; sourceTree = "<group>"; };
+		B17042181CF6CF80004E2F26 /* visualStabilizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualStabilizer.hpp; sourceTree = "<group>"; };
+		B17042191CF6D0F1004E2F26 /* Alignment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = stitcher/src/recorder/Alignment.h; sourceTree = SOURCE_ROOT; };
+		B170421A1CF6D124004E2F26 /* Alignment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alignment.mm; path = stitcher/src/recorder/Alignment.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -659,6 +666,7 @@
 		5936B1761CAD34F500F808D8 /* stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				B17042151CF6CF04004E2F26 /* globalAlignment.hpp */,
 				5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */,
 				5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */,
 				5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */,
@@ -996,6 +1004,8 @@
 				A5233E301BC87F7500C9EFE5 /* Stores.mm */,
 				A568D4961BD13171008FF556 /* HeadTracker.h */,
 				A568D4971BD13348008FF556 /* HeadTracker.mm */,
+				B17042191CF6D0F1004E2F26 /* Alignment.h */,
+				B170421A1CF6D124004E2F26 /* Alignment.mm */,
 			);
 			name = Stitcher;
 			path = Utils/Stitcher;
@@ -1333,6 +1343,9 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
+				B17042181CF6CF80004E2F26 /* visualStabilizer.hpp */,
+				B17042171CF6CF7A004E2F26 /* recorderMotor.hpp */,
+				B17042161CF6CF6F004E2F26 /* imageSink.hpp */,
 				A547FA101C5578D500FBC17D /* jumpFilter.hpp */,
 				A547FA111C5578D500FBC17D /* ringCloser.hpp */,
 				A5376ED31C4EBEF1004EFE88 /* stereoSink.hpp */,
@@ -1608,6 +1621,7 @@
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,
 				A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */,
 				8F23AA551BFF31B4008926A8 /* PersonTable.swift in Sources */,
+				B170421B1CF6D124004E2F26 /* Alignment.mm in Sources */,
 				A5FD5D831BEA5A4E0031ED1E /* quat.cpp in Sources */,
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
