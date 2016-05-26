@@ -12,6 +12,7 @@ import SceneKit
 import SpriteKit
 import Foundation
 import Async
+import SwiftyUserDefaults
 
 class TouchRotationSource: RotationMatrixSource {
     
@@ -125,6 +126,13 @@ class CombinedMotionManager: RotationMatrixSource {
     private let touchRotationSource: TouchRotationSource
     
     private var lastCoreMotionRotationMatrix: GLKMatrix4?
+    private var isRotating = false;
+    
+    
+    func setRotation(_isRotating:Bool) {
+        print("CombinedMotionManager setRotation")
+        isRotating = _isRotating
+    }
     
     init(sceneSize: CGSize, hfov: Float) {
         self.coreMotionRotationSource = CoreMotionRotationSource.Instance
@@ -165,6 +173,8 @@ class CombinedMotionManager: RotationMatrixSource {
         
         let coreMotionRotationMatrix = coreMotionRotationSource.getRotationMatrix()
         
+        
+        
         if !touchRotationSource.isTouching {
             // Update from motion and damping
             if let lastCoreMotionRotationMatrix = lastCoreMotionRotationMatrix {
@@ -174,9 +184,21 @@ class CombinedMotionManager: RotationMatrixSource {
                 let diffRotationPhi = atan2(-diffRotationMatrix.m20,
                                             sqrt(diffRotationMatrix.m21 * diffRotationMatrix.m21 +
                                                 diffRotationMatrix.m22 * diffRotationMatrix.m22))
+              
+
+                if isRotating == true {
+                    
+                    if Defaults[.SessionGyro] == true {
                 
-                touchRotationSource.phi += diffRotationPhi
-                touchRotationSource.theta += diffRotationTheta
+                        touchRotationSource.phi += diffRotationPhi
+                        touchRotationSource.theta += diffRotationTheta
+                       
+                   
+                    } else {
+                        touchRotationSource.phi += 0.005;
+                        touchRotationSource.theta = -1.5;
+                    }
+                }
             }
         }
         
@@ -440,6 +462,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
     var swipeView:UIScrollView?
     var isShareOpen = MutableProperty<Bool>(false)
     
+    func setRotation (isRotating:Bool) {
+        print ("cell set Rotation")
+        combinedMotionManager.setRotation(isRotating)
+    }
     
     dynamic private func pushProfile() {
         

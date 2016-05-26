@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4971FAEA1CF49865002F1B69 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4971FAE91CF49865002F1B69 /* Fabric.framework */; };
 		590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590E05B21CBD3119000331CB /* SaveThetaViewController.swift */; };
 		5917C8211CE441F200CD5A6D /* SharingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8201CE441F200CD5A6D /* SharingViewController.swift */; };
 		5917C8231CE4436900CD5A6D /* SharingNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */; };
@@ -17,16 +18,12 @@
 		5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */; };
 		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
 		594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594378FC1CDC472800C84E6F /* TabViewController.swift */; };
-		595E70A81CD39E81005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
-		595E70A91CD39F4F005CD441 /* EZSwipeController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; };
-		595E70AA1CD39F4F005CD441 /* EZSwipeController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 595E70A71CD39E81005CD441 /* EZSwipeController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5980D51E1CCDEF100010B4ED /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5980D51D1CCDEF100010B4ED /* Icomoon.framework */; };
 		598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598416411CBB896E00BD966D /* Icomoon.framework */; };
 		59848B231CEA204B00829963 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B221CEA204B00829963 /* LoginVC.swift */; };
 		59848B251CEA222800829963 /* LoginNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B241CEA222800829963 /* LoginNavViewController.swift */; };
 		59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B271CEAE13D00829963 /* SettingsNavViewController.swift */; };
 		59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B291CEAE2B000829963 /* SettingsViewController.swift */; };
-		59848B2E1CEB2DC400829963 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59848B2D1CEB2DC400829963 /* Fabric.framework */; };
 		598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571C1CEDA771002229AF /* Avenir-Book_0.otf */; };
 		598F571F1CEDA771002229AF /* Avenir-Heavy_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */; };
 		59F9226C1CDE0D0E005868A8 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F9226B1CDE0D0E005868A8 /* TabView.swift */; };
@@ -270,7 +267,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				595E70AA1CD39F4F005CD441 /* EZSwipeController.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -278,6 +274,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4971FAE91CF49865002F1B69 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		590E05B21CBD3119000331CB /* SaveThetaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveThetaViewController.swift; sourceTree = "<group>"; };
 		5917C8201CE441F200CD5A6D /* SharingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
 		5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingNavViewController.swift; sourceTree = "<group>"; };
@@ -296,14 +293,12 @@
 		5936B1821CAD34F500F808D8 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
 		594378FC1CDC472800C84E6F /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
-		595E70A71CD39E81005CD441 /* EZSwipeController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EZSwipeController.framework; path = Carthage/Build/iOS/EZSwipeController.framework; sourceTree = "<group>"; };
 		5980D51D1CCDEF100010B4ED /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		598416411CBB896E00BD966D /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		59848B221CEA204B00829963 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		59848B241CEA222800829963 /* LoginNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginNavViewController.swift; sourceTree = "<group>"; };
 		59848B271CEAE13D00829963 /* SettingsNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavViewController.swift; sourceTree = "<group>"; };
 		59848B291CEAE2B000829963 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		59848B2D1CEB2DC400829963 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = ../../../../Desktop/Fabric.framework; sourceTree = "<group>"; };
 		598F571C1CEDA771002229AF /* Avenir-Book_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Book_0.otf"; sourceTree = "<group>"; };
 		598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
 		59F9226B1CDE0D0E005868A8 /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
@@ -603,19 +598,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59848B2E1CEB2DC400829963 /* Fabric.framework in Frameworks */,
-				595E70A81CD39E81005CD441 /* EZSwipeController.framework in Frameworks */,
 				8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */,
 				8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */,
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
 				8FC9EC3C1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework in Frameworks */,
 				8F86D4F71B9B9664009F91EB /* PureLayout.framework in Frameworks */,
 				5980D51E1CCDEF100010B4ED /* Icomoon.framework in Frameworks */,
+				4971FAEA1CF49865002F1B69 /* Fabric.framework in Frameworks */,
 				8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */,
 				8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */,
 				8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */,
 				8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */,
-				595E70A91CD39F4F005CD441 /* EZSwipeController.framework in Frameworks */,
 				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
@@ -734,8 +727,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				59848B2D1CEB2DC400829963 /* Fabric.framework */,
-				595E70A71CD39E81005CD441 /* EZSwipeController.framework */,
+				4971FAE91CF49865002F1B69 /* Fabric.framework */,
 				598416411CBB896E00BD966D /* Icomoon.framework */,
 				5980D51D1CCDEF100010B4ED /* Icomoon.framework */,
 				8F4715111C49688700663684 /* TwitterKitResources.bundle */,
@@ -1918,8 +1910,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1951,7 +1943,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = IAM360;
-				PROVISIONING_PROFILE = "1356c220-4d00-4df5-a962-61eb9cdc57b0";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1965,8 +1957,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1986,7 +1978,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = IAM360;
-				PROVISIONING_PROFILE = "1356c220-4d00-4df5-a962-61eb9cdc57b0";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;
