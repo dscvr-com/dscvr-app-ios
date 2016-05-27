@@ -518,14 +518,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             cell.setRotation(false)
         }
         
-        var visibleRect = CGRect()
+       
+    
         
-        visibleRect.origin = collectionView!.contentOffset
-        visibleRect.size = collectionView!.bounds.size
+
+        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
         
-        let visiblePoint = CGPointMake(CGRectGetMidX(visibleRect), CGRectGetMaxY(visibleRect) - 100)
-        
-        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(visiblePoint)!
+        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
         
         
         let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
@@ -535,22 +534,16 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     
     override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        
+
+    
         let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-        
         for cell in cells {
             cell.setRotation(false)
         }
-        
-        var visibleRect = CGRect()
-        
-        visibleRect.origin = collectionView!.contentOffset
-        visibleRect.size = collectionView!.bounds.size
-        
-        let visiblePoint = CGPointMake(CGRectGetMidX(visibleRect), CGRectGetMaxY(visibleRect) - 200)
 
-        
-        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(visiblePoint)!
+        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
+     
+        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
         
         let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
     
