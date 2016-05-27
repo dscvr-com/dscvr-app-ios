@@ -130,7 +130,7 @@ class CombinedMotionManager: RotationMatrixSource {
     
     
     func setRotation(_isRotating:Bool) {
-        print("CombinedMotionManager setRotation")
+       
         isRotating = _isRotating
     }
     
@@ -463,7 +463,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     var isShareOpen = MutableProperty<Bool>(false)
     
     func setRotation (isRotating:Bool) {
-        print ("cell set Rotation")
+        
         combinedMotionManager.setRotation(isRotating)
     }
     

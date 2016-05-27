@@ -483,35 +483,19 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     
     override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-       /*
-        let cell4 = collectionView!.visibleCells().first as! OptographCollectionViewCell
-        cell4.setRotation(true)
-        print("scrollViewWillBeginDragging")
- */
-            /*
-        if visibleIndexPath.row > 1 {
-        
-            let cell0 = collectionView!.cellForItemAtIndexPath(visibleIndexPath.indexPathByAddingIndex(-1)) as! OptographCollectionViewCell
-            cell0.setRotation(false)
-        }
- */
         
        
-        var cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-      //  cells.removeFirst()
-        for cell in cells {
-            // look at data
+        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+         for cell in cells {
             cell.setRotation(false)
         }
         
-        var visibleRect = CGRect()
+       
+    
         
-        visibleRect.origin = collectionView!.contentOffset
-        visibleRect.size = collectionView!.bounds.size
+        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
         
-        let visiblePoint = CGPointMake(CGRectGetMidX(visibleRect), CGRectGetMaxY(visibleRect))
-        
-        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(visiblePoint)!
+        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
         
         let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
         cell.setRotation(true)
@@ -520,28 +504,18 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     
     override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        
-    /*
-        let cell4 = collectionView!.visibleCells().last as! OptographCollectionViewCell
-        cell4.setRotation(true)
-        print("scrollViewWillBeginDragging")
- */
-        var cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-   //     cells.removeLast()
- 
+    
+        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+    
         for cell in cells {
-            // look at data
+     
             cell.setRotation(false)
         }
         
-        var visibleRect = CGRect()
         
-        visibleRect.origin = collectionView!.contentOffset
-        visibleRect.size = collectionView!.bounds.size
-        
-        let visiblePoint = CGPointMake(CGRectGetMidX(visibleRect), CGRectGetMaxY(visibleRect))
-        
-        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(visiblePoint)!
+        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
+     
+        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
         
         let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
         cell.setRotation(true)
