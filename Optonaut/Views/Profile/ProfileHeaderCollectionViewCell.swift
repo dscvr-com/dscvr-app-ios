@@ -38,6 +38,8 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        print("reload")
+        
         contentView.backgroundColor = UIColor(hex:0xf7f7f7)
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
@@ -146,11 +148,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //postHeadingView.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width , height: 55)
         postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize:55)
         
-        
+        buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
+        buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal)
+        buttonFollow.hidden = true
     }
     
     func bindViewModel(viewModel: ProfileViewModel) {
-        // avoid binding multiple times
         if self.viewModel != nil {
             return
         }
@@ -163,6 +166,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         viewModel.isEditing.producer.startWithNext{ [weak self] val in
             val ? self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.updateImage))) : self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
+            self?.editSubView.hidden = val ? true : false
         }
         
         
@@ -189,9 +193,10 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         if isMe {
             buttonFollow.hidden = true
-            
+            editSubView.hidden = false
         } else {
             buttonFollow.hidden = false
+            editSubView.hidden = true
             buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
             textView.align(.UnderCentered, relativeTo: buttonFollow, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
             viewModel.isFollowed.producer.startWithNext{

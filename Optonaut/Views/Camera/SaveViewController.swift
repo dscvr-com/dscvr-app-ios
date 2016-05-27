@@ -329,9 +329,10 @@ class SaveViewController: UIViewController, RedNavbar {
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
         navigationController?.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: UIFont.displayOfSize(14, withType: .Regular),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
+            NSFontAttributeName: UIFont.fontDisplay(14, withType: .Regular),
+            NSForegroundColorAttributeName: UIColor(hex:0xffbc00),
         ]
+        
         cameraButton.progressLocked = true
         
         Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")

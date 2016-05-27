@@ -9,11 +9,11 @@
 import UIKit
 import ReactiveCocoa
 
-class TabView: PTView {
+class TabView: UIView {
 
     private let indicatedSideLayer = CALayer()
     
-    let cameraButton = RecButton()
+    let cameraButton = RecButton()  
     let leftButton = TButton()
     let rightButton = TButton()
     

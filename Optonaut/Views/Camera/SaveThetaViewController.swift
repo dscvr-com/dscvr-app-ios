@@ -47,6 +47,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     private var placeholderImage: SKTexture?
     //private var tabView = TabView()
     private var cameraButton = TButton()
+    private var postLater = TButton()
     
     private let readyNotification = NotificationSignal<Void>()
     
@@ -272,12 +273,18 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
     
-        cameraButton.icon = UIImage(named:"camera_icn")!
+        cameraButton.icon = UIImage(named:"upload_now_btn")!
         cameraButton.addTarget(self, action: #selector(readyToSubmit), forControlEvents: .TouchUpInside)
         scrollView.addSubview(cameraButton)
         
+        
+        postLater.icon = UIImage(named:"post_later")!
+        postLater.addTarget(self, action: #selector(postLaterAction), forControlEvents: .TouchUpInside)
+        scrollView.addSubview(postLater)
+        
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
             self!.cameraButton.loading = !isReady
+            self!.postLater.loading = !isReady
             if isReady {
                 self?.cameraButton.icon = UIImage(named:"upload_next")!
             }
@@ -288,6 +295,11 @@ class SaveThetaViewController: UIViewController, RedNavbar {
     func readyToSubmit(){
         if viewModel.isReadyForSubmit.value {
             submit(true)
+        }
+    }
+    func postLaterAction(){
+        if viewModel.isReadyForSubmit.value {
+            submit(false)
         }
     }
     
@@ -317,6 +329,8 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         moreSocialButton.anchorInCorner(.BottomRight, xPad: socialPadX, yPad: 30, width: 120, height: 23)
         
         cameraButton.align(.UnderCentered, relativeTo: shareBackgroundView, padding: 25, width: 80, height: 80)
+        //postLater.align(.ToTheRightMatchingBottom, relativeTo: cameraButton, padding: view.frame.width/4, width: postLater.icon.size.width, height: postLater.icon.size.height)
+        postLater.anchorInCorner(.BottomRight, xPad: 20, yPad: view.frame.size.height - (cameraButton.frame.size.height + cameraButton.frame.origin.y - 10), width: postLater.icon.size.width, height: postLater.icon.size.height)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -653,6 +667,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
             .on(
                 started: { [weak self] in
                     self?.cameraButton.loading = true
+                    self?.postLater.loading = true
                 },
                 completed: { [weak self] in
                     Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")

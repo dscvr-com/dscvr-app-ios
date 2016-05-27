@@ -33,6 +33,8 @@ class DetailsViewModel {
     let creator_userId = MutableProperty<String>("")
     let isFollowed = MutableProperty<Bool>(false)
     var isMe = false
+    let likeCount = MutableProperty<Int>(0)
+    let liked = MutableProperty<Bool>(false)
     
     
     var optographBox: ModelBox<Optograph>!
@@ -69,6 +71,35 @@ class DetailsViewModel {
                 failed: { [weak self] _ in
                     self?.creatorDetails.insertOrUpdate { box in
                         box.model.isFollowed = followedBefore
+                    }
+                }
+            )
+            .start()
+    }
+    
+    func toggleLike() {
+        let starredBefore = liked.value
+        let starsCountBefore = likeCount.value
+        
+        let optograph = optographBox.model
+        
+        SignalProducer<Bool, ApiError>(value: starredBefore)
+            .flatMap(.Latest) { followedBefore in
+                starredBefore
+                    ? ApiService<EmptyResponse>.delete("optographs/\(optograph.ID)/star")
+                    : ApiService<EmptyResponse>.post("optographs/\(optograph.ID)/star", parameters: nil)
+            }
+            .on(
+                started: { [weak self] in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.isStarred = !starredBefore
+                        box.model.starsCount += starredBefore ? -1 : 1
+                    }
+                },
+                failed: { [weak self] _ in
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.isStarred = starredBefore
+                        box.model.starsCount = starsCountBefore
                     }
                 }
             )
