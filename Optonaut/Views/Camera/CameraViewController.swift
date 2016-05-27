@@ -799,7 +799,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         createOptographViewController.hidesBottomBarWhenPushed = true
         navigationController!.pushViewController(createOptographViewController, animated: false)
         navigationController!.viewControllers.removeAtIndex(1)
-        print(navigationController!.viewControllers)
     }
     
 }

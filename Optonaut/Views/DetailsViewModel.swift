@@ -31,6 +31,9 @@ class DetailsViewModel {
     let optographReloaded = MutableProperty<Void>()
     let creator_username = MutableProperty<String>("")
     let creator_userId = MutableProperty<String>("")
+    let isFollowed = MutableProperty<Bool>(false)
+    var isMe = false
+    
     
     var optographBox: ModelBox<Optograph>!
     var creatorDetails:ModelBox<Person>!
@@ -40,10 +43,36 @@ class DetailsViewModel {
         logInit()
         optographBox = Models.optographs[optographID]!
         updatePropertiesDetails()
+        
+        isMe = SessionService.personID == optographBox.model.personID
     }
 
     deinit {
         logRetain()
+    }
+    func toggleFollow() {
+        let person = creatorDetails.model
+        let followedBefore = person.isFollowed
+        
+        SignalProducer<Bool, ApiError>(value: followedBefore)
+            .flatMap(.Latest) { followedBefore in
+                followedBefore
+                    ? ApiService<EmptyResponse>.delete("persons/\(person.ID)/follow")
+                    : ApiService<EmptyResponse>.post("persons/\(person.ID)/follow", parameters: nil)
+            }
+            .on(
+                started: { [weak self] in
+                    self?.creatorDetails.insertOrUpdate { box in
+                        box.model.isFollowed = !followedBefore
+                    }
+                },
+                failed: { [weak self] _ in
+                    self?.creatorDetails.insertOrUpdate { box in
+                        box.model.isFollowed = followedBefore
+                    }
+                }
+            )
+            .start()
     }
     
     private func updatePropertiesDetails() {
@@ -66,6 +95,7 @@ class DetailsViewModel {
             self?.creatorDetails.producer.startWithNext{ person in
                 self?.avatarImageUrl.value = "persons/\(person.ID)/\(person.avatarAssetID).jpg"
                 self?.creator_username.value = person.displayName
+                self?.isFollowed.value = person.isFollowed
             }
         }
     }

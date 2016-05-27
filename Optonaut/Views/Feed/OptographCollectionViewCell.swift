@@ -467,11 +467,16 @@ class OptographCollectionViewCell: UICollectionViewCell{
         combinedMotionManager.setRotation(isRotating)
     }
     
-    dynamic private func pushProfile() {
+    dynamic private func pushDetails() {
         
         let detailsViewController = DetailsTableViewController(optographId:optoId)
         detailsViewController.cellIndexpath = id
-        self.navigationController!.pushViewController(detailsViewController, animated: true)
+        navigationController?.pushViewController(detailsViewController, animated: true)
+    }
+    
+    dynamic private func pushProfile() {
+        
+        navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optographBox.model.personID), animated: true)
     }
     
     override init(frame: CGRect) {
@@ -496,7 +501,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         scnView.delegate = renderDelegate
         scnView.backgroundColor = .clearColor()
         scnView.hidden = false
-        scnView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
+        scnView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushDetails)))
         contentView.addSubview(scnView)
         
         loadingOverlayView.backgroundColor = .blackColor()
@@ -521,7 +526,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
-        //avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
         whiteBackground.addSubview(avatarImageView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
@@ -533,7 +538,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
         personNameView.textColor = UIColor(0xffbc00)
         personNameView.userInteractionEnabled = true
-        //personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.pushProfile)))
+        personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pushProfile)))
         whiteBackground.addSubview(personNameView)
         
         //likeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector()))
@@ -580,7 +585,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
-        optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.width / 2) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight)
+        optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x + 2 - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.height * 0.75) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight) 
         shareImageAsset.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
         bouncingButton.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
