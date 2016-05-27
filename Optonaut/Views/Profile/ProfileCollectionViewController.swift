@@ -52,6 +52,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         super.viewDidLoad()
         
         
+        title = "My Profile"
+        
         headerView.frame = CGRect(x: 0,y: 0,width: view.frame.width ,height: 50)
         headerView.backgroundColor = UIColor(hex:0x3E3D3D)
         headerView.hidden = true
@@ -68,15 +70,15 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         tabController?.delegate = self
         
-        title = "My Profile"
         var image = UIImage(named: "logo_small")
         image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         originalBackButton = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
         
         leftBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
-        leftBarButton.text = String.iconWithName(.Cancel)
+//        leftBarButton.text = String.iconWithName(.Cancel)
+        leftBarButton.text = "Cancel"
         leftBarButton.textColor = .whiteColor()
-        leftBarButton.font = UIFont.iconOfSize(19)
+        leftBarButton.font = UIFont.iconOfSize(10)
         leftBarButton.userInteractionEnabled = true
         leftBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapLeftBarButton)))
         barButtonItem = UIBarButtonItem(customView: leftBarButton)
@@ -90,8 +92,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         }
         
         rightBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
-        rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))
-        rightBarButton.font = UIFont.iconOfSize(21)
+//        rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))
+        rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple("Save", String.iconWithName(.More))
+        rightBarButton.font = UIFont.iconOfSize(10)
         rightBarButton.userInteractionEnabled = true
         rightBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapRightBarButton)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButton)
@@ -114,9 +117,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                     let headerHeight = 267 + textHeight
                     strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight + navBarHeight!, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight)
                     
-                    
-                    print("height ",navBarHeight!)
-                    strongSelf.collectionView!.contentOffset = CGPoint(x: 0,y: navBarHeight!)
+                    strongSelf.collectionView!.contentOffset = CGPoint(x: 0,y:-44)
+                    strongSelf.title = "Edit My Profile"
+                } else {
+                    strongSelf.title = "My Profile"
                 }
                 
                 strongSelf.collectionView!.scrollEnabled = !isEditing

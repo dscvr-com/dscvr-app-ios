@@ -194,13 +194,14 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         scnView.addSubview(cancelButton)
         cancelButton.anchorInCorner(.TopLeft, xPad: 0, yPad: 15, width: 40, height: 40)
         
-        tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
+        //tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
         //tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
-        tabView.cameraButton.addTarget(self, action: #selector(touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        tabView.cameraButton.addTarget(self, action: #selector(tapCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
     
     func tapCameraButton() {
         //tapCameraButtonCallback?()
+        print("ewe")
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true
     }

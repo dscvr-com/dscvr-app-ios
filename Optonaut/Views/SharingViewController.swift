@@ -37,8 +37,8 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     let buttonTwitter = UIButton()
     let buttonEmail = UIButton()
     let titleText = UILabel()
-    var textToShare:String?
-    var shareUrl:NSURL?
+    var textToShare:String = ""
+    var shareUrl:NSURL = NSURL(string: "")!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,14 +112,14 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
                 let person = Models.persons[optograph.personID]!.model
                 
                 let baseURL = Env == .Staging ? "share.iam360.io" : "share.iam360.io"
-                self.shareUrl = NSURL(string: "http://\(baseURL)/\(optograph.shareAlias)")
+                self.shareUrl = NSURL(string: "http://\(baseURL)/\(optograph.shareAlias)")!
                 self.textToShare = "Check out this awesome IAM360 image of \(person.displayName)"
             }
         }
     }
 
     func copyLink() {
-        UIPasteboard.generalPasteboard().string = "\(self.shareUrl!)"
+        UIPasteboard.generalPasteboard().string = "\(self.shareUrl)"
         
         let alert = UIAlertController(title: "", message: "Copied on clipboard.", preferredStyle: .Alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
@@ -153,7 +153,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
             facebookSheet.setInitialText(self.textToShare)
             facebookSheet.addURL(self.shareUrl)
             self.presentViewController(facebookSheet, animated: true, completion: { finished in
-                let graphProperties : [NSObject : AnyObject]! = ["og:type": "article","og:title":"IAM360", "og:description":self.textToShare!]
+                let graphProperties : [NSObject : AnyObject]! = ["og:type": "article","og:title":"IAM360", "og:description":self.textToShare]
                 let graphObject : FBSDKShareOpenGraphObject = FBSDKShareOpenGraphObject(properties: graphProperties)
             })
             
@@ -200,7 +200,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         
         //mailComposerVC.setToRecipients(["nurdin@gmail.com"])
         mailComposerVC.setSubject("Sharing IAM360 image")
-        mailComposerVC.setMessageBody("\(self.textToShare!) \n\n \(self.shareUrl!)", isHTML: true)
+        mailComposerVC.setMessageBody("\(self.textToShare) \n\n \(self.shareUrl)", isHTML: true)
         
         return mailComposerVC
     }

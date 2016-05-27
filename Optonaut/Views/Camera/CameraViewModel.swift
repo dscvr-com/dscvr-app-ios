@@ -24,7 +24,7 @@ class CameraViewModel {
             if isRecording {
                 self.instruction.value = "Follow the yellow dot"
             } else {
-                self.instruction.value = "Hold the button below\r\nto start recording"
+                self.instruction.value = "Press the button below\r\nto start recording"
             }
         }
         

@@ -9,7 +9,7 @@
 import UIKit
 import ReactiveCocoa
 
-class TabView: UIView {
+class TabView: PTView {
 
     private let indicatedSideLayer = CALayer()
     

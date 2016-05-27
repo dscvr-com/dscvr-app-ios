@@ -58,7 +58,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameInputView.placeholder = "Enter your name"
         displayNameInputView.font = UIFont.fontDisplay(15, withType: .Semibold)
         displayNameInputView.textAlignment = .Center
-        displayNameInputView.textColor = .Accent
+        displayNameInputView.textColor = UIColor(0xffbc00)
         displayNameInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         displayNameInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         displayNameInputView.returnKeyType = .Done
@@ -132,7 +132,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         avatarImageView.frame = CGRect(x: size.width / 2 - 50, y: 20, width: 100, height: 100)
         displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
-        displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 17)
+        displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)
         textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))

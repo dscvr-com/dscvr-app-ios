@@ -517,10 +517,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         for cell in cells {
             cell.setRotation(false)
         }
-        
-       
-    
-        
 
         let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
         
