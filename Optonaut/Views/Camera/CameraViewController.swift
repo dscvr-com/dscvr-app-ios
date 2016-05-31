@@ -36,7 +36,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     private var lastExposureInfo = ExposureInfo()
     private var lastAwbGains = AVCaptureWhiteBalanceGains()
-    private var exposureDuration = Double(1)
+    private var exposureDuration:Double = 1
     private var captureWidth = Int(1)
     
     private let sensorWidthInMeters = Double(0.004)
@@ -451,7 +451,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         let exposureDuration = max(self.exposureDuration, 0.006)
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
-        let movementPerFrameInPixels = Double(1000)
+        let movementPerFrameInPixels = Double(10000)
         
         let newTime = CACurrentMediaTime()
         
@@ -474,7 +474,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             let timeDiff = (newTime - time)
             let maxSpeed = Float(maxRecordingSpeed) * Float(timeDiff)
             
-            let accelleration = (!recorder.isIdle() ? Float(maxRecordingSpeed / 10) : Float(maxRecordingSpeed)) / Float(30)
+            let accelleration = (!recorder.isIdle() ? Float(maxRecordingSpeed / 5) : Float(maxRecordingSpeed)) / Float(15)
             
             let newHeading = GLKVector3Subtract(target, ball)
             
