@@ -44,6 +44,9 @@ class SaveViewController: UIViewController, RedNavbar {
     private let instagramSocialButton = SocialButton()
     private let moreSocialButton = SocialButton()
     private var placeholderImage: SKTexture?
+    private var postLater = TButton()
+    private var postLaterText = UILabel()
+    private var uploadNowText = UILabel()
     
     private let readyNotification = NotificationSignal<Void>()
     //private let tabView = TabView()
@@ -75,6 +78,7 @@ class SaveViewController: UIViewController, RedNavbar {
                     }
                 },
                 completed: { [weak self] in
+                    print("stitching finished")
                     ApiService<EmptyResponse>.get("completed").start()
                     self?.viewModel.stitcherFinished.value = true
                 }
@@ -260,9 +264,24 @@ class SaveViewController: UIViewController, RedNavbar {
         cameraButton.addTarget(self, action: #selector(readyToSubmit), forControlEvents: .TouchUpInside)
         scrollView.addSubview(cameraButton)
         
+        postLater.icon = UIImage(named:"post_later")!
+        postLater.addTarget(self, action: #selector(postLaterAction), forControlEvents: .TouchUpInside)
+        scrollView.addSubview(postLater)
+        
+        
+        postLaterText.text = "POST LATER"
+        postLaterText.font = UIFont.fontDisplay(8, withType: .Regular)
+        postLaterText.textAlignment = .Center
+        scrollView.addSubview(postLaterText)
+        
+        uploadNowText.text = "UPLOAD NOW"
+        uploadNowText.font = UIFont.fontDisplay(8, withType: .Regular)
+        uploadNowText.textAlignment = .Center
+        scrollView.addSubview(uploadNowText)
+        
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
             self?.cameraButton.loading = !isReady
-            //self?.tabView.rightButton.loading = !isReady
+            self!.postLater.loading = !isReady
             if isReady {
                 self?.cameraButton.icon = UIImage(named:"upload_next")!
             }
@@ -281,6 +300,11 @@ class SaveViewController: UIViewController, RedNavbar {
     func readyToSubmit(){
         if viewModel.isReadyForSubmit.value {
             submit(true)
+        }
+    }
+    func postLaterAction(){
+        if viewModel.isReadyForSubmit.value {
+            submit(false)
         }
     }
     
@@ -310,6 +334,11 @@ class SaveViewController: UIViewController, RedNavbar {
         moreSocialButton.anchorInCorner(.BottomRight, xPad: socialPadX, yPad: 30, width: 120, height: 23)
         
         cameraButton.align(.UnderCentered, relativeTo: shareBackgroundView, padding: 25, width: 80, height: 80)
+        
+        postLater.anchorInCorner(.BottomRight, xPad: 20, yPad: view.frame.size.height - (cameraButton.frame.size.height + cameraButton.frame.origin.y - 10), width: postLater.icon.size.width, height: postLater.icon.size.height)
+        
+        uploadNowText.align(.UnderCentered, relativeTo: cameraButton, padding: 5, width: 75, height: 8)
+        postLaterText.align(.UnderCentered, relativeTo: postLater, padding: 5, width: 75, height: 8)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -329,9 +358,10 @@ class SaveViewController: UIViewController, RedNavbar {
         UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
         
         navigationController?.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: UIFont.displayOfSize(14, withType: .Regular),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
+            NSFontAttributeName: UIFont.fontDisplay(14, withType: .Regular),
+            NSForegroundColorAttributeName: UIColor(hex:0xffbc00),
         ]
+        
         cameraButton.progressLocked = true
         
         Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
@@ -340,6 +370,7 @@ class SaveViewController: UIViewController, RedNavbar {
         locationView.reloadLocation()
         
         if !SessionService.isLoggedIn {
+            self.readyNotification.notify(())
             //tabController!.lockUI()
             
 //            let loginOverlayViewController = LoginOverlayViewController(
@@ -628,11 +659,11 @@ class SaveViewController: UIViewController, RedNavbar {
             .on(
                 started: { [weak self] in
                     self?.cameraButton.loading = true
-                    //self?.tabView.rightButton.loading = true
+                    self?.postLater.loading = true
                 },
                 completed: { [weak self] in
                     Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
-                    //self?.tabView.rightButton.loading = false
+                    self?.postLater.loading = false
                     self?.navigationController!.popViewControllerAnimated(false)
                 }
             )

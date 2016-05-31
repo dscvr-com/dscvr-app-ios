@@ -40,7 +40,7 @@ class TouchRotationSource: RotationMatrixSource {
     private let sceneWidth: Int
     private let sceneHeight: Int
     
-    // Dependent on optograph format. This values are suitable for
+    // Dependentvar optograph format. This values are suitable for
     // Stitcher version <= 7.
     private let border = Float(M_PI) / Float(6.45)
     private let minTheta: Float
@@ -130,7 +130,6 @@ class CombinedMotionManager: RotationMatrixSource {
     
     
     func setRotation(_isRotating:Bool) {
-        print("CombinedMotionManager setRotation")
         isRotating = _isRotating
     }
     
@@ -195,7 +194,7 @@ class CombinedMotionManager: RotationMatrixSource {
                        
                    
                     } else {
-                        touchRotationSource.phi += 0.005;
+                        touchRotationSource.phi += 0.003;
                         touchRotationSource.theta = -1.5;
                     }
                 }
@@ -435,6 +434,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
     private let blackSpace = UIView()
+    let hiddenViewToBounce = UIView()
+    
     let shareImageAsset = UIImageView()
     private let bouncingButton = UIButton()
     var pointX:CGFloat = 214.0
@@ -463,7 +464,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
     var isShareOpen = MutableProperty<Bool>(false)
     
     func setRotation (isRotating:Bool) {
-        print ("cell set Rotation")
         combinedMotionManager.setRotation(isRotating)
     }
     
@@ -476,7 +476,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     dynamic private func pushProfile() {
         
-        navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optographBox.model.personID), animated: true)
+        
+        let profilepage = ProfileCollectionViewController(personID: viewModel.optographBox.model.personID)
+        profilepage.isProfileVisit = true
+        navigationController?.pushViewController(profilepage, animated: true)
     }
     
     override init(frame: CGRect) {
@@ -560,24 +563,30 @@ class OptographCollectionViewCell: UICollectionViewCell{
         contentView.addSubview(shareImageAsset)
         
         hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
-        //hiddenGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
-        //hiddenGestureRecognizer.cancelsTouchesInView = false;
-        bouncingButton.addGestureRecognizer(hiddenGestureRecognizer)
+        //bouncingButton.addGestureRecognizer(hiddenGestureRecognizer)
         
-        bouncingButton.addTarget(self, action: #selector(self.bouncingCell), forControlEvents:.TouchUpInside)
+        //bouncingButton.addTarget(self, action: #selector(self.bouncingCell), forControlEvents:.TouchUpInside)
         bouncingButton.setImage(UIImage(named: "bouncing_button")!, forState: .Normal)
         scnView.addSubview(bouncingButton)
+        
+        hiddenViewToBounce.backgroundColor = UIColor.clearColor()
+        scnView.addSubview(hiddenViewToBounce)
         
         contentView.bringSubviewToFront(scnView)
         contentView.bringSubviewToFront(whiteBackground)
         contentView.bringSubviewToFront(blackSpace)
+        contentView.bringSubviewToFront(hiddenViewToBounce)
         
+        hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
+        hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
         blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
+        hiddenViewToBounce.anchorAndFillEdge(.Left, xPad:0, yPad: 0, otherSize: 100)
+        
         whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 70)
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 50, height: 50)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
@@ -585,7 +594,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
-        optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x + 2 - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.height * 0.75) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight) 
+        optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x + 2 - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.height * 0.75) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight)
         shareImageAsset.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
         bouncingButton.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
@@ -687,6 +696,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
             self.navigationController!.presentViewController(alert, animated: true, completion: nil)
         }
     }
+    
+    
     func followUser() {
         
         if SessionService.isLoggedIn {
@@ -709,9 +720,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
         }
         
         isMe = viewModel.isMe
-        
-//        avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
-//        personNameView.text = person.displayName
         personNameView.rac_text <~ viewModel.displayName
         
         viewModel.locationID.producer.startWithNext{

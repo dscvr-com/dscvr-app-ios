@@ -89,6 +89,8 @@ class SaveViewModel {
         
         readyNotification.signal.observeNext {
             
+            
+            print("pumasok dito sa readynotification")
             self.isLoggedIn.value = SessionService.isLoggedIn
             
             if self.isOnline.value && self.isLoggedIn.value {
@@ -186,7 +188,7 @@ class SaveViewModel {
                     }
             } else {
                 self.optographBox.insertOrUpdate()
-                
+                print("pumasok dito sa else ng readynotification")
                 self.isInitialized.value = true
                 self.placeID.producer.startWithNext{ print("placeId \($0)") }
                 self.placeID.producer
@@ -206,6 +208,10 @@ class SaveViewModel {
                     }
             }
         }
+        
+        isInitialized.producer.startWithNext{ print("isInitialized \($0)")}
+        stitcherFinished.producer.startWithNext{ print("stitcherFinished \($0)")}
+        locationLoading.producer.startWithNext{ print("locationLoading \($0)")}
         
         isReadyForStitching <~ stitcherFinished.producer
             .combineLatestWith(isInitialized.producer).map(and)

@@ -189,7 +189,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pushProfile)))
         whiteBackground.addSubview(personNameView)
         
-        //likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
+        likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
         //likeButtonView.setImage(UIImage(named:"user_unlike_icn"), forState: .Normal)
         whiteBackground.addSubview(likeButtonView)
         
@@ -276,8 +276,38 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             }
         }
     }
+    
+    func toggleStar() {
+        //        if SessionService.isLoggedIn {
+        //            viewModel.toggleLike()
+        //        } else {
+        //
+        //            let loginOverlayViewController = LoginOverlayViewController(
+        //                title: "Login to like this moment",
+        //                successCallback: {
+        //                    self.viewModel.toggleLike()
+        //                },
+        //                cancelCallback: { true },
+        //                alwaysCallback: {
+        //                    self.parentViewController!.tabController!.unlockUI()
+        //                    self.parentViewController!.tabController!.showUI()
+        //                }
+        //            )
+        //            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
+        //        }
+        
+        if SessionService.isLoggedIn {
+            viewModel.toggleLike()
+        } else {
+            let alert = UIAlertController(title:"", message: "Please login to like this moment.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
     dynamic private func pushProfile() {
-        navigationController?.pushViewController(ProfileCollectionViewController(personID: viewModel.optographBox.model.personID), animated: true)
+        let profilepage = ProfileCollectionViewController(personID: viewModel.optographBox.model.personID)
+        profilepage.isProfileVisit = true
+        navigationController?.pushViewController(profilepage, animated: true)
     }
     
     func followUser() {
@@ -433,16 +463,17 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
         updateNavbarAppear()
+        
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        //viewModel.viewIsActive.value = false
         imageDownloadDisposable?.dispose()
         imageDownloadDisposable = nil
         CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
+        tabController!.enableScrollView()
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)

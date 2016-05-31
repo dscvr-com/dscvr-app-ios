@@ -195,21 +195,25 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         scnView.addSubview(cancelButton)
         cancelButton.anchorInCorner(.TopLeft, xPad: 0, yPad: 15, width: 40, height: 40)
         
-        tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
-//        tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
-        tabView.cameraButton.addTarget(self, action: #selector(touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        //tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
+        //tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
+        tabView.cameraButton.addTarget(self, action: #selector(tapCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
     }
     
     func tapCameraButton() {
-        //tapCameraButtonCallback?()
+        //tapCameraButtonCallback?()                        d
+        print("ewe")
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true
     }
     
-//    func touchStartCameraButton() {
-//        viewModel.isRecording.value = true
-//    }
-//    
+    /*func touchStartCameraButton() {
+    //tapCameraButtonCallback?()
+    print("ewe")
+    tabView.cameraButton.hidden = true
+    viewModel.isRecording.value = true
+    }*/
+    
     func touchEndCameraButton() {
         //viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
@@ -232,32 +236,73 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
-        try! videoDevice!.lockForConfiguration()
-        videoDevice!.focusMode = mode
-        videoDevice!.unlockForConfiguration()
+        
+//        try! videoDevice!.lockForConfiguration()
+//        videoDevice!.focusMode = mode
+//        videoDevice!.unlockForConfiguration()
+        
+        do {
+            try videoDevice!.lockForConfiguration()
+            videoDevice!.focusMode = mode
+            videoDevice!.unlockForConfiguration()
+        } catch  {
+            print("error on setfocusmode")
+        }
+        
+        
     }
     
     private func setExposureMode(mode: AVCaptureExposureMode) {
-        try! videoDevice!.lockForConfiguration()
+//        try! videoDevice!.lockForConfiguration()
+//        
+//        if mode == AVCaptureExposureMode.Custom {
+//            exposureDuration = videoDevice!.exposureDuration.seconds
+//            var iso = videoDevice!.ISO
+//            if(iso > videoDevice!.activeFormat.maxISO) {
+//                iso = videoDevice!.activeFormat.maxISO
+//            }
+//            videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
+//        } else {
+//            videoDevice!.exposureMode = mode
+//        }
+//        videoDevice!.unlockForConfiguration()
         
-        if mode == AVCaptureExposureMode.Custom {
-            exposureDuration = videoDevice!.exposureDuration.seconds
-            var iso = videoDevice!.ISO
-            if(iso > videoDevice!.activeFormat.maxISO) {
-                iso = videoDevice!.activeFormat.maxISO
+        
+        do {
+            try videoDevice!.lockForConfiguration()
+            
+            if mode == AVCaptureExposureMode.Custom {
+                exposureDuration = videoDevice!.exposureDuration.seconds
+                var iso = videoDevice!.ISO
+                if(iso > videoDevice!.activeFormat.maxISO) {
+                    iso = videoDevice!.activeFormat.maxISO
+                }
+                videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
+            } else {
+                videoDevice!.exposureMode = mode
             }
-            videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
-            //print("Video Settings. Iso: \(iso), exposure duration: \(exposureDuration)");
-        } else {
-            videoDevice!.exposureMode = mode
+            videoDevice!.unlockForConfiguration()
+        
+        } catch {
+            print("setExposureMode")
+        
         }
-        videoDevice!.unlockForConfiguration()
     }
     
     private func setWhitebalanceMode(mode: AVCaptureWhiteBalanceMode) {
-        try! videoDevice!.lockForConfiguration()
-        videoDevice!.whiteBalanceMode = mode
-        videoDevice!.unlockForConfiguration()
+//        try! videoDevice!.lockForConfiguration()
+//        videoDevice!.whiteBalanceMode = mode
+//        videoDevice!.unlockForConfiguration()
+        
+        
+        do {
+            try videoDevice!.lockForConfiguration()
+            videoDevice!.whiteBalanceMode = mode
+            videoDevice!.unlockForConfiguration()
+            
+        } catch {
+            print("setWhitebalanceMode")
+        }
     }
     
     

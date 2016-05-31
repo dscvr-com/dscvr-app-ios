@@ -38,6 +38,8 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        print("reload")
+        
         contentView.backgroundColor = UIColor(hex:0xf7f7f7)
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
@@ -56,7 +58,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameInputView.placeholder = "Enter your name"
         displayNameInputView.font = UIFont.fontDisplay(15, withType: .Semibold)
         displayNameInputView.textAlignment = .Center
-        displayNameInputView.textColor = .Accent
+        displayNameInputView.textColor = UIColor(0xffbc00)
         displayNameInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         displayNameInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         displayNameInputView.returnKeyType = .Done
@@ -130,7 +132,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         avatarImageView.frame = CGRect(x: size.width / 2 - 50, y: 20, width: 100, height: 100)
         displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
-        displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 17)
+        displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)
         textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
@@ -146,11 +148,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //postHeadingView.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width , height: 55)
         postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize:55)
         
-        
+        buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
+        buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal)
+        buttonFollow.hidden = true
     }
     
     func bindViewModel(viewModel: ProfileViewModel) {
-        // avoid binding multiple times
         if self.viewModel != nil {
             return
         }
@@ -163,6 +166,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         viewModel.isEditing.producer.startWithNext{ [weak self] val in
             val ? self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.updateImage))) : self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
+            self?.editSubView.hidden = val ? true : false
         }
         
         
@@ -189,9 +193,10 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         if isMe {
             buttonFollow.hidden = true
-            
+            editSubView.hidden = false
         } else {
             buttonFollow.hidden = false
+            editSubView.hidden = true
             buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
             textView.align(.UnderCentered, relativeTo: buttonFollow, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
             viewModel.isFollowed.producer.startWithNext{
