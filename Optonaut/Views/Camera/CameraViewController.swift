@@ -451,7 +451,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         let exposureDuration = max(self.exposureDuration, 0.006)
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
-        let movementPerFrameInPixels = Double(10000)
+        let movementPerFrameInPixels = Double(80000)
         
         let newTime = CACurrentMediaTime()
         
