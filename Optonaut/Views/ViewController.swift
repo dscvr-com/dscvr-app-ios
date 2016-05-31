@@ -132,5 +132,8 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         
         return cellSize
     }
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        print("indexpath \(indexPath)")
+    }
 }
 

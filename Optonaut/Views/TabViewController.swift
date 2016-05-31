@@ -355,7 +355,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
 //                print("== \(names)")
 //            }
 //        }
- 
+        labelCapture.hidden = true
+        labelManual.hidden = true
+        labelMotor.hidden = true
+        manualButton.hidden = true
+        motorButton.hidden = true
+        dividerThree.hidden = true
     }
     
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer,shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {

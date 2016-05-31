@@ -74,10 +74,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         originalBackButton = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
         
-        leftBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
+        leftBarButton.frame = CGRect(x: 0, y: -2, width: 50, height: 21)
 //        leftBarButton.text = String.iconWithName(.Cancel)
         leftBarButton.text = "Cancel"
-        leftBarButton.textColor = .whiteColor()
+        leftBarButton.textColor = .blackColor()
         leftBarButton.font = UIFont.iconOfSize(10)
         leftBarButton.userInteractionEnabled = true
         leftBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapLeftBarButton)))
@@ -91,11 +91,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
         }
         
-        rightBarButton.frame = CGRect(x: 0, y: -2, width: 21, height: 21)
+        rightBarButton.frame = CGRect(x: 0, y: -2, width: 30, height: 21)
 //        rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))
         rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple("Save", String.iconWithName(.More))
-        rightBarButton.font = UIFont.iconOfSize(10)
+        rightBarButton.font = UIFont.iconOfSize(14)
         rightBarButton.userInteractionEnabled = true
+        rightBarButton.textColor = .blackColor()
         rightBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapRightBarButton)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButton)
         
@@ -114,7 +115,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 if isEditing {
                     let collectionViewSize = strongSelf.collectionView!.frame.size
                     let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.fontDisplay(12, withType: .Regular))
-                    let headerHeight = 267 + textHeight
+                    let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
                     strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight + navBarHeight!, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight)
                     
                     strongSelf.collectionView!.contentOffset = CGPoint(x: 0,y:-44)

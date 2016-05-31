@@ -463,16 +463,17 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
         updateNavbarAppear()
+        
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        //viewModel.viewIsActive.value = false
         imageDownloadDisposable?.dispose()
         imageDownloadDisposable = nil
         CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
+        tabController!.enableScrollView()
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)

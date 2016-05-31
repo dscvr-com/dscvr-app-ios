@@ -16,6 +16,7 @@ import Mixpanel
 import Neon
 import FBSDKCoreKit
 import Kingfisher
+import SwiftyUserDefaults
 
 //let Env = EnvType.Development
 //let Env = EnvType.localStaging
@@ -52,7 +53,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let tabBarViewController = TabViewController()
             self.window?.rootViewController = tabBarViewController
             
-            
+            let launchedBefore = NSUserDefaults.standardUserDefaults().boolForKey("launchedBefore")
+            if launchedBefore  {
+                print("Not first launch.")
+            }
+            else {
+                print("First launch, setting NSUserDefault.")
+                NSUserDefaults.standardUserDefaults().setBool(true, forKey: "launchedBefore")
+                Defaults[.SessionVRMode] = true
+                Defaults[.SessionUseMultiRing] = true
+            }
             
             Mixpanel.sharedInstance().track("Launch.Notification")
         }
