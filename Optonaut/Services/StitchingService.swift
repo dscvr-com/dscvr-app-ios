@@ -83,7 +83,8 @@ class StitchingService {
             Mixpanel.sharedInstance().track("Action.Stitching.Start")
             Mixpanel.sharedInstance().timeEvent("Action.Stitching.Finish")
             
-            let globalAligner = Alignment()
+            let globalAligner = Alignment ()
+            
             globalAligner.align()
             
             assert(hasUnstitchedRecordings())
