@@ -927,8 +927,8 @@
 		8FAB9F0F1B8F01DF00B4C8CB /* Feed */ = {
 			isa = PBXGroup;
 			children = (
-				8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */,
 				8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */,
+				8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */,
 				8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */,
 				8F276F281C36DC4E003C348C /* FeedNavViewController.swift */,
 				8FAB9F121B8F01DF00B4C8CB /* FeedOptographCollectionViewModel.swift */,
