@@ -11,6 +11,7 @@ import UIKit
 class PhotoThumbnail: UICollectionViewCell {
 
     var imageView: UIImageView!
+    var checkImageView = UIImageView()
     
     override init(frame: CGRect) {
         //initialize image view
@@ -20,6 +21,13 @@ class PhotoThumbnail: UICollectionViewCell {
         
         imageView.contentMode = UIViewContentMode.ScaleAspectFit
         contentView.addSubview(imageView)
+        
+        checkImageView.image = UIImage(named: "follow_active")
+        checkImageView.anchorInCorner(.TopRight, xPad: 3, yPad: 3, width: checkImageView.frame.width, height: checkImageView.frame.height)
+        imageView.addSubview(checkImageView)
+        
+        contentView.bringSubviewToFront(imageView)
+        contentView.bringSubviewToFront(checkImageView)
         
     }
     

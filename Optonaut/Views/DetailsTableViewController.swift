@@ -64,6 +64,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private var isSelectorButtonOpen:Bool = true
     private var isUIHide:Bool = false
     var isMe = false
+    var transformBegin:CGAffineTransform?
     
     required init(optographId:UUID) {
         
@@ -130,6 +131,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
+        
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
@@ -165,7 +167,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //            }
 //        }
         whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
-        scnView.addSubview(whiteBackground)
+        self.view.addSubview(whiteBackground)
         
         avatarImageView.layer.cornerRadius = 23.5
         avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
@@ -236,7 +238,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
             
         hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
-        scnView.addSubview(hideSelectorButton)
+        self.view.addSubview(hideSelectorButton)
         
         if  Defaults[.SessionGyro] {
             self.changeButtonIcon(true)
@@ -244,8 +246,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.changeButtonIcon(false)
         }
         
-        scnView.addSubview(littlePlanetButton)
-        scnView.addSubview(gyroButton)
+        self.view.addSubview(littlePlanetButton)
+        self.view.addSubview(gyroButton)
         
         
         hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
@@ -265,6 +267,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //        twoTapGestureRecognizer.numberOfTapsRequired = 2
 //        self.view.addGestureRecognizer(twoTapGestureRecognizer)
         
+        let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(self.pinchGesture(_:)))
+        
+        scnView.addGestureRecognizer(pinchGestureRecognizer)
+        
+        
         isMe = viewModel.isMe
         
         if isMe {
@@ -273,6 +280,32 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             optionsButtonView.hidden = false
             viewModel.isFollowed.producer.startWithNext{
                 $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
+            }
+        }
+    }
+    func pinchGesture(recognizer:UIPinchGestureRecognizer) {
+        
+        if let view = recognizer.view {
+            if recognizer.state == UIGestureRecognizerState.Began {
+                hideUI()
+                if transformBegin == nil {
+                    transformBegin = CGAffineTransformScale(view.transform,recognizer.scale, recognizer.scale)
+                }
+            } else if recognizer.state == UIGestureRecognizerState.Changed {
+                print(">>",view.transform.a)
+                print(recognizer.scale)
+                if view.transform.a >= 1.0  {
+                    scnView.transform = CGAffineTransformScale(view.transform,recognizer.scale, recognizer.scale)
+                    recognizer.scale = 1
+                } else {
+                    scnView.transform = transformBegin!
+                    recognizer.scale = 1
+                }
+            } else if recognizer.state == UIGestureRecognizerState.Ended {
+                if view.transform.a <= 1.0  {
+                    scnView.transform = transformBegin!
+                    recognizer.scale = 1
+                }
             }
         }
     }
@@ -319,6 +352,24 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
             self.navigationController!.presentViewController(alert, animated: true, completion: nil)
         }
+    }
+    
+    func hideUI() {
+        self.whiteBackground.hidden = true
+        self.hideSelectorButton.hidden = true
+        self.gyroButton.hidden = true
+        self.littlePlanetButton.hidden = true
+        self.isUIHide = true
+        self.navigationController?.navigationBarHidden = true
+    }
+    
+    func showUI() {
+        self.whiteBackground.hidden = false
+        self.hideSelectorButton.hidden = false
+        self.gyroButton.hidden = false
+        self.littlePlanetButton.hidden = false
+        self.isUIHide = false
+        self.navigationController?.navigationBarHidden = false
     }
     
     func oneTap(recognizer:UITapGestureRecognizer) {
@@ -423,7 +474,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesMoved(touches, withEvent: event)
         let point = touches.first!.locationInView(scnView)
-        print("point \(point)")
         combinedMotionManager.touchMove(point)
     }
     
