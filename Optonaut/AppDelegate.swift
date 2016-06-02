@@ -167,6 +167,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        KingfisherManager.sharedManager.cache.maxMemoryCost = 25000000 // 100mb = 2.5e+7 pixels
         KingfisherManager.sharedManager.cache.maxMemoryCost = 10 // 100mb = 2.5e+7 pixels
         
+        
+        KingfisherManager.sharedManager.cache.cleanExpiredDiskCache()
+        
+        
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         
         window?.backgroundColor = .whiteColor()

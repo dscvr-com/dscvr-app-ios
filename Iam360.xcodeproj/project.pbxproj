@@ -241,7 +241,7 @@
 		A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D681BEA5A4E0031ED1E /* recorder.cpp */; };
 		A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D711BEA5A4E0031ED1E /* monoStitcher.cpp */; };
 		A5FD5D8B1BEA5A570031ED1E /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5FD5D8A1BEA5A570031ED1E /* lib */; };
-		B170421B1CF6D124004E2F26 /* Alignment.mm in Sources */ = {isa = PBXBuildFile; fileRef = B170421A1CF6D124004E2F26 /* Alignment.mm */; };
+		B13720D91D003BD8008858B7 /* Alignment.mm in Sources */ = {isa = PBXBuildFile; fileRef = B13720D81D003BD8008858B7 /* Alignment.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -585,12 +585,12 @@
 		A5FD5D711BEA5A4E0031ED1E /* monoStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = monoStitcher.cpp; sourceTree = "<group>"; };
 		A5FD5D721BEA5A4E0031ED1E /* monoStitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = monoStitcher.hpp; sourceTree = "<group>"; };
 		A5FD5D8A1BEA5A570031ED1E /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
+		B13720D71D003BD8008858B7 /* Alignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = Optonaut/Stitcher/Alignment.h; sourceTree = SOURCE_ROOT; };
+		B13720D81D003BD8008858B7 /* Alignment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alignment.mm; path = Optonaut/Stitcher/Alignment.mm; sourceTree = SOURCE_ROOT; };
 		B17042151CF6CF04004E2F26 /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
 		B17042161CF6CF6F004E2F26 /* imageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSink.hpp; sourceTree = "<group>"; };
 		B17042171CF6CF7A004E2F26 /* recorderMotor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderMotor.hpp; sourceTree = "<group>"; };
 		B17042181CF6CF80004E2F26 /* visualStabilizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualStabilizer.hpp; sourceTree = "<group>"; };
-		B17042191CF6D0F1004E2F26 /* Alignment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = stitcher/src/recorder/Alignment.h; sourceTree = SOURCE_ROOT; };
-		B170421A1CF6D124004E2F26 /* Alignment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alignment.mm; path = stitcher/src/recorder/Alignment.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -993,6 +993,8 @@
 		8FAB9F691B8F02D500B4C8CB /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				B13720D71D003BD8008858B7 /* Alignment.h */,
+				B13720D81D003BD8008858B7 /* Alignment.mm */,
 				A5233E281BC87F7500C9EFE5 /* CommonExternal.h */,
 				A5233E291BC87F7500C9EFE5 /* CommonInternal.h */,
 				A5233E2A1BC87F7500C9EFE5 /* Recorder.h */,
@@ -1004,8 +1006,6 @@
 				A5233E301BC87F7500C9EFE5 /* Stores.mm */,
 				A568D4961BD13171008FF556 /* HeadTracker.h */,
 				A568D4971BD13348008FF556 /* HeadTracker.mm */,
-				B17042191CF6D0F1004E2F26 /* Alignment.h */,
-				B170421A1CF6D124004E2F26 /* Alignment.mm */,
 			);
 			name = Stitcher;
 			path = Utils/Stitcher;
@@ -1621,7 +1621,6 @@
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,
 				A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */,
 				8F23AA551BFF31B4008926A8 /* PersonTable.swift in Sources */,
-				B170421B1CF6D124004E2F26 /* Alignment.mm in Sources */,
 				A5FD5D831BEA5A4E0031ED1E /* quat.cpp in Sources */,
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
@@ -1637,6 +1636,7 @@
 				8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */,
 				A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */,
 				5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */,
+				B13720D91D003BD8008858B7 /* Alignment.mm in Sources */,
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */,
 				8FD845B81BC870B90064048D /* Debug.swift in Sources */,

@@ -117,11 +117,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         // Init scene view here because we need view bounds for the constructor overload
         // that forces GLES. Please don't use metal. It will fail.
-        if #available(iOS 9.0, *) {
-            scnView = SCNView(frame: view.bounds, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
-        } else {
+       if #available(iOS 9.0, *) {
+          scnView = SCNView(frame: view.bounds, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+       } else {
             scnView = SCNView(frame: view.bounds)
-        }
+        
+       }
         
         
         // layer for preview
@@ -225,7 +226,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         stopSession()
         
-        recorder.finish()
+        recorder.cancel()
         recorder.dispose()
         
         if StitchingService.hasUnstitchedRecordings() {

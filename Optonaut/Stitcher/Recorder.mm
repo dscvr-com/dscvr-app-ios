@@ -300,6 +300,11 @@ optonaut::ImageSink imageSink(Stores::post);
     pipe = NULL;
 }
 
+- (void)cancel {
+    assert(pipe != NULL);
+    pipe->Cancelled();
+}
+
 - (struct ExposureInfo)getExposureHint {
     assert(pipe != NULL);
     
