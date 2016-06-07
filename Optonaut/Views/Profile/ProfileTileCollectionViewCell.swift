@@ -123,9 +123,12 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
                 if isPrivate {
                     return self.iconView.text = String.iconWithName(.Safe)
                 } else if uploadStatus == .Uploading {
+                    self.uploadButton.hidden = true
                     return self.iconView.text = String.iconWithName(.Loading)
                 } else if uploadStatus == .Offline {
                     return self.uploadButton.hidden = false
+                } else if uploadStatus == .Uploaded {
+                    return self.uploadButton.hidden = true
                 } else {
                     return
                 }
@@ -134,8 +137,6 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
     func upload() {
         viewModel.goUpload()
     }
-    
-    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

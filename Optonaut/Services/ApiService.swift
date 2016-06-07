@@ -58,6 +58,7 @@ class ApiService<T: Mappable> {
     }
     
     static func put(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+        print(endpoint,queries,parameters)
         return request(endpoint, method: .PUT, queries: queries, parameters: parameters)
     }
     

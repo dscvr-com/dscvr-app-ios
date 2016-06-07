@@ -217,6 +217,7 @@ class PipelineService {
         if Reachability.connectedToNetwork() {
             for optograph in optographs {
                 Models.optographs.touch(optograph)
+                print(optograph.ID)
                 upload(optograph.ID)
             }
         }

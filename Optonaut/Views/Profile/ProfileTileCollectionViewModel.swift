@@ -60,11 +60,15 @@ class ProfileTileCollectionViewModel {
             optographBox.update { box in
                 box.model.isUploading = true
             }
+            optographBox.insertOrUpdate { box in
+                box.model.shouldBePublished = true
+            }
             
             let postParameters = [
                 "id": optograph.ID,
                 "stitcher_version": StitcherVersion,
                 "created_at": optograph.createdAt.toRFC3339String(),
+                "optograph_type":"optograph"
                 ]
             
             var putParameters: [String: AnyObject] = [
@@ -87,9 +91,11 @@ class ProfileTileCollectionViewModel {
                     "poi": location.POI,
                 ]
             }
+            print(postParameters)
             
             SignalProducer<Bool, ApiError>(value: !optographBox.model.shareAlias.isEmpty)
                 .flatMap(.Latest) { alreadyPosted -> SignalProducer<Void, ApiError> in
+                    print(alreadyPosted)
                     if alreadyPosted {
                         return SignalProducer(value: ())
                     } else {
@@ -104,13 +110,15 @@ class ProfileTileCollectionViewModel {
                 }
                 .flatMap(.Latest) {
                     ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: putParameters)
-                        .on(failed: { [weak self] _ in
+                        .on(failed: { [weak self] failedString in
+                            print(failedString)
                             self?.optographBox.update { box in
                                 box.model.isUploading = false
                             }
                             })
                 }
                 .on(next: { [weak self] optograph in
+                    print("success \(optograph)")
                     self?.optographBox.insertOrUpdate { box in
                         box.model.isOnServer = true
                     }
