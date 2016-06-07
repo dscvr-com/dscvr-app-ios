@@ -8,13 +8,17 @@
 
 import UIKit
 import Photos
+import ReactiveCocoa
 
-let albumName = "RICOH THETA"            //Replace with required folder name
+let albumName = "RICOH THETA"           //Replace with required folder name
+let albumNames = ["RICOH THETA","ROBERT","WHAT THE PUCK"]
+
+
 
 class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
 
     var collectionView: UICollectionView!
-    
+    let imagePicked = MutableProperty<UIImage?>(nil)
     var albumFound : Bool = false
     var assetCollection: PHAssetCollection = PHAssetCollection()
     var photosAsset: PHFetchResult!
@@ -25,7 +29,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         // Do any additional setup after loading the view, typically from a nib.
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
+        layout.sectionInset = UIEdgeInsets(top: 70, left: 10, bottom: 10, right: 10)
         layout.itemSize = CGSize(width: 90.0, height: 90.0)
         
         collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
@@ -34,6 +38,11 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         collectionView.registerClass(PhotoThumbnail.self, forCellWithReuseIdentifier: "Cell")
         collectionView.backgroundColor = UIColor.whiteColor()
         self.view.addSubview(collectionView)
+        
+        
+        for object in albumNames {
+            print(object)
+        }
         
         let fetchOptions = PHFetchOptions()
         fetchOptions.predicate = NSPredicate(format: "title = %@", albumName)
@@ -64,6 +73,23 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
                                                                 }
             })
         }
+        
+        let closeButton = UIButton()
+        closeButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
+        closeButton.anchorInCorner(.TopLeft, xPad: 10, yPad: 10, width: 40 , height: 40)
+        closeButton.addTarget(self, action: #selector(closePhotoLibrary), forControlEvents: .TouchUpInside)
+        self.view.addSubview(closeButton)
+        
+        let photoLabel = UILabel()
+        photoLabel.textAlignment = .Center
+        photoLabel.text = "360 Images"
+        photoLabel.font = .fontDisplay(20, withType: .Semibold)
+        self.view.addSubview(photoLabel)
+        photoLabel.anchorToEdge(.Top, padding: 10, width: 150, height: 40)
+    }
+    
+    func closePhotoLibrary() {
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -133,7 +159,20 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         return cellSize
     }
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        print("indexpath \(indexPath)")
+        
+        let asset: PHAsset = self.photosAsset[indexPath.item] as! PHAsset
+        
+        let imageOptions = PHImageRequestOptions()
+        imageOptions.deliveryMode = .HighQualityFormat
+        imageOptions.synchronous = true
+        
+        PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: CGSizeMake(CGFloat(5376), CGFloat(2688)), contentMode: .AspectFill, options: imageOptions, resultHandler: {(result, info)in
+            if let image = result {
+                self.imagePicked.value = image
+                self.closePhotoLibrary()
+            }
+        })
+        
     }
 }
 

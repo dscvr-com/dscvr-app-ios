@@ -235,6 +235,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //        self.presentViewController(imagePicker, animated: true, completion: nil)
         
         let imagePickVC = ViewController()
+        
+        imagePickVC.imagePicked.producer.startWithNext{ image in
+            if image != nil {
+                self.uploadTheta(image!)
+            }
+        }
+        
         self.presentViewController(imagePickVC, animated: true, completion: nil)
     }
     
@@ -253,7 +260,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             if pickedImage.size.height == 2688 && pickedImage.size.width == 5376 {
                 uploadTheta(pickedImage)
             } else {
-                isThetaImage.value = true
+                isThetaImage.value = false
             }
         }
         

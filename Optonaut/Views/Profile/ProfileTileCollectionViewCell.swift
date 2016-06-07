@@ -22,7 +22,10 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
     
     private let viewModel = ProfileTileCollectionViewModel()
     
+    private let uploadButton = UIButton()
+    
     private let whiteBackground = UIView()
+    private let deleteButton = UIButton()
     
 //    private let glView: OpenGLView
     
@@ -65,33 +68,23 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
             }
         contentView.addSubview(imageView)
         
-//        contentView.addSubview(glView)
-        
-//        scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
-//        scnView.playing = false
-//        
-//        scnView.scene = renderDelegate.scene
-//        scnView.delegate = renderDelegate
-//        scnView.backgroundColor = .clearColor()
-//        contentView.addSubview(scnView)
-        
         iconView.frame = CGRect(x: frame.width - 32, y: 14, width: 18, height: 18)
         iconView.textColor = .whiteColor()
         iconView.font = UIFont.iconOfSize(18)
         iconView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
-        iconView.rac_text <~ viewModel.isPrivate.producer.skipRepeats()
-            .combineLatestWith(viewModel.uploadStatus.producer.skipRepeats())
-            .map { isPrivate, uploadStatus in
-                if isPrivate {
-                    return String.iconWithName(.Safe)
-                } else if uploadStatus == .Uploading {
-                    return String.iconWithName(.Loading)
-                } else if uploadStatus == .Offline {
-                    return String.iconWithName(.Upload)
-                } else {
-                    return ""
-                }
-            }
+//        iconView.rac_text <~ viewModel.isPrivate.producer.skipRepeats()
+//            .combineLatestWith(viewModel.uploadStatus.producer.skipRepeats())
+//            .map { isPrivate, uploadStatus in
+//                if isPrivate {
+//                    return String.iconWithName(.Safe)
+//                } else if uploadStatus == .Uploading {
+//                    return String.iconWithName(.Loading)
+//                } else if uploadStatus == .Offline {
+//                    return String.iconWithName(.Upload)
+//                } else {
+//                    return ""
+//                }
+//            }
         contentView.addSubview(iconView)
         
         loadingView.frame = CGRect(origin: CGPointZero, size: frame.size)
@@ -104,7 +97,45 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
         
         whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
         contentView.addSubview(whiteBackground)
+        
+        
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
+        
+        deleteButton.setBackgroundImage(UIImage(named: "profile_delete_icn"), forState: .Normal)
+        uploadButton.setBackgroundImage(UIImage(named:"profile_upload_icn"), forState: .Normal)
+        
+        let deleteImageSize = UIImage(named:"profile_delete_icn")?.size
+        let uploadImageSize = UIImage(named:"profile_upload_icn")?.size
+        
+        whiteBackground.addSubview(deleteButton)
+        whiteBackground.addSubview(uploadButton)
+        
+        deleteButton.anchorToEdge(.Right, padding: 20, width: (deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
+        uploadButton.align(.ToTheLeftCentered, relativeTo: deleteButton, padding: 30, width: (uploadImageSize?.width)!, height: (uploadImageSize?.height)!)
+        uploadButton.addTarget(self, action: #selector(upload), forControlEvents: .TouchUpInside)
+        
+        uploadButton.hidden = true
+        
+        viewModel.isPrivate.producer
+            .skipRepeats()
+            .combineLatestWith(viewModel.uploadStatus.producer.skipRepeats())
+            .startWithNext{ isPrivate, uploadStatus in
+                if isPrivate {
+                    return self.iconView.text = String.iconWithName(.Safe)
+                } else if uploadStatus == .Uploading {
+                    self.uploadButton.hidden = true
+                    return self.iconView.text = String.iconWithName(.Loading)
+                } else if uploadStatus == .Offline {
+                    return self.uploadButton.hidden = false
+                } else if uploadStatus == .Uploaded {
+                    return self.uploadButton.hidden = true
+                } else {
+                    return
+                }
+        }
+    }
+    func upload() {
+        viewModel.goUpload()
     }
     
     required init?(coder aDecoder: NSCoder) {

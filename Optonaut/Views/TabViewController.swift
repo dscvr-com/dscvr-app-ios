@@ -197,7 +197,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         let textHeight = calcTextHeight("VR IMAGE VIEW STYLE", withWidth: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Light)), andFont: .fontDisplay(12, withType: .Semibold))
         
         let vrImageLabel = UILabel()
-        vrImageLabel.frame = CGRect(x: 70,y: bgImage!.frame.origin.y + (bgImage?.frame.height)! + 16 ,width: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Semibold)),height: textHeight)
+        vrImageLabel.frame = CGRect(x: 70,y: bgImage!.frame.origin.y + (bgImage?.frame.height)! + 20 ,width: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Semibold)),height: textHeight)
         vrImageLabel.text = "VR IMAGE VIEW STYLE"
         vrImageLabel.textAlignment = .Center
         vrImageLabel.textColor = UIColor.blackColor()
@@ -361,6 +361,13 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         manualButton.hidden = true
         motorButton.hidden = true
         dividerThree.hidden = true
+        
+        let versionLabel = UILabel()
+        versionLabel.text = "v0.81"
+        versionLabel.textAlignment = .Center
+        versionLabel.font = .fontDisplay(10, withType: .Semibold)
+        versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
+        thisView.addSubview(versionLabel)
     }
     
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer,shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
