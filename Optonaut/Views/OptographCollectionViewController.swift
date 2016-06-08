@@ -133,7 +133,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     }
                     
                     if results.models.count == 1 {
-                        strongSelf.collectionView!.reloadData()
+                        //strongSelf.collectionView!.reloadData()
                     } else {
                         CATransaction.begin()
                         CATransaction.setDisableActions(true)
@@ -218,6 +218,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         PipelineService.checkUploading()
         
     }
+    
     func openGallary() {
         
 //        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
@@ -440,12 +441,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         let optographID = optographIDs[indexPath.row]
         
         cell.bindModel(optographID)
-        cell.direction = optographDirections[optographID]!
-        cell.willDisplay()
-        cell.optoId = optographID
-        
-        let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
-        cell.setCubeImageCache(cubeImageCache)
+//        cell.direction = optographDirections[optographID]!
+//        cell.willDisplay()
+//        cell.optoId = optographID
+//        
+//        let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
+//        cell.setCubeImageCache(cubeImageCache)
         
         cell.id = indexPath.row
         cell.swipeView = tabController!.scrollView
@@ -454,23 +455,21 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             .startWithNext{ val in
                 if val{
                     print("optographid =",optographID)
-                   // cell.setRotation(true)
                     self.shareData.optographId.value = optographID
                 } else {
                     print("close")
-                    //cell.setRotation(false)
                 }
             }
         
-        if StitchingService.isStitching() {
-            imageCache.resetExcept(indexPath.row)
-        } else {
-            for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
-                let id = optographIDs[indexPath.row + i]
-                let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
-                imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
-            }
-        }
+//        if StitchingService.isStitching() {
+//            imageCache.resetExcept(indexPath.row)
+//        } else {
+//            for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
+//                let id = optographIDs[indexPath.row + i]
+//                let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
+//                imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
+//            }
+//        }
         
         if indexPath.row > optographIDs.count - 5 {
             viewModel.loadMore()
@@ -484,7 +483,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        //return UIScreen.mainScreen().bounds.size
         
         return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/3)*2))
     }
@@ -492,10 +490,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         let cell = cell as! OptographCollectionViewCell
         
-        optographDirections[optographIDs[indexPath.row]] = cell.direction
-        cell.didEndDisplay()
-        
-        imageCache.disable(indexPath.row)
+//        optographDirections[optographIDs[indexPath.row]] = cell.direction
+//        cell.didEndDisplay()
+//        
+//        imageCache.disable(indexPath.row)
     }
     
 //    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {

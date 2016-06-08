@@ -13,6 +13,7 @@ import SpriteKit
 import Foundation
 import Async
 import SwiftyUserDefaults
+import MediaPlayer
 
 class TouchRotationSource: RotationMatrixSource {
     
@@ -451,6 +452,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     var deleteCallback: (() -> ())?
     
+    var moviePlayer:MPMoviePlayerController!
+    
     var direction: Direction {
         set(direction) {
             combinedMotionManager.setDirection(direction)
@@ -464,7 +467,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     var isShareOpen = MutableProperty<Bool>(false)
     
     func setRotation (isRotating:Bool) {
-        combinedMotionManager.setRotation(isRotating)
+        //combinedMotionManager.setRotation(isRotating)
     }
     
     dynamic private func pushDetails() {
@@ -486,26 +489,27 @@ class OptographCollectionViewCell: UICollectionViewCell{
         super.init(frame: frame)
         
         contentView.backgroundColor = UIColor(hex:0xffbc00)
-        
-        if #available(iOS 9.0, *) {
-            scnView = SCNView(frame: contentView.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
-        } else {
-            scnView = SCNView(frame: contentView.frame)
-        }
-        
-        let hfov: Float = 55
-    
-        combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
-        
-        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
-        renderDelegate.scnView = scnView
-        
-        scnView.scene = renderDelegate.scene
-        scnView.delegate = renderDelegate
-        scnView.backgroundColor = .clearColor()
-        scnView.hidden = false
-        scnView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushDetails)))
-        contentView.addSubview(scnView)
+ 
+//
+//        if #available(iOS 9.0, *) {
+//            scnView = SCNView(frame: contentView.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+//        } else {
+//            scnView = SCNView(frame: contentView.frame)
+//        }
+//        
+//        let hfov: Float = 55
+//    
+//        combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
+//        
+//        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
+//        renderDelegate.scnView = scnView
+//        
+//        scnView.scene = renderDelegate.scene
+//        scnView.delegate = renderDelegate
+//        scnView.backgroundColor = .clearColor()
+//        scnView.hidden = false
+//        scnView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushDetails)))
+//        contentView.addSubview(scnView)
         
         loadingOverlayView.backgroundColor = .blackColor()
         loadingOverlayView.frame = contentView.frame
@@ -562,23 +566,23 @@ class OptographCollectionViewCell: UICollectionViewCell{
         shareImageAsset.image = UIImage(named: "share_hidden_icn")
         contentView.addSubview(shareImageAsset)
         
-        hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
+        //hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
         //bouncingButton.addGestureRecognizer(hiddenGestureRecognizer)
         
         //bouncingButton.addTarget(self, action: #selector(self.bouncingCell), forControlEvents:.TouchUpInside)
         bouncingButton.setImage(UIImage(named: "bouncing_button")!, forState: .Normal)
-        scnView.addSubview(bouncingButton)
+        //scnView.addSubview(bouncingButton)
         
         hiddenViewToBounce.backgroundColor = UIColor.clearColor()
-        scnView.addSubview(hiddenViewToBounce)
+        //scnView.addSubview(hiddenViewToBounce)
         
-        contentView.bringSubviewToFront(scnView)
+        //contentView.bringSubviewToFront(scnView)
         contentView.bringSubviewToFront(whiteBackground)
         contentView.bringSubviewToFront(blackSpace)
         contentView.bringSubviewToFront(hiddenViewToBounce)
         
-        hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
-        hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
+        //hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
+        //hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
     }
     
     override func layoutSubviews() {
@@ -710,9 +714,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
     }
     
     func bindModel(optographId:UUID) {
-        
-        //let optograph = Models.optographs[optographId]!.model
-        //let person = Models.persons[optograph.personID]!.model
 
         viewModel.bind(optographId)
         viewModel.avatarImageUrl.producer.startWithNext{
@@ -761,7 +762,17 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     var id: Int = 0 {
         didSet {
-            renderDelegate.id = id
+            let url:NSURL = NSURL(string: "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/b146850f-6105-408e-90b4-2ff76dbe88b1/pan.mp4")!
+            
+            print("http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/b146850f-6105-408e-90b4-2ff76dbe88b1/pan.mp4")
+            
+            moviePlayer = MPMoviePlayerController(contentURL: url)
+            moviePlayer.view.frame = CGRect(x:0, y: 0, width: frame.width, height: (frame.height/3)*2)
+            contentView.addSubview(moviePlayer.view)
+            moviePlayer.controlStyle = MPMovieControlStyle.None
+            moviePlayer.movieSourceType = MPMovieSourceType.File
+            moviePlayer.prepareToPlay()
+            moviePlayer.play()
         }
     }
     
@@ -807,7 +818,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     }
     
     func forgetTextures() {
-        renderDelegate.reset()
+        //renderDelegate.reset()
     }
     
     deinit {
