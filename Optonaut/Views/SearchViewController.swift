@@ -12,7 +12,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     lazy var searchBar:UISearchBar = UISearchBar(frame: CGRectZero);
     
-    var tableView: UITableView!
+    var tableView = UITableView()
     
     var searchActive : Bool = false
     
@@ -29,7 +29,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         searchBar.tintColor = UIColor.blackColor();
         self.navigationItem.titleView = searchBar;
     
-        tableView = UITableView(frame: self.view.frame);
+        //tableView = UITableView(frame: self.view.frame);
         tableView.dataSource = self;
         tableView.delegate = self;
         
@@ -45,6 +45,16 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
                         }
                     )
                     .start()
+        tableView.fillSuperview()
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SearchViewController.dismissKeyboard))
+        tapGestureRecognizer.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGestureRecognizer)
+        view.setNeedsUpdateConstraints()
+    }
+    
+    func dismissKeyboard() {
+        searchBar.endEditing(true)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -114,13 +124,10 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         let personDetails = person[indexPath.row]
         let image = ImageURL("persons/\(personDetails.ID)/\(personDetails.avatarAssetID).jpg", width: 47, height: 47)
         
-        print("personDetails >> \(personDetails)")
-        
         cell.userImage.kf_setImageWithURL(NSURL(string:image)!)
         cell.nameLabel.text = personDetails.displayName
         cell.nameLabel.sizeToFit()
         cell.locationLabel.text = ""
-        cell.locationLabel.sizeToFit()
         
         cell.locationLabel.frame = CGRect(x: cell.nameLabel.frame.origin.x, y: cell.nameLabel.frame.origin.y + cell.nameLabel.frame.size.height, width: 0, height: 0);
         cell.locationLabel.sizeToFit()

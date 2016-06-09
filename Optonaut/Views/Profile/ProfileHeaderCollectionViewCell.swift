@@ -95,7 +95,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
 //        buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
 //        contentView.addSubview(buttonView)
         
-        //buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
+        buttonFollow.addTarget(self, action: #selector(self.followUser), forControlEvents:.TouchUpInside)
         contentView.addSubview(buttonFollow)
         
 //        dividerDescription.backgroundColor = UIColor(0xffbc00)
@@ -125,6 +125,17 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         logRetain()
     }
     
+    func followUser() {
+        
+        if SessionService.isLoggedIn {
+            viewModel.toggleFollow()
+        } else {
+            let alert = UIAlertController(title:"", message: "Please login to follow this user", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -148,9 +159,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //postHeadingView.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width , height: 55)
         postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize:55)
         
-        buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
-        buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal)
-        buttonFollow.hidden = true
+        buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: avatarImageView.frame.width, height: 25)
     }
     
     func bindViewModel(viewModel: ProfileViewModel) {
@@ -167,6 +176,10 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         viewModel.isEditing.producer.startWithNext{ [weak self] val in
             val ? self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.updateImage))) : self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
             self?.editSubView.hidden = val ? true : false
+        }
+        
+        viewModel.isFollowed.producer.startWithNext{ [weak self] val in
+            val ? self?.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self?.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         }
         
         
@@ -192,26 +205,18 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         let size = contentView.frame.size
         
         if isMe {
+            print("ako")
             buttonFollow.hidden = true
             editSubView.hidden = false
         } else {
+            print("hindi ako")
             buttonFollow.hidden = false
             editSubView.hidden = true
             buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
             textView.align(.UnderCentered, relativeTo: buttonFollow, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
-            viewModel.isFollowed.producer.startWithNext{
-                $0 ? self.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
-            }
         }
         
-        //postCountView.rac_text <~ viewModel.postCount.producer.map { "\($0)" }
-        
-//        viewModel.postCount.producer.startWithNext {
-//            self.postHeadingView.text = "\($0) Posts"
-//        }
-        
         postHeadingView.rac_hidden <~ viewModel.isEditing
-        //postCountView.rac_hidden <~ viewModel.isEditing
         
     }
     

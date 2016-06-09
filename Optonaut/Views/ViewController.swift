@@ -10,7 +10,7 @@ import UIKit
 import Photos
 import ReactiveCocoa
 
-let albumName = "RICOH THETA"           //Replace with required folder name
+let albumName = "RICOH THETA"  
 let albumNames = ["RICOH THETA","ROBERT","WHAT THE PUCK"]
 
 

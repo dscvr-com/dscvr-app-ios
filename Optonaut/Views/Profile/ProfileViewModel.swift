@@ -50,6 +50,7 @@ class ProfileViewModel {
                 self?.followersCount.value = person.followersCount
                 self?.followingCount.value = person.followedCount
                 self?.isFollowed.value = person.isFollowed
+                print(person.isFollowed)
                 self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 84, height: 84)
             }
     }

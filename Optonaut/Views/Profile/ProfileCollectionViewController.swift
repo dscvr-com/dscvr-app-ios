@@ -70,12 +70,13 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         tabController?.delegate = self
         
-        var image = UIImage(named: "logo_small")
-        image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        originalBackButton = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
+        if !isProfileVisit {
+            var image = UIImage(named: "logo_small")
+            image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+            originalBackButton = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
+        }
         
         leftBarButton.frame = CGRect(x: 0, y: -2, width: 50, height: 21)
-//        leftBarButton.text = String.iconWithName(.Cancel)
         leftBarButton.text = "Cancel"
         leftBarButton.textColor = .blackColor()
         leftBarButton.font = UIFont.iconOfSize(10)
@@ -155,38 +156,18 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             .observeOnMain()
             .on(next: { [weak self] results in
                 if let strongSelf = self {
-//                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+                    
                     strongSelf.optographIDs = results.models.map { $0.ID }
                     
-//                    CATransaction.begin()
-//                    CATransaction.setDisableActions(true)
                         strongSelf.collectionView!.performBatchUpdates({
-//                            strongSelf.imageCache.delete(results.delete)
-//                            strongSelf.imageCache.insert(results.insert)
                             strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
                             strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
                             strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                        }, completion: { _ in
-//                            if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
-//                                // preserves scroll position
-//                                if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
-//                                    strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
-//                                }
-//                            }
-//                            strongSelf.refreshControl.endRefreshing()
-//                            CATransaction.commit()
-                        })
+                        }, completion: nil)
                 }
             })
             .start()
         
-//        collectionViewModel.isActive.producer
-//            .skip(1)
-//            .map(negate)
-//            .filter(identity)
-//            .startWithNext { [weak self] _ in
-//                self?.imageCache.reset()
-//            }
         if isProfileVisit {
             tabController!.disableScrollView()
         }
@@ -292,6 +273,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             NSFontAttributeName: UIFont.fontDisplay(20, withType: .Semibold),
             NSForegroundColorAttributeName: UIColor.blackColor(),
         ]
+        
+        if isProfileVisit {
+            tabController!.disableScrollView()
+        }
     }
     
     
@@ -299,10 +284,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         super.viewWillDisappear(animated)
         if isProfileVisit {
             tabController!.enableScrollView()
-            
         }
-        
-//        RotationService.sharedInstance.rotationDisable()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -434,12 +416,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-//        let profileOptographCollectionViewModel = ProfileOptographCollectionViewModel(personID: profileViewModel.personID, selectedOptographID: optographIDs[indexPath.item - 1])
-//        let optographCollectionViewController = OptographCollectionViewController(viewModel: profileOptographCollectionViewModel)
-//        navigationController!.pushViewController(optographCollectionViewController, animated: true)
-        let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item - 1])
-        detailsViewController.cellIndexpath = indexPath.item
-        navigationController?.pushViewController(detailsViewController, animated: true)
+        if indexPath.item != 0 {
+            let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item - 1])
+            detailsViewController.cellIndexpath = indexPath.item
+            navigationController?.pushViewController(detailsViewController, animated: true)
+        }
+        
     }
     
     dynamic private func tapLeftBarButton() {
