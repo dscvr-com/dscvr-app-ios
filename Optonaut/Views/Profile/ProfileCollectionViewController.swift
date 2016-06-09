@@ -288,9 +288,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         collectionViewModel.refreshNotification.notify(())
         collectionViewModel.isActive.value = true
         
-//        view.bounds = UIScreen.mainScreen().bounds
-        
-//        RotationService.sharedInstance.rotationEnable()
+        navigationController?.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.fontDisplay(20, withType: .Semibold),
+            NSForegroundColorAttributeName: UIColor.blackColor(),
+        ]
     }
     
     

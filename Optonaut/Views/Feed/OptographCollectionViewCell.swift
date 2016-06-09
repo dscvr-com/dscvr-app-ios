@@ -13,6 +13,10 @@ import SpriteKit
 import Foundation
 import Async
 import SwiftyUserDefaults
+import MediaPlayer
+import Kingfisher
+import AVFoundation
+import AVKit
 
 class TouchRotationSource: RotationMatrixSource {
     
@@ -415,8 +419,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let bottomBackgroundView = UIView()
     private let loadingOverlayView = UIView()
     
-    private var combinedMotionManager: CombinedMotionManager!
-    private var renderDelegate: CubeRenderDelegate!
     private var scnView: SCNView!
     
     private let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
@@ -451,20 +453,20 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     var deleteCallback: (() -> ())?
     
-    var direction: Direction {
-        set(direction) {
-            combinedMotionManager.setDirection(direction)
-        }
-        get {
-            return combinedMotionManager.getDirection()
-        }
-    }
     var hiddenGestureRecognizer:UIPanGestureRecognizer!
     var swipeView:UIScrollView?
     var isShareOpen = MutableProperty<Bool>(false)
     
+    var previewImage = UIImageView()
+    
     func setRotation (isRotating:Bool) {
-        combinedMotionManager.setRotation(isRotating)
+        //
+    }
+    
+    var id: Int = 0 {
+        didSet {
+            //
+        }
     }
     
     dynamic private func pushDetails() {
@@ -486,26 +488,39 @@ class OptographCollectionViewCell: UICollectionViewCell{
         super.init(frame: frame)
         
         contentView.backgroundColor = UIColor(hex:0xffbc00)
+ 
+//
+//        if #available(iOS 9.0, *) {
+//            scnView = SCNView(frame: contentView.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+//        } else {
+//            scnView = SCNView(frame: contentView.frame)
+//        }
+//        
+//        let hfov: Float = 55
+//    
+//        combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
+//        
+//        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
+//        renderDelegate.scnView = scnView
+//        
+//        scnView.scene = renderDelegate.scene
+//        scnView.delegate = renderDelegate
+//        scnView.backgroundColor = .clearColor()
+//        scnView.hidden = false
+//        scnView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushDetails)))
+//        contentView.addSubview(scnView)
         
-        if #available(iOS 9.0, *) {
-            scnView = SCNView(frame: contentView.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
-        } else {
-            scnView = SCNView(frame: contentView.frame)
-        }
+//        moviePlayer.view.frame = CGRect(origin: CGPointZero, size: frame.size)
+//        moviePlayer.controlStyle = MPMovieControlStyle.None
+//        moviePlayer.movieSourceType = MPMovieSourceType.File
+//        moviePlayer.repeatMode = MPMovieRepeatMode.One
+//        moviePlayer.prepareToPlay()
+//        
+//        contentView.addSubview(moviePlayer.view)
         
-        let hfov: Float = 55
-    
-        combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
         
-        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
-        renderDelegate.scnView = scnView
-        
-        scnView.scene = renderDelegate.scene
-        scnView.delegate = renderDelegate
-        scnView.backgroundColor = .clearColor()
-        scnView.hidden = false
-        scnView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushDetails)))
-        contentView.addSubview(scnView)
+//        previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
+//        contentView.addSubview(previewImage)
         
         loadingOverlayView.backgroundColor = .blackColor()
         loadingOverlayView.frame = contentView.frame
@@ -562,23 +577,24 @@ class OptographCollectionViewCell: UICollectionViewCell{
         shareImageAsset.image = UIImage(named: "share_hidden_icn")
         contentView.addSubview(shareImageAsset)
         
-        hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
+        //hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
         //bouncingButton.addGestureRecognizer(hiddenGestureRecognizer)
         
         //bouncingButton.addTarget(self, action: #selector(self.bouncingCell), forControlEvents:.TouchUpInside)
         bouncingButton.setImage(UIImage(named: "bouncing_button")!, forState: .Normal)
-        scnView.addSubview(bouncingButton)
+        //scnView.addSubview(bouncingButton)
         
         hiddenViewToBounce.backgroundColor = UIColor.clearColor()
-        scnView.addSubview(hiddenViewToBounce)
+        //scnView.addSubview(hiddenViewToBounce)
         
-        contentView.bringSubviewToFront(scnView)
+        //contentView.bringSubviewToFront(previewImage)
         contentView.bringSubviewToFront(whiteBackground)
         contentView.bringSubviewToFront(blackSpace)
         contentView.bringSubviewToFront(hiddenViewToBounce)
         
-        hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
-        hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
+        //hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
+        //hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
+    
     }
     
     override func layoutSubviews() {
@@ -710,9 +726,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
     }
     
     func bindModel(optographId:UUID) {
-        
-        //let optograph = Models.optographs[optographId]!.model
-        //let person = Models.persons[optograph.personID]!.model
 
         viewModel.bind(optographId)
         viewModel.avatarImageUrl.producer.startWithNext{
@@ -752,63 +765,44 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
             }
         }
+//        viewModel.uploadStatus.producer.equalsTo(.Uploaded)
+//            .startWithNext { [weak self] isUploaded in
+//                if isUploaded {
+//                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
+//                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+//                } else {
+//                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+//                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+//                        dispatch_async(dispatch_get_main_queue()) {
+//                            self?.previewImage.image = originalImage.resized(.Width, value: (self?.contentView.frame.width)!)
+//                        }
+//                    }
+//                }
+//        }
+        
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            var url:NSURL?
+            
+            if #available(iOS 9.0, *) {
+                url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/\(optographId)/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
+            }
+            print(url)
+            
+            let video = AVPlayer(URL: url!)
+            let playerLayer = AVPlayerLayer(player:video)
+            playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+            self.contentView.layer.addSublayer(playerLayer)
+            playerLayer.fillSuperview()
+            video.play()
+        }
     }
-    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }   
-    
-    var id: Int = 0 {
-        didSet {
-            renderDelegate.id = id
-        }
     }
     
-    func getVisibleAndAdjacentPlaneIndices(direction: Direction) -> [CubeImageCache.Index] {
-        let rotation = phiThetaToRotationMatrix(direction.phi, theta: direction.theta)
-        return renderDelegate.getVisibleAndAdjacentPlaneIndicesFromRotationMatrix(rotation)
-    }
-    
-    func setCubeImageCache(cache: CubeImageCache) {
-        
-        renderDelegate.nodeEnterScene = nil
-        renderDelegate.nodeLeaveScene = nil
-        
-        renderDelegate.reset()
-        
-        renderDelegate.nodeEnterScene = { [weak self] index in
-            dispatch_async(queue) {
-                cache.get(index) { [weak self] (texture: SKTexture, index: CubeImageCache.Index) in
-                    self?.renderDelegate.setTexture(texture, forIndex: index)
-                    Async.main { [weak self] in
-                        self?.loadingStatus.value = .Loaded
-                    }
-                }
-            }
-        }
-        
-        renderDelegate.nodeLeaveScene = { index in
-            dispatch_async(queue) {
-                cache.forget(index)
-            }
-        }
-    }
-    
-    func willDisplay() {
-        scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
-    }
-    
-    func didEndDisplay() {
-        scnView.playing = false
-        combinedMotionManager.reset()
-        loadingStatus.value = .Nothing
-        renderDelegate.reset()
-    }
-    
-    func forgetTextures() {
-        renderDelegate.reset()
-    }
     
     deinit {
         logRetain()

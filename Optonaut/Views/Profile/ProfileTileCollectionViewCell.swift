@@ -45,7 +45,6 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
-        //imageView.frame = CGRect(x:0,y:0,width: frame.size.width-30,height:frame.size.height)
         imageView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
         viewModel.uploadStatus.producer.equalsTo(.Uploaded)
             .combineLatestWith(viewModel.optographID.producer)
