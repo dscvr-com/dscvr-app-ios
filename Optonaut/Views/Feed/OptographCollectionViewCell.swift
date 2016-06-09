@@ -14,6 +14,9 @@ import Foundation
 import Async
 import SwiftyUserDefaults
 import MediaPlayer
+import Kingfisher
+import AVFoundation
+import AVKit
 
 class TouchRotationSource: RotationMatrixSource {
     
@@ -416,8 +419,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let bottomBackgroundView = UIView()
     private let loadingOverlayView = UIView()
     
-    private var combinedMotionManager: CombinedMotionManager!
-    private var renderDelegate: CubeRenderDelegate!
     private var scnView: SCNView!
     
     private let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
@@ -452,22 +453,20 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     var deleteCallback: (() -> ())?
     
-    var moviePlayer:MPMoviePlayerController!
-    
-    var direction: Direction {
-        set(direction) {
-            combinedMotionManager.setDirection(direction)
-        }
-        get {
-            return combinedMotionManager.getDirection()
-        }
-    }
     var hiddenGestureRecognizer:UIPanGestureRecognizer!
     var swipeView:UIScrollView?
     var isShareOpen = MutableProperty<Bool>(false)
     
+    var previewImage = UIImageView()
+    
     func setRotation (isRotating:Bool) {
-        //combinedMotionManager.setRotation(isRotating)
+        //
+    }
+    
+    var id: Int = 0 {
+        didSet {
+            //
+        }
     }
     
     dynamic private func pushDetails() {
@@ -510,6 +509,18 @@ class OptographCollectionViewCell: UICollectionViewCell{
 //        scnView.hidden = false
 //        scnView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushDetails)))
 //        contentView.addSubview(scnView)
+        
+//        moviePlayer.view.frame = CGRect(origin: CGPointZero, size: frame.size)
+//        moviePlayer.controlStyle = MPMovieControlStyle.None
+//        moviePlayer.movieSourceType = MPMovieSourceType.File
+//        moviePlayer.repeatMode = MPMovieRepeatMode.One
+//        moviePlayer.prepareToPlay()
+//        
+//        contentView.addSubview(moviePlayer.view)
+        
+        
+//        previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
+//        contentView.addSubview(previewImage)
         
         loadingOverlayView.backgroundColor = .blackColor()
         loadingOverlayView.frame = contentView.frame
@@ -576,13 +587,14 @@ class OptographCollectionViewCell: UICollectionViewCell{
         hiddenViewToBounce.backgroundColor = UIColor.clearColor()
         //scnView.addSubview(hiddenViewToBounce)
         
-        //contentView.bringSubviewToFront(scnView)
+        //contentView.bringSubviewToFront(previewImage)
         contentView.bringSubviewToFront(whiteBackground)
         contentView.bringSubviewToFront(blackSpace)
         contentView.bringSubviewToFront(hiddenViewToBounce)
         
         //hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
         //hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
+    
     }
     
     override func layoutSubviews() {
@@ -753,73 +765,44 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
             }
         }
+//        viewModel.uploadStatus.producer.equalsTo(.Uploaded)
+//            .startWithNext { [weak self] isUploaded in
+//                if isUploaded {
+//                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
+//                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+//                } else {
+//                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+//                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+//                        dispatch_async(dispatch_get_main_queue()) {
+//                            self?.previewImage.image = originalImage.resized(.Width, value: (self?.contentView.frame.width)!)
+//                        }
+//                    }
+//                }
+//        }
+        
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            var url:NSURL?
+            
+            if #available(iOS 9.0, *) {
+                url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/\(optographId)/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
+            }
+            print(url)
+            
+            let video = AVPlayer(URL: url!)
+            let playerLayer = AVPlayerLayer(player:video)
+            playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+            self.contentView.layer.addSublayer(playerLayer)
+            playerLayer.fillSuperview()
+            video.play()
+        }
     }
-    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }   
-    
-    var id: Int = 0 {
-        didSet {
-            let url:NSURL = NSURL(string: "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/b146850f-6105-408e-90b4-2ff76dbe88b1/pan.mp4")!
-            
-            print("http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/b146850f-6105-408e-90b4-2ff76dbe88b1/pan.mp4")
-            
-            moviePlayer = MPMoviePlayerController(contentURL: url)
-            moviePlayer.view.frame = CGRect(x:0, y: 0, width: frame.width, height: (frame.height/3)*2)
-            contentView.addSubview(moviePlayer.view)
-            moviePlayer.controlStyle = MPMovieControlStyle.None
-            moviePlayer.movieSourceType = MPMovieSourceType.File
-            moviePlayer.prepareToPlay()
-            moviePlayer.play()
-        }
     }
     
-    func getVisibleAndAdjacentPlaneIndices(direction: Direction) -> [CubeImageCache.Index] {
-        let rotation = phiThetaToRotationMatrix(direction.phi, theta: direction.theta)
-        return renderDelegate.getVisibleAndAdjacentPlaneIndicesFromRotationMatrix(rotation)
-    }
-    
-    func setCubeImageCache(cache: CubeImageCache) {
-        
-        renderDelegate.nodeEnterScene = nil
-        renderDelegate.nodeLeaveScene = nil
-        
-        renderDelegate.reset()
-        
-        renderDelegate.nodeEnterScene = { [weak self] index in
-            dispatch_async(queue) {
-                cache.get(index) { [weak self] (texture: SKTexture, index: CubeImageCache.Index) in
-                    self?.renderDelegate.setTexture(texture, forIndex: index)
-                    Async.main { [weak self] in
-                        self?.loadingStatus.value = .Loaded
-                    }
-                }
-            }
-        }
-        
-        renderDelegate.nodeLeaveScene = { index in
-            dispatch_async(queue) {
-                cache.forget(index)
-            }
-        }
-    }
-    
-    func willDisplay() {
-        scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
-    }
-    
-    func didEndDisplay() {
-        scnView.playing = false
-        combinedMotionManager.reset()
-        loadingStatus.value = .Nothing
-        renderDelegate.reset()
-    }
-    
-    func forgetTextures() {
-        //renderDelegate.reset()
-    }
     
     deinit {
         logRetain()
