@@ -314,6 +314,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
         return optographIDs.count + 1
     }
 
@@ -334,6 +335,19 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             cell.backgroundColor = UIColor.blackColor()
             
             return cell
+        }
+    }
+    
+    func addLabel() {
+        
+        if (optographIDs.count == 0) {
+            let label = UILabel()
+            label.anchorToEdge(.Bottom, padding: view.frame.height*0.25, width: 200, height: 30)
+            label.text = "Nothing to show"
+            label.font = UIFont.fontDisplay(25, withType: .Regular)
+            label.textAlignment = .Center
+            view.addSubview(label)
+        
         }
     }
     

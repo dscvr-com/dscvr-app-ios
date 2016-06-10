@@ -2,7 +2,7 @@
 //  DetailsContainerView.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 8/14/15.
+//  Created by Robert John Alkuino on 8/14/15.
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
@@ -58,6 +58,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
     
+    private let commentButtonView = BoundingButton()
+    private let commentCountView = UILabel()
+    
     private let hideSelectorButton = UIButton()
     private let littlePlanetButton = UIButton()
     private let gyroButton = UIButton()
@@ -111,22 +114,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         scnView.backgroundColor = .clearColor()
         scnView.hidden = false
         self.view.addSubview(scnView)
-        
-//        tableView.backgroundColor = .clearColor()
-//        tableView.delegate = self
-//        tableView.dataSource = self
-//        tableView.separatorStyle = .None
-//        tableView.canCancelContentTouches = false
-//        tableView.delaysContentTouches = false
-//        tableView.exclusiveTouch = false
-//        tableView.registerClass(DetailsTableViewCell.self, forCellReuseIdentifier: "details-cell")
-//        tableView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - tabBarController!.tabBar.frame.height)
-//        tableView.scrollEnabled = true
-//        view.addSubview(tableView)
-//        
-//        viewModel.comments.producer.startWithNext { [weak self] _ in
-//            self?.tableView.reloadData()
-//        }
         
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
@@ -192,8 +179,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(personNameView)
         
         likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
-        //likeButtonView.setImage(UIImage(named:"user_unlike_icn"), forState: .Normal)
         whiteBackground.addSubview(likeButtonView)
+        
+        
+        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
+        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
+        whiteBackground.addSubview(commentButtonView)
+
+        
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
         locationTextView.textColor = UIColor.whiteColor()
@@ -204,11 +197,20 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         likeCountView.textAlignment = .Right
         whiteBackground.addSubview(likeCountView)
         
+        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
+        commentCountView.textColor = .whiteColor()
+        commentCountView.textAlignment = .Right
+        whiteBackground.addSubview(commentCountView)
+        
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
+        
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
+        
+        commentButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:24, height: 28)
+        commentCountView.align(.ToTheLeftCentered, relativeTo: commentButtonView, padding: 10, width:20, height: 13)
         
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
@@ -217,6 +219,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         personNameView.rac_text <~ viewModel.creator_username
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
+        commentCountView.rac_text <~ viewModel.commentsCount.producer.map{ "\($0)" }
+        
         viewModel.isStarred.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
                 strongSelf.likeButtonView.setImage(liked ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), forState: .Normal)
@@ -283,6 +287,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             }
         }
     }
+    func toggleComment() {
+        let commentPage = CommentTableViewController(optographID: optographID)
+        //commentPage.modalPresentationStyle = .OverCurrentContext
+        self.navigationController?.presentViewController(commentPage, animated: true, completion: nil)
+    }
+    
     func pinchGesture(recognizer:UIPinchGestureRecognizer) {
         
         if let view = recognizer.view {

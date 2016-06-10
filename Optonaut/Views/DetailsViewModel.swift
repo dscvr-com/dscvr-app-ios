@@ -36,6 +36,11 @@ class DetailsViewModel {
     let likeCount = MutableProperty<Int>(0)
     let liked = MutableProperty<Bool>(false)
     
+    let postingEnabled = MutableProperty<Bool>(false)
+    let isPosting = MutableProperty<Bool>(false)
+    
+    var optographId:UUID
+    
     
     var optographBox: ModelBox<Optograph>!
     var creatorDetails:ModelBox<Person>!
@@ -44,7 +49,12 @@ class DetailsViewModel {
         
         logInit()
         optographBox = Models.optographs[optographID]!
+        optographId = optographID
+        
         updatePropertiesDetails()
+        
+        postingEnabled <~ text.producer.map(isNotEmpty)
+            .combineLatestWith(isPosting.producer.map(negate)).map(and)
         
         isMe = SessionService.personID == optographBox.model.personID
     }
@@ -130,4 +140,30 @@ class DetailsViewModel {
             }
         }
     }
+    
+    func postComment() -> SignalProducer<Comment, ApiError> {
+        return ApiService.post("optographs/\(optographId)/comments", parameters: ["text": text.value])
+            .on(
+                started: {
+                    self.isPosting.value = true
+                    self.commentsCount.value += 1
+                },
+                next: { comment in
+                    try! comment.person.insertOrUpdate()
+                    try! comment.insertOrUpdate()
+                },
+                completed: {
+                    self.text.value = ""
+                    self.isPosting.value = false
+                },
+                failed: { _ in
+                    self.commentsCount.value -= 1
+                }
+        )
+    }
+    
+    func insertNewComment(comment: Comment) {
+        comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
+    }
+    
 }
