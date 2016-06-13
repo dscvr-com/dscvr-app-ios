@@ -29,8 +29,8 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         // Do any additional setup after loading the view, typically from a nib.
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 70, left: 10, bottom: 10, right: 10)
-        layout.itemSize = CGSize(width: 90.0, height: 90.0)
+        layout.sectionInset = UIEdgeInsets(top: 70, left: 0, bottom: 10, right: 0)
+        //layout.itemSize = CGSize(width: 90.0, height: 90.0)
         
         collectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
         collectionView.dataSource = self
@@ -84,6 +84,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         photoLabel.textAlignment = .Center
         photoLabel.text = "360 Images"
         photoLabel.font = .fontDisplay(20, withType: .Semibold)
+        photoLabel.font =  UIFont(name: "HelveticaNeue-Bold",size: 20)
         self.view.addSubview(photoLabel)
         photoLabel.anchorToEdge(.Top, padding: 10, width: 150, height: 40)
     }
@@ -147,14 +148,15 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     
     //UICollectionViewDelegate
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat{
-        return 4
+        return 1
     }
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat{
         return 1
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        let cellSize = CGSizeMake(90.0, 90.0)
+        let widthSize = (view.frame.width/3)-2
+        let cellSize = CGSizeMake(widthSize,widthSize)
         
         return cellSize
     }

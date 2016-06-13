@@ -182,11 +182,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(likeButtonView)
         
         
-        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
-        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
-        whiteBackground.addSubview(commentButtonView)
-        
-        
+//        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
+//        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
+//        whiteBackground.addSubview(commentButtonView)
+//        
+//        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
+//        commentCountView.textColor = .whiteColor()
+//        commentCountView.textAlignment = .Right
+//        whiteBackground.addSubview(commentCountView)
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
         locationTextView.textColor = UIColor.whiteColor()
@@ -197,11 +200,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         likeCountView.textAlignment = .Right
         whiteBackground.addSubview(likeCountView)
         
-        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
-        commentCountView.textColor = .whiteColor()
-        commentCountView.textAlignment = .Right
-        whiteBackground.addSubview(commentCountView)
-        
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
@@ -209,8 +207,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         
-        commentButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:24, height: 28)
-        commentCountView.align(.ToTheLeftCentered, relativeTo: commentButtonView, padding: 10, width:20, height: 13)
+        //commentButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:24, height: 28)
+        //commentCountView.align(.ToTheLeftCentered, relativeTo: commentButtonView, padding: 10, width:20, height: 13)
         
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
@@ -219,7 +217,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         personNameView.rac_text <~ viewModel.creator_username
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
-        commentCountView.rac_text <~ viewModel.commentsCount.producer.map{ "\($0)" }
+        //commentCountView.rac_text <~ viewModel.commentsCount.producer.map{ "\($0)" }
         
         viewModel.isStarred.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
@@ -242,7 +240,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         
         hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
-        self.view.addSubview(hideSelectorButton)
+        //self.view.addSubview(hideSelectorButton)
         
         if  Defaults[.SessionGyro] {
             self.changeButtonIcon(true)
@@ -250,8 +248,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.changeButtonIcon(false)
         }
         
-        self.view.addSubview(littlePlanetButton)
-        self.view.addSubview(gyroButton)
+        //self.view.addSubview(littlePlanetButton)
+        //self.view.addSubview(gyroButton)
         
         
         hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
@@ -523,7 +521,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
         updateNavbarAppear()
-        
+        //navigationItem.backBarButtonItem?.tintColor = UIColor(hex:0xffbc00)
+        self.navigationController?.navigationBar.tintColor = UIColor(hex:0xffbc00)
     }
     
     override func viewWillDisappear(animated: Bool) {
