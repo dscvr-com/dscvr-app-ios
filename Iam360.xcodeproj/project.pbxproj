@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4971FAEA1CF49865002F1B69 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4971FAE91CF49865002F1B69 /* Fabric.framework */; };
+		590341021D0E78F1006BE976 /* Alignment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 590341011D0E78F1006BE976 /* Alignment.mm */; };
 		590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590E05B21CBD3119000331CB /* SaveThetaViewController.swift */; };
 		5917C8211CE441F200CD5A6D /* SharingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8201CE441F200CD5A6D /* SharingViewController.swift */; };
 		5917C8231CE4436900CD5A6D /* SharingNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */; };
@@ -281,6 +282,11 @@
 
 /* Begin PBXFileReference section */
 		4971FAE91CF49865002F1B69 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
+		590340FF1D0E780E006BE976 /* visualStabilizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualStabilizer.hpp; sourceTree = "<group>"; };
+		590341001D0E78BA006BE976 /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
+		590341011D0E78F1006BE976 /* Alignment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alignment.mm; path = stitcher/src/stitcher/Alignment.mm; sourceTree = SOURCE_ROOT; };
+		590341031D0E79BD006BE976 /* imageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSink.hpp; sourceTree = "<group>"; };
+		590341041D0E7ACF006BE976 /* Alignment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = stitcher/src/stereo/Alignment.h; sourceTree = SOURCE_ROOT; };
 		590E05B21CBD3119000331CB /* SaveThetaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveThetaViewController.swift; sourceTree = "<group>"; };
 		5917C8201CE441F200CD5A6D /* SharingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
 		5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingNavViewController.swift; sourceTree = "<group>"; };
@@ -674,6 +680,7 @@
 		5936B1761CAD34F500F808D8 /* stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				590341001D0E78BA006BE976 /* globalAlignment.hpp */,
 				5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */,
 				5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */,
 				5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */,
@@ -1011,6 +1018,7 @@
 		8FAB9F691B8F02D500B4C8CB /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				590341011D0E78F1006BE976 /* Alignment.mm */,
 				A5233E281BC87F7500C9EFE5 /* CommonExternal.h */,
 				A5233E291BC87F7500C9EFE5 /* CommonInternal.h */,
 				A5233E2A1BC87F7500C9EFE5 /* Recorder.h */,
@@ -1022,6 +1030,7 @@
 				A5233E301BC87F7500C9EFE5 /* Stores.mm */,
 				A568D4961BD13171008FF556 /* HeadTracker.h */,
 				A568D4971BD13348008FF556 /* HeadTracker.mm */,
+				590341041D0E7ACF006BE976 /* Alignment.h */,
 			);
 			name = Stitcher;
 			path = Utils/Stitcher;
@@ -1359,6 +1368,8 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
+				590341031D0E79BD006BE976 /* imageSink.hpp */,
+				590340FF1D0E780E006BE976 /* visualStabilizer.hpp */,
 				A547FA101C5578D500FBC17D /* jumpFilter.hpp */,
 				A547FA111C5578D500FBC17D /* ringCloser.hpp */,
 				A5376ED31C4EBEF1004EFE88 /* stereoSink.hpp */,
@@ -1690,6 +1701,7 @@
 				5936B1841CAD34F500F808D8 /* dynamicSeamer.cpp in Sources */,
 				8F5335B01BDBE0840058961A /* ActivityViewsTableViewCell.swift in Sources */,
 				A5DE71E91BE28A7400316F82 /* Distortion.swift in Sources */,
+				590341021D0E78F1006BE976 /* Alignment.mm in Sources */,
 				59FB1D5F1CF5AFC100C5C333 /* PhotoThumbnail.swift in Sources */,
 				8F5335AC1BDBCB610058961A /* ActivityTableViewCell.swift in Sources */,
 				8FAB9F4B1B8F01DF00B4C8CB /* HashtagTableViewController.swift in Sources */,

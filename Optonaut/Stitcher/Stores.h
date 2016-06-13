@@ -6,4 +6,5 @@ public:
     static optonaut::CheckpointStore right;
     static optonaut::CheckpointStore common;
     static optonaut::CheckpointStore debug;
+    static optonaut::CheckpointStore post;
 };
