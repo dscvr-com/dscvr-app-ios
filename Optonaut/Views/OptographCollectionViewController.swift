@@ -112,7 +112,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         viewModel.results.producer
             .filter { $0.changed }
-//            .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
+            .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
             .delayAllUntil(viewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
@@ -445,7 +445,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //        let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
 //        cell.setCubeImageCache(cubeImageCache)
         
-        cell.id = indexPath.row
         cell.swipeView = tabController!.scrollView
         
         cell.isShareOpen.producer
@@ -474,6 +473,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
         return cell
     }
+    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
+        let detailsViewController = DetailsTableViewController(optographId:optographIDs[indexPath.row])
+        detailsViewController.cellIndexpath = indexPath.item
+        navigationController?.pushViewController(detailsViewController, animated: true)
+    }
+    
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 0
@@ -484,7 +490,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/3)*2))
     }
     
- 
+    
 //    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
 //       
 //        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
@@ -522,10 +528,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //    }
     
 }
-        
 
-       
-    
 // MARK: - UITabBarControllerDelegate
 extension OptographCollectionViewController: DefaultTabControllerDelegate {
     
@@ -539,5 +542,3 @@ extension OptographCollectionViewController: DefaultTabControllerDelegate {
         collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
     }
 }
-    
- 

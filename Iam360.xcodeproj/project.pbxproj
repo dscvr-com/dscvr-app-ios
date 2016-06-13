@@ -245,6 +245,9 @@
 		A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D711BEA5A4E0031ED1E /* monoStitcher.cpp */; };
 		A5FD5D8B1BEA5A570031ED1E /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5FD5D8A1BEA5A570031ED1E /* lib */; };
 		B153E2141D06B22800CC4B72 /* Alingment.mm in Sources */ = {isa = PBXBuildFile; fileRef = B153E2131D06B22800CC4B72 /* Alingment.mm */; };
+		B1754D5C1D0E82CD005A3E85 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */; };
+		B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */; };
+		B1754D5E1D0E82CD005A3E85 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -597,6 +600,9 @@
 		B17042161CF6CF6F004E2F26 /* imageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSink.hpp; sourceTree = "<group>"; };
 		B17042171CF6CF7A004E2F26 /* recorderMotor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderMotor.hpp; sourceTree = "<group>"; };
 		B17042181CF6CF80004E2F26 /* visualStabilizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualStabilizer.hpp; sourceTree = "<group>"; };
+		B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
+		B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewController.swift; sourceTree = "<group>"; };
+		B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -663,6 +669,9 @@
 		5917C8241CE49C3000CD5A6D /* Details */ = {
 			isa = PBXGroup;
 			children = (
+				B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */,
+				B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */,
+				B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */,
 				59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */,
 				5917C8251CE49C8600CD5A6D /* DetailsTableViewController.swift */,
 			);
@@ -1684,6 +1693,8 @@
 				A5DE71EA1BE28A7400316F82 /* DistortionMesh.swift in Sources */,
 				8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
+				B1754D5C1D0E82CD005A3E85 /* CommentTableViewCell.swift in Sources */,
+				B1754D5E1D0E82CD005A3E85 /* CommentViewModel.swift in Sources */,
 				8F0B17841BAC084F00FAF649 /* OnboardingProfileViewModel.swift in Sources */,
 				8FC7E3621BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift in Sources */,
 				8F23AA4C1BFF31B4008926A8 /* ActivityResourceCommentTable.swift in Sources */,
@@ -1700,6 +1711,7 @@
 				8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */,
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
+				B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
 				A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */,
 				8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */,
