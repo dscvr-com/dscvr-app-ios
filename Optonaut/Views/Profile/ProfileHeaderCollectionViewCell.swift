@@ -32,7 +32,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     private let postHeadingView = UILabel()
     //private let postCountView = UILabel()
     private let editSubView = UIImageView()
-   
+    
     private let dividerDescription = UILabel()
     
     override init(frame: CGRect) {
@@ -84,22 +84,22 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         textInputView.delegate = self
         contentView.addSubview(textInputView)
         
-//        buttonIconView.image = UIImage(named: "")
-//        buttonView.addSubview(buttonIconView)
+        //        buttonIconView.image = UIImage(named: "")
+        //        buttonView.addSubview(buttonIconView)
         
-//        buttonView.backgroundColor = UIColor(0xffbc00)
-//        buttonView.layer.cornerRadius = 5
-//        buttonView.layer.masksToBounds = true
-//        buttonView.setTitleColor(.whiteColor(), forState: .Normal)
-//        buttonView.titleLabel?.font = .fontDisplay(11, withType: .Semibold)
-//        buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
-//        contentView.addSubview(buttonView)
+        //        buttonView.backgroundColor = UIColor(0xffbc00)
+        //        buttonView.layer.cornerRadius = 5
+        //        buttonView.layer.masksToBounds = true
+        //        buttonView.setTitleColor(.whiteColor(), forState: .Normal)
+        //        buttonView.titleLabel?.font = .fontDisplay(11, withType: .Semibold)
+        //        buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
+        //        contentView.addSubview(buttonView)
         
-        //buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
+        buttonFollow.addTarget(self, action: #selector(self.followUser), forControlEvents:.TouchUpInside)
         contentView.addSubview(buttonFollow)
         
-//        dividerDescription.backgroundColor = UIColor(0xffbc00)
-//        contentView.addSubview(dividerDescription)
+        //        dividerDescription.backgroundColor = UIColor(0xffbc00)
+        //        contentView.addSubview(dividerDescription)
         
         //postHeadingView.text = "0 Posts"
         postHeadingView.text = "IAM360 Images"
@@ -109,20 +109,31 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         postHeadingView.backgroundColor = UIColor(hex:0x3E3D3D)
         contentView.addSubview(postHeadingView)
         
-//        postCountView.font = .displayOfSize(12, withType: .Semibold)
-//        postCountView.textAlignment = .Center
-//        postCountView.textColor = UIColor(0xbdbdbd)
-//        contentView.addSubview(postCountView)
+        //        postCountView.font = .displayOfSize(12, withType: .Semibold)
+        //        postCountView.textAlignment = .Center
+        //        postCountView.textColor = UIColor(0xbdbdbd)
+        //        contentView.addSubview(postCountView)
         
         contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.dismissKeyboard)))
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     deinit {
         logRetain()
+    }
+    
+    func followUser() {
+        
+        if SessionService.isLoggedIn {
+            viewModel.toggleFollow()
+        } else {
+            let alert = UIAlertController(title:"", message: "Please login to follow this user", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+        }
     }
     
     override func layoutSubviews() {
@@ -148,9 +159,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //postHeadingView.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width , height: 55)
         postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize:55)
         
-        buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
-        buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal)
-        buttonFollow.hidden = true
+        buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: avatarImageView.frame.width, height: 25)
     }
     
     func bindViewModel(viewModel: ProfileViewModel) {
@@ -167,6 +176,10 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         viewModel.isEditing.producer.startWithNext{ [weak self] val in
             val ? self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.updateImage))) : self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
             self?.editSubView.hidden = val ? true : false
+        }
+        
+        viewModel.isFollowed.producer.startWithNext{ [weak self] val in
+            val ? self?.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self?.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         }
         
         
@@ -192,26 +205,18 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         let size = contentView.frame.size
         
         if isMe {
+            print("ako")
             buttonFollow.hidden = true
             editSubView.hidden = false
         } else {
+            print("hindi ako")
             buttonFollow.hidden = false
             editSubView.hidden = true
             buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
             textView.align(.UnderCentered, relativeTo: buttonFollow, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
-            viewModel.isFollowed.producer.startWithNext{
-                $0 ? self.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
-            }
         }
         
-        //postCountView.rac_text <~ viewModel.postCount.producer.map { "\($0)" }
-        
-//        viewModel.postCount.producer.startWithNext {
-//            self.postHeadingView.text = "\($0) Posts"
-//        }
-        
         postHeadingView.rac_hidden <~ viewModel.isEditing
-        //postCountView.rac_hidden <~ viewModel.isEditing
         
     }
     
@@ -219,15 +224,15 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         if isMe {
             viewModel.isEditing.value = true
         }
-//        else if !SessionService.isLoggedIn {
-//            parentViewController!.tabController!.hideUI()
-//            
-//            let loginOverlayViewController = LoginOverlayViewController()
-//            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
-//        } else {
-//            viewModel.toggleFollow()
-//        }
-//        
+        //        else if !SessionService.isLoggedIn {
+        //            parentViewController!.tabController!.hideUI()
+        //
+        //            let loginOverlayViewController = LoginOverlayViewController()
+        //            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
+        //        } else {
+        //            viewModel.toggleFollow()
+        //        }
+        //
     }
     
     dynamic private func dismissKeyboard() {
@@ -240,7 +245,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             imagePickerController.navigationBar.translucent = false
             imagePickerController.navigationBar.barTintColor = UIColor.Accent
             imagePickerController.navigationBar.titleTextAttributes = [
-//                NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
+                //                NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
                 NSForegroundColorAttributeName: UIColor.whiteColor(),
             ]
             
@@ -254,7 +259,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
 
 // MARK: - UITextViewDelegate
 extension ProfileHeaderCollectionViewCell: UITextViewDelegate {
-
+    
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             contentView.endEditing(true)
@@ -270,7 +275,7 @@ extension ProfileHeaderCollectionViewCell: UIImagePickerControllerDelegate, UINa
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         imagePickerController.dismissViewControllerAnimated(true, completion: nil)
-    
+        
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
         let fixedImage = image.fixedOrientation().centeredCropWithSize(CGSize(width: 1024, height: 1024))
         avatarImageView.image = fixedImage

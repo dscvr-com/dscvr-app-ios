@@ -2,7 +2,7 @@
 //  DetailsContainerView.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 8/14/15.
+//  Created by Robert John Alkuino on 8/14/15.
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
@@ -58,6 +58,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
     
+    private let commentButtonView = BoundingButton()
+    private let commentCountView = UILabel()
+    
     private let hideSelectorButton = UIButton()
     private let littlePlanetButton = UIButton()
     private let gyroButton = UIButton()
@@ -112,22 +115,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         scnView.hidden = false
         self.view.addSubview(scnView)
         
-//        tableView.backgroundColor = .clearColor()
-//        tableView.delegate = self
-//        tableView.dataSource = self
-//        tableView.separatorStyle = .None
-//        tableView.canCancelContentTouches = false
-//        tableView.delaysContentTouches = false
-//        tableView.exclusiveTouch = false
-//        tableView.registerClass(DetailsTableViewCell.self, forCellReuseIdentifier: "details-cell")
-//        tableView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - tabBarController!.tabBar.frame.height)
-//        tableView.scrollEnabled = true
-//        view.addSubview(tableView)
-//        
-//        viewModel.comments.producer.startWithNext { [weak self] _ in
-//            self?.tableView.reloadData()
-//        }
-        
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
@@ -149,23 +136,23 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         //viewModel.viewIsActive.value = true
         
-
+        
         
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
             rotationSignal
                 .skipRepeats()
                 .filter([.LandscapeLeft, .LandscapeRight])
-        //               .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
+                //               .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
                 .take(1)
                 .observeOn(UIScheduler())
                 .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
-                }
+        }
         
-//        viewModel.optographReloaded.producer.startWithNext { [weak self] in
-//            if self?.viewModel.optograph.deletedAt != nil {
-//                self?.navigationController?.popViewControllerAnimated(false)
-//            }
-//        }
+        //        viewModel.optographReloaded.producer.startWithNext { [weak self] in
+        //            if self?.viewModel.optograph.deletedAt != nil {
+        //                self?.navigationController?.popViewControllerAnimated(false)
+        //            }
+        //        }
         whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
         self.view.addSubview(whiteBackground)
         
@@ -192,8 +179,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(personNameView)
         
         likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
-        //likeButtonView.setImage(UIImage(named:"user_unlike_icn"), forState: .Normal)
         whiteBackground.addSubview(likeButtonView)
+        
+        
+        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
+        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
+        whiteBackground.addSubview(commentButtonView)
+        
+        
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
         locationTextView.textColor = UIColor.whiteColor()
@@ -204,11 +197,20 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         likeCountView.textAlignment = .Right
         whiteBackground.addSubview(likeCountView)
         
+        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
+        commentCountView.textColor = .whiteColor()
+        commentCountView.textAlignment = .Right
+        whiteBackground.addSubview(commentCountView)
+        
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
+        
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
+        
+        commentButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:24, height: 28)
+        commentCountView.align(.ToTheLeftCentered, relativeTo: commentButtonView, padding: 10, width:20, height: 13)
         
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
@@ -217,6 +219,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         personNameView.rac_text <~ viewModel.creator_username
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
+        commentCountView.rac_text <~ viewModel.commentsCount.producer.map{ "\($0)" }
+        
         viewModel.isStarred.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
                 strongSelf.likeButtonView.setImage(liked ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), forState: .Normal)
@@ -236,7 +240,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             locationTextView.text = ""
         }
         
-            
+        
         hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
         self.view.addSubview(hideSelectorButton)
         
@@ -263,9 +267,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         oneTapGestureRecognizer.numberOfTapsRequired = 1
         self.view.addGestureRecognizer(oneTapGestureRecognizer)
         
-//        let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
-//        twoTapGestureRecognizer.numberOfTapsRequired = 2
-//        self.view.addGestureRecognizer(twoTapGestureRecognizer)
+        //        let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
+        //        twoTapGestureRecognizer.numberOfTapsRequired = 2
+        //        self.view.addGestureRecognizer(twoTapGestureRecognizer)
         
         let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(self.pinchGesture(_:)))
         
@@ -283,6 +287,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             }
         }
     }
+    func toggleComment() {
+        let commentPage = CommentTableViewController(optographID: optographID)
+        //commentPage.modalPresentationStyle = .OverCurrentContext
+        self.navigationController?.presentViewController(commentPage, animated: true, completion: nil)
+    }
+    
     func pinchGesture(recognizer:UIPinchGestureRecognizer) {
         
         if let view = recognizer.view {
@@ -424,7 +434,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     self.gyroButton.align(.UnderCentered, relativeTo: self.littlePlanetButton, padding: 10, width: 35, height: 35)
                     },completion: nil)
         })
-    
+        
     }
     func closeSelector() {
         UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
@@ -439,7 +449,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 })
         })
     }
-
+    
     func littlePlanetButtonTouched() {
         Defaults[.SessionGyro] = false
         self.changeButtonIcon(false)
@@ -454,7 +464,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         if isGyro {
             littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_inactive"), forState: .Normal)
             gyroButton.setBackgroundImage(UIImage(named:"details_gyro_active"), forState: .Normal)
-        
+            
         } else {
             littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_active"), forState: .Normal)
             gyroButton.setBackgroundImage(UIImage(named:"details_gyro_inactive"), forState: .Normal)
@@ -509,8 +519,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         CoreMotionRotationSource.Instance.start()
         RotationService.sharedInstance.rotationEnable()
         
-//        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-//        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        //        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        //        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
         updateNavbarAppear()
         
@@ -532,18 +542,18 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-//        tableView.contentOffset = CGPoint(x: 0, y: -(tableView.frame.height - 78))
-//        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
+        //        tableView.contentOffset = CGPoint(x: 0, y: -(tableView.frame.height - 78))
+        //        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
     }
     
-//    func keyboardWillShow(notification: NSNotification) {
-//        let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
-//        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
-//    }
-//    
-//    func keyboardWillHide(notification: NSNotification) {
-//        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
-//    }
+    //    func keyboardWillShow(notification: NSNotification) {
+    //        let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
+    //        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+    //    }
+    //
+    //    func keyboardWillHide(notification: NSNotification) {
+    //        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
+    //    }
     
     func dismissKeyboard() {
         view.endEditing(true)
@@ -592,13 +602,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func forgetTextures() {
         renderDelegate.reset()
     }
-//    private func pushViewer(orientation: UIInterfaceOrientation) {
-//        rotationAlert?.dismissViewControllerAnimated(true, completion: nil)
-//        let viewerViewController = ViewerViewController(orientation: orientation, optograph: viewModel.optograph)
-//        viewerViewController.hidesBottomBarWhenPushed = true
-//        navigationController?.pushViewController(viewerViewController, animated: false)
-//        viewModel.increaseViewsCount()
-//    }
+    //    private func pushViewer(orientation: UIInterfaceOrientation) {
+    //        rotationAlert?.dismissViewControllerAnimated(true, completion: nil)
+    //        let viewerViewController = ViewerViewController(orientation: orientation, optograph: viewModel.optograph)
+    //        viewerViewController.hidesBottomBarWhenPushed = true
+    //        navigationController?.pushViewController(viewerViewController, animated: false)
+    //        viewModel.increaseViewsCount()
+    //    }
     
     func showRotationAlert() {
         rotationAlert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
@@ -610,7 +620,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 
 //// MARK: - UITableViewDelegate
 //extension DetailsTableViewController: UITableViewDelegate {
-//    
+//
 //    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 ////        let superView = tableView!.superview!
 //        if indexPath.row == 0 {
@@ -622,7 +632,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //                completion: nil)
 //        }
 //    }
-//    
+//
 //    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 //        if indexPath.row == 0 {
 //            let infoHeight = CGFloat(78)
@@ -638,12 +648,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //            return max(textHeight, 60)
 //        }
 //    }
-//    
+//
 //}
 //
 //// MARK: - UITableViewDataSource
 //extension DetailsTableViewController: UITableViewDataSource {
-//    
+//
 //    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 //        if indexPath.row == 0 {
 //            let cell = self.tableView.dequeueReusableCellWithIdentifier("details-cell") as! DetailsTableViewCell
@@ -653,11 +663,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //            return cell
 //        }
 //    }
-//    
+//
 //    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 //        return viewModel.comments.value.count + 2
 //    }
-//    
+//
 //}
 //
 //
@@ -669,19 +679,19 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //}
 
 //private class TableView: UITableView {
-//    
+//
 //    var horizontalScrollDistanceCallback: ((Float) -> ())?
-//    
+//
 //    private override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
 //        super.touchesMoved(touches, withEvent: event)
-//        
+//
 //        if let touch = touches.first {
 //            let oldPoint = touch.previousLocationInView(self)
 //            let newPoint = touch.locationInView(self)
 //            self.horizontalScrollDistanceCallback?(Float(newPoint.x - oldPoint.x))
 //        }
 //    }
-//    
+//
 //    private override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
 //        // this took a lot of time. don't bother to understand this
 //        if frame.height + contentOffset.y - 78 < 80 && point.y < 0 && frame.width - point.x < 100 {
