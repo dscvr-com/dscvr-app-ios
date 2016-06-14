@@ -243,7 +243,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             
             imagePickerController.navigationBar.translucent = false
-            imagePickerController.navigationBar.barTintColor = UIColor.Accent
+            imagePickerController.navigationBar.barTintColor = UIColor(hex:0xffbc00)
             imagePickerController.navigationBar.titleTextAttributes = [
                 //                NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
                 NSForegroundColorAttributeName: UIColor.whiteColor(),

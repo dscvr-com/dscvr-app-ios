@@ -55,6 +55,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
             NSFontAttributeName: UIFont.fontDisplay(15, withType: .Semibold),
             NSForegroundColorAttributeName: UIColor.whiteColor(),
         ]
+        self.navigationController?.navigationBar.tintColor = UIColor.whiteColor()
     }
     
     

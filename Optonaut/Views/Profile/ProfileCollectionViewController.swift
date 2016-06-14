@@ -76,10 +76,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             originalBackButton = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
         }
         
-        leftBarButton.frame = CGRect(x: 0, y: -2, width: 50, height: 21)
+        leftBarButton.frame = CGRect(x: 0, y: -2, width: 60, height: 21)
         leftBarButton.text = "Cancel"
         leftBarButton.textColor = .blackColor()
-        leftBarButton.font = UIFont.iconOfSize(10)
+        leftBarButton.font = UIFont.iconOfSize(15)
         leftBarButton.userInteractionEnabled = true
         leftBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapLeftBarButton)))
         barButtonItem = UIBarButtonItem(customView: leftBarButton)
@@ -92,19 +92,20 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
         }
         
-        rightBarButton.frame = CGRect(x: 0, y: -2, width: 30, height: 21)
+        rightBarButton.frame = CGRect(x: 0, y: -2, width: 20, height: 21)
         //        rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))
         rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple("Save", String.iconWithName(.More))
-        rightBarButton.font = UIFont.iconOfSize(14)
+        rightBarButton.font = UIFont.iconOfSize(15)
         rightBarButton.userInteractionEnabled = true
         rightBarButton.textColor = .blackColor()
         rightBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapRightBarButton)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButton)
         
         editOverlayView.backgroundColor = UIColor.blackColor().alpha(0.6)
+        //editOverlayView.backgroundColor = UIColor.whiteColor()
         editOverlayView.rac_hidden <~ profileViewModel.isEditing.producer.map(negate)
         view.addSubview(editOverlayView)
-        let navBarHeight = self.navigationController?.navigationBar.frame.height
+        _ = self.navigationController?.navigationBar.frame.height
         
         profileViewModel.isEditing.producer.skip(1).startWithNext { [weak self] isEditing in
             if let strongSelf = self {
@@ -114,15 +115,18 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 strongSelf.collectionView!.performBatchUpdates(nil, completion: { _ in CATransaction.commit() })
                 
                 if isEditing {
+                    self?.rightBarButton.frame = CGRect(x: 0, y: -2, width: 40, height: 21)
                     let collectionViewSize = strongSelf.collectionView!.frame.size
                     let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.fontDisplay(12, withType: .Regular))
                     let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
-                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight + navBarHeight!, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight)
+                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight - 20, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight + 20)
                     
                     strongSelf.collectionView!.contentOffset = CGPoint(x: 0,y:-44)
                     strongSelf.title = "Edit My Profile"
                 } else {
+                    self?.rightBarButton.frame = CGRect(x: 0, y: -2, width: 20, height: 21)
                     strongSelf.title = "My Profile"
+
                 }
                 
                 strongSelf.collectionView!.scrollEnabled = !isEditing
@@ -207,7 +211,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         profileViewModel = ProfileViewModel(personID: SessionService.personID)
         collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID)
         
-        rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple(String.iconWithName(.Check), String.iconWithName(.More))
+        rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple("Save", String.iconWithName(.More))
         
         profileViewModel.isEditing.producer.startWithNext { [weak self] isEditing in
             if isEditing {
@@ -226,12 +230,18 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 let navBarHeight = self!.navigationController?.navigationBar.frame.height
                 
                 if isEditing {
+                    self?.rightBarButton.frame = CGRect(x: 0, y: -2, width: 40, height: 21)
                     let collectionViewSize = strongSelf.collectionView!.frame.size
                     let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.fontDisplay(12, withType: .Regular))
-                    let headerHeight = 267 + textHeight
-                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight + navBarHeight!, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight)
+                    let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
+                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight - 20, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight + 20)
                     
-                    strongSelf.collectionView!.contentOffset = CGPoint(x:0,y:navBarHeight!)
+                    strongSelf.collectionView!.contentOffset = CGPoint(x: 0,y:-44)
+                    strongSelf.title = "Edit My Profile"
+                } else {
+                    self?.rightBarButton.frame = CGRect(x: 0, y: -2, width: 20, height: 21)
+                    strongSelf.title = "My Profile"
+                    
                 }
                 
                 strongSelf.collectionView!.scrollEnabled = !isEditing
@@ -300,6 +310,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         CoreMotionRotationSource.Instance.stop()
         
         collectionViewModel.isActive.value = false
+        self.navigationController?.navigationBarHidden = false
     }
     
     override func viewDidLayoutSubviews() {
