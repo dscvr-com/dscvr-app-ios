@@ -333,8 +333,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             let optographID = optographIDs[indexPath.item - 1]
             cell.bind(optographID)
+            cell.refreshNotification = collectionViewModel.refreshNotification
             cell.backgroundColor = UIColor.blackColor()
-            
             return cell
         }
     }

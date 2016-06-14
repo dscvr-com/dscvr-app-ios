@@ -589,7 +589,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
         //hiddenViewToBounce.anchorAndFillEdge(.Left, xPad:0, yPad: 0, otherSize: 100)
-        hiddenViewToBounce.frame = CGRect(x: 0,y: bouncingButton.frame.origin.y - 10,width: 80,height: 80)
+        //hiddenViewToBounce.frame = CGRect(x: 0,y: bouncingButton.frame.origin.y - 10,width: 80,height: 80)
+        hiddenViewToBounce.anchorToEdge(.Left, padding: 0, width: 80, height: 80)
         loadingOverlayView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: contentView.frame.height - 70 - 20)
         
         whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 70)

@@ -73,19 +73,23 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
                                                                 }
             })
         }
+        let navView = UIView()
+        navView.backgroundColor = UIColor.whiteColor()
+        self.view.addSubview(navView)
+        navView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: 50)
         
         let closeButton = UIButton()
         closeButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
         closeButton.anchorInCorner(.TopLeft, xPad: 10, yPad: 10, width: 40 , height: 40)
         closeButton.addTarget(self, action: #selector(closePhotoLibrary), forControlEvents: .TouchUpInside)
-        self.view.addSubview(closeButton)
+        navView.addSubview(closeButton)
         
         let photoLabel = UILabel()
         photoLabel.textAlignment = .Center
         photoLabel.text = "360 Images"
         photoLabel.font = .fontDisplay(20, withType: .Semibold)
         photoLabel.font =  UIFont(name: "HelveticaNeue-Bold",size: 20)
-        self.view.addSubview(photoLabel)
+        navView.addSubview(photoLabel)
         photoLabel.anchorToEdge(.Top, padding: 10, width: 150, height: 40)
     }
     

@@ -27,6 +27,8 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
     private let whiteBackground = UIView()
     private let deleteButton = UIButton()
     
+    var refreshNotification = NotificationSignal<Void>()
+    
 //    private let glView: OpenGLView
     
     override init(frame: CGRect) {
@@ -101,6 +103,7 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
         
         deleteButton.setBackgroundImage(UIImage(named: "profile_delete_icn"), forState: .Normal)
+        deleteButton.addTarget(self, action: #selector(deleteOpto), forControlEvents: .TouchUpInside)
         uploadButton.setBackgroundImage(UIImage(named:"profile_upload_icn"), forState: .Normal)
         
         let deleteImageSize = UIImage(named:"profile_delete_icn")?.size
@@ -133,6 +136,11 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
                 }
         }
     }
+    func deleteOpto() {
+        viewModel.deleteOpto()
+        refreshNotification.notify(())
+    }
+    
     func upload() {
         viewModel.goUpload()
     }

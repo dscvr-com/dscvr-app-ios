@@ -22,7 +22,7 @@ class ProfileOptographsViewModel {
         
         let query = OptographTable
             .select(*)
-            .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
+            .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID] && OptographTable[OptographSchema.deletedAt] == nil)
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(PersonTable[PersonSchema.ID] == personID)
         
@@ -55,6 +55,7 @@ class ProfileOptographsViewModel {
                 ApiService<OptographApiModel>.get("persons/\(personID)/optographs")
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
+                        print(apiModel)
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
                             box.model.isPublished = true

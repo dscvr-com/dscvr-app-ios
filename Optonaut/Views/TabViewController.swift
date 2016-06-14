@@ -240,9 +240,9 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         let dividerOne = UILabel()
         dividerOne.backgroundColor = UIColor(hex:0xa5a5a5)
         thisView.addSubview(dividerOne)
-        dividerOne.align(.UnderCentered, relativeTo: dividerFive, padding: textHeight+4, width:1, height: dividerOneHeight)
+        dividerOne.align(.UnderCentered, relativeTo: dividerFive, padding: textHeight+4, width:1, height: 50)
         
-        gyroButton.addTarget(self, action: #selector(TabViewController.gyroButtonTouched), forControlEvents:.TouchUpInside)
+        gyroButton.addTarget(self, action: #selector(TabViewController.inGyroMode), forControlEvents:.TouchUpInside)
         thisView.addSubview(gyroButton)
         gyroButton.align(.UnderMatchingLeft, relativeTo: labelCamera, padding: 2, width: gyroButton.icon.size.width, height: gyroButton.icon.size.height)
         
@@ -255,14 +255,14 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         labelGyro.align(.ToTheRightCentered, relativeTo: gyroButton, padding: 24, width: calcTextWidth("GYRO", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         littlePlanet.addTarget(self, action: #selector(TabViewController.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
-        thisView.addSubview(littlePlanet)
+        //thisView.addSubview(littlePlanet)
         littlePlanet.align(.UnderCentered, relativeTo: gyroButton, padding: 7, width: littlePlanet.icon.size.width, height: littlePlanet.icon.size.height)
         
         planet.textAlignment = NSTextAlignment.Center
         planet.textColor = UIColor.blackColor()
         planet.text = "LITTLE PLANET"
         planet.font = .fontDisplay(18, withType: .Semibold)
-        thisView.addSubview(planet)
+        //thisView.addSubview(planet)
         planet.align(.ToTheRightCentered, relativeTo: littlePlanet, padding: 24, width: calcTextWidth("LITTLE PLANET", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         let labelMode = UILabel()
@@ -271,7 +271,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         labelMode.text = "CAPTURE MODE"
         labelMode.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(labelMode)
-        labelMode.align(.UnderMatchingLeft, relativeTo: littlePlanet, padding: 4, width: calcTextWidth("CAPTURE MODE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
+//        labelMode.align(.UnderMatchingLeft, relativeTo: littlePlanet, padding: 4, width: calcTextWidth("CAPTURE MODE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
+         labelMode.align(.UnderMatchingLeft, relativeTo: gyroButton, padding: 4, width: calcTextWidth("CAPTURE MODE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
         
         let dividerTwo = UILabel()
         dividerTwo.backgroundColor = UIColor(hex:0xa5a5a5)
@@ -369,6 +370,18 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
         thisView.addSubview(versionLabel)
     }
+    func inGyroMode() {
+        if Defaults[.SessionGyro] {
+            gyroButton.icon = UIImage(named: "gyro_inactive_icn")!
+            Defaults[.SessionGyro] = false
+            labelGyro.textColor = UIColor.grayColor()
+        } else {
+            gyroButton.icon = UIImage(named: "gyro_active_icn")!
+            Defaults[.SessionGyro] = true
+            labelGyro.textColor = UIColor(hex:0xffbc00)
+        }
+    }
+    
     
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer,shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         print("gestureRecognizer wew")

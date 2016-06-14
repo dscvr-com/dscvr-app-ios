@@ -45,6 +45,15 @@ class ProfileTileCollectionViewModel {
             }
     }
     
+    func deleteOpto() {
+        PipelineService.stopStitching()
+        optographBox.insertOrUpdate { box in
+            print("date today \(NSDate())")
+            print(box.model.ID)
+            return box.model.deletedAt = NSDate()
+        }
+    }
+    
     func goUpload() {
         if Reachability.connectedToNetwork() {
             self.upload()
