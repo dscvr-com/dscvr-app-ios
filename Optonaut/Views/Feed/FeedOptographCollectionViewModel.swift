@@ -53,6 +53,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .flatMap(.Latest) { _ in
                 ApiService<OptographApiModel>.get("optographs/feed")
                     .observeOnUserInitiated()
+                    .filter({ print($0.deletedAt); return $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isInFeed = true
@@ -81,6 +82,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .flatMap(.Latest) { oldestResult in
                 ApiService<OptographApiModel>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
+                    .filter({ print($0.deletedAt); return $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isInFeed = true

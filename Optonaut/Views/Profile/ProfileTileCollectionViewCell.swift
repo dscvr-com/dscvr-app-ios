@@ -12,10 +12,12 @@ import ReactiveCocoa
 import SceneKit
 import Kingfisher
 
-class ProfileTileCollectionViewCell: UICollectionViewCell {
+protocol ReloadTable {
+    func reloadTable()
+}
+
+class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControllerDelegate{
     
-//    private let renderDelegate: CubeRenderDelegate
-//    private let scnView: SCNView
     private let iconView = UILabel()
     private let loadingView = UIActivityIndicatorView()
     private let imageView = PlaceholderImageView()
@@ -26,6 +28,7 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
     
     private let whiteBackground = UIView()
     private let deleteButton = UIButton()
+    weak var navigationController: NavigationController?
     
     var refreshNotification = NotificationSignal<Void>()
     
@@ -135,10 +138,23 @@ class ProfileTileCollectionViewCell: UICollectionViewCell {
                     return
                 }
         }
+        
+        deleteButton.rac_hidden <~ viewModel.userId.producer.map(negate)
     }
     func deleteOpto() {
-        viewModel.deleteOpto()
-        refreshNotification.notify(())
+        
+        let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this Optograph? You cannot undo this.", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
+            self.viewModel.deleteOpto()
+            self.refreshNotification.notify(())
+            
+            let alert = UIAlertController(title:"", message: "Will be deleted after next app restart.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Cancel, handler: { _ in return }))
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        
+        self.navigationController!.presentViewController(alert, animated: true, completion: nil)
     }
     
     func upload() {

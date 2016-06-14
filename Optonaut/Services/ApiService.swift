@@ -63,6 +63,7 @@ class ApiService<T: Mappable> {
     }
     
     static func delete(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
+        print(endpoint)
         return request(endpoint, method: .DELETE, queries: queries, parameters: nil)
     }
     
@@ -160,6 +161,7 @@ class ApiService<T: Mappable> {
         return SignalProducer { sink, disposable in
             if !Reachability.connectedToNetwork() {
                 sink.sendFailed(ApiError(endpoint: endpoint, timeout: false, status: nil, message: "Offline", error: nil))
+                print("pumasok dito")
                 return
             }
             
@@ -170,6 +172,7 @@ class ApiService<T: Mappable> {
                 mutableURLRequest.HTTPBody = Optional(json)
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
+            print("mutablerequest>>> ",mutableURLRequest)
             
             let request = Alamofire.request(mutableURLRequest)
                 .validate()

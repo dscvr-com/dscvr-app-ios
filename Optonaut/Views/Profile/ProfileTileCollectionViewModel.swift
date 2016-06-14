@@ -21,6 +21,7 @@ class ProfileTileCollectionViewModel {
     
     private var disposable: Disposable?
     var optographBox: ModelBox<Optograph>!
+    var userId = MutableProperty<Bool>(false)
     
     
     func bind(optographID: UUID) {
@@ -35,6 +36,10 @@ class ProfileTileCollectionViewModel {
             .startWithNext { [weak self] optograph in
                 self?.isPrivate.value = optograph.isPrivate
                 self?.isStitched.value = optograph.isStitched
+                if optograph.personID == SessionService.personID {
+                    self?.userId.value = true
+                }
+                
                 if optograph.isPublished {
                     self?.uploadStatus.value = .Uploaded
                 } else if optograph.isUploading {
@@ -46,12 +51,21 @@ class ProfileTileCollectionViewModel {
     }
     
     func deleteOpto() {
+        
+        
+        SignalProducer<Bool, ApiError>(value: true)
+            .flatMap(.Latest) { followedBefore in
+                ApiService<EmptyResponse>.delete("optographs/\(self.optographBox.model.ID)")
+            }
+            .start()
+        
         PipelineService.stopStitching()
         optographBox.insertOrUpdate { box in
             print("date today \(NSDate())")
             print(box.model.ID)
             return box.model.deletedAt = NSDate()
         }
+        
     }
     
     func goUpload() {
@@ -100,7 +114,6 @@ class ProfileTileCollectionViewModel {
                     "poi": location.POI,
                 ]
             }
-            print(postParameters)
             
             SignalProducer<Bool, ApiError>(value: !optographBox.model.shareAlias.isEmpty)
                 .flatMap(.Latest) { alreadyPosted -> SignalProducer<Void, ApiError> in

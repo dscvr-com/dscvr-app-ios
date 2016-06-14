@@ -217,7 +217,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             if isEditing {
                 self?.navigationItem.leftBarButtonItem = self!.barButtonItem
             }
-            //self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
+            self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
             
         }
         profileViewModel.isEditing.producer.skip(1).startWithNext { [weak self] isEditing in
@@ -345,7 +345,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             let optographID = optographIDs[indexPath.item - 1]
             cell.bind(optographID)
             cell.refreshNotification = collectionViewModel.refreshNotification
+            cell.navigationController = navigationController as? NavigationController
             cell.backgroundColor = UIColor.blackColor()
+            
             return cell
         }
     }
