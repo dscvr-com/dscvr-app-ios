@@ -363,7 +363,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         tabController!.enableScrollView()
         tabController!.enableNavBarGesture()
         
-        CoreMotionRotationSource.Instance.start()
+        //CoreMotionRotationSource.Instance.start()
         
         view.bounds = UIScreen.mainScreen().bounds
         
@@ -388,16 +388,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         
         isVisible = true
-        
-//        if let rotationSignal = RotationService.sharedInstance.rotationSignal {
-//            rotationSignal
-//                .skipRepeats()
-//                .filter([.LandscapeLeft, .LandscapeRight])
-////                .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
-//                .take(1)
-//                .observeOn(UIScheduler())
-//                .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
-//        }
         updateNavbarAppear()
     }
     
@@ -406,7 +396,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         isVisible = false
         
-        CoreMotionRotationSource.Instance.stop()
+        //CoreMotionRotationSource.Instance.stop()
         
         viewModel.isActive.value = false
         tabController!.disableNavBarGesture()
@@ -489,7 +479,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/3)*2))
     }
-    
     
 //    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
 //       

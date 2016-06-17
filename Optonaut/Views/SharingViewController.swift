@@ -11,6 +11,7 @@ import ReactiveCocoa
 import Social
 import FBSDKShareKit
 import MessageUI
+import Kingfisher
 
 class ShareData {
     class var sharedInstance: ShareData {
@@ -39,6 +40,8 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     let titleText = UILabel()
     var textToShare:String = ""
     var shareUrl:NSURL = NSURL(string: "")!
+    var imageToShare: UIImage?
+    var placeHolderToShare = UIImageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,8 +108,21 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         shareData.optographId.producer.startWithNext{ val in
             
             if val != nil {
-                let url = TextureURL(val!, side: .Left, size: self.view.frame.width, face: 0, x: 0, y: 0, d: 1)
+                let url = TextureURL2(val!, side: .Left, size: self.view.frame.width, face: 0, x: 0, y: 0, d: 1)
+                //let urlToShare = "http://resources.staging-iam360.io.s3.amazonaws.com/textures/\(val!)/placeholder.jpg"
+                let urlToShare = "http://bucket.iam360.io/textures/\(val!)/placeholder.jpg"
+                
                 placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
+                
+                ImageManager.sharedInstance.downloadImage(
+                    NSURL(string:urlToShare)!, requester: self,
+                    completionHandler: { (image, error, _, _) in
+                        if let error = error where error.code != -999 {
+                            print(error)
+                        }
+                        self.imageToShare = image
+                })
+                
                 let optographBox = Models.optographs[val]!
                 let optograph = optographBox.model
                 let person = Models.persons[optograph.personID]!.model
@@ -152,11 +168,8 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
             let facebookSheet:SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
             facebookSheet.setInitialText(self.textToShare)
             facebookSheet.addURL(self.shareUrl)
-            self.presentViewController(facebookSheet, animated: true, completion: { finished in
-                let graphProperties : [NSObject : AnyObject]! = ["og:type": "article","og:title":"IAM360", "og:description":self.textToShare]
-                let graphObject : FBSDKShareOpenGraphObject = FBSDKShareOpenGraphObject(properties: graphProperties)
-            })
-            
+            //facebookSheet.addImage(self.imageToShare)
+            self.presentViewController(facebookSheet, animated: true, completion: nil)
             
         } else {
             let alert = UIAlertController(title: "Accounts", message: "Please login to a Facebook account to share.", preferredStyle: UIAlertControllerStyle.Alert)

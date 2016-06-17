@@ -20,6 +20,8 @@
 		594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594378FC1CDC472800C84E6F /* TabViewController.swift */; };
 		595D87691D083D5E00866FF2 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D87681D083D5E00866FF2 /* SearchViewController.swift */; };
 		595D876B1D083D9500866FF2 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D876A1D083D9500866FF2 /* UserTableViewCell.swift */; };
+		5965DC721D1382E10031059B /* UploadItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965DC711D1382E10031059B /* UploadItemCell.swift */; };
+		5965DC741D138BF70031059B /* ProfileUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */; };
 		5980D51E1CCDEF100010B4ED /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5980D51D1CCDEF100010B4ED /* Icomoon.framework */; };
 		598416421CBB896E00BD966D /* Icomoon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598416411CBB896E00BD966D /* Icomoon.framework */; };
 		59848B231CEA204B00829963 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B221CEA204B00829963 /* LoginVC.swift */; };
@@ -302,6 +304,8 @@
 		594378FC1CDC472800C84E6F /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		595D87681D083D5E00866FF2 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		595D876A1D083D9500866FF2 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
+		5965DC711D1382E10031059B /* UploadItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadItemCell.swift; sourceTree = "<group>"; };
+		5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileUploadCollectionViewCell.swift; sourceTree = "<group>"; };
 		5980D51D1CCDEF100010B4ED /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		598416411CBB896E00BD966D /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		59848B221CEA204B00829963 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
@@ -986,6 +990,7 @@
 		8FAB9F1E1B8F01DF00B4C8CB /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				5965DC711D1382E10031059B /* UploadItemCell.swift */,
 				8F4186001C53C7EB009E1E3F /* ProfileCollectionViewController.swift */,
 				8F707C171C5A363F000AF7BF /* ProfileOptographsViewModel.swift */,
 				8F4186061C552957009E1E3F /* ProfileTileCollectionViewCell.swift */,
@@ -996,6 +1001,7 @@
 				8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */,
 				8FAB9F211B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift */,
 				8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */,
+				5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -1638,6 +1644,7 @@
 				8F4186071C552958009E1E3F /* ProfileTileCollectionViewCell.swift in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
 				8F966E0D1BCCF33900F5F5F8 /* SearchTableViewController.swift in Sources */,
+				5965DC721D1382E10031059B /* UploadItemCell.swift in Sources */,
 				8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */,
 				8F4185FB1C52DB08009E1E3F /* PersonApiModel.swift in Sources */,
 				8FC7E3731BD15B9D00E97CC3 /* HeadTracker.mm in Sources */,
@@ -1686,6 +1693,7 @@
 				8F23AA501BFF31B4008926A8 /* ActivityTable.swift in Sources */,
 				8FAB9F291B8F01DF00B4C8CB /* ActivitiesViewModel.swift in Sources */,
 				8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */,
+				5965DC741D138BF70031059B /* ProfileUploadCollectionViewCell.swift in Sources */,
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
 				8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */,
 				A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */,
@@ -1956,8 +1964,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Marky Villanueva (3JPAS249J5)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Marky Villanueva (3JPAS249J5)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1989,7 +1997,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = IAM360;
-				PROVISIONING_PROFILE = "25252fa3-3aa9-40c6-bac4-9d0dc4ae4d01";
+				PROVISIONING_PROFILE = "1bc6ea1c-718d-4c40-af2d-b993e082d837";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2003,8 +2011,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Marky Villanueva (3JPAS249J5)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Marky Villanueva (3JPAS249J5)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2024,7 +2032,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = IAM360;
-				PROVISIONING_PROFILE = "25252fa3-3aa9-40c6-bac4-9d0dc4ae4d01";
+				PROVISIONING_PROFILE = "1bc6ea1c-718d-4c40-af2d-b993e082d837";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

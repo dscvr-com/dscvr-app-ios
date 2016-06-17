@@ -722,7 +722,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 let location = Models.locations[locationID]!.model
                 self.locationTextView.text = "\(location.text), \(location.countryShort)"
                 self.personNameView.align(.ToTheRightMatchingTop, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)
-                self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)
+                self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 9.5, width: 200, height: 18)
                 self.locationTextView.text = location.text
             } else {
                 self.personNameView.align(.ToTheRightCentered, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)

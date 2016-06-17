@@ -55,9 +55,8 @@ class ProfileOptographsViewModel {
             .flatMap(.Latest) { _ in
                 ApiService<OptographApiModel>.get("persons/\(personID)/optographs")
                     .observeOnUserInitiated()
-                    .filter({ print($0.deletedAt); return $0.deletedAt == nil })
+                    .filter({ return $0.deletedAt == nil })
                     .on(next: { apiModel in
-                        
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
                             box.model.isPublished = true
@@ -82,7 +81,7 @@ class ProfileOptographsViewModel {
             .flatMap(.Latest) { oldestResult in
                 ApiService<OptographApiModel>.get("persons/\(personID)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
-                    .filter({ print($0.deletedAt); return $0.deletedAt == nil })
+                    .filter({ $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
@@ -100,12 +99,5 @@ class ProfileOptographsViewModel {
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
-    }
-    func ignorethrow(@noescape block: () throws -> Void){
-        do {
-            try block()
-        } catch {
-        
-        }
     }
 }

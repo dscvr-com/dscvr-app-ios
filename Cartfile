@@ -12,5 +12,4 @@ github "optonaut/CardboardParams.swift" >= 0.1.4
 github "radex/SwiftyUserDefaults"
 github "onevcat/Kingfisher" "master"
 github "mamaral/Neon" "master"
-github "goktugyil/EZSwipeController"
 

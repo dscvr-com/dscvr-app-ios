@@ -33,6 +33,10 @@ func TextureURL(optographID: String, side: TextureSide, size: CGFloat, face: Int
     let scaledSize = min(Int(size * UIScreen.mainScreen().scale), 900)
     return buildURL("textures/\(optographID)/\(sideLetter)\(face).jpg", width: 0, height: 0, filter: "subface(\(x),\(y),\(d),\(scaledSize))")
 }
+func TextureURL2(optographID: String, side: TextureSide, size: CGFloat, face: Int, x: Float, y: Float, d: Float) -> String {
+    let scaledSize = min(Int(size * UIScreen.mainScreen().scale), 900)
+    return buildURL("textures/\(optographID)/placeholder.jpg", width: 0, height: 0, filter: "subface(\(x),\(y),\(d),\(scaledSize))")
+}
 
 private func buildURL(path: String, width: Int, height: Int, filter: String?) -> String {
     let s3Host: String
