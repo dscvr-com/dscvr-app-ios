@@ -98,7 +98,8 @@ class SessionService {
                 Defaults[.SessionUseMultiRing] = false
                 Defaults[.SessionNeedRefresh] = true
             })
-            .flatMap(.Latest) { _ in ApiService<PersonApiModel>.get("persons/me") }
+            .flatMap(.Latest) { _ in
+                ApiService<PersonApiModel>.get("persons/me") }
             .map(Person.fromApiModel)
             .on(
                 next: { person in

@@ -31,6 +31,8 @@
 		598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571C1CEDA771002229AF /* Avenir-Book_0.otf */; };
 		598F571F1CEDA771002229AF /* Avenir-Heavy_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */; };
 		599459B11D0926C0000F3A5B /* SearchTableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599459B01D0926C0000F3A5B /* SearchTableModel.swift */; };
+		59DBBF921D190D410072AA3E /* IMG_0048.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 59DBBF911D190D410072AA3E /* IMG_0048.JPG */; };
+		59DBBF941D1954CC0072AA3E /* ShareModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DBBF931D1954CC0072AA3E /* ShareModalViewController.swift */; };
 		59F9226C1CDE0D0E005868A8 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F9226B1CDE0D0E005868A8 /* TabView.swift */; };
 		59FAF2421CE7008500B9C2F4 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */; };
 		59FB1D5F1CF5AFC100C5C333 /* PhotoThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB1D5D1CF5AFC100C5C333 /* PhotoThumbnail.swift */; };
@@ -315,6 +317,8 @@
 		598F571C1CEDA771002229AF /* Avenir-Book_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Book_0.otf"; sourceTree = "<group>"; };
 		598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
 		599459B01D0926C0000F3A5B /* SearchTableModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableModel.swift; sourceTree = "<group>"; };
+		59DBBF911D190D410072AA3E /* IMG_0048.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = IMG_0048.JPG; sourceTree = "<group>"; };
+		59DBBF931D1954CC0072AA3E /* ShareModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareModalViewController.swift; sourceTree = "<group>"; };
 		59F9226B1CDE0D0E005868A8 /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		59FB1D5D1CF5AFC100C5C333 /* PhotoThumbnail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoThumbnail.swift; sourceTree = "<group>"; };
@@ -666,6 +670,7 @@
 			children = (
 				5917C8201CE441F200CD5A6D /* SharingViewController.swift */,
 				5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */,
+				59DBBF931D1954CC0072AA3E /* ShareModalViewController.swift */,
 			);
 			name = Share;
 			sourceTree = "<group>";
@@ -957,6 +962,7 @@
 		8FAB9F0F1B8F01DF00B4C8CB /* Feed */ = {
 			isa = PBXGroup;
 			children = (
+				59DBBF911D190D410072AA3E /* IMG_0048.JPG */,
 				8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */,
 				8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */,
 				8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */,
@@ -1542,6 +1548,7 @@
 				8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */,
 				A56CA4091BC070450078D7E8 /* zeiss_displacement_left.vsh in Resources */,
 				A568D4951BD12F5A008FF556 /* (null) in Resources */,
+				59DBBF921D190D410072AA3E /* IMG_0048.JPG in Resources */,
 				A5DE71ED1BE28A7400316F82 /* distortion.fsh in Resources */,
 				A5FD5D8B1BEA5A570031ED1E /* lib in Resources */,
 				A56CA4081BC070450078D7E8 /* zeiss_displacement_left.json in Resources */,
@@ -1707,6 +1714,7 @@
 				8FC7E3621BCE7D9A00E97CC3 /* OnboardingHashtagSummaryViewModel.swift in Sources */,
 				8F23AA4C1BFF31B4008926A8 /* ActivityResourceCommentTable.swift in Sources */,
 				8F23AA4F1BFF31B4008926A8 /* ActivityResourceViewsTable.swift in Sources */,
+				59DBBF941D1954CC0072AA3E /* ShareModalViewController.swift in Sources */,
 				8FAB9F801B8F03E800B4C8CB /* UIKitExtensions.swift in Sources */,
 				5936B1841CAD34F500F808D8 /* dynamicSeamer.cpp in Sources */,
 				8F5335B01BDBE0840058961A /* ActivityViewsTableViewCell.swift in Sources */,

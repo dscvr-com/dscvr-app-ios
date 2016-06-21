@@ -66,6 +66,7 @@ class LoginOverlayViewController: UIViewController{
         }
         
         let successBlock = { [weak self] (token: FBSDKAccessToken!) in
+            print("token>>",token.tokenString)
             self?.viewModel.facebookSignin(token.userID, token: token.tokenString)
                 .on(
                     failed: { _ in

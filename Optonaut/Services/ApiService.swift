@@ -54,6 +54,7 @@ class ApiService<T: Mappable> {
     }
     
     static func post(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+        print(endpoint,parameters)
         return request(endpoint, method: .POST, queries: queries, parameters: parameters)
     }
     
@@ -149,6 +150,7 @@ class ApiService<T: Mappable> {
         mutableURLRequest.HTTPMethod = method.rawValue
         
         if let token = Defaults[.SessionToken] {
+            print("Bearer \(token)")
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         

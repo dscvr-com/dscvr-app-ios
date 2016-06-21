@@ -68,6 +68,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private var isUIHide:Bool = false
     var isMe = false
     var transformBegin:CGAffineTransform?
+    let deleteButton = UIButton()
     
     required init(optographId:UUID) {
         
@@ -284,7 +285,39 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
             }
         }
+        if isMe {
+            deleteButton.setBackgroundImage(UIImage(named: "profile_delete_icn"), forState: .Normal)
+            deleteButton.addTarget(self, action: #selector(deleteOpto), forControlEvents: .TouchUpInside)
+            whiteBackground.addSubview(deleteButton)
+            
+            let deleteImageSize = UIImage(named:"profile_delete_icn")?.size
+            deleteButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
+        }
+        
     }
+    func deleteOpto() {
+        
+        if SessionService.isLoggedIn {
+            let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this 360 image? You cannot undo this.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
+                self.viewModel.deleteOpto()
+                //self.refreshNotification.notify(())
+                
+                let alert = UIAlertController(title:"", message: "Will be deleted after next app restart.", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .Cancel, handler: { _ in return }))
+                self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+            
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController(title:"", message: "Please login to delete this 360 image.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    
+    
     func toggleComment() {
         let commentPage = CommentTableViewController(optographID: optographID)
         //commentPage.modalPresentationStyle = .OverCurrentContext

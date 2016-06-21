@@ -42,6 +42,10 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     var shareUrl:NSURL = NSURL(string: "")!
     var imageToShare: UIImage?
     var placeHolderToShare = UIImageView()
+    var urlToShare:String = ""
+    var descriptionToShare:String = ""
+    var optographId:String = ""
+    var tField: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -109,13 +113,15 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
             
             if val != nil {
                 let url = TextureURL2(val!, side: .Left, size: self.view.frame.width, face: 0, x: 0, y: 0, d: 1)
-                //let urlToShare = "http://resources.staging-iam360.io.s3.amazonaws.com/textures/\(val!)/placeholder.jpg"
-                let urlToShare = "http://bucket.iam360.io/textures/\(val!)/placeholder.jpg"
+                //self.urlToShare = "https://resources.staging-iam360.io.s3.amazonaws.com/textures/\(val!)/placeholder.jpg"
+                self.urlToShare = "http://bucket.iam360.io/textures/\(val!)/placeholder.jpg"
+                
+                self.optographId = val!
                 
                 placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
                 
                 ImageManager.sharedInstance.downloadImage(
-                    NSURL(string:urlToShare)!, requester: self,
+                    NSURL(string:self.urlToShare)!, requester: self,
                     completionHandler: { (image, error, _, _) in
                         if let error = error where error.code != -999 {
                             print(error)
@@ -132,6 +138,8 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
                 self.textToShare = "Check out this awesome IAM360 image of \(person.displayName)"
             }
         }
+        
+        
     }
 
     func copyLink() {
@@ -164,19 +172,59 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     }
     
     func shareFacebook() {
-        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook){
-            let facebookSheet:SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
-            facebookSheet.setInitialText(self.textToShare)
-            facebookSheet.addURL(self.shareUrl)
-            //facebookSheet.addImage(self.imageToShare)
-            self.presentViewController(facebookSheet, animated: true, completion: nil)
-            
-        } else {
-            let alert = UIAlertController(title: "Accounts", message: "Please login to a Facebook account to share.", preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
+//        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook){
+//            let facebookSheet:SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+//            facebookSheet.setInitialText(self.textToShare)
+//            facebookSheet.addImage(self.imageToShare)
+//            self.presentViewController(facebookSheet, animated: true, completion: nil)
+//            
+//        } else {
+//            let alert = UIAlertController(title: "Accounts", message: "Please login to a Facebook account to share.", preferredStyle: UIAlertControllerStyle.Alert)
+//            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+//            self.presentViewController(alert, animated: true, completion: nil)
+//        }
+        let alert = UIAlertController(title: "Facebook", message: "Say something about this IAM360 photo", preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addAction(UIAlertAction(title: "CANCEL", style: UIAlertActionStyle.Default, handler: nil))
+        alert.addAction(UIAlertAction(title: "POST", style: UIAlertActionStyle.Default, handler: { _ in
+                self.postFb()
+                return
+            }))
+        
+        alert.addTextFieldWithConfigurationHandler { (textField : UITextField!) -> Void in
+            textField.placeholder = ""
+            self.tField = textField
         }
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+        
     }
+    
+    func postFb() {
+        self.descriptionToShare = self.tField.text! == "" ? "IAM360":self.tField.text!
+        
+        let parameters = [
+            "optograph_id": self.optographId,
+            "caption": self.tField.text!
+            ]
+        
+        ApiService<EmptyResponse>.post("optographs/share_facebook", parameters: parameters)
+            .on(
+                completed: {
+                    print("success")
+                    let alert = UIAlertController(title: "", message: "Posted Successfully.", preferredStyle: UIAlertControllerStyle.Alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+                    self.presentViewController(alert, animated: true, completion: nil)
+                },
+                failed: { _ in
+                    let alert = UIAlertController(title: "", message: "Posting Failed.", preferredStyle: UIAlertControllerStyle.Alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+                    self.presentViewController(alert, animated: true, completion: nil)
+
+                }
+        )
+        .start()
+    }
+    
     func shareMessenger() {
 //        
 //        let content = FBSDKShareLinkContent()
@@ -229,4 +277,5 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         controller.dismissViewControllerAnimated(true, completion: nil)
         
     }
+    
 }

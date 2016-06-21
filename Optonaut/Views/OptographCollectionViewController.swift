@@ -46,6 +46,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     let isThetaImage = MutableProperty<Bool>(false)
     
+    var indexPathShow:Int = 0
+    
     var imageView: UIImageView!
     var imagePicker = UIImagePickerController()
     
@@ -479,41 +481,20 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/3)*2))
     }
-    
+
 //    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-//       
-//        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-//        for cell in cells {
-//            cell.setRotation(false)
+//        if indexPathShow >= 0 {
+//            print("scrollViewWillBeginDragging",indexPathShow)
+//            let path = NSIndexPath(forRow: indexPathShow, inSection: 0)
+//            
+//            let cell = collectionView?.cellForItemAtIndexPath(path) as! OptographCollectionViewCell
+//            cell.setRotation(true)
 //        }
-//
-//        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
-//        
-//        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
-//        
-//        
-//        let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
-//        
-//        cell.setRotation(true)
-//
 //    }
-//    
-//    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-//
-//    
-//        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-//        for cell in cells {
-//            cell.setRotation(false)
-//        }
-//
-//        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
-//     
-//        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
+//    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
 //        
-//        let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
-//    
-//        cell.setRotation(true)
-//        
+//        indexPathShow = indexPath.row - 1
+//        print("indexPathShow>> ",indexPathShow)
 //    }
     
 }

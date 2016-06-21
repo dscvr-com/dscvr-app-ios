@@ -460,10 +460,17 @@ class OptographCollectionViewCell: UICollectionViewCell{
     var previewImage = UIImageView()
     
     var yellowView = UIView()
+//    let playerLayer = AVPlayerLayer()
+//    var video:AVPlayer?
     
-    func setRotation (isRotating:Bool) {
-        //
-    }
+//    func setRotation (isRotating:Bool) {
+//        if isRotating {
+//            print("playing")
+//            self.video!.play()
+//        } else {
+//            self.video!.pause()
+//        }
+//    }
     
     var id: Int = 0 {
         didSet {
@@ -490,24 +497,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         contentView.backgroundColor = UIColor(hex:0xffbc00)
         
-        //        if #available(iOS 9.0, *) {
-        //            scnView = SCNView(frame: contentView.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
-        //        } else {
-        //            scnView = SCNView(frame: contentView.frame)
-        //        }
-        //
-        //        let hfov: Float = 55
-        //
-        //        combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
-        //
-        //        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
-        //        renderDelegate.scnView = scnView
-        //
-        //        scnView.scene = renderDelegate.scene
-        //        scnView.delegate = renderDelegate
-        //        scnView.backgroundColor = .clearColor()
-        //        scnView.hidden = false
-        
         shareImageAsset.layer.cornerRadius = avatarImageView.frame.size.width / 2
         shareImageAsset.image = UIImage(named: "share_hidden_icn")
         contentView.addSubview(shareImageAsset)
@@ -525,6 +514,9 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
         yellowView.addSubview(previewImage)
+        
+//        playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+//        self.yellowView.layer.addSublayer(playerLayer)
         
         whiteBackground.backgroundColor = UIColor(hex:0x595959).alpha(0.80)
         yellowView.addSubview(whiteBackground)
@@ -586,6 +578,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         super.layoutSubviews()
         
         yellowView.fillSuperview()
+//        playerLayer.fillSuperview()
         
         blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
         //hiddenViewToBounce.anchorAndFillEdge(.Left, xPad:0, yPad: 0, otherSize: 100)
@@ -643,7 +636,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         switch recognizer.state {
         case .Began:
-            //xCoordBegin = translationX
             print("wew")
         case .Changed:
             if (translationX > xCoordBegin) {
@@ -763,23 +755,21 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 self?.loadingIndicatorView.stopAnimating()
         }
         
-        
-        //        dispatch_async(dispatch_get_main_queue()) {
-        //
-        //            var url:NSURL?
-        //
-        //            if #available(iOS 9.0, *) {
-        //                url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/\(optographId)/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
-        //            }
-        //            print(url)
-        //
-        //            let video = AVPlayer(URL: url!)
-        //            let playerLayer = AVPlayerLayer(player:video)
-        //            playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        //            self.contentView.layer.addSublayer(playerLayer)
-        //            playerLayer.fillSuperview()
-        //            video.play()
-        //        }
+//        dispatch_async(dispatch_get_main_queue()) {
+//            
+//            var url:NSURL?
+//            
+//            if #available(iOS 9.0, *) {
+//                url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/6e40d95d-c79e-4ba9-a2d0-789d6b08611f/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
+//            }
+//            print(url)
+//            
+//            self.video = AVPlayer(URL: url!)
+//            self.playerLayer.player = self.video
+//            
+//            self.loadingOverlayView.hidden = true
+//            self.loadingIndicatorView.stopAnimating()
+//        }
     }
     
     required init?(coder aDecoder: NSCoder) {
