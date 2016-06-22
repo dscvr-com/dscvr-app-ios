@@ -2,7 +2,7 @@
 //  ProfileHeaderCollectionViewCell.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 23/01/2016.
+//  Created by Robert John Alkuino on 23/01/2016.
 //  Copyright © 2016 Optonaut. All rights reserved.
 //
 
@@ -29,11 +29,14 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     private let textInputView = KMPlaceholderTextView()
     private let buttonFollow = UIButton()
     //private let buttonIconView = UIImageView()
-    private let postHeadingView = UILabel()
+    private let postHeadingView1 = UILabel()
+    private let postHeadingView2 = UILabel()
     //private let postCountView = UILabel()
     private let editSubView = UIImageView()
     
     private let dividerDescription = UILabel()
+    
+    let yellowLine = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -103,12 +106,26 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //        contentView.addSubview(dividerDescription)
         
         //postHeadingView.text = "0 Posts"
-        postHeadingView.text = "IAM360 Images"
-        postHeadingView.textColor = UIColor.whiteColor()
-        postHeadingView.textAlignment = .Center
-        postHeadingView.font = UIFont(name: "Avenir-Book", size: 20)
-        postHeadingView.backgroundColor = UIColor(hex:0x3E3D3D)
-        contentView.addSubview(postHeadingView)
+        postHeadingView1.text = "IAM360 Images"
+        postHeadingView1.textColor = UIColor(0xffbc00)
+        postHeadingView1.textAlignment = .Center
+        postHeadingView1.font = UIFont(name: "Avenir-Book", size: 20)
+        postHeadingView1.backgroundColor = UIColor(hex:0x3E3D3D)
+        postHeadingView1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.imagePageTabTouched)))
+        postHeadingView1.userInteractionEnabled = true
+        contentView.addSubview(postHeadingView1)
+        
+        postHeadingView2.text = "Followers"
+        postHeadingView2.textColor = UIColor.whiteColor()
+        postHeadingView2.textAlignment = .Center
+        postHeadingView2.font = UIFont(name: "Avenir-Book", size: 20)
+        postHeadingView2.backgroundColor = UIColor(hex:0x3E3D3D)
+        postHeadingView2.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.followTabTouched)))
+        postHeadingView2.userInteractionEnabled = true
+        contentView.addSubview(postHeadingView2)
+        
+        yellowLine.backgroundColor = UIColor(0xffbc00)
+        contentView.addSubview(yellowLine)
         
         //        postCountView.font = .displayOfSize(12, withType: .Semibold)
         //        postCountView.textAlignment = .Center
@@ -116,6 +133,19 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //        contentView.addSubview(postCountView)
         
         contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.dismissKeyboard)))
+    }
+    
+    func followTabTouched() {
+        postHeadingView2.textColor = UIColor(0xffbc00)
+        postHeadingView1.textColor = UIColor.whiteColor()
+        yellowLine.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 2)
+        viewModel.followTabTouched.value = true
+    }
+    func imagePageTabTouched() {
+        postHeadingView1.textColor = UIColor(0xffbc00)
+        postHeadingView2.textColor = UIColor.whiteColor()
+        yellowLine.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 2)
+        viewModel.followTabTouched.value = false
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -158,7 +188,10 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //let metricWidth = size.width / 3
         //postCountView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 33, width: metricWidth, height: 14)
         //postHeadingView.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width , height: 55)
-        postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize:55)
+        postHeadingView1.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
+        postHeadingView2.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
+        
+        yellowLine.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 2)
         
         buttonFollow.align(.UnderCentered, relativeTo: textView, padding: 10, width: avatarImageView.frame.width, height: 25)
     }
@@ -215,7 +248,9 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             editSubView.hidden = true
         }
         
-        postHeadingView.rac_hidden <~ viewModel.isEditing
+        postHeadingView1.rac_hidden <~ viewModel.isEditing
+        postHeadingView2.rac_hidden <~ viewModel.isEditing
+        yellowLine.rac_hidden <~ viewModel.isEditing
         
     }
     

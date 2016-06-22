@@ -192,6 +192,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         
         alert.addTextFieldWithConfigurationHandler { (textField : UITextField!) -> Void in
             textField.placeholder = ""
+            
             self.tField = textField
         }
         

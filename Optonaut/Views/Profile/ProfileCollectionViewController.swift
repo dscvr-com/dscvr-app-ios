@@ -32,6 +32,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     private var originalBackButton: UIBarButtonItem?
     let headerView = UIView()
     var isProfileVisit:Bool = false
+    var isFollowClicked:Bool = false
     
     init(personID: UUID) {
         
@@ -89,6 +90,15 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
         }
         
+        profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
+            if isFollowTabTap {
+                self!.isFollowClicked = true
+            } else {
+                self!.isFollowClicked = false
+            }
+            self!.collectionView?.reloadData()
+        }
+        
         rightBarButton.frame = CGRect(x: 0, y: -2, width: 20, height: 21)
         rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple("Save", String.iconWithName(.More))
         rightBarButton.font = UIFont.iconOfSize(15)
@@ -136,6 +146,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         collectionView!.registerClass(ProfileHeaderCollectionViewCell.self, forCellWithReuseIdentifier: "top-cell")
         collectionView!.registerClass(ProfileTileCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell")
         collectionView!.registerClass(ProfileUploadCollectionViewCell.self, forCellWithReuseIdentifier: "upload-cell")
+        collectionView!.registerClass(ProfileFollowersViewCell.self, forCellWithReuseIdentifier: "followers-cell")
         
         collectionView!.backgroundColor = UIColor(hex:0xf7f7f7)
         
@@ -151,8 +162,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             .delayAllUntil(collectionViewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
-                
-                
                 
                 if let strongSelf = self {
 //                    let uploaded:Bool = results.models.map {
@@ -335,8 +344,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if isFollowClicked {
+            return 2
+        } else {
+            return optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0)
+        }
         
-        return optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0)
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -348,7 +361,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             cell.parentViewController = self
             
             return cell
-        } else if indexPath.item == 1 {
+        } else if indexPath.item == 1 && !isFollowClicked{
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("upload-cell", forIndexPath: indexPath) as! ProfileUploadCollectionViewCell
             
             cell.optographIDsNotUploaded = optographIDsNotUploaded
@@ -357,7 +370,15 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             return cell
         
-        }else {
+        } else if indexPath.item == 1 && isFollowClicked {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("followers-cell", forIndexPath: indexPath) as! ProfileFollowersViewCell
+            
+            cell.navigationController = navigationController as? NavigationController
+            //cell.reloadTable()
+            
+            return cell
+            
+        } else {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! ProfileTileCollectionViewCell
             
             let optographID = optographIDs[indexPath.item-2]
@@ -395,10 +416,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if indexPath.item == 0 {
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             return CGSize(width: self.view.frame.width, height: 267 + textHeight)
-        } else if indexPath.item == 1 {
+        } else if indexPath.item == 1 && isFollowClicked {
+            let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
+            return CGSize(width: self.view.frame.width, height: 267 + textHeight)
+        } else if indexPath.item == 1 && !isFollowClicked {
             let width = (self.view.frame.size.width)
             return CGSize(width: width, height: CGFloat(optographIDsNotUploaded.count * 75) + CGFloat(optographIDsNotUploaded.count * 1))
-            
         } else {
             let width = ((self.view.frame.size.width)/3) - 2
             return CGSize(width: width, height: width)

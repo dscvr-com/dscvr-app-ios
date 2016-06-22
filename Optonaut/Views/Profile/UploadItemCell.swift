@@ -2,7 +2,7 @@
 //  UploadItemCell.swift
 //  PhotoViewGallery
 //
-//  Created by Thadz on 08/06/2016.
+//  Created by Robert John Alkuino on 08/06/2016.
 //  Copyright © 2016 Brewed Concepts. All rights reserved.
 //
 
