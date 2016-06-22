@@ -336,7 +336,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        print(optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0))
         return optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0)
     }
     

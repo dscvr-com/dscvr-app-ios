@@ -95,6 +95,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //        buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
         //        contentView.addSubview(buttonView)
         
+        buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         buttonFollow.addTarget(self, action: #selector(self.followUser), forControlEvents:.TouchUpInside)
         contentView.addSubview(buttonFollow)
         
@@ -146,7 +147,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)
-        textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
+        textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
         textInputView.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font) + 50)
         
         //buttonIconView.anchorToEdge(.Right, padding: 12, width: 12, height: 12)
@@ -159,7 +160,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //postHeadingView.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width , height: 55)
         postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize:55)
         
-        buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: avatarImageView.frame.width, height: 25)
+        buttonFollow.align(.UnderCentered, relativeTo: textView, padding: 10, width: avatarImageView.frame.width, height: 25)
     }
     
     func bindViewModel(viewModel: ProfileViewModel) {
@@ -212,8 +213,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             print("hindi ako")
             buttonFollow.hidden = false
             editSubView.hidden = true
-            buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
-            textView.align(.UnderCentered, relativeTo: buttonFollow, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
         }
         
         postHeadingView.rac_hidden <~ viewModel.isEditing
