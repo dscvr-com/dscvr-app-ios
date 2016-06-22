@@ -77,6 +77,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     private let tabView = TabView()
     
+        
     required init() {
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
@@ -597,6 +598,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         var bestFormat: AVCaptureDeviceFormat?
         var bestFrameRate: AVFrameRateRange?
+        
         
         for format in videoDevice!.formats.map({ $0 as! AVCaptureDeviceFormat }) {
             for rate in format.videoSupportedFrameRateRanges.map({ $0 as! AVFrameRateRange }) {
