@@ -13,8 +13,7 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
     
     
     var tableView: UITableView!
-//    var optographIDsNotUploaded: [UUID]?
-    var data = ["San Francisco","New York","San Jose","Chicago","Los Angeles","Austin","Seattle", "Sacramento"]
+    var data:[Person] = []
     
     weak var navigationController: NavigationController?
     
@@ -27,6 +26,20 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
         tableView.delegate = self;
         tableView.registerClass(FollowersTableViewCell.self, forCellReuseIdentifier: "userFollowers");
         contentView.addSubview(tableView)
+        
+    }
+    
+    func viewIsActive() {
+        ApiService<PersonApiModel>.get("persons/followers")
+            .on(next: { person in
+                Models.persons.touch(person).insertOrUpdate()
+            })
+            .map(Person.fromApiModel)
+            .collect()
+            .startWithNext { person in
+                self.data = person
+                self.reloadTable()
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -44,14 +57,24 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("userFollowers") as! FollowersTableViewCell
         
-        //cell.bind(optographIDsNotUploaded![indexPath.item])
+        let datas = data[indexPath.item]
+        cell.nameLabel.text = datas.displayName
+        let imageUrl = ImageURL("persons/\(datas.ID)/\(datas.avatarAssetID).jpg", width: 47, height: 47)
+        cell.userImage.kf_setImageWithURL(NSURL(string:imageUrl)!)
+        cell.bind(datas.ID)
+        
+        if datas.isFollowed {
+            cell.isFollowed.value = true
+        }
         
         return cell;
     }
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-//        let detailsViewController = DetailsTableViewController(optographId: optographIDsNotUploaded![indexPath.item])
-//        detailsViewController.cellIndexpath = indexPath.item
-//        navigationController?.pushViewController(detailsViewController, animated: true)
+        let datas = data[indexPath.item]
+        
+        let profilepage = ProfileCollectionViewController(personID: datas.ID)
+        profilepage.isProfileVisit = true
+        navigationController?.pushViewController(profilepage, animated: true)
     }
     func reloadTable() {
         tableView.reloadData()

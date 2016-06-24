@@ -7,12 +7,15 @@
 //
 
 import Foundation
+import ReactiveCocoa
 
 class FollowersTableViewCell: UITableViewCell {
     
     var userImage: UIImageView = UIImageView()
     var nameLabel: UILabel = UILabel()
     var followButton = UIButton()
+    var personBox: ModelBox<Person>!
+    var isFollowed = MutableProperty<Bool>(false)
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -26,21 +29,57 @@ class FollowersTableViewCell: UITableViewCell {
         self.userImage.clipsToBounds = true
         self.userImage.image = UIImage(named: "avatar-placeholder")!
         
-        
         self.nameLabel = UILabel(frame: CGRect(x: self.userImage.frame.origin.x + self.userImage.frame.size.width + 10.0, y: self.userImage.frame.origin.y + 10.0, width: 100.0, height: 30.0))
         self.nameLabel.font = UIFont.systemFontOfSize(13.0, weight: UIFontWeightMedium)
-        self.nameLabel.text = "Junjuners"
+        
         self.nameLabel.textColor = UIColor.darkGrayColor()
         
-        
-        followButton.setBackgroundImage(UIImage(named: "follow_inactive"), forState: .Normal)
-        let followButtonSize = UIImage(named: "follow_inactive")?.size
-        followButton.frame = CGRect(x: contentView.frame.width-(followButtonSize?.width)!-20,y: (contentView.frame.height/2)+5,width: (followButtonSize?.width)!, height: (followButtonSize?.height)!)
+        //let followButtonSize = UIImage(named: "follow_button")?.size
+        self.followButton.frame = CGRect(x: 0, y: 0, width: 80.0, height: 25.0)
+        self.followButton.center = CGPoint(x: self.contentView.frame.size.width, y: self.userImage.center.y)
+        followButton.addTarget(self, action: #selector(toggleFollow), forControlEvents:.TouchUpInside)
         contentView.addSubview(followButton)
-        //followButton.anchorToEdge(.Right, padding: 15, width: (followButtonSize?.width)!, height: (followButtonSize?.height)!)
         
         contentView.addSubview(userImage)
         contentView.addSubview(nameLabel)
+        
+        isFollowed.producer.startWithNext{val in
+            if val {
+                self.followButton.setBackgroundImage(UIImage(named: "follow_button"), forState: .Normal)
+            } else {
+                self.followButton.setBackgroundImage(UIImage(named: "unfollow_button"), forState: .Normal)
+            }
+        }
+    }
+    func bind(personId:UUID) {
+        personBox = Models.persons[personId]!
+    }
+    
+    func toggleFollow() {
+        let person = personBox.model
+        let followedBefore = person.isFollowed
+        
+        SignalProducer<Bool, ApiError>(value: followedBefore)
+            .flatMap(.Latest) { followedBefore in
+                followedBefore
+                    ? ApiService<EmptyResponse>.delete("persons/\(person.ID)/follow")
+                    : ApiService<EmptyResponse>.post("persons/\(person.ID)/follow", parameters: nil)
+            }
+            .on(
+                started: { [weak self] in
+                    self?.personBox.insertOrUpdate { box in
+                        box.model.isFollowed = !followedBefore
+                        self?.isFollowed.value = !followedBefore
+                    }
+                },
+                failed: { [weak self] _ in
+                    self?.personBox.insertOrUpdate { box in
+                        box.model.isFollowed = followedBefore
+                        self?.isFollowed.value = followedBefore
+                    }
+                }
+            )
+            .start()
     }
     
     required init(coder aDecoder: NSCoder){

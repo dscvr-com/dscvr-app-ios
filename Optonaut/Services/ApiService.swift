@@ -150,8 +150,8 @@ class ApiService<T: Mappable> {
         mutableURLRequest.HTTPMethod = method.rawValue
         
         if let token = Defaults[.SessionToken] {
-            print("Bearer \(token)")
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            print ("token",token)
         }
         
         return mutableURLRequest
@@ -171,6 +171,7 @@ class ApiService<T: Mappable> {
                 mutableURLRequest.HTTPBody = Optional(json)
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
+            print("mutablerequest",mutableURLRequest)
             
             let request = Alamofire.request(mutableURLRequest)
                 .validate()
@@ -179,6 +180,9 @@ class ApiService<T: Mappable> {
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             SessionService.logout()
                         }
+                        print("data>>",data)
+                        print("response>>",response)
+                        print("error>>",error)
                         
                         do {
                             let data = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)

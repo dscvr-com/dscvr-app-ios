@@ -104,7 +104,9 @@ class SaveViewModel {
                         "id": optograph.ID,
                         "stitcher_version": StitcherVersion,
                         "created_at": optograph.createdAt.toRFC3339String(),
-                        "optograph_type":"theta"
+                        "optograph_type":"theta",
+                        "optograph_platform": "iOS \(Defaults[.SessionPhoneOS]!)",
+                        "optograph_model":"\(Defaults[.SessionPhoneModel]!)"
                     ]
                 } else {
                     uploadModeStr = ""
@@ -112,7 +114,9 @@ class SaveViewModel {
                         "id": optograph.ID,
                         "stitcher_version": StitcherVersion,
                         "created_at": optograph.createdAt.toRFC3339String(),
-                        "optograph_type":"optograph"
+                        "optograph_type":"optograph",
+                        "optograph_platform": "iOS \(Defaults[.SessionPhoneOS]!)",
+                        "optograph_model":"\(Defaults[.SessionPhoneModel]!)"
                     ]
                 }
                 

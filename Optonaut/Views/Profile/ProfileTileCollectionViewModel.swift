@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import SwiftyUserDefaults
 
 class ProfileTileCollectionViewModel {
     
@@ -87,11 +88,14 @@ class ProfileTileCollectionViewModel {
                 box.model.shouldBePublished = true
             }
             
+            
             let postParameters = [
                 "id": optograph.ID,
                 "stitcher_version": StitcherVersion,
                 "created_at": optograph.createdAt.toRFC3339String(),
-                "optograph_type":"optograph"
+                "optograph_type":"optograph",
+                "optograph_platform": "iOS \(Defaults[.SessionPhoneOS]!)",
+                "optograph_model":"\(Defaults[.SessionPhoneModel]!)"
                 ]
             
             var putParameters: [String: AnyObject] = [

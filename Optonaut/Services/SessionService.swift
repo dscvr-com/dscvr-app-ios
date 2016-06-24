@@ -31,6 +31,8 @@ extension DefaultsKeys {
     static let SessionMotor = DefaultsKey<Bool>("session_use_motor")
     static let SessionGyro = DefaultsKey<Bool>("session_use_gyro")
     static let SessionVRMode = DefaultsKey<Bool>("session_use_vr")
+    static let SessionPhoneModel = DefaultsKey<String?>("session_phone_model")
+    static let SessionPhoneOS = DefaultsKey<String?>("session_phone_os")
     
 }
 
@@ -87,6 +89,7 @@ class SessionService {
        return SignalProducer(value: loginData)
             .on(next: { loginData in
                 Defaults[.SessionToken] = loginData.token
+                print("my token>>",loginData.token)
                 Defaults[.SessionPersonID] = loginData.ID
                 Defaults[.SessionDebuggingEnabled] = false
                 Defaults[.SessionOnboardingVersion] = loginData.onboardingVersion

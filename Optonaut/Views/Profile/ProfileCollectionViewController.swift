@@ -33,6 +33,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     let headerView = UIView()
     var isProfileVisit:Bool = false
     var isFollowClicked:Bool = false
+    var fromLoginPage:Bool = false
     
     init(personID: UUID) {
         
@@ -58,7 +59,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         view.addSubview(headerView)
         let texttext = UILabel()
         texttext.frame = CGRect(x: view.frame.width / 2 - (150/2),y: 15,width: 150,height: 20)
-        texttext.text = "IAM360 Images"
+        texttext.text = "Images"
         texttext.textAlignment = .Center
         texttext.textColor = UIColor.whiteColor()
         headerView.addSubview(texttext)
@@ -92,8 +93,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
             if isFollowTabTap {
+                print("click")
                 self!.isFollowClicked = true
             } else {
+                print("not click")
                 self!.isFollowClicked = false
             }
             self!.collectionView?.reloadData()
@@ -164,15 +167,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             .on(next: { [weak self] results in
                 
                 if let strongSelf = self {
-//                    let uploaded:Bool = results.models.map {
-//                        if $0.isPublished {
-//                            return true
-//                        } else if $0.isUploading {
-//                            return true
-//                        } else {
-//                            return false
-//                        }
-//                    }
+                    print("nagreload")
                     strongSelf.optographIDsNotUploaded = results.models
                         .filter{ !$0.isPublished && !$0.isUploading}
                         .map{$0.ID}
@@ -284,6 +279,17 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 }
                 })
             .start()
+        
+        profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
+            if isFollowTabTap {
+                print("click")
+                self!.isFollowClicked = true
+            } else {
+                print("not click")
+                self!.isFollowClicked = false
+            }
+            self!.collectionView?.reloadData()
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -308,6 +314,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             tabController!.disableScrollView()
         }
         self.navigationController?.navigationBar.tintColor = UIColor(hex:0xffbc00)
+        
+        if fromLoginPage {
+            goToFeeds()
+            fromLoginPage = false
+        }
     }
     
     
@@ -374,7 +385,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("followers-cell", forIndexPath: indexPath) as! ProfileFollowersViewCell
             
             cell.navigationController = navigationController as? NavigationController
-            //cell.reloadTable()
+            cell.viewIsActive()
             
             return cell
             
@@ -418,7 +429,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             return CGSize(width: self.view.frame.width, height: 267 + textHeight)
         } else if indexPath.item == 1 && isFollowClicked {
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
-            return CGSize(width: self.view.frame.width, height: 267 + textHeight)
+            return CGSize(width: self.view.frame.width, height: self.view.frame.height - (267 + textHeight))
         } else if indexPath.item == 1 && !isFollowClicked {
             let width = (self.view.frame.size.width)
             return CGSize(width: width, height: CGFloat(optographIDsNotUploaded.count * 75) + CGFloat(optographIDsNotUploaded.count * 1))

@@ -23,8 +23,9 @@ class ProfileNavViewController: NavigationController {
         } else {
             pushViewController(loginOverlayViewController, animated: false)
             SessionService.loginNotifiaction.signal.observeNext {
-//               self.popViewControllerAnimated(false)
-               self.pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
+                let profilePage = ProfileCollectionViewController(personID: SessionService.personID)
+                profilePage.fromLoginPage = true
+                self.pushViewController(profilePage, animated: false)
             }
         }
     }

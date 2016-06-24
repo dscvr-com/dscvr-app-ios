@@ -106,7 +106,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //        contentView.addSubview(dividerDescription)
         
         //postHeadingView.text = "0 Posts"
-        postHeadingView1.text = "IAM360 Images"
+        postHeadingView1.text = "Images"
         postHeadingView1.textColor = UIColor(0xffbc00)
         postHeadingView1.textAlignment = .Center
         postHeadingView1.font = UIFont(name: "Avenir-Book", size: 20)

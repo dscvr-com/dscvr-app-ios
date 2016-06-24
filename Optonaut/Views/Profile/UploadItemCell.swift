@@ -22,15 +22,15 @@ class UploadItemCell: UITableViewCell {
         self.uploadItem.center = CGPoint(x: self.uploadItem.frame.size.width/2.0 + 10.0, y: self.contentView.frame.height/2 + 15.0)
         self.uploadItem.backgroundColor = UIColor.lightGrayColor()
         
-        //self.uploadButton = UIButton(frame: CGRect(x: 0, y: 0, width: 75.0, height: 25.0))
         self.uploadButton.frame = CGRect(x: 0, y: 0, width: 75.0, height: 25.0)
         self.uploadButton.center = CGPoint(x: self.contentView.frame.size.width, y: self.uploadItem.center.y)
         self.uploadButton.setTitle("UPLOAD", forState: .Normal)
+        self.uploadButton.backgroundColor = UIColor(hex:0xffbc00)
         self.uploadButton.titleLabel?.font = UIFont.systemFontOfSize(11.0)
-        self.uploadButton.setTitleColor(UIColor.greenColor(), forState: .Normal)
+        self.uploadButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
         self.uploadButton.layer.cornerRadius = 4.0
-        self.uploadButton.layer.borderColor = UIColor.greenColor().CGColor
         self.uploadButton.layer.borderWidth = 1.0
+        self.uploadButton.layer.borderColor = UIColor(hex:0xffbc00).CGColor
         self.uploadButton.addTarget(self, action: #selector(upload), forControlEvents: .TouchUpInside)
         
         self.addSubview(uploadItem)
@@ -52,7 +52,7 @@ class UploadItemCell: UITableViewCell {
             .skipRepeats()
             .startWithNext{ uploadStatus in
                 if uploadStatus == .Uploading {
-                    self.uploadButton.setTitle("UPLOADING", forState: .Normal)
+                    self.uploadButton.setTitle("UPLOADING...", forState: .Normal)
                     self.uploadButton.userInteractionEnabled = false
                 } else if uploadStatus == .Offline {
                     return self.uploadButton.hidden = false
