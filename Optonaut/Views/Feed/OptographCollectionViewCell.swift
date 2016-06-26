@@ -418,11 +418,11 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let topElements = UIView()
     private let bottomElements = UIView()
     private let bottomBackgroundView = UIView()
-    private let loadingOverlayView = UIView()
+    //private let loadingOverlayView = UIView()
     
     private var scnView: SCNView!
     
-    private let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+    //private let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
     
     private var touchStart: CGPoint?
     
@@ -462,17 +462,26 @@ class OptographCollectionViewCell: UICollectionViewCell{
     var previewImage = UIImageView()
     
     var yellowView = UIView()
-//    let playerLayer = AVPlayerLayer()
-//    var video:AVPlayer?
+    let playerLayer = AVPlayerLayer()
     
-//    func setRotation (isRotating:Bool) {
-//        if isRotating {
-//            print("playing")
-//            self.video!.play()
-//        } else {
-//            self.video!.pause()
-//        }
-//    }
+    var video:AVPlayer? {
+        didSet {
+            self.playerLayer.player = video
+//            NSNotificationCenter.defaultCenter().addObserverForName(AVPlayerItemDidPlayToEndTimeNotification, object: nil, queue: nil) { notification in
+//                self.video?.seekToTime(kCMTimeZero)
+//                self.video?.play()
+//            }
+        }
+    }
+    
+    func setRotation (isRotating:Bool) {
+        if isRotating {
+            print("playing")
+            self.video!.play()
+        } else {
+            self.video!.pause()
+        }
+    }
     
     var id: Int = 0 {
         didSet {
@@ -507,19 +516,19 @@ class OptographCollectionViewCell: UICollectionViewCell{
         yellowView.backgroundColor = UIColor.blackColor()
         contentView.addSubview(yellowView)
         
-        loadingOverlayView.backgroundColor = .blackColor()
-        loadingOverlayView.hidden = false
-        contentView.addSubview(loadingOverlayView)
+//        loadingOverlayView.backgroundColor = .blackColor()
+//        loadingOverlayView.hidden = false
+//        contentView.addSubview(loadingOverlayView)
+//        
+//        loadingIndicatorView.frame = contentView.frame
+//        loadingIndicatorView.startAnimating()
+//        contentView.addSubview(loadingIndicatorView)
         
-        loadingIndicatorView.frame = contentView.frame
-        loadingIndicatorView.startAnimating()
-        contentView.addSubview(loadingIndicatorView)
+//        previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
+//        yellowView.addSubview(previewImage)
         
-        previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
-        yellowView.addSubview(previewImage)
-        
-//        playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-//        self.yellowView.layer.addSublayer(playerLayer)
+        playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        self.yellowView.layer.addSublayer(playerLayer)
         
         whiteBackground.backgroundColor = UIColor(hex:0x595959).alpha(0.80)
         yellowView.addSubview(whiteBackground)
@@ -580,12 +589,12 @@ class OptographCollectionViewCell: UICollectionViewCell{
         super.layoutSubviews()
         
         yellowView.fillSuperview()
-//        playerLayer.fillSuperview()
+        playerLayer.fillSuperview()
         
         blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
         
         hiddenViewToBounce.anchorToEdge(.Left, padding: 10, width: 70, height: 100)
-        loadingOverlayView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: contentView.frame.height - 70 - 20)
+        //loadingOverlayView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: contentView.frame.height - 70 - 20)
         
         whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 70)
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 50, height: 50)
@@ -743,37 +752,21 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
             }
         }
-        viewModel.uploadStatus.producer.equalsTo(.Uploaded)
-            .startWithNext { [weak self] isUploaded in
-                if isUploaded {
-                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
-                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
-                } else {
-                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
-                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self?.previewImage.image = originalImage.resized(.Width, value: (self?.contentView.frame.width)!)
-                        }
-                    }
-                }
-                self?.loadingOverlayView.hidden = true
-                self?.loadingIndicatorView.stopAnimating()
-        }
-        
-//        dispatch_async(dispatch_get_main_queue()) {
-//            
-//            var url:NSURL?
-//            
-//            if #available(iOS 9.0, *) {
-//                url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/6e40d95d-c79e-4ba9-a2d0-789d6b08611f/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
-//            }
-//            print(url)
-//            
-//            self.video = AVPlayer(URL: url!)
-//            self.playerLayer.player = self.video
-//            
-//            self.loadingOverlayView.hidden = true
-//            self.loadingIndicatorView.stopAnimating()
+//        viewModel.uploadStatus.producer.equalsTo(.Uploaded)
+//            .startWithNext { [weak self] isUploaded in
+//                if isUploaded {
+//                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
+//                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+//                } else {
+//                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+//                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+//                        dispatch_async(dispatch_get_main_queue()) {
+//                            self?.previewImage.image = originalImage.resized(.Width, value: (self?.contentView.frame.width)!)
+//                        }
+//                    }
+//                }
+//                self?.loadingOverlayView.hidden = true
+//                self?.loadingIndicatorView.stopAnimating()
 //        }
     }
     
@@ -783,6 +776,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     
     deinit {
+        //NSNotificationCenter.defaultCenter().removeObserver(self, name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
         logRetain()
     }
 }

@@ -429,14 +429,15 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         let optographID = optographIDs[indexPath.row]
         
-        cell.bindModel(optographID)
-//        cell.direction = optographDirections[optographID]!
-//        cell.willDisplay()
-//        cell.optoId = optographID
-//        
-//        let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
-//        cell.setCubeImageCache(cubeImageCache)
+        var url:NSURL?
         
+        if #available(iOS 9.0, *) {
+            url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/\(optographID)/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
+        }
+        
+        cell.video = AVPlayer(URL: url!)
+        
+        cell.bindModel(optographID)
         cell.swipeView = tabController!.scrollView
         cell.collectionView = collectionView
         cell.isShareOpen.producer
@@ -449,18 +450,16 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 }
             }
         
-//        if StitchingService.isStitching() {
-//            imageCache.resetExcept(indexPath.row)
-//        } else {
-//            for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
-//                let id = optographIDs[indexPath.row + i]
-//                let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
-//                imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
-//            }
-//        }
-        
         if indexPath.row > optographIDs.count - 5 {
             viewModel.loadMore()
+        }
+        
+        if indexPathShow >= 0 {
+            if indexPathShow == indexPath.item {
+                cell.setRotation(true)
+            } else {
+                cell.setRotation(false)
+            }
         }
     
         return cell
@@ -481,21 +480,42 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/3)*2))
     }
-
-//    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-//        if indexPathShow >= 0 {
-//            print("scrollViewWillBeginDragging",indexPathShow)
-//            let path = NSIndexPath(forRow: indexPathShow, inSection: 0)
-//            
-//            let cell = collectionView?.cellForItemAtIndexPath(path) as! OptographCollectionViewCell
-//            cell.setRotation(true)
-//        }
-//    }
-//    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-//        
-//        indexPathShow = indexPath.row - 1
-//        print("indexPathShow>> ",indexPathShow)
-//    }
+    
+    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        
+        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+        for cell in cells {
+            cell.setRotation(false)
+        }
+        
+        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
+        
+        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
+        
+        
+        let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
+        
+        cell.setRotation(true)
+        
+    }
+    
+    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        
+        
+        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+        for cell in cells {
+            cell.setRotation(false)
+        }
+        
+        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
+        
+        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
+        
+        let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
+        
+        cell.setRotation(true)
+        
+    }
     
 }
 
