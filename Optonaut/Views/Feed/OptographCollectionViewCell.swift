@@ -573,9 +573,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         yellowView.addSubview(hiddenViewToBounce)
         
         hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
-        //bouncingButton.addGestureRecognizer(hiddenGestureRecognizer)
-        
-        //hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
+        hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.bouncingCell)))
     }
     
     override func layoutSubviews() {
@@ -585,7 +583,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
 //        playerLayer.fillSuperview()
         
         blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
-        hiddenViewToBounce.fillSuperview(left:70, right: 0, top: 0, bottom: 90)
+        
+        hiddenViewToBounce.anchorToEdge(.Left, padding: 10, width: 70, height: 100)
         loadingOverlayView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: contentView.frame.height - 70 - 20)
         
         whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 70)
@@ -640,7 +639,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
             xCoordBegin = 0.0
         case .Changed:
             xCoordBegin += 2.0
-            print(velocity.x)
             if velocity.x > 0 {
                 if (yellowView.frame.origin.x <= 67) {
                     yellowView.frame.origin.x = xCoordBegin
@@ -650,11 +648,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
                         isShareOpen.value = true
                     }
                 }
-            } else if (velocity.x < 0){
-                swipeView?.scrollRectToVisible(CGRect(x: 0,y: 0,width: contentView.frame.width * 3,height: 100), animated: true)
-            } else{
-                
-                print(collectionView?.contentOffset.y)
             }
             
         case .Cancelled:
