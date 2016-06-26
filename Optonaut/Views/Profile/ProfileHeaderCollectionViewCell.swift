@@ -29,6 +29,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     private let textInputView = KMPlaceholderTextView()
     private let buttonFollow = UIButton()
     //private let buttonIconView = UIImageView()
+    private let postHeadingView = UILabel()
     private let postHeadingView1 = UILabel()
     private let postHeadingView2 = UILabel()
     //private let postCountView = UILabel()
@@ -105,7 +106,13 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //        dividerDescription.backgroundColor = UIColor(0xffbc00)
         //        contentView.addSubview(dividerDescription)
         
-        //postHeadingView.text = "0 Posts"
+        postHeadingView.text = "Images"
+        postHeadingView.textColor = UIColor.whiteColor()
+        postHeadingView.textAlignment = .Center
+        postHeadingView.font = UIFont(name: "Avenir-Book", size: 20)
+        postHeadingView.backgroundColor = UIColor(hex:0x3E3D3D)
+        contentView.addSubview(postHeadingView)
+        
         postHeadingView1.text = "Images"
         postHeadingView1.textColor = UIColor(0xffbc00)
         postHeadingView1.textAlignment = .Center
@@ -187,7 +194,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         //let metricWidth = size.width / 3
         //postCountView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 33, width: metricWidth, height: 14)
-        //postHeadingView.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width , height: 55)
+        postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 55)
         postHeadingView1.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
         postHeadingView2.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
         
@@ -216,7 +223,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             val ? self?.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self?.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         }
         
-        
         displayNameView.rac_text <~ viewModel.displayName
         displayNameView.rac_hidden <~ viewModel.isEditing
         displayNameInputView.rac_hidden <~ viewModel.isEditing.producer.map(negate)
@@ -236,22 +242,26 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             self?.textInputView.text = viewModel.text.value
         }
         
-        let size = contentView.frame.size
-        
         if isMe {
             print("ako")
             buttonFollow.hidden = true
             editSubView.hidden = false
+            postHeadingView.hidden = true
+            postHeadingView1.hidden = false
+            postHeadingView2.hidden = false
+            yellowLine.hidden = false
+            postHeadingView1.rac_hidden <~ viewModel.isEditing
+            postHeadingView2.rac_hidden <~ viewModel.isEditing
+            yellowLine.rac_hidden <~ viewModel.isEditing
         } else {
             print("hindi ako")
             buttonFollow.hidden = false
             editSubView.hidden = true
+            postHeadingView.hidden = false
+            postHeadingView1.hidden = true
+            postHeadingView2.hidden = true
+            yellowLine.hidden = true
         }
-        
-        postHeadingView1.rac_hidden <~ viewModel.isEditing
-        postHeadingView2.rac_hidden <~ viewModel.isEditing
-        yellowLine.rac_hidden <~ viewModel.isEditing
-        
     }
     
     dynamic private func tapButton() {

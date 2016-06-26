@@ -233,6 +233,7 @@ private class OverlayViewModel {
     let locationID = MutableProperty<UUID?>("")
     var isMe = false
     
+    
     func bind(optographID: UUID) {
         
         optographBox = Models.optographs[optographID]!
@@ -455,6 +456,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     var hiddenGestureRecognizer:UIPanGestureRecognizer!
     var swipeView:UIScrollView?
+    var collectionView:UICollectionView?
     var isShareOpen = MutableProperty<Bool>(false)
     
     var previewImage = UIImageView()
@@ -477,6 +479,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
             //
         }
     }
+    var xCoordBegin:CGFloat = 0.0
     
     dynamic private func pushDetails() {
         
@@ -570,8 +573,9 @@ class OptographCollectionViewCell: UICollectionViewCell{
         yellowView.addSubview(hiddenViewToBounce)
         
         hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
-        hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
+        //bouncingButton.addGestureRecognizer(hiddenGestureRecognizer)
         
+        //hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
     }
     
     override func layoutSubviews() {
@@ -581,9 +585,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
 //        playerLayer.fillSuperview()
         
         blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
-        //hiddenViewToBounce.anchorAndFillEdge(.Left, xPad:0, yPad: 0, otherSize: 100)
-        //hiddenViewToBounce.frame = CGRect(x: 0,y: bouncingButton.frame.origin.y - 10,width: 80,height: 80)
-        hiddenViewToBounce.anchorToEdge(.Left, padding: 0, width: 80, height: 80)
+        hiddenViewToBounce.fillSuperview(left:70, right: 0, top: 0, bottom: 90)
         loadingOverlayView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: contentView.frame.height - 70 - 20)
         
         whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 70)
@@ -630,29 +632,39 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     func handlePan(recognizer:UIPanGestureRecognizer) {
         
-        let translationX = recognizer.locationInView(contentView).x
-        
-        let xCoordBegin:CGFloat = 0.0
+        //let translationX = recognizer.locationInView(contentView).x
+        let velocity = recognizer.velocityInView(contentView)
         
         switch recognizer.state {
         case .Began:
-            print("wew")
+            xCoordBegin = 0.0
         case .Changed:
-            if (translationX > xCoordBegin) {
+            xCoordBegin += 2.0
+            print(velocity.x)
+            if velocity.x > 0 {
                 if (yellowView.frame.origin.x <= 67) {
-                    yellowView.frame.origin.x = translationX
+                    yellowView.frame.origin.x = xCoordBegin
                 } else {
                     if !isShareOpen.value {
                         swipeView?.scrollRectToVisible(CGRect(x: 0,y: 0,width: contentView.frame.width,height: 100), animated: true)
                         isShareOpen.value = true
                     }
                 }
+            } else if (velocity.x < 0){
+                swipeView?.scrollRectToVisible(CGRect(x: 0,y: 0,width: contentView.frame.width * 3,height: 100), animated: true)
+            } else{
+                
+                print(collectionView?.contentOffset.y)
             }
+            
         case .Cancelled:
             print("cancelled")
         case .Ended:
+            xCoordBegin = 0.0
             yellowView.frame.origin.x = 0
-            isShareOpen.value = false
+            if isShareOpen.value {
+                isShareOpen.value = false
+            }
             
         default: break
         }

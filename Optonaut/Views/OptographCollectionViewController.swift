@@ -438,7 +438,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //        cell.setCubeImageCache(cubeImageCache)
         
         cell.swipeView = tabController!.scrollView
-        
+        cell.collectionView = collectionView
         cell.isShareOpen.producer
             .startWithNext{ val in
                 if val{
