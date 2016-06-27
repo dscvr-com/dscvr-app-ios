@@ -543,8 +543,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        
-        //tabController!.hideUI()
         tabController!.disableScrollView()
         
         CoreMotionRotationSource.Instance.start()
@@ -554,7 +552,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
         updateNavbarAppear()
-        //navigationItem.backBarButtonItem?.tintColor = UIColor(hex:0xffbc00)
+        
         self.navigationController?.navigationBar.tintColor = UIColor(hex:0xffbc00)
     }
     
@@ -621,7 +619,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func willDisplay() {
-        scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
+        scnView.playing = true
     }
     
     func didEndDisplay() {

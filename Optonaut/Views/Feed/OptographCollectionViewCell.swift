@@ -189,18 +189,25 @@ class CombinedMotionManager: RotationMatrixSource {
                                                 diffRotationMatrix.m22 * diffRotationMatrix.m22))
                 
                 
-                if isRotating == true {
+//                if isRotating == true {
+//                    
+//                    if Defaults[.SessionGyro] == true {
+//                        
+//                        touchRotationSource.phi += diffRotationPhi
+//                        touchRotationSource.theta += diffRotationTheta
+//                        
+//                        
+//                    } else {
+//                        touchRotationSource.phi += 0.003;
+//                        touchRotationSource.theta = -1.5;
+//                    }
+//                }
+                if Defaults[.SessionGyro] == true {
                     
-                    if Defaults[.SessionGyro] == true {
-                        
-                        touchRotationSource.phi += diffRotationPhi
-                        touchRotationSource.theta += diffRotationTheta
-                        
-                        
-                    } else {
-                        touchRotationSource.phi += 0.003;
-                        touchRotationSource.theta = -1.5;
-                    }
+                    touchRotationSource.phi += diffRotationPhi
+                    touchRotationSource.theta += diffRotationTheta
+                    
+                    
                 }
             }
         }
