@@ -55,6 +55,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     
     var lastContentOffset:CGFloat = 0
     
+    let shareData = ShareData.sharedInstance
+    
     required init() {
         
         centerViewController = FeedNavViewController()
@@ -132,6 +134,14 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    
+    func scrollViewDidScroll(scrollView:UIScrollView) {
+        if (scrollView.contentOffset.x < self.view.frame.width && !shareData.isSharePageOpen.value) {
+            scrollView.contentOffset.x = self.view.frame.width
+        } else if (scrollView.contentOffset.x >= self.view.frame.width && shareData.isSharePageOpen.value) {
+            shareData.isSharePageOpen.value = false
+        }
     }
     
     func rightButtonAction() {

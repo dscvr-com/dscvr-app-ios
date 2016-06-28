@@ -93,10 +93,12 @@ class ProfileTileCollectionViewModel {
                 "id": optograph.ID,
                 "stitcher_version": StitcherVersion,
                 "created_at": optograph.createdAt.toRFC3339String(),
-                "optograph_type":"optograph",
+                "optograph_type":"optograph_\(optograph.ringCount == "one" ? "1":"3")",
                 "optograph_platform": "iOS \(Defaults[.SessionPhoneOS]!)",
                 "optograph_model":"\(Defaults[.SessionPhoneModel]!)"
                 ]
+            
+            print(postParameters)
             
             var putParameters: [String: AnyObject] = [
                 "text": optograph.text,

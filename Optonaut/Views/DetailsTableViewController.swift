@@ -69,6 +69,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var isMe = false
     var transformBegin:CGAffineTransform?
     let deleteButton = UIButton()
+    var gyroImageActive = UIImage(named: "details_gyro_active")
+    var gyroImageInactive = UIImage(named: "details_gyro_inactive")
+    
     
     required init(optographId:UUID) {
         
@@ -240,7 +243,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         }
         
         
-        hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
+        //hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
         //self.view.addSubview(hideSelectorButton)
         
         if  Defaults[.SessionGyro] {
@@ -253,18 +256,26 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //self.view.addSubview(gyroButton)
         
         
-        hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
-        hideSelectorButton.addTarget(self, action: #selector(self.selectorButton), forControlEvents:.TouchUpInside)
+//        hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
+//        hideSelectorButton.addTarget(self, action: #selector(self.selectorButton), forControlEvents:.TouchUpInside)
+//        
+//        littlePlanetButton.align(.UnderCentered, relativeTo: hideSelectorButton, padding: 10, width: 35, height: 35)
+//        littlePlanetButton.addTarget(self, action: #selector(self.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
         
-        littlePlanetButton.align(.UnderCentered, relativeTo: hideSelectorButton, padding: 10, width: 35, height: 35)
-        littlePlanetButton.addTarget(self, action: #selector(self.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
+//        gyroButton.align(.UnderCentered, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
         
-        gyroButton.align(.UnderCentered, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
-        gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
+//        gyroButton.anchorInCorner(.TopRight, xPad: 20, yPad: 30, width: 40, height: 40)
+//        gyroButton.userInteractionEnabled = true
+//        gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
+        
+        
+        
+        gyroImageActive = gyroImageActive?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        gyroImageInactive = gyroImageInactive?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         
         let oneTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.oneTap(_:)))
         oneTapGestureRecognizer.numberOfTapsRequired = 1
-        self.view.addGestureRecognizer(oneTapGestureRecognizer)
+        self.scnView.addGestureRecognizer(oneTapGestureRecognizer)
         
         //        let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
         //        twoTapGestureRecognizer.numberOfTapsRequired = 2
@@ -398,7 +409,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func hideUI() {
         self.whiteBackground.hidden = true
         self.hideSelectorButton.hidden = true
-        self.gyroButton.hidden = true
+        //self.gyroButton.hidden = true
         self.littlePlanetButton.hidden = true
         self.isUIHide = true
         self.navigationController?.navigationBarHidden = true
@@ -407,7 +418,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func showUI() {
         self.whiteBackground.hidden = false
         self.hideSelectorButton.hidden = false
-        self.gyroButton.hidden = false
+        //self.gyroButton.hidden = false
         self.littlePlanetButton.hidden = false
         self.isUIHide = false
         self.navigationController?.navigationBarHidden = false
@@ -419,7 +430,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
                 self.whiteBackground.hidden = true
                 self.hideSelectorButton.hidden = true
-                self.gyroButton.hidden = true
+                //self.gyroButton.hidden = true
                 self.littlePlanetButton.hidden = true
                 self.isUIHide = true
                 },completion: nil)
@@ -428,7 +439,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
                 self.whiteBackground.hidden = false
                 self.hideSelectorButton.hidden = false
-                self.gyroButton.hidden = false
+                //self.gyroButton.hidden = false
                 self.littlePlanetButton.hidden = false
                 self.isUIHide = false
                 },completion: nil)
@@ -487,19 +498,26 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func gyroButtonTouched() {
-        Defaults[.SessionGyro] = true
-        self.changeButtonIcon(true)
+        if Defaults[.SessionGyro] {
+            Defaults[.SessionGyro] = false
+            self.changeButtonIcon(false)
+        } else {
+            Defaults[.SessionGyro] = true
+            self.changeButtonIcon(true)
+        }
     }
     
     func changeButtonIcon(isGyro:Bool) {
-        if isGyro {
-            littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_inactive"), forState: .Normal)
-            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_active"), forState: .Normal)
-            
-        } else {
-            littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_active"), forState: .Normal)
-            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_inactive"), forState: .Normal)
-        }
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: isGyro ? gyroImageActive : gyroImageInactive, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(gyroButtonTouched))
+        
+//        if isGyro {
+//            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_inactive"), forState: .Normal)
+//            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_active"), forState: .Normal)
+//            
+//        } else {
+//            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_active"), forState: .Normal)
+//            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_inactive"), forState: .Normal)
+//        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

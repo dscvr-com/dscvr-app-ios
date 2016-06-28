@@ -40,6 +40,7 @@ struct OptographSchemaType: ModelSchema {
     let rightCubeTextureStatusUpload = Expression<CubeTextureStatus?>("optograph_right_cube_texture_status_upload")
     let leftCubeTextureStatusSave = Expression<CubeTextureStatus?>("optograph_left_cube_texture_status_save")
     let rightCubeTextureStatusSave = Expression<CubeTextureStatus?>("optograph_right_cube_texture_status_save")
+    let ringCount = Expression<String>("optograph_ring_count")
 }
 
 let OptographSchema = OptographSchemaType()

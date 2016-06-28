@@ -27,6 +27,7 @@ class ShareData {
         return Static.instance!
     }
     var optographId = MutableProperty<UUID?>(nil)
+    var isSharePageOpen = MutableProperty<Bool>(false)
 }
 
 

@@ -654,18 +654,27 @@ class OptographCollectionViewCell: UICollectionViewCell{
         case .Began:
             xCoordBegin = 0.0
         case .Changed:
-            xCoordBegin += 2.0
+            xCoordBegin += 4.0
             if velocity.x > 0 {
                 if (yellowView.frame.origin.x <= 67) {
                     yellowView.frame.origin.x = xCoordBegin
                 } else {
                     if !isShareOpen.value {
-                        swipeView?.scrollRectToVisible(CGRect(x: 0,y: 0,width: contentView.frame.width,height: 100), animated: true)
-                        isShareOpen.value = true
+                        if (viewModel.uploadStatus.value == .Offline || viewModel.uploadStatus.value == .Uploading) {
+                            let alert = UIAlertController(title:"Sorry, something went wrong on sharing..", message: "Maybe the 360 image is still uploading or not uploaded yet.", preferredStyle: .Alert)
+                            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in
+                                self.xCoordBegin = 0.0
+                                self.yellowView.frame.origin.x = 0
+                                return
+                            }))
+                            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+                        } else {
+                            swipeView?.scrollRectToVisible(CGRect(x: 0,y: 0,width: contentView.frame.width,height: 100), animated: true)
+                            isShareOpen.value = true
+                        }
                     }
                 }
             }
-            
         case .Cancelled:
             print("cancelled")
         case .Ended:

@@ -445,6 +445,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 if val{
                     print("optographid =",optographID)
                     self.shareData.optographId.value = optographID
+                    self.shareData.isSharePageOpen.value = true
                 } else {
                     print("close")
                 }
