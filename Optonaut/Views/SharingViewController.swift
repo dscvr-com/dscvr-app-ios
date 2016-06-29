@@ -51,13 +51,13 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let image: UIImage = UIImage(named: "logo_big")!
+        let image: UIImage = UIImage(named: "logo_settings")!
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
         self.view.addSubview(bgImage!)
         bgImage!.anchorToEdge(.Top, padding: (navigationController?.navigationBar.frame.height)! + 25, width: image.size.width, height: image.size.height)
         
-        let placeholderImageViewImage: UIImage = UIImage(named: "logo_big")!
+        let placeholderImageViewImage: UIImage = UIImage(named: "logo_settings")!
         var placeholderImageView: UIImageView?
         placeholderImageView = UIImageView(image: placeholderImageViewImage)
         placeholderImageView?.backgroundColor = UIColor.blackColor()

@@ -144,6 +144,11 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             shareData.isSharePageOpen.value = false
         }
     }
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
+            scrollView.contentOffset.x = self.view.frame.width
+        }
+    }
     
     func rightButtonAction() {
         UIView.animateWithDuration(0.5, animations: {

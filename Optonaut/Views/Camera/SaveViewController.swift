@@ -101,7 +101,7 @@ class SaveViewController: UIViewController, RedNavbar {
             readyNotification.notify(())
         }
         
-        title = "UPLOAD TO IAM360"
+        title = "UPLOAD TO DSCVR"
         
         var privateButton = UIImage(named: "privacy_me")
         var publicButton = UIImage(named: "privacy_world")
