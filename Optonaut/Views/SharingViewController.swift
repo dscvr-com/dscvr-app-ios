@@ -55,7 +55,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
         self.view.addSubview(bgImage!)
-        bgImage!.anchorToEdge(.Top, padding: (navigationController?.navigationBar.frame.height)! + 25, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
+        bgImage!.anchorToEdge(.Top, padding: (navigationController?.navigationBar.frame.height)! + 25, width: image.size.width, height: image.size.height)
         
         let placeholderImageViewImage: UIImage = UIImage(named: "logo_big")!
         var placeholderImageView: UIImageView?
@@ -64,7 +64,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         self.view.addSubview(placeholderImageView!)
         placeholderImageView!.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: self.view.frame.width - 56, height: 130)
         
-        titleText.text = "Share this IAM360 photo:"
+        titleText.text = "Share this 360 image:"
         titleText.textAlignment = .Center
         titleText.font = UIFont(name: "Avenir-Book", size: 25)
         self.view.addSubview(titleText)
@@ -184,20 +184,26 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
 //            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
 //            self.presentViewController(alert, animated: true, completion: nil)
 //        }
-        let alert = UIAlertController(title: "Facebook", message: "Say something about this IAM360 photo", preferredStyle: UIAlertControllerStyle.Alert)
-        alert.addAction(UIAlertAction(title: "CANCEL", style: UIAlertActionStyle.Default, handler: nil))
-        alert.addAction(UIAlertAction(title: "POST", style: UIAlertActionStyle.Default, handler: { _ in
-                self.postFb()
-                return
-            }))
         
-        alert.addTextFieldWithConfigurationHandler { (textField : UITextField!) -> Void in
-            textField.placeholder = ""
-            
-            self.tField = textField
-        }
+//        let alert = UIAlertController(title: "Facebook", message: "Say something about this IAM360 photo", preferredStyle: UIAlertControllerStyle.Alert)
+//        alert.addAction(UIAlertAction(title: "CANCEL", style: UIAlertActionStyle.Default, handler: nil))
+//        alert.addAction(UIAlertAction(title: "POST", style: UIAlertActionStyle.Default, handler: { _ in
+//                self.postFb()
+//                return
+//            }))
+//        
+//        alert.addTextFieldWithConfigurationHandler { (textField : UITextField!) -> Void in
+//            textField.placeholder = ""
+//            
+//            self.tField = textField
+//        }
+//        
+//        self.presentViewController(alert, animated: true, completion: nil)
         
-        self.presentViewController(alert, animated: true, completion: nil)
+        
+        let shareOnFb = FacebookShareViewController()
+        shareOnFb.modalPresentationStyle = .OverCurrentContext
+        self.navigationController?.presentViewController(shareOnFb, animated: true, completion: nil)
         
     }
     

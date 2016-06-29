@@ -35,6 +35,7 @@
 		59DBBF941D1954CC0072AA3E /* ShareModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DBBF931D1954CC0072AA3E /* ShareModalViewController.swift */; };
 		59DBBF961D1A43880072AA3E /* ProfileFollowersViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DBBF951D1A43880072AA3E /* ProfileFollowersViewCell.swift */; };
 		59DBBF981D1A5A9E0072AA3E /* FollowersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DBBF971D1A5A9E0072AA3E /* FollowersTableViewCell.swift */; };
+		59E9068B1D23CED30030FC65 /* FacebookShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E9068A1D23CED20030FC65 /* FacebookShareViewController.swift */; };
 		59F9226C1CDE0D0E005868A8 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F9226B1CDE0D0E005868A8 /* TabView.swift */; };
 		59FAF2421CE7008500B9C2F4 /* DetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */; };
 		59FB1D5F1CF5AFC100C5C333 /* PhotoThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB1D5D1CF5AFC100C5C333 /* PhotoThumbnail.swift */; };
@@ -323,6 +324,7 @@
 		59DBBF931D1954CC0072AA3E /* ShareModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareModalViewController.swift; sourceTree = "<group>"; };
 		59DBBF951D1A43880072AA3E /* ProfileFollowersViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileFollowersViewCell.swift; sourceTree = "<group>"; };
 		59DBBF971D1A5A9E0072AA3E /* FollowersTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FollowersTableViewCell.swift; sourceTree = "<group>"; };
+		59E9068A1D23CED20030FC65 /* FacebookShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookShareViewController.swift; sourceTree = "<group>"; };
 		59F9226B1CDE0D0E005868A8 /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		59FAF2411CE7008500B9C2F4 /* DetailsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewModel.swift; sourceTree = "<group>"; };
 		59FB1D5D1CF5AFC100C5C333 /* PhotoThumbnail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoThumbnail.swift; sourceTree = "<group>"; };
@@ -487,7 +489,7 @@
 		8FC9EC3B1B85DAB9006CB5D0 /* KMPlaceholderTextView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KMPlaceholderTextView.framework; path = Carthage/Build/iOS/KMPlaceholderTextView.framework; sourceTree = "<group>"; };
 		8FCA92E11BC7180B004913E5 /* OptographOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographOptions.swift; sourceTree = "<group>"; };
 		8FCADEDF1BAB1A080018674B /* OnboardingInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingInfoViewController.swift; sourceTree = "<group>"; };
-		8FCCA02B1B3806040091F1B1 /* IAM360.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IAM360.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FCCA02B1B3806040091F1B1 /* DSCVR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DSCVR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCCA02F1B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OptonautTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCCA0451B3806040091F1B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -675,6 +677,7 @@
 				5917C8201CE441F200CD5A6D /* SharingViewController.swift */,
 				5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */,
 				59DBBF931D1954CC0072AA3E /* ShareModalViewController.swift */,
+				59E9068A1D23CED20030FC65 /* FacebookShareViewController.swift */,
 			);
 			name = Share;
 			sourceTree = "<group>";
@@ -1161,7 +1164,7 @@
 		8FCCA02C1B3806040091F1B1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8FCCA02B1B3806040091F1B1 /* IAM360.app */,
+				8FCCA02B1B3806040091F1B1 /* DSCVR.app */,
 				8FCCA0401B3806040091F1B1 /* OptonautTests.xctest */,
 				8FA86D4C1C08F2C80033CBA9 /* OptonautUITests.xctest */,
 			);
@@ -1444,9 +1447,9 @@
 			productReference = 8FA86D4C1C08F2C80033CBA9 /* OptonautUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		8FCCA02A1B3806040091F1B1 /* Iam360 */ = {
+		8FCCA02A1B3806040091F1B1 /* DSCVR */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "Iam360" */;
+			buildConfigurationList = 8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "DSCVR" */;
 			buildPhases = (
 				8FCCA0271B3806040091F1B1 /* Sources */,
 				8FCCA0281B3806040091F1B1 /* Frameworks */,
@@ -1459,9 +1462,9 @@
 			);
 			dependencies = (
 			);
-			name = Iam360;
+			name = DSCVR;
 			productName = Optonaut;
-			productReference = 8FCCA02B1B3806040091F1B1 /* IAM360.app */;
+			productReference = 8FCCA02B1B3806040091F1B1 /* DSCVR.app */;
 			productType = "com.apple.product-type.application";
 		};
 		8FCCA03F1B3806040091F1B1 /* OptonautTests */ = {
@@ -1511,7 +1514,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "Iam360" */;
+			buildConfigurationList = 8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "DSCVR" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1524,7 +1527,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8FCCA02A1B3806040091F1B1 /* Iam360 */,
+				8FCCA02A1B3806040091F1B1 /* DSCVR */,
 				8FCCA03F1B3806040091F1B1 /* OptonautTests */,
 				8FA86D4B1C08F2C80033CBA9 /* OptonautUITests */,
 			);
@@ -1777,6 +1780,7 @@
 				8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */,
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
 				59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */,
+				59E9068B1D23CED30030FC65 /* FacebookShareViewController.swift in Sources */,
 				595D87691D083D5E00866FF2 /* SearchViewController.swift in Sources */,
 				8F4186091C552D02009E1E3F /* ProfileTileCollectionViewModel.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
@@ -1850,12 +1854,12 @@
 /* Begin PBXTargetDependency section */
 		8FA86D521C08F2C80033CBA9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8FCCA02A1B3806040091F1B1 /* Iam360 */;
+			target = 8FCCA02A1B3806040091F1B1 /* DSCVR */;
 			targetProxy = 8FA86D511C08F2C80033CBA9 /* PBXContainerItemProxy */;
 		};
 		8FCCA0421B3806040091F1B1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8FCCA02A1B3806040091F1B1 /* Iam360 */;
+			target = 8FCCA02A1B3806040091F1B1 /* DSCVR */;
 			targetProxy = 8FCCA0411B3806040091F1B1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -2012,7 +2016,7 @@
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
-				PRODUCT_NAME = IAM360;
+				PRODUCT_NAME = DSCVR;
 				PROVISIONING_PROFILE = "e8e9c6bb-663a-44be-a3ee-9c0dcb4bbf2e";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2047,7 +2051,7 @@
 					"$(PROJECT_DIR)/stitcher/vendor",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
-				PRODUCT_NAME = IAM360;
+				PRODUCT_NAME = DSCVR;
 				PROVISIONING_PROFILE = "e8e9c6bb-663a-44be-a3ee-9c0dcb4bbf2e";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
@@ -2101,7 +2105,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "Iam360" */ = {
+		8FCCA0261B3806040091F1B1 /* Build configuration list for PBXProject "DSCVR" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FCCA0481B3806040091F1B1 /* Debug */,
@@ -2110,7 +2114,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "Iam360" */ = {
+		8FCCA04A1B3806040091F1B1 /* Build configuration list for PBXNativeTarget "DSCVR" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8FCCA04B1B3806040091F1B1 /* Debug */,

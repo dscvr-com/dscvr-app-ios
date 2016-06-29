@@ -35,6 +35,7 @@ class DetailsViewModel {
     var isMe = false
     let likeCount = MutableProperty<Int>(0)
     let liked = MutableProperty<Bool>(false)
+    let isThreeRing = MutableProperty<Bool>(false)
     
     let postingEnabled = MutableProperty<Bool>(false)
     let isPosting = MutableProperty<Bool>(false)

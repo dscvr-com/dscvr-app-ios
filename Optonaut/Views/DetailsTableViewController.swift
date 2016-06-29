@@ -71,6 +71,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     let deleteButton = UIButton()
     var gyroImageActive = UIImage(named: "details_gyro_active")
     var gyroImageInactive = UIImage(named: "details_gyro_inactive")
+    var backButton = UIImage(named: "back_yellow_icn")
     
     
     required init(optographId:UUID) {
@@ -109,7 +110,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             scnView = SCNView(frame: self.view.frame)
         }
         
-        let hfov: Float = 55
+        let hfov: Float = 40
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
         renderDelegate.scnView = scnView
@@ -246,12 +247,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)
         //self.view.addSubview(hideSelectorButton)
         
-        if  Defaults[.SessionGyro] {
-            self.changeButtonIcon(true)
-        } else {
-            self.changeButtonIcon(false)
-        }
-        
         //self.view.addSubview(littlePlanetButton)
         //self.view.addSubview(gyroButton)
         
@@ -268,10 +263,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //        gyroButton.userInteractionEnabled = true
 //        gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
         
-        
-        
         gyroImageActive = gyroImageActive?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         gyroImageInactive = gyroImageInactive?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeDetailsPage))
+        
+        if  Defaults[.SessionGyro] {
+            self.changeButtonIcon(true)
+        } else {
+            self.changeButtonIcon(false)
+        }
         
         let oneTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.oneTap(_:)))
         oneTapGestureRecognizer.numberOfTapsRequired = 1
@@ -327,7 +328,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.navigationController!.presentViewController(alert, animated: true, completion: nil)
         }
     }
-    
+    func closeDetailsPage() {
+        self.navigationController?.popViewControllerAnimated(true)
+    }
     
     func toggleComment() {
         let commentPage = CommentTableViewController(optographID: optographID)
@@ -571,7 +574,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         updateNavbarAppear()
         
-        self.navigationController?.navigationBar.tintColor = UIColor(hex:0xffbc00)
+        //self.navigationController?.navigationBar.tintColor = UIColor(hex:0xffbc00)
     }
     
     override func viewWillDisappear(animated: Bool) {

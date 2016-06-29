@@ -54,7 +54,6 @@ class ApiService<T: Mappable> {
     }
     
     static func post(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
-        print(endpoint,parameters)
         return request(endpoint, method: .POST, queries: queries, parameters: parameters)
     }
     
@@ -171,7 +170,6 @@ class ApiService<T: Mappable> {
                 mutableURLRequest.HTTPBody = Optional(json)
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
-            print("mutablerequest",mutableURLRequest)
             
             let request = Alamofire.request(mutableURLRequest)
                 .validate()

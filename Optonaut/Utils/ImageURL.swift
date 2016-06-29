@@ -44,19 +44,22 @@ private func buildURL(path: String, width: Int, height: Int, filter: String?) ->
     switch Env {
 //    case .Development: s3Host = "optonaut-ios-beta-dev.s3.amazonaws.com"
 //    case .Staging: s3Host = "optonaut-ios-beta-staging.s3.amazonaws.com"
-    case .Production,.localStaging, .Staging, .Development: s3Host = "bucket.iam360.io" //"resources.staging-iam360.io.s3.amazonaws.com"
+    case .Production,.localStaging, .Staging, .Development: s3Host = "resources.staging-iam360.io.s3.amazonaws.com"
     }
     
     let scale = UIScreen.mainScreen().scale
     let scaledWidth = Int(CGFloat(width) * scale)
     let scaledHeight = Int(CGFloat(height) * scale)
-    let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
+    //let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
+    let securityKey = "unsafe"
     
     let filterStr = filter != nil ? "filters:\(filter!)/" : ""
     let urlPartToSign = "\(scaledWidth)x\(scaledHeight)/\(filterStr)\(s3Host)/\(path)"
-    let hmacUrlPart = urlPartToSign.hmac(securityKey)
+    //let hmacUrlPart = urlPartToSign.hmac(securityKey)
+    let hmacUrlPart = urlPartToSign.hmac("unsafe")
     
-    return "http://images.iam360.io/\(hmacUrlPart)/\(urlPartToSign)"
+    //return "http://images.iam360.io/\(hmacUrlPart)/\(urlPartToSign)"
+    return "http://52.74.26.220:8888/\(hmacUrlPart)/\(urlPartToSign)"
 }
 
 private extension String {

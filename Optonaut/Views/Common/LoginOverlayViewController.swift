@@ -53,7 +53,7 @@ class LoginOverlayViewController: UIViewController{
     
     dynamic private func facebook() {
         let loginManager = FBSDKLoginManager()
-        let readPermission = ["public_profile","email"]
+        let readPermission = ["public_profile","email","user_friends"]
         
         viewModel.facebookPending.value = true
         
@@ -66,6 +66,7 @@ class LoginOverlayViewController: UIViewController{
         }
         
         let successBlock = { [weak self] (token: FBSDKAccessToken!) in
+            print(token.tokenString)
             self?.viewModel.facebookSignin(token.userID, token: token.tokenString)
                 .on(
                     failed: { _ in

@@ -21,7 +21,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     let leftViewController: NavigationController
     
     var thisView = UIView()
-    var isSettingsViewOpen:Bool = false
+    var isSettingsViewOpen = MutableProperty<Bool>(false)
     var panGestureRecognizer:UIPanGestureRecognizer!
     var navBarTapGestureRecognizer:UITapGestureRecognizer!
     var inVr:Bool = false
@@ -137,10 +137,13 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func scrollViewDidScroll(scrollView:UIScrollView) {
+        print(scrollView.contentOffset.x , ">>>",self.view.frame.width)
         if (scrollView.contentOffset.x < self.view.frame.width && !shareData.isSharePageOpen.value) {
             scrollView.contentOffset.x = self.view.frame.width
+            print("pumasok sa if")
         } else if (scrollView.contentOffset.x >= self.view.frame.width && shareData.isSharePageOpen.value) {
             shareData.isSharePageOpen.value = false
+            print("pumasok sa else if ")
         }
     }
     
@@ -182,7 +185,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         label.sizeToFit()
         return label.frame.height
     }
-    
     
     func settingsView() {
         
@@ -344,10 +346,14 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 24, width: calcTextWidth("MOTOR", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         thisView.addSubview(labelMotor)
         
-        self.activeRingButtons(Defaults[.SessionUseMultiRing])
-        self.activeModeButtons(Defaults[.SessionMotor])
-        self.activeVrMode()
-        self.activeDisplayButtons(Defaults[.SessionGyro])
+        isSettingsViewOpen.producer.startWithNext{ val in
+            if val {
+                self.activeRingButtons(Defaults[.SessionUseMultiRing])
+                self.activeModeButtons(Defaults[.SessionMotor])
+                self.activeVrMode()
+                self.activeDisplayButtons(Defaults[.SessionGyro])
+            }
+        }
 
         pullButton.icon = UIImage(named:"arrow_pull")!
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
@@ -405,7 +411,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 self.thisView.frame = CGRectMake(0, settingsViewCount , self.view.frame.width, self.view.frame.height)
             }
             }, completion: { finished in
-                self.isSettingsViewOpen = false
+                self.isSettingsViewOpen.value = false
                 
         })
     }
@@ -515,7 +521,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             print("wew")
         case .Changed:
             
-            if !isSettingsViewOpen {
+            if !isSettingsViewOpen.value {
                 thisView.frame = CGRectMake(0, translationY - self.view.frame.height , self.view.frame.width, self.view.frame.height)
             } else {
                 thisView.frame = CGRectMake(0,self.view.frame.height - (self.view.frame.height - translationY) , self.view.frame.width, self.view.frame.height)
@@ -523,17 +529,17 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         case .Cancelled:
             print("cancelled")
         case .Ended:
-            if !isSettingsViewOpen{
+            if !isSettingsViewOpen.value {
                 UIView.animateWithDuration(0.5, animations: {
                     self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
                     }, completion:{ finished in
-                        self.isSettingsViewOpen = true
+                        self.isSettingsViewOpen.value = true
                 })
             } else {
                 UIView.animateWithDuration(0.5, animations: {
                     self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
                     }, completion:{ finished in
-                        self.isSettingsViewOpen = false
+                        self.isSettingsViewOpen.value = false
                 })
             }
             
@@ -542,36 +548,36 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     func tapNavBarTitleForFeedClass() {
         
-        if !isSettingsViewOpen{
+        if !isSettingsViewOpen.value {
             UIView.animateWithDuration(0.3, animations: {
                 self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
-                    self.isSettingsViewOpen = true
+                    self.isSettingsViewOpen.value = true
                     
             })
         } else {
             UIView.animateWithDuration(0.3, animations: {
                 self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
-                    self.isSettingsViewOpen = false
+                    self.isSettingsViewOpen.value = false
             })
         }
     }
     
     func tapNavBarTitle(recognizer:UITapGestureRecognizer) {
         
-        if !isSettingsViewOpen{
+        if !isSettingsViewOpen.value{
             UIView.animateWithDuration(0.3, animations: {
                 self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
-                    self.isSettingsViewOpen = true
+                    self.isSettingsViewOpen.value = true
             
             })
         } else {
             UIView.animateWithDuration(0.3, animations: {
                 self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
-                    self.isSettingsViewOpen = false
+                    self.isSettingsViewOpen.value = false
             })
         }
     }
