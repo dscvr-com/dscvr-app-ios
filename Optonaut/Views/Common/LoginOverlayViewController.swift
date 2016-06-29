@@ -38,16 +38,16 @@ class LoginOverlayViewController: UIViewController{
         contentView.backgroundColor = UIColor(hex:0xf7f7f7)
         view.addSubview(contentView)
         
+        let imageSize = UIImage(named: "logo_big")
         logoImageView.image = UIImage(named: "logo_big")
         contentView.addSubview(logoImageView)
-        
         
         //facebookButtonView.rac_loading <~ viewModel.facebookPending
         facebookButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LoginOverlayViewController.facebook)))
         facebookButtonView.setBackgroundImage(UIImage(named:"facebook_btn"), forState: .Normal)
         contentView.addSubview(facebookButtonView)
         
-        logoImageView.anchorToEdge(.Top, padding: 200, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
+        logoImageView.anchorToEdge(.Top, padding: 200, width: imageSize!.size.width, height: imageSize!.size.height)
         facebookButtonView.align(.UnderCentered, relativeTo: logoImageView, padding: 30, width: contentView.frame.width - 85, height: 50)
     }
     

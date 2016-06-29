@@ -140,10 +140,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         print(scrollView.contentOffset.x , ">>>",self.view.frame.width)
         if (scrollView.contentOffset.x < self.view.frame.width && !shareData.isSharePageOpen.value) {
             scrollView.contentOffset.x = self.view.frame.width
-            print("pumasok sa if")
         } else if (scrollView.contentOffset.x >= self.view.frame.width && shareData.isSharePageOpen.value) {
             shareData.isSharePageOpen.value = false
-            print("pumasok sa else if ")
         }
     }
     
@@ -223,12 +221,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         let vrText = UILabel()
 //        vrText.frame = CGRect(x: 38,y: titleSettings.frame.origin.y + 30+50,width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(18, withType: .Semibold)),height: 30)
-        vrText.text = "VIEW IAM360 IN"
+        vrText.text = "VIEW 360 IMAGE IN"
         vrText.textAlignment = .Center
         vrText.textColor = UIColor.grayColor()
         vrText.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(vrText)
-        vrText.align(.UnderMatchingLeft, relativeTo: vrImageLabel, padding: 16, width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
+        vrText.align(.UnderMatchingLeft, relativeTo: vrImageLabel, padding: 16, width: calcTextWidth("VIEW 360 IMAGE IN", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         let dividerFive = UILabel()
         dividerFive.backgroundColor = UIColor(hex:0xa5a5a5)
