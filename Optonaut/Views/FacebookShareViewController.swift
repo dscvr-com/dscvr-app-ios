@@ -14,6 +14,9 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
     var buttonCancel = UIButton()
     var buttonPost = UIButton()
     var textField = UITextView()
+    var labelTitle = UILabel()
+    var labelLine = UILabel()
+    var labelFacebook = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,24 +27,45 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
         
         theView.backgroundColor = UIColor.whiteColor()
         
+        labelFacebook.text = "Facebook"
+        labelFacebook.textColor = UIColor.grayColor()
+        labelFacebook.font = UIFont.boldSystemFontOfSize(16.0)
+        theView.addSubview(labelFacebook)
+        
         buttonCancel.setTitle("CANCEL", forState: .Normal)
         buttonCancel.backgroundColor = UIColor.whiteColor()
         buttonCancel.setTitleColor(UIColor.grayColor(), forState: .Normal)
         buttonCancel.addTarget(self,action: #selector(dismissPage),forControlEvents: .TouchUpInside)
+        theView.addSubview(buttonCancel)
         
         buttonPost.setTitle("POST", forState: .Normal)
         buttonPost.backgroundColor = UIColor.whiteColor()
         buttonPost.setTitleColor(UIColor.blueColor(), forState: .Normal)
         buttonPost.addTarget(self,action: #selector(dismissPage),forControlEvents: .TouchUpInside)
-        
-        buttonCancel.anchorInCorner(.TopLeft, xPad: 10, yPad: 10, width: 100, height: 20)
-        buttonPost.anchorInCorner(.TopRight, xPad: 10, yPad: 10, width: 100, height: 20)
-        
-        theView.addSubview(buttonCancel)
         theView.addSubview(buttonPost)
+        
+        labelLine.backgroundColor = UIColor.grayColor()
+        theView.addSubview(labelLine)
+        
+        labelTitle.text = "Say something about this 360 photo"
+        labelTitle.textAlignment = .Center
+        theView.addSubview(labelTitle)
+        
+        textField.backgroundColor = UIColor.grayColor()
+        textField.textColor = UIColor.blackColor()
+        textField.becomeFirstResponder()
         theView.addSubview(textField)
         
-        textField.becomeFirstResponder()
+        
+        
+        labelFacebook.anchorToEdge(.Top, padding: 10, width: 80, height: 20)
+        buttonCancel.anchorInCorner(.TopLeft, xPad: 0, yPad: 10, width: 100, height: 20)
+        buttonPost.anchorInCorner(.TopRight, xPad: 0, yPad: 10, width: 100, height: 20)
+        labelLine.align(.UnderMatchingLeft, relativeTo: buttonCancel, padding: 10, width: view.frame.width - 20, height: 1)
+        labelTitle.align(.UnderCentered, relativeTo: labelLine, padding: 10, width: view.frame.width - 20, height: 30)
+        textField.align(.UnderCentered, relativeTo: labelTitle, padding: 10, width: view.frame.width - 40, height: 100)
+        
+        
 
         // Do any additional setup after loading the view.
     }
