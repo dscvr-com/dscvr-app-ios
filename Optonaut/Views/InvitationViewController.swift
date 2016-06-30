@@ -8,11 +8,12 @@
 
 import UIKit
 
-class InvitationViewController: UIViewController {
+class InvitationViewController: UIViewController,UITextFieldDelegate {
 
     
     var label1 = UILabel()
     var label2 = UILabel()
+    var label3 = UILabel()
     var logoImageView = UIImageView()
     var textPutCode = UITextField()
     var textRequestCode = UITextField()
@@ -20,15 +21,19 @@ class InvitationViewController: UIViewController {
     var view1 = UIView()
     var orImage = UIImageView()
     var requestButton = UIButton()
+    var backView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor(hex:0x343434)
         
-        let logo: UIImage = UIImage(named: "logo_big")!
+        backView.backgroundColor = UIColor(hex:0x343434)
+        view.addSubview(backView)
+        backView.fillSuperview()
+        
+        let logo: UIImage = UIImage(named: "logo_invite")!
         logoImageView.image = logo
-        view.addSubview(logoImageView)
+        backView.addSubview(logoImageView)
         
         let dragTextWidth = calcTextWidth("Type Super Secret Code", withFont: .displayOfSize(20, withType: .Semibold))
         label1.text = "Type Super Secret Code"
@@ -36,10 +41,10 @@ class InvitationViewController: UIViewController {
         label1.backgroundColor = UIColor.clearColor()
         label1.textColor = UIColor.whiteColor()
         label1.textAlignment = .Center
-        view.addSubview(label1)
+        backView.addSubview(label1)
         
         view1.backgroundColor = UIColor.clearColor()
-        view.addSubview(view1)
+        backView.addSubview(view1)
         
         textPutCode.backgroundColor = UIColor(hex:0xCACACA)
         textPutCode.layer.cornerRadius = 2
@@ -55,18 +60,20 @@ class InvitationViewController: UIViewController {
         
         let orText: UIImage = UIImage(named: "or_icn")!
         orImage.image = orText
-        view.addSubview(orImage)
+        backView.addSubview(orImage)
         
         label2.text = "Request Super Secret Code"
         label2.font = UIFont(name: "Avenir-Book", size: 20)
         label2.backgroundColor = UIColor.clearColor()
         label2.textAlignment = .Center
         label2.textColor = UIColor.whiteColor()
-        view.addSubview(label2)
+        backView.addSubview(label2)
         
         textRequestCode.backgroundColor = UIColor(hex:0xCACACA)
         textRequestCode.layer.cornerRadius = 2
-        view.addSubview(textRequestCode)
+        textRequestCode.placeholder = "   E-mail"
+        textRequestCode.textColor = UIColor.whiteColor()
+        backView.addSubview(textRequestCode)
         
         requestButton.setTitle("REQUEST", forState: .Normal)
         requestButton.layer.cornerRadius = 2
@@ -74,28 +81,75 @@ class InvitationViewController: UIViewController {
         requestButton.backgroundColor = UIColor(hex:0xffbc00)
         requestButton.setTitleColor(UIColor(hex:0x343434), forState: .Normal)
         requestButton.addTarget(self,action: #selector(pushCode),forControlEvents: .TouchUpInside)
-        view.addSubview(requestButton)
+        backView.addSubview(requestButton)
         
-        logoImageView.anchorToEdge(.Top, padding: 40, width: logo.size.width, height: logo.size.height)
+        label3.text = "Reach us at TEAM@DSCVR.COM"
+        label3.font = UIFont(name: "Avenir-Book", size: 17)
+        label3.backgroundColor = UIColor.clearColor()
+        label3.textAlignment = .Center
+        label3.textColor = UIColor.whiteColor()
+        backView.addSubview(label3)
+        
+        logoImageView.anchorToEdge(.Top, padding: 60, width: logo.size.width, height: logo.size.height)
         label1.align(.UnderCentered, relativeTo: logoImageView, padding: 55, width: dragTextWidth, height: 25)
         
         let viewwidth = (view.frame.width-49)/3
         
-        textPutCode.anchorInCorner(.TopLeft, xPad: 0, yPad: 0, width: viewwidth * 2, height: 40)
-        buttonPutCode.align(.ToTheRightMatchingBottom, relativeTo: textPutCode, padding: 5, width: viewwidth, height: 40)
-        view1.align(.UnderCentered, relativeTo: label1, padding: 16, width: view.frame.width-49, height: 40)
+        textPutCode.anchorInCorner(.TopLeft, xPad: 0, yPad: 0, width: viewwidth * 2, height: 50)
+        buttonPutCode.align(.ToTheRightMatchingBottom, relativeTo: textPutCode, padding: 5, width: viewwidth, height: 50)
+        view1.align(.UnderCentered, relativeTo: label1, padding: 16, width: view.frame.width-49, height: 50)
         orImage.align(.UnderCentered, relativeTo: view1, padding: 49, width: orText.size.width, height: orText.size.height)
         label2.align(.UnderCentered, relativeTo: orImage, padding: 22, width: view.frame.width-44, height: 50)
         
+        textRequestCode.align(.UnderCentered, relativeTo: label2, padding: 16, width: view.frame.width-44, height: 50)
+        requestButton.align(.UnderCentered, relativeTo: textRequestCode, padding: 13, width: view.frame.width-44, height: 50)
         
+        let footerWidth = calcTextWidth("Reach us at TEAM@DSCVR.COM", withFont: .displayOfSize(17, withType: .Semibold))
+        label3.anchorToEdge(.Bottom, padding: 10, width: footerWidth, height:20)
         
+        textPutCode.delegate = self
+        textRequestCode.delegate = self
+        backView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeKeyboard)))
         
-        
-        // Do any additional setup after loading the view.
     }
-    
     func pushCode() {
     
+    }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
+        if textRequestCode.isFirstResponder() {
+            backView.frame = CGRect(x: 0,y: backView.frame.origin.y - keyboardHeight ,width: view.frame.width,height: view.frame.height)
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
+        if textRequestCode.isFirstResponder() {
+            backView.frame = CGRect(x: 0,y: backView.frame.origin.y + keyboardHeight ,width: view.frame.width,height: view.frame.height)
+        }
+        
+    }
+    func closeKeyboard() {
+        view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
     }
 
     override func didReceiveMemoryWarning() {
@@ -103,15 +157,5 @@ class InvitationViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
