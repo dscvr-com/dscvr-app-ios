@@ -104,6 +104,11 @@
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
+            <key>api-staging.dscvr.com</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+            </dict>
 			<key>facebook.com</key>
 			<dict>
 				<key>NSExceptionRequiresForwardSecrecy</key>

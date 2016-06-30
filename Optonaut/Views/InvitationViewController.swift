@@ -47,11 +47,11 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         backView.addSubview(view1)
         
         textPutCode.backgroundColor = UIColor(hex:0xCACACA)
-        textPutCode.layer.cornerRadius = 2
+        textPutCode.layer.cornerRadius = 4
         view1.addSubview(textPutCode)
         
         buttonPutCode.setTitle("GO", forState: .Normal)
-        buttonPutCode.layer.cornerRadius = 2
+        buttonPutCode.layer.cornerRadius = 4
         buttonPutCode.titleLabel!.font =  UIFont(name: "Helvetica", size: 12)
         buttonPutCode.backgroundColor = UIColor(hex:0xffbc00)
         buttonPutCode.setTitleColor(UIColor(hex:0x343434), forState: .Normal)
@@ -70,13 +70,13 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         backView.addSubview(label2)
         
         textRequestCode.backgroundColor = UIColor(hex:0xCACACA)
-        textRequestCode.layer.cornerRadius = 2
+        textRequestCode.layer.cornerRadius = 4
         textRequestCode.placeholder = "   E-mail"
         textRequestCode.textColor = UIColor.whiteColor()
         backView.addSubview(textRequestCode)
         
         requestButton.setTitle("REQUEST", forState: .Normal)
-        requestButton.layer.cornerRadius = 2
+        requestButton.layer.cornerRadius = 4
         requestButton.titleLabel!.font =  UIFont(name: "Helvetica", size: 12)
         requestButton.backgroundColor = UIColor(hex:0xffbc00)
         requestButton.setTitleColor(UIColor(hex:0x343434), forState: .Normal)
@@ -95,8 +95,8 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         
         let viewwidth = (view.frame.width-49)/3
         
-        textPutCode.anchorInCorner(.TopLeft, xPad: 0, yPad: 0, width: viewwidth * 2, height: 50)
-        buttonPutCode.align(.ToTheRightMatchingBottom, relativeTo: textPutCode, padding: 5, width: viewwidth, height: 50)
+        textPutCode.anchorInCorner(.TopLeft, xPad: 0, yPad: 0, width: (viewwidth * 2)+20, height: 50)
+        buttonPutCode.align(.ToTheRightMatchingBottom, relativeTo: textPutCode, padding: 5, width: viewwidth - 20, height: 50)
         view1.align(.UnderCentered, relativeTo: label1, padding: 16, width: view.frame.width-49, height: 50)
         orImage.align(.UnderCentered, relativeTo: view1, padding: 49, width: orText.size.width, height: orText.size.height)
         label2.align(.UnderCentered, relativeTo: orImage, padding: 22, width: view.frame.width-44, height: 50)

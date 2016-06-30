@@ -51,15 +51,13 @@ private func buildURL(path: String, width: Int, height: Int, filter: String?) ->
     let scaledWidth = Int(CGFloat(width) * scale)
     let scaledHeight = Int(CGFloat(height) * scale)
     let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
-    //let securityKey = "unsafe"
     
     let filterStr = filter != nil ? "filters:\(filter!)/" : ""
     let urlPartToSign = "\(scaledWidth)x\(scaledHeight)/\(filterStr)\(s3Host)/\(path)"
     let hmacUrlPart = urlPartToSign.hmac(securityKey)
-    //let hmacUrlPart = urlPartToSign.hmac("unsafe")
     
-    return "http://images.iam360.io/\(hmacUrlPart)/\(urlPartToSign)"
-    //return "http://52.74.26.220:8888/\(hmacUrlPart)/\(urlPartToSign)"
+    //return "http://images.iam360.io/\(hmacUrlPart)/\(urlPartToSign)"
+    return "http://photos.dscvr.com/\(hmacUrlPart)/\(urlPartToSign)"
 }
 
 private extension String {

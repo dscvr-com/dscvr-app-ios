@@ -134,7 +134,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
                 let optograph = optographBox.model
                 let person = Models.persons[optograph.personID]!.model
                 
-                let baseURL = Env == .Staging ? "share.iam360.io" : "share.iam360.io"
+                let baseURL = Env == .Staging ? "wow.dscvr.com" : "wow.dscvr.com"
                 self.shareUrl = NSURL(string: "http://\(baseURL)/\(optograph.shareAlias)")!
                 self.textToShare = "Check out this awesome IAM360 image of \(person.displayName)"
             }

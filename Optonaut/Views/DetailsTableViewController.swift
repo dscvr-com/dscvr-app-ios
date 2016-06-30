@@ -448,7 +448,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func oneTap(recognizer:UITapGestureRecognizer) {
-        print("one tap")
         if !isUIHide {
             UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
                 self.whiteBackground.hidden = true

@@ -33,7 +33,6 @@ struct OptographApiModel: ApiModel, Mappable {
     }
     
     mutating func mapping(map: Map) {
-        print(map)
         ID                          <- map["id"]
         createdAt                   <- (map["created_at"], NSDateTransform())
         updatedAt                   <- (map["updated_at"], NSDateTransform())
