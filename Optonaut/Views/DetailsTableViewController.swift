@@ -72,7 +72,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var gyroImageActive = UIImage(named: "details_gyro_active")
     var gyroImageInactive = UIImage(named: "details_gyro_inactive")
     var backButton = UIImage(named: "back_yellow_icn")
-    var shareButton = UIImage(named:"")
+    var shareButton = UIButton()
     
     required init(optographId:UUID) {
         
@@ -304,9 +304,29 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             
             let deleteImageSize = UIImage(named:"profile_delete_icn")?.size
             deleteButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
+            
+            shareButton.setBackgroundImage(UIImage(named: "share_white_details"), forState: .Normal)
+            shareButton.addTarget(self, action: #selector(share), forControlEvents: .TouchUpInside)
+            whiteBackground.addSubview(shareButton)
+            
+            let shareImageSize = UIImage(named:"share_white_details")?.size
+            shareButton.align(.ToTheLeftCentered, relativeTo: deleteButton, padding: 20, width:(shareImageSize?.width)!, height: (shareImageSize?.height)!)
+        } else {
+            shareButton.setBackgroundImage(UIImage(named: "share_white_details"), forState: .Normal)
+            shareButton.addTarget(self, action: #selector(share), forControlEvents: .TouchUpInside)
+            whiteBackground.addSubview(shareButton)
+            
+            let shareImageSize = UIImage(named:"share_white_details")?.size
+            shareButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(shareImageSize?.width)!, height: (shareImageSize?.height)!)
         }
         
     }
+    func share() {
+        let share = DetailsShareViewController()
+        share.optographId = optographID
+        self.navigationController?.presentViewController(share, animated: true, completion: nil)
+    }
+    
     func deleteOpto() {
         
         if SessionService.isLoggedIn {

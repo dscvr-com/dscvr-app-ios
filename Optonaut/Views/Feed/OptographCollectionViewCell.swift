@@ -484,8 +484,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
     func setRotation (isRotating:Bool) {
         if isRotating {
             print("playing")
-            previewImage.hidden = true
-            self.video!.play()
+            if self.video?.status == .ReadyToPlay {
+                previewImage.hidden = true
+                self.video!.play()
+            }
         } else {
             print("pause")
             previewImage.hidden = false

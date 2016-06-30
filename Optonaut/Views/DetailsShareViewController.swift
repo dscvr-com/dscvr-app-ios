@@ -33,18 +33,38 @@ class DetailsShareViewController: UIViewController ,TabControllerDelegate,MFMail
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let closeButton = UIButton()
+        closeButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
+        closeButton.anchorInCorner(.TopLeft, xPad: 10, yPad: 20, width: 30 , height: 30)
+        closeButton.addTarget(self, action: #selector(closeShare), forControlEvents: .TouchUpInside)
+        self.view.addSubview(closeButton)
+        
+        let shareTitle = UILabel()
+        shareTitle.text = "Share"
+        shareTitle.textAlignment = .Center
+        shareTitle.font = UIFont(name: "Avenir-Book", size: 25)
+        self.view.addSubview(shareTitle)
+        
+        let textwidth = calcTextWidth("Share", withFont: .displayOfSize(25, withType: .Semibold))
+        shareTitle.anchorToEdge(.Top, padding: 25, width: textwidth, height: 20)
+        
+        let lineDivider = UILabel()
+        lineDivider.backgroundColor = UIColor.lightGrayColor()
+        self.view.addSubview(lineDivider)
+        lineDivider.align(.UnderCentered, relativeTo: shareTitle, padding: 10, width: self.view.frame.width , height: 1)
+        
         let image: UIImage = UIImage(named: "logo_settings")!
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
         self.view.addSubview(bgImage!)
-        bgImage!.anchorToEdge(.Top, padding: (navigationController?.navigationBar.frame.height)! + 25, width: image.size.width, height: image.size.height)
+        bgImage!.align(.UnderCentered, relativeTo: lineDivider, padding: 10, width:image.size.width, height: image.size.height)
         
         let placeholderImageViewImage: UIImage = UIImage(named: "logo_settings")!
         var placeholderImageView: UIImageView?
         placeholderImageView = UIImageView(image: placeholderImageViewImage)
         placeholderImageView?.backgroundColor = UIColor.blackColor()
         self.view.addSubview(placeholderImageView!)
-        placeholderImageView!.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: self.view.frame.width - 56, height: 130)
+        placeholderImageView!.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width:  self.view.frame.width - 56, height: 130)
         
         titleText.text = "Share this 360 image:"
         titleText.textAlignment = .Center
@@ -109,6 +129,10 @@ class DetailsShareViewController: UIViewController ,TabControllerDelegate,MFMail
             self.textToShare = "Check out this awesome IAM360 image of \(person.displayName)"
         }
     }
+    func closeShare() {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
     
     func copyLink() {
         UIPasteboard.generalPasteboard().string = "\(self.shareUrl)"
@@ -141,7 +165,7 @@ class DetailsShareViewController: UIViewController ,TabControllerDelegate,MFMail
         let shareOnFb = FacebookShareViewController()
         shareOnFb.optographId = self.optographId
         shareOnFb.modalPresentationStyle = .OverCurrentContext
-        self.navigationController?.presentViewController(shareOnFb, animated: true, completion: nil)
+        self.presentViewController(shareOnFb, animated: true, completion: nil)
     }
     
     func shareMessenger() {
