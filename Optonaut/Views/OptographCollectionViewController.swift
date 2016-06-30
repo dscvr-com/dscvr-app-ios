@@ -467,9 +467,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        let detailsViewController = DetailsTableViewController(optographId:optographIDs[indexPath.row])
-        detailsViewController.cellIndexpath = indexPath.item
-        navigationController?.pushViewController(detailsViewController, animated: true)
+//        let detailsViewController = DetailsTableViewController(optographId:optographIDs[indexPath.row])
+//        detailsViewController.cellIndexpath = indexPath.item
+//        navigationController?.pushViewController(detailsViewController, animated: true)
+        navigationController?.pushViewController(InvitationViewController(), animated: true)
     }
     
     

@@ -72,7 +72,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var gyroImageActive = UIImage(named: "details_gyro_active")
     var gyroImageInactive = UIImage(named: "details_gyro_inactive")
     var backButton = UIImage(named: "back_yellow_icn")
-    
+    var shareButton = UIImage(named:"")
     
     required init(optographId:UUID) {
         
