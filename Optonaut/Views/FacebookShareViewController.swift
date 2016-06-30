@@ -19,6 +19,10 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
     var labelFacebook = UILabel()
     var buttonViews = UIView()
     var optographId:String = ""
+    
+    var loadingView = UIView()
+    var container = UIView()
+    var actInd = UIActivityIndicatorView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +68,7 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
         labelTitle.textAlignment = .Center
         theView.addSubview(labelTitle)
         
-        textField.backgroundColor = UIColor.grayColor()
+        textField.backgroundColor = UIColor(hex:0xCACACA)
         textField.textColor = UIColor.blackColor()
         let placeholder = NSAttributedString(string: "Check out this amazing scene in virtual reality", attributes: [NSForegroundColorAttributeName : UIColor.blackColor()])
         textField.attributedText = placeholder
@@ -80,9 +84,33 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
         labelTitle.align(.UnderCentered, relativeTo: labelLine, padding: 10, width: view.frame.width - 20, height: 30)
         textField.align(.UnderCentered, relativeTo: labelTitle, padding: 10, width: view.frame.width - 40, height: 100)
         
+        showActivityIndicatory(view)
+    }
+    
+    func showActivityIndicatory(uiView: UIView) {
+        container.frame = uiView.frame
+        container.center = uiView.center
+        container.backgroundColor = UIColor(hex:0xffffff).alpha(0.30)
         
-
-        // Do any additional setup after loading the view.
+        loadingView.frame = CGRectMake(0, 0, 80, 80)
+        loadingView.center = uiView.center
+        loadingView.backgroundColor = UIColor(hex:0x444444).alpha(0.70)
+        loadingView.clipsToBounds = true
+        loadingView.layer.cornerRadius = 10
+        
+        actInd.frame = CGRectMake(0.0, 0.0, 40.0, 40.0);
+        actInd.activityIndicatorViewStyle =
+            UIActivityIndicatorViewStyle.WhiteLarge
+        actInd.center = CGPointMake(loadingView.frame.size.width / 2,
+                                    loadingView.frame.size.height / 2);
+        loadingView.addSubview(actInd)
+        container.addSubview(loadingView)
+        uiView.addSubview(container)
+        
+        self.loadingView.hidden = true
+        self.container.hidden = true
+        self.actInd.stopAnimating()
+        
     }
     
     func dismissPage() {
@@ -99,7 +127,9 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
         ApiService<EmptyResponse>.post("optographs/share_facebook", parameters: parameters)
             .on(
                 completed: {
-                    print("success")
+                    self.loadingView.hidden = true
+                    self.container.hidden = true
+                    self.actInd.stopAnimating()
                     let alert = UIAlertController(title: "", message: "Posted Successfully.", preferredStyle: UIAlertControllerStyle.Alert)
                     alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { val in
                         self.dismissPage()
@@ -107,12 +137,19 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
                     self.presentViewController(alert, animated: true, completion: nil)
                 },
                 failed: { _ in
+                    self.loadingView.hidden = true
+                    self.container.hidden = true
+                    self.actInd.stopAnimating()
                     let alert = UIAlertController(title: "", message: "Posting Failed.", preferredStyle: UIAlertControllerStyle.Alert)
                     alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {val in
                         self.dismissPage()
                     }))
                     self.presentViewController(alert, animated: true, completion: nil)
                     
+                },started: { _ in
+                    self.loadingView.hidden = false
+                    self.container.hidden = false
+                    self.actInd.startAnimating()
                 }
             )
             .start()
