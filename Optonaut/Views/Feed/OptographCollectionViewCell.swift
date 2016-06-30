@@ -484,8 +484,11 @@ class OptographCollectionViewCell: UICollectionViewCell{
     func setRotation (isRotating:Bool) {
         if isRotating {
             print("playing")
+            previewImage.hidden = true
             self.video!.play()
         } else {
+            print("pause")
+            previewImage.hidden = false
             self.video!.pause()
         }
     }
@@ -531,11 +534,11 @@ class OptographCollectionViewCell: UICollectionViewCell{
 //        loadingIndicatorView.startAnimating()
 //        contentView.addSubview(loadingIndicatorView)
         
-//        previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
-//        yellowView.addSubview(previewImage)
-        
         playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         self.yellowView.layer.addSublayer(playerLayer)
+        
+        previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
+        yellowView.addSubview(previewImage)
         
         whiteBackground.backgroundColor = UIColor(hex:0x595959).alpha(0.80)
         yellowView.addSubview(whiteBackground)
@@ -656,7 +659,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         case .Changed:
             xCoordBegin += 4.0
             if velocity.x > 0 {
-                if (yellowView.frame.origin.x <= 67) {
+                if (yellowView.frame.origin.x <= 45) {
                     yellowView.frame.origin.x = xCoordBegin
                 } else {
                     if !isShareOpen.value {
@@ -768,22 +771,22 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
             }
         }
-//        viewModel.uploadStatus.producer.equalsTo(.Uploaded)
-//            .startWithNext { [weak self] isUploaded in
-//                if isUploaded {
-//                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
-//                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
-//                } else {
-//                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
-//                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
-//                        dispatch_async(dispatch_get_main_queue()) {
-//                            self?.previewImage.image = originalImage.resized(.Width, value: (self?.contentView.frame.width)!)
-//                        }
-//                    }
-//                }
+        viewModel.uploadStatus.producer.equalsTo(.Uploaded)
+            .startWithNext { [weak self] isUploaded in
+                if isUploaded {
+                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
+                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+                } else {
+                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self?.previewImage.image = originalImage.resized(.Width, value: (self?.contentView.frame.width)!)
+                        }
+                    }
+                }
 //                self?.loadingOverlayView.hidden = true
 //                self?.loadingIndicatorView.stopAnimating()
-//        }
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
