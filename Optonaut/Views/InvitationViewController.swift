@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ReactiveCocoa
 
 class InvitationViewController: UIViewController,UITextFieldDelegate {
 
@@ -55,7 +56,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         buttonPutCode.titleLabel!.font =  UIFont(name: "Helvetica", size: 12)
         buttonPutCode.backgroundColor = UIColor(hex:0xffbc00)
         buttonPutCode.setTitleColor(UIColor(hex:0x343434), forState: .Normal)
-        buttonPutCode.addTarget(self,action: #selector(pushCode),forControlEvents: .TouchUpInside)
+        buttonPutCode.addTarget(self,action: #selector(sendCode),forControlEvents: .TouchUpInside)
         view1.addSubview(buttonPutCode)
         
         let orText: UIImage = UIImage(named: "or_icn")!
@@ -80,7 +81,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         requestButton.titleLabel!.font =  UIFont(name: "Helvetica", size: 12)
         requestButton.backgroundColor = UIColor(hex:0xffbc00)
         requestButton.setTitleColor(UIColor(hex:0x343434), forState: .Normal)
-        requestButton.addTarget(self,action: #selector(pushCode),forControlEvents: .TouchUpInside)
+        requestButton.addTarget(self,action: #selector(sendRequest),forControlEvents: .TouchUpInside)
         backView.addSubview(requestButton)
         
         label3.text = "Reach us at TEAM@DSCVR.COM"
@@ -111,10 +112,52 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         textRequestCode.delegate = self
         backView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeKeyboard)))
         
+        let closeButton = UIButton()
+        closeButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
+        closeButton.anchorInCorner(.TopLeft, xPad: 10, yPad: 20, width: 30 , height: 30)
+        closeButton.addTarget(self, action: #selector(close), forControlEvents: .TouchUpInside)
+        backView.addSubview(closeButton)
+        
     }
-    func pushCode() {
+    
+    func close() {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func sendRequest() {
+        
+        sendApiRequestCode().start()
+        
+       // "fundme360"
     
     }
+    
+    func sendApiRequestCode() -> SignalProducer<RequestCodeApiModel, ApiError> {
+        let parameters = ["uuid": SessionService.personID]
+        
+        return ApiService<RequestCodeApiModel>.postForGate("api/request_code", parameters:parameters)
+            .on(next: { data in
+                print(data.message)
+                print(data.status)
+                print(data.request_text)
+            })
+    }
+    
+    func pushCode() -> SignalProducer<RequestCodeApiModel, ApiError> {
+        
+        let parameters = ["uuid": SessionService.personID,"code":textPutCode.text!]
+        
+        return ApiService<RequestCodeApiModel>.postForGate("api/use_code", parameters: parameters)
+            .on(next: { data in
+                print(data.message)
+                print(data.status)
+                print(data.request_text)
+            })
+    }
+    func sendCode() {
+        pushCode().start()
+    }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         

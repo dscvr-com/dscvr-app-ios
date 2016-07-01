@@ -34,6 +34,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     var isProfileVisit:Bool = false
     var isFollowClicked:Bool = false
     var fromLoginPage:Bool = false
+    var finishReloadingCollectionView = MutableProperty<Bool>(false)
     
     init(personID: UUID) {
         

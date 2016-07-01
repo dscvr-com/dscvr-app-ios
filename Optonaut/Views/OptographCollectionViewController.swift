@@ -275,8 +275,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             self.tabController?.leftViewController.cleanup()
             
             Defaults[.SessionUploadMode] = "opto"
-            self.presentViewController(InvitationViewController(), animated: true, completion: nil)
-            //navigationController?.pushViewController(CameraViewController(), animated: false)
+            
+            if Defaults[.SessionEliteUser] {
+                navigationController?.pushViewController(CameraViewController(), animated: false)
+            } else{
+                self.presentViewController(InvitationViewController(), animated: true, completion: nil)
+            }
             
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)

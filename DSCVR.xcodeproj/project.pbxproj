@@ -19,6 +19,7 @@
 		5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */; };
 		5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */; };
 		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
+		5937E0A51D262B3D00584F97 /* RequestCodeApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */; };
 		594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594378FC1CDC472800C84E6F /* TabViewController.swift */; };
 		595D87691D083D5E00866FF2 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D87681D083D5E00866FF2 /* SearchViewController.swift */; };
 		595D876B1D083D9500866FF2 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D876A1D083D9500866FF2 /* UserTableViewCell.swift */; };
@@ -310,6 +311,7 @@
 		5936B1811CAD34F500F808D8 /* stitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcher.hpp; sourceTree = "<group>"; };
 		5936B1821CAD34F500F808D8 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
+		5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestCodeApiModel.swift; sourceTree = "<group>"; };
 		594378FC1CDC472800C84E6F /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		595D87681D083D5E00866FF2 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		595D876A1D083D9500866FF2 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
@@ -828,6 +830,7 @@
 				8F4185FE1C53C463009E1E3F /* LoginApiModel.swift */,
 				8F4185FA1C52DB08009E1E3F /* PersonApiModel.swift */,
 				8F4185FC1C52DBBD009E1E3F /* LocationApiModel.swift */,
+				5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */,
 			);
 			name = ApiModel;
 			path = APIModel;
@@ -1696,6 +1699,7 @@
 				8FC7E3761BD15B9D00E97CC3 /* SO3Util.mm in Sources */,
 				8F900B471B839E690085566C /* Location.swift in Sources */,
 				5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */,
+				5937E0A51D262B3D00584F97 /* RequestCodeApiModel.swift in Sources */,
 				8F1287E91BA8A9730098ED24 /* NSURLExtensions.swift in Sources */,
 				8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */,
 				A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */,
