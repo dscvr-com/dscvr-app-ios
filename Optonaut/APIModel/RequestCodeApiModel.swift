@@ -13,6 +13,7 @@ struct RequestCodeApiModel: Mappable {
     var status: String = ""
     var message:  String = ""
     var request_text: String = ""
+    var prompt: String = ""
     
     init?(_ map: Map) {}
     
@@ -20,5 +21,6 @@ struct RequestCodeApiModel: Mappable {
         status              <- map["status"]
         message                 <- map["message"]
         request_text  <- map["request_text"]
+        prompt  <- map["prompt"]
     }
 }

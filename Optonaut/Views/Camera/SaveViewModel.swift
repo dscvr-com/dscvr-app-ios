@@ -104,7 +104,8 @@ class SaveViewModel {
                         "created_at": optograph.createdAt.toRFC3339String(),
                         "optograph_type":"theta",
                         "optograph_platform": "iOS \(Defaults[.SessionPhoneOS]!)",
-                        "optograph_model":"\(Defaults[.SessionPhoneModel]!)"
+                        "optograph_model":"\(Defaults[.SessionPhoneModel]!)",
+                        "optograph_make":"Apple"
                     ]
                 } else {
                     uploadModeStr = ""
@@ -114,9 +115,11 @@ class SaveViewModel {
                         "created_at": optograph.createdAt.toRFC3339String(),
                         "optograph_type":Defaults[.SessionUseMultiRing] ? "optograph_3":"optograph_1",
                         "optograph_platform": "iOS \(Defaults[.SessionPhoneOS]!)",
-                        "optograph_model":"\(Defaults[.SessionPhoneModel]!)"
+                        "optograph_model":"\(Defaults[.SessionPhoneModel]!)",
+                        "optograph_make":"Apple"
                     ]
                 }
+                print(postParameters)
                 
                 ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
                     .on(next: { [weak self] optograph in
@@ -273,7 +276,9 @@ class SaveViewModel {
             box.model.isSubmitted = true
             box.model.directionPhi = directionPhi
             box.model.directionTheta = directionTheta
-            box.model.ringCount = Defaults[.SessionUseMultiRing] ? "three":"one"
+            if (Defaults[.SessionUploadMode]) != "theta" {
+                box.model.ringCount = Defaults[.SessionUseMultiRing] ? "three":"one"
+            }
         }
         if isOnline.value && isLoggedIn.value {
             let optograph = optographBox.model

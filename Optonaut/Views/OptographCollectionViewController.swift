@@ -281,6 +281,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             } else{
                 self.presentViewController(InvitationViewController(), animated: true, completion: nil)
             }
+            //navigationController?.pushViewController(CameraViewController(), animated: false)
             
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)

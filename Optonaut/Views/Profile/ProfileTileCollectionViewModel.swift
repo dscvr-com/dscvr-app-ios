@@ -87,15 +87,22 @@ class ProfileTileCollectionViewModel {
             optographBox.insertOrUpdate { box in
                 box.model.shouldBePublished = true
             }
+            var tempString:String = ""
             
+            if (Defaults[.SessionUploadMode]) != "theta" {
+                tempString = optograph.ringCount == "one" ? "optograph_1":"optograph_3"
+            } else {
+                tempString = "theta"
+            }
             
             let postParameters = [
                 "id": optograph.ID,
                 "stitcher_version": StitcherVersion,
                 "created_at": optograph.createdAt.toRFC3339String(),
-                "optograph_type":"optograph_\(optograph.ringCount == "one" ? "1":"3")",
+                "optograph_type":tempString,
                 "optograph_platform": "iOS \(Defaults[.SessionPhoneOS]!)",
-                "optograph_model":"\(Defaults[.SessionPhoneModel]!)"
+                "optograph_model":"\(Defaults[.SessionPhoneModel]!)",
+                "optograph_make":"Apple"
                 ]
             
             print(postParameters)

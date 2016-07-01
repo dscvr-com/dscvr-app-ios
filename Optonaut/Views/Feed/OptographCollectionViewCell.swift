@@ -773,14 +773,20 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
             }
         }
+        
         viewModel.uploadStatus.producer.equalsTo(.Uploaded)
             .startWithNext { [weak self] isUploaded in
+                
                 if isUploaded {
-                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
-                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+//                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
+//                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+                    let stringUrl = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/frame1.jpg"
+                    self?.previewImage.kf_setImageWithURL(NSURL(string: stringUrl)!)
+                    
                 } else {
-                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
-                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+                    //let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+                    let stringUrl = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/frame1.jpg"
+                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(stringUrl) {
                         dispatch_async(dispatch_get_main_queue()) {
                             self?.previewImage.image = originalImage.resized(.Width, value: (self?.contentView.frame.width)!)
                         }

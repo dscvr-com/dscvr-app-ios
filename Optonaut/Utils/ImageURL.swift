@@ -58,6 +58,7 @@ private func buildURL(path: String, width: Int, height: Int, filter: String?) ->
     
     //return "http://images.iam360.io/\(hmacUrlPart)/\(urlPartToSign)"
     return "http://photos.dscvr.com/\(hmacUrlPart)/\(urlPartToSign)"
+    //return "http://images.dscvr.com/\(hmacUrlPart)/\(urlPartToSign)"
 }
 
 private extension String {

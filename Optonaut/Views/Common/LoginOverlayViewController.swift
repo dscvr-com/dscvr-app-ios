@@ -9,6 +9,7 @@
 import Foundation
 import ReactiveCocoa
 import FBSDKLoginKit
+import SwiftyUserDefaults
 
 class LoginOverlayViewController: UIViewController{
     
@@ -76,6 +77,7 @@ class LoginOverlayViewController: UIViewController{
                     completed: {
                         //self?.dismissViewControllerAnimated(true, completion: nil)
                         //self?.navigationController?.popViewControllerAnimated(false)
+                        Defaults[.SessionUserDidFirstLogin] = true
                     }
                 )
                 .start()

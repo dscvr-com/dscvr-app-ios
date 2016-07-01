@@ -114,6 +114,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         scrollView.delegate = self
         scrollView.showsHorizontalScrollIndicator = false
+        
+        if (!Defaults[.SessionUserDidFirstLogin]) {
+            scrollView.contentOffset.x = self.view.frame.width * 2
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -121,6 +125,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        
     }
     
     func disableNavBarGesture(){
@@ -137,11 +143,19 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func scrollViewDidScroll(scrollView:UIScrollView) {
+        
         print(scrollView.contentOffset.x , ">>>",self.view.frame.width)
-        if (scrollView.contentOffset.x < self.view.frame.width && !shareData.isSharePageOpen.value) {
-            scrollView.contentOffset.x = self.view.frame.width
-        } else if (scrollView.contentOffset.x >= self.view.frame.width && shareData.isSharePageOpen.value) {
-            shareData.isSharePageOpen.value = false
+        if (!Defaults[.SessionUserDidFirstLogin]) {
+            
+            if (scrollView.contentOffset.x <= (self.view.frame.width * 2)) {
+                scrollView.contentOffset.x = self.view.frame.width * 2
+            }
+        } else {
+            if (scrollView.contentOffset.x < self.view.frame.width && !shareData.isSharePageOpen.value) {
+                scrollView.contentOffset.x = self.view.frame.width
+            } else if (scrollView.contentOffset.x >= self.view.frame.width && shareData.isSharePageOpen.value) {
+                shareData.isSharePageOpen.value = false
+            }
         }
     }
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
