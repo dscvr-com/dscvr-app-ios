@@ -215,30 +215,19 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     
     func openGallary() {
-        
-//        imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
-//        imagePicker.navigationBar.translucent = false
-//        imagePicker.navigationBar.barTintColor = UIColor(hex:0x343434)
-//        imagePicker.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
-//        imagePicker.navigationBar.titleTextAttributes = [
-//            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
-//            NSForegroundColorAttributeName: UIColor.whiteColor(),
-//        ]
-//        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
-//        imagePicker.setNavigationBarHidden(false, animated: false)
-//        imagePicker.interactivePopGestureRecognizer?.enabled = false
-//        
-//        self.presentViewController(imagePicker, animated: true, completion: nil)
-        
-        let imagePickVC = ViewController()
-        
-        imagePickVC.imagePicked.producer.startWithNext{ image in
-            if image != nil {
-                self.uploadTheta(image!)
+        if Defaults[.SessionEliteUser] {
+            let imagePickVC = ViewController()
+            
+            imagePickVC.imagePicked.producer.startWithNext{ image in
+                if image != nil {
+                    self.uploadTheta(image!)
+                }
             }
+            
+            self.presentViewController(imagePickVC, animated: true, completion: nil)
+        } else{
+            self.presentViewController(InvitationViewController(), animated: true, completion: nil)
         }
-        
-        self.presentViewController(imagePickVC, animated: true, completion: nil)
     }
     
     func uploadTheta(thetaImage:UIImage) {
@@ -281,7 +270,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             } else{
                 self.presentViewController(InvitationViewController(), animated: true, completion: nil)
             }
-            //navigationController?.pushViewController(CameraViewController(), animated: false)
             
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)

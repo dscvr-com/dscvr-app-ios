@@ -151,8 +151,13 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
                 print(data.status)
                 print(data.request_text)
                 
-                if (data.request_text != "") {
+                if (data.message == "Already status 3") {
+                    Defaults[.SessionEliteUser] = true
+                    self.navigationController?.popViewControllerAnimated(true)
+                    
+                }else if (data.request_text != "") {
                     self.label2.text = data.request_text
+                    self.label2.font = UIFont(name: "Avenir-Book", size: 12)
                 }
                 
                 self.sendAlert(data.prompt)
@@ -180,6 +185,27 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         pushCode().start()
     }
     
+    func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
+        
+        let parameters = ["uuid": SessionService.personID]
+        print(parameters)
+        return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
+            .on(next: { data in
+                print(data.message)
+                print(data.status)
+                print(data.request_text)
+                if (data.status == "ok" && data.message == "2") {
+                    self.label2.text = data.request_text
+                    self.label2.font = UIFont(name: "Avenir-Book", size: 12)
+                    self.requestButton.enabled = false
+                }
+                
+            })
+    }
+    func checkElite() {
+        sendCheckElite().start()
+    }
+    
     
     func sendAlert(message:String) {
         let alert = UIAlertController(title: "", message: message, preferredStyle: .Alert)
@@ -197,6 +223,8 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        
+        checkElite()
     }
     
     override func viewWillDisappear(animated: Bool) {
