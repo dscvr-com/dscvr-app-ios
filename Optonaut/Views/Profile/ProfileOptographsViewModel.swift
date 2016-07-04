@@ -22,7 +22,7 @@ class ProfileOptographsViewModel {
         
         let query = OptographTable
             .select(*)
-            .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID] && OptographTable[OptographSchema.deletedAt] == nil)
+            .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(PersonTable[PersonSchema.ID] == personID)
         
@@ -100,4 +100,22 @@ class ProfileOptographsViewModel {
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
     }
+    
+    func refresh() {
+        refreshNotification.notify(())
+    }
+    
+//    func createLocationWhenNil() {
+//        let coords = LocationService.lastLocation()!
+//        var location = Location.newInstance()
+//        location.latitude = coords.latitude
+//        location.longitude = coords.longitude
+//        var locationBox: ModelBox<Location>?
+//        
+//        locationBox = Models.locations.create(location)
+//        locationBox!.insertOrUpdate()
+//        optographBox.insertOrUpdate { box in
+//            box.model.locationID = location.ID
+//    
+//    }
 }

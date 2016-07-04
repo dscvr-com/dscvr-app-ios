@@ -224,7 +224,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         bgImage!.align(.UnderCentered, relativeTo: titleSettings,padding: 25, width: image.size.width, height: image.size.height)
         
         let textHeight = calcTextHeight("VR IMAGE VIEW STYLE", withWidth: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Light)), andFont: .fontDisplay(12, withType: .Semibold))
-        
+        	
         let vrImageLabel = UILabel()
         vrImageLabel.frame = CGRect(x: 70,y: bgImage!.frame.origin.y + (bgImage?.frame.height)! + 20 ,width: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Semibold)),height: textHeight)
         vrImageLabel.text = "VR IMAGE VIEW STYLE"
@@ -397,7 +397,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         dividerThree.hidden = true
         
         let versionLabel = UILabel()
-        versionLabel.text = "v0.82"
+        versionLabel.text = "v0.84"
         versionLabel.textAlignment = .Center
         versionLabel.font = .fontDisplay(10, withType: .Semibold)
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)

@@ -295,7 +295,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
         if (Defaults[.SessionNeedRefresh]) {
             self.reloadView()
             Defaults[.SessionNeedRefresh] = false

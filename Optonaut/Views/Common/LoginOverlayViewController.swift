@@ -52,6 +52,30 @@ class LoginOverlayViewController: UIViewController{
         facebookButtonView.align(.UnderCentered, relativeTo: logoImageView, padding: 30, width: contentView.frame.width - 85, height: 50)
     }
     
+    
+    
+    func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
+        
+        let parameters = ["uuid": SessionService.personID]
+        print(parameters)
+        return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
+            .on(next: { data in
+                print(data.message)
+                print(data.status)
+                print(data.request_text)
+                
+                if (data.status == "ok" && data.message == "3") {
+                    Defaults[.SessionEliteUser] = true
+                } else {
+                    Defaults[.SessionEliteUser] = false
+                }
+                
+            })
+    }
+    func checkElite() {
+        sendCheckElite().start()
+    }
+    
     dynamic private func facebook() {
         let loginManager = FBSDKLoginManager()
         let readPermission = ["public_profile","email","user_friends"]
@@ -75,9 +99,8 @@ class LoginOverlayViewController: UIViewController{
                         errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
                     },
                     completed: {
-                        //self?.dismissViewControllerAnimated(true, completion: nil)
-                        //self?.navigationController?.popViewControllerAnimated(false)
                         Defaults[.SessionUserDidFirstLogin] = true
+                        self?.checkElite()
                     }
                 )
                 .start()

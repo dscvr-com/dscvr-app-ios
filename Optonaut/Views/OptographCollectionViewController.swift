@@ -113,11 +113,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapRightButton))
         
         viewModel.results.producer
-            .filter { $0.changed }
-            .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
+            .filter { print("nagdelete?", $0.changed) ;return $0.changed }
+            //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
             .delayAllUntil(viewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
+                print("reload data =======")
+                
                 if let strongSelf = self {
                     let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
                     strongSelf.optographIDs = results.models.map { $0.ID }
@@ -135,6 +137,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                             strongSelf.collectionView!.performBatchUpdates({
                                 strongSelf.imageCache.delete(results.delete)
                                 strongSelf.imageCache.insert(results.insert)
+                                print("need to delete>>",results.delete)
+                                print("need to update>>",results.update)
+                                print("need to insert>>",results.insert)
                                 strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection: 0) })
                                 strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
                                 strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
@@ -226,7 +231,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             self.presentViewController(imagePickVC, animated: true, completion: nil)
         } else{
-            self.presentViewController(InvitationViewController(), animated: true, completion: nil)
+            //self.presentViewController(InvitationViewController(), animated: true, completion: nil)
+            self.tapRightButton()
         }
     }
     
@@ -268,7 +274,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             if Defaults[.SessionEliteUser] {
                 navigationController?.pushViewController(CameraViewController(), animated: false)
             } else{
-                self.presentViewController(InvitationViewController(), animated: true, completion: nil)
+                //self.presentViewController(InvitationViewController(), animated: true, completion: nil)
+                self.tapRightButton()
             }
             
         case .Stitching(_):
@@ -352,6 +359,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        
         uiHidden.value = false
         viewModel.isActive.value = true
         
@@ -365,8 +373,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         //RotationService.sharedInstance.rotationEnable()
         
-//        if let indexPath = self.collectionView!.indexPathsForVisibleItems().first, cell = self.collectionView!.cellForItemAtIndexPath(indexPath) {
-//            self.collectionView(self.collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
+//        if let indexPath = self.collectionView!.indexPathsForVisibleItems().first {
+//            if let cell = self.collectionView!.cellForItemAtIndexPath(indexPath) {
+//                self.collectionView(self.collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
+//            }
 //        }
     }
     
@@ -429,6 +439,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/\(optographID)/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
         }
         
+        print("http://s3-ap-southeast-1.amazonaws.com/","resources.staging-iam360.io/textures/\(optographID)/pan.mp4")
+        
         cell.video = AVPlayer(URL: url!)
         
         cell.bindModel(optographID)
@@ -484,15 +496,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             cell.setRotation(false)
         }
         
-        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
-        
-        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
-        
-        
-        let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
-        
-        cell.setRotation(true)
-        
+        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds))
+        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter){
+            let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
+            
+            cell.setRotation(true)
+        }
     }
     
     override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
@@ -503,14 +512,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             cell.setRotation(false)
         }
         
-        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds));
-        
-        let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter)!
-        
-        let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
-        
-        cell.setRotation(true)
-        
+        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds))
+        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter) {
+            let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
+            
+            cell.setRotation(true)
+        }
     }
     
 }

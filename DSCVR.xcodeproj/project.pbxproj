@@ -2037,7 +2037,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "e8e9c6bb-663a-44be-a3ee-9c0dcb4bbf2e";
+				PROVISIONING_PROFILE = "c1588013-8365-4ec3-9c20-676a9805e97c";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2072,7 +2072,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "e8e9c6bb-663a-44be-a3ee-9c0dcb4bbf2e";
+				PROVISIONING_PROFILE = "c1588013-8365-4ec3-9c20-676a9805e97c";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

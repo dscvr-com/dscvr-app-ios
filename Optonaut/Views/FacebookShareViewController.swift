@@ -68,7 +68,9 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
         labelTitle.textAlignment = .Center
         theView.addSubview(labelTitle)
         
-        textField.backgroundColor = UIColor(hex:0xCACACA)
+        textField.backgroundColor = UIColor(hex:0xf7f7f7) //UIColor(hex:0xCACACA)
+        textField.layer.borderWidth = 0.8
+        textField.layer.borderColor = UIColor(hex:0x3E3D3D).CGColor
         textField.textColor = UIColor.blackColor()
         let placeholder = NSAttributedString(string: "Check out this amazing scene in virtual reality", attributes: [NSForegroundColorAttributeName : UIColor.blackColor()])
         textField.attributedText = placeholder

@@ -17,7 +17,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
     var label3 = UILabel()
     var logoImageView = UIImageView()
     var textPutCode = UITextField()
-    var textRequestCode = UITextField()
+    var textRequestCode = UILabel()
     var buttonPutCode = UIButton()
     var view1 = UIView()
     var orImage = UIImageView()
@@ -73,10 +73,10 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         label2.textColor = UIColor.whiteColor()
         backView.addSubview(label2)
         
-        textRequestCode.backgroundColor = UIColor(hex:0xCACACA)
-        textRequestCode.layer.cornerRadius = 4
-        textRequestCode.placeholder = "   E-mail"
+        textRequestCode.backgroundColor = UIColor.clearColor()
+        textRequestCode.font = UIFont(name: "Avenir-Book", size: 20)
         textRequestCode.textColor = UIColor.whiteColor()
+        textRequestCode.textAlignment = .Center
         backView.addSubview(textRequestCode)
         
         requestButton.setTitle("REQUEST", forState: .Normal)
@@ -112,7 +112,6 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         label3.anchorToEdge(.Bottom, padding: 10, width: footerWidth, height:20)
         
         textPutCode.delegate = self
-        textRequestCode.delegate = self
         backView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeKeyboard)))
         
         let closeButton = UIButton()
@@ -127,8 +126,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         
         personBox = Models.persons[SessionService.personID]!
         
-        textRequestCode.text = "   " + personBox.model.email!
-        textRequestCode.enabled = false
+        textRequestCode.text = personBox.model.email!
     }
     
     
@@ -151,16 +149,13 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
                 print(data.status)
                 print(data.request_text)
                 
-                if (data.message == "Already status 3") {
-                    Defaults[.SessionEliteUser] = true
-                    self.navigationController?.popViewControllerAnimated(true)
-                    
-                }else if (data.request_text != "") {
+                if (data.status == "ok" && data.message == "Updated to status 2") {
+                    Defaults[.SessionEliteUser] = false
                     self.label2.text = data.request_text
-                    self.label2.font = UIFont(name: "Avenir-Book", size: 12)
+                    self.label2.font = UIFont(name: "Avenir-Book", size: 13)
+                    self.requestButton.enabled = false
+                    self.sendAlert(data.prompt)
                 }
-                
-                self.sendAlert(data.prompt)
             })
     }
     
@@ -175,7 +170,6 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
                 print(data.request_text)
                 if (data.status == "ok") {
                     Defaults[.SessionEliteUser] = true
-                    self.navigationController?.popViewControllerAnimated(true)
                 }
                 self.sendAlert(data.prompt)
                 
@@ -194,10 +188,18 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
                 print(data.message)
                 print(data.status)
                 print(data.request_text)
-                if (data.status == "ok" && data.message == "2") {
+                if (data.status == "ok" && data.message == "1") {
                     self.label2.text = data.request_text
-                    self.label2.font = UIFont(name: "Avenir-Book", size: 12)
+                    self.label2.font = UIFont(name: "Avenir-Book", size: 20)
+                    self.requestButton.enabled = true
+                    Defaults[.SessionEliteUser] = false
+                } else if (data.status == "ok" && data.message == "2"){
+                    self.label2.text = data.request_text
+                    self.label2.font = UIFont(name: "Avenir-Book", size: 13)
                     self.requestButton.enabled = false
+                    Defaults[.SessionEliteUser] = false
+                } else if (data.status == "ok" && data.message == "3"){
+                    self.navigationController?.popViewControllerAnimated(false)
                 }
                 
             })
@@ -209,7 +211,12 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
     
     func sendAlert(message:String) {
         let alert = UIAlertController(title: "", message: message, preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in
+            if Defaults[.SessionEliteUser] {
+                self.navigationController?.popViewControllerAnimated(true)
+            }
+            
+            return }))
         self.presentViewController(alert, animated: true, completion: nil)
     }
     

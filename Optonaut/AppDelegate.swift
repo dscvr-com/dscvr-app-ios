@@ -17,6 +17,7 @@ import Neon
 import FBSDKCoreKit
 import Kingfisher
 import SwiftyUserDefaults
+import ReactiveCocoa
 
 //let Env = EnvType.Development
 //let Env = EnvType.localStaging
@@ -50,9 +51,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            application.registerForRemoteNotifications()
             
             
-            let tabBarViewController = TabViewController()
-            self.window?.rootViewController = tabBarViewController
-            
             let launchedBefore = NSUserDefaults.standardUserDefaults().boolForKey("launchedBefore")
             if launchedBefore  {
                 print("Not first launch.")
@@ -68,12 +66,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             Defaults[.SessionPhoneModel] = UIDevice.currentDevice().modelName
             Defaults[.SessionPhoneOS] = UIDevice.currentDevice().systemVersion
+            
+            let tabBarViewController = TabViewController()
+            self.window?.rootViewController = tabBarViewController
+            
+            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
+                self.sendCheckElite().start()
+            
+            }
         }
-        
-        
         return true
+    }
+    
+    func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
         
-        
+        let parameters = ["uuid": SessionService.personID]
+        return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
+            .on(next: { data in
+                print(data.message)
+                print(data.status)
+                print(data.request_text)
+                if (data.status == "ok" && data.message == "3") {
+                    Defaults[.SessionEliteUser] = true
+                } else {
+                    Defaults[.SessionEliteUser] = false
+                }
+            })
     }
     
     func applicationWillResignActive(application: UIApplication) {
