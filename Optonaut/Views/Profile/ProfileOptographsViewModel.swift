@@ -38,6 +38,7 @@ class ProfileOptographsViewModel {
                         if row[OptographSchema.locationID] != nil {
                             
                             Models.locations.touch(Location.fromSQL(row))
+                            
                         }
                         
                         return optograph

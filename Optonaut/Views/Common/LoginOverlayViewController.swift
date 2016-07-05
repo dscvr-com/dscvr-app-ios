@@ -109,7 +109,7 @@ class LoginOverlayViewController: UIViewController{
         loginManager.logInWithReadPermissions(readPermission, fromViewController: self) { [weak self] result, error in
             
             if error != nil || result.isCancelled {
-                //print(error)
+                print(error)
                 self?.viewModel.facebookPending.value = false
                 loginManager.logOut()
                 //self!.cancel()

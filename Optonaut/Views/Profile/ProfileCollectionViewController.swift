@@ -100,6 +100,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 print("not click")
                 self!.isFollowClicked = false
             }
+            self!.collectionViewModel.refreshNotification.notify(())
             self!.collectionView?.reloadData()
         }
         
@@ -162,7 +163,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         //collectionView!.delaysContentTouches = false
         
         collectionViewModel.results.producer
-            .filter {$0.changed}
+            .filter{$0.changed}
             .delayAllUntil(collectionViewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
@@ -205,6 +206,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         }
     }
     
+    func reloadTable() {
+    
+    }
+    
     override func scrollViewDidScroll(scrollView: UIScrollView) {
         let offsetY:CGFloat  = scrollView.contentOffset.y
         
@@ -224,6 +229,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     func reloadView() {
         collectionViewModel.refreshNotification.dispose()
+        
         profileViewModel = ProfileViewModel(personID: SessionService.personID)
         collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID)
         
@@ -270,16 +276,26 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             .observeOnMain()
             .on(next: { [weak self] results in
                 if let strongSelf = self {
+                    strongSelf.optographIDsNotUploaded = results.models
+                        .filter{ !$0.isPublished && !$0.isUploading}
+                        .map{$0.ID}
+                    
+                    strongSelf.optographIDs = results.models
+                        .filter{ $0.isPublished || $0.isUploading}
+                        .map{$0.ID}
+                    
                     strongSelf.optographIDs = results.models.map { $0.ID }
-                    strongSelf.collectionView!.performBatchUpdates({
-                        strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                        strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                        strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                        }, completion: { _ in
-                    })
+//                    strongSelf.collectionView!.performBatchUpdates({
+//                        strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+//                        strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+//                        strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+//                        }, completion: { _ in
+//                    })
                 }
                 })
-            .start()
+            .startWithNext { _ in
+                self.collectionView?.reloadData()
+        }
         
         profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
             if isFollowTabTap {
@@ -289,7 +305,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 print("not click")
                 self!.isFollowClicked = false
             }
-            self!.collectionView?.reloadData()
+            self!.collectionViewModel.refreshNotification.notify(())
         }
     }
     
@@ -301,7 +317,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         }
         
         CoreMotionRotationSource.Instance.start()
-        
         collectionViewModel.refreshNotification.notify(())
         collectionViewModel.isActive.value = true
         
@@ -327,6 +342,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if isProfileVisit {
             tabController!.enableScrollView()
         }
+        CoreMotionRotationSource.Instance.stop()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -337,8 +353,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        
-        CoreMotionRotationSource.Instance.stop()
         
         collectionViewModel.isActive.value = false
         self.navigationController?.navigationBarHidden = false
@@ -358,6 +372,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if isFollowClicked {
             return 2
         } else {
+            print("count3",optographIDs.count)
+            print(("count2",optographIDsNotUploaded.count > 0 ? 1:0))
+            print("count1",optographIDsNotUploaded.count)
+            print("number of itens",optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0))
             return optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0)
         }
         
@@ -372,7 +390,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             cell.parentViewController = self
             
             return cell
-        } else if indexPath.item == 1 && !isFollowClicked{
+        } else if indexPath.item == 1 && !isFollowClicked && optographIDsNotUploaded.count != 0{
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("upload-cell", forIndexPath: indexPath) as! ProfileUploadCollectionViewCell
             
             cell.optographIDsNotUploaded = optographIDsNotUploaded
@@ -391,8 +409,13 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
         } else {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! ProfileTileCollectionViewCell
+            var cellCount:Int = 1
             
-            let optographID = optographIDs[indexPath.item-2]
+            if optographIDsNotUploaded.count != 0 {
+                cellCount += 1
+            }
+            
+            let optographID = optographIDs[indexPath.item - cellCount]
             cell.bind(optographID)
             cell.refreshNotification = collectionViewModel.refreshNotification
             cell.navigationController = navigationController as? NavigationController
@@ -430,7 +453,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         } else if indexPath.item == 1 && isFollowClicked {
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             return CGSize(width: self.view.frame.width, height: self.view.frame.height - (267 + textHeight))
-        } else if indexPath.item == 1 && !isFollowClicked {
+        } else if indexPath.item == 1 && !isFollowClicked && optographIDsNotUploaded.count != 0{
             let width = (self.view.frame.size.width)
             return CGSize(width: width, height: CGFloat(optographIDsNotUploaded.count * 75) + CGFloat(optographIDsNotUploaded.count * 1))
         } else {
@@ -459,9 +482,14 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.item != 0 && indexPath.item != 1 {
-            let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item - 2])
-            detailsViewController.cellIndexpath = indexPath.item
+        if indexPath.item != 0 && !isFollowClicked && !(indexPath.item == 1 && optographIDsNotUploaded.count != 0){
+            var cellCount:Int = 1
+            
+            if optographIDsNotUploaded.count != 0 {
+                cellCount += 1
+            }
+            let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item - cellCount])
+            detailsViewController.cellIndexpath = cellCount
             navigationController?.pushViewController(detailsViewController, animated: true)
         }
         

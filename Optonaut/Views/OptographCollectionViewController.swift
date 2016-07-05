@@ -362,22 +362,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         uiHidden.value = false
         viewModel.isActive.value = true
+        viewModel.refresh()
         
         showUI()
         tabController!.enableScrollView()
         tabController!.enableNavBarGesture()
         
-        //CoreMotionRotationSource.Instance.start()
-        
         view.bounds = UIScreen.mainScreen().bounds
-        
-        //RotationService.sharedInstance.rotationEnable()
-        
-//        if let indexPath = self.collectionView!.indexPathsForVisibleItems().first {
-//            if let cell = self.collectionView!.cellForItemAtIndexPath(indexPath) {
-//                self.collectionView(self.collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
-//            }
-//        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -498,9 +489,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds))
         if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter){
-            let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
+            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
             
-            cell.setRotation(true)
+                cell.setRotation(true)
+            }
         }
     }
     
@@ -514,9 +506,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds))
         if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter) {
-            let cell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as! OptographCollectionViewCell
-            
-            cell.setRotation(true)
+            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
+                cell.setRotation(true)
+            }
         }
     }
     

@@ -333,11 +333,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this 360 image? You cannot undo this.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
                 self.viewModel.deleteOpto()
-                //self.refreshNotification.notify(())
-                
-                let alert = UIAlertController(title:"", message: "Will be deleted after next app restart.", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .Cancel, handler: { _ in return }))
-                self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+                self.closeDetailsPage()
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
             
@@ -601,7 +597,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         imageDownloadDisposable?.dispose()
         imageDownloadDisposable = nil
-        CoreMotionRotationSource.Instance.stop()
+        //CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
         tabController!.enableScrollView()
         

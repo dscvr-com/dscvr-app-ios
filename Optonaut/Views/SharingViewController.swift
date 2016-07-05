@@ -12,6 +12,7 @@ import Social
 import FBSDKShareKit
 import MessageUI
 import Kingfisher
+import FBSDKLoginKit
 
 class ShareData {
     class var sharedInstance: ShareData {
@@ -47,6 +48,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     var descriptionToShare:String = ""
     var optographId:String = ""
     var tField: UITextField!
+    var activityIndicator = UIActivityIndicatorView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -141,6 +143,14 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         }
         
         
+        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+        
+        activityIndicator.center = self.view.center
+        
+        activityIndicator.stopAnimating()
+        
+        self.view.addSubview(activityIndicator)
+        
     }
 
     func copyLink() {
@@ -178,6 +188,54 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         shareOnFb.optographId = self.optographId
         shareOnFb.modalPresentationStyle = .OverCurrentContext
         self.navigationController?.presentViewController(shareOnFb, animated: true, completion: nil)
+    }
+    
+    
+    func tapFacebookSocialButton() {
+        let loginManager = FBSDKLoginManager()
+        let publishPermissions = ["publish_actions"]
+        
+        let errorBlock = { [weak self] (message: String) in
+            
+            let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
+            self?.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+        let successBlock = { [weak self] (token: FBSDKAccessToken!) in
+            let parameters  = [
+                "facebook_user_id": token.userID,
+                "facebook_token": token.tokenString,
+                ]
+            ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
+                .on(
+                    failed: { _ in
+                        errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
+                    },
+                    completed: { [weak self] in
+                        self!.shareFacebook()
+                    }
+                )
+                .start()
+        }
+        
+        if let token = FBSDKAccessToken.currentAccessToken() where publishPermissions.reduce(true, combine: { $0 && token.hasGranted($1) }) {
+            return
+        }
+        
+        loginManager.logInWithPublishPermissions(publishPermissions, fromViewController: self) { [weak self] result, error in
+            if error != nil || result.isCancelled {
+                loginManager.logOut()
+            } else {
+                let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
+                let allPermissionsGranted = publishPermissions.reduce(true) { $0 && grantedPermissions.contains($1) }
+                if allPermissionsGranted {
+                    successBlock(result.token)
+                } else {
+                    errorBlock("Please allow access to all points in the list. Don't worry, your data will be kept safe.")
+                }
+            }
+        }
     }
     
     func shareMessenger() {

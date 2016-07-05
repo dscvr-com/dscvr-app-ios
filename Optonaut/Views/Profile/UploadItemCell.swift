@@ -57,7 +57,7 @@ class UploadItemCell: UITableViewCell {
                 } else if uploadStatus == .Offline {
                     return self.uploadButton.hidden = false
                 } else {
-                    return
+                    return 
                 }
         }
     }
