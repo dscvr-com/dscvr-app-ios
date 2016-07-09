@@ -270,6 +270,10 @@ optonaut::ImageSink imageSink(Stores::post);
     assert(pipe != NULL);
     return pipe->IsFinished();
 }
+- (void)cancel {
+    assert(pipe != NULL);
+    pipe->Cancel();
+}
 - (double)getDistanceToBall {
     assert(pipe != NULL);
     return pipe->GetDistanceToBall();
