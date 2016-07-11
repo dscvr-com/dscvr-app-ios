@@ -38,13 +38,17 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         self.view.addSubview(tableView);
         
         viewModel.results.producer
-                    .on(
-                        next: { people in
-                            self.person = people
-                            self.tableView.reloadData()
+                .on(
+                    next: { people in
+                        if people.count > 0 {
+                            if people[0].userName != "" && people[0].ID != "" {
+                                self.person = people
+                                self.tableView.reloadData()
+                            }
                         }
-                    )
-                    .start()
+                    }
+                )
+                .start()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -113,18 +117,20 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("userCellIdentifier") as! UserTableViewCell
         let personDetails = person[indexPath.row]
+        
         let image = ImageURL("persons/\(personDetails.ID)/\(personDetails.avatarAssetID).jpg", width: 47, height: 47)
         
         print("personDetails >> \(personDetails)")
         
         cell.userImage.kf_setImageWithURL(NSURL(string:image)!)
-        cell.nameLabel.text = personDetails.displayName
+        cell.nameLabel.text = personDetails.userName
         cell.nameLabel.sizeToFit()
         cell.locationLabel.text = ""
         cell.locationLabel.sizeToFit()
         
         cell.locationLabel.frame = CGRect(x: cell.nameLabel.frame.origin.x, y: cell.nameLabel.frame.origin.y + cell.nameLabel.frame.size.height, width: 0, height: 0);
         cell.locationLabel.sizeToFit()
+        
         return cell;
     }
     

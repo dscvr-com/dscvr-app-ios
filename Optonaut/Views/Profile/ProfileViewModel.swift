@@ -55,6 +55,15 @@ class ProfileViewModel {
             }
     }
     
+    func refreshData() {
+        personBox.producer
+            .skipRepeats()
+            .startWithNext { [weak self] person in
+                self?.displayName.value = person.displayName
+                self?.userName.value = person.userName
+        }
+    }
+    
     func saveEdit() {
         let parameters = [
             "display_name": displayName.value,
