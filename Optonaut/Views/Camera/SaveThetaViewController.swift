@@ -115,8 +115,7 @@ class SaveThetaViewController: UIViewController, RedNavbar {
             readyNotification.notify(())
         }
         
-        title = "SAVE THE MOMENT"
-
+        title = "UPLOAD TO DSCVR"
         
         var privateButton = UIImage(named: "privacy_me")
         var publicButton = UIImage(named: "privacy_world")
@@ -129,12 +128,12 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: cancelButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.cancel))
         
         
-        viewModel.isPrivate.producer.startWithNext { [weak self] isPrivate in
-            if let strongSelf = self {
-                
-                strongSelf.navigationItem.rightBarButtonItem = UIBarButtonItem(image: isPrivate ? privateButton : publicButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(strongSelf.togglePrivate))
-            }
-        }
+//        viewModel.isPrivate.producer.startWithNext { [weak self] isPrivate in
+//            if let strongSelf = self {
+//                
+//                strongSelf.navigationItem.rightBarButtonItem = UIBarButtonItem(image: isPrivate ? privateButton : publicButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(strongSelf.togglePrivate))
+//            }
+//        }
         
         view.backgroundColor = .whiteColor()
         
@@ -251,8 +250,8 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         instagramSocialButton.text = "Instagram"
         instagramSocialButton.color = UIColor(0x9b6954)
         instagramSocialButton.userInteractionEnabled = true
-        instagramSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.tapInstagramSocialButton)))
-        shareBackgroundView.addSubview(instagramSocialButton)
+        //instagramSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.tapInstagramSocialButton)))
+        //shareBackgroundView.addSubview(instagramSocialButton)
         
         viewModel.postInstagram.producer.startWithNext { [weak self] toggled in
             self?.instagramSocialButton.state = toggled ? .Selected : .Unselected
@@ -261,10 +260,10 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         
         moreSocialButton.icon2 = UIImage(named:"more_save_active")!
         moreSocialButton.text = "More"
-        moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReadyForSubmit.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
-        moreSocialButton.rac_alpha <~ viewModel.isReadyForSubmit.producer.mapToTuple(1, 0.2)
-        moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.tapMoreSocialButton)))
-        shareBackgroundView.addSubview(moreSocialButton)
+        //moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReadyForSubmit.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
+        //moreSocialButton.rac_alpha <~ viewModel.isReadyForSubmit.producer.mapToTuple(1, 0.2)
+        //moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveThetaViewController.tapMoreSocialButton)))
+        //shareBackgroundView.addSubview(moreSocialButton)
         
         scrollView.scnView = scnView
         view.addSubview(scrollView)
@@ -273,21 +272,21 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
     
-        cameraButton.icon = UIImage(named:"upload_now_btn")!
+        cameraButton.icon = UIImage(named:"upload_next")!
         cameraButton.addTarget(self, action: #selector(readyToSubmit), forControlEvents: .TouchUpInside)
         scrollView.addSubview(cameraButton)
         
         
         postLater.icon = UIImage(named:"post_later")!
         postLater.addTarget(self, action: #selector(postLaterAction), forControlEvents: .TouchUpInside)
-        scrollView.addSubview(postLater)
+        //scrollView.addSubview(postLater)
         
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
             self!.cameraButton.loading = !isReady
             self!.postLater.loading = !isReady
-            if isReady {
-                self?.cameraButton.icon = UIImage(named:"upload_next")!
-            }
+//            if isReady {
+//                self?.cameraButton.icon = UIImage(named:"upload_next")!
+//            }
         }
         
         tabController!.delegate = self
@@ -458,14 +457,11 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { _ in
             PipelineService.stopStitching()
             
-//            self.viewModel.optographBox.insertOrUpdate { box in
-//                box.model.deletedAt = NSDate()
-//            }
-//            if StitchingService.hasUnstitchedRecordings() {
-//                StitchingService.removeUnstitchedRecordings()
-//            }
-//            
-//            self.navigationController!.popViewControllerAnimated(true)
+            if StitchingService.hasUnstitchedRecordings() {
+                StitchingService.removeUnstitchedRecordings()
+            }
+            
+            self.navigationController!.popViewControllerAnimated(true)
             
         }))
         confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))

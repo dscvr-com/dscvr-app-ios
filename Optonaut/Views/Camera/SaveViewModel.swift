@@ -89,8 +89,6 @@ class SaveViewModel {
         
         readyNotification.signal.observeNext {
             
-            
-            print("pumasok dito sa readynotification")
             self.isLoggedIn.value = SessionService.isLoggedIn
             
             if self.isOnline.value && self.isLoggedIn.value {
@@ -104,7 +102,10 @@ class SaveViewModel {
                         "id": optograph.ID,
                         "stitcher_version": StitcherVersion,
                         "created_at": optograph.createdAt.toRFC3339String(),
-                        "optograph_type":"theta"
+                        "optograph_type":"theta",
+                        "optograph_platform": "iOS \(Defaults[.SessionPhoneOS]!)",
+                        "optograph_model":"\(Defaults[.SessionPhoneModel]!)",
+                        "optograph_make":"Apple"
                     ]
                 } else {
                     uploadModeStr = ""
@@ -112,9 +113,13 @@ class SaveViewModel {
                         "id": optograph.ID,
                         "stitcher_version": StitcherVersion,
                         "created_at": optograph.createdAt.toRFC3339String(),
-                        "optograph_type":"optograph"
+                        "optograph_type":Defaults[.SessionUseMultiRing] ? "optograph_3":"optograph_1",
+                        "optograph_platform": "iOS \(Defaults[.SessionPhoneOS]!)",
+                        "optograph_model":"\(Defaults[.SessionPhoneModel]!)",
+                        "optograph_make":"Apple"
                     ]
                 }
+                print(postParameters)
                 
                 ApiService<OptographApiModel>.post("optographs", parameters: postParameters)
                     .on(next: { [weak self] optograph in
@@ -271,6 +276,9 @@ class SaveViewModel {
             box.model.isSubmitted = true
             box.model.directionPhi = directionPhi
             box.model.directionTheta = directionTheta
+            if (Defaults[.SessionUploadMode]) != "theta" {
+                box.model.ringCount = Defaults[.SessionUseMultiRing] ? "three":"one"
+            }
         }
         if isOnline.value && isLoggedIn.value {
             let optograph = optographBox.model

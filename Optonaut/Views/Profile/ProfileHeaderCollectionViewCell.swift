@@ -2,7 +2,7 @@
 //  ProfileHeaderCollectionViewCell.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 23/01/2016.
+//  Created by Robert John Alkuino on 23/01/2016.
 //  Copyright © 2016 Optonaut. All rights reserved.
 //
 
@@ -30,10 +30,14 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     private let buttonFollow = UIButton()
     //private let buttonIconView = UIImageView()
     private let postHeadingView = UILabel()
+    private let postHeadingView1 = UILabel()
+    private let postHeadingView2 = UILabel()
     //private let postCountView = UILabel()
     private let editSubView = UIImageView()
     
     private let dividerDescription = UILabel()
+    
+    let yellowLine = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -95,19 +99,40 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //        buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
         //        contentView.addSubview(buttonView)
         
+        buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         buttonFollow.addTarget(self, action: #selector(self.followUser), forControlEvents:.TouchUpInside)
         contentView.addSubview(buttonFollow)
         
         //        dividerDescription.backgroundColor = UIColor(0xffbc00)
         //        contentView.addSubview(dividerDescription)
         
-        //postHeadingView.text = "0 Posts"
-        postHeadingView.text = "IAM360 Images"
+        postHeadingView.text = "Images"
         postHeadingView.textColor = UIColor.whiteColor()
         postHeadingView.textAlignment = .Center
         postHeadingView.font = UIFont(name: "Avenir-Book", size: 20)
         postHeadingView.backgroundColor = UIColor(hex:0x3E3D3D)
         contentView.addSubview(postHeadingView)
+        
+        postHeadingView1.text = "Images"
+        postHeadingView1.textColor = UIColor(0xffbc00)
+        postHeadingView1.textAlignment = .Center
+        postHeadingView1.font = UIFont(name: "Avenir-Book", size: 20)
+        postHeadingView1.backgroundColor = UIColor(hex:0x3E3D3D)
+        postHeadingView1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.imagePageTabTouched)))
+        postHeadingView1.userInteractionEnabled = true
+        contentView.addSubview(postHeadingView1)
+        
+        postHeadingView2.text = "Followers"
+        postHeadingView2.textColor = UIColor.whiteColor()
+        postHeadingView2.textAlignment = .Center
+        postHeadingView2.font = UIFont(name: "Avenir-Book", size: 20)
+        postHeadingView2.backgroundColor = UIColor(hex:0x3E3D3D)
+        postHeadingView2.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.followTabTouched)))
+        postHeadingView2.userInteractionEnabled = true
+        contentView.addSubview(postHeadingView2)
+        
+        yellowLine.backgroundColor = UIColor(0xffbc00)
+        contentView.addSubview(yellowLine)
         
         //        postCountView.font = .displayOfSize(12, withType: .Semibold)
         //        postCountView.textAlignment = .Center
@@ -115,6 +140,19 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         //        contentView.addSubview(postCountView)
         
         contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.dismissKeyboard)))
+    }
+    
+    func followTabTouched() {
+        postHeadingView2.textColor = UIColor(0xffbc00)
+        postHeadingView1.textColor = UIColor.whiteColor()
+        yellowLine.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 2)
+        viewModel.followTabTouched.value = true
+    }
+    func imagePageTabTouched() {
+        postHeadingView1.textColor = UIColor(0xffbc00)
+        postHeadingView2.textColor = UIColor.whiteColor()
+        yellowLine.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 2)
+        viewModel.followTabTouched.value = false
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -146,7 +184,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)
-        textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
+        textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
         textInputView.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font) + 50)
         
         //buttonIconView.anchorToEdge(.Right, padding: 12, width: 12, height: 12)
@@ -156,10 +194,13 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         //let metricWidth = size.width / 3
         //postCountView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 33, width: metricWidth, height: 14)
-        //postHeadingView.align(.UnderCentered, relativeTo: textView, padding: 15, width: size.width , height: 55)
-        postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize:55)
+        postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 55)
+        postHeadingView1.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
+        postHeadingView2.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
         
-        buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: avatarImageView.frame.width, height: 25)
+        yellowLine.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 2)
+        
+        buttonFollow.align(.UnderCentered, relativeTo: textView, padding: 10, width: avatarImageView.frame.width, height: 25)
     }
     
     func bindViewModel(viewModel: ProfileViewModel) {
@@ -182,7 +223,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             val ? self?.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self?.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         }
         
-        
         displayNameView.rac_text <~ viewModel.displayName
         displayNameView.rac_hidden <~ viewModel.isEditing
         displayNameInputView.rac_hidden <~ viewModel.isEditing.producer.map(negate)
@@ -202,22 +242,26 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             self?.textInputView.text = viewModel.text.value
         }
         
-        let size = contentView.frame.size
-        
         if isMe {
             print("ako")
             buttonFollow.hidden = true
             editSubView.hidden = false
+            postHeadingView.hidden = true
+            postHeadingView1.hidden = false
+            postHeadingView2.hidden = false
+            yellowLine.hidden = false
+            postHeadingView1.rac_hidden <~ viewModel.isEditing
+            postHeadingView2.rac_hidden <~ viewModel.isEditing
+            yellowLine.rac_hidden <~ viewModel.isEditing
         } else {
             print("hindi ako")
             buttonFollow.hidden = false
             editSubView.hidden = true
-            buttonFollow.align(.UnderCentered, relativeTo: displayNameView, padding: 20, width: avatarImageView.frame.width, height: 25)
-            textView.align(.UnderCentered, relativeTo: buttonFollow, padding: 20, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
+            postHeadingView.hidden = false
+            postHeadingView1.hidden = true
+            postHeadingView2.hidden = true
+            yellowLine.hidden = true
         }
-        
-        postHeadingView.rac_hidden <~ viewModel.isEditing
-        
     }
     
     dynamic private func tapButton() {

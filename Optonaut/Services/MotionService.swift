@@ -51,11 +51,11 @@ class HeadTrackerRotationSource : RotationMatrixSource {
         if retainCounter == 0 {
             headTracker.startTracking(.LandscapeRight)
         }
-        retainCounter++
+        retainCounter += 1
     }
     
     func stop() {
-        retainCounter--
+        retainCounter -= 1
         if retainCounter == 0 {
             headTracker.stopTracking()
         }
@@ -109,11 +109,11 @@ class CoreMotionRotationSource : RotationMatrixSource {
             motionManager.deviceMotionUpdateInterval = 1 / 60
             motionManager.startDeviceMotionUpdates()
         }
-        retainCounter++
+        retainCounter += 1
     }
     
     func stop() {
-        retainCounter--
+        retainCounter -= 1
         if retainCounter == 0 {
             motionManager.stopDeviceMotionUpdates()
         }
@@ -161,11 +161,11 @@ class RotationService {
                 }
             })
         }
-        retainCounter++
+        retainCounter += 1
     }
     
     func rotationDisable() {
-        retainCounter--
+        retainCounter -= 1
         
         if retainCounter == 0 {
             motionManager.stopAccelerometerUpdates()

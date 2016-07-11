@@ -83,6 +83,7 @@ struct Optograph: DeletableModel {
     var postTwitter: Bool
     var postInstagram: Bool
     var shouldBePublished: Bool
+    var ringCount: String
     
     static func newInstance() -> Optograph {
         return Optograph(
@@ -117,7 +118,8 @@ struct Optograph: DeletableModel {
             postFacebook: false,
             postTwitter: false,
             postInstagram: false,
-            shouldBePublished: false
+            shouldBePublished: false,
+            ringCount: ""
         )
     }
     
@@ -238,7 +240,8 @@ extension Optograph: SQLiteModel {
             postFacebook: row[OptographSchema.postFacebook],
             postTwitter: row[OptographSchema.postTwitter],
             postInstagram: row[OptographSchema.postInstagram],
-            shouldBePublished: row[OptographSchema.shouldBePublished]
+            shouldBePublished: row[OptographSchema.shouldBePublished],
+            ringCount: row[OptographSchema.ringCount]
         )
     }
     
@@ -275,6 +278,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.postTwitter <-- postTwitter,
             OptographSchema.postInstagram <-- postInstagram,
             OptographSchema.shouldBePublished <-- shouldBePublished,
+            OptographSchema.ringCount <-- ringCount
         ]
     }
     

@@ -11,6 +11,8 @@ import ReactiveCocoa
 import Social
 import FBSDKShareKit
 import MessageUI
+import Kingfisher
+import FBSDKLoginKit
 
 class ShareData {
     class var sharedInstance: ShareData {
@@ -26,6 +28,7 @@ class ShareData {
         return Static.instance!
     }
     var optographId = MutableProperty<UUID?>(nil)
+    var isSharePageOpen = MutableProperty<Bool>(false)
 }
 
 
@@ -39,24 +42,31 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     let titleText = UILabel()
     var textToShare:String = ""
     var shareUrl:NSURL = NSURL(string: "")!
+    var imageToShare: UIImage?
+    var placeHolderToShare = UIImageView()
+    var urlToShare:String = ""
+    var descriptionToShare:String = ""
+    var optographId:String = ""
+    var tField: UITextField!
+    var activityIndicator = UIActivityIndicatorView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let image: UIImage = UIImage(named: "logo_big")!
+        let image: UIImage = UIImage(named: "logo_settings")!
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
         self.view.addSubview(bgImage!)
-        bgImage!.anchorToEdge(.Top, padding: (navigationController?.navigationBar.frame.height)! + 25, width: view.frame.size.width * 0.5, height: view.frame.size.height * 0.13)
+        bgImage!.anchorToEdge(.Top, padding: (navigationController?.navigationBar.frame.height)! + 25, width: image.size.width, height: image.size.height)
         
-        let placeholderImageViewImage: UIImage = UIImage(named: "logo_big")!
+        let placeholderImageViewImage: UIImage = UIImage(named: "logo_settings")!
         var placeholderImageView: UIImageView?
         placeholderImageView = UIImageView(image: placeholderImageViewImage)
         placeholderImageView?.backgroundColor = UIColor.blackColor()
         self.view.addSubview(placeholderImageView!)
         placeholderImageView!.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: self.view.frame.width - 56, height: 130)
         
-        titleText.text = "Share this IAM360 photo:"
+        titleText.text = "Share this 360 image:"
         titleText.textAlignment = .Center
         titleText.font = UIFont(name: "Avenir-Book", size: 25)
         self.view.addSubview(titleText)
@@ -69,7 +79,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         buttonCopyLink.addTarget(self, action: #selector(copyLink), forControlEvents: .TouchUpInside)
         
         buttonFacebook.setImage(UIImage(named: "sharing_facebook_btn") , forState: .Normal)
-        buttonFacebook.addTarget(self, action: #selector(shareFacebook), forControlEvents: .TouchUpInside)
+        buttonFacebook.addTarget(self, action: #selector(tapFacebookSocialButton), forControlEvents: .TouchUpInside)
         
 //        buttonMessenger.setImage(UIImage(named: "sharing_messenger_btn") , forState: .Normal)
 //        buttonMessenger.addTarget(self, action: #selector(shareMessenger), forControlEvents: .TouchUpInside)
@@ -105,17 +115,42 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         shareData.optographId.producer.startWithNext{ val in
             
             if val != nil {
-                let url = TextureURL(val!, side: .Left, size: self.view.frame.width, face: 0, x: 0, y: 0, d: 1)
+                let url = TextureURL2(val!, side: .Left, size: self.view.frame.width, face: 0, x: 0, y: 0, d: 1)
+                //self.urlToShare = "https://resources.staging-iam360.io.s3.amazonaws.com/textures/\(val!)/placeholder.jpg"
+                self.urlToShare = "http://bucket.iam360.io/textures/\(val!)/placeholder.jpg"
+                
+                self.optographId = val!
+                
                 placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
+                
+                ImageManager.sharedInstance.downloadImage(
+                    NSURL(string:self.urlToShare)!, requester: self,
+                    completionHandler: { (image, error, _, _) in
+                        if let error = error where error.code != -999 {
+                            print(error)
+                        }
+                        self.imageToShare = image
+                })
+                
                 let optographBox = Models.optographs[val]!
                 let optograph = optographBox.model
                 let person = Models.persons[optograph.personID]!.model
                 
-                let baseURL = Env == .Staging ? "share.iam360.io" : "share.iam360.io"
+                let baseURL = Env == .Staging ? "wow.dscvr.com" : "wow.dscvr.com"
                 self.shareUrl = NSURL(string: "http://\(baseURL)/\(optograph.shareAlias)")!
                 self.textToShare = "Check out this awesome IAM360 image of \(person.displayName)"
             }
         }
+        
+        
+        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+        
+        activityIndicator.center = self.view.center
+        
+        activityIndicator.stopAnimating()
+        
+        self.view.addSubview(activityIndicator)
+        
     }
 
     func copyLink() {
@@ -148,22 +183,62 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     }
     
     func shareFacebook() {
-        if SLComposeViewController.isAvailableForServiceType(SLServiceTypeFacebook){
-            let facebookSheet:SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
-            facebookSheet.setInitialText(self.textToShare)
-            facebookSheet.addURL(self.shareUrl)
-            self.presentViewController(facebookSheet, animated: true, completion: { finished in
-                let graphProperties : [NSObject : AnyObject]! = ["og:type": "article","og:title":"IAM360", "og:description":self.textToShare]
-                let graphObject : FBSDKShareOpenGraphObject = FBSDKShareOpenGraphObject(properties: graphProperties)
-            })
+        
+        let shareOnFb = FacebookShareViewController()
+        shareOnFb.optographId = self.optographId
+        shareOnFb.modalPresentationStyle = .OverCurrentContext
+        self.navigationController?.presentViewController(shareOnFb, animated: true, completion: nil)
+    }
+    
+    
+    func tapFacebookSocialButton() {
+        let loginManager = FBSDKLoginManager()
+        let publishPermissions = ["publish_actions"]
+        
+        let errorBlock = { [weak self] (message: String) in
             
-            
-        } else {
-            let alert = UIAlertController(title: "Accounts", message: "Please login to a Facebook account to share.", preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
+            let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
+            self?.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+        let successBlock = { [weak self] (token: FBSDKAccessToken!) in
+            let parameters  = [
+                "facebook_user_id": token.userID,
+                "facebook_token": token.tokenString,
+                ]
+            ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
+                .on(
+                    failed: { _ in
+                        errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
+                    },
+                    completed: { [weak self] in
+                        self!.shareFacebook()
+                    }
+                )
+                .start()
+        }
+        
+        if let token = FBSDKAccessToken.currentAccessToken() where publishPermissions.reduce(true, combine: { $0 && token.hasGranted($1) }) {
+            self.shareFacebook()
+            return
+        }
+        
+        loginManager.logInWithPublishPermissions(publishPermissions, fromViewController: self) { [weak self] result, error in
+            if error != nil || result.isCancelled {
+                loginManager.logOut()
+            } else {
+                let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
+                let allPermissionsGranted = publishPermissions.reduce(true) { $0 && grantedPermissions.contains($1) }
+                if allPermissionsGranted {
+                    successBlock(result.token)
+                } else {
+                    errorBlock("Please allow access to all points in the list. Don't worry, your data will be kept safe.")
+                }
+            }
         }
     }
+    
     func shareMessenger() {
 //        
 //        let content = FBSDKShareLinkContent()
@@ -216,4 +291,5 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         controller.dismissViewControllerAnimated(true, completion: nil)
         
     }
+    
 }

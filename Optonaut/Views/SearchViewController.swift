@@ -131,7 +131,6 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         let personDetails = person[indexPath.row]
-        print(personDetails.ID)
         
         let profilepage = ProfileCollectionViewController(personID: personDetails.ID)
         profilepage.isProfileVisit = true

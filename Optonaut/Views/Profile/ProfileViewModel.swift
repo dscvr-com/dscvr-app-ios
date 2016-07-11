@@ -22,6 +22,7 @@ class ProfileViewModel {
     let isFollowed = MutableProperty<Bool>(false)
     let isEditing = MutableProperty<Bool>(false)
     let avatarImageUrl = MutableProperty<String>("")
+    let followTabTouched = MutableProperty<Bool>(false)
     let isMe: Bool
     let personID: UUID
     

@@ -189,18 +189,25 @@ class CombinedMotionManager: RotationMatrixSource {
                                                 diffRotationMatrix.m22 * diffRotationMatrix.m22))
                 
                 
-                if isRotating == true {
+//                if isRotating == true {
+//                    
+//                    if Defaults[.SessionGyro] == true {
+//                        
+//                        touchRotationSource.phi += diffRotationPhi
+//                        touchRotationSource.theta += diffRotationTheta
+//                        
+//                        
+//                    } else {
+//                        touchRotationSource.phi += 0.003;
+//                        touchRotationSource.theta = -1.5;
+//                    }
+//                }
+                if Defaults[.SessionGyro] == true {
                     
-                    if Defaults[.SessionGyro] == true {
-                        
-                        touchRotationSource.phi += diffRotationPhi
-                        touchRotationSource.theta += diffRotationTheta
-                        
-                        
-                    } else {
-                        touchRotationSource.phi += 0.003;
-                        touchRotationSource.theta = -1.5;
-                    }
+                    touchRotationSource.phi += diffRotationPhi
+                    touchRotationSource.theta += diffRotationTheta
+                    
+                    
                 }
             }
         }
@@ -232,6 +239,7 @@ private class OverlayViewModel {
     let displayName = MutableProperty<String>("")
     let locationID = MutableProperty<UUID?>("")
     var isMe = false
+    
     
     func bind(optographID: UUID) {
         
@@ -417,11 +425,11 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let topElements = UIView()
     private let bottomElements = UIView()
     private let bottomBackgroundView = UIView()
-    private let loadingOverlayView = UIView()
+    //private let loadingOverlayView = UIView()
     
     private var scnView: SCNView!
     
-    private let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+    //private let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
     
     private var touchStart: CGPoint?
     
@@ -455,14 +463,36 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     var hiddenGestureRecognizer:UIPanGestureRecognizer!
     var swipeView:UIScrollView?
+    var collectionView:UICollectionView?
     var isShareOpen = MutableProperty<Bool>(false)
     
     var previewImage = UIImageView()
     
     var yellowView = UIView()
+    let playerLayer = AVPlayerLayer()
+    
+    var video:AVPlayer? {
+        didSet {
+            self.playerLayer.player = video
+//            NSNotificationCenter.defaultCenter().addObserverForName(AVPlayerItemDidPlayToEndTimeNotification, object: nil, queue: nil) { notification in
+//                self.video?.seekToTime(kCMTimeZero)
+//                self.video?.play()
+//            }
+        }
+    }
     
     func setRotation (isRotating:Bool) {
-        //
+        if isRotating {
+            print("playing")
+            if self.video?.status == .ReadyToPlay {
+                previewImage.hidden = true
+                self.video!.play()
+            }
+        } else {
+            print("pause")
+            previewImage.hidden = false
+            self.video!.pause()
+        }
     }
     
     var id: Int = 0 {
@@ -470,6 +500,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
             //
         }
     }
+    var xCoordBegin:CGFloat = 0.0
     
     dynamic private func pushDetails() {
         
@@ -490,24 +521,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         contentView.backgroundColor = UIColor(hex:0xffbc00)
         
-        //        if #available(iOS 9.0, *) {
-        //            scnView = SCNView(frame: contentView.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
-        //        } else {
-        //            scnView = SCNView(frame: contentView.frame)
-        //        }
-        //
-        //        let hfov: Float = 55
-        //
-        //        combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
-        //
-        //        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
-        //        renderDelegate.scnView = scnView
-        //
-        //        scnView.scene = renderDelegate.scene
-        //        scnView.delegate = renderDelegate
-        //        scnView.backgroundColor = .clearColor()
-        //        scnView.hidden = false
-        
         shareImageAsset.layer.cornerRadius = avatarImageView.frame.size.width / 2
         shareImageAsset.image = UIImage(named: "share_hidden_icn")
         contentView.addSubview(shareImageAsset)
@@ -515,13 +528,16 @@ class OptographCollectionViewCell: UICollectionViewCell{
         yellowView.backgroundColor = UIColor.blackColor()
         contentView.addSubview(yellowView)
         
-        loadingOverlayView.backgroundColor = .blackColor()
-        loadingOverlayView.hidden = false
-        contentView.addSubview(loadingOverlayView)
+//        loadingOverlayView.backgroundColor = .blackColor()
+//        loadingOverlayView.hidden = false
+//        contentView.addSubview(loadingOverlayView)
+//        
+//        loadingIndicatorView.frame = contentView.frame
+//        loadingIndicatorView.startAnimating()
+//        contentView.addSubview(loadingIndicatorView)
         
-        loadingIndicatorView.frame = contentView.frame
-        loadingIndicatorView.startAnimating()
-        contentView.addSubview(loadingIndicatorView)
+        playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        self.yellowView.layer.addSublayer(playerLayer)
         
         previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
         yellowView.addSubview(previewImage)
@@ -578,20 +594,19 @@ class OptographCollectionViewCell: UICollectionViewCell{
         yellowView.addSubview(hiddenViewToBounce)
         
         hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
-        hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.bouncingCell)))
-        
+        hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.bouncingCell)))
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
         yellowView.fillSuperview()
+        playerLayer.fillSuperview()
         
         blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
-        //hiddenViewToBounce.anchorAndFillEdge(.Left, xPad:0, yPad: 0, otherSize: 100)
-        //hiddenViewToBounce.frame = CGRect(x: 0,y: bouncingButton.frame.origin.y - 10,width: 80,height: 80)
-        hiddenViewToBounce.anchorToEdge(.Left, padding: 0, width: 80, height: 80)
-        loadingOverlayView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: contentView.frame.height - 70 - 20)
+        
+        hiddenViewToBounce.anchorToEdge(.Left, padding: 10, width: 70, height: 100)
+        //loadingOverlayView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: contentView.frame.height - 70 - 20)
         
         whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 70)
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 50, height: 50)
@@ -637,30 +652,42 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     func handlePan(recognizer:UIPanGestureRecognizer) {
         
-        let translationX = recognizer.locationInView(contentView).x
-        
-        let xCoordBegin:CGFloat = 0.0
+        //let translationX = recognizer.locationInView(contentView).x
+        let velocity = recognizer.velocityInView(contentView)
         
         switch recognizer.state {
         case .Began:
-            //xCoordBegin = translationX
-            print("wew")
+            xCoordBegin = 0.0
         case .Changed:
-            if (translationX > xCoordBegin) {
-                if (yellowView.frame.origin.x <= 67) {
-                    yellowView.frame.origin.x = translationX
+            xCoordBegin += 4.0
+            if velocity.x > 0 {
+                if (yellowView.frame.origin.x <= 45) {
+                    yellowView.frame.origin.x = xCoordBegin
                 } else {
                     if !isShareOpen.value {
-                        swipeView?.scrollRectToVisible(CGRect(x: 0,y: 0,width: contentView.frame.width,height: 100), animated: true)
-                        isShareOpen.value = true
+                        if (viewModel.uploadStatus.value == .Offline || viewModel.uploadStatus.value == .Uploading) {
+                            let alert = UIAlertController(title:"Oops! Your 360 image is still uploading..", message: "Please try again later..", preferredStyle: .Alert)
+                            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in
+                                self.xCoordBegin = 0.0
+                                self.yellowView.frame.origin.x = 0
+                                return
+                            }))
+                            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+                        } else {
+                            swipeView?.scrollRectToVisible(CGRect(x: 0,y: 0,width: contentView.frame.width,height: 100), animated: true)
+                            isShareOpen.value = true
+                        }
                     }
                 }
             }
         case .Cancelled:
             print("cancelled")
         case .Ended:
+            xCoordBegin = 0.0
             yellowView.frame.origin.x = 0
-            isShareOpen.value = false
+            if isShareOpen.value {
+                isShareOpen.value = false
+            }
             
         default: break
         }
@@ -722,7 +749,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 let location = Models.locations[locationID]!.model
                 self.locationTextView.text = "\(location.text), \(location.countryShort)"
                 self.personNameView.align(.ToTheRightMatchingTop, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)
-                self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)
+                self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 9.5, width: 200, height: 18)
                 self.locationTextView.text = location.text
             } else {
                 self.personNameView.align(.ToTheRightCentered, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)
@@ -746,40 +773,28 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
             }
         }
+        
         viewModel.uploadStatus.producer.equalsTo(.Uploaded)
             .startWithNext { [weak self] isUploaded in
+                
                 if isUploaded {
-                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
-                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+//                    let url = TextureURL(optographId, side: .Left, size: (self?.contentView.frame.width)!, face: 0, x: 0, y: 0, d: 1)
+//                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+                    let stringUrl = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/frame1.jpg"
+                    self?.previewImage.kf_setImageWithURL(NSURL(string: stringUrl)!)
+                    
                 } else {
-                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
-                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+                    //let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+                    let stringUrl = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/frame1.jpg"
+                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(stringUrl) {
                         dispatch_async(dispatch_get_main_queue()) {
                             self?.previewImage.image = originalImage.resized(.Width, value: (self?.contentView.frame.width)!)
                         }
                     }
                 }
-                self?.loadingOverlayView.hidden = true
-                self?.loadingIndicatorView.stopAnimating()
+//                self?.loadingOverlayView.hidden = true
+//                self?.loadingIndicatorView.stopAnimating()
         }
-        
-        
-        //        dispatch_async(dispatch_get_main_queue()) {
-        //
-        //            var url:NSURL?
-        //
-        //            if #available(iOS 9.0, *) {
-        //                url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/\(optographId)/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
-        //            }
-        //            print(url)
-        //
-        //            let video = AVPlayer(URL: url!)
-        //            let playerLayer = AVPlayerLayer(player:video)
-        //            playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        //            self.contentView.layer.addSublayer(playerLayer)
-        //            playerLayer.fillSuperview()
-        //            video.play()
-        //        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -788,6 +803,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     
     deinit {
+        //NSNotificationCenter.defaultCenter().removeObserver(self, name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
         logRetain()
     }
 }

@@ -31,7 +31,10 @@ extension DefaultsKeys {
     static let SessionMotor = DefaultsKey<Bool>("session_use_motor")
     static let SessionGyro = DefaultsKey<Bool>("session_use_gyro")
     static let SessionVRMode = DefaultsKey<Bool>("session_use_vr")
-    
+    static let SessionPhoneModel = DefaultsKey<String?>("session_phone_model")
+    static let SessionPhoneOS = DefaultsKey<String?>("session_phone_os")
+    static let SessionEliteUser = DefaultsKey<Bool>("session_elite_user")
+    static let SessionUserDidFirstLogin = DefaultsKey<Bool>("session_did_first_login")
 }
 
 let DefaultVRGlasses = "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"
@@ -98,7 +101,8 @@ class SessionService {
                 Defaults[.SessionUseMultiRing] = false
                 Defaults[.SessionNeedRefresh] = true
             })
-            .flatMap(.Latest) { _ in ApiService<PersonApiModel>.get("persons/me") }
+            .flatMap(.Latest) { _ in
+                ApiService<PersonApiModel>.get("persons/me") }
             .map(Person.fromApiModel)
             .on(
                 next: { person in

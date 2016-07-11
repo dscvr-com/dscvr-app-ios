@@ -2,7 +2,7 @@
 //  ActivityViewModel.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 6/26/15.
+//  Created by Robert John Alkuino on 6/26/15.
 //  Copyright (c) 2015 Optonaut. All rights reserved.
 //
 

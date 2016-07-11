@@ -2,7 +2,7 @@
 //  ActivitiesService.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 02/01/2016.
+//  Created by Robert John Alkuino on 02/01/2016.
 //  Copyright © 2016 Optonaut. All rights reserved.
 //
 

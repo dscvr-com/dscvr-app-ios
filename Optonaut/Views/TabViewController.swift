@@ -21,7 +21,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     let leftViewController: NavigationController
     
     var thisView = UIView()
-    var isSettingsViewOpen:Bool = false
+    var isSettingsViewOpen = MutableProperty<Bool>(false)
     var panGestureRecognizer:UIPanGestureRecognizer!
     var navBarTapGestureRecognizer:UITapGestureRecognizer!
     var inVr:Bool = false
@@ -54,6 +54,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     let planet = UILabel()
     
     var lastContentOffset:CGFloat = 0
+    
+    let shareData = ShareData.sharedInstance
     
     required init() {
         
@@ -112,6 +114,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         scrollView.delegate = self
         scrollView.showsHorizontalScrollIndicator = false
+        
+        if (!Defaults[.SessionUserDidFirstLogin]) {
+            scrollView.contentOffset.x = self.view.frame.width * 2
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -119,6 +125,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        
     }
     
     func disableNavBarGesture(){
@@ -132,6 +140,27 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    
+    func scrollViewDidScroll(scrollView:UIScrollView) {
+        
+        if (!Defaults[.SessionUserDidFirstLogin]) {
+            
+            if (scrollView.contentOffset.x <= (self.view.frame.width * 2)) {
+                scrollView.contentOffset.x = self.view.frame.width * 2
+            }
+        } else {
+            if (scrollView.contentOffset.x < self.view.frame.width && !shareData.isSharePageOpen.value) {
+                scrollView.contentOffset.x = self.view.frame.width
+            } else if (scrollView.contentOffset.x >= self.view.frame.width && shareData.isSharePageOpen.value) {
+                shareData.isSharePageOpen.value = false
+            }
+        }
+    }
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
+            scrollView.contentOffset.x = self.view.frame.width
+        }
     }
     
     func rightButtonAction() {
@@ -173,7 +202,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         return label.frame.height
     }
     
-    
     func settingsView() {
         
         thisView.frame = CGRectMake(0, -(view.frame.height), view.frame.width, view.frame.height)
@@ -195,7 +223,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         bgImage!.align(.UnderCentered, relativeTo: titleSettings,padding: 25, width: image.size.width, height: image.size.height)
         
         let textHeight = calcTextHeight("VR IMAGE VIEW STYLE", withWidth: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Light)), andFont: .fontDisplay(12, withType: .Semibold))
-        
+        	
         let vrImageLabel = UILabel()
         vrImageLabel.frame = CGRect(x: 70,y: bgImage!.frame.origin.y + (bgImage?.frame.height)! + 20 ,width: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Semibold)),height: textHeight)
         vrImageLabel.text = "VR IMAGE VIEW STYLE"
@@ -211,12 +239,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         let vrText = UILabel()
 //        vrText.frame = CGRect(x: 38,y: titleSettings.frame.origin.y + 30+50,width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(18, withType: .Semibold)),height: 30)
-        vrText.text = "VIEW IAM360 IN"
+        vrText.text = "VIEW 360 IMAGE IN"
         vrText.textAlignment = .Center
         vrText.textColor = UIColor.grayColor()
         vrText.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(vrText)
-        vrText.align(.UnderMatchingLeft, relativeTo: vrImageLabel, padding: 16, width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
+        vrText.align(.UnderMatchingLeft, relativeTo: vrImageLabel, padding: 16, width: calcTextWidth("VIEW 360 IMAGE IN", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         let dividerFive = UILabel()
         dividerFive.backgroundColor = UIColor(hex:0xa5a5a5)
@@ -334,10 +362,14 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 24, width: calcTextWidth("MOTOR", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         thisView.addSubview(labelMotor)
         
-        self.activeRingButtons(Defaults[.SessionUseMultiRing])
-        self.activeModeButtons(Defaults[.SessionMotor])
-        self.activeVrMode()
-        self.activeDisplayButtons(Defaults[.SessionGyro])
+        isSettingsViewOpen.producer.startWithNext{ val in
+            if val {
+                self.activeRingButtons(Defaults[.SessionUseMultiRing])
+                self.activeModeButtons(Defaults[.SessionMotor])
+                self.activeVrMode()
+                self.activeDisplayButtons(Defaults[.SessionGyro])
+            }
+        }
 
         pullButton.icon = UIImage(named:"arrow_pull")!
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
@@ -364,7 +396,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         dividerThree.hidden = true
         
         let versionLabel = UILabel()
-        versionLabel.text = "v0.81"
+        versionLabel.text = "v0.84"
         versionLabel.textAlignment = .Center
         versionLabel.font = .fontDisplay(10, withType: .Semibold)
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
@@ -395,7 +427,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 self.thisView.frame = CGRectMake(0, settingsViewCount , self.view.frame.width, self.view.frame.height)
             }
             }, completion: { finished in
-                self.isSettingsViewOpen = false
+                self.isSettingsViewOpen.value = false
                 
         })
     }
@@ -505,7 +537,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             print("wew")
         case .Changed:
             
-            if !isSettingsViewOpen {
+            if !isSettingsViewOpen.value {
                 thisView.frame = CGRectMake(0, translationY - self.view.frame.height , self.view.frame.width, self.view.frame.height)
             } else {
                 thisView.frame = CGRectMake(0,self.view.frame.height - (self.view.frame.height - translationY) , self.view.frame.width, self.view.frame.height)
@@ -513,17 +545,17 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         case .Cancelled:
             print("cancelled")
         case .Ended:
-            if !isSettingsViewOpen{
+            if !isSettingsViewOpen.value {
                 UIView.animateWithDuration(0.5, animations: {
                     self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
                     }, completion:{ finished in
-                        self.isSettingsViewOpen = true
+                        self.isSettingsViewOpen.value = true
                 })
             } else {
                 UIView.animateWithDuration(0.5, animations: {
                     self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
                     }, completion:{ finished in
-                        self.isSettingsViewOpen = false
+                        self.isSettingsViewOpen.value = false
                 })
             }
             
@@ -532,36 +564,36 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     func tapNavBarTitleForFeedClass() {
         
-        if !isSettingsViewOpen{
+        if !isSettingsViewOpen.value {
             UIView.animateWithDuration(0.3, animations: {
                 self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
-                    self.isSettingsViewOpen = true
+                    self.isSettingsViewOpen.value = true
                     
             })
         } else {
             UIView.animateWithDuration(0.3, animations: {
                 self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
-                    self.isSettingsViewOpen = false
+                    self.isSettingsViewOpen.value = false
             })
         }
     }
     
     func tapNavBarTitle(recognizer:UITapGestureRecognizer) {
         
-        if !isSettingsViewOpen{
+        if !isSettingsViewOpen.value{
             UIView.animateWithDuration(0.3, animations: {
                 self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
-                    self.isSettingsViewOpen = true
+                    self.isSettingsViewOpen.value = true
             
             })
         } else {
             UIView.animateWithDuration(0.3, animations: {
                 self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
-                    self.isSettingsViewOpen = false
+                    self.isSettingsViewOpen.value = false
             })
         }
     }

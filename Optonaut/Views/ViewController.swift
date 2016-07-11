@@ -9,8 +9,9 @@
 import UIKit
 import Photos
 import ReactiveCocoa
+import FBSDKShareKit
 
-let albumName = "RICOH THETA"           //Replace with required folder name
+let albumName = "RICOH THETA"
 let albumNames = ["RICOH THETA","ROBERT","WHAT THE PUCK"]
 
 
@@ -154,6 +155,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat{
         return 1
     }
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat{
         return 1
     }
@@ -164,6 +166,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         
         return cellSize
     }
+    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
         let asset: PHAsset = self.photosAsset[indexPath.item] as! PHAsset
@@ -175,6 +178,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: CGSizeMake(CGFloat(5376), CGFloat(2688)), contentMode: .AspectFill, options: imageOptions, resultHandler: {(result, info)in
             if let image = result {
                 self.imagePicked.value = image
+                
                 self.closePhotoLibrary()
             }
         })

@@ -2,7 +2,7 @@
 //  ActionButton.swift
 //  Optonaut
 //
-//  Created by Johannes Schickling on 9/18/15.
+//  Created by Robert John Alkuino on 9/18/15.
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 

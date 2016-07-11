@@ -177,11 +177,11 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         //        view.addSubview(recordButtonView)
         
         //        if Defaults[.SessionDebuggingEnabled] {
-        #if DEBUG
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
-            tapGestureRecognizer.numberOfTapsRequired = 3
-            view.addGestureRecognizer(tapGestureRecognizer)
-        #endif
+//        #if DEBUG
+//            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
+//            tapGestureRecognizer.numberOfTapsRequired = 3
+//            view.addGestureRecognizer(tapGestureRecognizer)
+//        #endif
         //        }
         //tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
@@ -226,7 +226,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         stopSession()
         
-        recorder.finish()
+        recorder.cancel()
         recorder.dispose()
         
         if StitchingService.hasUnstitchedRecordings() {

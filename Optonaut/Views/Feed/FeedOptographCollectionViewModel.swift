@@ -27,8 +27,13 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         let query = OptographTable.select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .filter(OptographTable[OptographSchema.isInFeed] && OptographTable[OptographSchema.deletedAt] == nil )
+            .filter(OptographTable[OptographSchema.isInFeed])
+            .filter(OptographTable[OptographSchema.shouldBePublished])
             .order(OptographTable[OptographSchema.createdAt].asc)
+        
+        refreshNotification.signal.observeOnMain().observeNext{
+            print("nakareceive ng signal")
+        }
         
         refreshNotification.signal
             .flatMap(.Latest) { _ in
@@ -45,7 +50,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                     .startOnUserInitiated()
             }
             .observeOnMain()
-            .map { self.results.value.merge($0, deleteOld: false) }
+            .map {self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
     
         refreshNotification.signal
@@ -53,7 +58,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .flatMap(.Latest) { _ in
                 ApiService<OptographApiModel>.get("optographs/feed")
                     .observeOnUserInitiated()
-                    .filter({ print($0.deletedAt); return $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isInFeed = true
@@ -82,7 +86,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .flatMap(.Latest) { oldestResult in
                 ApiService<OptographApiModel>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
-                    .filter({ print($0.deletedAt); return $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isInFeed = true
@@ -124,10 +127,11 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         }
     }
     
-    dynamic func refresh() {
+    func refresh() {
+        print("refresh function called!")
         refreshNotification.notify(())
-       // refreshTimer?.invalidate()
-      //  refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: #selector(FeedOptographCollectionViewModel.refresh), userInfo: nil, repeats: true)
+//        refreshTimer?.invalidate()
+//        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: #selector(FeedOptographCollectionViewModel.refresh), userInfo: nil, repeats: true)
     }
     
     func loadMore() {

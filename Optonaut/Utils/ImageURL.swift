@@ -33,6 +33,10 @@ func TextureURL(optographID: String, side: TextureSide, size: CGFloat, face: Int
     let scaledSize = min(Int(size * UIScreen.mainScreen().scale), 900)
     return buildURL("textures/\(optographID)/\(sideLetter)\(face).jpg", width: 0, height: 0, filter: "subface(\(x),\(y),\(d),\(scaledSize))")
 }
+func TextureURL2(optographID: String, side: TextureSide, size: CGFloat, face: Int, x: Float, y: Float, d: Float) -> String {
+    let scaledSize = min(Int(size * UIScreen.mainScreen().scale), 900)
+    return buildURL("textures/\(optographID)/placeholder.jpg", width: 0, height: 0, filter: "subface(\(x),\(y),\(d),\(scaledSize))")
+}
 
 private func buildURL(path: String, width: Int, height: Int, filter: String?) -> String {
     let s3Host: String
@@ -46,13 +50,17 @@ private func buildURL(path: String, width: Int, height: Int, filter: String?) ->
     let scale = UIScreen.mainScreen().scale
     let scaledWidth = Int(CGFloat(width) * scale)
     let scaledHeight = Int(CGFloat(height) * scale)
+    //let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
     let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
     
     let filterStr = filter != nil ? "filters:\(filter!)/" : ""
     let urlPartToSign = "\(scaledWidth)x\(scaledHeight)/\(filterStr)\(s3Host)/\(path)"
-    let hmacUrlPart = urlPartToSign.hmac(securityKey)
+    //let hmacUrlPart = urlPartToSign.hmac(securityKey)
+    let hmacUrlPart = "unsafe"
     
-    return "http://images.iam360.io/\(hmacUrlPart)/\(urlPartToSign)"
+    //return "http://images.iam360.io/\(hmacUrlPart)/\(urlPartToSign)"
+    print(">>>>>>>>>>>","http://images.dscvr.com/\(hmacUrlPart)/\(urlPartToSign)")
+    return "http://images.dscvr.com/\(hmacUrlPart)/\(urlPartToSign)"
 }
 
 private extension String {

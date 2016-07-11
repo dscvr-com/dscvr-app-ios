@@ -17,6 +17,7 @@ import Neon
 import FBSDKCoreKit
 import Kingfisher
 import SwiftyUserDefaults
+import ReactiveCocoa
 
 //let Env = EnvType.Development
 //let Env = EnvType.localStaging
@@ -50,9 +51,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            application.registerForRemoteNotifications()
             
             
-            let tabBarViewController = TabViewController()
-            self.window?.rootViewController = tabBarViewController
-            
             let launchedBefore = NSUserDefaults.standardUserDefaults().boolForKey("launchedBefore")
             if launchedBefore  {
                 print("Not first launch.")
@@ -65,8 +63,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             Mixpanel.sharedInstance().track("Launch.Notification")
+            
+            Defaults[.SessionPhoneModel] = UIDevice.currentDevice().modelName
+            Defaults[.SessionPhoneOS] = UIDevice.currentDevice().systemVersion
+            
+            let tabBarViewController = TabViewController()
+            self.window?.rootViewController = tabBarViewController
+            
+            Defaults[.SessionGyro] = true
+            
+            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
+                self.sendCheckElite().start()
+            
+            }
         }
         return true
+    }
+    
+    func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
+        
+        let parameters = ["uuid": SessionService.personID]
+        return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
+            .on(next: { data in
+                print(data.message)
+                print(data.status)
+                print(data.request_text)
+                if (data.status == "ok" && data.message == "3") {
+                    Defaults[.SessionEliteUser] = true
+                } else {
+                    Defaults[.SessionEliteUser] = false
+                }
+            })
     }
     
     func applicationWillResignActive(application: UIApplication) {
@@ -162,10 +189,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupAppearanceDefaults()
         
         KingfisherManager.sharedManager.downloader.downloadTimeout = 60
-        KingfisherManager.sharedManager.cache.maxDiskCacheSize = 200000000 // 200mb
-//        KingfisherManager.sharedManager.cache.maxMemoryCost = 400000000 // 100mb = 4e+8 pixels
-//        KingfisherManager.sharedManager.cache.maxMemoryCost = 25000000 // 100mb = 2.5e+7 pixels
-        KingfisherManager.sharedManager.cache.maxMemoryCost = 10 // 100mb = 2.5e+7 pixels
+        KingfisherManager.sharedManager.cache.maxDiskCacheSize = 200000000
+        KingfisherManager.sharedManager.cache.maxMemoryCost = 10
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         
@@ -197,6 +222,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         VersionService.updateToLatest()
+    }
+    
+}
+
+public extension UIDevice {
+    
+    var modelName: String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8 where value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        
+        switch identifier {
+        case "iPod5,1":                                 return "iPod Touch 5"
+        case "iPod7,1":                                 return "iPod Touch 6"
+        case "iPhone3,1", "iPhone3,2", "iPhone3,3":     return "iPhone 4"
+        case "iPhone4,1":                               return "iPhone 4s"
+        case "iPhone5,1", "iPhone5,2":                  return "iPhone 5"
+        case "iPhone5,3", "iPhone5,4":                  return "iPhone 5c"
+        case "iPhone6,1", "iPhone6,2":                  return "iPhone 5s"
+        case "iPhone7,2":                               return "iPhone 6"
+        case "iPhone7,1":                               return "iPhone 6 Plus"
+        case "iPhone8,1":                               return "iPhone 6s"
+        case "iPhone8,2":                               return "iPhone 6s Plus"
+        case "iPhone8,4":                               return "iPhone SE"
+        case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":return "iPad 2"
+        case "iPad3,1", "iPad3,2", "iPad3,3":           return "iPad 3"
+        case "iPad3,4", "iPad3,5", "iPad3,6":           return "iPad 4"
+        case "iPad4,1", "iPad4,2", "iPad4,3":           return "iPad Air"
+        case "iPad5,3", "iPad5,4":                      return "iPad Air 2"
+        case "iPad2,5", "iPad2,6", "iPad2,7":           return "iPad Mini"
+        case "iPad4,4", "iPad4,5", "iPad4,6":           return "iPad Mini 2"
+        case "iPad4,7", "iPad4,8", "iPad4,9":           return "iPad Mini 3"
+        case "iPad5,1", "iPad5,2":                      return "iPad Mini 4"
+        case "iPad6,3", "iPad6,4", "iPad6,7", "iPad6,8":return "iPad Pro"
+        case "AppleTV5,3":                              return "Apple TV"
+        case "i386", "x86_64":                          return "Simulator"
+        default:                                        return identifier
+        }
     }
     
 }

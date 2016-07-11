@@ -32,20 +32,7 @@ class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControlle
     
     var refreshNotification = NotificationSignal<Void>()
     
-//    private let glView: OpenGLView
-    
     override init(frame: CGRect) {
-        
-//        glView = OpenGLView(frame: CGRect(origin: CGPointZero, size: frame.size))
-        
-//        if #available(iOS 9.0, *) {
-//            scnView = SCNView(frame: CGRect(origin: CGPointZero, size: frame.size), options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
-//        } else {
-//            scnView = SCNView(frame: frame)
-//        }
-//        scnView = SCNView(frame: CGRect(origin: CGPointZero, size: frame.size), options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
-        
-//        renderDelegate = CubeRenderDelegate(rotationMatrixSource: CoreMotionRotationSource.Instance, width: scnView.frame.width, height: scnView.frame.height, fov: Double(HorizontalFieldOfView))
         
         super.init(frame: frame)
         
@@ -58,15 +45,15 @@ class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControlle
             .startWithNext { [weak self] (isUploaded, optographID) in
                 if isUploaded {
                     let url = TextureURL(optographID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
+                    print("cell",url)
                     self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
                 } else {
                     let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+                    print("cell1",url)
                     if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
                         dispatch_async(dispatch_get_main_queue()) {
                             self?.imageView.image = originalImage.resized(.Width, value: frame.width)
                         }
-                    } else {
-                        // TODO this should never be possible
                     }
                 }
             }
@@ -99,27 +86,27 @@ class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControlle
         
         contentView.backgroundColor = UIColor(0xcacaca)
         
-        whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
-        contentView.addSubview(whiteBackground)
+//        whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
+//        contentView.addSubview(whiteBackground)
         
         
-        whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
-        
-        deleteButton.setBackgroundImage(UIImage(named: "profile_delete_icn"), forState: .Normal)
-        deleteButton.addTarget(self, action: #selector(deleteOpto), forControlEvents: .TouchUpInside)
-        uploadButton.setBackgroundImage(UIImage(named:"profile_upload_icn"), forState: .Normal)
-        
-        let deleteImageSize = UIImage(named:"profile_delete_icn")?.size
-        let uploadImageSize = UIImage(named:"profile_upload_icn")?.size
-        
-        whiteBackground.addSubview(deleteButton)
-        whiteBackground.addSubview(uploadButton)
-        
-        deleteButton.anchorToEdge(.Right, padding: 20, width: (deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
-        uploadButton.align(.ToTheLeftCentered, relativeTo: deleteButton, padding: 30, width: (uploadImageSize?.width)!, height: (uploadImageSize?.height)!)
-        uploadButton.addTarget(self, action: #selector(upload), forControlEvents: .TouchUpInside)
-        
-        uploadButton.hidden = true
+//        whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
+//        
+//        deleteButton.setBackgroundImage(UIImage(named: "profile_delete_icn"), forState: .Normal)
+//        deleteButton.addTarget(self, action: #selector(deleteOpto), forControlEvents: .TouchUpInside)
+//        uploadButton.setBackgroundImage(UIImage(named:"profile_upload_icn"), forState: .Normal)
+//        
+//        let deleteImageSize = UIImage(named:"profile_delete_icn")?.size
+//        let uploadImageSize = UIImage(named:"profile_upload_icn")?.size
+//        
+//        whiteBackground.addSubview(deleteButton)
+//        whiteBackground.addSubview(uploadButton)
+//        
+//        deleteButton.anchorToEdge(.Right, padding: 20, width: (deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
+//        uploadButton.align(.ToTheLeftCentered, relativeTo: deleteButton, padding: 30, width: (uploadImageSize?.width)!, height: (uploadImageSize?.height)!)
+//        uploadButton.addTarget(self, action: #selector(upload), forControlEvents: .TouchUpInside)
+//        
+//        uploadButton.hidden = true
         
         viewModel.isPrivate.producer
             .skipRepeats()
@@ -128,18 +115,18 @@ class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControlle
                 if isPrivate {
                     return self.iconView.text = String.iconWithName(.Safe)
                 } else if uploadStatus == .Uploading {
-                    self.uploadButton.hidden = true
+                    //self.uploadButton.hidden = true
                     return self.iconView.text = String.iconWithName(.Loading)
                 } else if uploadStatus == .Offline {
-                    return self.uploadButton.hidden = false
+                    //return self.uploadButton.hidden = false
                 } else if uploadStatus == .Uploaded {
-                    return self.uploadButton.hidden = true
+                    //return self.uploadButton.hidden = true
                 } else {
                     return
                 }
         }
         
-        deleteButton.rac_hidden <~ viewModel.userId.producer.map(negate)
+        //deleteButton.rac_hidden <~ viewModel.userId.producer.map(negate)
     }
     func deleteOpto() {
         

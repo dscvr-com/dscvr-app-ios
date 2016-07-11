@@ -35,6 +35,7 @@ class DetailsViewModel {
     var isMe = false
     let likeCount = MutableProperty<Int>(0)
     let liked = MutableProperty<Bool>(false)
+    let isThreeRing = MutableProperty<Bool>(false)
     
     let postingEnabled = MutableProperty<Bool>(false)
     let isPosting = MutableProperty<Bool>(false)
@@ -116,6 +117,24 @@ class DetailsViewModel {
             .start()
     }
     
+    func deleteOpto() {
+        
+        
+        SignalProducer<Bool, ApiError>(value: true)
+            .flatMap(.Latest) { followedBefore in
+                ApiService<EmptyResponse>.delete("optographs/\(self.optographBox.model.ID)")
+            }
+            .start()
+        
+        PipelineService.stopStitching()
+        optographBox.insertOrUpdate { box in
+            print("date today \(NSDate())")
+            print(box.model.ID)
+            return box.model.deletedAt = NSDate()
+        }
+        
+    }
+    
     private func updatePropertiesDetails() {
         optographBox.producer.startWithNext{ [weak self] optograph in
             self?.isStarred.value = optograph.isStarred
@@ -123,6 +142,8 @@ class DetailsViewModel {
             self?.viewsCount.value = optograph.viewsCount
             self?.commentsCount.value = optograph.commentsCount
             self?.timeSinceCreated.value = optograph.createdAt.longDescription
+            print(optograph.createdAt.longDescription)
+            print(optograph.ID)
             self?.text.value = optograph.isPrivate ? "[private] " + optograph.text : optograph.text
             self?.hashtags.value = optograph.hashtagString
             self?.isPublished.value = optograph.isPublished

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyUserDefaults
 
 class ProfileNavViewController: NavigationController {
     
@@ -20,11 +21,34 @@ class ProfileNavViewController: NavigationController {
         if SessionService.isLoggedIn {
             viewControllers.insert(loginOverlayViewController, atIndex: 0)
             pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
+//            if SessionService.needsOnboarding {
+//                let username = AddUsernameViewController()
+//                pushViewController(username, animated: false)
+//            }
+            
+            if !Defaults[.SessionEliteUser] {
+                let gate = InvitationViewController()
+                gate.fromProfilePage = true
+                pushViewController(gate, animated: false)
+            }
+            
         } else {
             pushViewController(loginOverlayViewController, animated: false)
             SessionService.loginNotifiaction.signal.observeNext {
-//               self.popViewControllerAnimated(false)
-               self.pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
+                let profilePage = ProfileCollectionViewController(personID: SessionService.personID)
+                profilePage.fromLoginPage = true
+                self.pushViewController(profilePage, animated: false)
+                
+//                if SessionService.needsOnboarding {
+//                    let username = AddUsernameViewController()
+//                    self.pushViewController(username, animated: false)
+//                }
+                
+                if !Defaults[.SessionEliteUser] {
+                    let gate = InvitationViewController()
+                    gate.fromProfilePage = true
+                    self.pushViewController(gate, animated: false)
+                }
             }
         }
     }
