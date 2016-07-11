@@ -113,7 +113,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapRightButton))
         
         viewModel.results.producer
-            .filter { print("nagdelete?", $0.changed) ;return $0.changed }
+            .filter {return $0.changed }
             //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
             .delayAllUntil(viewModel.isActive.producer)
             .observeOnMain()
@@ -361,8 +361,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         
         uiHidden.value = false
-        viewModel.isActive.value = true
         viewModel.refresh()
+        viewModel.isActive.value = true
         
         showUI()
         tabController!.enableScrollView()

@@ -597,7 +597,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         imageDownloadDisposable?.dispose()
         imageDownloadDisposable = nil
-        //CoreMotionRotationSource.Instance.stop()
+//        CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
         tabController!.enableScrollView()
         

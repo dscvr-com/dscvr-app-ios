@@ -142,6 +142,8 @@ class DetailsViewModel {
             self?.viewsCount.value = optograph.viewsCount
             self?.commentsCount.value = optograph.commentsCount
             self?.timeSinceCreated.value = optograph.createdAt.longDescription
+            print(optograph.createdAt.longDescription)
+            print(optograph.ID)
             self?.text.value = optograph.isPrivate ? "[private] " + optograph.text : optograph.text
             self?.hashtags.value = optograph.hashtagString
             self?.isPublished.value = optograph.isPublished

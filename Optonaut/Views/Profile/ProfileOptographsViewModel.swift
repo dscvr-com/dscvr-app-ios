@@ -36,7 +36,10 @@ class ProfileOptographsViewModel {
                         Models.persons.touch(Person.fromSQL(row))
                         
                         if row[OptographSchema.locationID] != nil {
-                            
+//                            if let locationRow = Location.fromSQL(row){
+//                            
+//                            }
+//                            
                             Models.locations.touch(Location.fromSQL(row))
                             
                         }

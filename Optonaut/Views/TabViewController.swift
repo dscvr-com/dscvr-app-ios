@@ -144,7 +144,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     
     func scrollViewDidScroll(scrollView:UIScrollView) {
         
-        print(scrollView.contentOffset.x , ">>>",self.view.frame.width)
         if (!Defaults[.SessionUserDidFirstLogin]) {
             
             if (scrollView.contentOffset.x <= (self.view.frame.width * 2)) {

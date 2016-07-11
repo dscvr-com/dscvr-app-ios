@@ -79,7 +79,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         buttonCopyLink.addTarget(self, action: #selector(copyLink), forControlEvents: .TouchUpInside)
         
         buttonFacebook.setImage(UIImage(named: "sharing_facebook_btn") , forState: .Normal)
-        buttonFacebook.addTarget(self, action: #selector(shareFacebook), forControlEvents: .TouchUpInside)
+        buttonFacebook.addTarget(self, action: #selector(tapFacebookSocialButton), forControlEvents: .TouchUpInside)
         
 //        buttonMessenger.setImage(UIImage(named: "sharing_messenger_btn") , forState: .Normal)
 //        buttonMessenger.addTarget(self, action: #selector(shareMessenger), forControlEvents: .TouchUpInside)
@@ -220,6 +220,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         }
         
         if let token = FBSDKAccessToken.currentAccessToken() where publishPermissions.reduce(true, combine: { $0 && token.hasGranted($1) }) {
+            self.shareFacebook()
             return
         }
         

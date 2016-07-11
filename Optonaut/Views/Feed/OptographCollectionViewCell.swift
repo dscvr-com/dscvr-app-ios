@@ -666,7 +666,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 } else {
                     if !isShareOpen.value {
                         if (viewModel.uploadStatus.value == .Offline || viewModel.uploadStatus.value == .Uploading) {
-                            let alert = UIAlertController(title:"Sorry, something went wrong on sharing..", message: "Maybe the 360 image is still uploading or not uploaded yet.", preferredStyle: .Alert)
+                            let alert = UIAlertController(title:"Oops! Your 360 image is still uploading..", message: "Please try again later..", preferredStyle: .Alert)
                             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in
                                 self.xCoordBegin = 0.0
                                 self.yellowView.frame.origin.x = 0

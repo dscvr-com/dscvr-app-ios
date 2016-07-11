@@ -70,6 +70,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let tabBarViewController = TabViewController()
             self.window?.rootViewController = tabBarViewController
             
+            Defaults[.SessionGyro] = true
+            
             if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
                 self.sendCheckElite().start()
             
@@ -187,10 +189,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupAppearanceDefaults()
         
         KingfisherManager.sharedManager.downloader.downloadTimeout = 60
-        KingfisherManager.sharedManager.cache.maxDiskCacheSize = 200000000 // 200mb
-//        KingfisherManager.sharedManager.cache.maxMemoryCost = 400000000 // 100mb = 4e+8 pixels
-//        KingfisherManager.sharedManager.cache.maxMemoryCost = 25000000 // 100mb = 2.5e+7 pixels
-        KingfisherManager.sharedManager.cache.maxMemoryCost = 10 // 100mb = 2.5e+7 pixels
+        KingfisherManager.sharedManager.cache.maxDiskCacheSize = 200000000
+        KingfisherManager.sharedManager.cache.maxMemoryCost = 10
         
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
         

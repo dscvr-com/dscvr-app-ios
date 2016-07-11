@@ -100,8 +100,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 print("not click")
                 self!.isFollowClicked = false
             }
-            self!.collectionViewModel.refreshNotification.notify(())
             self!.collectionView?.reloadData()
+            self!.collectionViewModel.refreshNotification.notify(())
         }
         
         rightBarButton.frame = CGRect(x: 0, y: -2, width: 20, height: 21)
@@ -206,10 +206,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         }
     }
     
-    func reloadTable() {
-    
-    }
-    
     override func scrollViewDidScroll(scrollView: UIScrollView) {
         let offsetY:CGFloat  = scrollView.contentOffset.y
         
@@ -285,12 +281,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                         .map{$0.ID}
                     
                     strongSelf.optographIDs = results.models.map { $0.ID }
-//                    strongSelf.collectionView!.performBatchUpdates({
-//                        strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-//                        strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-//                        strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-//                        }, completion: { _ in
-//                    })
                 }
                 })
             .startWithNext { _ in
@@ -298,14 +288,18 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         }
         
         profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
-            if isFollowTabTap {
-                print("click")
-                self!.isFollowClicked = true
-            } else {
-                print("not click")
-                self!.isFollowClicked = false
+            if let strongSelf = self {
+                if isFollowTabTap {
+                    print("click")
+                    strongSelf.isFollowClicked = true
+                } else {
+                    print("not click")
+                    strongSelf.isFollowClicked = false
+                }
+                strongSelf.collectionView?.reloadData()
+                strongSelf.collectionViewModel.refreshNotification.notify(())
+            
             }
-            self!.collectionViewModel.refreshNotification.notify(())
         }
     }
     
