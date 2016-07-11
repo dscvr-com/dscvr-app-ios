@@ -225,7 +225,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         stopSession()
         
-        recorder.finish()
+        recorder.cancel()
         recorder.dispose()
         
         if StitchingService.hasUnstitchedRecordings() {

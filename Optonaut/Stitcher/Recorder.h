@@ -62,6 +62,7 @@ struct ExposureInfo {
 - (uint32_t)getRecordedImagesCount;
 - (uint32_t)getImagesToRecordCount;
 - (void)finish;
+- (void)cancel;
 - (void)dispose;
 - (bool)isDisposed;
 - (struct ExposureInfo)getExposureHint;
