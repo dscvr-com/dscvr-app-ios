@@ -29,9 +29,7 @@ class SearchTableModel {
                     .flatMap(.Latest) { keyword in
                         return ApiService<PersonApiModel>.get("persons/search?keyword=\(keyword)")
                             .on(next: { apiModel in
-                                
-                                
-//                                Models.persons.touch(apiModel).insertOrUpdate()
+                                Models.persons.touch(apiModel).insertOrUpdate()
                             })
                             .ignoreError()
                             .map(Person.fromApiModel)

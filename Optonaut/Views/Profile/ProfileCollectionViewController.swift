@@ -314,6 +314,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         collectionViewModel.refreshNotification.notify(())
         collectionViewModel.isActive.value = true
         
+        profileViewModel.refreshData()
+        
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.fontDisplay(20, withType: .Semibold),
             NSForegroundColorAttributeName: UIColor.blackColor(),

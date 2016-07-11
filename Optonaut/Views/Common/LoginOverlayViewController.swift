@@ -20,8 +20,6 @@ class LoginOverlayViewController: UIViewController{
     
     private let viewModel = LoginOverlayViewModel()
     
-    var loadingView = UIView()
-    var container = UIView()
     var actInd = UIActivityIndicatorView()
     
     init() {
@@ -58,34 +56,16 @@ class LoginOverlayViewController: UIViewController{
         showActivityIndicatory(contentView)
     }
     
-    
     func showActivityIndicatory(uiView: UIView) {
-        container.frame = uiView.frame
-        container.center = uiView.center
-        container.backgroundColor = UIColor(hex:0xffffff).alpha(0.30)
-        
-        loadingView.frame = CGRectMake(0, 0, 80, 80)
-        loadingView.center = uiView.center
-        loadingView.backgroundColor = UIColor(hex:0x444444).alpha(0.70)
-        loadingView.clipsToBounds = true
-        loadingView.layer.cornerRadius = 10
-        
-        actInd.frame = CGRectMake(0.0, 0.0, 40.0, 40.0);
-        actInd.activityIndicatorViewStyle =
-            UIActivityIndicatorViewStyle.WhiteLarge
-        actInd.center = CGPointMake(loadingView.frame.size.width / 2,
-                                    loadingView.frame.size.height / 2);
-        loadingView.addSubview(actInd)
-        container.addSubview(loadingView)
-        uiView.addSubview(container)
-        
-        self.loadingView.hidden = true
-        self.container.hidden = true
-        self.actInd.stopAnimating()
-        
+        actInd.hidesWhenStopped = true
+        actInd.center = view.center
+        actInd.stopAnimating()
+        uiView.addSubview(actInd)
     }
     
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
+        
+        self.actInd.startAnimating()
         
         let parameters = ["uuid": SessionService.personID]
         return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
@@ -94,8 +74,6 @@ class LoginOverlayViewController: UIViewController{
                 print(data.status)
                 print(data.request_text)
                 
-                self.loadingView.hidden = true
-                self.container.hidden = true
                 self.actInd.stopAnimating()
                 
                 if (data.status == "ok" && data.message == "3") {
@@ -107,10 +85,6 @@ class LoginOverlayViewController: UIViewController{
             })
     }
     func checkElite() {
-        self.loadingView.hidden = false
-        self.container.hidden = false
-        self.actInd.startAnimating()
-        
         sendCheckElite().start()
     }
     
@@ -122,22 +96,23 @@ class LoginOverlayViewController: UIViewController{
         
         let errorBlock = { [weak self] (message: String) in
             self?.viewModel.facebookPending.value = false
-            
+            self?.actInd.stopAnimating()
             let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
             self?.presentViewController(alert, animated: true, completion: nil)
         }
         
         let successBlock = { [weak self] (token: FBSDKAccessToken!) in
-            print(token.tokenString)
             self?.viewModel.facebookSignin(token.userID, token: token.tokenString)
                 .on(
                     failed: { _ in
                         loginManager.logOut()
+                        self?.actInd.stopAnimating()
                         errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
                     },
                     completed: {
                         Defaults[.SessionUserDidFirstLogin] = true
+                        self?.actInd.stopAnimating()
                         self?.checkElite()
                     }
                 )
@@ -147,11 +122,10 @@ class LoginOverlayViewController: UIViewController{
         loginManager.logInWithReadPermissions(readPermission, fromViewController: self) { [weak self] result, error in
             
             if error != nil || result.isCancelled {
-                print(error)
                 self?.viewModel.facebookPending.value = false
                 loginManager.logOut()
-                //self!.cancel()
             } else {
+                self?.actInd.startAnimating()
                 let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
                 let allPermissionsGranted = readPermission.reduce(true) { $0 && grantedPermissions.contains($1) }
 

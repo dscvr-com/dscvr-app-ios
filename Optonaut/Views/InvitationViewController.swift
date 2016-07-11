@@ -25,6 +25,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
     var backView = UIView()
     var personBox: ModelBox<Person>!
     var fromProfilePage:Bool = false
+    var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -127,6 +128,11 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         personBox = Models.persons[SessionService.personID]!
         
         textRequestCode.text = personBox.model.email!
+        
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.center = view.center
+        activityIndicator.stopAnimating()
+        backView.addSubview(activityIndicator)
     }
     
     
@@ -134,17 +140,21 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    
+    func closeKeyboard() {
+        view.endEditing(true)
+    }
     
     func sendRequest() {
         sendApiRequestCode().start()
     }
     
     func sendApiRequestCode() -> SignalProducer<RequestCodeApiModel, ApiError> {
+        activityIndicator.startAnimating()
         let parameters = ["uuid": SessionService.personID]
         print(parameters)
         return ApiService<RequestCodeApiModel>.postForGate("api/request_code", parameters:parameters)
             .on(next: { data in
+                self.activityIndicator.stopAnimating()
                 print(data.message)
                 print(data.status)
                 print(data.request_text)
@@ -161,10 +171,12 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
     
     func pushCode() -> SignalProducer<RequestCodeApiModel, ApiError> {
         
+        activityIndicator.startAnimating()
         let parameters = ["uuid": SessionService.personID,"code":textPutCode.text!]
         print(parameters)
         return ApiService<RequestCodeApiModel>.postForGate("api/use_code", parameters: parameters)
             .on(next: { data in
+                self.activityIndicator.stopAnimating()
                 print(data.message)
                 print(data.status)
                 print(data.request_text)
@@ -181,10 +193,12 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
     
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
         
+        activityIndicator.startAnimating()
         let parameters = ["uuid": SessionService.personID]
         print(parameters)
         return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
             .on(next: { data in
+                self.activityIndicator.stopAnimating()
                 print(data.message)
                 print(data.status)
                 print(data.request_text)
@@ -258,9 +272,6 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
             backView.frame = CGRect(x: 0,y: backView.frame.origin.y + keyboardHeight ,width: view.frame.width,height: view.frame.height)
         }
         
-    }
-    func closeKeyboard() {
-        view.endEditing(true)
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {

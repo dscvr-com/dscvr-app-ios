@@ -21,10 +21,10 @@ class ProfileNavViewController: NavigationController {
         if SessionService.isLoggedIn {
             viewControllers.insert(loginOverlayViewController, atIndex: 0)
             pushViewController(ProfileCollectionViewController(personID: SessionService.personID), animated: false)
-//            if SessionService.needsOnboarding {
-//                let username = AddUsernameViewController()
-//                pushViewController(username, animated: false)
-//            }
+            if SessionService.needsOnboarding {
+                let username = AddUsernameViewController()
+                pushViewController(username, animated: false)
+            }
             
             if !Defaults[.SessionEliteUser] {
                 let gate = InvitationViewController()
@@ -39,10 +39,10 @@ class ProfileNavViewController: NavigationController {
                 profilePage.fromLoginPage = true
                 self.pushViewController(profilePage, animated: false)
                 
-//                if SessionService.needsOnboarding {
-//                    let username = AddUsernameViewController()
-//                    self.pushViewController(username, animated: false)
-//                }
+                if SessionService.needsOnboarding {
+                    let username = AddUsernameViewController()
+                    self.pushViewController(username, animated: false)
+                }
                 
                 if !Defaults[.SessionEliteUser] {
                     let gate = InvitationViewController()

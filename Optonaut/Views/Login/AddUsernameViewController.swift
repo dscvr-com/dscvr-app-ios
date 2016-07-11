@@ -29,6 +29,8 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     
     private var personSQL: Person
     
+    var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+    
     required init() {
         
         let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Defaults[.SessionPersonID]!)
@@ -67,6 +69,8 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         username.borderStyle = UITextBorderStyle.RoundedRect
         username.font = UIFont(name: "Avenir-Heavy", size: 15)
         username.textColor = UIColor(hex:0xffd24e)
+        username.autocorrectionType = UITextAutocorrectionType.No
+        username.autocapitalizationType = UITextAutocapitalizationType.None
         
         let placeholderText = NSLocalizedString("Username", comment: "Username")
         let placeholderString = NSAttributedString(string: placeholderText, attributes: [NSForegroundColorAttributeName: UIColor(white: 0.66, alpha: 1.0),
@@ -89,6 +93,7 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         createButton.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Normal)
         createButton.titleLabel!.font = UIFont(name: "Avenir-Heavy", size: 15)
         createButton.enabled = false
+        createButton.addTarget(self, action: #selector(createUsername), forControlEvents: .TouchUpInside)
         
         createButton.layer.cornerRadius = 7.0
         
@@ -149,6 +154,34 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
                 }
             )
             .start()
+        
+        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeKeyboard)))
+        
+        
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.center = view.center
+        activityIndicator.stopAnimating()
+        contentView.addSubview(activityIndicator)
+    }
+    
+    func createUsername() {
+        updateData().start()
+    }
+    
+    func closeKeyboard() {
+        view.endEditing(true)
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.navigationItem.setHidesBackButton(true, animated:true)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.navigationItem.setHidesBackButton(false, animated:true)
     }
     
     func updateData() -> SignalProducer<EmptyResponse, ApiError> {
@@ -163,22 +196,25 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
             .on(
                 started: {
                     print("updating")
+                    self.activityIndicator.startAnimating()
                 },
                 completed: {
                     self.personSQL.displayName = self.viewModel.searchText.value
                     self.personSQL.userName = self.viewModel.searchText.value
                     Defaults[.SessionOnboardingVersion] = OnboardingVersion
                     self.saveModel()
+                    self.activityIndicator.stopAnimating()
                 },
                 failed: { error in
                     print(error)
+                    self.activityIndicator.stopAnimating()
                 }
         )
     }
     
     private func saveModel() {
         try! personSQL.insertOrUpdate()
-        self.sendAlert("Usernamed updated successfully!")
+        self.sendAlert("Username updated successfully!")
     }
     
     func sendAlert(message:String) {
