@@ -482,17 +482,27 @@ class OptographCollectionViewCell: UICollectionViewCell{
     }
     
     func setRotation (isRotating:Bool) {
-        if isRotating {
-            print("playing")
-            if self.video?.status == .ReadyToPlay {
-                previewImage.hidden = true
-                self.video!.play()
+        
+        previewImage.hidden = false
+        
+        if let gyroVideo = self.video {
+            if isRotating {
+                print("playing")
+                if gyroVideo.status == .ReadyToPlay {
+                    previewImage.hidden = true
+                    gyroVideo.play()
+                }
+            } else {
+                print("pause")
+                gyroVideo.pause()
             }
         } else {
-            print("pause")
             previewImage.hidden = false
-            self.video!.pause()
         }
+    }
+    
+    func loadPreviewImage() {
+        previewImage.hidden = false
     }
     
     var id: Int = 0 {

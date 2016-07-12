@@ -59,7 +59,6 @@ private func buildURL(path: String, width: Int, height: Int, filter: String?) ->
     let hmacUrlPart = "unsafe"
     
     //return "http://images.iam360.io/\(hmacUrlPart)/\(urlPartToSign)"
-    print(">>>>>>>>>>>","http://images.dscvr.com/\(hmacUrlPart)/\(urlPartToSign)")
     return "http://images.dscvr.com/\(hmacUrlPart)/\(urlPartToSign)"
 }
 

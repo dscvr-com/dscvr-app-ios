@@ -50,6 +50,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     var imageView: UIImageView!
     var imagePicker = UIImagePickerController()
+    let fileManager = NSFileManager.defaultManager()
     
     let shareData = ShareData.sharedInstance
     
@@ -114,7 +115,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         viewModel.results.producer
             .filter {return $0.changed }
-            //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
+            .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
             .delayAllUntil(viewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
@@ -414,6 +415,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        print("count ng mga optograph",optographIDs.count)
         return optographIDs.count
     }
 
@@ -424,41 +426,80 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         let optographID = optographIDs[indexPath.row]
         
-        var url:NSURL?
+        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographID)/pan.mp4"
         
-        if #available(iOS 9.0, *) {
-            url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/\(optographID)/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
-        }
+        let returnData = imageCache.insertMp4IntoCache(filename,optographId: optographID)
+        print("return filename",returnData)
         
-        print("http://s3-ap-southeast-1.amazonaws.com/","resources.staging-iam360.io/textures/\(optographID)/pan.mp4")
-        
-        cell.video = AVPlayer(URL: url!)
-        
-        cell.bindModel(optographID)
-        cell.swipeView = tabController!.scrollView
-        cell.collectionView = collectionView
-        cell.isShareOpen.producer
-            .startWithNext{ val in
-                if val{
-                    print("optographid =",optographID)
-                    self.shareData.optographId.value = optographID
-                    self.shareData.isSharePageOpen.value = true
+        if fileManager.fileExistsAtPath(returnData) {
+            print("exist")
+            cell.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
+            
+            cell.bindModel(optographID)
+            cell.swipeView = tabController!.scrollView
+            cell.collectionView = collectionView
+            cell.isShareOpen.producer
+                .startWithNext{ val in
+                    if val{
+                        print("optographid =",optographID)
+                        self.shareData.optographId.value = optographID
+                        self.shareData.isSharePageOpen.value = true
+                    } else {
+                        print("close")
+                    }
+            }
+            
+            if indexPath.row > optographIDs.count - 5 {
+                viewModel.loadMore()
+            }
+            
+            if indexPathShow >= 0 {
+                if indexPathShow == indexPath.item {
+                    cell.setRotation(true)
                 } else {
-                    print("close")
+                    cell.setRotation(false)
                 }
             }
-        
-        if indexPath.row > optographIDs.count - 5 {
-            viewModel.loadMore()
+        } else {
+            print("not existing")
+            cell.loadPreviewImage()
         }
         
-        if indexPathShow >= 0 {
-            if indexPathShow == indexPath.item {
-                cell.setRotation(true)
-            } else {
-                cell.setRotation(false)
-            }
-        }
+        
+//        var url:NSURL?
+//
+//        if #available(iOS 9.0, *) {
+//
+//            url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/\(optographID)/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
+//        }
+//        
+//        cell.video = AVPlayer(URL: url!)
+//        
+//        cell.bindModel(optographID)
+//        cell.swipeView = tabController!.scrollView
+//        cell.collectionView = collectionView
+//        cell.isShareOpen.producer
+//            .startWithNext{ val in
+//                if val{
+//                    print("optographid =",optographID)
+//                    self.shareData.optographId.value = optographID
+//                    self.shareData.isSharePageOpen.value = true
+//                } else {
+//                    print("close")
+//                }
+//            }
+//        
+//        if indexPath.row > optographIDs.count - 5 {
+//            viewModel.loadMore()
+//        }
+//        
+//        if indexPathShow >= 0 {
+//            if indexPathShow == indexPath.item {
+//                cell.setRotation(true)
+//            } else {
+//                cell.setRotation(false)
+//            }
+//        }
     
         return cell
     }

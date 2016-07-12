@@ -31,15 +31,12 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .filter(OptographTable[OptographSchema.shouldBePublished])
             .order(OptographTable[OptographSchema.createdAt].asc)
         
-        refreshNotification.signal.observeOnMain().observeNext{
-            print("nakareceive ng signal")
-        }
-        
         refreshNotification.signal
             .flatMap(.Latest) { _ in
                 DatabaseService.query(.Many, query: query)
                     .observeOnUserInitiated()
                     .on(next: { row in
+                        print(">>>>>>+++",row)
                         Models.optographs.touch(Optograph.fromSQL(row))
                         Models.persons.touch(Person.fromSQL(row))
                         Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)

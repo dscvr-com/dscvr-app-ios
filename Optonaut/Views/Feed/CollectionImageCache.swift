@@ -247,6 +247,7 @@ class CollectionImageCache {
     private let debouncerTouch: Debouncer
     
     private let textureSize: CGFloat
+    private let logsPath:NSURL?
     
     init(textureSize: CGFloat) {
         self.textureSize = textureSize
@@ -254,6 +255,15 @@ class CollectionImageCache {
         items = [Item?](count: CollectionImageCache.cacheSize, repeatedValue: nil)
         
         debouncerTouch = Debouncer(queue: dispatch_get_main_queue(), delay: 0.1)
+        
+        let documentsPath = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0])
+        logsPath = documentsPath.URLByAppendingPathComponent("mp4s")
+        
+        do {
+            try NSFileManager.defaultManager().createDirectoryAtPath(logsPath!.path!, withIntermediateDirectories: true, attributes: nil)
+        } catch let error as NSError {
+            NSLog("Unable to create directory \(error.debugDescription)")
+        }
     }
     
     deinit {
@@ -274,6 +284,23 @@ class CollectionImageCache {
             items[cacheIndex] = item
             return item.innerCache
         }
+    }
+    func insertMp4IntoCache(url:String,optographId:String) -> String{
+        
+        let priority = DISPATCH_QUEUE_PRIORITY_BACKGROUND
+        
+        let path = self.logsPath!.path!.stringByAppendingPathComponent("\(optographId).mp4")
+        
+        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            
+            let videoData = NSData(contentsOfURL: NSURL(string:url)!)
+            
+            if (videoData != nil) {
+                
+                videoData?.writeToFile(path, atomically: true)
+            }
+        }
+        return path
     }
     
     func disable(index: Int) {
