@@ -77,6 +77,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     private let tabView = TabView()
     
+        
     required init() {
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
@@ -596,21 +597,22 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         
         var bestFormat: AVCaptureDeviceFormat?
-        var bestFrameRate: AVFrameRateRange?
+        //var bestFrameRate: AVFrameRateRange?
+        
+        var maxFps: Double = 0
         
         for format in videoDevice!.formats.map({ $0 as! AVCaptureDeviceFormat }) {
-            for rate in format.videoSupportedFrameRateRanges.map({ $0 as! AVFrameRateRange }) {
-                if bestFormat == nil || bestFrameRate!.minFrameDuration > rate.minFrameDuration {
-                    bestFormat = format
-                    bestFrameRate = rate
-                }
-                //print("Video: \(format.description), Max: \(rate.maxFrameDuration.seconds), min: \(rate.minFrameDuration.seconds)");
+            var ranges = format.videoSupportedFrameRateRanges as! [AVFrameRateRange]
+            let frameRates = ranges[0]
+            if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= 30
+            {
+                maxFps = frameRates.maxFrameRate
+                bestFormat = format
+                
             }
         }
-        videoDevice!.activeFormat = bestFormat
-        videoDevice!.activeVideoMinFrameDuration = bestFrameRate!.minFrameDuration
-        videoDevice!.activeVideoMaxFrameDuration = bestFrameRate!.minFrameDuration
         
+        print(String(maxFps) + "fps");
         
         if videoDevice!.activeFormat.videoHDRSupported.boolValue {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
@@ -620,7 +622,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         videoDevice!.exposureMode = .ContinuousAutoExposure
         videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
         
+        
+        videoDevice!.activeVideoMinFrameDuration = CMTimeMake(1, 30)
+        videoDevice!.activeVideoMaxFrameDuration = CMTimeMake(1, 30)
+        
         videoDevice!.unlockForConfiguration()
+        
         session.startRunning()
     }
     
