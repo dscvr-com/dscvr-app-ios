@@ -34,21 +34,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         prepareAndExecute(requireLogin: true) {
-//            let tabBarViewController = TabBarViewController()
-//            
-//            if let notification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
-//                Mixpanel.sharedInstance().track("Launch.Notification")
-//                self.application(application, didReceiveRemoteNotification: notification)
-//                tabBarViewController.selectedIndex = 2
-//            }
             
-//            self.window?.rootViewController = tabBarViewController
+            if let notification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
+                Mixpanel.sharedInstance().track("Launch.Notification")
+                self.application(application, didReceiveRemoteNotification: notification)
+            }
             
-//            let notificationTypes: UIUserNotificationType = [UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound]
-//            let pushNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: nil)
+            let notificationTypes: UIUserNotificationType = [UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound]
+            let pushNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: nil)
 
-//            application.registerUserNotificationSettings(pushNotificationSettings)
-//            application.registerForRemoteNotifications()
+            application.registerUserNotificationSettings(pushNotificationSettings)
+            application.registerForRemoteNotifications()
             
             
             let launchedBefore = NSUserDefaults.standardUserDefaults().boolForKey("launchedBefore")

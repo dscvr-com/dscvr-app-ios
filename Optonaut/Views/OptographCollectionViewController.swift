@@ -434,25 +434,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if fileManager.fileExistsAtPath(returnData) {
             print("exist")
             cell.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
-            
-            cell.bindModel(optographID)
-            cell.swipeView = tabController!.scrollView
-            cell.collectionView = collectionView
-            cell.isShareOpen.producer
-                .startWithNext{ val in
-                    if val{
-                        print("optographid =",optographID)
-                        self.shareData.optographId.value = optographID
-                        self.shareData.isSharePageOpen.value = true
-                    } else {
-                        print("close")
-                    }
-            }
-            
-            if indexPath.row > optographIDs.count - 5 {
-                viewModel.loadMore()
-            }
-            
             if indexPathShow >= 0 {
                 if indexPathShow == indexPath.item {
                     cell.setRotation(true)
@@ -465,41 +446,23 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             cell.loadPreviewImage()
         }
         
+        cell.bindModel(optographID)
+        cell.swipeView = tabController!.scrollView
+        cell.collectionView = collectionView
+        cell.isShareOpen.producer
+            .startWithNext{ val in
+                if val{
+                    print("optographid =",optographID)
+                    self.shareData.optographId.value = optographID
+                    self.shareData.isSharePageOpen.value = true
+                } else {
+                    print("close")
+                }
+        }
         
-//        var url:NSURL?
-//
-//        if #available(iOS 9.0, *) {
-//
-//            url = NSURL(fileURLWithPath: "resources.staging-iam360.io/textures/\(optographID)/pan.mp4" ,isDirectory: false,relativeToURL:NSURL(string: "http://s3-ap-southeast-1.amazonaws.com"))
-//        }
-//        
-//        cell.video = AVPlayer(URL: url!)
-//        
-//        cell.bindModel(optographID)
-//        cell.swipeView = tabController!.scrollView
-//        cell.collectionView = collectionView
-//        cell.isShareOpen.producer
-//            .startWithNext{ val in
-//                if val{
-//                    print("optographid =",optographID)
-//                    self.shareData.optographId.value = optographID
-//                    self.shareData.isSharePageOpen.value = true
-//                } else {
-//                    print("close")
-//                }
-//            }
-//        
-//        if indexPath.row > optographIDs.count - 5 {
-//            viewModel.loadMore()
-//        }
-//        
-//        if indexPathShow >= 0 {
-//            if indexPathShow == indexPath.item {
-//                cell.setRotation(true)
-//            } else {
-//                cell.setRotation(false)
-//            }
-//        }
+        if indexPath.row > optographIDs.count - 5 {
+            viewModel.loadMore()
+        }
     
         return cell
     }

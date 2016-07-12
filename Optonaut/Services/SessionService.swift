@@ -163,6 +163,7 @@ class SessionService {
         Defaults[.SessionShareToggledFacebook] = false
         Defaults[.SessionShareToggledTwitter] = false
         Defaults[.SessionShareToggledInstagram] = false
+        Defaults[.SessionEliteUser] = false
         
         Mixpanel.sharedInstance().reset()
         UIApplication.sharedApplication().applicationIconBadgeNumber = 0
