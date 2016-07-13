@@ -186,6 +186,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         
         let shareOnFb = FacebookShareViewController()
         shareOnFb.optographId = self.optographId
+        shareOnFb.link = "\(self.shareUrl)"
         shareOnFb.modalPresentationStyle = .OverCurrentContext
         self.navigationController?.presentViewController(shareOnFb, animated: true, completion: nil)
     }

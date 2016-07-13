@@ -69,10 +69,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var isMe = false
     var transformBegin:CGAffineTransform?
     let deleteButton = UIButton()
+    
+    
     var gyroImageActive = UIImage(named: "details_gyro_active")
     var gyroImageInactive = UIImage(named: "details_gyro_inactive")
+    var vrIcon = UIImage(named: "vr_icon")
+    
     var backButton = UIImage(named: "back_yellow_icn")
     var shareButton = UIButton()
+    var gyroTypeBtn = UIButton()
     
     required init(optographId:UUID) {
         
@@ -261,16 +266,21 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //        gyroButton.userInteractionEnabled = true
 //        gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
         
-        gyroImageActive = gyroImageActive?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        gyroImageInactive = gyroImageInactive?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeDetailsPage))
+        self.view.addSubview(gyroTypeBtn)
+        gyroTypeBtn.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
+        gyroTypeBtn.addTarget(self, action: #selector(gyroButtonTouched), forControlEvents:.TouchUpInside)
         
         if  Defaults[.SessionGyro] {
             self.changeButtonIcon(true)
         } else {
             self.changeButtonIcon(false)
         }
+        
+        vrIcon = vrIcon?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image:vrIcon , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(vrIconTouched))
+        
+        backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeDetailsPage))
         
         let oneTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.oneTap(_:)))
         oneTapGestureRecognizer.numberOfTapsRequired = 1
@@ -298,17 +308,21 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         if isMe {
             deleteButton.setBackgroundImage(UIImage(named: "profile_delete_icn"), forState: .Normal)
             deleteButton.addTarget(self, action: #selector(deleteOpto), forControlEvents: .TouchUpInside)
-            whiteBackground.addSubview(deleteButton)
+            self.view.addSubview(deleteButton)
             
             let deleteImageSize = UIImage(named:"profile_delete_icn")?.size
-            deleteButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
+            deleteButton.align(.AboveMatchingRight, relativeTo: whiteBackground, padding: 10, width: (deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
+            
+            deleteButton.anchorInCorner(.BottomRight, xPad: 15, yPad: 76, width: (deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
             
             shareButton.setBackgroundImage(UIImage(named: "share_white_details"), forState: .Normal)
             shareButton.addTarget(self, action: #selector(share), forControlEvents: .TouchUpInside)
             whiteBackground.addSubview(shareButton)
             
             let shareImageSize = UIImage(named:"share_white_details")?.size
-            shareButton.align(.ToTheLeftCentered, relativeTo: deleteButton, padding: 20, width:(shareImageSize?.width)!, height: (shareImageSize?.height)!)
+            shareButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(shareImageSize?.width)!, height: (shareImageSize?.height)!)
+            
+            
         } else {
             shareButton.setBackgroundImage(UIImage(named: "share_white_details"), forState: .Normal)
             shareButton.addTarget(self, action: #selector(share), forControlEvents: .TouchUpInside)
@@ -323,6 +337,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let share = DetailsShareViewController()
         share.optographId = optographID
         self.navigationController?.presentViewController(share, animated: true, completion: nil)
+    }
+    
+    func vrIconTouched() {
+        let alert = UIAlertController(title:"", message: "Please tilt your phone by 90\u{00B0} to enter VR mode!", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+        self.navigationController!.presentViewController(alert, animated: true, completion: nil)
     }
     
     func deleteOpto() {
@@ -429,6 +449,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //self.gyroButton.hidden = true
         self.littlePlanetButton.hidden = true
         self.isUIHide = true
+        deleteButton.hidden = true
+        gyroTypeBtn.hidden = true
         self.navigationController?.navigationBarHidden = true
     }
     
@@ -438,6 +460,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //self.gyroButton.hidden = false
         self.littlePlanetButton.hidden = false
         self.isUIHide = false
+        deleteButton.hidden = false
+        gyroTypeBtn.hidden = false
         self.navigationController?.navigationBarHidden = false
     }
     
@@ -447,6 +471,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.whiteBackground.hidden = true
                 self.hideSelectorButton.hidden = true
                 //self.gyroButton.hidden = true
+                self.gyroTypeBtn.hidden = true
+                self.deleteButton.hidden = true
                 self.littlePlanetButton.hidden = true
                 self.isUIHide = true
                 },completion: nil)
@@ -456,6 +482,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.whiteBackground.hidden = false
                 self.hideSelectorButton.hidden = false
                 //self.gyroButton.hidden = false
+                self.gyroTypeBtn.hidden = false
+                self.deleteButton.hidden = false
                 self.littlePlanetButton.hidden = false
                 self.isUIHide = false
                 },completion: nil)
@@ -524,7 +552,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func changeButtonIcon(isGyro:Bool) {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: isGyro ? gyroImageActive : gyroImageInactive, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(gyroButtonTouched))
+        
+        if isGyro {
+            gyroTypeBtn.setBackgroundImage(gyroImageActive, forState: .Normal)
+        } else {
+            gyroTypeBtn.setBackgroundImage(gyroImageInactive, forState: .Normal)
+        }
         
 //        if isGyro {
 //            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_inactive"), forState: .Normal)

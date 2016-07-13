@@ -19,6 +19,7 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
     var labelFacebook = UILabel()
     var buttonViews = UIView()
     var optographId:String = ""
+    var link:String = ""
     
     var loadingView = UIView()
     var container = UIView()
@@ -122,7 +123,7 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
         
         let parameters = [
             "optograph_id": optographId,
-            "caption": textField.text == "" ? "Check out this amazing scene in virtual reality":textField.text
+            "caption": textField.text == "" ? "Check out this amazing scene in virtual reality \n\n \(link)":textField.text+"\n\n"+"\(link)"
         ]
         print(parameters)
         

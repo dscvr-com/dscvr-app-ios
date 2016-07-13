@@ -44,13 +44,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     private var tabView = TabView()
     
-    let isThetaImage = MutableProperty<Bool>(false)
+    private let fileManager = NSFileManager.defaultManager()
+    private var arrayOfDir:[String] = []
     
-    var indexPathShow:Int = 0
+    let isThetaImage = MutableProperty<Bool>(false)
     
     var imageView: UIImageView!
     var imagePicker = UIImagePickerController()
-    let fileManager = NSFileManager.defaultManager()
     
     let shareData = ShareData.sharedInstance
     
@@ -420,52 +420,40 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
-        
-        cell.navigationController = navigationController as? NavigationController
         
         let optographID = optographIDs[indexPath.row]
         
-        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographID)/pan.mp4"
-        
-        let returnData = imageCache.insertMp4IntoCache(filename,optographId: optographID)
-        print("return filename",returnData)
-        
-        if fileManager.fileExistsAtPath(returnData) {
-            print("exist")
-            cell.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
-            if indexPathShow >= 0 {
-                if indexPathShow == indexPath.item {
-                    cell.setRotation(true)
-                } else {
-                    cell.setRotation(false)
-                }
-            }
-        } else {
-            print("not existing")
-            cell.loadPreviewImage()
-        }
-        
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
+        cell.navigationController = navigationController as? NavigationController
         cell.bindModel(optographID)
         cell.swipeView = tabController!.scrollView
         cell.collectionView = collectionView
         cell.isShareOpen.producer
             .startWithNext{ val in
                 if val{
-                    print("optographid =",optographID)
                     self.shareData.optographId.value = optographID
                     self.shareData.isSharePageOpen.value = true
-                } else {
-                    print("close")
                 }
         }
         
         if indexPath.row > optographIDs.count - 5 {
             viewModel.loadMore()
         }
+        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographID)/pan.mp4"
+        
+        let returnData = imageCache.insertMp4IntoCache(filename,optographId: optographID)
+        
+        if returnData != "" {
+            cell.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
+        } else {
+            cell.loadPreviewImage()
+        }
     
         return cell
     }
+    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+    }
+    
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
         let detailsViewController = DetailsTableViewController(optographId:optographIDs[indexPath.row])
@@ -483,6 +471,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/3)*2))
     }
+    
+    
     
     override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         

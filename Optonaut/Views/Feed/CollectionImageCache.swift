@@ -248,6 +248,7 @@ class CollectionImageCache {
     
     private let textureSize: CGFloat
     private let logsPath:NSURL?
+    private let fileManager = NSFileManager.defaultManager()
     
     init(textureSize: CGFloat) {
         self.textureSize = textureSize
@@ -260,7 +261,7 @@ class CollectionImageCache {
         logsPath = documentsPath.URLByAppendingPathComponent("mp4s")
         
         do {
-            try NSFileManager.defaultManager().createDirectoryAtPath(logsPath!.path!, withIntermediateDirectories: true, attributes: nil)
+            try fileManager.createDirectoryAtPath(logsPath!.path!, withIntermediateDirectories: true, attributes: nil)
         } catch let error as NSError {
             NSLog("Unable to create directory \(error.debugDescription)")
         }
@@ -291,16 +292,20 @@ class CollectionImageCache {
         
         let path = self.logsPath!.path!.stringByAppendingPathComponent("\(optographId).mp4")
         
-        dispatch_async(dispatch_get_global_queue(priority, 0)) {
-            
-            let videoData = NSData(contentsOfURL: NSURL(string:url)!)
-            
-            if (videoData != nil) {
+        if !self.fileManager.fileExistsAtPath(path) {
+            dispatch_async(dispatch_get_global_queue(priority, 0)) {
                 
-                videoData?.writeToFile(path, atomically: true)
+                let videoData = NSData(contentsOfURL: NSURL(string:url)!)
+                
+                if (videoData != nil) {
+                    
+                    videoData?.writeToFile(path, atomically: true)
+                }
             }
+            return ""
+        } else {
+            return path
         }
-        return path
     }
     
     func disable(index: Int) {

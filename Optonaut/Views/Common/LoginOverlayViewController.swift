@@ -54,7 +54,7 @@ class LoginOverlayViewController: UIViewController{
     
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
         
-        LoadingIndicatorView.show("Checking..")
+        LoadingIndicatorView.show()
         
         let parameters = ["uuid": SessionService.personID]
         return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
@@ -114,7 +114,7 @@ class LoginOverlayViewController: UIViewController{
                 self?.viewModel.facebookPending.value = false
                 loginManager.logOut()
             } else {
-                LoadingIndicatorView.show("Logging In...")
+                LoadingIndicatorView.show()
                 let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
                 let allPermissionsGranted = readPermission.reduce(true) { $0 && grantedPermissions.contains($1) }
 
