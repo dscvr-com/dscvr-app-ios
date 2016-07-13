@@ -141,8 +141,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         //viewModel.viewIsActive.value = true
         
-        
-        
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
             rotationSignal
                 .skipRepeats()
@@ -278,9 +276,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         oneTapGestureRecognizer.numberOfTapsRequired = 1
         self.scnView.addGestureRecognizer(oneTapGestureRecognizer)
         
-        //        let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
-        //        twoTapGestureRecognizer.numberOfTapsRequired = 2
-        //        self.view.addGestureRecognizer(twoTapGestureRecognizer)
+//                let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
+//                twoTapGestureRecognizer.numberOfTapsRequired = 2
+//                self.view.addGestureRecognizer(twoTapGestureRecognizer)
         
         let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(self.pinchGesture(_:)))
         

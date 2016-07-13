@@ -20,8 +20,6 @@ class LoginOverlayViewController: UIViewController{
     
     private let viewModel = LoginOverlayViewModel()
     
-    var actInd = UIActivityIndicatorView()
-    
     init() {
         
         super.init(nibName: nil, bundle: nil)
@@ -52,20 +50,11 @@ class LoginOverlayViewController: UIViewController{
         
         logoImageView.anchorToEdge(.Top, padding: 200, width: imageSize!.size.width, height: imageSize!.size.height)
         facebookButtonView.align(.UnderCentered, relativeTo: logoImageView, padding: 30, width: contentView.frame.width - 85, height: 50)
-        
-        showActivityIndicatory(contentView)
-    }
-    
-    func showActivityIndicatory(uiView: UIView) {
-        actInd.hidesWhenStopped = true
-        actInd.center = view.center
-        actInd.stopAnimating()
-        uiView.addSubview(actInd)
     }
     
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
         
-        self.actInd.startAnimating()
+        LoadingIndicatorView.show("Checking..")
         
         let parameters = ["uuid": SessionService.personID]
         return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
@@ -74,7 +63,7 @@ class LoginOverlayViewController: UIViewController{
                 print(data.status)
                 print(data.request_text)
                 
-                self.actInd.stopAnimating()
+                LoadingIndicatorView.hide()
                 
                 if (data.status == "ok" && data.message == "3") {
                     Defaults[.SessionEliteUser] = true
@@ -96,7 +85,7 @@ class LoginOverlayViewController: UIViewController{
         
         let errorBlock = { [weak self] (message: String) in
             self?.viewModel.facebookPending.value = false
-            self?.actInd.stopAnimating()
+            LoadingIndicatorView.hide()
             let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
             self?.presentViewController(alert, animated: true, completion: nil)
@@ -107,12 +96,12 @@ class LoginOverlayViewController: UIViewController{
                 .on(
                     failed: { _ in
                         loginManager.logOut()
-                        self?.actInd.stopAnimating()
+                        LoadingIndicatorView.hide()
                         errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
                     },
                     completed: {
                         Defaults[.SessionUserDidFirstLogin] = true
-                        self?.actInd.stopAnimating()
+                        LoadingIndicatorView.hide()
                         self?.checkElite()
                     }
                 )
@@ -125,7 +114,7 @@ class LoginOverlayViewController: UIViewController{
                 self?.viewModel.facebookPending.value = false
                 loginManager.logOut()
             } else {
-                self?.actInd.startAnimating()
+                LoadingIndicatorView.show("Logging In...")
                 let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
                 let allPermissionsGranted = readPermission.reduce(true) { $0 && grantedPermissions.contains($1) }
 

@@ -22,6 +22,8 @@
 		5937E0A51D262B3D00584F97 /* RequestCodeApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */; };
 		594023D01D2E73CE00393E1F /* AddUsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594023CF1D2E73CE00393E1F /* AddUsernameViewController.swift */; };
 		594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594378FC1CDC472800C84E6F /* TabViewController.swift */; };
+		594F6B4D1D36110500A361B3 /* UIImage+Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */; };
+		594F6B4F1D3619CF00A361B3 /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */; };
 		595D87691D083D5E00866FF2 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D87681D083D5E00866FF2 /* SearchViewController.swift */; };
 		595D876B1D083D9500866FF2 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D876A1D083D9500866FF2 /* UserTableViewCell.swift */; };
 		5965DC721D1382E10031059B /* UploadItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965DC711D1382E10031059B /* UploadItemCell.swift */; };
@@ -315,6 +317,8 @@
 		5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestCodeApiModel.swift; sourceTree = "<group>"; };
 		594023CF1D2E73CE00393E1F /* AddUsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddUsernameViewController.swift; sourceTree = "<group>"; };
 		594378FC1CDC472800C84E6F /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
+		594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Gif.swift"; sourceTree = "<group>"; };
+		594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
 		595D87681D083D5E00866FF2 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		595D876A1D083D9500866FF2 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		5965DC711D1382E10031059B /* UploadItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadItemCell.swift; sourceTree = "<group>"; };
@@ -1044,6 +1048,8 @@
 		8FAB9F5F1B8F02D500B4C8CB /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */,
+				594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */,
 				8FAB9F611B8F02D500B4C8CB /* Appearance.swift */,
 				8FAB9F621B8F02D500B4C8CB /* Constants.swift */,
 				8FD845B71BC870B90064048D /* Debug.swift */,
@@ -1823,6 +1829,7 @@
 				8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */,
 				59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
+				594F6B4F1D3619CF00A361B3 /* LoadingIndicatorView.swift in Sources */,
 				8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
@@ -1853,6 +1860,7 @@
 				8F7738161B380F5D001F642B /* Person.swift in Sources */,
 				A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */,
 				A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */,
+				594F6B4D1D36110500A361B3 /* UIImage+Gif.swift in Sources */,
 				8F4186031C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift in Sources */,
 				8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,
