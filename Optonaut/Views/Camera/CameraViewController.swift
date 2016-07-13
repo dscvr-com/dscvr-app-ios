@@ -497,7 +497,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         let exposureDuration = max(self.exposureDuration, 0.006)
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
-        let movementPerFrameInPixels = Double(400)
+        let movementPerFrameInPixels = Double(1500)
         
         let newTime = CACurrentMediaTime()
         
@@ -520,7 +520,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             let timeDiff = (newTime - time)
             let maxSpeed = Float(maxRecordingSpeed) * Float(timeDiff)
             
-            let accelleration = (!recorder.isIdle() ? Float(maxRecordingSpeed / 5) : Float(maxRecordingSpeed)) / Float(15)
+            let accelleration = (!recorder.isIdle() ? Float(maxRecordingSpeed / 3) : Float(maxRecordingSpeed)) / Float(9)
             
             let newHeading = GLKVector3Subtract(target, ball)
             
@@ -565,7 +565,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         //session.sessionPreset = AVCaptureSessionPresetHigh
         session.sessionPreset = AVCaptureSessionPreset1280x720
-        
+        //session.sessionPreset = AVCaptureSessionPresetMedium
+
         
         videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice!) else {
@@ -621,7 +622,9 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         videoDevice!.exposureMode = .ContinuousAutoExposure
         videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
+        //videoDevice!.
         
+        AVCaptureVideoStabilizationMode.Standard
         
         videoDevice!.activeVideoMinFrameDuration = CMTimeMake(1, 30)
         videoDevice!.activeVideoMaxFrameDuration = CMTimeMake(1, 30)
