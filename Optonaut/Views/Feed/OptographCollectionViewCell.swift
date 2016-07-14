@@ -280,6 +280,11 @@ private class OverlayViewModel {
         }
     }
     
+    func setVideo() {
+    
+    
+    }
+    
     func toggleFollow() {
         let person = personBox.model
         let followedBefore = person.isFollowed
@@ -466,7 +471,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     var collectionView:UICollectionView?
     var isShareOpen = MutableProperty<Bool>(false)
     
-    var previewImage = UIImageView(image: UIImage(named: "feed_placeholder"))
+    var previewImage = PlaceholderImageView()
     
     var yellowView = UIView()
     let playerLayer = AVPlayerLayer()
@@ -498,6 +503,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
             } else {
                 gyroVideo.pause()
             }
+        } else {
+            previewImage.hidden = false
         }
     }
     
@@ -534,6 +541,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         self.yellowView.layer.addSublayer(playerLayer)
         
+        previewImage.placeholderImage = UIImage(named:"feed_placeholder")
         previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
         yellowView.addSubview(previewImage)
         

@@ -124,7 +124,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 if let strongSelf = self {
                     let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
                     strongSelf.optographIDs = results.models.map { $0.ID }
+                    
                     for optograph in results.models {
+                        
                         if strongSelf.optographDirections[optograph.ID] == nil {
                             strongSelf.optographDirections[optograph.ID] = (phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta))
                         }
@@ -362,8 +364,11 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         
         uiHidden.value = false
+        
+        collectionView!.reloadData()
         viewModel.refresh()
         viewModel.isActive.value = true
+        
         
         showUI()
         tabController!.enableScrollView()
@@ -424,6 +429,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         let optographID = optographIDs[indexPath.row]
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
+        
         cell.navigationController = navigationController as? NavigationController
         cell.bindModel(optographID)
         cell.swipeView = tabController!.scrollView
@@ -436,22 +442,41 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 }
         }
         
-        if indexPath.row > optographIDs.count - 5 {
+        if indexPath.row > optographIDs.count - 3 {
             viewModel.loadMore()
         }
-        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographID)/pan.mp4"
-        
-        let returnData = imageCache.insertMp4IntoCache(filename,optographId: optographID)
-        
-        if returnData != "" {
-            cell.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
+//        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographID)/pan.mp4"
+//        
+//        let returnData = imageCache.insertMp4IntoCache(filename,optographId: optographID)
+//        
+//        if returnData != "" {
+//            cell.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
+//        } else {
+//            print("pumasok dito ",indexPath.row)
+//            cell.loadPreviewImage()
+//        }
+        if arrayOfDir.indices.contains(indexPath.row) {
+            if arrayOfDir[indexPath.row] != "" {
+                cell.video = AVPlayer(URL: NSURL(fileURLWithPath: arrayOfDir[indexPath.row]))
+            } else {
+                cell.video = nil
+            }
         } else {
-            cell.loadPreviewImage()
+            cell.video = nil
         }
     
         return cell
     }
     override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+        
+        let optographID = optographIDs[indexPath.row]
+        
+        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographID)/pan.mp4"
+        
+        let returnData = imageCache.insertMp4IntoCache(filename,optographId:optographID)
+        
+        arrayOfDir.insert(returnData, atIndex: indexPath.row)
+        
     }
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {

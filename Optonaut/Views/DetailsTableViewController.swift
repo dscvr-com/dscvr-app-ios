@@ -352,6 +352,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
                 self.viewModel.deleteOpto()
                 self.closeDetailsPage()
+                self.imageCache.deleteMp4(self.optographID)
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
             

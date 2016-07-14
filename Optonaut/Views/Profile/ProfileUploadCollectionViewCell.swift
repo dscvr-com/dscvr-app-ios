@@ -13,7 +13,6 @@ import Kingfisher
 
 class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSource, UITableViewDelegate{
     
-    
     var tableView: UITableView!
     var optographIDsNotUploaded: [UUID]?
     
@@ -28,6 +27,7 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
         tableView.delegate = self;
         tableView.registerClass(UploadItemCell.self, forCellReuseIdentifier: "uploadImages");
         contentView.addSubview(tableView)
+
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -56,6 +56,7 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
     }
     func reloadTable() {
         tableView.reloadData()
+    
     }
 
 }

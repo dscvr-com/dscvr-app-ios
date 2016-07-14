@@ -308,6 +308,17 @@ class CollectionImageCache {
         }
     }
     
+    func deleteMp4(optographId:String) -> Bool {
+        let path = self.logsPath!.path!.stringByAppendingPathComponent("\(optographId).mp4")
+        
+        do{
+            try fileManager.removeItemAtPath(path)
+            return true
+        }catch {
+            return false
+        }
+    }
+    
     func disable(index: Int) {
         assertMainThread()
         

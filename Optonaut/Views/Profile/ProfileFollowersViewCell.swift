@@ -16,6 +16,8 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
     var data:[Person] = []
     
     weak var navigationController: NavigationController?
+    let viewNoFollowers = UIView()
+    let text = UILabel()
     
     override init(frame: CGRect) {
         
@@ -27,6 +29,16 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
         tableView.registerClass(FollowersTableViewCell.self, forCellReuseIdentifier: "userFollowers");
         contentView.addSubview(tableView)
         
+        viewNoFollowers.frame = CGRect(origin: CGPointZero, size: frame.size)
+        viewNoFollowers.backgroundColor = UIColor.whiteColor()
+        contentView.addSubview(viewNoFollowers)
+        
+        text.text = "You have no followers!"
+        text.textAlignment = .Center
+        text.textColor = UIColor.grayColor()
+        viewNoFollowers.addSubview(text)
+        text.autoAlignAxis(.Horizontal, toSameAxisOfView: contentView, withOffset: -50)
+        text.autoAlignAxisToSuperviewAxis(.Vertical)
     }
     
     func viewIsActive() {
@@ -78,6 +90,11 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
     }
     func reloadTable() {
         tableView.reloadData()
+        if data.count != 0 {
+            viewNoFollowers.hidden = true
+        } else {
+            viewNoFollowers.hidden = false
+        }
     }
     
 }

@@ -370,13 +370,19 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 self.activeDisplayButtons(Defaults[.SessionGyro])
             }
         }
+        let pullView = UIView()
+        pullView.backgroundColor = UIColor.clearColor()
+        pullView.anchorToEdge(.Bottom, padding: 0, width: 40, height: 25)
+        thisView.addSubview(pullView)
+        
 
         pullButton.icon = UIImage(named:"arrow_pull")!
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
-        pullButton.addGestureRecognizer(panGestureRecognizer)
+        pullView.addGestureRecognizer(panGestureRecognizer)
+        pullView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pullButtonTap(_:))))
+        
         thisView.addGestureRecognizer(panGestureRecognizer)
         
-        pullButton.addTarget(self, action: #selector(self.pullButtonTap), forControlEvents:.TouchUpInside)
         thisView.addSubview(pullButton)
         pullButton.anchorToEdge(.Bottom, padding: 5, width: 20, height: 15)
         
@@ -420,7 +426,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         return true
     }
     
-    func pullButtonTap() {
+    func pullButtonTap(recognizer:UITapGestureRecognizer) {
         UIView.animateWithDuration(1.0, delay: 1.2, options: .CurveEaseOut, animations: {
             if var settingsViewCount:CGFloat = self.thisView.frame.origin.y {
                 settingsViewCount -= self.view.frame.origin.y

@@ -54,7 +54,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         avatarImageView.userInteractionEnabled = true
         contentView.addSubview(avatarImageView)
         
-        displayNameView.font = UIFont.fontDisplay(15, withType: .Semibold)
+        displayNameView.font = UIFont.fontDisplay(25, withType: .Semibold)
         displayNameView.textColor = UIColor(0xffbc00)
         displayNameView.textAlignment = .Center
         contentView.addSubview(displayNameView)
@@ -180,7 +180,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         let size = contentView.frame.size
         
         avatarImageView.frame = CGRect(x: size.width / 2 - 50, y: 20, width: 100, height: 100)
-        displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
+        displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 30)
         displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)
