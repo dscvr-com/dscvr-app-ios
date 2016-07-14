@@ -329,6 +329,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func deleteOpto() {
         
+        print("test")
+        renderDelegate.addMarker()
+        
+        
+        /*
+        
         if SessionService.isLoggedIn {
             let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this 360 image? You cannot undo this.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
@@ -343,6 +349,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
             self.navigationController!.presentViewController(alert, animated: true, completion: nil)
         }
+ 
+ */
     }
     func closeDetailsPage() {
         self.navigationController?.popViewControllerAnimated(true)

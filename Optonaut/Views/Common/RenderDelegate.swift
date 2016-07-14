@@ -14,8 +14,15 @@ import SpriteKit
 class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
     private let cameraNode = SCNNode()
+    private let cameraCrosshair =  SCNNode()
+    
     private let rotationMatrixSource: RotationMatrixSource
     private let cameraOffset: Float
+    
+    
+    
+    
+    
     
     let scene = SCNScene()
     
@@ -27,6 +34,8 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         set {
             _fov = fov
             cameraNode.camera = RenderDelegate.setupCamera(fov)
+            
+            cameraCrosshair.camera = RenderDelegate.setupCrosshairCamera(fov)
         }
     }
 
@@ -36,13 +45,28 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         
         cameraNode.camera = RenderDelegate.setupCamera(fov)
         _fov = fov
+     
+        cameraCrosshair.camera = RenderDelegate.setupCrosshairCamera(fov)
         
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         scene.rootNode.addChildNode(cameraNode)
         
+    
+        cameraCrosshair.position = SCNVector3(x: 0, y: 0, z: 0)
+        scene.rootNode.addChildNode(cameraCrosshair)
+        
+    
+        
         // TODO(ej): Check if this is necassary for 3D vision. If so, add it to transform
         // in each render loop since pivot is broken.
         // cameraNode.pivot = SCNMatrix4MakeTranslation(0, cameraOffset, 0)
+        
+        
+        
+        
+        
+        
+        
         
         super.init()
     }
@@ -81,8 +105,28 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         return camera
     }
     
+    internal static func setupCrosshairCamera(fov: FieldOfView) -> SCNCamera {
+        let zNear = Float(0.01)
+        let zFar = Float(10000)
+        
+        let fovLeft = tan(toRadians(fov.left)) * zNear
+        let fovRight = tan(toRadians(fov.right)) * zNear
+        let fovTop = tan(toRadians(fov.top)) * zNear
+        let fovBottom = tan(toRadians(fov.bottom)) * zNear
+        
+        let projection = GLKMatrix4MakeFrustum(-fovLeft/16, fovRight/16, -fovBottom/16, fovTop/16, zNear, zFar)
+        
+        let camera = SCNCamera()
+        camera.setProjectionTransform(SCNMatrix4FromGLKMatrix4(projection))
+        
+        return camera
+    }
+    
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         cameraNode.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
+        
+        
+        cameraCrosshair.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
     }
     
     func dispose() {
@@ -113,12 +157,15 @@ class CubeRenderDelegate: RenderDelegate {
     // Inverse index lookup from node to index
     var indices: [SCNNode: CubeImageCache.Index] = [:]
     var adj: [SCNNode: [SCNNode]] = [:]
+    var markers = [SCNNode] ()
     
     var nodeEnterScene: (CubeImageCache.Index -> ())?
     var nodeLeaveScene: (CubeImageCache.Index -> ())?
     
     weak var scnView: SCNView?
-
+    private let sphereGeoNode: SCNNode
+    private let cameraText: SCNNode
+   
     private let cubeScaling: CGFloat = 10
     private let cubeFaceCount: Int
     private let autoDispose: Bool
@@ -134,6 +181,29 @@ class CubeRenderDelegate: RenderDelegate {
         self.cubeFaceCount = cubeFaceCount
         self.autoDispose = autoDispose
         self.willRequestAll = false
+        
+        scnView?.showsStatistics = true
+        
+        
+        
+        let circleGeo = SCNSphere(radius: 0.01)
+        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        sphereGeoNode = SCNNode(geometry: circleGeo)
+        sphereGeoNode.name = "test"
+        
+        
+        let newText = SCNText(string: "hello", extrusionDepth:1.0)
+        newText.font = UIFont (name: "Arial", size: 5)
+        newText.firstMaterial!.diffuse.contents = UIColor.whiteColor()
+        newText.firstMaterial!.specular.contents = UIColor.whiteColor()
+        
+        
+        cameraText = SCNNode(geometry: newText)
+        
+        
+        
+        
+    
         super.init(rotationMatrixSource: rotationMatrixSource, fov: fov, cameraOffset: cameraOffset)
         
         
@@ -186,6 +256,33 @@ class CubeRenderDelegate: RenderDelegate {
         for o in planes.values {
             adj[o.node] = getKNNGeometric(o.node, k: 9)
         }
+
+        
+        
+        
+        sphereGeoNode.position = SCNVector3Make(1.0, 1.0, 0)
+        
+        
+        cameraText.position = SCNVector3Make(1.0, 1.0, 0)
+     //   sphereGeoNode.eulerAngles = SCNVector3Make(0, 0, 0)
+        
+        
+        
+     //   let pivot = SCNMatrix4MakeTranslation(-(0.0 + 0.1 / 2) * 2 + 1, (0.0 + 0.1 / 2) * 2 - 1, 0)
+        
+        
+     //   var transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
+     //  transform = SCNMatrix4Mult(sphereGeoNode.transform, transform)
+     //   sphereGeoNode.transform = SCNMatrix4Mult(SCNMatrix4Invert(pivot), transform)
+
+        
+        scene.rootNode.addChildNode(sphereGeoNode)
+        scene.rootNode.addChildNode(cameraText)
+        
+        
+        
+        
+        
     }
     
     private func getDist(a: SCNNode, b: SCNNode) -> Float {
@@ -215,6 +312,26 @@ class CubeRenderDelegate: RenderDelegate {
                 item.requested = false
             }
         }
+    }
+    
+    
+    func addMarker () {
+        
+        
+        let circleGeo = SCNSphere(radius: 0.01)
+        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        let markNode = SCNNode(geometry: circleGeo)
+        let n = markers.count
+        
+        markNode.name = "test" + String(n)
+        
+        
+        markNode.position = sphereGeoNode.position
+        
+        
+        scene.rootNode.addChildNode(markNode)
+        markers.append(markNode)
+         
     }
     
     var id: Int = 0
@@ -249,6 +366,48 @@ class CubeRenderDelegate: RenderDelegate {
     
     func requestAll() {
         willRequestAll = true
+    }
+    
+    func findNextPoint(p0: SCNVector3, direction: SCNVector3) -> SCNVector3{
+        
+        var x = Float()
+        var y = Float()
+        var z = Float()
+        let t = 1.0 as Float
+        
+        x = p0.x + t * direction.x
+        y = p0.y + t * direction.y
+        z = p0.z + t * direction.z
+        
+        let result = SCNVector3Make(x, y, z)
+        return result
+        
+    }
+    
+    
+    func calculateCameraDirection(cameraNode: SCNNode) -> GLKVector3 {
+        
+        let x = -cameraNode.rotation.x
+        let y = -cameraNode.rotation.y
+        let z = -cameraNode.rotation.z
+        let w = cameraNode.rotation.w
+        
+        let cameraRotationMatrix = GLKMatrix3Make(cos(w) + pow(x, 2) * (1 - cos(w)),
+                                                  x * y * (1 - cos(w)) - z * sin(w),
+                                                  x * z * (1 - cos(w)) + y*sin(w),
+                                                  
+                                                  y*x*(1-cos(w)) + z*sin(w),
+                                                  cos(w) + pow(y, 2) * (1 - cos(w)),
+                                                  y*z*(1-cos(w)) - x*sin(w),
+                                                  
+                                                  z*x*(1 - cos(w)) - y*sin(w),
+                                                  z*y*(1 - cos(w)) + x*sin(w),
+                                                  cos(w) + pow(z, 2) * ( 1 - cos(w)))
+        
+        let cameraDirection = GLKMatrix3MultiplyVector3(cameraRotationMatrix, GLKVector3Make(0.0, 0.0, -1.0))
+        
+        return cameraDirection
+        
     }
     
     private func request(item: Item, index: CubeImageCache.Index) {
@@ -290,15 +449,46 @@ class CubeRenderDelegate: RenderDelegate {
         // Use the small camera for debugging.
         // let smallFov = RenderDelegate.getFov(scnView!.bounds.width, height: scnView!.bounds.height, fov: 10)
         // let smallCamera = SCNNode()
-        // smallCamera.camera = RenderDelegate.setupCamera(smallFov)
-        // smallCamera.transform = cameraNode.transform
+       //  smallCamera.camera = RenderDelegate.setupCamera(smallFov)
+      //   smallCamera.transform = cameraNode.transform
+        
+        
         
         let visibleAndAdjacentPlanes = getVisibleAndAdjacentPlanes(self.cameraNode)
         
+        
+        
+        let cameraDirection = calculateCameraDirection(self.cameraNode)
+        let camdir = SCNVector3Make(cameraDirection.x, cameraDirection.y, cameraDirection.z)
+     //   print("camera direction \(camdir)")
+        let nextpoint = findNextPoint(cameraNode.position, direction: SCNVector3Make(cameraDirection.x, cameraDirection.y, cameraDirection.z))
+        sphereGeoNode.position = nextpoint
+        
+        
+        cameraText.position = nextpoint
+     //   print("next point \(nextpoint)")
+        
+        
+        for marknode in markers {
+            
+            if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) {
+          //      let angle = self.cameraNode.presentationNode.rotation.w * self.cameraNode.presentationNode.rotation.y
+           // let elevation = self.cameraNode.rotation.w
+          //  var direction = SCNVector3(x: -sin(angle), y: 0, z: -cos(angle))
+            //direction = SCNVector3(x: cos(elevation) * direction.x , y: sin(elevation), z: cos(elevation) * direction.z)
+           // let eulerangle = sphereGeoNode.position
+            let markername = marknode.name
+            print ("marker name \(markername) ")
+         
+        }
+        }
+ 
+ 
+      
         // Use verbose colors for debugging.
-        // planes.values.forEach { $0.node.geometry!.firstMaterial!.diffuse.contents = UIColor.redColor() }
-        // visibleAndAdjacentPlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.blueColor() }
-        // visiblePlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.greenColor() }
+      //   planes.values.forEach { $0.node.geometry!.firstMaterial!.diffuse.contents = UIColor.redColor() }
+     //    visibleAndAdjacentPlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.blueColor() }
+     //    visiblePlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.greenColor() }
         
         // TODO - Syncing here is not really fast. It's more like really slow. 
         
@@ -309,6 +499,9 @@ class CubeRenderDelegate: RenderDelegate {
             } else if autoDispose && !nowVisible {
                 forget(item, index: index)
             }
+            
+            
+            
         }
         
         // Forced initialisation of ALL views. We do that past the 
@@ -322,6 +515,8 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     private func createPlane(position position: SCNVector3, rotation: SCNVector3, subX: Float, subY: Float, subW: Float) -> SCNNode {
+    
+         print("[createPlane] \(subX) \(subY) \(subW)   \(position)")
         let geometry = SCNPlane(width: CGFloat(2 * subW), height: CGFloat(2 * subW))
         geometry.firstMaterial!.doubleSided = true
         
@@ -330,6 +525,7 @@ class CubeRenderDelegate: RenderDelegate {
         let node = SCNNode(geometry: geometry)
         
         let pivot = SCNMatrix4MakeTranslation(-(subX + subW / 2) * 2 + 1, (subY + subW / 2) * 2 - 1, 0)
+        
         
         node.position = position
         node.eulerAngles = rotation
