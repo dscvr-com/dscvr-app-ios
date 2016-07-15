@@ -537,17 +537,20 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     func handlePan(recognizer:UIPanGestureRecognizer) {
         
         let translationY = recognizer.translationInView(self.view).y
+        var panBegin:CGFloat = 0.0
         
         switch recognizer.state {
         case .Began:
-            print("wew")
+            panBegin = translationY
         case .Changed:
-            
             if !isSettingsViewOpen.value {
                 thisView.frame = CGRectMake(0, translationY - self.view.frame.height , self.view.frame.width, self.view.frame.height)
             } else {
-                thisView.frame = CGRectMake(0,self.view.frame.height - (self.view.frame.height - translationY) , self.view.frame.width, self.view.frame.height)
+                if translationY <= panBegin {
+                    thisView.frame = CGRectMake(0,self.view.frame.height - (self.view.frame.height - translationY) , self.view.frame.width, self.view.frame.height)
+                }
             }
+            
         case .Cancelled:
             print("cancelled")
         case .Ended:
