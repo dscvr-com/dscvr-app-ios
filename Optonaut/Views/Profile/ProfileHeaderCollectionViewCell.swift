@@ -60,13 +60,14 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(displayNameView)
         
         displayNameInputView.placeholder = "Enter your name"
-        displayNameInputView.font = UIFont.fontDisplay(15, withType: .Semibold)
+        displayNameInputView.font = UIFont.fontDisplay(20, withType: .Semibold)
         displayNameInputView.textAlignment = .Center
         displayNameInputView.textColor = UIColor(0xffbc00)
         displayNameInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         displayNameInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         displayNameInputView.returnKeyType = .Done
         displayNameInputView.delegate = self
+        displayNameInputView.editable = false
         contentView.addSubview(displayNameInputView)
         
         editSubView.image = UIImage(named:"editSubview_btn")

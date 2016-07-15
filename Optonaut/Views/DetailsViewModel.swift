@@ -33,8 +33,6 @@ class DetailsViewModel {
     let creator_userId = MutableProperty<String>("")
     let isFollowed = MutableProperty<Bool>(false)
     var isMe = false
-    let likeCount = MutableProperty<Int>(0)
-    let liked = MutableProperty<Bool>(false)
     let isThreeRing = MutableProperty<Bool>(false)
     
     let postingEnabled = MutableProperty<Bool>(false)
@@ -89,13 +87,13 @@ class DetailsViewModel {
     }
     
     func toggleLike() {
-        let starredBefore = liked.value
-        let starsCountBefore = likeCount.value
+        let starredBefore = isStarred.value
+        let starsCountBefore = starsCount.value
         
         let optograph = optographBox.model
         
         SignalProducer<Bool, ApiError>(value: starredBefore)
-            .flatMap(.Latest) { followedBefore in
+            .flatMap(.Latest) { likedBefore in
                 starredBefore
                     ? ApiService<EmptyResponse>.delete("optographs/\(optograph.ID)/star")
                     : ApiService<EmptyResponse>.post("optographs/\(optograph.ID)/star", parameters: nil)
@@ -105,12 +103,14 @@ class DetailsViewModel {
                     self?.optographBox.insertOrUpdate { box in
                         box.model.isStarred = !starredBefore
                         box.model.starsCount += starredBefore ? -1 : 1
+                        self!.isStarred.value = starredBefore
                     }
                 },
                 failed: { [weak self] _ in
                     self?.optographBox.insertOrUpdate { box in
                         box.model.isStarred = starredBefore
                         box.model.starsCount = starsCountBefore
+                        self!.isStarred.value = starredBefore
                     }
                 }
             )
@@ -142,8 +142,6 @@ class DetailsViewModel {
             self?.viewsCount.value = optograph.viewsCount
             self?.commentsCount.value = optograph.commentsCount
             self?.timeSinceCreated.value = optograph.createdAt.longDescription
-            print(optograph.createdAt.longDescription)
-            print(optograph.ID)
             self?.text.value = optograph.isPrivate ? "[private] " + optograph.text : optograph.text
             self?.hashtags.value = optograph.hashtagString
             self?.isPublished.value = optograph.isPublished

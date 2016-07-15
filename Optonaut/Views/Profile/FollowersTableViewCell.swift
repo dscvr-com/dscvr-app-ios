@@ -34,14 +34,15 @@ class FollowersTableViewCell: UITableViewCell {
         
         self.nameLabel.textColor = UIColor.darkGrayColor()
         
-        //let followButtonSize = UIImage(named: "follow_button")?.size
-        self.followButton.frame = CGRect(x: 0, y: 0, width: 80.0, height: 25.0)
-        self.followButton.center = CGPoint(x: self.contentView.frame.size.width, y: self.userImage.center.y)
+        let followButtonSize = UIImage(named: "follow_button")?.size
         followButton.addTarget(self, action: #selector(toggleFollow), forControlEvents:.TouchUpInside)
-        contentView.addSubview(followButton)
         
+        contentView.addSubview(followButton)
         contentView.addSubview(userImage)
         contentView.addSubview(nameLabel)
+        
+        self.followButton.anchorToEdge(.Right, padding: 10, width: (followButtonSize?.width)!, height: (followButtonSize?.height)!)
+        self.followButton.frame = CGRect(x: 0,y: 0, width: (followButtonSize?.width)!, height: (followButtonSize?.height)!)
         
         isFollowed.producer.startWithNext{val in
             if val {

@@ -44,7 +44,7 @@ class ProfileViewModel {
         personBox.producer
             .skipRepeats()
             .startWithNext { [weak self] person in
-                self?.displayName.value = person.displayName
+                self?.displayName.value = "@\(person.displayName)"
                 self?.userName.value = person.userName
                 self?.text.value = person.text
                 self?.postCount.value = person.optographsCount
@@ -59,7 +59,7 @@ class ProfileViewModel {
         personBox.producer
             .skipRepeats()
             .startWithNext { [weak self] person in
-                self?.displayName.value = person.displayName
+                self?.displayName.value = "@\(person.displayName)"
                 self?.userName.value = person.userName
         }
     }
@@ -84,7 +84,7 @@ class ProfileViewModel {
     }
     
     func cancelEdit() {
-        displayName.value = personBox.model.displayName
+        displayName.value = "@\(personBox.model.displayName)"
         userName.value = personBox.model.userName
         text.value = personBox.model.text
         isEditing.value = false
