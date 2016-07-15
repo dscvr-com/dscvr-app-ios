@@ -236,7 +236,7 @@ private class OverlayViewModel {
     
     let isFollowed = MutableProperty<Bool>(false)
     let avatarImageUrl = MutableProperty<String>("")
-    let displayName = MutableProperty<String>("")
+    let userName = MutableProperty<String>("")
     let locationID = MutableProperty<UUID?>("")
     var isMe = false
     
@@ -268,21 +268,10 @@ private class OverlayViewModel {
         personBox.producer
             .skipRepeats()
             .startWithNext { [weak self] person in
-                self?.displayName.value = person.displayName
-                //                self?.userName.value = person.userName
-                //                self?.text.value = person.text
-                //                self?.postCount.value = person.optographsCount
-                //                self?.followersCount.value = person.followersCount
-                //                self?.followingCount.value = person.followedCount
+                self?.userName.value = person.userName
                 self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47)
                 self?.isFollowed.value = person.isFollowed
-                
         }
-    }
-    
-    func setVideo() {
-    
-    
     }
     
     func toggleFollow() {
@@ -419,7 +408,6 @@ private class OverlayViewModel {
 }
 
 class OptographCollectionViewCell: UICollectionViewCell{
-    
     weak var uiHidden: MutableProperty<Bool>!
     
     private let viewModel = OverlayViewModel()
@@ -475,6 +463,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     var yellowView = UIView()
     let playerLayer = AVPlayerLayer()
+    let eliteImageView = UIImageView()
     
     var video:AVPlayer? {
         didSet {
@@ -487,6 +476,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
         }
     }
     var xCoordBegin:CGFloat = 0.0
+    
+    private var imageCache: CollectionImageCache
     
     func setRotation (isRotating:Bool) {
         
@@ -527,7 +518,13 @@ class OptographCollectionViewCell: UICollectionViewCell{
     }
     
     override init(frame: CGRect) {
+        
+        let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
+        imageCache = CollectionImageCache(textureSize: textureSize)
+        
         super.init(frame: frame)
+        
+        
         
         contentView.backgroundColor = UIColor(hex:0xffbc00)
         
@@ -541,7 +538,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         self.yellowView.layer.addSublayer(playerLayer)
         
-        previewImage.placeholderImage = UIImage(named:"feed_placeholder")
+        previewImage.placeholderImage = UIImage(named:"placeholder_img")
         previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
         yellowView.addSubview(previewImage)
         
@@ -560,6 +557,9 @@ class OptographCollectionViewCell: UICollectionViewCell{
         avatarImageView.userInteractionEnabled = true
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.pushProfile)))
         whiteBackground.addSubview(avatarImageView)
+        
+        eliteImageView.image = UIImage(named: "elite_beta_icn")!
+        whiteBackground.addSubview(eliteImageView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
@@ -598,6 +598,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
         hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.bouncingCell)))
+        
+        
     }
     
     override func layoutSubviews() {
@@ -743,7 +745,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         }
         
         isMe = viewModel.isMe
-        personNameView.rac_text <~ viewModel.displayName
+        personNameView.rac_text <~ viewModel.userName
         
         viewModel.locationID.producer.startWithNext{
             
@@ -781,7 +783,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 
                 if isUploaded {
                     let stringUrl = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/frame1.jpg"
-                    self?.previewImage.kf_setImageWithURL(NSURL(string: stringUrl)!)
+                    //self?.previewImage.kf_setImageWithURL(NSURL(string: stringUrl)!)
+                    self?.previewImage.setImageWithURLString(stringUrl)
                     
                 } else {
                     let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
@@ -792,6 +795,19 @@ class OptographCollectionViewCell: UICollectionViewCell{
                     }
                 }
         }
+        
+        
+        
+        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/pan.mp4"
+        
+        let returnData = imageCache.insertMp4IntoCache(filename,optographId:optographId)
+        
+        if returnData != "" {
+            self.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
+        } else {
+            self.video = nil
+        }
+
     }
     
     required init?(coder aDecoder: NSCoder) {

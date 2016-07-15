@@ -224,11 +224,11 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             val ? self?.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self?.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         }
         
-        displayNameView.rac_text <~ viewModel.displayName
+        displayNameView.rac_text <~ viewModel.userName
         displayNameView.rac_hidden <~ viewModel.isEditing
         displayNameInputView.rac_hidden <~ viewModel.isEditing.producer.map(negate)
         displayNameInputView.rac_textSignal().toSignalProducer().skip(1).startWithNext { [weak self] val in
-            self?.viewModel.displayName.value = val as! String
+            self?.viewModel.userName.value = val as! String
         }
         
         textView.rac_text <~ viewModel.text
@@ -239,7 +239,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         }
         
         viewModel.isEditing.producer.filter(isTrue).startWithNext { [weak self] _ in
-            self?.displayNameInputView.text = viewModel.displayName.value
+            self?.displayNameInputView.text = viewModel.userName.value
             self?.textInputView.text = viewModel.text.value
         }
         

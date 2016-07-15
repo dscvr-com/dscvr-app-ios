@@ -120,8 +120,6 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         
         let image = ImageURL("persons/\(personDetails.ID)/\(personDetails.avatarAssetID).jpg", width: 47, height: 47)
         
-        print("personDetails >> \(personDetails)")
-        
         cell.userImage.kf_setImageWithURL(NSURL(string:image)!)
         cell.nameLabel.text = personDetails.userName
         cell.nameLabel.sizeToFit()

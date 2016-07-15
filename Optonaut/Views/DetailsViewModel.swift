@@ -61,6 +61,7 @@ class DetailsViewModel {
     deinit {
         logRetain()
     }
+    
     func toggleFollow() {
         let person = creatorDetails.model
         let followedBefore = person.isFollowed
@@ -154,7 +155,7 @@ class DetailsViewModel {
             self?.creatorDetails = Models.persons[optograph.personID]!
             self?.creatorDetails.producer.startWithNext{ person in
                 self?.avatarImageUrl.value = "persons/\(person.ID)/\(person.avatarAssetID).jpg"
-                self?.creator_username.value = person.displayName
+                self?.creator_username.value = person.userName
                 self?.isFollowed.value = person.isFollowed
             }
         }

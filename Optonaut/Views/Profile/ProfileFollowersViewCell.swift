@@ -12,7 +12,7 @@ import Kingfisher
 class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITableViewDelegate{
     
     
-    var tableView: UITableView!
+    var tableView = UITableView()
     var data:[Person] = []
     
     weak var navigationController: NavigationController?
@@ -23,7 +23,7 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
         
         super.init(frame: frame)
         
-        tableView = UITableView(frame: CGRect(x: 0, y: 0, width: Int(frame.size.width), height:Int(frame.size.height)));
+        tableView.frame = CGRect(origin: CGPointZero, size: frame.size)
         tableView.dataSource = self;
         tableView.delegate = self;
         tableView.registerClass(FollowersTableViewCell.self, forCellReuseIdentifier: "userFollowers");

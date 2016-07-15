@@ -30,19 +30,21 @@ class FollowersTableViewCell: UITableViewCell {
         self.userImage.image = UIImage(named: "avatar-placeholder")!
         
         self.nameLabel = UILabel(frame: CGRect(x: self.userImage.frame.origin.x + self.userImage.frame.size.width + 10.0, y: self.userImage.frame.origin.y + 10.0, width: 100.0, height: 30.0))
-        self.nameLabel.font = UIFont.systemFontOfSize(13.0, weight: UIFontWeightMedium)
+        self.nameLabel.font = UIFont.systemFontOfSize(15.0, weight: UIFontWeightMedium)
         
         self.nameLabel.textColor = UIColor.darkGrayColor()
         
         let followButtonSize = UIImage(named: "follow_button")?.size
         followButton.addTarget(self, action: #selector(toggleFollow), forControlEvents:.TouchUpInside)
         
-        contentView.addSubview(followButton)
-        contentView.addSubview(userImage)
-        contentView.addSubview(nameLabel)
+        self.followButton.frame = CGRect(x: 0, y: 0,  width: (followButtonSize?.width)!, height: (followButtonSize?.height)!)
+        self.followButton.center = CGPoint(x: self.contentView.frame.size.width - 10, y: self.userImage.center.y)
         
-        self.followButton.anchorToEdge(.Right, padding: 10, width: (followButtonSize?.width)!, height: (followButtonSize?.height)!)
-        self.followButton.frame = CGRect(x: 0,y: 0, width: (followButtonSize?.width)!, height: (followButtonSize?.height)!)
+        self.addSubview(followButton)
+        self.addSubview(userImage)
+        self.addSubview(nameLabel)
+        
+        self.nameLabel.align(.ToTheRightCentered, relativeTo: self.userImage, padding: 10, width: 100, height: 30)
         
         isFollowed.producer.startWithNext{val in
             if val {
