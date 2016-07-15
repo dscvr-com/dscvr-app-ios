@@ -17,6 +17,8 @@ class ActivityTableViewController: UIViewController, RedNavbar {
     internal let tableView = UITableView()
     private let refreshControl = UIRefreshControl()
     
+    
+    
     let viewModel = ActivitiesViewModel()
     
     override func viewDidLoad() {

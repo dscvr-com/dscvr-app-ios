@@ -400,6 +400,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             cell.navigationController = navigationController as? NavigationController
             cell.viewIsActive()
+
             
             return cell
             
