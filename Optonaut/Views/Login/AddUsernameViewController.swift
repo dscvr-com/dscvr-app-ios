@@ -16,7 +16,7 @@ import SwiftyUserDefaults
 
 class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     
-    private let viewModel = SearchTableModel()
+    private let viewModel = OnboardingViewModel()
     private var person: [Person] = []
     
     private let contentView = UIView()

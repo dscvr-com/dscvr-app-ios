@@ -28,7 +28,6 @@
     {
       "orientation" : "portrait",
       "idiom" : "iphone",
-      "filename" : "iPhone4s@2x.png",
       "extent" : "full-screen",
       "minimum-system-version" : "7.0",
       "scale" : "2x"
@@ -59,14 +58,6 @@
       "extent" : "full-screen",
       "subtype" : "retina4",
       "scale" : "2x"
-    },
-    {
-      "filename" : "0-splash_screen@1x.png",
-      "unassigned" : true
-    },
-    {
-      "filename" : "0-splash_screen@3x-4.png",
-      "unassigned" : true
     }
   ],
   "info" : {
