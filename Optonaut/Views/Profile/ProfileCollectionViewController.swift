@@ -431,7 +431,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             label.font = UIFont.fontDisplay(25, withType: .Regular)
             label.textAlignment = .Center
             view.addSubview(label)
-            
         }
     }
     

@@ -32,14 +32,15 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .order(OptographTable[OptographSchema.createdAt].asc)
         
         refreshNotification.signal.observeOnMain().observeNext{
-            if Reachability.connectedToNetwork() {
-                query = OptographTable.select(*)
-                    .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
-                    .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-                    .filter(OptographTable[OptographSchema.isInFeed])
-                    .filter(OptographTable[OptographSchema.shouldBePublished])
-                    .order(OptographTable[OptographSchema.createdAt].asc)
-            } else {
+//            if Reachability.connectedToNetwork() {
+//                query = OptographTable.select(*)
+//                    .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
+//                    .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+//                    .filter(OptographTable[OptographSchema.isInFeed])
+//                    .filter(OptographTable[OptographSchema.shouldBePublished])
+//                    .order(OptographTable[OptographSchema.createdAt].asc)
+//            } 
+            if (true) {
                 query = OptographTable.select(*)
                     .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
                     .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])

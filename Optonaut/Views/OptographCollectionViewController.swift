@@ -12,6 +12,7 @@ import SpriteKit
 import Async
 import Kingfisher
 import SwiftyUserDefaults
+//import FillableLoaders
 
 typealias Direction = (phi: Float, theta: Float)
 
@@ -52,6 +53,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     var imagePicker = UIImagePickerController()
     
     let shareData = ShareData.sharedInstance
+    
+    //var loader: FillableLoader = FillableLoader()
     
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
@@ -171,6 +174,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         view.addSubview(tabView)
         
+//        loader = WavesLoader.showLoaderWithPath(self.path(), onView:view)
+//        loader.progressBased = true
+//        loader.frame = CGRect(x: 50,y: 200 ,width: 0,height: 0)
         
         tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
         tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
@@ -196,6 +202,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     print("Idle")
                 case let .Stitching(progress):
                     self?.tabView.cameraButton.progress = CGFloat(progress)
+                    //self!.loader.progress = CGFloat(progress)
                     print("Stitching")
                 case .StitchingFinished(_):
                     self?.tabView.cameraButton.progress = nil
@@ -220,7 +227,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         PipelineService.checkUploading()
         
     }
-    
+    func path() -> CGPath{
+        return SamplePaths.cameraPath()
+    }
     func openGallary() {
         if Defaults[.SessionEliteUser] {
             let imagePickVC = ViewController()

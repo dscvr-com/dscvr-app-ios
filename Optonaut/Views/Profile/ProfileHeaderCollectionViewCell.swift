@@ -32,6 +32,8 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     private let postHeadingView = UILabel()
     private let postHeadingView1 = UILabel()
     private let postHeadingView2 = UILabel()
+    private let postHeadingView3 = UILabel()
+    
     //private let postCountView = UILabel()
     private let editSubView = UIImageView()
     
@@ -132,13 +134,17 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         postHeadingView2.userInteractionEnabled = true
         contentView.addSubview(postHeadingView2)
         
+//        postHeadingView3.text = "Notifications"
+//        postHeadingView3.textColor = UIColor.whiteColor()
+//        postHeadingView3.textAlignment = .Center
+//        postHeadingView3.font = UIFont(name: "Avenir-Book", size: 20)
+//        postHeadingView3.backgroundColor = UIColor(hex:0x3E3D3D)
+//        postHeadingView3.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.followTabTouched)))
+//        postHeadingView3.userInteractionEnabled = true
+//        contentView.addSubview(postHeadingView3)
+        
         yellowLine.backgroundColor = UIColor(0xffbc00)
         contentView.addSubview(yellowLine)
-        
-        //        postCountView.font = .displayOfSize(12, withType: .Semibold)
-        //        postCountView.textAlignment = .Center
-        //        postCountView.textColor = UIColor(0xbdbdbd)
-        //        contentView.addSubview(postCountView)
         
         contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.dismissKeyboard)))
     }
@@ -195,9 +201,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         //let metricWidth = size.width / 3
         //postCountView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 33, width: metricWidth, height: 14)
+        
         postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 55)
         postHeadingView1.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
         postHeadingView2.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
+        
+       // contentView.groupInCorner(group: .Horizontal, views: [postHeadingView1, postHeadingView1, postHeadingView2], inCorner: .BottomLeft, padding: 0, width: contentView.frame.width/2, height: 55)
         
         yellowLine.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 2)
         
