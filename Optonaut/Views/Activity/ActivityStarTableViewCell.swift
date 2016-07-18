@@ -17,11 +17,12 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         causingImageView.userInteractionEnabled = true
-        causingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        causingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityStarTableViewCell.pushProfile)))
         
         optographImageView.userInteractionEnabled = true
-        optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
+        optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityStarTableViewCell.pushDetails)))
         optographImageView.contentMode = .ScaleAspectFill
+        optographImageView.backgroundColor = UIColor.grayColor()
         contentView.addSubview(optographImageView)
     }
     
@@ -51,11 +52,17 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     }
     
     func pushProfile() {
-//        navigationController?.pushViewController(ProfileTableViewController(personID: activity.activityResourceStar!.causingPerson.ID), animated: true)
+        
+        let profilepage = ProfileCollectionViewController(personID: activity.activityResourceFollow!.causingPerson.ID)
+        profilepage.isProfileVisit = true
+        navigationController?.pushViewController(profilepage, animated: true)
     }
     
     func pushDetails() {
-//        navigationController?.pushViewController(DetailsTableViewController(optographID: activity.activityResourceStar!.optograph.ID), animated: true)
+        
+        let detailsViewController = DetailsTableViewController(optographId:activity.activityResourceStar!.optograph.ID)
+        detailsViewController.cellIndexpath = 0
+        navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
 }

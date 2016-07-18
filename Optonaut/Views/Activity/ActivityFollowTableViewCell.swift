@@ -16,6 +16,9 @@ class ActivityFollowTableViewCell: ActivityTableViewCell {
         
         causingImageView.userInteractionEnabled = true
         causingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityFollowTableViewCell.pushProfile)))
+        
+        nameView.userInteractionEnabled = true
+        nameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityFollowTableViewCell.pushProfile)))
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -31,7 +34,9 @@ class ActivityFollowTableViewCell: ActivityTableViewCell {
     }
     
     func pushProfile() {
-//        navigationController?.pushViewController(ProfileTableViewController(personID: activity.activityResourceFollow!.causingPerson.ID), animated: true)
+        let profilepage = ProfileCollectionViewController(personID: activity.activityResourceFollow!.causingPerson.ID)
+        profilepage.isProfileVisit = true
+        navigationController?.pushViewController(profilepage, animated: true)
     }
     
 }

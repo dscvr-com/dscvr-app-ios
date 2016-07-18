@@ -176,6 +176,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
 //        loader = WavesLoader.showLoaderWithPath(self.path(), onView:view)
 //        loader.progressBased = true
+//        loader.loaderColor = UIColor(0xffbc00)
 //        loader.frame = CGRect(x: 50,y: 200 ,width: 0,height: 0)
         
         tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
@@ -482,7 +483,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         let detailsViewController = DetailsTableViewController(optographId:optographIDs[indexPath.row])
         detailsViewController.cellIndexpath = indexPath.item
         navigationController?.pushViewController(detailsViewController, animated: true)
-        //navigationController?.pushViewController(InvitationViewController(), animated: true)
     }
     
     

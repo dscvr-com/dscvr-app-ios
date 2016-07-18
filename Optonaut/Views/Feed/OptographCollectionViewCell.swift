@@ -614,6 +614,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         whiteBackground.align(.AboveMatchingLeft, relativeTo: blackSpace, padding: 0, width: contentView.frame.width , height: 70)
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 50, height: 50)
+        
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
@@ -624,7 +625,13 @@ class OptographCollectionViewCell: UICollectionViewCell{
         bouncingButton.anchorToEdge(.Left, padding: 10, width: avatarImageView.frame.size.width, height: avatarImageView.frame.size.width)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         locationTextView.text = ""
+        
+        //eliteImageView.anchorInCorner(.BottomLeft, xPad: optionsButtonView.frame.origin.x, yPad: 21, width: 24, height: 28)
+        
+        let icnWidth = UIImage(named: "elite_beta_icn")!
+        eliteImageView.anchorInCorner(.BottomLeft, xPad: optionsButtonView.frame.origin.x + (optionsButtonView.frame.width/2), yPad: 6, width: icnWidth.size.width, height: icnWidth.size.height)
     }
+    
     
     func bouncingCell() {
         UIView.animateWithDuration(0.1, animations: {

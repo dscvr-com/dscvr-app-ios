@@ -24,7 +24,6 @@ class ActivityTableViewController: UIViewController, RedNavbar {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Activity"
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -47,7 +46,7 @@ class ActivityTableViewController: UIViewController, RedNavbar {
                 next: { results in
                     let wasEmptyBefore = self.items.isEmpty
                     
-//                    self.items = results.models
+                    self.items = results.models
                     
                     if wasEmptyBefore {
                         self.tableView.reloadData()
@@ -67,7 +66,7 @@ class ActivityTableViewController: UIViewController, RedNavbar {
                     
                     self.refreshControl.endRefreshing()
                     
-                    NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: "markVisibleAsRead", userInfo: nil, repeats: false)
+                    NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(ActivityTableViewController.markVisibleAsRead), userInfo: nil, repeats: false)
                 },
                 failed: { _ in
                     self.refreshControl.endRefreshing()
@@ -160,6 +159,7 @@ extension ActivityTableViewController: UITableViewDataSource {
             return cell
         } else {
             let activity = items[indexPath.row]
+            
             let cell: ActivityTableViewCell
             switch activity.type {
             case .Star:
@@ -173,6 +173,7 @@ extension ActivityTableViewController: UITableViewDataSource {
             default:
                 fatalError()
             }
+            
             
             cell.update(activity)
             cell.navigationController = navigationController as? NavigationController

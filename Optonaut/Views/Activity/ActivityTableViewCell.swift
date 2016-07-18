@@ -16,24 +16,32 @@ class ActivityTableViewCell: UITableViewCell {
     var activity: Activity!
     
     // subviews
-    private let isReadView = UIView()
+    //private let isReadView = UIView()
     private let lineView = UIView()
     private let textView = UILabel()
     let causingImageView = PlaceholderImageView()
+    let nameView = UILabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        isReadView.backgroundColor = .Accent
-        isReadView.hidden = true
-        isReadView.layer.cornerRadius = 3
-        contentView.addSubview(isReadView)
+//        isReadView.backgroundColor = .Accent
+//        isReadView.hidden = true
+//        isReadView.layer.cornerRadius = 3
+//        contentView.addSubview(isReadView)
+        
+        nameView.text = "Jon Snow"
+        nameView.numberOfLines = 0
+        nameView.font = UIFont.displayOfSize(14, withType: .Regular)
+        nameView.textColor = UIColor(0xffbc00)
+        contentView.addSubview(nameView)
         
         textView.numberOfLines = 0
-        textView.font = UIFont.displayOfSize(14, withType: .Regular)
+        textView.font = UIFont.displayOfSize(15, withType: .Regular)
         textView.textColor = .DarkGrey
         contentView.addSubview(textView)
         
+        causingImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         causingImageView.layer.cornerRadius = 20
         causingImageView.clipsToBounds = true
         contentView.addSubview(causingImageView)
@@ -50,17 +58,21 @@ class ActivityTableViewCell: UITableViewCell {
     
     override func updateConstraints() {
         
-        isReadView.autoAlignAxisToSuperviewAxis(.Horizontal)
-        isReadView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 8)
-        isReadView.autoSetDimensionsToSize(CGSize(width: 6, height: 6))
+//        isReadView.autoAlignAxisToSuperviewAxis(.Horizontal)
+//        isReadView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 8)
+//        isReadView.autoSetDimensionsToSize(CGSize(width: 6, height: 6))
         
         causingImageView.autoAlignAxisToSuperviewAxis(.Horizontal)
         causingImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
         causingImageView.autoSetDimensionsToSize(CGSize(width: 40, height: 40))
         
+        nameView.autoAlignAxisToSuperviewAxis(.Horizontal)
+        nameView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 75)
+        nameView.autoSetDimensionsToSize(CGSize(width: 60, height: 20))
+        
         textView.autoAlignAxisToSuperviewAxis(.Horizontal)
-        textView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 80)
-        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -72)
+        textView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 10)
+        textView.autoSetDimensionsToSize(CGSize(width: 150, height: 20))
         
         lineView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView)
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
@@ -72,7 +84,7 @@ class ActivityTableViewCell: UITableViewCell {
     
     func update(activity: Activity) {
         textView.text = activity.text
-        isReadView.hidden = activity.isRead
+        //isReadView.hidden = activity.isRead
         
         self.activity = activity
     }

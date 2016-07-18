@@ -20,7 +20,7 @@ class ActivityViewsTableViewCell: ActivityTableViewCell {
         causingImageView.contentMode = .Center
         
         optographImageView.userInteractionEnabled = true
-        optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
+        optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityViewsTableViewCell.pushDetails)))
         optographImageView.contentMode = .ScaleAspectFill
         contentView.addSubview(optographImageView)
     }

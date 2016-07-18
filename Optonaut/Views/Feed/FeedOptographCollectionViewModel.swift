@@ -79,7 +79,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             box.model.isPublished = true
                             box.model.isSubmitted = true
                         }
-                        print(apiModel.person)
                         Models.persons.touch(apiModel.person).insertOrUpdate()
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
                     })

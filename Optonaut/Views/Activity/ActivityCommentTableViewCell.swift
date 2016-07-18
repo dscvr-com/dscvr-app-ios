@@ -17,10 +17,10 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         causingImageView.userInteractionEnabled = true
-        causingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        causingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityCommentTableViewCell.pushProfile)))
         
         optographImageView.userInteractionEnabled = true
-        optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushDetails"))
+        optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityCommentTableViewCell.pushDetails)))
         optographImageView.contentMode = .ScaleAspectFill
         contentView.addSubview(optographImageView)
     }

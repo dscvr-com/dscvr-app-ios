@@ -33,6 +33,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     let headerView = UIView()
     var isProfileVisit:Bool = false
     var isFollowClicked:Bool = false
+    var isNotifClicked:Bool = false
     var fromLoginPage:Bool = false
     var finishReloadingCollectionView = MutableProperty<Bool>(false)
     
@@ -96,12 +97,23 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             if isFollowTabTap {
                 print("click")
                 self!.isFollowClicked = true
+                self!.isNotifClicked = false
             } else {
                 print("not click")
                 self!.isFollowClicked = false
+                self!.isNotifClicked = false
             }
             self!.collectionView?.reloadData()
             self!.collectionViewModel.refreshNotification.notify(())
+        }
+        
+        profileViewModel.notifTabTouched.producer.startWithNext { [weak self] isNotifTabTap in
+            if isNotifTabTap {
+                print("click notification")
+                self!.isNotifClicked = true
+                self!.isFollowClicked = false
+                self!.collectionView?.reloadData()
+            }
         }
         
         rightBarButton.frame = CGRect(x: 0, y: -2, width: 20, height: 21)
@@ -152,6 +164,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         collectionView!.registerClass(ProfileTileCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell")
         collectionView!.registerClass(ProfileUploadCollectionViewCell.self, forCellWithReuseIdentifier: "upload-cell")
         collectionView!.registerClass(ProfileFollowersViewCell.self, forCellWithReuseIdentifier: "followers-cell")
+        collectionView!.registerClass(NotificationTableViewCell.self, forCellWithReuseIdentifier: "notification-cell")
         
         collectionView!.backgroundColor = UIColor(hex:0xf7f7f7)
         
@@ -298,7 +311,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 }
                 strongSelf.collectionView?.reloadData()
                 strongSelf.collectionViewModel.refreshNotification.notify(())
-            
             }
         }
     }
@@ -365,7 +377,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if isFollowClicked {
+        if isFollowClicked || isNotifClicked {
             return 2
         } else {
             print("count3",optographIDs.count)
@@ -386,7 +398,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             cell.parentViewController = self
             
             return cell
-        } else if indexPath.item == 1 && !isFollowClicked && optographIDsNotUploaded.count != 0{
+        } else if indexPath.item == 1 && !isFollowClicked && optographIDsNotUploaded.count != 0 && !isNotifClicked{
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("upload-cell", forIndexPath: indexPath) as! ProfileUploadCollectionViewCell
             
             cell.optographIDsNotUploaded = optographIDsNotUploaded
@@ -395,12 +407,19 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             return cell
         
-        } else if indexPath.item == 1 && isFollowClicked {
+        } else if indexPath.item == 1 && isFollowClicked && !isNotifClicked{
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("followers-cell", forIndexPath: indexPath) as! ProfileFollowersViewCell
             
             cell.navigationController = navigationController as? NavigationController
             cell.viewIsActive()
 
+            
+            return cell
+            
+        } else if indexPath.item == 1 && isNotifClicked {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("notification-cell", forIndexPath: indexPath) as! NotificationTableViewCell
+            
+            cell.navigationController = navigationController as? NavigationController
             
             return cell
             
@@ -446,7 +465,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if indexPath.item == 0 {
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             return CGSize(width: self.view.frame.width, height: 267 + textHeight)
-        } else if indexPath.item == 1 && isFollowClicked {
+        } else if indexPath.item == 1 && (isFollowClicked || isNotifClicked){
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             return CGSize(width: self.view.frame.width, height: self.view.frame.height - (267 + textHeight))
         } else if indexPath.item == 1 && !isFollowClicked && optographIDsNotUploaded.count != 0{
