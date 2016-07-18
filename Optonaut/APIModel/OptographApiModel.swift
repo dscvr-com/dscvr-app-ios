@@ -29,6 +29,8 @@ struct OptographApiModel: ApiModel, Mappable {
     var directionPhi: Double = 0
     var directionTheta: Double = 0
     
+    init() {}
+    
     init?(_ map: Map){
     }
     

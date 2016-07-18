@@ -158,8 +158,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                                 strongSelf.refreshControl.endRefreshing()
                                 CATransaction.commit()
                             })
+                        strongSelf.collectionView!.reloadData()
                     }
-                    
                 }
             })
             .start()
@@ -374,10 +374,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         uiHidden.value = false
         
-        collectionView!.reloadData()
         viewModel.refresh()
         viewModel.isActive.value = true
-        
         
         showUI()
         tabController!.enableScrollView()

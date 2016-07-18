@@ -22,6 +22,9 @@
 		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
 		5937E0A51D262B3D00584F97 /* RequestCodeApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */; };
 		594023D01D2E73CE00393E1F /* AddUsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594023CF1D2E73CE00393E1F /* AddUsernameViewController.swift */; };
+		59405BEF1D3CDBC100D1BA45 /* Migration0008.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59405BEE1D3CDBC100D1BA45 /* Migration0008.swift */; };
+		59405BF31D3D36EB00D1BA45 /* ActivityResourceStarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */; };
+		59405BF51D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59405BF41D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift */; };
 		594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594378FC1CDC472800C84E6F /* TabViewController.swift */; };
 		594F6B4D1D36110500A361B3 /* UIImage+Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */; };
 		594F6B4F1D3619CF00A361B3 /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */; };
@@ -320,6 +323,9 @@
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
 		5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestCodeApiModel.swift; sourceTree = "<group>"; };
 		594023CF1D2E73CE00393E1F /* AddUsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddUsernameViewController.swift; sourceTree = "<group>"; };
+		59405BEE1D3CDBC100D1BA45 /* Migration0008.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0008.swift; sourceTree = "<group>"; };
+		59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceStarModel.swift; sourceTree = "<group>"; };
+		59405BF41D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceFollowModel.swift; sourceTree = "<group>"; };
 		594378FC1CDC472800C84E6F /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Gif.swift"; sourceTree = "<group>"; };
 		594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
@@ -781,6 +787,7 @@
 				8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */,
 				8FFB565C1C3055D000D2BE62 /* Migration0006.swift */,
 				59CDB7C71D2250B60094C816 /* Migration0007.swift */,
+				59405BEE1D3CDBC100D1BA45 /* Migration0008.swift */,
 			);
 			path = Migrations;
 			sourceTree = "<group>";
@@ -845,6 +852,8 @@
 				8F4185FA1C52DB08009E1E3F /* PersonApiModel.swift */,
 				8F4185FC1C52DBBD009E1E3F /* LocationApiModel.swift */,
 				5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */,
+				59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */,
+				59405BF41D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift */,
 			);
 			name = ApiModel;
 			path = APIModel;
@@ -1843,9 +1852,11 @@
 				59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				594F6B4F1D3619CF00A361B3 /* LoadingIndicatorView.swift in Sources */,
+				59405BF51D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift in Sources */,
 				8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
+				59405BEF1D3CDBC100D1BA45 /* Migration0008.swift in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
 				8FD845C51BCAA4530064048D /* WebImage.swift in Sources */,
 				8F707C181C5A363F000AF7BF /* ProfileOptographsViewModel.swift in Sources */,
@@ -1874,6 +1885,7 @@
 				A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */,
 				A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */,
 				594F6B4D1D36110500A361B3 /* UIImage+Gif.swift in Sources */,
+				59405BF31D3D36EB00D1BA45 /* ActivityResourceStarModel.swift in Sources */,
 				8F4186031C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift in Sources */,
 				8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,

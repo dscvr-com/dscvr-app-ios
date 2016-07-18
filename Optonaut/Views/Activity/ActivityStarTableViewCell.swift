@@ -42,20 +42,26 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     override func update(activity: Activity) {
         if self.activity != activity {
             causingImageView.setImageWithURLString(ImageURL(activity.activityResourceStar!.causingPerson.avatarAssetID, width: 40, height: 40))
-        }
-        
-        if self.activity != activity {
-//            optographImageView.setImageWithURLString(ImageURL(activity.activityResourceStar!.optograph.previewAssetID, width: 32, height: 40))
+            nameView.text = activity.activityResourceStar!.causingPerson.userName
+            
+            let url = TextureURL(activity.activityResourceStar!.optograph.ID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
+            print("cell",url)
+            self.optographImageView.kf_setImageWithURL(NSURL(string: url)!)
+            
         }
         
         super.update(activity)
     }
     
     func pushProfile() {
-        
-        let profilepage = ProfileCollectionViewController(personID: activity.activityResourceFollow!.causingPerson.ID)
-        profilepage.isProfileVisit = true
-        navigationController?.pushViewController(profilepage, animated: true)
+        ApiService<PersonApiModel>.get("persons/\(activity.activityResourceStar!.causingPerson.ID)")
+            .on(next: { apiModel in
+                Models.persons.touch(apiModel).insertOrUpdate()
+            }).startWithNext{ _ in
+                let profilepage = ProfileCollectionViewController(personID: self.activity.activityResourceStar!.causingPerson.ID)
+                profilepage.isProfileVisit = true
+                self.navigationController?.pushViewController(profilepage, animated: true)
+        }
     }
     
     func pushDetails() {

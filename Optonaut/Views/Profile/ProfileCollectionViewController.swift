@@ -39,8 +39,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     init(personID: UUID) {
         
-        profileViewModel = ProfileViewModel(personID: personID)
         collectionViewModel = ProfileOptographsViewModel(personID: personID)
+        profileViewModel = ProfileViewModel(personID: personID)
         
         super.init(collectionViewLayout: UICollectionViewLeftAlignedLayout())
     }
@@ -300,17 +300,39 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 self.collectionView?.reloadData()
         }
         
+//        profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
+//            if let strongSelf = self {
+//                if isFollowTabTap {
+//                    print("click")
+//                    strongSelf.isFollowClicked = true
+//                } else {
+//                    print("not click")
+//                    strongSelf.isFollowClicked = false
+//                }
+//                strongSelf.collectionView?.reloadData()
+//                strongSelf.collectionViewModel.refreshNotification.notify(())
+//            }
+//        }
         profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
-            if let strongSelf = self {
-                if isFollowTabTap {
-                    print("click")
-                    strongSelf.isFollowClicked = true
-                } else {
-                    print("not click")
-                    strongSelf.isFollowClicked = false
-                }
-                strongSelf.collectionView?.reloadData()
-                strongSelf.collectionViewModel.refreshNotification.notify(())
+            if isFollowTabTap {
+                print("click")
+                self!.isFollowClicked = true
+                self!.isNotifClicked = false
+            } else {
+                print("not click")
+                self!.isFollowClicked = false
+                self!.isNotifClicked = false
+            }
+            self!.collectionView?.reloadData()
+            self!.collectionViewModel.refreshNotification.notify(())
+        }
+        
+        profileViewModel.notifTabTouched.producer.startWithNext { [weak self] isNotifTabTap in
+            if isNotifTabTap {
+                print("click notification")
+                self!.isNotifClicked = true
+                self!.isFollowClicked = false
+                self!.collectionView?.reloadData()
             }
         }
     }

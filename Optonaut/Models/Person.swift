@@ -22,6 +22,7 @@ struct Person: Model {
     var followedCount: Int
     var isFollowed: Bool
     var avatarAssetID: UUID
+    var eliteStatus: Int
     
     static let guestID: UUID = "00000000-0000-0000-0000-000000000000"
     
@@ -38,7 +39,8 @@ struct Person: Model {
             followersCount: 0,
             followedCount: 0,
             isFollowed: false,
-            avatarAssetID: ""
+            avatarAssetID: "",
+            eliteStatus: 0
         )
     }
     
@@ -63,6 +65,7 @@ extension Person: MergeApiModel {
         followedCount = apiModel.followedCount
         isFollowed = apiModel.isFollowed
         avatarAssetID = apiModel.avatarAssetID
+        eliteStatus = apiModel.eliteUser
     }
 }
 
@@ -80,6 +83,7 @@ func ==(lhs: Person, rhs: Person) -> Bool {
         && lhs.followedCount == rhs.followedCount
         && lhs.isFollowed == rhs.isFollowed
         && lhs.avatarAssetID == rhs.avatarAssetID
+        && lhs.eliteStatus == rhs.eliteStatus
 }
 
 extension Person: SQLiteModel {
@@ -105,7 +109,8 @@ extension Person: SQLiteModel {
             followersCount: row[PersonSchema.followersCount],
             followedCount: row[PersonSchema.followedCount],
             isFollowed: row[PersonSchema.isFollowed],
-            avatarAssetID: row[PersonSchema.avatarAssetID]
+            avatarAssetID: row[PersonSchema.avatarAssetID],
+            eliteStatus:  row[PersonSchema.eliteStatus]
         )
     }
     
@@ -121,7 +126,8 @@ extension Person: SQLiteModel {
             PersonSchema.followersCount <-- followersCount,
             PersonSchema.followedCount <-- followedCount,
             PersonSchema.isFollowed <-- isFollowed,
-            PersonSchema.avatarAssetID <-- avatarAssetID
+            PersonSchema.avatarAssetID <-- avatarAssetID,
+            PersonSchema.eliteStatus <-- eliteStatus
         ]
         
         if email != nil {

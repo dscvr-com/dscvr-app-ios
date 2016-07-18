@@ -189,6 +189,9 @@ class ApiService<T: Mappable> {
             
             let mutableURLRequest = buildURLRequest(endpoint, method: method, queries: queries)
             
+            
+            print("urlrequest >>",mutableURLRequest)
+            
             if let parameters = parameters {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters, options: [])
                 mutableURLRequest.HTTPBody = Optional(json)
@@ -198,14 +201,12 @@ class ApiService<T: Mappable> {
             let request = Alamofire.request(mutableURLRequest)
                 .validate()
                 .response { (_, response, data, error) in
+                    
                     if let error = error {
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             SessionService.logout()
                         }
-                        print("data>>",data)
-                        print("response>>",response)
-                        print("error>>",error)
-                        
+
                         do {
                             let data = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
                         } catch {}
@@ -217,6 +218,8 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                                    
+                                    print("data>>>",json)
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
                                     } else if let array = Mapper<T>().mapArray(json) {

@@ -30,7 +30,6 @@ class ActivityTableViewCell: UITableViewCell {
 //        isReadView.layer.cornerRadius = 3
 //        contentView.addSubview(isReadView)
         
-        nameView.text = "Jon Snow"
         nameView.numberOfLines = 0
         nameView.font = UIFont.displayOfSize(14, withType: .Regular)
         nameView.textColor = UIColor(0xffbc00)

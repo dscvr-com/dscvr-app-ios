@@ -24,21 +24,22 @@ struct Activity: DeletableModel {
     var deletedAt: NSDate?
     var isRead: Bool
     var type: ActivityType
-    var activityResourceStar: ActivityResourceStar?
+    var activityResourceStar: ActivityResourceStarModel?
     var activityResourceComment: ActivityResourceComment?
     var activityResourceViews: ActivityResourceViews?
-    var activityResourceFollow: ActivityResourceFollow?
+    var activityResourceFollow: ActivityResourceFollowModel?
     
     var text: String {
         switch type {
-        case .Star: return "\(activityResourceStar!.causingPerson.displayName) liked your Optograph."
+        case .Star: return " liked your Optograph."//return "\(activityResourceStar!.causingPerson.displayName) liked your Optograph."
         case .Comment: return "\(activityResourceComment!.causingPerson.displayName) commented on your Optograph: \(activityResourceComment!.comment.text)"
         case .Views: return "Congratulations! Your Optograph just hit \(activityResourceViews!.count) views."
         case .Follow:
             if activityResourceFollow!.causingPerson.isFollowed {
                 return "\(activityResourceFollow!.causingPerson.displayName) followed you back."
             } else {
-                return "\(activityResourceFollow!.causingPerson.displayName) started following you."
+                //return "\(activityResourceFollow!.causingPerson.displayName) started following you."
+                return " started following you."
             }
         case .Nil: fatalError()
         }

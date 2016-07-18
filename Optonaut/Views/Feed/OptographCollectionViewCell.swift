@@ -239,7 +239,7 @@ private class OverlayViewModel {
     let userName = MutableProperty<String>("")
     let locationID = MutableProperty<UUID?>("")
     var isMe = false
-    
+    var isElite = MutableProperty<Int>(0)
     
     func bind(optographID: UUID) {
         
@@ -271,6 +271,7 @@ private class OverlayViewModel {
                 self?.userName.value = person.userName
                 self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47)
                 self?.isFollowed.value = person.isFollowed
+                self?.isElite.value = person.eliteStatus
         }
     }
     
@@ -803,7 +804,14 @@ class OptographCollectionViewCell: UICollectionViewCell{
                 }
         }
         
-        
+        viewModel.isElite.producer.startWithNext{ val in
+            if val == 0 {
+                self.eliteImageView.hidden = true
+            } else {
+                self.eliteImageView.hidden = false
+            }
+            
+        }
         
         let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/pan.mp4"
         

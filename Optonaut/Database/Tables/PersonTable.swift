@@ -21,6 +21,7 @@ struct PersonSchemaType: ModelSchema {
     let followedCount = Expression<Int>("person_followed_count")
     let isFollowed = Expression<Bool>("person_is_followed")
     let avatarAssetID = Expression<UUID>("person_avatar_asset_id")
+    let eliteStatus = Expression<Int>("person_elite_status")
 }
 
 let PersonSchema = PersonSchemaType()
