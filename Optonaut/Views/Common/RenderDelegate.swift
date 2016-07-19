@@ -11,6 +11,10 @@ import SceneKit
 import CardboardParams
 import SpriteKit
 
+//protocol RenderDelegateDelegate {
+//    func didEnterFrustrum(markerName: String)
+//}
+
 class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
     private let cameraNode = SCNNode()
@@ -18,9 +22,6 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
     
     private let rotationMatrixSource: RotationMatrixSource
     private let cameraOffset: Float
-    
-    
-    
     
     
     
@@ -70,6 +71,8 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         
         super.init()
     }
+    
+//    var delegate: RenderDelegateDelegate?
     
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double) {
         let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
@@ -137,6 +140,10 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
     
 }
 
+protocol CubeRenderDelegateDelegate {
+    func didEnterFrustrum(markerName: String, inFrustrum: Bool)
+}
+
 class CubeRenderDelegate: RenderDelegate {
     
     class Item {
@@ -162,6 +169,8 @@ class CubeRenderDelegate: RenderDelegate {
     var nodeEnterScene: (CubeImageCache.Index -> ())?
     var nodeLeaveScene: (CubeImageCache.Index -> ())?
     
+    var delegate: CubeRenderDelegateDelegate?
+    
     weak var scnView: SCNView?
     private let sphereGeoNode: SCNNode
     private let cameraText: SCNNode
@@ -184,7 +193,8 @@ class CubeRenderDelegate: RenderDelegate {
         
         scnView?.showsStatistics = true
         
-        
+        let planeGeo = SCNPlane(width: 1.0, height: 1.0)
+        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         
         let circleGeo = SCNSphere(radius: 0.01)
         circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
@@ -315,15 +325,17 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     
-    func addMarker () {
+    func addMarker(color: UIColor, type: String) {
         
+        let planeGeo = SCNPlane(width: 5, height: 5)
+        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         
         let circleGeo = SCNSphere(radius: 0.01)
-        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        circleGeo.firstMaterial?.diffuse.contents = color
         let markNode = SCNNode(geometry: circleGeo)
         let n = markers.count
         
-        markNode.name = "test" + String(n)
+        markNode.name = type + String(n)
         
         
         markNode.position = sphereGeoNode.position
@@ -478,9 +490,13 @@ class CubeRenderDelegate: RenderDelegate {
             //direction = SCNVector3(x: cos(elevation) * direction.x , y: sin(elevation), z: cos(elevation) * direction.z)
            // let eulerangle = sphereGeoNode.position
             let markername = marknode.name
-            print ("marker name \(markername) ")
+//            print ("marker name \(markername) ")
+                delegate!.didEnterFrustrum(markername!, inFrustrum: true)
          
         }
+            else{
+                delegate!.didEnterFrustrum("", inFrustrum: false)
+            }
         }
  
  
