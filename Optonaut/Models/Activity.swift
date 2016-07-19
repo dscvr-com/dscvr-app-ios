@@ -31,15 +31,15 @@ struct Activity: DeletableModel {
     
     var text: String {
         switch type {
-        case .Star: return " liked your Optograph."//return "\(activityResourceStar!.causingPerson.displayName) liked your Optograph."
+        case .Star: return "liked your Optograph."//return "\(activityResourceStar!.causingPerson.displayName) liked your Optograph."
         case .Comment: return "\(activityResourceComment!.causingPerson.displayName) commented on your Optograph: \(activityResourceComment!.comment.text)"
         case .Views: return "Congratulations! Your Optograph just hit \(activityResourceViews!.count) views."
         case .Follow:
             if activityResourceFollow!.causingPerson.isFollowed {
-                return "\(activityResourceFollow!.causingPerson.displayName) followed you back."
+                return "followed you back."
             } else {
                 //return "\(activityResourceFollow!.causingPerson.displayName) started following you."
-                return " started following you."
+                return "started following you."
             }
         case .Nil: fatalError()
         }

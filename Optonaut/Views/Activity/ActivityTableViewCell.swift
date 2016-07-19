@@ -21,6 +21,8 @@ class ActivityTableViewCell: UITableViewCell {
     private let textView = UILabel()
     let causingImageView = PlaceholderImageView()
     let nameView = UILabel()
+    let followBack = UIButton()
+    let alreadyFollow = UIButton()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -31,7 +33,8 @@ class ActivityTableViewCell: UITableViewCell {
 //        contentView.addSubview(isReadView)
         
         nameView.numberOfLines = 0
-        nameView.font = UIFont.displayOfSize(14, withType: .Regular)
+        //nameView.font = UIFont.displayOfSize(17, withType: .Semibold)
+        nameView.font = UIFont (name: "Avenir-Heavy", size: 17)
         nameView.textColor = UIColor(0xffbc00)
         contentView.addSubview(nameView)
         
@@ -41,8 +44,10 @@ class ActivityTableViewCell: UITableViewCell {
         contentView.addSubview(textView)
         
         causingImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
-        causingImageView.layer.cornerRadius = 20
+        causingImageView.layer.cornerRadius = 25
+        causingImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
         causingImageView.clipsToBounds = true
+        causingImageView.layer.borderWidth = 2.0
         contentView.addSubview(causingImageView)
         
         lineView.backgroundColor = UIColor.WhiteGrey
@@ -63,10 +68,10 @@ class ActivityTableViewCell: UITableViewCell {
         
         causingImageView.autoAlignAxisToSuperviewAxis(.Horizontal)
         causingImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
-        causingImageView.autoSetDimensionsToSize(CGSize(width: 40, height: 40))
+        causingImageView.autoSetDimensionsToSize(CGSize(width: 50, height: 50))
         
         nameView.autoAlignAxisToSuperviewAxis(.Horizontal)
-        nameView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 75)
+        nameView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 80)
         nameView.autoSetDimensionsToSize(CGSize(width: 60, height: 20))
         
         textView.autoAlignAxisToSuperviewAxis(.Horizontal)

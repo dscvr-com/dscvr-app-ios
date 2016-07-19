@@ -19,6 +19,9 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
         causingImageView.userInteractionEnabled = true
         causingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityStarTableViewCell.pushProfile)))
         
+        nameView.userInteractionEnabled = true
+        nameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityStarTableViewCell.pushProfile)))
+        
         optographImageView.userInteractionEnabled = true
         optographImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ActivityStarTableViewCell.pushDetails)))
         optographImageView.contentMode = .ScaleAspectFill
@@ -41,11 +44,15 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     
     override func update(activity: Activity) {
         if self.activity != activity {
-            causingImageView.setImageWithURLString(ImageURL(activity.activityResourceStar!.causingPerson.avatarAssetID, width: 40, height: 40))
+            
+            let imageUrl = ImageURL("persons/\(activity.activityResourceStar!.causingPerson.ID)/\(activity.activityResourceStar!.causingPerson.avatarAssetID).jpg", width: 47, height: 47)
+            causingImageView.kf_setImageWithURL(NSURL(string:imageUrl)!)
+            
             nameView.text = activity.activityResourceStar!.causingPerson.userName
             
+            Models.persons.touch(activity.activityResourceStar!.causingPerson).insertOrUpdate()
+            
             let url = TextureURL(activity.activityResourceStar!.optograph.ID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
-            print("cell",url)
             self.optographImageView.kf_setImageWithURL(NSURL(string: url)!)
             
         }
@@ -54,14 +61,10 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     }
     
     func pushProfile() {
-        ApiService<PersonApiModel>.get("persons/\(activity.activityResourceStar!.causingPerson.ID)")
-            .on(next: { apiModel in
-                Models.persons.touch(apiModel).insertOrUpdate()
-            }).startWithNext{ _ in
-                let profilepage = ProfileCollectionViewController(personID: self.activity.activityResourceStar!.causingPerson.ID)
-                profilepage.isProfileVisit = true
-                self.navigationController?.pushViewController(profilepage, animated: true)
-        }
+        
+        let profilepage = ProfileCollectionViewController(personID: self.activity.activityResourceStar!.causingPerson.ID)
+        profilepage.isProfileVisit = true
+        self.navigationController?.pushViewController(profilepage, animated: true)
     }
     
     func pushDetails() {

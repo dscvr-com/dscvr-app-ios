@@ -386,14 +386,14 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         thisView.addSubview(pullButton)
         pullButton.anchorToEdge(.Bottom, padding: 5, width: 20, height: 15)
         
-//        for family: String in UIFont.familyNames()
-//        {
-//            print("\(family)")
-//            for names: String in UIFont.fontNamesForFamilyName(family)
-//            {
-//                print("== \(names)")
-//            }
-//        }
+        for family: String in UIFont.familyNames()
+        {
+            print("\(family)")
+            for names: String in UIFont.fontNamesForFamilyName(family)
+            {
+                print("== \(names)")
+            }
+        }
         labelCapture.hidden = true
         labelManual.hidden = true
         labelMotor.hidden = true

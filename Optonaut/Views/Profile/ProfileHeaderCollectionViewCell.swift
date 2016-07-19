@@ -242,6 +242,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         }
         
         viewModel.isFollowed.producer.startWithNext{ [weak self] val in
+            print(">>>+++",val)
             val ? self?.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self?.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         }
         
@@ -271,9 +272,11 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             postHeadingView.hidden = true
             postHeadingView1.hidden = false
             postHeadingView2.hidden = false
+            postHeadingView3.hidden = false
             yellowLine.hidden = false
             postHeadingView1.rac_hidden <~ viewModel.isEditing
             postHeadingView2.rac_hidden <~ viewModel.isEditing
+            postHeadingView3.rac_hidden <~ viewModel.isEditing
             yellowLine.rac_hidden <~ viewModel.isEditing
         } else {
             print("hindi ako")
@@ -282,6 +285,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             postHeadingView.hidden = false
             postHeadingView1.hidden = true
             postHeadingView2.hidden = true
+            postHeadingView3.hidden = true
             yellowLine.hidden = true
         }
     }

@@ -109,7 +109,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         profileViewModel.notifTabTouched.producer.startWithNext { [weak self] isNotifTabTap in
             if isNotifTabTap {
-                print("click notification")
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
                 self!.collectionView?.reloadData()

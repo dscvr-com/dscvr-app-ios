@@ -128,7 +128,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
-        
+
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {

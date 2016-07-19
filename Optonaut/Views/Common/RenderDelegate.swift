@@ -10,6 +10,7 @@ import Foundation
 import SceneKit
 import CardboardParams
 import SpriteKit
+import ReactiveCocoa
 
 class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
