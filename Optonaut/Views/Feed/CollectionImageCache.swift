@@ -276,6 +276,22 @@ class CollectionImageCache {
         }
     }
     
+    func getOptocache(index: Int, optographID: UUID, side: TextureSide) -> CubeImageCache {
+        assertMainThread()
+        
+        let cacheIndex = index % CollectionImageCache.cacheSize
+        
+            let item = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))
+            items[cacheIndex]?.innerCache.dispose()
+            items[cacheIndex] = item
+            return item.innerCache
+        
+    }
+    
+    
+    
+    
+    
     func disable(index: Int) {
         assertMainThread()
         

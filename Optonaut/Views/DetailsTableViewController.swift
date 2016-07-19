@@ -123,12 +123,23 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     
                     self.markerNameLabel.hidden = false
                     print("markerName: \(self.markerNameLabel.text!)")
+                    
+                    
+                    if (self.markerNameLabel.text! == "Text Item2") {
+                        print("resetToBlack")
+                      
+                        let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: "6e5b494d-8e1f-4516-ab95-37165224e323", side: .Left)
+                        self.setCubeImageCache(cubeImageCache  )
+                    }
+
                 }
                 else{
                     self.markerNameLabel.hidden = true
                 }
             }
         }
+        
+        
     }
     
     override func viewDidLoad() {
@@ -826,6 +837,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func setCubeImageCache(cache: CubeImageCache) {
+        
+        renderDelegate.reset();
         
         renderDelegate.nodeEnterScene = nil
         renderDelegate.nodeLeaveScene = nil

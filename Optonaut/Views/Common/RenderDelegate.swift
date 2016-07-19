@@ -179,7 +179,9 @@ class CubeRenderDelegate: RenderDelegate {
     private let cubeFaceCount: Int
     private let autoDispose: Bool
     private var willRequestAll: Bool
+    let imageCache: CollectionImageCache
     
+   
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool) {
         let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
         
@@ -210,7 +212,8 @@ class CubeRenderDelegate: RenderDelegate {
         
         cameraText = SCNNode(geometry: newText)
         
-        
+        let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
+        imageCache = CollectionImageCache(textureSize: textureSize)
         
         
     
@@ -327,24 +330,37 @@ class CubeRenderDelegate: RenderDelegate {
     
     func addMarker(color: UIColor, type: String) {
         
-        let planeGeo = SCNPlane(width: 5, height: 5)
+        let planeGeo = SCNPlane(width: 0.1, height: 0.1)
         planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        
+        
+        
+       
+        
+        
         
         let circleGeo = SCNSphere(radius: 0.01)
         circleGeo.firstMaterial?.diffuse.contents = color
-        let markNode = SCNNode(geometry: circleGeo)
+        let markNode = SCNNode(geometry: planeGeo)
         let n = markers.count
         
         markNode.name = type + String(n)
         
         
         markNode.position = sphereGeoNode.position
+        markNode.rotation = self.cameraNode.rotation
         
+        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
          
     }
+    
+    
+    
+    
+    
     
     var id: Int = 0
     
@@ -362,6 +378,56 @@ class CubeRenderDelegate: RenderDelegate {
             }
         }
     }
+    
+    
+    func resetToBlack() {
+        nodeEnterScene = nil
+        nodeLeaveScene = nil
+        
+        sync(self) {
+            for (_, plane) in self.planes {
+                //print("resett \(self.id) \(index)")
+                plane.node.geometry?.firstMaterial?.diffuse.contents = CubeRenderDelegate.BlackTexture
+                plane.visible = false
+                plane.hasTexture = false
+            //    plane.requested = false
+            }
+        }
+        
+        
+        
+        
+        let cubeImageCache = imageCache.get(0, optographID: "6e5b494d-8e1f-4516-ab95-37165224e323", side: .Left)
+        setCubeImageCache(cubeImageCache)
+    }
+    
+    
+    
+    func setCubeImageCache(cache: CubeImageCache) {
+        
+        nodeEnterScene = nil
+        nodeLeaveScene = nil
+        
+        reset()
+        
+        nodeEnterScene = { [weak self] index in
+            dispatch_async(queue1) {
+                cache.get(index) { [weak self] (texture: SKTexture, index: CubeImageCache.Index) in
+                    self!.setTexture(texture, forIndex: index)
+         //           Async.main { [weak self] in
+          //              self?.loadingStatus.value = .Loaded
+          //          }
+                }
+            }
+        }
+        
+        nodeLeaveScene = { index in
+            dispatch_async(queue1) {
+                cache.forget(index)
+            }
+        }
+    }
+
     
     func getVisibleAndAdjacentPlaneIndicesFromRotationMatrix(rotation: GLKMatrix4) -> [CubeImageCache.Index] {
         let dummyCam = SCNNode()
@@ -421,6 +487,10 @@ class CubeRenderDelegate: RenderDelegate {
         return cameraDirection
         
     }
+    
+   
+    
+    
     
     private func request(item: Item, index: CubeImageCache.Index) {
         if !item.visible {
@@ -490,9 +560,15 @@ class CubeRenderDelegate: RenderDelegate {
             //direction = SCNVector3(x: cos(elevation) * direction.x , y: sin(elevation), z: cos(elevation) * direction.z)
            // let eulerangle = sphereGeoNode.position
             let markername = marknode.name
-//            print ("marker name \(markername) ")
-                delegate!.didEnterFrustrum(markername!, inFrustrum: true)
-         
+            print ("marker name \(markername) ")
+               
+                if (markername! == "Text Item2") {
+                    print("resetToBlack")
+                  
+                  
+                    
+                }
+          delegate!.didEnterFrustrum(markername!, inFrustrum: true)
         }
             else{
                 delegate!.didEnterFrustrum("", inFrustrum: false)
