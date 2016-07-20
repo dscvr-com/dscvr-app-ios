@@ -23,6 +23,7 @@ class ActivityTableViewCell: UITableViewCell {
     let nameView = UILabel()
     let followBack = UIButton()
     let alreadyFollow = UIButton()
+    let dateView = UILabel()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -33,15 +34,20 @@ class ActivityTableViewCell: UITableViewCell {
 //        contentView.addSubview(isReadView)
         
         nameView.numberOfLines = 0
-        //nameView.font = UIFont.displayOfSize(17, withType: .Semibold)
         nameView.font = UIFont (name: "Avenir-Heavy", size: 17)
         nameView.textColor = UIColor(0xffbc00)
         contentView.addSubview(nameView)
         
         textView.numberOfLines = 0
-        textView.font = UIFont.displayOfSize(15, withType: .Regular)
+        //textView.font = UIFont.displayOfSize(15, withType: .Regular)
         textView.textColor = .DarkGrey
+        textView.font = UIFont (name: "AvenirNextCondensed-Italic", size: 15)
         contentView.addSubview(textView)
+        
+        dateView.numberOfLines = 0
+        dateView.font = UIFont.displayOfSize(12, withType: .Regular)
+        dateView.textColor = .DarkGrey
+        contentView.addSubview(dateView)
         
         causingImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         causingImageView.layer.cornerRadius = 25
@@ -75,8 +81,13 @@ class ActivityTableViewCell: UITableViewCell {
         nameView.autoSetDimensionsToSize(CGSize(width: 60, height: 20))
         
         textView.autoAlignAxisToSuperviewAxis(.Horizontal)
-        textView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 10)
+        textView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 5)
         textView.autoSetDimensionsToSize(CGSize(width: 150, height: 20))
+        
+        //dateView.autoAlignAxisToSuperviewAxis(.Vertical)
+        dateView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 80)
+        dateView.autoPinEdge(.Top, toEdge: .Bottom, ofView: nameView, withOffset: 5)
+        dateView.autoSetDimensionsToSize(CGSize(width: 30, height: 20))
         
         lineView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView)
         lineView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
@@ -89,6 +100,7 @@ class ActivityTableViewCell: UITableViewCell {
     func update(activity: Activity) {
         textView.text = activity.text
         //isReadView.hidden = activity.isRead
+        dateView.text = activity.createdAt.shortDescription
         
         self.activity = activity
     }

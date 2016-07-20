@@ -62,12 +62,16 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     
     func pushProfile() {
         
+        self.read()
+        
         let profilepage = ProfileCollectionViewController(personID: self.activity.activityResourceStar!.causingPerson.ID)
         profilepage.isProfileVisit = true
         self.navigationController?.pushViewController(profilepage, animated: true)
     }
     
     func pushDetails() {
+        
+        self.read()
         
         let detailsViewController = DetailsTableViewController(optographId:activity.activityResourceStar!.optograph.ID)
         detailsViewController.cellIndexpath = 0

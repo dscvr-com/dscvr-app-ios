@@ -76,11 +76,13 @@ class DetailsViewModel {
                 started: { [weak self] in
                     self?.creatorDetails.insertOrUpdate { box in
                         box.model.isFollowed = !followedBefore
+                        self?.isFollowed.value = !followedBefore
                     }
                 },
                 failed: { [weak self] _ in
                     self?.creatorDetails.insertOrUpdate { box in
                         box.model.isFollowed = followedBefore
+                        self?.isFollowed.value = followedBefore
                     }
                 }
             )

@@ -76,6 +76,8 @@ class ActivityFollowTableViewCell: ActivityTableViewCell {
     
     func toggleFollow() {
         
+        self.read()
+        
         let userModel = Models.persons[activity.activityResourceFollow!.causingPerson.ID]!
         let followedBefore = activity.activityResourceFollow!.causingPerson.isFollowed
         
@@ -108,6 +110,9 @@ class ActivityFollowTableViewCell: ActivityTableViewCell {
     }
     
     func pushProfile() {
+        
+        self.read()
+        
         let profilepage = ProfileCollectionViewController(personID: self.activity.activityResourceFollow!.causingPerson.ID)
         profilepage.isProfileVisit = true
         self.navigationController?.pushViewController(profilepage, animated: true)

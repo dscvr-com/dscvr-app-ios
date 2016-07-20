@@ -31,8 +31,8 @@ struct Activity: DeletableModel {
     
     var text: String {
         switch type {
-        case .Star: return "liked your Optograph."//return "\(activityResourceStar!.causingPerson.displayName) liked your Optograph."
-        case .Comment: return "\(activityResourceComment!.causingPerson.displayName) commented on your Optograph: \(activityResourceComment!.comment.text)"
+        case .Star: return "liked your photo."//return "\(activityResourceStar!.causingPerson.displayName) liked your Optograph."
+        case .Comment: return "\(activityResourceComment!.causingPerson.displayName) commented on your photo: \(activityResourceComment!.comment.text)"
         case .Views: return "Congratulations! Your Optograph just hit \(activityResourceViews!.count) views."
         case .Follow:
             if activityResourceFollow!.causingPerson.isFollowed {
@@ -65,7 +65,7 @@ extension Activity: Equatable {}
 
 func ==(lhs: Activity, rhs: Activity) -> Bool {
     return lhs.ID == rhs.ID
-        && lhs.isRead == rhs.isRead
+        //&& lhs.isRead == rhs.isRead
 }
 
 extension Activity: Mappable {

@@ -271,6 +271,7 @@ private class OverlayViewModel {
                 self?.userName.value = person.userName
                 self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47)
                 self?.isFollowed.value = person.isFollowed
+                print("why>>",person.userName," ",person.isFollowed)
                 self?.isElite.value = person.eliteStatus
         }
     }
@@ -290,11 +291,13 @@ private class OverlayViewModel {
                     self?.personBox.insertOrUpdate { box in
                         box.model.isFollowed = !followedBefore
                     }
+                    self?.isFollowed.value = !followedBefore
                 },
                 failed: { [weak self] _ in
                     self?.personBox.insertOrUpdate { box in
                         box.model.isFollowed = followedBefore
                     }
+                    self?.isFollowed.value = followedBefore
                 }
             )
             .start()
@@ -543,7 +546,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
         yellowView.addSubview(previewImage)
         
-        whiteBackground.backgroundColor = UIColor(hex:0x595959).alpha(0.80)
+        whiteBackground.backgroundColor = UIColor(hex:0x595959).alpha(0.20)
         yellowView.addSubview(whiteBackground)
         
         blackSpace.backgroundColor = UIColor.blackColor()
@@ -609,7 +612,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         yellowView.fillSuperview()
         playerLayer.fillSuperview()
         
-        blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
+        blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 5)
         
         hiddenViewToBounce.anchorToEdge(.Left, padding: 10, width: 70, height: 100)
         

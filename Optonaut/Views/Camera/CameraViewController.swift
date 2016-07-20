@@ -202,7 +202,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     }
     
     func tapCameraButton() {
-        //tapCameraButtonCallback?()                        d
+        //tapCameraButtonCallback?()
         print("ewe")
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true
@@ -399,6 +399,11 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         Mixpanel.sharedInstance().track("View.Camera")
+    }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        tabController!.disableScrollView()
     }
     
     override func viewWillDisappear(animated: Bool) {

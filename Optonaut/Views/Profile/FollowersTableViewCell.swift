@@ -57,19 +57,19 @@ class FollowersTableViewCell: UITableViewCell {
     func bind(personId:UUID) {
         personBox = Models.persons[personId]!
         
-//        personBox.producer
-//            .skipRepeats()
-//            .startWithNext { [weak self] person in
-////                self?.displayName.value = "@\(person.displayName)"
-////                self?.userName.value = "@\(person.userName)"
-////                self?.text.value = person.text
-////                self?.postCount.value = person.optographsCount
-////                self?.followersCount.value = person.followersCount
-////                self?.followingCount.value = person.followedCount
-//                self?.isFollowed.value = person.isFollowed
-////                self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 84, height: 84)
-//        }
-        
+        personBox.producer
+            .skipRepeats()
+            .startWithNext { [weak self] person in
+                print("bind>>",person.isFollowed)
+//                self?.displayName.value = "@\(person.displayName)"
+//                self?.userName.value = "@\(person.userName)"
+//                self?.text.value = person.text
+//                self?.postCount.value = person.optographsCount
+//                self?.followersCount.value = person.followersCount
+//                self?.followingCount.value = person.followedCount
+                self?.isFollowed.value = person.isFollowed
+//                self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 84, height: 84)
+        }
     }
     
     func toggleFollow() {
@@ -88,8 +88,7 @@ class FollowersTableViewCell: UITableViewCell {
                         box.model.isFollowed = !followedBefore
                         self?.isFollowed.value = !followedBefore
                     }
-                },
-                failed: { [weak self] _ in
+                },failed: { [weak self] _ in
                     self?.personBox.insertOrUpdate { box in
                         box.model.isFollowed = followedBefore
                         self?.isFollowed.value = followedBefore

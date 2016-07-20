@@ -86,7 +86,7 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
         
         contentView.addSubview(tableView)
         
-        //contentView.setNeedsUpdateConstraints()
+        contentView.setNeedsUpdateConstraints()
     }
     
 //    override func awakeFromNib() {
@@ -103,33 +103,33 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
         }
     }
     
-//    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-//        markVisibleAsRead()
-//    }
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        markVisibleAsRead()
+    }
     
-//    dynamic func markVisibleAsRead() {
-//        guard let visibleCells = tableView.visibleCells as? [ActivityTableViewCell] else {
-//            return
-//        }
-//        
-//        let unreadActivities = visibleCells.map({ $0.activity }).filter({ !$0.isRead })
-//        
-//        if unreadActivities.isEmpty {
-//            return
-//        }
-//        
-//        SignalProducer<Activity!, NoError>.fromValues(unreadActivities)
-//            .observeOnUserInteractive()
-//            .flatMap(.Merge) {
-//                ApiService<EmptyResponse>.post("activities/\($0.ID)/read")
-//                    .ignoreError()
-//                    .startOnUserInteractive()
-//            }
-//            .observeOnMain()
-//            .startWithCompleted { [weak self] in
-//                self?.viewModel.refreshNotification.notify(())
-//        }
-//    }
+    dynamic func markVisibleAsRead() {
+        guard let visibleCells = tableView.visibleCells as? [ActivityTableViewCell] else {
+            return
+        }
+        
+        let unreadActivities = visibleCells.map({ $0.activity }).filter({ !$0.isRead })
+        
+        if unreadActivities.isEmpty {
+            return
+        }
+        
+        SignalProducer<Activity!, NoError>.fromValues(unreadActivities)
+            .observeOnUserInteractive()
+            .flatMap(.Merge) {
+                ApiService<EmptyResponse>.post("activities/\($0.ID)/read")
+                    .ignoreError()
+                    .startOnUserInteractive()
+            }
+            .observeOnMain()
+            .startWithCompleted { [weak self] in
+                self?.viewModel.refreshNotification.notify(())
+        }
+    }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if items.isEmpty {
@@ -153,7 +153,6 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
             default:
                 fatalError()
             }
-            print("my activity>>",activity)
             
             cell.update(activity)
             cell.navigationController = navigationController
@@ -176,7 +175,6 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print(items.count)
         return items.isEmpty ? 1 : items.count
     }
     

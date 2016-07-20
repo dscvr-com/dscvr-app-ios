@@ -211,7 +211,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 }
         }
         updateTabs()
-        //initNotificationIndicator()
+        initNotificationIndicator()
         imagePicker.delegate = self
         
         isThetaImage.producer
@@ -344,20 +344,20 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     private func initNotificationIndicator() {
         let circle = UILabel()
-        circle.frame = CGRect(x: tabView.rightButton.frame.origin.x + 25, y: tabView.rightButton.frame.origin.y - 3, width: 16, height: 16)
+        circle.frame = CGRect(x: view.frame.width - 25, y: 25, width: 10, height: 10)
         circle.backgroundColor = .Accent
         circle.font = UIFont.displayOfSize(10, withType: .Regular)
         circle.textAlignment = .Center
         circle.textColor = .whiteColor()
         circle.layer.cornerRadius = 8
         circle.clipsToBounds = true
-        circle.hidden = true
-        tabView.addSubview(circle)
+        //circle.hidden = true
+        view.addSubview(circle)
         
         ActivitiesService.unreadCount.producer.startWithNext { count in
             let hidden = count <= 0
             circle.hidden = hidden
-            circle.text = "\(count)"
+            //circle.text = "\(count)"
         }
     }
     
@@ -489,8 +489,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        
-        return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/3)*2))
+        print("width height",UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/5)*2))
+        return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/5)*2))
     }
     
     

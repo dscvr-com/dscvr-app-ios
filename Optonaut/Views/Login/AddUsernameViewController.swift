@@ -130,8 +130,6 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
                     
                     self.person = people
                     
-                    print("people: \(people)")
-                    
                     if self.person.count > 0{
                         if self.person[0].userName == "" {
                             print("string available")

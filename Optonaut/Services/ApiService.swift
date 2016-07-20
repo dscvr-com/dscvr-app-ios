@@ -154,7 +154,7 @@ class ApiService<T: Mappable> {
         
         if let token = Defaults[.SessionToken] {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            print ("token",token)
+            print ("Bearer ",token)
         }
         
         return mutableURLRequest
@@ -174,7 +174,7 @@ class ApiService<T: Mappable> {
         
         if let token = Defaults[.SessionToken] {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            print ("token",token)
+            //print ("token",token)
         }
         
         return mutableURLRequest
@@ -190,7 +190,7 @@ class ApiService<T: Mappable> {
             let mutableURLRequest = buildURLRequest(endpoint, method: method, queries: queries)
             
             
-            print("urlrequest >>",mutableURLRequest)
+            //print("urlrequest >>",mutableURLRequest)
             
             if let parameters = parameters {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters, options: [])
@@ -276,9 +276,6 @@ class ApiService<T: Mappable> {
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             SessionService.logout()
                         }
-                        print("data>>",data)
-                        print("response>>",response)
-                        print("error>>",error)
                         
                         do {
                             let data = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)

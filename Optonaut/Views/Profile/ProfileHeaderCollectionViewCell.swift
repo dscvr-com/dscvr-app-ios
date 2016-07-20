@@ -242,7 +242,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         }
         
         viewModel.isFollowed.producer.startWithNext{ [weak self] val in
-            print(">>>+++",val)
             val ? self?.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self?.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         }
         

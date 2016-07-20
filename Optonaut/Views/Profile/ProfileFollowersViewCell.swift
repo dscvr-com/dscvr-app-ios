@@ -75,10 +75,6 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
         cell.userImage.kf_setImageWithURL(NSURL(string:imageUrl)!)
         cell.bind(datas.ID)
         
-        if datas.isFollowed {
-            cell.isFollowed.value = true
-        }
-        
         return cell;
     }
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
