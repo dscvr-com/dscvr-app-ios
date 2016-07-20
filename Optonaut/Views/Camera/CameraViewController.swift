@@ -66,12 +66,15 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     private let cameraNode = SCNNode()
     private var scnView : SCNView!
     private let scene = SCNScene()
+    private var currentDegree : Float
     
     // ball
     private let ballNode = SCNNode()
     private var ballSpeed = GLKVector3Make(0, 0, 0)
+    private let baseMatrix = GLKMatrix4Make(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1 , 0.0, 0.0, -1.0, 0.00, 0.0, 0.0, 0.0, 0.0, 1.0)
     
     private var tapCameraButtonCallback: (() -> ())?
+    private var lastElapsedTime = CACurrentMediaTime() ;
     
     private let cancelButton = UIButton()
     
@@ -79,6 +82,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
         
     required init() {
+        
+        currentDegree = 0.03
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
@@ -202,10 +207,15 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     }
     
     func tapCameraButton() {
-        //tapCameraButtonCallback?()                        d
+        //tapCameraButtonCallback?()
         print("ewe")
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true
+        
+        if let bleService = btDiscoverySharedInstance.bleService {
+            //000102030405060708
+            bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95
+            }
     }
     
     /*func touchStartCameraButton() {
@@ -222,6 +232,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     
     func cancelRecording() {
+        
+        if let bleService = btDiscoverySharedInstance.bleService {
+                                  //fe000402ffffffffffffffffffffffffff"
+            bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process        
+        }
+        
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
         
         stopSession()
@@ -688,8 +704,22 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             
             recorder.setIdle(!self.viewModel.isRecording.value)
             
+            //Motor Fixed 1ring
+            let timeDiff = CACurrentMediaTime() - lastElapsedTime
             
-            recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
+            if (timeDiff > 0.023 ) {
+                currentDegree -= 0.5
+                lastElapsedTime = CACurrentMediaTime()
+            }
+            
+            
+            var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
+            
+            var currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
+            
+            
+            //recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
+            recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
             
             let errorVec = recorder.getAngularDistanceToBall()
             let r = recorder.getCurrentRotation()

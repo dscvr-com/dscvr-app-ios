@@ -543,7 +543,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
         yellowView.addSubview(previewImage)
         
-        whiteBackground.backgroundColor = UIColor(hex:0x595959).alpha(0.80)
+        whiteBackground.backgroundColor = UIColor(hex:0x595959).alpha(0.20)
         yellowView.addSubview(whiteBackground)
         
         blackSpace.backgroundColor = UIColor.blackColor()
@@ -609,7 +609,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         yellowView.fillSuperview()
         playerLayer.fillSuperview()
         
-        blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 20)
+        blackSpace.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 5)
         
         hiddenViewToBounce.anchorToEdge(.Left, padding: 10, width: 70, height: 100)
         
