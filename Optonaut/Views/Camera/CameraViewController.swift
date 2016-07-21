@@ -214,7 +214,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         if let bleService = btDiscoverySharedInstance.bleService {
             //000102030405060708
-            bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95
+            //bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95
+              bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff");
             }
     }
     
