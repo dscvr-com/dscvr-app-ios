@@ -44,7 +44,7 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
     func viewIsActive() {
         ApiService<PersonApiModel>.get("persons/followers")
             .on(next: { person in
-                Models.persons.touch(person).insertOrUpdate()
+                //Models.persons.touch(person).insertOrUpdate()
             })
             .map(Person.fromApiModel)
             .collect()

@@ -43,6 +43,7 @@ class DetailsViewModel {
     
     var optographBox: ModelBox<Optograph>!
     var creatorDetails:ModelBox<Person>!
+    var isElite = MutableProperty<Int>(0)
     
     init(optographID: UUID) {
         
@@ -159,6 +160,7 @@ class DetailsViewModel {
                 self?.avatarImageUrl.value = "persons/\(person.ID)/\(person.avatarAssetID).jpg"
                 self?.creator_username.value = person.userName
                 self?.isFollowed.value = person.isFollowed
+                self?.isElite.value = person.eliteStatus
             }
         }
     }

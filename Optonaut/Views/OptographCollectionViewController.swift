@@ -357,6 +357,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         ActivitiesService.unreadCount.producer.startWithNext { count in
             let hidden = count <= 0
             circle.hidden = hidden
+            
+            
+            print("count>>>>>>>",count)
             //circle.text = "\(count)"
         }
     }
@@ -427,7 +430,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("count ng mga optograph",optographIDs.count)
         return optographIDs.count
     }
 
@@ -489,7 +491,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        print("width height",UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/5)*2))
         return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/5)*2))
     }
     

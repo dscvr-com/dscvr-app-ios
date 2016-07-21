@@ -115,7 +115,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Re-register background task if necassary.
         StitchingService.onApplicationResuming()
-        UIApplication.sharedApplication().applicationIconBadgeNumber = 0;
+        //UIApplication.sharedApplication().applicationIconBadgeNumber = 0;
     }
     
     func applicationWillTerminate(application: UIApplication) {

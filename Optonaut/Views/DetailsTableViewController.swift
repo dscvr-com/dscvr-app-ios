@@ -78,6 +78,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var backButton = UIImage(named: "back_yellow_icn")
     var shareButton = UIButton()
     var gyroTypeBtn = UIButton()
+    var eliteImageView = UIImageView()
     
     required init(optographId:UUID) {
         
@@ -174,6 +175,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL(viewModel.avatarImageUrl.value, width: 47, height: 47))!)
         whiteBackground.addSubview(avatarImageView)
         
+        eliteImageView.image = UIImage(named: "elite_beta_icn")!
+        whiteBackground.addSubview(eliteImageView)
+        
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
@@ -212,7 +216,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         
         //commentButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:24, height: 28)
@@ -222,6 +225,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
         
         optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x + 2 - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.height * 0.75) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight)
+        
+        let icnWidth = UIImage(named: "elite_beta_icn")!
+        eliteImageView.anchorInCorner(.BottomLeft, xPad: optionsButtonView.frame.origin.x + (optionsButtonView.frame.width/2), yPad: 6, width: icnWidth.size.width, height: icnWidth.size.height)
         
         personNameView.rac_text <~ viewModel.creator_username
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
@@ -330,6 +336,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             
             let shareImageSize = UIImage(named:"share_white_details")?.size
             shareButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(shareImageSize?.width)!, height: (shareImageSize?.height)!)
+        }
+        viewModel.isElite.producer.startWithNext{ val in
+            if val == 0 {
+                self.eliteImageView.hidden = true
+            } else {
+                self.eliteImageView.hidden = false
+            }
+            
         }
         
     }

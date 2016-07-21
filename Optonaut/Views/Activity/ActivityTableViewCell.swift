@@ -24,6 +24,7 @@ class ActivityTableViewCell: UITableViewCell {
     let followBack = UIButton()
     let alreadyFollow = UIButton()
     let dateView = UILabel()
+    let eliteImageView = UIImageView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -56,6 +57,9 @@ class ActivityTableViewCell: UITableViewCell {
         causingImageView.layer.borderWidth = 2.0
         contentView.addSubview(causingImageView)
         
+        eliteImageView.image = UIImage(named: "elite_beta_icn")!
+        contentView.addSubview(eliteImageView)
+        
         lineView.backgroundColor = UIColor.WhiteGrey
         contentView.addSubview(lineView)
         
@@ -75,6 +79,11 @@ class ActivityTableViewCell: UITableViewCell {
         causingImageView.autoAlignAxisToSuperviewAxis(.Horizontal)
         causingImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
         causingImageView.autoSetDimensionsToSize(CGSize(width: 50, height: 50))
+        
+        eliteImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
+        eliteImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: causingImageView, withOffset: -8)
+        let size = UIImage(named: "elite_beta_icn")!.size
+        eliteImageView.autoSetDimensionsToSize(CGSize(width: size.width, height: size.height))
         
         nameView.autoAlignAxisToSuperviewAxis(.Horizontal)
         nameView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 80)

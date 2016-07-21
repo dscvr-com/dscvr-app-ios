@@ -69,6 +69,7 @@ class ActivityFollowTableViewCell: ActivityTableViewCell {
                 followBack.hidden = false
                 alreadyFollow.hidden = true
             }
+            //eliteImageView.hidden = activity.activityResourceFollow!.causingPerson.eliteUser == 1 ? false : true
         }
         
         super.update(activity)
