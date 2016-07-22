@@ -214,8 +214,9 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         if let bleService = btDiscoverySharedInstance.bleService {
             //000102030405060708
-            bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms
-            //  bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff");
+            bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms forward
+            //  bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff"); // reverse
+            //bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process
             }
     }
     
@@ -503,8 +504,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         ballNode.geometry = ballGeometry
         ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor(hex:0xffbc00)
         
-        var zrotation = GLKMatrix4MakeZRotation(GLKMathDegreesToRadians(Float(45.0)))
-        
         
         scene.rootNode.addChildNode(ballNode)
     }
@@ -724,10 +723,10 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             lastElapsedTime = mediaTime
             
             var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
-            var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
+          //  var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
             
-            var currentRotation = GLKMatrix4Multiply(baseMatrix, xrotation)
-            currentRotation = GLKMatrix4Multiply(currentRotation, rotation)
+            //var currentRotation = GLKMatrix4Multiply(baseMatrix, xrotation)
+            var currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
             
           //  var currentRad = currentDegree  * M_PI / 180.0
          //   var currentRotation = GLKMatrix4Rotate(baseMatrix, 1.0, 0.0, currentRad, 0.0)
