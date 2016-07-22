@@ -214,7 +214,9 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         if let bleService = btDiscoverySharedInstance.bleService {
             //000102030405060708
-            bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms forward
+           //bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms forward
+          //bleService.sendCommand("fe070100001c20019000d3ffffffffffff"); //move 18 ms forward
+            bleService.sendCommand("fe070100001c20015e00a1ffffffffffff"); //move 18 ms forward
             //  bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff"); // reverse
             //bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process
             }
@@ -711,9 +713,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             let mediaTime = CACurrentMediaTime()
             let timeDiff = mediaTime - lastElapsedTime
             
-            // static degree per 0.0001ms = 0.000475
+            // static degree per 0.0001ms = 0.000475 for 75.789 s
+            // static degree per 0.0001ms = 0.002 for 18.0 s
+            // static degree per 0.0001ms = 0.00175 for 20.571 s
             
-            let degreeIncr = (timeDiff / 0.0001 ) * 0.000475
+            
+            let degreeIncr = (timeDiff / 0.0001 ) * 0.00175
             print("degreeIncr \(degreeIncr)")
             
             if viewModel.isRecording.value {
