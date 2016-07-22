@@ -700,6 +700,11 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
            
+            
+            print("pitch \(motion.attitude.pitch)")
+            print("yaw \(motion.attitude.yaw)")
+            print("roll \(motion.attitude.roll)")
+            
             var buf = ImageBuffer()
             buf.data = CVPixelBufferGetBaseAddress(pixelBuffer)
             buf.width = UInt32(CVPixelBufferGetWidth(pixelBuffer))
@@ -722,19 +727,21 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             print("degreeIncr \(degreeIncr)")
             
             if viewModel.isRecording.value {
-                currentDegree -= Float(degreeIncr)
+                //currentDegree -= Float(degreeIncr)
+                currentDegree += Float(degreeIncr)
             }
          
             lastElapsedTime = mediaTime
             
-            var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
+          //  var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
           //  var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
             
-            //var currentRotation = GLKMatrix4Multiply(baseMatrix, xrotation)
-            var currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
+          //  var currentRotation = GLKMatrix4Multiply(baseMatrix, xrotation)
+           // currentRotation = GLKMatrix4Multiply(currentRotation, rotation)
             
-          //  var currentRad = currentDegree  * M_PI / 180.0
-         //   var currentRotation = GLKMatrix4Rotate(baseMatrix, 1.0, 0.0, currentRad, 0.0)
+            var currentRad = currentDegree  * Float(M_PI / 180.0)
+            print("currentRad  \(currentRad)" )
+            var currentRotation = GLKMatrix4Rotate(baseMatrix, 1.0, 0.0, currentRad, 0.0)
             
             print("currentDegree \(currentDegree) CACurrentMediaTime \(mediaTime) ")
             

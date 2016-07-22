@@ -17,6 +17,7 @@ let PositionCharUUID = CBUUID(string: "00001001-0000-1000-8000-00805f9b34fb")
 let ResponseCharUUID = CBUUID(string: "00001002-0000-1000-8000-00805f9b34fb")
 let BLEServiceChangedStatusNotification = "kBLEServiceChangedStatusNotification"
 
+
 class BTService: NSObject, CBPeripheralDelegate {
     var peripheral: CBPeripheral?
     var positionCharacteristic: CBCharacteristic?
@@ -77,7 +78,7 @@ class BTService: NSObject, CBPeripheralDelegate {
                                                        error: NSError?) {
         
         let responseData = characteristic.value
-        print("reponsse data2 \(responseData)")
+        print("reponsse data2 \(responseData)") 
         
         
     }
