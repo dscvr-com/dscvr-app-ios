@@ -214,8 +214,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         if let bleService = btDiscoverySharedInstance.bleService {
             //000102030405060708
-            //bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95
-              bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff");
+            bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms
+            //  bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff");
             }
     }
     
@@ -503,6 +503,9 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         ballNode.geometry = ballGeometry
         ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor(hex:0xffbc00)
         
+        var zrotation = GLKMatrix4MakeZRotation(GLKMathDegreesToRadians(Float(45.0)))
+        
+        
         scene.rootNode.addChildNode(ballNode)
     }
     
@@ -695,7 +698,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             
             let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
-            
+           
             var buf = ImageBuffer()
             buf.data = CVPixelBufferGetBaseAddress(pixelBuffer)
             buf.width = UInt32(CVPixelBufferGetWidth(pixelBuffer))
@@ -706,18 +709,30 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             recorder.setIdle(!self.viewModel.isRecording.value)
             
             //Motor Fixed 1ring
-            let timeDiff = CACurrentMediaTime() - lastElapsedTime
+            let mediaTime = CACurrentMediaTime()
+            let timeDiff = mediaTime - lastElapsedTime
             
-            if (timeDiff > 0.023 ) {
-                currentDegree -= 0.5
-                lastElapsedTime = CACurrentMediaTime()
+            // static degree per 0.0001ms = 0.000475
+            
+            let degreeIncr = (timeDiff / 0.0001 ) * 0.000475
+            print("degreeIncr \(degreeIncr)")
+            
+            if viewModel.isRecording.value {
+                currentDegree -= Float(degreeIncr)
             }
-            
+         
+            lastElapsedTime = mediaTime
             
             var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
+            var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
             
-            var currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
+            var currentRotation = GLKMatrix4Multiply(baseMatrix, xrotation)
+            currentRotation = GLKMatrix4Multiply(currentRotation, rotation)
             
+          //  var currentRad = currentDegree  * M_PI / 180.0
+         //   var currentRotation = GLKMatrix4Rotate(baseMatrix, 1.0, 0.0, currentRad, 0.0)
+            
+            print("currentDegree \(currentDegree) CACurrentMediaTime \(mediaTime) ")
             
             //recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
