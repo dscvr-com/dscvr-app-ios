@@ -18,13 +18,13 @@ import Async
 import Mixpanel
 import SwiftyUserDefaults
 import Photos
-
+import CoreBluetooth
 
 struct staticVariables {
     static var isCenter:Bool!
 }
 
-class CameraViewController: UIViewController,TabControllerDelegate {
+class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralDelegate {
     
     private let viewModel = CameraViewModel()
     private let motionManager = CMMotionManager()
@@ -103,6 +103,15 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             self?.presentViewController(confirmAlert, animated: true, completion: nil)
             
         }
+    }
+    
+    func peripheral( peripheral: CBPeripheral,
+                     didUpdateValueForCharacteristic characteristic: CBCharacteristic,
+                                                     error: NSError?) {
+        
+        let responseData = characteristic.value
+        print("reponsse data processed \(responseData)")
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -217,6 +226,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
            //bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms forward
           //bleService.sendCommand("fe070100001c20019000d3ffffffffffff"); //move 18 ms forward
             bleService.sendCommand("fe070100001c20015e00a1ffffffffffff"); //move 18 ms forward
+            bleService.sendCommand("fe070100001c20014a008dffffffffffff");
+            //bleService.sendCommand("fe070100001c20019000a1ffffffffffff"); //move right 95  75789 ms forward
             //  bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff"); // reverse
             //bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process
             }
@@ -724,6 +735,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             
             
             let degreeIncr = (timeDiff / 0.0001 ) * 0.00175
+            //let degreeIncr = (timeDiff / 0.0001 ) * 0.000475
+            let degreeIncr = (timeDiff / 0.0001 ) * 0.001650013
             print("degreeIncr \(degreeIncr)")
             
             if viewModel.isRecording.value {
@@ -910,6 +923,11 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             
             recorder_.dispose()
         }
+        
+        //bluetooth callback from motor
+        let bData = BService.sharedInstance
+        print("bData>>>>>>>>>>>>",bData.bluetoothData)
+        
         let createOptographViewController = SaveViewController(recorderCleanup: recorderCleanup)
         createOptographViewController.hidesBottomBarWhenPushed = true
         navigationController!.pushViewController(createOptographViewController, animated: false)
