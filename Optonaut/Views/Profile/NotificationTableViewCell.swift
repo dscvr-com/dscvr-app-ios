@@ -52,7 +52,9 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
         tableView.addSubview(refreshControl)
         
         viewModel.results.producer
-            .on(
+            .on(started: {
+                    LoadingIndicatorView.show(self.contentView)
+                },
                 next: { results in
                     let wasEmptyBefore = self.items.isEmpty
                     
@@ -73,6 +75,8 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
                         }
                         self.tableView.endUpdates()
                     }
+                    
+                    LoadingIndicatorView.hide()
                     
                     self.refreshControl.endRefreshing()
                     

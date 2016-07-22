@@ -331,6 +331,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 print("click notification")
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
+                UIApplication.sharedApplication().applicationIconBadgeNumber = 0
                 self!.collectionView?.reloadData()
             }
         }
@@ -563,14 +564,4 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             navigationController?.presentViewController(settingsSheet, animated: true, completion: nil)
         }
     }
-    
-}
-
-// MARK: - UITabBarControllerDelegate
-extension ProfileCollectionViewController: DefaultTabControllerDelegate {
-    
-    func jumpToTop() {
-        collectionViewModel.refreshNotification.notify(())
-        collectionView!.setContentOffset(CGPointZero, animated: true)
-    } 
 }

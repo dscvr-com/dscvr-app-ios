@@ -42,7 +42,7 @@ class ActivityTableViewCell: UITableViewCell {
         textView.numberOfLines = 0
         //textView.font = UIFont.displayOfSize(15, withType: .Regular)
         textView.textColor = .DarkGrey
-        textView.font = UIFont (name: "AvenirNextCondensed-Italic", size: 15)
+        textView.font = UIFont (name: "Avenir-Book", size: 15)
         contentView.addSubview(textView)
         
         dateView.numberOfLines = 0

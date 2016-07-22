@@ -46,10 +46,10 @@ class TabView: PTView {
             self?.bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: offset)
             CATransaction.commit()
         }
-        
-        //cameraButton.frame = CGRect(x: frame.width / 2 - 35, y: 126 / 2 - 35, width: 80, height: 80)
         cameraButton.icon = UIImage(named:"camera_icn")!
-        cameraButton.anchorToEdge(.Bottom, padding: 20, width: 80, height: 80)
+        let size = UIImage(named:"camera_icn")!.size
+        print("++++++++++",size.width,size.height)
+        cameraButton.anchorToEdge(.Bottom, padding: 20, width: size.width, height: size.height)
         addSubview(cameraButton)
         
         

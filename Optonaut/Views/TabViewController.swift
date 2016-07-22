@@ -833,51 +833,51 @@ extension TabControllerDelegate {
     func swipeToShare(){}
 }
 
-protocol DefaultTabControllerDelegate: TabControllerDelegate {}
-
-extension DefaultTabControllerDelegate {
-    
-    func onTapCameraButton() {
-        switch PipelineService.stitchingStatus.value {
-        case .Idle:
-            self.tabController!.centerViewController.cleanup()
-            self.tabController?.centerViewController.pushViewController(CameraViewController(), animated: false)
-            
-        case .Stitching(_):
-            
-            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
-        case let .StitchingFinished(optographID):
-            scrollToOptograph(optographID)
-            PipelineService.stitchingStatus.value = .Idle
-        case .Uninitialized: ()
-        }
-    }
-    func swipeToShare(){
-        print("swipe")
-    }
-    
-    func onTapLeftButton() {
-//        if tabController?.activeViewController == tabController?.leftViewController {
-//            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
-//                jumpToTop()
-//            }
-//        } else {
-//            tabController?.updateActiveTab(.Left)
+//protocol DefaultTabControllerDelegate: TabControllerDelegate {}
+//
+//extension DefaultTabControllerDelegate {
+//    
+//    func onTapCameraButton() {
+//        switch PipelineService.stitchingStatus.value {
+//        case .Idle:
+//            self.tabController!.centerViewController.cleanup()
+//            self.tabController?.centerViewController.pushViewController(CameraViewController(), animated: false)
+//            
+//        case .Stitching(_):
+//            
+//            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
+//            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+//            tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
+//        case let .StitchingFinished(optographID):
+//            scrollToOptograph(optographID)
+//            PipelineService.stitchingStatus.value = .Idle
+//        case .Uninitialized: ()
 //        }
-    }
-    
-    func onTapRightButton() {
-//        if tabController?.activeViewController == tabController?.rightViewController {
-//            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
-//                jumpToTop()
-//            }
-//        } else {
-//            tabController?.updateActiveTab(.Right)
-//        }
-    }
-}
+//    }
+//    func swipeToShare(){
+//        print("swipe")
+//    }
+//    
+//    func onTapLeftButton() {
+////        if tabController?.activeViewController == tabController?.leftViewController {
+////            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
+////                jumpToTop()
+////            }
+////        } else {
+////            tabController?.updateActiveTab(.Left)
+////        }
+//    }
+//    
+//    func onTapRightButton() {
+////        if tabController?.activeViewController == tabController?.rightViewController {
+////            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
+////                jumpToTop()
+////            }
+////        } else {
+////            tabController?.updateActiveTab(.Right)
+////        }
+//    }
+//}
 
 extension UIViewController {
     var tabController: TabViewController? {

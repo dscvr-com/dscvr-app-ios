@@ -44,7 +44,7 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
     func viewIsActive() {
         ApiService<PersonApiModel>.get("persons/followers")
             .on(next: { person in
-                //Models.persons.touch(person).insertOrUpdate()
+                Models.persons.touch(person).insertOrUpdate()
             })
             .map(Person.fromApiModel)
             .collect()
@@ -70,7 +70,7 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
         let cell = tableView.dequeueReusableCellWithIdentifier("userFollowers") as! FollowersTableViewCell
         
         let datas = data[indexPath.item]
-        cell.nameLabel.text = datas.displayName
+        cell.nameLabel.text = datas.userName
         let imageUrl = ImageURL("persons/\(datas.ID)/\(datas.avatarAssetID).jpg", width: 47, height: 47)
         cell.userImage.kf_setImageWithURL(NSURL(string:imageUrl)!)
         cell.bind(datas.ID)

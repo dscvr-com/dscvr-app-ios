@@ -23,3 +23,31 @@ struct ActivityResourceStarModel: Mappable {
         causingPerson   <- map["causing_person"]
     }
 }
+
+//extension ActivityResourceStarModel: SQLiteModel {
+//    
+//    static func schema() -> ModelSchema {
+//        return ActivityResourceStarSchema
+//    }
+//    
+//    static func table() -> SQLiteTable {
+//        return ActivityResourceStarTable
+//    }
+//    
+//    static func fromSQL(row: SQLiteRow) -> ActivityResourceStarModel {
+//        return ActivityResourceStarModel(
+//            ID: row[ActivityResourceStarSchema.ID],
+//            optograph: row[ActivityResourceStarSchema.optographID],
+//            causingPerson: row[ActivityResourceStarSchema.causingPersonID]
+//        )
+//    }
+//    
+//    func toSQL() -> [SQLiteSetter] {
+//        return [
+//            ActivityResourceStarSchema.ID <-- ID,
+//            ActivityResourceStarSchema.optographID <-- optograph.ID,
+//            ActivityResourceStarSchema.causingPersonID <-- causingPerson.ID,
+//        ]
+//    }
+//    
+//}

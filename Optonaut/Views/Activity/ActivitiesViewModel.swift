@@ -34,15 +34,14 @@ class ActivitiesViewModel: NSObject {
 //            .join(LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
 //            .filter(PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == SessionService.personID)
 //            .order(CommentSchema.createdAt.asc)
-        
+//        
 //        refreshNotification.signal
 //            .flatMap(.Latest) { _ in
 //                DatabaseService.query(.Many, query: query)
 //                    .observeOnUserInteractive()
-////                    .map { row -> Activity in
-////                        return Activity.fromSQL(row)
-////                    }
-//                    .map(Activity.fromSQL)
+//                    .map { row -> Activity in
+//                        return Activity.fromSQL(row)
+//                    }
 //                    .ignoreError()
 //                    .collect()
 //                    .startOnUserInteractive()
@@ -80,7 +79,6 @@ class ActivitiesViewModel: NSObject {
             .observeNext { results in
                 self.unreadCount.value = results.models.reduce(0) { (acc, activity) in acc + (activity.isRead ? 0 : 1) }
                 self.results.value = results
-                print("the results>>> ",results)
             }
         refreshNotification.notify(())
         

@@ -435,7 +435,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let whiteBackground = UIView()
     private let avatarImageView = UIImageView()
     private let locationTextView = UILabel()
-    private let likeCountView = UILabel()
+    //private let likeCountView = UILabel()
     private let personNameView = BoundingLabel()
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
@@ -584,10 +584,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
         locationTextView.textColor = UIColor.whiteColor()
         whiteBackground.addSubview(locationTextView)
         
-        likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
-        likeCountView.textColor = .whiteColor()
-        likeCountView.textAlignment = .Right
-        whiteBackground.addSubview(likeCountView)
+//        likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
+//        likeCountView.textColor = .whiteColor()
+//        likeCountView.textAlignment = .Right
+//        whiteBackground.addSubview(likeCountView)
         
         hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
         bouncingButton.addGestureRecognizer(hiddenGestureRecognizer)
@@ -620,7 +620,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
+        //likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
         optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x + 2 - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.height * 0.75) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight)
@@ -771,8 +771,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
             }
         }
         likeButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
-        likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
-        likeCountView.rac_text <~ viewModel.likeCount.producer.map { "\($0)" }
+//        likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
+//        likeCountView.rac_text <~ viewModel.likeCount.producer.map { "\($0)" }
         
         viewModel.liked.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
