@@ -263,6 +263,7 @@
 		A5FD5D8B1BEA5A570031ED1E /* lib in Resources */ = {isa = PBXBuildFile; fileRef = A5FD5D8A1BEA5A570031ED1E /* lib */; };
 		B12D8F4C1D3F428F00DF0FBF /* BTDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12D8F4B1D3F428F00DF0FBF /* BTDiscovery.swift */; };
 		B12D8F4E1D3F42DD00DF0FBF /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12D8F4D1D3F42DD00DF0FBF /* BTService.swift */; };
+		B137BCF21D4231D8003017F6 /* BService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B137BCF11D4231D8003017F6 /* BService.swift */; };
 		B153E2141D06B22800CC4B72 /* Alingment.mm in Sources */ = {isa = PBXBuildFile; fileRef = B153E2131D06B22800CC4B72 /* Alingment.mm */; };
 		B1754D5C1D0E82CD005A3E85 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */; };
 		B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */; };
@@ -633,6 +634,7 @@
 		A5FD5D8A1BEA5A570031ED1E /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		B12D8F4B1D3F428F00DF0FBF /* BTDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTDiscovery.swift; sourceTree = "<group>"; };
 		B12D8F4D1D3F42DD00DF0FBF /* BTService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTService.swift; sourceTree = "<group>"; };
+		B137BCF11D4231D8003017F6 /* BService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BService.swift; sourceTree = "<group>"; };
 		B153E2121D06B1FB00CC4B72 /* Alignment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = Optonaut/Stitcher/Alignment.h; sourceTree = SOURCE_ROOT; };
 		B153E2131D06B22800CC4B72 /* Alingment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alingment.mm; path = Optonaut/Stitcher/Alingment.mm; sourceTree = SOURCE_ROOT; };
 		B17042151CF6CF04004E2F26 /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
@@ -1136,6 +1138,7 @@
 				8F1E0AC51B98304F002E2FB5 /* VersionService.swift */,
 				8F276F2A1C3819A6003C348C /* ActivitiesService.swift */,
 				A5E43B231C5D11F9005BBF1A /* ImageCacheService.swift */,
+				B137BCF11D4231D8003017F6 /* BService.swift */,
 			);
 			name = Services;
 			path = Optonaut/Services;
@@ -1831,6 +1834,7 @@
 				8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */,
 				A5DE71EC1BE28A7400316F82 /* DistortionRenderer.swift in Sources */,
 				8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */,
+				B137BCF21D4231D8003017F6 /* BService.swift in Sources */,
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
 				59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */,
 				59E9068B1D23CED30030FC65 /* FacebookShareViewController.swift in Sources */,

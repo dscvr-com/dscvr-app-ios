@@ -17,6 +17,13 @@ let PositionCharUUID = CBUUID(string: "00001001-0000-1000-8000-00805f9b34fb")
 let ResponseCharUUID = CBUUID(string: "00001002-0000-1000-8000-00805f9b34fb")
 let BLEServiceChangedStatusNotification = "kBLEServiceChangedStatusNotification"
 
+protocol ResponseDataRequestDelegate {
+    func responseData(data: NSData) -> NSData
+}
+
+
+
+
 class BTService: NSObject, CBPeripheralDelegate {
     var peripheral: CBPeripheral?
     var positionCharacteristic: CBCharacteristic?
@@ -80,6 +87,8 @@ class BTService: NSObject, CBPeripheralDelegate {
         print("reponsse data2 \(responseData)")
         
         
+        let bData = BService.sharedInstance
+        bData.bluetoothData = responseData!
     }
 
     
