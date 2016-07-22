@@ -138,8 +138,7 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
                             self.createButton.backgroundColor = UIColor(hex:0xffd24e)
                             self.availability.text = "Username is available"
                             self.availability.textColor = UIColor(hex:0xffd24e)
-                        }
-                        else{
+                        } else {
                             print("string exists")
                             self.createButton.enabled = false
                             self.createButton.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Normal)
@@ -152,6 +151,18 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
                 }
             )
             .start()
+        
+        viewModel.nameOk.producer.startWithNext{ val in
+            if val {
+                print("string available")
+                self.createButton.enabled = true
+                self.createButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
+                self.createButton.backgroundColor = UIColor(hex:0xffd24e)
+                self.availability.text = "Username is available"
+                self.availability.textColor = UIColor(hex:0xffd24e)
+                self.availability.sizeToFit()
+            }
+        }
         
         contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeKeyboard)))
         
@@ -231,13 +242,15 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         
         print("updated string: \(updatedTextString)")
         
-        if updatedTextString.length < 3{
-            createButton.enabled = false
+        if updatedTextString.length <= 12 {
+            if updatedTextString.length >= 5{
+                createButton.enabled = false
+                viewModel.searchText.value = updatedTextString as String
+            }
+            return true
+        } else {
+            return false
         }
-        
-        viewModel.searchText.value = updatedTextString as String
-        
-        return true
     }
     
     func textFieldDidBeginEditing(textField: UITextField) {

@@ -30,6 +30,7 @@ struct TableViewResults<T: DeletableModel> {
                 delete.append(index)
             }
         }
+        
         if deleteOld {
             for (index, model) in models.enumerate() {
                 if newModels.indexOf({ $0.ID == model.ID }) == nil {

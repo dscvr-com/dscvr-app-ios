@@ -142,10 +142,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                             strongSelf.collectionView!.performBatchUpdates({
                                 strongSelf.imageCache.delete(results.delete)
                                 strongSelf.imageCache.insert(results.insert)
-                                print("need to delete>>",results.delete)
-                                print("need to update>>",results.update)
-                                print("need to insert>>",results.insert)
-                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection: 0) })
+                                for data in results.delete {
+                                    strongSelf.imageCache.deleteMp4((strongSelf.optographIDs[data]))
+                                }
+                                
+                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection:
+                                    0) })
                                 strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
                                 strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
                             }, completion: { _ in
@@ -158,7 +160,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                                 strongSelf.refreshControl.endRefreshing()
                                 CATransaction.commit()
                             })
-                        //strongSelf.collectionView!.reloadData()
                     }
                 }
             })
@@ -379,8 +380,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         
         uiHidden.value = false
-        
-        //viewModel.refresh()
         viewModel.isActive.value = true
         
         showUI()
@@ -389,9 +388,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         view.bounds = UIScreen.mainScreen().bounds
         
-//        if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) as? OptographCollectionViewCell {
-//            collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
-//        }
+        if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) as? OptographCollectionViewCell {
+            collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -439,12 +438,15 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return optographIDs.count
     }
-
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+        
+        guard let cell = cell as? OptographCollectionViewCell else {
+            return
+        }
         
         let optographID = optographIDs[indexPath.row]
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
+        //let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
         
         cell.navigationController = navigationController as? NavigationController
         cell.bindModel(optographID)
@@ -461,7 +463,30 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if indexPath.row > optographIDs.count - 3 {
             viewModel.loadMore()
         }
-    
+    }
+
+    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        //let optographID = optographIDs[indexPath.row]
+        
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
+        
+//        cell.navigationController = navigationController as? NavigationController
+//        cell.bindModel(optographID)
+//        cell.swipeView = tabController!.scrollView
+//        cell.collectionView = collectionView
+//        cell.isShareOpen.producer
+//            .startWithNext{ val in
+//                if val{
+//                    self.shareData.optographId.value = optographID
+//                    self.shareData.isSharePageOpen.value = true
+//                }
+//        }
+//        
+//        if indexPath.row > optographIDs.count - 3 {
+//            viewModel.loadMore()
+//        }
+        
         return cell
     }
     

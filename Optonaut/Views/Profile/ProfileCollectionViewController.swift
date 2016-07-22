@@ -111,6 +111,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             if isNotifTabTap {
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
+                ActivitiesService.unreadCount.value = 0
                 self!.collectionView?.reloadData()
             }
         }

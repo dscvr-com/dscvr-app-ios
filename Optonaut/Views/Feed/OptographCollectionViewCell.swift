@@ -290,6 +290,7 @@ private class OverlayViewModel {
                     self?.personBox.insertOrUpdate { box in
                         box.model.isFollowed = !followedBefore
                     }
+                    
                     self?.isFollowed.value = !followedBefore
                 },
                 failed: { [weak self] _ in
@@ -483,27 +484,29 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private var imageCache: CollectionImageCache
     
     func setRotation (isRotating:Bool) {
-        
-        previewImage.hidden = false
-        
+        hidePreviewImage(false)
         if let gyroVideo = self.video {
             if isRotating {
                 if gyroVideo.status == .ReadyToPlay {
-                    previewImage.hidden = true
+                    hidePreviewImage(true)
                     gyroVideo.play()
                 } else {
-                    previewImage.hidden = false
+                    hidePreviewImage(false)
                 }
             } else {
                 gyroVideo.pause()
             }
         } else {
-            previewImage.hidden = false
+            hidePreviewImage(false)
         }
+        
     }
     
-    func loadPreviewImage() {
-        previewImage.hidden = false
+    func hidePreviewImage(val:Bool) {
+        UIView.animateWithDuration(0.5, animations: {
+            self.previewImage.hidden = val
+            }, completion:nil)
+        
     }
     
     dynamic private func pushDetails() {
