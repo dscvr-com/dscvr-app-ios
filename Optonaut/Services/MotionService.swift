@@ -88,13 +88,15 @@ class CoreMotionRotationSource : RotationMatrixSource {
     
     static let Instance = CoreMotionRotationSource()
     
+    private init() { }
+    
     func getRotationMatrix() -> GLKMatrix4 {
         
         guard let r = motionManager.deviceMotion?.attitude.rotationMatrix else {
             return GLKMatrix4Make(1, 0, 0, 0,
-                0, 0, 1, 0,
-                0, 1, 0, 0,
-                0, 0, 0, 1)
+                                  0, 0, 1, 0,
+                                  0, -1, 0, 0,
+                                  0, 0, 0, 1)
         }
         return GLKMatrix4Make(
             Float(r.m11), Float(r.m12), Float(r.m13), 0,
@@ -118,6 +120,54 @@ class CoreMotionRotationSource : RotationMatrixSource {
             motionManager.stopDeviceMotionUpdates()
         }
         assert(retainCounter >= 0)
+    }
+    
+}
+
+class CustomRotationMatrixSource : RotationMatrixSource {
+    var phi = Float(0)
+    var theta = Float(0)
+    
+    static let Instance = CustomRotationMatrixSource()
+    
+    private init() { }
+    
+    func getRotationMatrix() -> GLKMatrix4 {
+        
+        // Generate some movement - just for debugging. 
+    
+        phi += Float(0.02)
+        
+        if(phi > Float(M_PI)) {
+            if(theta == 0) {
+                theta = Float(0.3)
+            } else if(theta > 0) {
+                theta = Float(-0.3)
+            } else if(theta < 0) {
+                theta = Float(0)
+            }
+            
+            phi = 0
+        }
+        
+        let base = GLKMatrix4Make(1, 0, 0, 0,
+                0, 0, 1, 0,
+                0, -1, 0, 0,
+                0, 0, 0, 1)
+        
+        let rotPhi = GLKMatrix4MakeZRotation(phi)
+        let rotTheta = GLKMatrix4MakeXRotation(-theta)
+        
+        let temp = GLKMatrix4Multiply(rotTheta, base)
+        return GLKMatrix4Multiply(rotPhi, temp)
+    }
+    
+    func start() {
+  
+    }
+    
+    func stop() {
+    
     }
     
 }

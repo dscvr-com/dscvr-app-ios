@@ -126,7 +126,7 @@ class TouchRotationSource: RotationMatrixSource {
 }
 
 class CombinedMotionManager: RotationMatrixSource {
-    private let coreMotionRotationSource: CoreMotionRotationSource
+    private let coreMotionRotationSource: RotationMatrixSource
     private let touchRotationSource: TouchRotationSource
     
     private var lastCoreMotionRotationMatrix: GLKMatrix4?
@@ -142,7 +142,7 @@ class CombinedMotionManager: RotationMatrixSource {
         self.touchRotationSource = TouchRotationSource(sceneSize: sceneSize, hfov: hfov)
     }
     
-    init(coreMotionRotationSource: CoreMotionRotationSource, touchRotationSource: TouchRotationSource) {
+    init(coreMotionRotationSource: RotationMatrixSource, touchRotationSource: TouchRotationSource) {
         self.coreMotionRotationSource = coreMotionRotationSource
         self.touchRotationSource = touchRotationSource
     }
