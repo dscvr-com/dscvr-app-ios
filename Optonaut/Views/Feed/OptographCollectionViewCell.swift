@@ -469,11 +469,11 @@ class OptographCollectionViewCell: UICollectionViewCell{
     let playerLayer = AVPlayerLayer()
     let eliteImageView = UIImageView()
     
-    var video:AVPlayer? {
-        didSet {
-            self.playerLayer.player = video
-        }
-    }
+//    var video:AVPlayer? {
+//        didSet {
+//            self.playerLayer.player = video
+//        }
+//    }
     var id: Int = 0 {
         didSet {
             //
@@ -483,24 +483,24 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     private var imageCache: CollectionImageCache
     
-    func setRotation (isRotating:Bool) {
-        hidePreviewImage(false)
-        if let gyroVideo = self.video {
-            if isRotating {
-                if gyroVideo.status == .ReadyToPlay {
-                    hidePreviewImage(true)
-                    gyroVideo.play()
-                } else {
-                    hidePreviewImage(false)
-                }
-            } else {
-                gyroVideo.pause()
-            }
-        } else {
-            hidePreviewImage(false)
-        }
-        
-    }
+//    func setRotation (isRotating:Bool) {
+//        hidePreviewImage(false)
+//        if let gyroVideo = self.video {
+//            if isRotating {
+//                if gyroVideo.status == .ReadyToPlay {
+//                    hidePreviewImage(true)
+//                    gyroVideo.play()
+//                } else {
+//                    hidePreviewImage(false)
+//                }
+//            } else {
+//                gyroVideo.pause()
+//            }
+//        } else {
+//            hidePreviewImage(false)
+//        }
+//        
+//    }
     
     func hidePreviewImage(val:Bool) {
         UIView.animateWithDuration(0.5, animations: {
@@ -818,15 +818,15 @@ class OptographCollectionViewCell: UICollectionViewCell{
             
         }
         
-        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/pan.mp4"
-        
-        let returnData = imageCache.insertMp4IntoCache(filename,optographId:optographId)
-        
-        if returnData != "" {
-            self.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
-        } else {
-            self.video = nil
-        }
+//        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/pan.mp4"
+//        
+//        let returnData = imageCache.insertMp4IntoCache(filename,optographId:optographId)
+//        
+//        if returnData != "" {
+//            self.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
+//        } else {
+//            self.video = nil
+//        }
 
     }
     

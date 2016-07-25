@@ -13,6 +13,7 @@ import Async
 import Kingfisher
 import SwiftyUserDefaults
 //import FillableLoaders
+import NVActivityIndicatorView
 
 typealias Direction = (phi: Float, theta: Float)
 
@@ -46,6 +47,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     private var tabView = TabView()
     
     private let fileManager = NSFileManager.defaultManager()
+    var loader:NVActivityIndicatorView?
     
     //let isThetaImage = MutableProperty<Bool>(false)
     
@@ -114,6 +116,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         var image = UIImage(named: "profile_page_icn")
         image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapRightButton))
+        
+        loader = NVActivityIndicatorView(frame: view.frame, type: .BallZigZagDeflect)
         
         viewModel.results.producer
             .filter {$0.changed }
@@ -234,6 +238,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         PipelineService.checkStitching()
         PipelineService.checkUploading()
+        
+        viewModel.isActive.value = true
         
     }
     func path() -> CGPath{
@@ -380,7 +386,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         
         uiHidden.value = false
-        viewModel.isActive.value = true
+        //viewModel.isActive.value = true
         
         showUI()
         tabController!.enableScrollView()
@@ -446,8 +452,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         let optographID = optographIDs[indexPath.row]
         
-        //let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
-        
         cell.navigationController = navigationController as? NavigationController
         cell.bindModel(optographID)
         cell.swipeView = tabController!.scrollView
@@ -507,38 +511,37 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     
     
-    
-    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-        
-        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-        for cell in cells {
-            cell.setRotation(false)
-        }
-        
-        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds)-20)
-        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter){
-            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
-            
-                cell.setRotation(true)
-            }
-        }
-    }
-    
-    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        
-        
-        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-        for cell in cells {
-            cell.setRotation(false)
-        }
-        
-        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds)-20)
-        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter) {
-            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
-                cell.setRotation(true)
-            }
-        }
-    }
+//    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+//        
+//        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+//        for cell in cells {
+//            cell.setRotation(false)
+//        }
+//        
+//        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds)-20)
+//        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter){
+//            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
+//            
+//                cell.setRotation(true)
+//            }
+//        }
+//    }
+//    
+//    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+//        
+//        
+//        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+//        for cell in cells {
+//            cell.setRotation(false)
+//        }
+//        
+//        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds)-20)
+//        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter) {
+//            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
+//                cell.setRotation(true)
+//            }
+//        }
+//    }
     
     func jumpToTop() {
         viewModel.refresh()

@@ -116,12 +116,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         postHeadingView.backgroundColor = UIColor(hex:0x3E3D3D)
         contentView.addSubview(postHeadingView)
         
-        postHeadingView1.text = "Images"
+        postHeadingView1.text = "Notifications"
         postHeadingView1.textColor = UIColor(0xffbc00)
         postHeadingView1.textAlignment = .Center
         postHeadingView1.font = UIFont(name: "Avenir-Book", size: 17)
         postHeadingView1.backgroundColor = UIColor(hex:0x3E3D3D)
-        postHeadingView1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.imagePageTabTouched)))
+        postHeadingView1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.notifPageTabTouched)))
         postHeadingView1.userInteractionEnabled = true
         contentView.addSubview(postHeadingView1)
         
@@ -134,12 +134,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         postHeadingView2.userInteractionEnabled = true
         contentView.addSubview(postHeadingView2)
         
-        postHeadingView3.text = "Notifications"
+        postHeadingView3.text = "Images"
         postHeadingView3.textColor = UIColor.whiteColor()
         postHeadingView3.textAlignment = .Center
         postHeadingView3.font = UIFont(name: "Avenir-Book", size: 17)
         postHeadingView3.backgroundColor = UIColor(hex:0x3E3D3D)
-        postHeadingView3.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.notifPageTabTouched)))
+        postHeadingView3.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.imagePageTabTouched)))
         postHeadingView3.userInteractionEnabled = true
         contentView.addSubview(postHeadingView3)
         
@@ -157,21 +157,21 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         viewModel.followTabTouched.value = true
         viewModel.notifTabTouched.value = false
     }
-    func imagePageTabTouched() {
+    func notifPageTabTouched() {
         postHeadingView1.textColor = UIColor(0xffbc00)
         postHeadingView2.textColor = UIColor.whiteColor()
         postHeadingView3.textColor = UIColor.whiteColor()
         yellowLine.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/3, height: 2)
-        viewModel.followTabTouched.value = false
-        viewModel.notifTabTouched.value = false
+        
+        viewModel.notifTabTouched.value = true
     }
-    
-    func notifPageTabTouched() {
+    func imagePageTabTouched() {
         postHeadingView1.textColor = UIColor.whiteColor()
         postHeadingView2.textColor = UIColor.whiteColor()
         postHeadingView3.textColor = UIColor(0xffbc00)
         yellowLine.anchorInCorner(.BottomLeft, xPad: (contentView.frame.width/3) * 2, yPad: 0, width: contentView.frame.width/3, height: 2)
-        viewModel.notifTabTouched.value = true
+        viewModel.followTabTouched.value = false
+        viewModel.notifTabTouched.value = false
     }
     
     required init?(coder aDecoder: NSCoder) {

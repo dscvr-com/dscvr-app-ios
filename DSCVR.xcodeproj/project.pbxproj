@@ -14,7 +14,6 @@
 		5917C8271CE49C8600CD5A6D /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8251CE49C8600CD5A6D /* DetailsTableViewController.swift */; };
 		59306C041D24E035009BF7BE /* InvitationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59306C031D24E034009BF7BE /* InvitationViewController.swift */; };
 		59306C061D24E268009BF7BE /* DetailsShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59306C051D24E268009BF7BE /* DetailsShareViewController.swift */; };
-		5933E6811D3A803600D18982 /* FillableLoaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5933E6801D3A803600D18982 /* FillableLoaders.framework */; };
 		5936B1841CAD34F500F808D8 /* dynamicSeamer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */; };
 		5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */; };
 		5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */; };
@@ -655,7 +654,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5933E6811D3A803600D18982 /* FillableLoaders.framework in Frameworks */,
 				8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */,
 				8F4B6F981BE004B9005D2D68 /* ProtocolBuffers.framework in Frameworks */,
 				8F6084841BC27DD400ADAFFC /* Mixpanel.framework in Frameworks */,
@@ -1654,7 +1652,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyUserDefaults.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Neon.framework",
 				"$(SRCROOT)/Frameworks/Icomoon.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/FillableLoaders.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -2076,7 +2073,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "0c952e38-5a83-4895-a3ae-1e670b3afb72";
+				PROVISIONING_PROFILE = "77b86bb6-48be-4c58-ae3f-d828c7abd73f";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2111,7 +2108,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "0c952e38-5a83-4895-a3ae-1e670b3afb72";
+				PROVISIONING_PROFILE = "77b86bb6-48be-4c58-ae3f-d828c7abd73f";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

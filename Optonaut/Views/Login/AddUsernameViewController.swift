@@ -155,12 +155,7 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         viewModel.nameOk.producer.startWithNext{ val in
             if val {
                 print("string available")
-                self.createButton.enabled = true
-                self.createButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
-                self.createButton.backgroundColor = UIColor(hex:0xffd24e)
-                self.availability.text = "Username is available"
-                self.availability.textColor = UIColor(hex:0xffd24e)
-                self.availability.sizeToFit()
+                self.insertStatusText("Username is available")
             }
         }
         
@@ -171,6 +166,16 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         activityIndicator.center = view.center
         activityIndicator.stopAnimating()
         contentView.addSubview(activityIndicator)
+    }
+    
+    func insertStatusText(str:String) {
+        self.createButton.enabled = true
+        self.createButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
+        self.createButton.backgroundColor = UIColor(hex:0xffd24e)
+        self.availability.text = str
+        self.availability.textColor = UIColor(hex:0xffd24e)
+        self.availability.sizeToFit()
+    
     }
     
     func createUsername() {
@@ -244,8 +249,14 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         
         if updatedTextString.length <= 12 {
             if updatedTextString.length >= 5{
-                createButton.enabled = false
-                viewModel.searchText.value = updatedTextString as String
+                if isValidUserName(updatedTextString as String) {
+                    createButton.enabled = false
+                    viewModel.searchText.value = updatedTextString as String
+                } else {
+                    self.insertStatusText("Username is invalid!")
+                    return false
+                }
+                
             }
             return true
         } else {

@@ -33,7 +33,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     let headerView = UIView()
     var isProfileVisit:Bool = false
     var isFollowClicked:Bool = false
-    var isNotifClicked:Bool = false
+    var isNotifClicked:Bool = true
     var fromLoginPage:Bool = false
     var finishReloadingCollectionView = MutableProperty<Bool>(false)
     
@@ -95,11 +95,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
             if isFollowTabTap {
-                print("click")
                 self!.isFollowClicked = true
                 self!.isNotifClicked = false
             } else {
-                print("not click")
                 self!.isFollowClicked = false
                 self!.isNotifClicked = false
             }
@@ -111,6 +109,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             if isNotifTabTap {
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
+                UIApplication.sharedApplication().applicationIconBadgeNumber = 0
                 ActivitiesService.unreadCount.value = 0
                 self!.collectionView?.reloadData()
             }
@@ -125,7 +124,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButton)
         
         editOverlayView.backgroundColor = UIColor.blackColor().alpha(0.6)
-        //editOverlayView.backgroundColor = UIColor.whiteColor()
         editOverlayView.rac_hidden <~ profileViewModel.isEditing.producer.map(negate)
         view.addSubview(editOverlayView)
         _ = self.navigationController?.navigationBar.frame.height
@@ -155,9 +153,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 strongSelf.collectionView!.scrollEnabled = !isEditing
             }
         }
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
         
         // Register cell classes
         collectionView!.registerClass(ProfileHeaderCollectionViewCell.self, forCellWithReuseIdentifier: "top-cell")
@@ -300,26 +295,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 self.collectionView?.reloadData()
         }
         
-//        profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
-//            if let strongSelf = self {
-//                if isFollowTabTap {
-//                    print("click")
-//                    strongSelf.isFollowClicked = true
-//                } else {
-//                    print("not click")
-//                    strongSelf.isFollowClicked = false
-//                }
-//                strongSelf.collectionView?.reloadData()
-//                strongSelf.collectionViewModel.refreshNotification.notify(())
-//            }
-//        }
         profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
             if isFollowTabTap {
-                print("click")
                 self!.isFollowClicked = true
                 self!.isNotifClicked = false
             } else {
-                print("not click")
                 self!.isFollowClicked = false
                 self!.isNotifClicked = false
             }
@@ -333,6 +313,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
                 UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                ActivitiesService.unreadCount.value = 0
                 self!.collectionView?.reloadData()
             }
         }
@@ -406,7 +387,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             print("count3",optographIDs.count)
             print(("count2",optographIDsNotUploaded.count > 0 ? 1:0))
             print("count1",optographIDsNotUploaded.count)
-            print("number of itens",optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0))
+            print("number of items",optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0))
             return optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0)
         }
         

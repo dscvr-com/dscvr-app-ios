@@ -203,8 +203,6 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         print(parameters)
         return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
             .on(next: { data in
-                //self.activityIndicator.stopAnimating()
-                LoadingIndicatorView.hide()
                 print(data.message)
                 print(data.status)
                 print(data.request_text)
@@ -213,12 +211,15 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
                     self.label2.font = UIFont(name: "Avenir-Book", size: 20)
                     self.requestButton.enabled = true
                     Defaults[.SessionEliteUser] = false
+                    LoadingIndicatorView.hide()
                 } else if (data.status == "ok" && data.message == "2"){
                     self.label2.text = data.request_text
                     self.label2.font = UIFont(name: "Avenir-Book", size: 13)
                     self.requestButton.enabled = false
                     Defaults[.SessionEliteUser] = false
+                    LoadingIndicatorView.hide()
                 } else if (data.status == "ok" && data.message == "3"){
+                    LoadingIndicatorView.hide()
                     self.navigationController?.popViewControllerAnimated(false)
                 }
                 
