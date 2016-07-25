@@ -27,8 +27,8 @@ struct staticVariables {
 class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralDelegate {
     
     private let viewModel = CameraViewModel()
-    private let motionManager = CMMotionManager()
-    
+    //private let motionManager = CMMotionManager()
+    private let rotationSource = CustomRotationMatrixSource.Instance
     // camera
     private let session = AVCaptureSession()
     private let sessionQueue: dispatch_queue_t
@@ -75,10 +75,13 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
     
     private var tapCameraButtonCallback: (() -> ())?
     private var lastElapsedTime = CACurrentMediaTime() ;
+    private var currentTheta = Float(0.0)
+    private var currentPhi = Float(0.0)
     
     private let cancelButton = UIButton()
     
     private let tabView = TabView()
+    private let bData = BService.sharedInstance
     
         
     required init() {
@@ -119,8 +122,8 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
     }
     
     deinit {
-        motionManager.stopDeviceMotionUpdates()
-        
+       // motionManager.stopDeviceMotionUpdates()
+        rotationSource.stop()
         //We do that in our signal as soon as everything's finished
         //recorder.dispose()
         
@@ -201,7 +204,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         scnView.addSubview(tabView)
         
-        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+       // motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
         
@@ -225,12 +228,27 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             //000102030405060708
            //bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms forward
           //bleService.sendCommand("fe070100001c20019000d3ffffffffffff"); //move 18 ms forward
-            bleService.sendCommand("fe070100001c20015e00a1ffffffffffff"); //move 18 ms forward
+          //  bleService.sendCommand("fe070100001c20015e00a1ffffffffffff"); //move 18 ms forward
             bleService.sendCommand("fe070100001c20014a008dffffffffffff");
             //bleService.sendCommand("fe070100001c20019000a1ffffffffffff"); //move right 95  75789 ms forward
             //  bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff"); // reverse
             //bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process
+        
+       
+  
+          /*
+            bData.dataHasCome.producer.startWithNext{ val in
+                if val{
+                    print("bData>>>>>>>>>>>>",self.bData.bluetoothData)
+                    self.bData.dataHasCome.value = false
+                }
+                
             }
+ */
+
+        }
+        
+        
     }
     
     /*func touchStartCameraButton() {
@@ -424,7 +442,8 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         
         UIApplication.sharedApplication().idleTimerDisabled = true
         
-        motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
+    //    motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
+        rotationSource.start()
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -706,15 +725,17 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         
-        if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
-            
-            let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
+        //if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
+        if let pixelBuffer = pixelBuffer {
+        
+
+      //      let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
            
             
-            print("pitch \(motion.attitude.pitch)")
-            print("yaw \(motion.attitude.yaw)")
-            print("roll \(motion.attitude.roll)")
+        //    print("pitch \(motion.attitude.pitch)")
+        //    print("yaw \(motion.attitude.yaw)")
+        //    print("roll \(motion.attitude.roll)")
             
             var buf = ImageBuffer()
             buf.data = CVPixelBufferGetBaseAddress(pixelBuffer)
@@ -734,36 +755,62 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             // static degree per 0.0001ms = 0.00175 for 20.571 s
             
             
-            let degreeIncr = (timeDiff / 0.0001 ) * 0.00175
+            //let degreeIncr = (timeDiff / 0.0001 ) * 0.00175
             //let degreeIncr = (timeDiff / 0.0001 ) * 0.000475
-            let degreeIncr = (timeDiff / 0.0001 ) * 0.001650013
-            print("degreeIncr \(degreeIncr)")
+            var degreeIncr = (timeDiff / 0.0001 ) * 0.000850013
+            
+            print("degreeIncr \(degreeIncr) M_PI \(-M_PI_2)")
             
             if viewModel.isRecording.value {
-                //currentDegree -= Float(degreeIncr)
-                currentDegree += Float(degreeIncr)
+                currentDegree -= Float(degreeIncr)
+                //currentDegree += Float(degreeIncr)
             }
          
             lastElapsedTime = mediaTime
             
-          //  var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
-          //  var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
+            var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
+           // var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
             
-          //  var currentRotation = GLKMatrix4Multiply(baseMatrix, xrotation)
+            var currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
            // currentRotation = GLKMatrix4Multiply(currentRotation, rotation)
             
-            var currentRad = currentDegree  * Float(M_PI / 180.0)
-            print("currentRad  \(currentRad)" )
-            var currentRotation = GLKMatrix4Rotate(baseMatrix, 1.0, 0.0, currentRad, 0.0)
+            //var currentRad = currentDegree  * Float(M_PI / 180.0)
+            //print("currentRad  \(currentRad)" )
+            //var currentRotation = GLKMatrix4Rotate(baseMatrix, 1.0, 0.0, currentRad, 0.0)
             
             print("currentDegree \(currentDegree) CACurrentMediaTime \(mediaTime) ")
             
-            //recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
-            recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
+            currentPhi = GLKMathDegreesToRadians(Float(currentDegree))
+            
+            let cmRotation = self.rotationSource.getRotationMatrixMotor(currentPhi, thetaValue: currentTheta)
+            print("Matrix: [\(cmRotation.m00), \(cmRotation.m01), \(cmRotation.m02), \(cmRotation.m03)")
+            print("______: [\(cmRotation.m10), \(cmRotation.m11), \(cmRotation.m12), \(cmRotation.m13)")
+            print("______: [\(cmRotation.m20), \(cmRotation.m21), \(cmRotation.m22), \(cmRotation.m23)")
+            print("______: [\(cmRotation.m30), \(cmRotation.m31), \(cmRotation.m32), \(cmRotation.m33)")
+            
+            
+            if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
+                if(currentTheta == 0) {
+                    currentTheta = Float(-0.718)
+                } else if(currentTheta < 0) {
+                    currentTheta = Float(0.718)
+                } else if(currentTheta > 0) {
+                    currentTheta = Float(0)
+                }
+                
+                currentDegree = 0
+
+            }
+            
+            recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
+            //recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
             
             let errorVec = recorder.getAngularDistanceToBall()
             let r = recorder.getCurrentRotation()
             // let exposureHintC = recorder.getExposureHint()
+            
+            // checking the bluetooth value
+         
             
             Async.main {
                 if self.isViewLoaded() {
@@ -924,10 +971,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             recorder_.dispose()
         }
         
-        //bluetooth callback from motor
-        let bData = BService.sharedInstance
-        print("bData>>>>>>>>>>>>",bData.bluetoothData)
-        
+
         let createOptographViewController = SaveViewController(recorderCleanup: recorderCleanup)
         createOptographViewController.hidesBottomBarWhenPushed = true
         navigationController!.pushViewController(createOptographViewController, animated: false)

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ReactiveCocoa
 
 
 class BService {
@@ -23,4 +24,5 @@ class BService {
         return Static.instance!
     }
     var bluetoothData = NSData()
+    var dataHasCome = MutableProperty<Bool>(false)
 }
