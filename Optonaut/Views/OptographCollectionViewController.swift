@@ -12,8 +12,6 @@ import SpriteKit
 import Async
 import Kingfisher
 import SwiftyUserDefaults
-//import FillableLoaders
-import NVActivityIndicatorView
 
 typealias Direction = (phi: Float, theta: Float)
 
@@ -47,7 +45,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     private var tabView = TabView()
     
     private let fileManager = NSFileManager.defaultManager()
-    var loader:NVActivityIndicatorView?
     
     //let isThetaImage = MutableProperty<Bool>(false)
     
@@ -56,7 +53,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     let shareData = ShareData.sharedInstance
     
-    //var loader: FillableLoader = FillableLoader()
+    var progress = KDCircularProgress()
     
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
@@ -116,8 +113,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         var image = UIImage(named: "profile_page_icn")
         image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapRightButton))
-        
-        loader = NVActivityIndicatorView(frame: view.frame, type: .BallZigZagDeflect)
         
         viewModel.results.producer
             .filter {$0.changed }
@@ -179,13 +174,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         view.addSubview(tabView)
         
-//        loader = WavesLoader.showLoaderWithPath(self.path(), onView:view)
-//        loader.progressBased = true
-//        loader.loaderColor = UIColor(0xffbc00)
-////        loader.hidden = true
-//        loader.progress = 0.0
-//        loader.frame = CGRect(x: 0,y: (self.view.frame.height/2) - 50 ,width: 0,height: 0)
-        
         tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
         tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
         tabView.cameraButton.addTarget(self, action: #selector(touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
@@ -193,6 +181,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         tabView.leftButton.addTarget(self, action: #selector(tapLeftButton), forControlEvents: [.TouchDown])
         
         tabView.rightButton.addTarget(self, action: #selector(tapRightButtonTab), forControlEvents: [.TouchUpInside])
+        
+        createStitchingProgressBar()
         
         PipelineService.stitchingStatus.producer
             .observeOnMain()
@@ -209,16 +199,15 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     }
                     print("Idle")
                 case let .Stitching(progress):
-//                    if self?.loader.hidden == true {
-//                        self?.loader.hidden = false
-//                    }
                     self?.tabView.cameraButton.progress = CGFloat(progress)
-                    //self!.loader.progress = CGFloat(progress)
-                    print("Stitching")
+                    if self?.progress.hidden == true {
+                        self?.progress.hidden = false
+                    }
+                    let progressSize:Double = Double(progress * 360)
+                    self?.progress.angle = progressSize
                 case .StitchingFinished(_):
+                    self?.progress.hidden = true
                     self?.tabView.cameraButton.progress = nil
-//                    self?.loader.progress = 100.0
-//                    self?.loader.hidden = true
                     print("StitchingFinished")
                 }
         }
@@ -226,22 +215,29 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         initNotificationIndicator()
         imagePicker.delegate = self
         
-//        isThetaImage.producer
-//            .filter(isTrue)
-//            .startWithNext{ _ in
-//                let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
-//                alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler:{ _ in
-//                    self.isThetaImage.value = false
-//                }))
-//                self.presentViewController(alert, animated: true, completion: nil)
-//        }
-        
         PipelineService.checkStitching()
         PipelineService.checkUploading()
         
         viewModel.isActive.value = true
-        
     }
+    
+    func createStitchingProgressBar() {
+        let sizeWidth = UIImage(named:"camera_icn")!.size.width
+        let sizeHeight = UIImage(named:"camera_icn")!.size.height
+        
+        progress = KDCircularProgress(frame: CGRect(x: ((view.frame.width/2) - ((sizeWidth+30)/2)), y: (view.frame.height) - sizeHeight - 30, width: sizeWidth+30, height: sizeHeight+30))
+        progress.progressThickness = 0.2
+        progress.trackThickness = 0.7
+        progress.clockwise = true
+        progress.gradientRotateSpeed = 2
+        progress.roundedCorners = true
+        progress.angle = 300
+        progress.glowMode = .Forward
+        progress.setColors(UIColor.cyanColor() ,UIColor.whiteColor(), UIColor.magentaColor())
+        progress.hidden = true
+        view.addSubview(progress)
+    }
+    
     func path() -> CGPath{
         return SamplePaths.cameraPath()
     }
@@ -496,8 +492,27 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        let detailsViewController = DetailsTableViewController(optographId:optographIDs[indexPath.row])
+        var optographsToPick: [UUID] = []
+        optographsToPick.append(optographIDs[indexPath.row])
+        
+        if (indexPath.row + 5 ) > optographIDs.count {
+            for a in 1...5 {
+                print(a)
+                print("negative")
+                optographsToPick.append(optographIDs[(indexPath.row + a) % optographIDs.count])
+            }
+        } else {
+            for a in 1...5 {
+                print("positive")
+                print(a)
+                optographsToPick.append(optographIDs[indexPath.row + a])
+            }
+        }
+        
+        let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
+        
         detailsViewController.cellIndexpath = indexPath.item
+        
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
     

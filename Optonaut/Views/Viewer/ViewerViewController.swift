@@ -18,7 +18,7 @@ private let queue = dispatch_queue_create("viewer", DISPATCH_QUEUE_SERIAL)
 class ViewerViewController: UIViewController  {
     
     private let orientation: UIInterfaceOrientation
-    private let optograph: Optograph
+    private var optograph: Optograph?
     
     private var leftRenderDelegate: CubeRenderDelegate!
     private var rightRenderDelegate: CubeRenderDelegate!
@@ -26,7 +26,7 @@ class ViewerViewController: UIViewController  {
     private var rightScnView: SCNView!
     private let separatorLayer = CALayer()
     private var headset: CardboardParams
-    private let screen: ScreenParams
+    private var screen: ScreenParams
     
     private var leftProgram: DistortionProgram!
     private var rightProgram: DistortionProgram!
@@ -38,12 +38,18 @@ class ViewerViewController: UIViewController  {
     private let leftLoadingView = UIActivityIndicatorView()
     private let rightLoadingView = UIActivityIndicatorView()
     
-    private let leftCache: CubeImageCache
-    private let rightCache: CubeImageCache
+    private var leftCache: CubeImageCache?
+    private var rightCache: CubeImageCache?
     
-    required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
+    var arrayOfOpto:[UUID] = []
+    var counter = 1
+    var loadImage = MutableProperty<Bool>(false)
+    var textureSize:CGFloat = 0.0
+    
+    required init(orientation: UIInterfaceOrientation, arrayOfoptograph:[UUID],selfOptograph:UUID) {
+        
+        self.arrayOfOpto = arrayOfoptograph
         self.orientation = orientation
-        self.optograph = optograph
         
         // Please set this to meaningful default values.
         
@@ -58,17 +64,60 @@ class ViewerViewController: UIViewController  {
         case .IPhone6SPlus: screen = ScreenParams(device: .IPhone6SPlus)
         default: fatalError("device not supported")
         }
-       
+        
         headset = CardboardParams.fromBase64(Defaults[.SessionVRGlasses]).value!
-    
+        
         print("Headset: \(headset.vendor) \(headset.model)")
         
-        let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.height / 2, hfov: 65) // 90 is a guess. A better value might be needed
+        let optograph = Models.optographs[selfOptograph]?.model
+        self.optograph = optograph!
         
-        leftCache = CubeImageCache(optographID: optograph.ID, side: .Left, textureSize: textureSize)
-        rightCache = CubeImageCache(optographID: optograph.ID, side: .Right, textureSize: textureSize)
+        textureSize = getTextureWidth(UIScreen.mainScreen().bounds.height / 2, hfov: 65) // 90 is a guess. A better value might be needed
+        
+        self.leftCache = CubeImageCache(optographID: optograph!.ID, side: .Left, textureSize: textureSize)
+        self.rightCache = CubeImageCache(optographID: optograph!.ID, side: .Right, textureSize: textureSize)
+        
+        loadImage.value = true
         
         super.init(nibName: nil, bundle: nil)
+    }
+    
+    func initiateViewer() {
+        
+        var optographId_:UUID = ""
+        
+        clearImages()
+        createField()
+        
+        if counter == 4 {
+            optographId_ = self.arrayOfOpto[counter]
+            counter = 0
+        } else {
+            optographId_ = self.arrayOfOpto[counter]
+            counter += 1
+        }
+        
+        let optograph = Models.optographs[optographId_]?.model
+        self.optograph = optograph!
+        
+        print("counter >>",counter)
+        print("optograph details",optograph!)
+        
+        self.leftCache = CubeImageCache(optographID: optograph!.ID, side: .Left, textureSize: textureSize)
+        self.rightCache = CubeImageCache(optographID: optograph!.ID, side: .Right, textureSize: textureSize)
+        
+        loadImage.value = true
+    }
+    
+    func createField() {
+        createRenderDelegates()
+        applyDistortionShader()
+    }
+    func clearImages() {
+        leftCache!.dispose()
+        rightCache!.dispose()
+        leftRenderDelegate.dispose()
+        rightRenderDelegate.dispose()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -162,6 +211,9 @@ class ViewerViewController: UIViewController  {
         if !Defaults[.SessionVRGlassesSelected] {
             showGlassesSelection()
         }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(initiateViewer))
+        view.addGestureRecognizer(tapGesture)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -192,52 +244,57 @@ class ViewerViewController: UIViewController  {
                     popActivated = true
                 }
             }
-        
-        
-        let leftImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
-            dispatch_async(dispatch_get_main_queue()) {
-                self?.leftRenderDelegate.setTexture(image, forIndex: index)
-                self?.leftLoadingView.stopAnimating()
+        loadImage.producer.startWithNext{ val in
+            if val {
+                
+                let leftImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self?.leftRenderDelegate.setTexture(image, forIndex: index)
+                        self?.leftLoadingView.stopAnimating()
+                    }
+                }
+                
+                self.leftRenderDelegate.nodeEnterScene = { [weak self] index in
+                    dispatch_async(queue) {
+                        //print("Left enter.")
+                        self?.leftLoadingView.startAnimating()
+                        self?.leftCache!.get(index, callback: leftImageCallback)
+                    }
+                }
+                
+                self.leftRenderDelegate.nodeLeaveScene = { [weak self] index in
+                    dispatch_async(queue) { [weak self] in
+                        //print("Left leave.")
+                        self?.leftCache!.forget(index)
+                    }
+                }
+                
+                let rightImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self?.rightRenderDelegate.setTexture(image, forIndex: index)
+                        self?.rightLoadingView.stopAnimating()
+                    }
+                }
+                
+                self.rightRenderDelegate.nodeEnterScene = { [weak self] index in
+                    dispatch_async(queue) {
+                        //print("Right enter.")
+                        self?.rightLoadingView.startAnimating()
+                        self?.rightCache!.get(index, callback: rightImageCallback)
+                    }
+                }
+                
+                self.rightRenderDelegate.nodeLeaveScene = { [weak self] index in
+                    dispatch_async(queue) { [weak self] in
+                        //print("Right leave.")
+                        self?.rightCache!.forget(index)
+                    }
+                }
+                
+                self.rightRenderDelegate.requestAll()
+                self.leftRenderDelegate.requestAll()
             }
         }
-        
-        leftRenderDelegate.nodeEnterScene = { [weak self] index in
-            dispatch_async(queue) {
-                //print("Left enter.")
-                self?.leftCache.get(index, callback: leftImageCallback)
-            }
-        }
-    
-        leftRenderDelegate.nodeLeaveScene = { [weak self] index in
-            dispatch_async(queue) { [weak self] in
-                //print("Left leave.")
-                self?.leftCache.forget(index)
-            }
-        }
-        
-        let rightImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
-            dispatch_async(dispatch_get_main_queue()) {
-                self?.rightRenderDelegate.setTexture(image, forIndex: index)
-                self?.rightLoadingView.stopAnimating()
-            }
-        }
-        
-        rightRenderDelegate.nodeEnterScene = { [weak self] index in
-            dispatch_async(queue) {
-                //print("Right enter.")
-                self?.rightCache.get(index, callback: rightImageCallback)
-            }
-        }
-        
-        rightRenderDelegate.nodeLeaveScene = { [weak self] index in
-            dispatch_async(queue) { [weak self] in
-                //print("Right leave.")
-                self?.rightCache.forget(index)
-            }
-        }
-        
-        rightRenderDelegate.requestAll()
-        leftRenderDelegate.requestAll()
     }
     
     func setViewerParameters(headset: CardboardParams) {
@@ -250,7 +307,7 @@ class ViewerViewController: UIViewController  {
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.ID, "optograph_description" : optograph.text])
+        Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph!.ID, "optograph_description" : optograph!.text])
         
         rotationDisposable?.dispose()
         RotationService.sharedInstance.rotationDisable()
@@ -264,8 +321,8 @@ class ViewerViewController: UIViewController  {
     }
     
     override func viewWillDisappear(animated: Bool) {
-        leftCache.dispose()
-        rightCache.dispose()
+        leftCache!.dispose()
+        rightCache!.dispose()
         leftRenderDelegate.dispose()
         rightRenderDelegate.dispose()
         
@@ -350,7 +407,7 @@ private class GlassesSelectionView: UIView {
         cancelButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
         cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
-        cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(GlassesSelectionView.cancel)))
         addSubview(cancelButtonView)
         
         titleTextView.text = "Choose your VR glasses"
@@ -364,14 +421,14 @@ private class GlassesSelectionView: UIView {
         glassesIconView.textAlignment = .Center
         glassesIconView.font = UIFont.iconOfSize(73)
         glassesIconView.userInteractionEnabled = true
-        glassesIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        glassesIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(GlassesSelectionView.cancel)))
         addSubview(glassesIconView)
         
         glassesTextView.font = UIFont.displayOfSize(15, withType: .Semibold)
         glassesTextView.textColor = .whiteColor()
         glassesTextView.textAlignment = .Center
         glassesTextView.userInteractionEnabled = true
-        glassesTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        glassesTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(GlassesSelectionView.cancel)))
         addSubview(glassesTextView)
         
         qrcodeIconView.text = String.iconWithName(.Qrcode)
@@ -379,7 +436,7 @@ private class GlassesSelectionView: UIView {
         qrcodeIconView.textColor = .whiteColor()
         qrcodeIconView.textAlignment = .Center
         qrcodeIconView.userInteractionEnabled = true
-        qrcodeIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "scan"))
+        qrcodeIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(GlassesSelectionView.scan)))
         addSubview(qrcodeIconView)
         
         qrcodeTextView.font = UIFont.displayOfSize(15, withType: .Semibold)
@@ -387,7 +444,7 @@ private class GlassesSelectionView: UIView {
         qrcodeTextView.text = "Scan QR code"
         qrcodeTextView.textAlignment = .Center
         qrcodeTextView.userInteractionEnabled = true
-        qrcodeTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "scan"))
+        qrcodeTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(GlassesSelectionView.scan)))
         addSubview(qrcodeTextView)
         
         loadingIndicatorView.activityIndicatorViewStyle = .WhiteLarge

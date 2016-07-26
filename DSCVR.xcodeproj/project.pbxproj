@@ -25,6 +25,7 @@
 		59405BF31D3D36EB00D1BA45 /* ActivityResourceStarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */; };
 		59405BF51D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59405BF41D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift */; };
 		594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594378FC1CDC472800C84E6F /* TabViewController.swift */; };
+		5945F4061D46042C002B4CCD /* KDCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5945F4051D46042C002B4CCD /* KDCircularProgress.swift */; };
 		594F6B4D1D36110500A361B3 /* UIImage+Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */; };
 		594F6B4F1D3619CF00A361B3 /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */; };
 		595D87691D083D5E00866FF2 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D87681D083D5E00866FF2 /* SearchViewController.swift */; };
@@ -326,6 +327,7 @@
 		59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceStarModel.swift; sourceTree = "<group>"; };
 		59405BF41D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceFollowModel.swift; sourceTree = "<group>"; };
 		594378FC1CDC472800C84E6F /* TabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
+		5945F4051D46042C002B4CCD /* KDCircularProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDCircularProgress.swift; sourceTree = "<group>"; };
 		594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Gif.swift"; sourceTree = "<group>"; };
 		594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
 		595D87681D083D5E00866FF2 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
@@ -1065,6 +1067,7 @@
 		8FAB9F5F1B8F02D500B4C8CB /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				5945F4051D46042C002B4CCD /* KDCircularProgress.swift */,
 				594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */,
 				594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */,
 				8FAB9F611B8F02D500B4C8CB /* Appearance.swift */,
@@ -1837,6 +1840,7 @@
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
 				A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */,
 				8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */,
+				5945F4061D46042C002B4CCD /* KDCircularProgress.swift in Sources */,
 				8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */,
 				59848B251CEA222800829963 /* LoginNavViewController.swift in Sources */,
 				8F23AA4D1BFF31B4008926A8 /* ActivityResourceFollowTable.swift in Sources */,

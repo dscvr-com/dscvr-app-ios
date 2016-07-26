@@ -99,6 +99,7 @@ class CubeImageCache {
             } else if self.items[index]?.downloadTask == nil {
                 // Case 2.1 - Image is not Pre-Fetched, but we have it in our disk cache.
                 let tiledUrl =  NSURL(string: self.url(index, textureSize: self.textureSize))!
+                print("imageUrl>>>>>>>",tiledUrl)
                 let tiledImage = ImageManager.sharedInstance.retrieveImageFromCache(tiledUrl, requester: self)
                 
                 if let tiledImage = tiledImage {

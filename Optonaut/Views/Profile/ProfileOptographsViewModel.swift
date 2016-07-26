@@ -76,7 +76,7 @@ class ProfileOptographsViewModel {
             }
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
-            .observeNext { self.results.value = $0 }
+            .observeNext {self.results.value = $0 }
         
         loadMoreNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }

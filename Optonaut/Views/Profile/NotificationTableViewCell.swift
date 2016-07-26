@@ -52,10 +52,7 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
         tableView.addSubview(refreshControl)
         
         viewModel.results.producer
-            .on(started: {
-                    LoadingIndicatorView.show(self.contentView)
-                },
-                next: { results in
+            .on( next: { results in
                     let wasEmptyBefore = self.items.isEmpty
                     
                     self.items = results.models
@@ -76,11 +73,9 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
                         self.tableView.endUpdates()
                     }
                     
-                    LoadingIndicatorView.hide()
-                    
                     self.refreshControl.endRefreshing()
                     
-//                    NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(NotificationTableViewCell.markVisibleAsRead), userInfo: nil, repeats: false)
+                    //NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(NotificationTableViewCell.markVisibleAsRead), userInfo: nil, repeats: false)
                 },
                 failed: { _ in
                     self.refreshControl.endRefreshing()
@@ -96,6 +91,9 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
 //    override func awakeFromNib() {
 //        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
 //    }
+    func isActive() {
+        viewModel.refresh()
+    }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if items.isEmpty {

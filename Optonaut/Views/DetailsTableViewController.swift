@@ -40,6 +40,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
     
+    var optographTopPick:[UUID] = []
+    
     var direction: Direction {
         set(direction) {
             combinedMotionManager.setDirection(direction)
@@ -70,7 +72,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var transformBegin:CGAffineTransform?
     let deleteButton = UIButton()
     
-    
     var gyroImageActive = UIImage(named: "details_gyro_active")
     var gyroImageInactive = UIImage(named: "details_gyro_inactive")
     var vrIcon = UIImage(named: "vr_icon")
@@ -80,11 +81,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var gyroTypeBtn = UIButton()
     var eliteImageView = UIImageView()
     
-    required init(optographId:UUID) {
+    required init(optoList:[UUID]) {
         
-        optographID = optographId
+        optographID = optoList[0]
+        optographTopPick = optoList
         
-        viewModel = DetailsViewModel(optographID: optographId)
+        viewModel = DetailsViewModel(optographID: optographID)
         let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
         imageCache = CollectionImageCache(textureSize: textureSize)
         
@@ -134,9 +136,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
         
-        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographID]!.model)
+        let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick ,selfOptograph:optographID )
         navigationController?.pushViewController(viewerViewController, animated: false)
-        //        viewModel.increaseViewsCount()
     }
     
     override func viewDidAppear(animated: Bool) {

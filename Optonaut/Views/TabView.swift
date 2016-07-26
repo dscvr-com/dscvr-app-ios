@@ -48,7 +48,6 @@ class TabView: PTView {
         }
         cameraButton.icon = UIImage(named:"camera_icn")!
         let size = UIImage(named:"camera_icn")!.size
-        print("++++++++++",size.width,size.height)
         cameraButton.anchorToEdge(.Bottom, padding: 20, width: size.width, height: size.height)
         addSubview(cameraButton)
         

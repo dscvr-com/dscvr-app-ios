@@ -74,7 +74,7 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
         
         self.read()
         
-        let detailsViewController = DetailsTableViewController(optographId:activity.activityResourceStar!.optograph.ID)
+        let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceStar!.optograph.ID])
         detailsViewController.cellIndexpath = 0
         navigationController?.pushViewController(detailsViewController, animated: true)
     }

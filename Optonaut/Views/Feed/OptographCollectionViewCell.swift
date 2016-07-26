@@ -506,12 +506,11 @@ class OptographCollectionViewCell: UICollectionViewCell{
         UIView.animateWithDuration(0.5, animations: {
             self.previewImage.hidden = val
             }, completion:nil)
-        
     }
     
     dynamic private func pushDetails() {
         
-        let detailsViewController = DetailsTableViewController(optographId:optoId)
+        let detailsViewController = DetailsTableViewController(optoList:[optoId])
         detailsViewController.cellIndexpath = id
         navigationController?.pushViewController(detailsViewController, animated: true)
     }

@@ -109,6 +109,11 @@ class ActivityTableViewCell: UITableViewCell {
     func update(activity: Activity) {
         textView.text = activity.text
         //isReadView.hidden = activity.isRead
+        
+//        if !activity.isRead {
+//            contentView.backgroundColor = UIColor(hex:0x595959).alpha(0.20)
+//        }
+//        
         dateView.text = activity.createdAt.shortDescription
         
         self.activity = activity

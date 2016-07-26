@@ -54,9 +54,8 @@ class ActivitiesViewModel: NSObject {
             .takeWhile { _ in Reachability.connectedToNetwork() && SessionService.isLoggedIn }
             .flatMap(.Latest) { _ in
                 ApiService<Activity>.get("activities")
-                    .observeOnUserInteractive()
+                    .observeOnUserInitiated()
                     .on(next: { activity in
-                        
                         try! activity.insertOrUpdate()
 //                        try! activity.activityResourceStar?.insertOrUpdate()
 //                        activity.activityResourceStar?.optograph.insertOrIgnore()
@@ -72,11 +71,13 @@ class ActivitiesViewModel: NSObject {
                     })
                     .ignoreError()
                     .collect()
-                    .startOnUserInteractive()
+                    .startOnUserInitiated()
             }
             .observeOnMain()
-            .map {self.results.value.merge($0, deleteOld: false) }
+            .map {self.results.value.mergeForNotification($0, deleteOld: false) }
             .observeNext { results in
+                
+                print("this results",results)
                 self.unreadCount.value = results.models.reduce(0) { (acc, activity) in acc + (activity.isRead ? 0 : 1) }
                 self.results.value = results
             }
