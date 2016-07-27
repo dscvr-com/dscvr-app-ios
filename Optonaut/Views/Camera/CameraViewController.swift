@@ -804,7 +804,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             
             if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
                 
-                ringcount = 1
+                /*ringcount = 1
                 
                 if ringcount == 1{
                      viewModel.isRecording.value = false
@@ -853,7 +853,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
                     }
                 }
                 
-                /*if ringcount == 2{
+                if ringcount == 2{
                     
                     let seconds = 24.0
                     let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds

@@ -86,62 +86,70 @@ class BTService: NSObject, CBPeripheralDelegate {
                                                        error: NSError?) {
         
         let responseData = characteristic.value
-        print("reponsse data2 \(responseData)") 
-
-
-
-        // need to get the response value = get the current position 
-        /*
-        // strip data - get the ydirection data
-         if ringFlag == 0 {
-            if yDirection == "00000223" {
-                // Y is on center
-                sendCommand("move top command")
-            } if yDirection == "FFFFF9DD" {
-                // not sure if this is the return data for the top
-                    sendCommand("rotate the motor x")
-                ringFlag = 1
-            }
-         
-         
-         } else if ringFlag == 1 {
-            if yDirection == "FFFFF9DD" {
-                // Y is on top
-                sendCommand("move bot command")
-            } if yDirection == "000006E3" {
-                // not sure if this is the return data for the bot
-                sendCommand("rotate the motor x")
-                ringFlag = 2
-            }
-         
-         
-         
-         } else if ringFlag == 2 {
-         
-            if yDirection == "FFFFF9DD" {
-                // Y is on bot
-                sendCommand("move center command")
-            } if yDirection == "00000223" {
-                // not sure if this is the return data for the bot
-         
-                ringFlag = 3 // means done
-            }
-         
-         }
-         
- 
- 
+        print("reponsse data2 \(responseData)")
         
-       */
+        let responseValue = hexString(responseData!)
         
         
+        
+        if responseValue != "" {
+        
+        let index = responseValue.startIndex.advancedBy(14)
+        responseValue[index] // returns Character 'o'
+        
+        let endIndex = responseValue.endIndex.advancedBy(-12)
+        responseValue[Range(index ..< endIndex)] //<-
+        responseValue.substringFromIndex(index)  //index till the endofString
+        
+        print("RP>>>>" + responseValue[Range(index ..< endIndex)]) //strip data -> for ydirection
+        
+        
+        var yDirection = responseValue[Range(index ..< endIndex)]
+        
+
+            // need to get the response value = get the current position
+        
+            // strip data - get the ydirection data
+            if ringFlag == 0 {
+                if yDirection == "000005db" {
+                    // Y is on center
+                    sendCommand("fe0702fffff830012c005affffffffffff") //move to top command
+                    if yDirection == "fffffe0b" {
+                        // not sure if this is the return data for the top
+                        sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
+                        ringFlag = 1
+                    }
+                }
+         
+            } else if ringFlag == 1 {
+                if yDirection == "fffffe0b" {
+                    // Y is on top
+                    sendCommand("fe070200000ea6012c00e8ffffffffffff") //move to bot command
+                    if yDirection == "00000cb1" {
+                        // not sure if this is the return data for the bot
+                        sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
+                        ringFlag = 2
+                    }
+                }
+         
+            } else if ringFlag == 2 {
+         
+                if yDirection == "00000cb1" {
+                    // Y is on bot
+                    sendCommand("fe0702fffff830012c005affffffffffff") //move to top command
+                    if yDirection == "000004e1" {
+                        // not sure if this is the return data for the bot
+         
+                        ringFlag = 3 // means done
+                    }
+                }
+            }
+        }
         
         let bData = BService.sharedInstance
         bData.bluetoothData = responseData!
         bData.dataHasCome.value = true
     }
-
-    
     
     func peripheral( peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
         print("Got update from bluetooth \(characteristic.UUID)")
@@ -246,4 +254,29 @@ class BTService: NSObject, CBPeripheralDelegate {
         NSNotificationCenter.defaultCenter().postNotificationName(BLEServiceChangedStatusNotification, object: self, userInfo: connectionDetails)
     }
     
+    
+    //hextostring
+    func hexString(data:NSData)->String{
+        if data.length > 0 {
+            let  hexChars = Array("0123456789abcdef".utf8) as [UInt8];
+            let buf = UnsafeBufferPointer<UInt8>(start: UnsafePointer(data.bytes), count: data.length);
+            var output = [UInt8](count: data.length*2 + 1, repeatedValue: 0);
+            var ix:Int = 0;
+            for b in buf {
+                let hi  = Int((b & 0xf0) >> 4);
+                let low = Int(b & 0x0f);
+                output[ix++] = hexChars[ hi];
+                output[ix++] = hexChars[low];
+            }
+            let result = String.fromCString(UnsafePointer(output))!;
+            return result;
+        }
+        return "";
+    }
+    
+    
 }
+
+
+
+
