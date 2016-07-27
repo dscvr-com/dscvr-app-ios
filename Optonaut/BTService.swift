@@ -27,9 +27,11 @@ protocol ResponseDataRequestDelegate {
 class BTService: NSObject, CBPeripheralDelegate {
     var peripheral: CBPeripheral?
     var positionCharacteristic: CBCharacteristic?
+    var ringFlag = 0 //  0 =  center; 1 =top ; 2 bot
     
     init(initWithPeripheral peripheral: CBPeripheral) {
         super.init()
+        
         
         self.peripheral = peripheral
         self.peripheral?.delegate = self
@@ -85,6 +87,53 @@ class BTService: NSObject, CBPeripheralDelegate {
         
         let responseData = characteristic.value
         print("reponsse data2 \(responseData)") 
+
+
+
+        // need to get the response value = get the current position 
+        /*
+        // strip data - get the ydirection data
+         if ringFlag == 0 {
+            if yDirection == "00000223" {
+                // Y is on center
+                sendCommand("move top command")
+            } if yDirection == "FFFFF9DD" {
+                // not sure if this is the return data for the top
+                    sendCommand("rotate the motor x")
+                ringFlag = 1
+            }
+         
+         
+         } else if ringFlag == 1 {
+            if yDirection == "FFFFF9DD" {
+                // Y is on top
+                sendCommand("move bot command")
+            } if yDirection == "000006E3" {
+                // not sure if this is the return data for the bot
+                sendCommand("rotate the motor x")
+                ringFlag = 2
+            }
+         
+         
+         
+         } else if ringFlag == 2 {
+         
+            if yDirection == "FFFFF9DD" {
+                // Y is on bot
+                sendCommand("move center command")
+            } if yDirection == "00000223" {
+                // not sure if this is the return data for the bot
+         
+                ringFlag = 3 // means done
+            }
+         
+         }
+         
+ 
+ 
+        
+       */
+        
         
         
         let bData = BService.sharedInstance
