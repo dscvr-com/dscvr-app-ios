@@ -326,6 +326,9 @@ class ViewerViewController: UIViewController  {
         leftRenderDelegate.dispose()
         rightRenderDelegate.dispose()
         
+        leftRenderDelegate.reset()
+        rightRenderDelegate.reset()
+        
         tabBarController?.tabBar.hidden = false
         navigationController?.setNavigationBarHidden(false, animated: false)
         ScreenService.sharedInstance.reset()

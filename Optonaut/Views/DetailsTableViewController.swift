@@ -29,8 +29,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private var renderDelegate: CubeRenderDelegate!
     private var scnView: SCNView!
     
-    private var imageDownloadDisposable: Disposable?
-    
     private var rotationAlert: UIAlertController?
     
     private enum LoadingStatus { case Nothing, Preview, Loaded }
@@ -379,7 +377,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         }
     }
     func closeDetailsPage() {
+        
+        renderDelegate.dispose()
+        imageCache.reset()
+        didEndDisplay()
+        
         self.navigationController?.popViewControllerAnimated(true)
+        //self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
     func toggleComment() {
@@ -642,9 +646,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        imageDownloadDisposable?.dispose()
-        imageDownloadDisposable = nil
-//        CoreMotionRotationSource.Instance.stop()
+        CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
         tabController!.enableScrollView()
         
@@ -715,13 +717,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func forgetTextures() {
         renderDelegate.reset()
     }
-    //    private func pushViewer(orientation: UIInterfaceOrientation) {
-    //        rotationAlert?.dismissViewControllerAnimated(true, completion: nil)
-    //        let viewerViewController = ViewerViewController(orientation: orientation, optograph: viewModel.optograph)
-    //        viewerViewController.hidesBottomBarWhenPushed = true
-    //        navigationController?.pushViewController(viewerViewController, animated: false)
-    //        viewModel.increaseViewsCount()
-    //    }
     
     func showRotationAlert() {
         rotationAlert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)

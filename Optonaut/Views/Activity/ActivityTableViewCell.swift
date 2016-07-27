@@ -87,7 +87,7 @@ class ActivityTableViewCell: UITableViewCell {
         
         nameView.autoAlignAxisToSuperviewAxis(.Horizontal)
         nameView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 80)
-        nameView.autoSetDimensionsToSize(CGSize(width: 60, height: 20))
+        nameView.autoSetDimensionsToSize(CGSize(width: 70, height: 20))
         
         textView.autoAlignAxisToSuperviewAxis(.Horizontal)
         textView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 5)
