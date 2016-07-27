@@ -333,12 +333,6 @@ class CubeRenderDelegate: RenderDelegate {
         let planeGeo = SCNPlane(width: 0.1, height: 0.1)
         planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         
-        
-        
-       
-        
-        
-        
         let circleGeo = SCNSphere(radius: 0.01)
         circleGeo.firstMaterial?.diffuse.contents = color
         let markNode = SCNNode(geometry: planeGeo)

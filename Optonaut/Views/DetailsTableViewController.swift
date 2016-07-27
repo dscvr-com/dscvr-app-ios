@@ -128,7 +128,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     if (self.markerNameLabel.text! == "Text Item2") {
                         print("resetToBlack")
                       
-                        let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: "6e5b494d-8e1f-4516-ab95-37165224e323", side: .Left)
+                        let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: "8e8fcab1-761e-4ef8-a969-0c1346b39bf3", side: .Left)
                         self.setCubeImageCache(cubeImageCache  )
                     }
 
@@ -174,6 +174,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
         ///addd flags to control adding texture
+        
+        print("optoID: \(optographID)")
         
     }
     
@@ -525,6 +527,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func audioButtonDown(){
         renderDelegate.addMarker(UIColor.greenColor(), type:"Audio Item")
+        
+        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+        
+        self.navigationController?.pushViewController(optocollection, animated: true)
     }
     
     func deleteOpto() {
