@@ -17,7 +17,7 @@ import SwiftyUserDefaults
 
 let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
 
-class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate{
+class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate, FPOptographsCollectionViewControllerDelegate{
     
     private let viewModel: DetailsViewModel!
     
@@ -90,6 +90,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var attachmentToggled:Bool = false
     
+    var nodeItem = StorytellingObject()
+    
     required init(optographId:UUID) {
         
         optographID = optographId
@@ -108,6 +110,22 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     deinit {
         logRetain()
+    }
+    
+    func optographSelected(optographID: String) {
+        nodeItem.optographID = optographID;
+        
+        print("node x: \(nodeItem.objectVector3.x)");
+        print("node z: \(nodeItem.objectRotation.z)");
+        print("node id: \(nodeItem.optographID)");
+        print("node type: \(nodeItem.objectType)");
+    }
+    
+    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector4){
+        print("addVectorAndRotation");
+        
+        nodeItem.objectVector3 = vector;
+        nodeItem.objectRotation = rotation;
     }
     
     func didEnterFrustrum(markerName: String, inFrustrum:Bool) {
@@ -519,18 +537,41 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     //create a function with button tag switch for color changes
     func textButtonDown(){
         renderDelegate.addMarker(UIColor.blueColor(), type:"Text Item")
+        nodeItem.objectType = "Text Item"
+        
+        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+        optocollection.delegate = self;
+        
+        let naviCon = UINavigationController()
+        naviCon.viewControllers = [optocollection]
+        
+        self.presentViewController(naviCon, animated: true, completion: nil)
     }
     
     func imageButtonDown(){
         renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
+        nodeItem.objectType = "Image Item"
+        
+        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+        optocollection.delegate = self;
+        
+        let naviCon = UINavigationController()
+        naviCon.viewControllers = [optocollection]
+        
+        self.presentViewController(naviCon, animated: true, completion: nil)
     }
     
     func audioButtonDown(){
         renderDelegate.addMarker(UIColor.greenColor(), type:"Audio Item")
+        nodeItem.objectType = "Audio Item"
         
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+        optocollection.delegate = self;
         
-        self.navigationController?.pushViewController(optocollection, animated: true)
+        let naviCon = UINavigationController()
+        naviCon.viewControllers = [optocollection]
+        
+        self.presentViewController(naviCon, animated: true, completion: nil)
     }
     
     func deleteOpto() {
@@ -867,6 +908,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 cache.forget(index)
             }
         }
+        
+        
     }
     
     func willDisplay() {

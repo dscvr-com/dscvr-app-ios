@@ -142,6 +142,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
 protocol CubeRenderDelegateDelegate {
     func didEnterFrustrum(markerName: String, inFrustrum: Bool)
+    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector4)
 }
 
 class CubeRenderDelegate: RenderDelegate {
@@ -348,7 +349,8 @@ class CubeRenderDelegate: RenderDelegate {
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
-         
+        
+        delegate!.addVectorAndRotation(markNode.position, rotation: markNode.rotation)
     }
     
     

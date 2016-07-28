@@ -11,6 +11,10 @@ import ReactiveCocoa
 import SpriteKit
 import SwiftyUserDefaults
 
+protocol FPOptographsCollectionViewControllerDelegate {
+    func optographSelected(optographID: String);
+}
+
 class FPOptographsCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     private var profileViewModel: ProfileViewModel;
@@ -18,6 +22,9 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
     private var feedsModel = FeedOptographCollectionViewModel();
     private var optographIDs: [UUID] = [];
     private var feedIDs: [UUID] = [];
+    
+    var startStory = false;
+    var delegate: FPOptographsCollectionViewControllerDelegate?
     
     init(personID: UUID) {
         
@@ -119,12 +126,20 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
     
     //UICollectionView Delegate
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item])
-        detailsViewController.cellIndexpath = indexPath.item
         
-        print("id: \(optographIDs[indexPath.item])");
+        if startStory{
+            let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item])
+            detailsViewController.cellIndexpath = indexPath.item
+            
+            print("id: \(optographIDs[indexPath.item])");
+            
+            navigationController?.pushViewController(detailsViewController, animated: true)
+        }
+        else{
+            delegate?.optographSelected(optographIDs[indexPath.item]);
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }
         
-        navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
     //UICollectionViewFlowLayout Delegate
