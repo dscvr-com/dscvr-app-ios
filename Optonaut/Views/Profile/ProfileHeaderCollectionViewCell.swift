@@ -249,7 +249,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameView.rac_hidden <~ viewModel.isEditing
         displayNameInputView.rac_hidden <~ viewModel.isEditing.producer.map(negate)
         displayNameInputView.rac_textSignal().toSignalProducer().skip(1).startWithNext { [weak self] val in
-            self?.viewModel.userName.value = val as! String
+            self?.viewModel._userName = val as! String
         }
         
         textView.rac_text <~ viewModel.text

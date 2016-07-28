@@ -166,9 +166,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.view.addSubview(whiteBackground)
         
         descriptionLabel.numberOfLines = 0
-        descriptionLabel.font = UIFont.textOfSize(15, withType: .Regular)
+        //descriptionLabel.font = UIFont.textOfSize(15, withType: .Regular)
         descriptionLabel.textColor = .whiteColor()
         descriptionLabel.backgroundColor = UIColor.clearColor()
+        descriptionLabel.font = UIFont(name: "HelveticaNeue-ThinItalic",size: 15)
         self.view.addSubview(descriptionLabel)
         
         avatarImageView.layer.cornerRadius = 23.5
