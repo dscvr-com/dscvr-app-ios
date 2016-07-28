@@ -41,7 +41,7 @@ class ViewerViewController: UIViewController  {
     private var leftCache: CubeImageCache?
     private var rightCache: CubeImageCache?
     
-    var arrayOfOpto:[UUID] = []
+    var arrayOfOpto:NSArray = []
     var counter = 1
     var loadImage = MutableProperty<Bool>(false)
     var textureSize:CGFloat = 0.0
@@ -84,29 +84,31 @@ class ViewerViewController: UIViewController  {
     
     func initiateViewer() {
         
-        var optographId_:UUID = ""
-        
-        clearImages()
-        createField()
-        
-        if counter == 4 {
-            optographId_ = self.arrayOfOpto[counter]
-            counter = 0
-        } else {
-            optographId_ = self.arrayOfOpto[counter]
-            counter += 1
+        if self.arrayOfOpto.count > 1 {
+            var optographId_:UUID = ""
+            
+            clearImages()
+            createField()
+            
+            if counter == self.arrayOfOpto.count - 1 {
+                optographId_ = self.arrayOfOpto[counter] as! UUID
+                counter = 0
+            } else {
+                optographId_ = self.arrayOfOpto[counter] as! UUID
+                counter += 1
+            }
+            
+            let optograph = Models.optographs[optographId_]?.model
+            self.optograph = optograph!
+            
+            print("counter >>",counter)
+            print("optograph details",optograph!)
+            
+            self.leftCache = CubeImageCache(optographID: optograph!.ID, side: .Left, textureSize: textureSize)
+            self.rightCache = CubeImageCache(optographID: optograph!.ID, side: .Right, textureSize: textureSize)
+            
+            loadImage.value = true
         }
-        
-        let optograph = Models.optographs[optographId_]?.model
-        self.optograph = optograph!
-        
-        print("counter >>",counter)
-        print("optograph details",optograph!)
-        
-        self.leftCache = CubeImageCache(optographID: optograph!.ID, side: .Left, textureSize: textureSize)
-        self.rightCache = CubeImageCache(optographID: optograph!.ID, side: .Right, textureSize: textureSize)
-        
-        loadImage.value = true
     }
     
     func createField() {

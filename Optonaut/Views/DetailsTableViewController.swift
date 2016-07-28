@@ -38,7 +38,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
     
-    var optographTopPick:[UUID] = []
+    var optographTopPick:NSArray = []
     
     var direction: Direction {
         set(direction) {
@@ -134,7 +134,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
         
-        let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick ,selfOptograph:optographID )
+        let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick as! [UUID] ,selfOptograph:optographID )
         navigationController?.pushViewController(viewerViewController, animated: false)
     }
     
