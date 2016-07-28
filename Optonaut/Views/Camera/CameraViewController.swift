@@ -83,7 +83,9 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
     private let tabView = TabView()
     private let bData = BService.sharedInstance
     
-        
+    //for motor
+    var ringFlag = 0
+    
     required init() {
         
         currentDegree = 0.03
@@ -222,7 +224,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         //tapCameraButtonCallback?()
         print("ewe")
         tabView.cameraButton.hidden = true
-        viewModel.isRecording.value = true
+        viewModel.isRecording.value = true // <-
         
         if let bleService = btDiscoverySharedInstance.bleService {
             //000102030405060708
@@ -799,105 +801,18 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             print("______: [\(cmRotation.m20), \(cmRotation.m21), \(cmRotation.m22), \(cmRotation.m23)")
             print("______: [\(cmRotation.m30), \(cmRotation.m31), \(cmRotation.m32), \(cmRotation.m33)")
             
-            var ringcount = 0
-            
             
             if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
-                
-                /*ringcount = 1
-                
-                if ringcount == 1{
-                     viewModel.isRecording.value = false
-                    
-                    if let bleService = btDiscoverySharedInstance.bleService {
+                viewModel.isRecording.value = false
+                    if self.bData.ydirection == "fffffe0b"{
+                        print(">>>>why?")
+                        viewModel.isRecording.value = true
                         
-                        //top ring
-                        bleService.sendCommand("fe0702fffff830012c005affffffffffff");
-                        
-                    }
-                    // temporary implementation
-                    
-                    delay(10){
-                        self.viewModel.isRecording.value = true
-                        
-                        if let bleService = btDiscoverySharedInstance.bleService {
-                            
-                            print(">>>>>>>why??")
-                            bleService.sendCommand("fe070100001c20014a008dffffffffffff");
-                            //bleService.sendCommand("fe070200000ea6012c00e8ffffffffffff");
-                        }
-                        
-                        ringcount = 2
-                    }
-                }
-                
-                if ringcount == 2{
-                    
-                    delay(34){
-                        
-                        print(">>>>>>>>>>>>>>>>>here")
-                    
-                        self.viewModel.isRecording.value = false
-                        //bottom ring
-                        if let bleService = btDiscoverySharedInstance.bleService {
-                            bleService.sendCommand("fe070200000ea6012c00e8ffffffffffff");
-                        }
-                    }
-                    
-                    delay(10){
-                        self.viewModel.isRecording.value = true
-                        
-                        if let bleService = btDiscoverySharedInstance.bleService {
-                            bleService.sendCommand("fe070100001c20014a008dffffffffffff");
-                        }
-                    }
-                }
-                
-                if ringcount == 2{
-                    
-                    let seconds = 24.0
-                    let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds
-                    let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-                    
-                    dispatch_after(dispatchTime, dispatch_get_main_queue(), {
-                        
-                        self.viewModel.isRecording.value = false
-                        
-                        if let bleService = btDiscoverySharedInstance.bleService {
-                            
-                            //bottom ring
-                            bleService.sendCommand("fe070200000ea6012c00e8ffffffffffff");
-    
-                        }
-                        
-                    })
-                    
-                    let seconds2 = 10.0
-                    let delay2 = seconds2 * Double(NSEC_PER_SEC)  // nanoseconds per seconds
-                    let dispatchTime2 = dispatch_time(DISPATCH_TIME_NOW, Int64(delay2))
-                    
-                    dispatch_after(dispatchTime2, dispatch_get_main_queue(), {
-                        self.viewModel.isRecording.value = true
-                        
-                        if let bleService = btDiscoverySharedInstance.bleService {
-                            bleService.sendCommand("fe070100001c20014a008dffffffffffff");
-                            
-                        }
-                        
-                    })
-                    
-                    
-                }*/
-                
-                
-              
-                
-                //while
+                    }            
                 
                 if(currentTheta == 0) {
                     currentTheta = Float(-0.718)
                 } else if(currentTheta < 0) {
-                    //viewModel.isRecording.value = false
                     currentTheta = Float(0.718)
                 } else if(currentTheta > 0) {
                     currentTheta = Float(0)

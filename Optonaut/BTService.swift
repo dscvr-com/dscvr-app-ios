@@ -85,12 +85,10 @@ class BTService: NSObject, CBPeripheralDelegate {
                       didUpdateValueForCharacteristic characteristic: CBCharacteristic,
                                                        error: NSError?) {
         
-        let responseData = characteristic.value
+        let responseData = characteristic.value //<- notification
         print("reponsse data2 \(responseData)")
         
         let responseValue = hexString(responseData!)
-        
-        
         
         if responseValue != "" {
         
@@ -98,15 +96,23 @@ class BTService: NSObject, CBPeripheralDelegate {
         responseValue[index] // returns Character 'o'
         
         let endIndex = responseValue.endIndex.advancedBy(-12)
-        responseValue[Range(index ..< endIndex)] //<-
+        responseValue[Range(index ..< endIndex)] //<- ydirection
         responseValue.substringFromIndex(index)  //index till the endofString
         
         print("RP>>>>" + responseValue[Range(index ..< endIndex)]) //strip data -> for ydirection
+            
+            
+        let index2 = responseValue.startIndex.advancedBy(23)
+        let endIndex2 = responseValue.endIndex.advancedBy(-4)
+        responseValue[Range(index2 ..< endIndex2)] //time elapsed
+            
+        var timelapsed = responseValue[Range(index2 ..< endIndex2)]
         
-        
+        print("TP>>>>" + responseValue[Range(index2 ..< endIndex2)])
+            
         var yDirection = responseValue[Range(index ..< endIndex)]
         
-
+            print("ydirection",yDirection)
             // need to get the response value = get the current position
         
             // strip data - get the ydirection data
@@ -114,41 +120,53 @@ class BTService: NSObject, CBPeripheralDelegate {
                 if yDirection == "000005db" {
                     // Y is on center
                     sendCommand("fe0702fffff830012c005affffffffffff") //move to top command
-                    if yDirection == "fffffe0b" {
-                        // not sure if this is the return data for the top
-                        sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
-                        ringFlag = 1
-                    }
+                    print("blecommanddone")
+                    
+                    
+                }else if yDirection == "fffffe0b" {
+                    
+                    print("got2topring")
+                    // not sure if this is the return data for the top
+                    sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
+                    ringFlag = 1
                 }
          
             } else if ringFlag == 1 {
                 if yDirection == "fffffe0b" {
                     // Y is on top
                     sendCommand("fe070200000ea6012c00e8ffffffffffff") //move to bot command
-                    if yDirection == "00000cb1" {
-                        // not sure if this is the return data for the bot
-                        sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
-                        ringFlag = 2
-                    }
+                }else if yDirection == "00000cb1" {
+                    // not sure if this is the return data for the bot
+                    sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
+                    ringFlag = 2
                 }
+
          
             } else if ringFlag == 2 {
          
                 if yDirection == "00000cb1" {
                     // Y is on bot
                     sendCommand("fe0702fffff830012c005affffffffffff") //move to top command
-                    if yDirection == "000004e1" {
-                        // not sure if this is the return data for the bot
-         
-                        ringFlag = 3 // means done
-                    }
+                }else if yDirection == "000004e1" {
+                    // not sure if this is the return data for the bot
+                    
+                    ringFlag = 3 // means done
                 }
+
             }
+            
+            let bData = BService.sharedInstance
+            bData.bluetoothData = responseData!
+            bData.ydirection = yDirection
+            bData.timelapsed = timelapsed
+            bData.dataHasCome.value = true
+            
+            
+            
         }
         
-        let bData = BService.sharedInstance
-        bData.bluetoothData = responseData!
-        bData.dataHasCome.value = true
+        
+        
     }
     
     func peripheral( peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?) {

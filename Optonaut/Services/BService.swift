@@ -25,4 +25,6 @@ class BService {
     }
     var bluetoothData = NSData()
     var dataHasCome = MutableProperty<Bool>(false)
+    var ydirection = String()
+    var timelapsed = String()
 }
