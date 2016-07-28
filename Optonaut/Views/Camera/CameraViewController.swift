@@ -802,13 +802,20 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             print("______: [\(cmRotation.m30), \(cmRotation.m31), \(cmRotation.m32), \(cmRotation.m33)")
             
             
+            if bData.dataHasCome.value  {
+                viewModel.isRecording.value = true
+                
+            }
+            
             if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
-                viewModel.isRecording.value = false
+                viewModel.isRecording.value = false //<-
+                
+                /*print("ito?>>>>>",bData.ydirection)
                     if self.bData.ydirection == "fffffe0b"{
                         print(">>>>why?")
                         viewModel.isRecording.value = true
                         
-                    }            
+                    }*/
                 
                 if(currentTheta == 0) {
                     currentTheta = Float(-0.718)

@@ -112,6 +112,7 @@ class BTService: NSObject, CBPeripheralDelegate {
             
         var yDirection = responseValue[Range(index ..< endIndex)]
         
+            let bData = BService.sharedInstance
             print("ydirection",yDirection)
             // need to get the response value = get the current position
         
@@ -121,11 +122,13 @@ class BTService: NSObject, CBPeripheralDelegate {
                     // Y is on center
                     sendCommand("fe0702fffff830012c005affffffffffff") //move to top command
                     print("blecommanddone")
+                    bData.dataHasCome.value = false
                     
                     
                 }else if yDirection == "fffffe0b" {
                     
                     print("got2topring")
+                    bData.dataHasCome.value = true
                     // not sure if this is the return data for the top
                     sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
                     ringFlag = 1
@@ -134,9 +137,11 @@ class BTService: NSObject, CBPeripheralDelegate {
             } else if ringFlag == 1 {
                 if yDirection == "fffffe0b" {
                     // Y is on top
+                    bData.dataHasCome.value = false
                     sendCommand("fe070200000ea6012c00e8ffffffffffff") //move to bot command
                 }else if yDirection == "00000cb1" {
                     // not sure if this is the return data for the bot
+                    bData.dataHasCome.value = true
                     sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
                     ringFlag = 2
                 }
@@ -145,21 +150,22 @@ class BTService: NSObject, CBPeripheralDelegate {
             } else if ringFlag == 2 {
          
                 if yDirection == "00000cb1" {
+                    bData.dataHasCome.value = false
                     // Y is on bot
-                    sendCommand("fe0702fffff830012c005affffffffffff") //move to top command
+                    sendCommand("fe0702fffff92a012c0055ffffffffffff") //move to center command
                 }else if yDirection == "000004e1" {
                     // not sure if this is the return data for the bot
-                    
+                    bData.dataHasCome.value = false
                     ringFlag = 3 // means done
                 }
 
             }
             
-            let bData = BService.sharedInstance
+           
             bData.bluetoothData = responseData!
             bData.ydirection = yDirection
             bData.timelapsed = timelapsed
-            bData.dataHasCome.value = true
+            
             
             
             
