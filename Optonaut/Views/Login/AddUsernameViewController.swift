@@ -29,6 +29,8 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     
     private var personSQL: Person
     
+    var timer: NSTimer? = nil
+    
     var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     required init() {
@@ -154,28 +156,38 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         
         viewModel.nameOk.producer.startWithNext{ val in
             if val {
-                print("string available")
-                self.insertStatusText("Username is available")
+                self.insertStatusText("Username is available",valid:true)
             }
         }
         
         contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeKeyboard)))
         
-        
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.center = view.center
-        activityIndicator.stopAnimating()
+        activityIndicator.frame = CGRect(x: contentView.frame.origin.x - 60,y: username.frame.origin.y,width: 40,height: 40)
+        activityIndicator.startAnimating()
         contentView.addSubview(activityIndicator)
+//        activityIndicator.hidesWhenStopped = true
+//        activityIndicator.center = view.center
+//        activityIndicator.stopAnimating()
+//        contentView.addSubview(activityIndicator)
     }
     
-    func insertStatusText(str:String) {
-        self.createButton.enabled = true
-        self.createButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
-        self.createButton.backgroundColor = UIColor(hex:0xffd24e)
-        self.availability.text = str
-        self.availability.textColor = UIColor(hex:0xffd24e)
-        self.availability.sizeToFit()
-    
+    func insertStatusText(str:String,valid:Bool) {
+        if valid {
+            self.createButton.enabled = true
+            self.createButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
+            self.createButton.backgroundColor = UIColor(hex:0xffd24e)
+            self.availability.text = str
+            self.availability.textColor = UIColor(hex:0xffd24e)
+            self.availability.sizeToFit()
+        } else {
+            self.createButton.enabled = false
+            self.createButton.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Normal)
+            self.createButton.backgroundColor = UIColor.grayColor()
+            self.availability.text = str
+            self.availability.textColor = UIColor.whiteColor()
+            self.availability.sizeToFit()
+        
+        }
     }
     
     func createUsername() {
@@ -210,18 +222,21 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
             .on(
                 started: {
                     print("updating")
-                    self.activityIndicator.startAnimating()
+                    //self.activityIndicator.startAnimating()
+                    LoadingIndicatorView.show()
                 },
                 completed: {
                     self.personSQL.displayName = self.viewModel.searchText.value
                     self.personSQL.userName = self.viewModel.searchText.value
                     Defaults[.SessionOnboardingVersion] = OnboardingVersion
                     self.saveModel()
-                    self.activityIndicator.stopAnimating()
+                    //self.activityIndicator.stopAnimating()
+                    LoadingIndicatorView.hide()
                 },
                 failed: { error in
                     print(error)
-                    self.activityIndicator.stopAnimating()
+                    //self.activityIndicator.stopAnimating()
+                    LoadingIndicatorView.hide()
                 }
         )
     }
@@ -247,24 +262,28 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         
         print("updated string: \(updatedTextString)")
         
-        if updatedTextString.length <= 12 {
-            if updatedTextString.length >= 5{
-                if isValidUserName(updatedTextString as String) {
-                    createButton.enabled = false
-                    viewModel.searchText.value = updatedTextString as String
-                } else {
-                    self.insertStatusText("Username is invalid!")
-                    return false
-                }
-                
+        self.insertStatusText("",valid: false)
+        
+        print("string count",updatedTextString.length)
+        
+        if (updatedTextString.length >= 5) && (updatedTextString.length <= 12){
+            if isValidUserName(updatedTextString as String) {
+                createButton.enabled = false
+                print("valid string")
+                //self.viewModel.searchText.value = updatedTextString as String
+                timer?.invalidate()
+                timer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(sendRequest), userInfo: textField, repeats: false)
+            } else {
+                self.insertStatusText("Username is invalid.",valid: false)
             }
             return true
         } else {
-            return false
+            self.insertStatusText("Username should be 5-12 character range.",valid: false)
+            return true
         }
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
-        print("username is editing")
+    func sendRequest(timer: NSTimer) {
+        self.viewModel.searchText.value = username.text!
     }
 }

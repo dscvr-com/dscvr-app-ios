@@ -23,8 +23,9 @@ class OnboardingViewModel {
                 if str.isEmpty {
                     self.results.value = []
                 }
+                print(">>",str)
             })
-            .filter { $0.characters.count > 2 }
+            .filter { $0.characters.count >= 5 }
             .throttle(0.3, onScheduler: QueueScheduler(queue: queue))
             .map(escape)
             .flatMap(.Latest) { keyword in

@@ -217,6 +217,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         PipelineService.checkStitching()
         PipelineService.checkUploading()
+        
+        viewModel.isActive.value = true
     }
     
     func createStitchingProgressBar() {
@@ -393,7 +395,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
         }
         
-        viewModel.isActive.value = true
+        //viewModel.isActive.value = true
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -496,7 +498,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         var optographsToPick: [UUID] = []
         optographsToPick.append(optographIDs[indexPath.row])
         
-        if (indexPath.row + 5 ) > optographIDs.count {
+        if (indexPath.row + 5 ) >= optographIDs.count {
             for a in 1...5 {
                 optographsToPick.append(optographIDs[(indexPath.row + a) % optographIDs.count])
             }
