@@ -122,7 +122,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             .on(next: { [weak self] results in
                 
                 if let strongSelf = self {
-                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+                    //let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
                     strongSelf.optographIDs = results.models.map { $0.ID }
                     
                     for optograph in results.models {
@@ -217,8 +217,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         PipelineService.checkStitching()
         PipelineService.checkUploading()
-        
-        viewModel.isActive.value = true
     }
     
     func createStitchingProgressBar() {
@@ -279,6 +277,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         self.dismissViewControllerAnimated(true, completion: nil)
     }
+    
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -393,6 +392,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) as? OptographCollectionViewCell {
             collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
         }
+        
+        viewModel.isActive.value = true
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -497,14 +498,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         if (indexPath.row + 5 ) > optographIDs.count {
             for a in 1...5 {
-                print(a)
-                print("negative")
                 optographsToPick.append(optographIDs[(indexPath.row + a) % optographIDs.count])
             }
         } else {
             for a in 1...5 {
-                print("positive")
-                print(a)
                 optographsToPick.append(optographIDs[indexPath.row + a])
             }
         }

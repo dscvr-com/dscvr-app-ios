@@ -78,6 +78,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var shareButton = UIButton()
     var gyroTypeBtn = UIButton()
     var eliteImageView = UIImageView()
+    var descriptionLabel = UILabel()
     
     required init(optoList:[UUID]) {
         
@@ -164,6 +165,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
         self.view.addSubview(whiteBackground)
         
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.font = UIFont.textOfSize(15, withType: .Regular)
+        descriptionLabel.textColor = .whiteColor()
+        descriptionLabel.backgroundColor = UIColor.clearColor()
+        self.view.addSubview(descriptionLabel)
+        
         avatarImageView.layer.cornerRadius = 23.5
         avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
         avatarImageView.layer.borderWidth = 2.0
@@ -212,6 +219,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(likeCountView)
         
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
+        let deleteImageSize1 = UIImage(named:"profile_delete_icn")?.size
+        descriptionLabel.frame = CGRect(x: whiteBackground.frame.origin.x + 10,y: view.frame.height - whiteBackground.frame.height - 40,width: view.frame.width - 10 - (deleteImageSize1?.width)!,height: 20)
+        
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
@@ -230,6 +240,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         personNameView.rac_text <~ viewModel.creator_username
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
+        descriptionLabel.rac_text <~ viewModel.text
+        
         //commentCountView.rac_text <~ viewModel.commentsCount.producer.map{ "\($0)" }
         
         viewModel.isStarred.producer.startWithNext { [weak self] liked in
@@ -471,6 +483,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.isUIHide = true
         deleteButton.hidden = true
         gyroTypeBtn.hidden = true
+        descriptionLabel.hidden = true
         self.navigationController?.navigationBarHidden = true
     }
     
@@ -482,29 +495,32 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.isUIHide = false
         deleteButton.hidden = false
         gyroTypeBtn.hidden = false
+        descriptionLabel.hidden = false
         self.navigationController?.navigationBarHidden = false
     }
     
     func oneTap(recognizer:UITapGestureRecognizer) {
         if !isUIHide {
-            UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
+            UIView.animateWithDuration(0.4,delay: 0.1, options: .CurveEaseOut, animations: {
                 self.whiteBackground.hidden = true
                 self.hideSelectorButton.hidden = true
                 //self.gyroButton.hidden = true
                 self.gyroTypeBtn.hidden = true
                 self.deleteButton.hidden = true
                 self.littlePlanetButton.hidden = true
+                self.descriptionLabel.hidden = true
                 self.isUIHide = true
                 },completion: nil)
             self.navigationController?.navigationBarHidden = true
         } else {
-            UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
+            UIView.animateWithDuration(0.4,delay: 0.1, options: .CurveEaseOut, animations: {
                 self.whiteBackground.hidden = false
                 self.hideSelectorButton.hidden = false
                 //self.gyroButton.hidden = false
                 self.gyroTypeBtn.hidden = false
                 self.deleteButton.hidden = false
                 self.littlePlanetButton.hidden = false
+                self.descriptionLabel.hidden = false
                 self.isUIHide = false
                 },completion: nil)
             self.navigationController?.navigationBarHidden = false
