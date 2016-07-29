@@ -516,7 +516,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             detailsViewController.cellIndexpath = cellCount
             navigationController?.pushViewController(detailsViewController, animated: true)
         }
-        
     }
     
     dynamic private func tapLeftBarButton() {
@@ -532,8 +531,20 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             if profileViewModel.isMe {
                 settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
-                    SessionService.logoutReset()
-                    SessionService.logout()
+                    
+                    if self.optographIDsNotUploaded.count != 0 {
+                        let confirmAlert = UIAlertController(title: "Are you sure want to logout?", message: "Some optographs are still not uploaded and will be deleted if you logout.", preferredStyle: .Alert)
+                        confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+                        confirmAlert.addAction(UIAlertAction(title: "Logout", style: .Default, handler: { _ in
+                            SessionService.logoutReset()
+                            SessionService.logout()
+                        }))
+                        
+                        self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
+                    } else {
+                        SessionService.logoutReset()
+                        SessionService.logout()
+                    }
                 }))
             } else {
                 settingsSheet.addAction(UIAlertAction(title: "Report user", style: .Destructive, handler: { _ in

@@ -33,6 +33,7 @@ class LoginOverlayViewController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         navigationController?.navigationBarHidden = true
         
         contentView.frame = UIScreen.mainScreen().bounds
@@ -49,7 +50,8 @@ class LoginOverlayViewController: UIViewController{
         contentView.addSubview(facebookButtonView)
         
         logoImageView.anchorToEdge(.Top, padding: 200, width: imageSize!.size.width, height: imageSize!.size.height)
-        facebookButtonView.align(.UnderCentered, relativeTo: logoImageView, padding: 30, width: contentView.frame.width - 85, height: 50)
+        let buttonSize = UIImage(named:"facebook_btn")?.size
+        facebookButtonView.align(.UnderCentered, relativeTo: logoImageView, padding: 30, width: (buttonSize?.width)!, height: (buttonSize?.height)!)
     }
     
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {

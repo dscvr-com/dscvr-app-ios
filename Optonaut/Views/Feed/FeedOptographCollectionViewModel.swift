@@ -28,7 +28,8 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(OptographTable[OptographSchema.isInFeed])
-            .filter(PersonTable[PersonSchema.isFollowed] || OptographTable[OptographSchema.isStaffPick])
+            //.filter(PersonTable[PersonSchema.isFollowed] || OptographTable[OptographSchema.isStaffPick])
+            .filter(OptographTable[OptographSchema.isStaffPick] || PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == (Defaults[.SessionPersonID] ?? Person.guestID) || PersonTable[PersonSchema.ID] == Person.guestID)
             .order(OptographTable[OptographSchema.createdAt].asc)
         
 //        refreshNotification.signal.observeOnMain().observeNext{
@@ -91,7 +92,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { results in
-//                self.newResultsAvailable.value = self.results.value.models.first?.ID != results.models.first?.ID
                 self.results.value = results
             }
 

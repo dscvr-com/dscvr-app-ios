@@ -78,7 +78,9 @@ class ProfileTileCollectionViewModel {
     }
     
     func upload() {
+        
         if !optographBox.model.isOnServer {
+            print("pumasok sa if upload")
             let optograph = optographBox.model
             
             optographBox.update { box in
@@ -120,6 +122,8 @@ class ProfileTileCollectionViewModel {
                 ]
             }
             
+            print(postParameters)
+            
             SignalProducer<Bool, ApiError>(value: !optographBox.model.shareAlias.isEmpty)
                 .flatMap(.Latest) { alreadyPosted -> SignalProducer<Void, ApiError> in
                     print(alreadyPosted)
@@ -138,7 +142,7 @@ class ProfileTileCollectionViewModel {
                 .flatMap(.Latest) {
                     ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: putParameters)
                         .on(failed: { [weak self] failedString in
-                            print(failedString)
+                            print("FAiled",failedString)
                             self?.optographBox.update { box in
                                 box.model.isUploading = false
                             }
@@ -156,6 +160,7 @@ class ProfileTileCollectionViewModel {
             
             
         } else {
+            print("pumasok sa else upload")
             optographBox.insertOrUpdate { box in
                 box.model.shouldBePublished = true
                 box.model.isUploading = true

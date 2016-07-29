@@ -53,7 +53,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     let shareData = ShareData.sharedInstance
     
-    var progress = KDCircularProgress()
+    //var progress = KDCircularProgress()
     
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
@@ -182,7 +182,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         tabView.rightButton.addTarget(self, action: #selector(tapRightButtonTab), forControlEvents: [.TouchUpInside])
         
-        createStitchingProgressBar()
+        //createStitchingProgressBar()
         
         PipelineService.stitchingStatus.producer
             .observeOnMain()
@@ -200,13 +200,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     print("Idle")
                 case let .Stitching(progress):
                     self?.tabView.cameraButton.progress = CGFloat(progress)
-                    if self?.progress.hidden == true {
-                        self?.progress.hidden = false
-                    }
-                    let progressSize:Double = Double(progress * 360)
-                    self?.progress.angle = progressSize
+//                    if self?.progress.hidden == true {
+//                        self?.progress.hidden = false
+//                    }
+//                    let progressSize:Double = Double(progress * 360)
+//                    self?.progress.angle = progressSize
                 case .StitchingFinished(_):
-                    self?.progress.hidden = true
+//                    self?.progress.hidden = true
                     self?.tabView.cameraButton.progress = nil
                     print("StitchingFinished")
                 }
@@ -221,22 +221,22 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         viewModel.isActive.value = true
     }
     
-    func createStitchingProgressBar() {
-        let sizeWidth = UIImage(named:"camera_icn")!.size.width
-        let sizeHeight = UIImage(named:"camera_icn")!.size.height
-        
-        progress = KDCircularProgress(frame: CGRect(x: ((view.frame.width/2) - ((sizeWidth+30)/2)), y: (view.frame.height) - sizeHeight - 30, width: sizeWidth+30, height: sizeHeight+30))
-        progress.progressThickness = 0.2
-        progress.trackThickness = 0.7
-        progress.clockwise = true
-        progress.gradientRotateSpeed = 2
-        progress.roundedCorners = true
-        progress.angle = 300
-        progress.glowMode = .Forward
-        progress.setColors(UIColor.cyanColor() ,UIColor.whiteColor(), UIColor.magentaColor())
-        progress.hidden = true
-        view.addSubview(progress)
-    }
+//    func createStitchingProgressBar() {
+//        let sizeWidth = UIImage(named:"camera_icn")!.size.width
+//        let sizeHeight = UIImage(named:"camera_icn")!.size.height
+//        
+//        progress = KDCircularProgress(frame: CGRect(x: ((view.frame.width/2) - ((sizeWidth+30)/2)), y: (view.frame.height) - sizeHeight - 30, width: sizeWidth+30, height: sizeHeight+30))
+//        progress.progressThickness = 0.2
+//        progress.trackThickness = 0.7
+//        progress.clockwise = true
+//        progress.gradientRotateSpeed = 2
+//        progress.roundedCorners = true
+//        progress.angle = 300
+//        progress.glowMode = .Forward
+//        progress.setColors(UIColor.cyanColor() ,UIColor.whiteColor(), UIColor.magentaColor())
+//        progress.hidden = true
+//        view.addSubview(progress)
+//    }
     
     func path() -> CGPath{
         return SamplePaths.cameraPath()
@@ -331,6 +331,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             self.presentViewController(alert, animated: true, completion: nil)
         }
+//self.presentViewController(InvitationViewController(), animated: true, completion: nil)
     }
     func tapRightButtonTab() {
         tabController!.tapNavBarTitleForFeedClass()
