@@ -23,7 +23,10 @@ class ProfileTileCollectionViewModel {
     private var disposable: Disposable?
     var optographBox: ModelBox<Optograph>!
     var userId = MutableProperty<Bool>(false)
+    var uploadPercentStatus = MutableProperty<Float>(0.0)
     
+    var leftCount = 0
+    var rightCount = 0
     
     func bind(optographID: UUID) {
         disposable?.dispose()
@@ -45,10 +48,45 @@ class ProfileTileCollectionViewModel {
                     self?.uploadStatus.value = .Uploaded
                 } else if optograph.isUploading {
                     self?.uploadStatus.value = .Uploading
+                    self?.getUploadStatus(optograph.rightCubeTextureStatusUpload?.status, lindex: optograph.leftCubeTextureStatusUpload?.status)
                 } else {
                     self?.uploadStatus.value = .Offline
                 }
             }
+    }
+    
+    func getUploadStatus(rindex:[Bool]?,lindex:[Bool]?) {
+        
+        var val = 1
+        
+        print("rindex>>",rindex)
+        print("lindex>>",lindex)
+        
+        if lindex != nil {
+            val = 0
+            for l in lindex! {
+                if l {
+                    val += 1
+                    leftCount = val
+                }
+            }
+        }
+        
+        if rindex != nil {
+            val = 0
+            for r in rindex! {
+                if r {
+                    val += 1
+                    rightCount = val
+                }
+            }
+        }
+        
+        val = leftCount + rightCount
+        
+        print(Float(val) * 0.08333333)
+        
+        self.uploadPercentStatus.value = Float(val) * 0.08333333
     }
     
     func deleteOpto() {

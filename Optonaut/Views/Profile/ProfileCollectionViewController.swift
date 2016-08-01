@@ -110,8 +110,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             if isNotifTabTap {
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
-                UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                ActivitiesService.unreadCount.value = 0
+                self!.readAllNotification().start()
                 self!.collectionView?.reloadData()
             }
         }
@@ -178,13 +177,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             .on(next: { [weak self] results in
                 
                 if let strongSelf = self {
-                    print("nagreload")
                     strongSelf.optographIDsNotUploaded = results.models
                         .filter{ !$0.isPublished && !$0.isUploading}
                         .map{$0.ID}
                     
                     strongSelf.optographIDs = results.models
-                        .filter{ $0.isPublished || $0.isUploading}
+                        .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
                     
                     //                    strongSelf.collectionView!.performBatchUpdates({
@@ -202,6 +200,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if isProfileVisit {
             tabController!.disableScrollView()
         }
+    }
+    func readAllNotification() -> SignalProducer<EmptyResponse, ApiError> {
+        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+        ActivitiesService.unreadCount.value = 0
+        return ApiService<EmptyResponse>.post("activities/read_all")
     }
     
     deinit {
@@ -282,11 +285,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             .on(next: { [weak self] results in
                 if let strongSelf = self {
                     strongSelf.optographIDsNotUploaded = results.models
-                        .filter{ !$0.isPublished && !$0.isUploading}
+                        .filter{ !$0.isPublished || !$0.isUploading}
                         .map{$0.ID}
                     
                     strongSelf.optographIDs = results.models
-                        .filter{ $0.isPublished || $0.isUploading}
+                        .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
                     
                     strongSelf.optographIDs = results.models.map { $0.ID }
@@ -410,6 +413,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             cell.optographIDsNotUploaded = optographIDsNotUploaded
             cell.navigationController = navigationController as? NavigationController
+            cell.refreshNotification = collectionViewModel.refreshNotification
             cell.reloadTable()
             
             return cell

@@ -162,28 +162,15 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         }
         viewModel.headingToDot.producer
             .map { CGAffineTransformMakeRotation(CGFloat($0) + CGFloat(M_PI_2)) }
-            //            .map { CGAffineTransformMakeRotation(CGFloat($0) - CGFloat(M_PI_2)) }
             .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
         view.addSubview(arrowView)
         
-        //        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
-        //        recordButtonView.layer.cornerRadius = 35
-        //        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
-        //            .map { _ in true }
-        //            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-        //        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
-        //            .map { _ in false }
-        //            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-        //        view.addSubview(recordButtonView)
-        
-        //        if Defaults[.SessionDebuggingEnabled] {
 //        #if DEBUG
 //            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
 //            tapGestureRecognizer.numberOfTapsRequired = 3
 //            view.addGestureRecognizer(tapGestureRecognizer)
 //        #endif
-        //        }
-        //tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
+        
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         scnView.addSubview(tabView)
         
@@ -207,13 +194,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true
     }
-    
-    /*func touchStartCameraButton() {
-    //tapCameraButtonCallback?()
-    print("ewe")
-    tabView.cameraButton.hidden = true
-    viewModel.isRecording.value = true
-    }*/
     
     func touchEndCameraButton() {
         //viewModel.isRecording.value = false
@@ -285,7 +265,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             videoDevice!.unlockForConfiguration()
         
         } catch {
-            print("setExposureMode")
+            print("error on setExposureMode")
         
         }
     }
@@ -617,8 +597,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
                 
             }
         }
-        
-        print(String(maxFps) + "fps");
         
         if videoDevice!.activeFormat.videoHDRSupported.boolValue {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false

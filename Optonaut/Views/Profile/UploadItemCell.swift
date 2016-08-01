@@ -8,12 +8,16 @@
 
 import UIKit
 import Kingfisher
+import ReactiveCocoa
 
 class UploadItemCell: UITableViewCell {
     
     var uploadItem: UIImageView!
     var uploadButton = UIButton()
+    var uploadFinish = MutableProperty<Bool>(false)
     private let viewModel = ProfileTileCollectionViewModel()
+    var uploadProgress:UIProgressView?
+    var uploadLabel = UILabel()
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -22,8 +26,6 @@ class UploadItemCell: UITableViewCell {
         self.uploadItem.center = CGPoint(x: self.uploadItem.frame.size.width/2.0 + 10.0, y: self.contentView.frame.height/2 + 15.0)
         self.uploadItem.backgroundColor = UIColor.lightGrayColor()
         
-        self.uploadButton.frame = CGRect(x: 0, y: 0, width: 75.0, height: 25.0)
-        self.uploadButton.center = CGPoint(x: self.contentView.frame.size.width, y: self.uploadItem.center.y)
         self.uploadButton.setTitle("UPLOAD", forState: .Normal)
         self.uploadButton.backgroundColor = UIColor(hex:0xffbc00)
         self.uploadButton.titleLabel?.font = UIFont.systemFontOfSize(11.0)
@@ -36,12 +38,43 @@ class UploadItemCell: UITableViewCell {
         self.addSubview(uploadItem)
         self.addSubview(uploadButton)
         
+        self.uploadButton.autoAlignAxisToSuperviewAxis(.Horizontal)
+        self.uploadButton.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
+        self.uploadButton.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
+        
+        self.uploadLabel.backgroundColor = UIColor.blackColor()
+        self.uploadLabel.textColor = UIColor.whiteColor()
+        self.uploadLabel.text = "UPLOADING.."
+        self.uploadLabel.textAlignment = .Center
+        self.uploadLabel.layer.cornerRadius = 4.0
+        self.uploadLabel.layer.borderWidth = 1.0
+        self.uploadLabel.font = UIFont.systemFontOfSize(11.0)
+        self.addSubview(uploadLabel)
+        
+        self.uploadLabel.autoAlignAxisToSuperviewAxis(.Horizontal)
+        self.uploadLabel.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
+        self.uploadLabel.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
+        self.uploadLabel.hidden = true
+        
+        self.uploadProgress = UIProgressView(progressViewStyle: UIProgressViewStyle.Default)
+        self.uploadProgress?.progressTintColor = UIColor(hex:0xffbc00).alpha(0.70)
+        self.uploadProgress?.trackTintColor = UIColor.clearColor()
+        self.uploadProgress?.layer.cornerRadius = 4.0
+        self.uploadProgress?.layer.borderWidth = 1.0
+        self.addSubview(uploadProgress!)
+        
+        self.uploadProgress!.autoAlignAxisToSuperviewAxis(.Horizontal)
+        self.uploadProgress!.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
+        self.uploadProgress!.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
+        self.uploadProgress!.hidden = true
     }
+    
     func upload() {
         viewModel.goUpload()
     }
     func bind(optographID: UUID) {
         viewModel.bind(optographID)
+        print("my opto>>",optographID)
         let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
         if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
             dispatch_async(dispatch_get_main_queue()) {
@@ -52,13 +85,23 @@ class UploadItemCell: UITableViewCell {
             .skipRepeats()
             .startWithNext{ uploadStatus in
                 if uploadStatus == .Uploading {
-                    self.uploadButton.setTitle("UPLOADING...", forState: .Normal)
-                    self.uploadButton.userInteractionEnabled = false
+                    self.uploadProgress!.hidden = false
+                    self.uploadLabel.hidden = false
                 } else if uploadStatus == .Offline {
-                    return self.uploadButton.hidden = false
+                    self.uploadProgress!.hidden = true
+                    self.uploadLabel.hidden = true
+                } else if uploadStatus == .Uploaded {
+                    self.uploadFinish.value = true
+                    self.uploadLabel.hidden = true
+                    self.uploadProgress!.hidden = true
+                    return
                 } else {
                     return 
                 }
+        }
+        
+        viewModel.uploadPercentStatus.producer.startWithNext{ val in
+            self.uploadProgress!.setProgress(val, animated: true)
         }
     }
     required init(coder aDecoder: NSCoder){

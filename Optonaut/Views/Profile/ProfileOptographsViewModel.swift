@@ -52,7 +52,7 @@ class ProfileOptographsViewModel {
             }
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
-            .observeNext { self.results.value = $0 }
+            .observeNext { print("results from db>>", $0) ; self.results.value = $0 }
 
         refreshNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
@@ -76,7 +76,7 @@ class ProfileOptographsViewModel {
             }
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
-            .observeNext {self.results.value = $0 }
+            .observeNext { print("results from db>>", $0) ;self.results.value = $0 }
         
         loadMoreNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }

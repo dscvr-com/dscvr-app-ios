@@ -76,8 +76,6 @@ class ActivitiesViewModel: NSObject {
             .observeOnMain()
             .map {self.results.value.mergeForNotification($0, deleteOld: false) }
             .observeNext { results in
-                
-                print("this results",results)
                 self.unreadCount.value = results.models.reduce(0) { (acc, activity) in acc + (activity.isRead ? 0 : 1) }
                 self.results.value = results
             }

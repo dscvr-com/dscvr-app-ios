@@ -15,6 +15,7 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
     
     var tableView: UITableView!
     var optographIDsNotUploaded: [UUID]?
+    var refreshNotification = NotificationSignal<Void>()
     
     weak var navigationController: NavigationController?
     
@@ -46,6 +47,13 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
         let cell = tableView.dequeueReusableCellWithIdentifier("uploadImages") as! UploadItemCell
         
         cell.bind(optographIDsNotUploaded![indexPath.item])
+        cell.selectionStyle = .None
+        cell.uploadFinish.producer.startWithNext{ val in
+            if val {
+                print("upload finish")
+                self.refreshNotification.notify()
+            }
+        }
         
         return cell;
     }
