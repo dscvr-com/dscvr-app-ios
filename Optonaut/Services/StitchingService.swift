@@ -112,6 +112,22 @@ class StitchingService {
                 }
             }
             
+            //get the ER result
+            if !shallCancel {
+                
+                let erImage = stitcher.getLeftEquirectangularResult()
+                autoreleasepool {
+                    
+                    UIImageWriteToSavedPhotosAlbum(UIImage(CGImage: ImageBufferToCGImage(erImage)), self
+                        , nil, nil)
+                    
+                  
+                }
+                Recorder.freeImageBuffer(erImage)
+                
+                
+            }
+            
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getRightResult().enumerate() {
                     var rightFace = ImageBuffer()
@@ -144,6 +160,9 @@ class StitchingService {
         
         return signal
     }
+    
+    
+   
     
     static func removeUnstitchedRecordings() {
         assert(!isStitching())

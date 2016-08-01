@@ -77,6 +77,16 @@ struct StitcherCancellation {
     } catch (StitcherCancellation c) { }
     return result;
 }
+
+- (struct ImageBuffer)getLeftEquirectangularResult {
+    
+    optonaut::Stitcher stitcher(Stores::left);
+    return CVMatToImageBuffer(stitcher.Finish(optonaut::ProgressCallback::Empty)->image.data);
+    
+}
+
+
+
 - (NSArray<NSValue*>*)getRightResult {
     optonaut::Stitcher stitcher(Stores::right);
     
