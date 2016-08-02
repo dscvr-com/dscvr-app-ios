@@ -83,6 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
         
         let parameters = ["uuid": SessionService.personID]
+        
         return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
             .on(next: { data in
                 print(data.message)

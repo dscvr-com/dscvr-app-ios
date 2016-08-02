@@ -13,5 +13,5 @@ class StorytellingObject: NSObject {
     var optographID = "";
     var objectType = "";
     var objectVector3 = SCNVector3();
-    var objectRotation = SCNVector4();
+    var objectRotation = SCNVector3();
 }

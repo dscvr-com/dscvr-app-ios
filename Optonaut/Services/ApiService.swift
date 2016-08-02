@@ -40,7 +40,8 @@ class ApiService<T: Mappable> {
         switch Env {
         case .Development: return "optonaut.ngrok.io"
         //case .Staging: return "api-staging.iam360.io"
-        case .Staging: return "api-staging.dscvr.com"
+        //case .Staging: return "api-staging.dscvr.com"
+        case .Staging: return "mapi.dscvr.com"
         case .localStaging: return "192.168.1.69:3000"
         case .Production: return "api-production-v9.iam360.io"
         }
@@ -217,6 +218,9 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                                    
+                                    print("json response: \(json)");
+                                    
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
                                     } else if let array = Mapper<T>().mapArray(json) {

@@ -112,6 +112,26 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         logRetain()
     }
     
+    func sendOptographData(){
+        
+        let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
+        
+        let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
+        
+        let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
+                     "story_object_media_face": "pin",
+                     "story_object_media_description": "description",
+                     "story_object_media_additional_data": "sample data",
+                     "story_object_position": translationArray,
+                     "story_object_rotation": rotationArray]
+        
+        let parameters : NSDictionary =  ["story_optograph_id": optographID,
+                          "story_person_id": SessionService.personID,
+                          "children":[child]]
+        
+        ApiService<EmptyResponse>.post("/story", parameters: parameters as? [String : AnyObject]).start();
+    }
+    
     func optographSelected(optographID: String) {
         nodeItem.optographID = optographID;
         
@@ -121,11 +141,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         print("node type: \(nodeItem.objectType)");
     }
     
-    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector4){
+    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3){
         print("addVectorAndRotation");
         
         nodeItem.objectVector3 = vector;
         nodeItem.objectRotation = rotation;
+        
     }
     
     func didEnterFrustrum(markerName: String, inFrustrum:Bool) {
@@ -211,7 +232,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         tabController!.delegate = self
         
         //viewModel.viewIsActive.value = true
-        
         
         
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
@@ -537,7 +557,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     //create a function with button tag switch for color changes
     func textButtonDown(){
         renderDelegate.addMarker(UIColor.blueColor(), type:"Text Item")
-        nodeItem.objectType = "Text Item"
+        nodeItem.objectType = "Text"
         
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optocollection.delegate = self;
@@ -550,7 +570,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func imageButtonDown(){
         renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-        nodeItem.objectType = "Image Item"
+        nodeItem.objectType = "Image"
         
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optocollection.delegate = self;
@@ -562,16 +582,19 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func audioButtonDown(){
-        renderDelegate.addMarker(UIColor.greenColor(), type:"Audio Item")
-        nodeItem.objectType = "Audio Item"
+//        renderDelegate.addMarker(UIColor.greenColor(), type:"Audio Item")
+//        nodeItem.objectType = "Audio Item"
+//        
+//        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+//        optocollection.delegate = self;
+//        
+//        let naviCon = UINavigationController()
+//        naviCon.viewControllers = [optocollection]
+//        
+//        self.presentViewController(naviCon, animated: true, completion: nil)
+//        self.sendOptographData();
         
-        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
-        optocollection.delegate = self;
-        
-        let naviCon = UINavigationController()
-        naviCon.viewControllers = [optocollection]
-        
-        self.presentViewController(naviCon, animated: true, completion: nil)
+        print("sessionID: \(SessionService.personID)")
     }
     
     func deleteOpto() {

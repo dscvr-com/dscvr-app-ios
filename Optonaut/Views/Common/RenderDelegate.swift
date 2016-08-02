@@ -142,7 +142,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
 protocol CubeRenderDelegateDelegate {
     func didEnterFrustrum(markerName: String, inFrustrum: Bool)
-    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector4)
+    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3)
 }
 
 class CubeRenderDelegate: RenderDelegate {
@@ -341,16 +341,28 @@ class CubeRenderDelegate: RenderDelegate {
         
         markNode.name = type + String(n)
         
+        print("camera x: \(self.cameraNode.eulerAngles.x)")
+        print("camera y: \(self.cameraNode.eulerAngles.y)")
+        print("camera z: \(self.cameraNode.eulerAngles.z)")
         
         markNode.position = sphereGeoNode.position
-        markNode.rotation = self.cameraNode.rotation
+//        markNode.rotation = self.cameraNode.rotation
+        
+        markNode.eulerAngles = self.cameraNode.eulerAngles;
+        
+        print("node x: \(markNode.eulerAngles.x)")
+        print("node y: \(markNode.eulerAngles.y)")
+        print("node z: \(markNode.eulerAngles.z)")
         
         markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
+        
+        
+        
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
         
-        delegate!.addVectorAndRotation(markNode.position, rotation: markNode.rotation)
+        delegate!.addVectorAndRotation(markNode.position, rotation: markNode.eulerAngles)
     }
     
     
@@ -556,10 +568,10 @@ class CubeRenderDelegate: RenderDelegate {
             //direction = SCNVector3(x: cos(elevation) * direction.x , y: sin(elevation), z: cos(elevation) * direction.z)
            // let eulerangle = sphereGeoNode.position
             let markername = marknode.name
-            print ("marker name \(markername) ")
+//            print ("marker name \(markername) ")
                
                 if (markername! == "Text Item2") {
-                    print("resetToBlack")
+//                    print("resetToBlack")
                   
                   
                     
