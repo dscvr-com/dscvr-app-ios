@@ -346,7 +346,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         labelManual.textAlignment = NSTextAlignment.Center
         labelManual.text = "MANUAL"
-        labelManual.textColor = UIColor(hex:0xffbc00)
+        labelManual.textColor = UIColor(hex:0xFF5E00)
         labelManual.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(labelManual)
         labelManual.align(.ToTheRightCentered, relativeTo: manualButton, padding: 24, width: calcTextWidth("MANUAL", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
@@ -357,7 +357,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         labelMotor.textAlignment = NSTextAlignment.Center
         labelMotor.text = "MOTOR"
-        labelMotor.textColor = UIColor(hex:0xffbc00)
+        labelMotor.textColor = UIColor(hex:0xFF5E00)
         labelMotor.font = .fontDisplay(18, withType: .Semibold)
         labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 24, width: calcTextWidth("MOTOR", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         thisView.addSubview(labelMotor)
@@ -416,7 +416,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         } else {
             gyroButton.icon = UIImage(named: "gyro_active_icn")!
             Defaults[.SessionGyro] = true
-            labelGyro.textColor = UIColor(hex:0xffbc00)
+            labelGyro.textColor = UIColor(hex:0xFF5E00)
         }
     }
     
@@ -489,12 +489,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             manualButton.icon = UIImage(named: "manual_inactive_icn")!
             
             labelManual.textColor = UIColor.grayColor()
-            labelMotor.textColor = UIColor(hex:0xffbc00)
+            labelMotor.textColor = UIColor(hex:0xFF5E00)
         } else {
             motorButton.icon = UIImage(named: "motor_inactive_icn")!
             manualButton.icon = UIImage(named: "manual_active_icn")!
             
-            labelManual.textColor = UIColor(hex:0xffbc00)
+            labelManual.textColor = UIColor(hex:0xFF5E00)
             labelMotor.textColor = UIColor.grayColor()
         }
     }
@@ -505,7 +505,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             threeRingButton.icon = UIImage(named: "threeRing_active_icn")!
             oneRingButton.icon = UIImage(named: "oneRing_inactive_icn")!
             
-            labelRing3.textColor = UIColor(hex:0xffbc00)
+            labelRing3.textColor = UIColor(hex:0xFF5E00)
             labelRing1.textColor = UIColor.grayColor()
             
         } else {
@@ -513,7 +513,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             oneRingButton.icon = UIImage(named: "oneRing_active_icn")!
             
             labelRing3.textColor = UIColor.grayColor()
-            labelRing1.textColor = UIColor(hex:0xffbc00)
+            labelRing1.textColor = UIColor(hex:0xFF5E00)
         }
     }
     func activeDisplayButtons(isGyro:Bool) {
@@ -522,7 +522,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             gyroButton.icon = UIImage(named: "gyro_active_icn")!
             littlePlanet.icon = UIImage(named: "littlePlanet_inactive_icn")!
             
-            labelGyro.textColor = UIColor(hex:0xffbc00)
+            labelGyro.textColor = UIColor(hex:0xFF5E00)
             planet.textColor = UIColor.grayColor()
             
         } else {
@@ -530,7 +530,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             littlePlanet.icon = UIImage(named: "littlePlanet_active_icn")!
             
             labelGyro.textColor = UIColor.grayColor()
-            planet.textColor = UIColor(hex:0xffbc00)
+            planet.textColor = UIColor(hex:0xFF5E00)
         }
     }
     

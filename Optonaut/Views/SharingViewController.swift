@@ -53,7 +53,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let image: UIImage = UIImage(named: "logo_settings")!
+        let image: UIImage = UIImage(named: "logo_share")!
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
         self.view.addSubview(bgImage!)

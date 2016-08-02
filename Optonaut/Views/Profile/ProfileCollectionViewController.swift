@@ -119,7 +119,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple("Save", String.iconWithName(.More))
         rightBarButton.font = UIFont.iconOfSize(15)
         rightBarButton.userInteractionEnabled = true
-        rightBarButton.textColor = .blackColor()
+        rightBarButton.textColor = UIColor(hex:0xFF5E00)
         rightBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapRightBarButton)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButton)
         
@@ -204,6 +204,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     func readAllNotification() -> SignalProducer<EmptyResponse, ApiError> {
         UIApplication.sharedApplication().applicationIconBadgeNumber = 0
         ActivitiesService.unreadCount.value = 0
+        print("activities/read_all")
         return ApiService<EmptyResponse>.post("activities/read_all")
     }
     
@@ -316,8 +317,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 print("click notification")
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
-                UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                ActivitiesService.unreadCount.value = 0
+                self!.readAllNotification().start()
                 self!.collectionView?.reloadData()
             }
         }

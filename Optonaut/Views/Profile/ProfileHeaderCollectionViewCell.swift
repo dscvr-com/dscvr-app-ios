@@ -49,7 +49,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = UIColor(hex:0xf7f7f7)
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
-        avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        avatarImageView.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         avatarImageView.layer.borderWidth = 3.0
         avatarImageView.layer.cornerRadius = 50
         avatarImageView.clipsToBounds = true
@@ -57,14 +57,14 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(avatarImageView)
         
         displayNameView.font = UIFont.fontDisplay(20, withType: .Semibold)
-        displayNameView.textColor = UIColor(0xffbc00)
+        displayNameView.textColor = UIColor(0xFF5E00)
         displayNameView.textAlignment = .Center
         contentView.addSubview(displayNameView)
         
         displayNameInputView.placeholder = "Enter your name"
         displayNameInputView.font = UIFont.fontDisplay(20, withType: .Semibold)
         displayNameInputView.textAlignment = .Center
-        displayNameInputView.textColor = UIColor(0xffbc00)
+        displayNameInputView.textColor = UIColor(0xFF5E00)
         displayNameInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         displayNameInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         displayNameInputView.returnKeyType = .Done
@@ -117,7 +117,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(postHeadingView)
         
         postHeadingView1.text = "Notifications"
-        postHeadingView1.textColor = UIColor(0xffbc00)
+        postHeadingView1.textColor = UIColor(0xFF5E00)
         postHeadingView1.textAlignment = .Center
         postHeadingView1.font = UIFont(name: "Avenir-Book", size: 17)
         postHeadingView1.backgroundColor = UIColor(hex:0x3E3D3D)
@@ -143,14 +143,14 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         postHeadingView3.userInteractionEnabled = true
         contentView.addSubview(postHeadingView3)
         
-        yellowLine.backgroundColor = UIColor(0xffbc00)
+        yellowLine.backgroundColor = UIColor(0xFF5E00)
         contentView.addSubview(yellowLine)
         
         contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.dismissKeyboard)))
     }
     
     func followTabTouched() {
-        postHeadingView2.textColor = UIColor(0xffbc00)
+        postHeadingView2.textColor = UIColor(0xFF5E00)
         postHeadingView1.textColor = UIColor.whiteColor()
         postHeadingView3.textColor = UIColor.whiteColor()
         yellowLine.anchorInCorner(.BottomRight, xPad: (contentView.frame.width/3), yPad: 0, width: contentView.frame.width/3, height: 2)
@@ -158,7 +158,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         viewModel.notifTabTouched.value = false
     }
     func notifPageTabTouched() {
-        postHeadingView1.textColor = UIColor(0xffbc00)
+        postHeadingView1.textColor = UIColor(0xFF5E00)
         postHeadingView2.textColor = UIColor.whiteColor()
         postHeadingView3.textColor = UIColor.whiteColor()
         yellowLine.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/3, height: 2)
@@ -168,7 +168,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     func imagePageTabTouched() {
         postHeadingView1.textColor = UIColor.whiteColor()
         postHeadingView2.textColor = UIColor.whiteColor()
-        postHeadingView3.textColor = UIColor(0xffbc00)
+        postHeadingView3.textColor = UIColor(0xFF5E00)
         yellowLine.anchorInCorner(.BottomLeft, xPad: (contentView.frame.width/3) * 2, yPad: 0, width: contentView.frame.width/3, height: 2)
         viewModel.followTabTouched.value = false
         viewModel.notifTabTouched.value = false
@@ -312,7 +312,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             
             imagePickerController.navigationBar.translucent = false
-            imagePickerController.navigationBar.barTintColor = UIColor(hex:0xffbc00)
+            imagePickerController.navigationBar.barTintColor = UIColor(hex:0xFF5E00)
             imagePickerController.navigationBar.titleTextAttributes = [
                 //                NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
                 NSForegroundColorAttributeName: UIColor.whiteColor(),

@@ -531,7 +531,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         
         
-        contentView.backgroundColor = UIColor(hex:0xffbc00)
+        contentView.backgroundColor = UIColor(hex:0xFF5E00)
         
         shareImageAsset.layer.cornerRadius = avatarImageView.frame.size.width / 2
         shareImageAsset.image = UIImage(named: "share_hidden_icn")
@@ -555,7 +555,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         avatarImageView.image = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 25
-        avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        avatarImageView.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         avatarImageView.layer.borderWidth = 2.0
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
@@ -573,7 +573,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         whiteBackground.addSubview(optionsButtonView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
-        personNameView.textColor = UIColor(0xffbc00)
+        personNameView.textColor = UIColor.whiteColor()
         personNameView.userInteractionEnabled = true
         personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pushProfile)))
         whiteBackground.addSubview(personNameView)

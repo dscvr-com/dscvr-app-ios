@@ -156,6 +156,7 @@ class ApiService<T: Mappable> {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             print ("Bearer ",token)
         }
+        print("mutableRequest>>>",mutableURLRequest)
         
         return mutableURLRequest
     }
