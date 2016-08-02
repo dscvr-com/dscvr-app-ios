@@ -173,7 +173,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.view.addSubview(descriptionLabel)
         
         avatarImageView.layer.cornerRadius = 23.5
-        avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        avatarImageView.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         avatarImageView.layer.borderWidth = 2.0
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
@@ -192,7 +192,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(optionsButtonView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
-        personNameView.textColor = UIColor(0xffbc00)
+        personNameView.textColor = UIColor(0xFF5E00)
         personNameView.userInteractionEnabled = true
         personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pushProfile)))
         whiteBackground.addSubview(personNameView)
