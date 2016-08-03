@@ -25,7 +25,7 @@ class FollowersTableViewCell: UITableViewCell {
         self.userImage.center = CGPoint(x: userImage.frame.size.width/2.0 + 20.0, y: self.contentView.frame.height/2 + 15.0)
         self.userImage.backgroundColor = UIColor.lightGrayColor()
         self.userImage.layer.cornerRadius = self.userImage.frame.size.width/2
-        self.userImage.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        self.userImage.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         self.userImage.layer.borderWidth = 2.0
         self.userImage.clipsToBounds = true
         self.userImage.image = UIImage(named: "avatar-placeholder")!
@@ -33,8 +33,8 @@ class FollowersTableViewCell: UITableViewCell {
         eliteImageView.image = UIImage(named: "elite_beta_icn")!
         
         self.nameLabel = UILabel(frame: CGRect(x: self.userImage.frame.origin.x + self.userImage.frame.size.width + 10.0, y: self.userImage.frame.origin.y + 10.0, width: 100.0, height: 30.0))
-        self.nameLabel.font = UIFont.systemFontOfSize(15.0, weight: UIFontWeightMedium)
-        self.nameLabel.textColor = UIColor(0xffbc00)
+        self.nameLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
+        self.nameLabel.textColor = UIColor(0xFF5E00)
         
         let followButtonSize = UIImage(named: "follow_button")?.size
         followButton.addTarget(self, action: #selector(toggleFollow), forControlEvents:.TouchUpInside)
@@ -50,7 +50,7 @@ class FollowersTableViewCell: UITableViewCell {
         self.nameLabel.align(.ToTheRightCentered, relativeTo: self.userImage, padding: 10, width: 100, height: 30)
         let icnWidth = UIImage(named: "elite_beta_icn")!
         
-        eliteImageView.frame = CGRect(x: userImage.frame.origin.x,y: userImage.frame.origin.y + userImage.frame.height - (icnWidth.size.height/2) - 2,width: icnWidth.size.width, height: icnWidth.size.height)
+        eliteImageView.frame = CGRect(x: userImage.frame.origin.x + 2,y: userImage.frame.origin.y + userImage.frame.height - (icnWidth.size.height/2) - 2,width: icnWidth.size.width, height: icnWidth.size.height)
         
         isFollowed.producer.startWithNext{val in
             if val {

@@ -320,6 +320,7 @@ class ViewerViewController: UIViewController  {
         super.viewWillAppear(animated)
         
         applyDistortionShader()
+        tabController!.disableScrollView()
     }
     
     override func viewWillDisappear(animated: Bool) {

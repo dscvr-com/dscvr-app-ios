@@ -81,7 +81,12 @@ struct StitcherCancellation {
 - (struct ImageBuffer)getLeftEquirectangularResult {
     
     optonaut::Stitcher stitcher(Stores::left);
-    return CVMatToImageBuffer(stitcher.Finish(optonaut::ProgressCallback::Empty)->image.data);
+    cv::Mat sphere = stitcher.Finish(optonaut::ProgressCallback::Empty)->image.data;
+    cv::Mat blurred;
+    optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
+    panoBlur.Blur(sphere, blurred);
+
+    return CVMatToImageBuffer(blurred);
     
 }
 

@@ -10,6 +10,8 @@ import Foundation
 import ReactiveCocoa
 import Mixpanel
 import Async
+import AssetsLibrary
+import ImageIO
 
 enum StitchingError: ErrorType {
     case Busy
@@ -118,9 +120,37 @@ class StitchingService {
                 let erImage = stitcher.getLeftEquirectangularResult()
                 autoreleasepool {
                     
-                    UIImageWriteToSavedPhotosAlbum(UIImage(CGImage: ImageBufferToCGImage(erImage)), self
-                        , nil, nil)
+//                    UIImageWriteToSavedPhotosAlbum(UIImage(CGImage: ImageBufferToCGImage(erImage)), self
+//                        , nil, nil)
                     
+                    
+                    //let asset = ALAssetsLibrary()
+                    let image = UIImage(CGImage: ImageBufferToCGImage(erImage))
+                    let imageData = UIImageJPEGRepresentation(image, 1.0)
+                    
+                    let strModel = "RICOH THETA S" as String
+                    let strMake = "RICOH" as String
+                    
+                    let meta:NSDictionary = [kCGImagePropertyTIFFModel as String :strModel,kCGImagePropertyTIFFMake as String:strMake]
+//                    meta.setValue(strModel, forKey: kCGImagePropertyTIFFModel as String)
+//                    meta.setValue(strMake, forKey: kCGImagePropertyTIFFMake as String)
+                    
+                    let source:CGImageSourceRef = CGImageSourceCreateWithData(imageData!, nil)!
+                    let UTI:CFStringRef = CGImageSourceGetType(source)!
+                    
+                    let destData = NSMutableData()
+                    let destination:CGImageDestinationRef = CGImageDestinationCreateWithData(destData, UTI, 1, nil)!
+                    
+                    CGImageDestinationAddImageFromSource(destination, source, 0, meta)
+                    
+                    CGImageDestinationFinalize(destination)
+                    
+                    UIImageWriteToSavedPhotosAlbum(UIImage(data:destData,scale:1.0)!, self, nil, nil)
+                    
+//                    asset.writeImageDataToSavedPhotosAlbum(imageData, metadata: meta as [AnyObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
+//                        print("meta path >>> \(path)")
+//                        print("meta error >>> \(error)")
+//                    })
                   
                 }
                 Recorder.freeImageBuffer(erImage)

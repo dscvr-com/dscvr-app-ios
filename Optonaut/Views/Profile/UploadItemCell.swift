@@ -18,6 +18,8 @@ class UploadItemCell: UITableViewCell {
     private let viewModel = ProfileTileCollectionViewModel()
     var uploadProgress:UIProgressView?
     var uploadLabel = UILabel()
+    var stitchingLabel = UILabel()
+    let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -27,12 +29,12 @@ class UploadItemCell: UITableViewCell {
         self.uploadItem.backgroundColor = UIColor.lightGrayColor()
         
         self.uploadButton.setTitle("UPLOAD", forState: .Normal)
-        self.uploadButton.backgroundColor = UIColor(hex:0xffbc00)
+        self.uploadButton.backgroundColor = UIColor(hex:0xFF5E00)
         self.uploadButton.titleLabel?.font = UIFont.systemFontOfSize(11.0)
         self.uploadButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
         self.uploadButton.layer.cornerRadius = 4.0
         self.uploadButton.layer.borderWidth = 1.0
-        self.uploadButton.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        self.uploadButton.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         self.uploadButton.addTarget(self, action: #selector(upload), forControlEvents: .TouchUpInside)
         
         self.addSubview(uploadItem)
@@ -57,7 +59,7 @@ class UploadItemCell: UITableViewCell {
         self.uploadLabel.hidden = true
         
         self.uploadProgress = UIProgressView(progressViewStyle: UIProgressViewStyle.Default)
-        self.uploadProgress?.progressTintColor = UIColor(hex:0xffbc00).alpha(0.70)
+        self.uploadProgress?.progressTintColor = UIColor(hex:0xFF5E00).alpha(0.70)
         self.uploadProgress?.trackTintColor = UIColor.clearColor()
         self.uploadProgress?.layer.cornerRadius = 4.0
         self.uploadProgress?.layer.borderWidth = 1.0
@@ -67,6 +69,26 @@ class UploadItemCell: UITableViewCell {
         self.uploadProgress!.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
         self.uploadProgress!.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
         self.uploadProgress!.hidden = true
+        
+        self.stitchingLabel.backgroundColor = UIColor(hex:0xFF5E00)
+        self.stitchingLabel.textColor = UIColor.whiteColor()
+        self.stitchingLabel.text = "STITCHING.."
+        self.stitchingLabel.textAlignment = .Center
+        self.stitchingLabel.layer.cornerRadius = 4.0
+        self.stitchingLabel.layer.borderWidth = 1.0
+        self.stitchingLabel.font = UIFont.systemFontOfSize(11.0)
+        self.addSubview(stitchingLabel)
+        
+        self.stitchingLabel.autoAlignAxisToSuperviewAxis(.Horizontal)
+        self.stitchingLabel.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
+        self.stitchingLabel.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
+        self.stitchingLabel.hidden = true
+        
+        self.loadingView.hidesWhenStopped = true
+        self.loadingView.center = CGPointMake(CGRectGetMidX(self.stitchingLabel.bounds), CGRectGetMidY(self.stitchingLabel.bounds));
+        self.stitchingLabel.addSubview(loadingView)
+        self.loadingView.stopAnimating()
+        
     }
     
     func upload() {
@@ -98,6 +120,20 @@ class UploadItemCell: UITableViewCell {
                 } else {
                     return 
                 }
+        }
+        
+        viewModel.isStitched.producer.startWithNext { val in
+            if !val {
+                if !self.loadingView.isAnimating() {
+                    self.stitchingLabel.hidden = false
+                    self.loadingView.startAnimating()
+                }
+            } else {
+                if self.loadingView.isAnimating() {
+                    self.stitchingLabel.hidden = true
+                    self.loadingView.stopAnimating()
+                }
+            }
         }
         
         viewModel.uploadPercentStatus.producer.startWithNext{ val in

@@ -54,6 +54,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         super.viewDidLoad()
 
         let image: UIImage = UIImage(named: "logo_share")!
+        //let image: UIImage = UIImage(named:"iam360_navTitle")!
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
         self.view.addSubview(bgImage!)
@@ -104,7 +105,8 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         
         self.view.backgroundColor = UIColor.whiteColor()
         
-        var leftBarImage = UIImage(named: "logo_small")
+       // var leftBarImage = UIImage(named: "logo_small")
+        var leftBarImage = UIImage(named:"iam360_navTitle")
         leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.tapRightButton))
         

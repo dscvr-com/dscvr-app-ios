@@ -36,7 +36,7 @@ class ActivityTableViewCell: UITableViewCell {
         
         nameView.numberOfLines = 0
         nameView.font = UIFont (name: "Avenir-Heavy", size: 17)
-        nameView.textColor = UIColor(0xffbc00)
+        nameView.textColor = UIColor(0xFF5E00)
         contentView.addSubview(nameView)
         
         textView.numberOfLines = 0
@@ -52,7 +52,7 @@ class ActivityTableViewCell: UITableViewCell {
         
         causingImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
         causingImageView.layer.cornerRadius = 25
-        causingImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        causingImageView.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         causingImageView.clipsToBounds = true
         causingImageView.layer.borderWidth = 2.0
         contentView.addSubview(causingImageView)

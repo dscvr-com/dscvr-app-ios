@@ -36,12 +36,7 @@ class ProfileOptographsViewModel {
                         Models.persons.touch(Person.fromSQL(row))
                         
                         if row[OptographSchema.locationID] != nil {
-//                            if let locationRow = Location.fromSQL(row){
-//                            
-//                            }
-//                            
                             Models.locations.touch(Location.fromSQL(row))
-                            
                         }
                         
                         return optograph
@@ -52,14 +47,14 @@ class ProfileOptographsViewModel {
             }
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
-            .observeNext { print("results from db>>", $0) ; self.results.value = $0 }
+            .observeNext { self.results.value = $0 }
 
         refreshNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .flatMap(.Latest) { _ in
                 ApiService<OptographApiModel>.get("persons/\(personID)/optographs")
                     .observeOnUserInitiated()
-                    .filter({ return $0.deletedAt == nil })
+                    //.filter({ return $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
@@ -76,7 +71,7 @@ class ProfileOptographsViewModel {
             }
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
-            .observeNext { print("results from db>>", $0) ;self.results.value = $0 }
+            .observeNext { self.results.value = $0 }
         
         loadMoreNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
@@ -85,7 +80,7 @@ class ProfileOptographsViewModel {
             .flatMap(.Latest) { oldestResult in
                 ApiService<OptographApiModel>.get("persons/\(personID)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
-                    .filter({ $0.deletedAt == nil })
+                    //.filter({ $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
@@ -109,17 +104,7 @@ class ProfileOptographsViewModel {
         refreshNotification.notify(())
     }
     
-//    func createLocationWhenNil() {
-//        let coords = LocationService.lastLocation()!
-//        var location = Location.newInstance()
-//        location.latitude = coords.latitude
-//        location.longitude = coords.longitude
-//        var locationBox: ModelBox<Location>?
-//        
-//        locationBox = Models.locations.create(location)
-//        locationBox!.insertOrUpdate()
-//        optographBox.insertOrUpdate { box in
-//            box.model.locationID = location.ID
-//    
-//    }
+    func createLocationWhenNil() {
+    
+    }
 }

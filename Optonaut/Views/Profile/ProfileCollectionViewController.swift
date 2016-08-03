@@ -72,7 +72,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         tabController?.delegate = self
         
         if !isProfileVisit {
-            var image = UIImage(named: "logo_small")
+            //var image = UIImage(named: "logo_small")
+            var image = UIImage(named:"iam360_navTitle")
             image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
             originalBackButton = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
         }
@@ -286,14 +287,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             .on(next: { [weak self] results in
                 if let strongSelf = self {
                     strongSelf.optographIDsNotUploaded = results.models
-                        .filter{ !$0.isPublished || !$0.isUploading}
+                        .filter{ !$0.isPublished && !$0.isUploading}
                         .map{$0.ID}
                     
                     strongSelf.optographIDs = results.models
                         .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
-                    
-                    strongSelf.optographIDs = results.models.map { $0.ID }
                 }
                 })
             .startWithNext { _ in

@@ -23,7 +23,7 @@ class PlaceholderTableViewCell: UITableViewCell {
         iconView.textColor = .DarkGrey
         contentView.addSubview(iconView)
         
-        textView.font = UIFont.displayOfSize(14, withType: .Semibold)
+        textView.font = UIFont (name: "Avenir-Book", size: 17)
         textView.textColor = .LightGrey
         contentView.addSubview(textView)
         

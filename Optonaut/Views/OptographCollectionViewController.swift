@@ -12,6 +12,7 @@ import SpriteKit
 import Async
 import Kingfisher
 import SwiftyUserDefaults
+import AssetsLibrary
 
 typealias Direction = (phi: Float, theta: Float)
 

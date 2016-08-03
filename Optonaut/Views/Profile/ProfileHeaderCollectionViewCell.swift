@@ -36,6 +36,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     
     //private let postCountView = UILabel()
     private let editSubView = UIImageView()
+    private let atSign = UIImageView()
     
     private let dividerDescription = UILabel()
     
@@ -60,6 +61,9 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameView.textColor = UIColor(0xFF5E00)
         displayNameView.textAlignment = .Center
         contentView.addSubview(displayNameView)
+        
+//        atSign.image = UIImage(named:"atSign")
+//        contentView.addSubview(atSign)
         
         displayNameInputView.placeholder = "Enter your name"
         displayNameInputView.font = UIFont.fontDisplay(20, withType: .Semibold)
@@ -200,6 +204,9 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         avatarImageView.frame = CGRect(x: size.width / 2 - 50, y: 20, width: 100, height: 100)
         displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 30)
+        
+//        let atSignSize = UIImage(named:"atSign")?.size
+//        atSign.align(.ToTheLeftCentered, relativeTo: displayNameView, padding: 0, width: (atSignSize?.width)!, height: atSignSize!.height)
         displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)

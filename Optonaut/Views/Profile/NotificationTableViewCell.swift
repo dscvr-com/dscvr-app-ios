@@ -136,7 +136,7 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if items.isEmpty {
             let cell = tableView.dequeueReusableCellWithIdentifier("placeholder-cell") as! PlaceholderTableViewCell
-            cell.textView.text = "Nothing new yet"
+            cell.textView.text = "Nothing new yet."
             //cell.iconView.text = String.iconWithName(.Inbox)
             cell.iconView.textColor = .LightGrey
             return cell

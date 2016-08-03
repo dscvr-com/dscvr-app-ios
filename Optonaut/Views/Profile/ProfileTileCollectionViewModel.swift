@@ -40,6 +40,7 @@ class ProfileTileCollectionViewModel {
             .startWithNext { [weak self] optograph in
                 self?.isPrivate.value = optograph.isPrivate
                 self?.isStitched.value = optograph.isStitched
+                
                 if optograph.personID == SessionService.personID {
                     self?.userId.value = true
                 }
