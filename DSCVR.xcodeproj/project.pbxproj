@@ -261,6 +261,9 @@
 		B1754D5E1D0E82CD005A3E85 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */; };
 		BB7634541D42103A002486BF /* FPOptographsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7634531D42103A002486BF /* FPOptographsCollectionViewController.swift */; };
 		BB7634561D49E2F4002486BF /* StorytellingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7634551D49E2F3002486BF /* StorytellingObject.swift */; };
+		BBBDE6CC1D5202AC00144DB4 /* StorytellingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBDE6CB1D5202AC00144DB4 /* StorytellingResponse.swift */; };
+		BBBDE6CE1D52170A00144DB4 /* StorytellingChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBDE6CD1D52170A00144DB4 /* StorytellingChildren.swift */; };
+		BBBDE6D01D52270B00144DB4 /* StoryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBDE6CF1D52270B00144DB4 /* StoryObject.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -629,6 +632,9 @@
 		B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		BB7634531D42103A002486BF /* FPOptographsCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FPOptographsCollectionViewController.swift; sourceTree = "<group>"; };
 		BB7634551D49E2F3002486BF /* StorytellingObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingObject.swift; sourceTree = "<group>"; };
+		BBBDE6CB1D5202AC00144DB4 /* StorytellingResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingResponse.swift; sourceTree = "<group>"; };
+		BBBDE6CD1D52170A00144DB4 /* StorytellingChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingChildren.swift; sourceTree = "<group>"; };
+		BBBDE6CF1D52270B00144DB4 /* StoryObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryObject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -837,6 +843,9 @@
 				8F4185FA1C52DB08009E1E3F /* PersonApiModel.swift */,
 				8F4185FC1C52DBBD009E1E3F /* LocationApiModel.swift */,
 				5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */,
+				BBBDE6CB1D5202AC00144DB4 /* StorytellingResponse.swift */,
+				BBBDE6CD1D52170A00144DB4 /* StorytellingChildren.swift */,
+				BBBDE6CF1D52270B00144DB4 /* StoryObject.swift */,
 			);
 			name = ApiModel;
 			path = APIModel;
@@ -1729,6 +1738,7 @@
 				590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */,
 				8F23AA531BFF31B4008926A8 /* LocationTable.swift in Sources */,
+				BBBDE6D01D52270B00144DB4 /* StoryObject.swift in Sources */,
 				A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */,
 				8FAB9F321B8F01DF00B4C8CB /* BottomLineTextField.swift in Sources */,
 				8FAB9F301B8F01DF00B4C8CB /* SaveViewController.swift in Sources */,
@@ -1829,6 +1839,7 @@
 				8F4185FD1C52DBBD009E1E3F /* LocationApiModel.swift in Sources */,
 				8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */,
 				8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */,
+				BBBDE6CC1D5202AC00144DB4 /* StorytellingResponse.swift in Sources */,
 				59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */,
@@ -1852,6 +1863,7 @@
 				8F21F48F1C4405300075C8EC /* CollectionImageCache.swift in Sources */,
 				A5FD5D841BEA5A4E0031ED1E /* support.cpp in Sources */,
 				8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */,
+				BBBDE6CE1D52170A00144DB4 /* StorytellingChildren.swift in Sources */,
 				8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */,
 				8F5335A81BDBBFE30058961A /* ActivityResourceViews.swift in Sources */,
 				8F8E32D01BFE043200E09392 /* DeviceTokenService.swift in Sources */,

@@ -114,6 +114,23 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func sendOptographData(){
         
+        /*
+        let parameters = ["uuid": SessionService.personID]
+        
+        return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
+            .on(next: { data in
+                print(data.message)
+                print(data.status)
+                print(data.request_text)
+                if (data.status == "ok" && data.message == "3") {
+                    Defaults[.SessionEliteUser] = true
+                } else {
+                    Defaults[.SessionEliteUser] = false
+                }
+            })
+        
+        */
+        
         let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
         
         let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
@@ -129,7 +146,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                           "story_person_id": SessionService.personID,
                           "children":[child]]
         
-        ApiService<EmptyResponse>.post("/story", parameters: parameters as? [String : AnyObject]).start();
+        ApiService<StorytellingResponse>.post("/story", parameters: parameters as? [String : AnyObject]).on(next: { data in
+            
+            
+            
+        }).start();
     }
     
     func optographSelected(optographID: String) {
@@ -592,9 +613,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //        naviCon.viewControllers = [optocollection]
 //        
 //        self.presentViewController(naviCon, animated: true, completion: nil)
-//        self.sendOptographData();
+        self.sendOptographData();
         
         print("sessionID: \(SessionService.personID)")
+        
     }
     
     func deleteOpto() {
