@@ -80,6 +80,8 @@ class LoginOverlayViewController: UIViewController{
     }
     
     dynamic private func facebook() {
+//        let username = AddUsernameViewController()
+//        navigationController?.pushViewController(username, animated: false)
         let loginManager = FBSDKLoginManager()
         let readPermission = ["public_profile","email","user_friends"]
         

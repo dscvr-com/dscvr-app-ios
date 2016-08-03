@@ -47,7 +47,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         label1.font = UIFont(name: "Avenir-Book", size: 20)
         label1.backgroundColor = UIColor.clearColor()
         label1.textColor = UIColor(hex:0x343434)
-        label1.textAlignment = .Center
+        label1.textAlignment = .Left
         backView.addSubview(label1)
         
         view1.backgroundColor = UIColor.clearColor()
@@ -70,11 +70,11 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         orImage.image = orText
         backView.addSubview(orImage)
         
-        let dragTextWidth1 = calcTextWidth("Get a Super Secret Code:", withFont: .displayOfSize(20, withType: .Semibold))
+        //let dragTextWidth1 = calcTextWidth("Get a Super Secret Code:", withFont: UIFont(name: "Avenir-Book", size: 20)!)
         label2.text = "Get a Super Secret Code:"
         label2.font = UIFont(name: "Avenir-Book", size: 20)
         label2.backgroundColor = UIColor.clearColor()
-        label2.textAlignment = .Center
+        label2.textAlignment = .Left
         label2.textColor = UIColor(hex:0x343434)
         backView.addSubview(label2)
         
@@ -109,7 +109,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         label1.align(.AboveMatchingLeft, relativeTo: view1, padding: 16, width: dragTextWidth, height: 25)
         orImage.align(.UnderCentered, relativeTo: view1, padding: 49, width: orText.size.width, height: orText.size.height)
         
-        label2.align(.UnderMatchingLeft, relativeTo: orImage, padding: 49, width: dragTextWidth1+10, height: 25)
+        label2.align(.UnderMatchingLeft, relativeTo: orImage, padding: 49, width: view.frame.width-44, height: 25)
         textRequestCode.align(.UnderMatchingLeft, relativeTo: label2, padding: 16, width: view.frame.width-44, height: 50)
         requestButton.align(.UnderCentered, relativeTo: textRequestCode, padding: 13, width: view.frame.width-44, height: 50)
         
@@ -160,7 +160,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
                 
                 if (data.status == "ok" && data.message == "Updated to status 2") {
                     Defaults[.SessionEliteUser] = false
-                    self.label2.text = data.request_text
+                    self.label2.text = data.request_text + ":"
                     self.label2.font = UIFont(name: "Avenir-Book", size: 13)
                     self.requestButton.enabled = false
                     self.sendAlert(data.prompt)
@@ -201,13 +201,13 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
                 print(data.status)
                 print(data.request_text)
                 if (data.status == "ok" && data.message == "1") {
-                    self.label2.text = data.request_text
+                    self.label2.text = data.request_text + ":"
                     self.label2.font = UIFont(name: "Avenir-Book", size: 20)
                     self.requestButton.enabled = true
                     Defaults[.SessionEliteUser] = false
                     LoadingIndicatorView.hide()
                 } else if (data.status == "ok" && data.message == "2"){
-                    self.label2.text = data.request_text
+                    self.label2.text = data.request_text + ":"
                     self.label2.font = UIFont(name: "Avenir-Book", size: 13)
                     self.requestButton.enabled = false
                     Defaults[.SessionEliteUser] = false

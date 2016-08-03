@@ -343,7 +343,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if isProfileVisit {
             tabController!.disableScrollView()
         }
-        self.navigationController?.navigationBar.tintColor = UIColor(hex:0xffbc00)
+        self.navigationController?.navigationBar.tintColor = UIColor(hex:0xFF5E00)
         
         if fromLoginPage {
             goToFeeds()

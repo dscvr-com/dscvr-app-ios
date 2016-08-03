@@ -73,6 +73,7 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
             let imageUrl = ImageURL("persons/\(datas.ID)/\(datas.avatarAssetID).jpg", width: 47, height: 47)
             cell.userImage.kf_setImageWithURL(NSURL(string:imageUrl)!)
             cell.bind(datas.ID)
+            cell.selectionStyle = .None
             
             return cell;
         }

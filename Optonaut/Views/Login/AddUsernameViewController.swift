@@ -19,7 +19,7 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     private let viewModel = OnboardingViewModel()
     private var person: [Person] = []
     
-    private let contentView = UIView()
+    private let contentView = UIImageView()
     private let logoImageView = UIImageView()
     
     private let username = UITextField()
@@ -35,7 +35,8 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     
     required init() {
         
-        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Defaults[.SessionPersonID]!)
+        //let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Defaults[.SessionPersonID]!)
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Person.guestID)
         personSQL = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
         
         super.init(nibName: nil, bundle: nil)
@@ -54,11 +55,14 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         contentView.frame = UIScreen.mainScreen().bounds
-        contentView.backgroundColor = UIColor(hex:0x444444)
+        contentView.image = UIImage(named:"gradient_bg")
+        //contentView.backgroundColor = UIColor.clearColor()
         view.addSubview(contentView)
         
-        let imageSize = UIImage(named: "logo_big")
-        logoImageView.image = UIImage(named: "logo_big")
+        contentView.userInteractionEnabled = true
+        
+        let imageSize = UIImage(named: "logo_invite")
+        logoImageView.image = UIImage(named: "logo_invite")
         contentView.addSubview(logoImageView)
         
         logoImageView.anchorToEdge(.Top, padding: 125, width: imageSize!.size.width, height: imageSize!.size.height)
@@ -70,7 +74,7 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         username.center = contentView.center
         username.borderStyle = UITextBorderStyle.RoundedRect
         username.font = UIFont(name: "Avenir-Heavy", size: 15)
-        username.textColor = UIColor(hex:0xffd24e)
+        username.textColor = UIColor(hex:0xFF5E00)
         username.autocorrectionType = UITextAutocorrectionType.No
         username.autocapitalizationType = UITextAutocapitalizationType.None
         
@@ -104,7 +108,7 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         let createLabel = UILabel()
         createLabel.text = "Create your username:"
         createLabel.font = UIFont(name: "Avenir-Heavy", size: 15)
-        createLabel.textColor = UIColor.whiteColor()
+        createLabel.textColor = UIColor.darkGrayColor()
         createLabel.sizeToFit()
         
         createLabel.frame = CGRect(x: 20.0, y: username.frame.origin.y - (createLabel.frame.size.height * 1.5), width: createLabel.frame.size.width, height: createLabel.frame.size.height)
@@ -113,8 +117,7 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         let atLabel = UILabel()
         atLabel.text = "@"
         atLabel.font = UIFont(name: "Avenir-Heavy", size: 32)
-        atLabel.textColor = UIColor.whiteColor()
-//        atLabel.textAlignment = NSTextAlignment.Center
+        atLabel.textColor = UIColor.blackColor()
         atLabel.frame = CGRect(x: createLabel.frame.origin.x, y: username.frame.origin.y, width: username.frame.size.height, height: username.frame.size.height)
         
         contentView.addSubview(atLabel)
@@ -137,9 +140,9 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
                             print("string available")
                             self.createButton.enabled = true
                             self.createButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
-                            self.createButton.backgroundColor = UIColor(hex:0xffd24e)
+                            self.createButton.backgroundColor = UIColor(hex:0xFF5E00)
                             self.availability.text = "Username is available"
-                            self.availability.textColor = UIColor(hex:0xffd24e)
+                            self.availability.textColor = UIColor(hex:0xFF5E00)
                         } else {
                             print("string exists")
                             self.createButton.enabled = false
@@ -160,7 +163,7 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
             }
         }
         
-        contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeKeyboard)))
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeKeyboard)))
         
         activityIndicator.frame = CGRect(x: contentView.frame.origin.x - 60,y: username.frame.origin.y,width: 40,height: 40)
         activityIndicator.startAnimating()
@@ -175,9 +178,9 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         if valid {
             self.createButton.enabled = true
             self.createButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
-            self.createButton.backgroundColor = UIColor(hex:0xffd24e)
+            self.createButton.backgroundColor = UIColor(hex:0xFF5E00)
             self.availability.text = str
-            self.availability.textColor = UIColor(hex:0xffd24e)
+            self.availability.textColor = UIColor(hex:0xFF5E00)
             self.availability.sizeToFit()
         } else {
             self.createButton.enabled = false
@@ -202,6 +205,9 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         super.viewWillAppear(animated)
         
         self.navigationItem.setHidesBackButton(true, animated:true)
+        
+        navigationController?.navigationBar.translucent = true
+        navigationController?.navigationBar.shadowImage = UIImage()
     }
     
     override func viewWillDisappear(animated: Bool) {

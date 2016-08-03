@@ -57,7 +57,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         avatarImageView.userInteractionEnabled = true
         contentView.addSubview(avatarImageView)
         
-        displayNameView.font = UIFont.fontDisplay(20, withType: .Semibold)
+        displayNameView.font = UIFont (name: "Avenir-Heavy", size: 20)
         displayNameView.textColor = UIColor(0xFF5E00)
         displayNameView.textAlignment = .Center
         contentView.addSubview(displayNameView)

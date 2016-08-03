@@ -18,8 +18,6 @@ class UploadItemCell: UITableViewCell {
     private let viewModel = ProfileTileCollectionViewModel()
     var uploadProgress:UIProgressView?
     var uploadLabel = UILabel()
-    var stitchingLabel = UILabel()
-    let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -46,7 +44,7 @@ class UploadItemCell: UITableViewCell {
         
         self.uploadLabel.backgroundColor = UIColor.blackColor()
         self.uploadLabel.textColor = UIColor.whiteColor()
-        self.uploadLabel.text = "UPLOADING.."
+        self.uploadLabel.text = "Uploading.."
         self.uploadLabel.textAlignment = .Center
         self.uploadLabel.layer.cornerRadius = 4.0
         self.uploadLabel.layer.borderWidth = 1.0
@@ -70,24 +68,17 @@ class UploadItemCell: UITableViewCell {
         self.uploadProgress!.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
         self.uploadProgress!.hidden = true
         
-        self.stitchingLabel.backgroundColor = UIColor(hex:0xFF5E00)
-        self.stitchingLabel.textColor = UIColor.whiteColor()
-        self.stitchingLabel.text = "STITCHING.."
-        self.stitchingLabel.textAlignment = .Center
-        self.stitchingLabel.layer.cornerRadius = 4.0
-        self.stitchingLabel.layer.borderWidth = 1.0
-        self.stitchingLabel.font = UIFont.systemFontOfSize(11.0)
-        self.addSubview(stitchingLabel)
-        
-        self.stitchingLabel.autoAlignAxisToSuperviewAxis(.Horizontal)
-        self.stitchingLabel.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
-        self.stitchingLabel.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
-        self.stitchingLabel.hidden = true
-        
-        self.loadingView.hidesWhenStopped = true
-        self.loadingView.center = CGPointMake(CGRectGetMidX(self.stitchingLabel.bounds), CGRectGetMidY(self.stitchingLabel.bounds));
-        self.stitchingLabel.addSubview(loadingView)
-        self.loadingView.stopAnimating()
+        PipelineService.stitchingStatus.producer
+            .observeOnMain()
+            .startWithNext { [weak self] status in
+                switch status {
+                case let .Stitching(progress):
+                    self?.uploadLabel.text = "Stitching.."
+                    self?.uploadProgress!.setProgress(progress, animated: true)
+                default:
+                    print("wala")
+                }
+        }
         
     }
     
@@ -96,7 +87,6 @@ class UploadItemCell: UITableViewCell {
     }
     func bind(optographID: UUID) {
         viewModel.bind(optographID)
-        print("my opto>>",optographID)
         let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
         if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
             dispatch_async(dispatch_get_main_queue()) {
@@ -122,21 +112,9 @@ class UploadItemCell: UITableViewCell {
                 }
         }
         
-        viewModel.isStitched.producer.startWithNext { val in
-            if !val {
-                if !self.loadingView.isAnimating() {
-                    self.stitchingLabel.hidden = false
-                    self.loadingView.startAnimating()
-                }
-            } else {
-                if self.loadingView.isAnimating() {
-                    self.stitchingLabel.hidden = true
-                    self.loadingView.stopAnimating()
-                }
-            }
-        }
         
         viewModel.uploadPercentStatus.producer.startWithNext{ val in
+            self.uploadLabel.text = "Uploading.."
             self.uploadProgress!.setProgress(val, animated: true)
         }
     }
