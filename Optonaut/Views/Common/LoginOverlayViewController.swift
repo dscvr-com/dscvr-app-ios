@@ -16,7 +16,7 @@ class LoginOverlayViewController: UIViewController{
     private let logoImageView = UIImageView()
     private let facebookButtonView = UIButton()
     
-    private let contentView = UIView()
+    private let contentView = UIImageView()
     
     private let viewModel = LoginOverlayViewModel()
     
@@ -37,11 +37,12 @@ class LoginOverlayViewController: UIViewController{
         navigationController?.navigationBarHidden = true
         
         contentView.frame = UIScreen.mainScreen().bounds
-        contentView.backgroundColor = UIColor(hex:0xf7f7f7)
+        contentView.image = UIImage(named:"gradient_bg")
+        contentView.userInteractionEnabled = true
         view.addSubview(contentView)
         
-        let imageSize = UIImage(named: "logo_big")
-        logoImageView.image = UIImage(named: "logo_big")
+        let imageSize = UIImage(named: "logo_settings")
+        logoImageView.image = UIImage(named: "logo_settings")
         contentView.addSubview(logoImageView)
         
         //facebookButtonView.rac_loading <~ viewModel.facebookPending

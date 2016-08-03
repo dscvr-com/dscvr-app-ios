@@ -370,21 +370,22 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 self.activeDisplayButtons(Defaults[.SessionGyro])
             }
         }
-        let pullView = UIView()
-        pullView.backgroundColor = UIColor.clearColor()
-        pullView.anchorToEdge(.Bottom, padding: 0, width: 40, height: 25)
-        thisView.addSubview(pullView)
-        
 
         pullButton.icon = UIImage(named:"arrow_pull")!
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
-        pullView.addGestureRecognizer(panGestureRecognizer)
-        pullView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pullButtonTap(_:))))
         
         thisView.addGestureRecognizer(panGestureRecognizer)
         
         thisView.addSubview(pullButton)
         pullButton.anchorToEdge(.Bottom, padding: 5, width: 20, height: 15)
+        
+        let pullView = UIView()
+        pullView.backgroundColor = UIColor.clearColor()
+        thisView.addSubview(pullView)
+        pullView.anchorToEdge(.Bottom, padding: 0, width: 60, height: 35)
+        
+        pullView.addGestureRecognizer(panGestureRecognizer)
+        pullView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pullButtonTap(_:))))
         
         for family: String in UIFont.familyNames()
         {
@@ -427,14 +428,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func pullButtonTap(recognizer:UITapGestureRecognizer) {
-        UIView.animateWithDuration(1.0, delay: 1.2, options: .CurveEaseOut, animations: {
-            if var settingsViewCount:CGFloat = self.thisView.frame.origin.y {
-                settingsViewCount -= self.view.frame.origin.y
-                self.thisView.frame = CGRectMake(0, settingsViewCount , self.view.frame.width, self.view.frame.height)
-            }
-            }, completion: { finished in
+        print("tangina!")
+        
+        UIView.animateWithDuration(0.5, animations: {
+            self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
+            }, completion:{ finished in
                 self.isSettingsViewOpen.value = false
-                
         })
     }
     func gyroButtonTouched() {
