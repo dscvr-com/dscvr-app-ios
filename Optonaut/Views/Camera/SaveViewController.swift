@@ -320,9 +320,12 @@ class SaveViewController: UIViewController, RedNavbar {
         instagramSocialButton.anchorInCorner(.BottomLeft, xPad: socialPadX, yPad: 30, width: 120, height: 23)
         moreSocialButton.anchorInCorner(.BottomRight, xPad: socialPadX, yPad: 30, width: 120, height: 23)
         
-        cameraButton.align(.UnderCentered, relativeTo: shareBackgroundView, padding: 25, width: 80, height: 80)
+//        cameraButton.align(.UnderCentered, relativeTo: shareBackgroundView, padding: 25, width: 80, height: 80)
+//        
+//        postLater.anchorInCorner(.BottomRight, xPad: 20, yPad: view.frame.size.height - (cameraButton.frame.size.height + cameraButton.frame.origin.y - 10), width: postLater.icon.size.width, height: postLater.icon.size.height)
         
-        postLater.anchorInCorner(.BottomRight, xPad: 20, yPad: view.frame.size.height - (cameraButton.frame.size.height + cameraButton.frame.origin.y - 10), width: postLater.icon.size.width, height: postLater.icon.size.height)
+        cameraButton.anchorToEdge(.Bottom, padding: 10, width: 80, height: 80)
+        postLater.anchorInCorner(.BottomRight, xPad: 10, yPad: 10, width: postLater.icon.size.width, height: postLater.icon.size.height)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -343,7 +346,7 @@ class SaveViewController: UIViewController, RedNavbar {
         
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.fontDisplay(14, withType: .Regular),
-            NSForegroundColorAttributeName: UIColor(hex:0xffbc00),
+            NSForegroundColorAttributeName: UIColor(hex:0xFF5E00),
         ]
         
         cameraButton.progressLocked = true

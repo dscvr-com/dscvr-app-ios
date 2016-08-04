@@ -103,15 +103,27 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 self!.isNotifClicked = false
             }
             self!.collectionView?.reloadData()
-            //self!.collectionView!.reloadItemsAtIndexPaths([NSIndexPath(forItem: 1, inSection: 0)])
             self!.collectionViewModel.refreshNotification.notify(())
+            
+//            if self?.optographIDsNotUploaded.count != 0 {
+//                let indexPath = NSIndexPath(forRow: 1, inSection: 0)
+//                self?.collectionView?.reloadItemsAtIndexPaths([indexPath])
+//            }
         }
         
         profileViewModel.notifTabTouched.producer.startWithNext { [weak self] isNotifTabTap in
             if isNotifTabTap {
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
-                self!.readAllNotification().start()
+                self!.readAllNotification()
+                    .on(
+                        completed: { [weak self] in
+                            UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                            ActivitiesService.unreadCount.value = 0
+                        }
+                    )
+                    .start()
+                
                 self!.collectionView?.reloadData()
             }
         }
@@ -203,9 +215,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         }
     }
     func readAllNotification() -> SignalProducer<EmptyResponse, ApiError> {
-        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-        ActivitiesService.unreadCount.value = 0
-        print("activities/read_all")
         return ApiService<EmptyResponse>.post("activities/read_all")
     }
     
@@ -316,7 +325,13 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 print("click notification")
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
-                self!.readAllNotification().start()
+                self!.readAllNotification()
+                    .on(
+                        completed: { [weak self] in
+                        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                        ActivitiesService.unreadCount.value = 0
+                    }).start()
+                
                 self!.collectionView?.reloadData()
             }
         }
@@ -413,7 +428,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             cell.optographIDsNotUploaded = optographIDsNotUploaded
             cell.navigationController = navigationController as? NavigationController
             cell.refreshNotification = collectionViewModel.refreshNotification
-            //cell.reloadTable()
+            cell.reloadTable()
             
             return cell
             

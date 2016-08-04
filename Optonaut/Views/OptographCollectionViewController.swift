@@ -209,6 +209,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 case .StitchingFinished(_):
 //                    self?.progress.hidden = true
                     self?.tabView.cameraButton.progress = nil
+                    self?.viewModel.refresh()
                     print("StitchingFinished")
                 }
         }
@@ -344,6 +345,16 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     func tapRightButton() {
         tabController!.rightButtonAction()
+        readAllNotification()
+            .on(
+                completed: { [weak self] in
+                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                    ActivitiesService.unreadCount.value = 0
+                }).start()
+    }
+    
+    func readAllNotification() -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.post("activities/read_all")
     }
     
     func tapLeftBarButton() {

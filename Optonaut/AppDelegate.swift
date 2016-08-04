@@ -115,7 +115,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Re-register background task if necassary.
         StitchingService.onApplicationResuming()
-        UIApplication.sharedApplication().applicationIconBadgeNumber = 0;
+        //UIApplication.sharedApplication().applicationIconBadgeNumber = 0;
     }
     
     func applicationWillTerminate(application: UIApplication) {
@@ -159,8 +159,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject: AnyObject]) {
-        
-        print("userinfo",userInfo)
         ActivitiesService.unreadCount.value = 1
         
 //        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {

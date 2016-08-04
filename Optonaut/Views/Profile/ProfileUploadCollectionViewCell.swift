@@ -13,7 +13,7 @@ import Kingfisher
 
 class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSource, UITableViewDelegate{
     
-    var tableView: UITableView!
+    var tableView =  UITableView()
     var optographIDsNotUploaded: [UUID]?
     var refreshNotification = NotificationSignal<Void>()
     
@@ -23,11 +23,12 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
         
         super.init(frame: frame)
         
-        tableView = UITableView(frame: CGRect(x: 0, y: 0, width: Int(frame.size.width), height:Int(frame.size.height)));
-        tableView.dataSource = self;
-        tableView.delegate = self;
-        tableView.registerClass(UploadItemCell.self, forCellReuseIdentifier: "uploadImages");
+//        tableView = UITableView(frame: CGRect(x: 0, y: 0, width: Int(frame.size.width), height:Int(frame.size.height)));
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.registerClass(UploadItemCell.self, forCellReuseIdentifier: "uploadImages")
         contentView.addSubview(tableView)
+        tableView.fillSuperview()
 
     }
     
@@ -63,6 +64,7 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
     func reloadTable() {
+        tableView.fillSuperview()
         tableView.reloadData()
     
     }
