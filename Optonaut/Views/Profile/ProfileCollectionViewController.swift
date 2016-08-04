@@ -413,7 +413,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             cell.optographIDsNotUploaded = optographIDsNotUploaded
             cell.navigationController = navigationController as? NavigationController
             cell.refreshNotification = collectionViewModel.refreshNotification
-            cell.reloadTable()
+            //cell.reloadTable()
             
             return cell
             
@@ -421,7 +421,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("followers-cell", forIndexPath: indexPath) as! ProfileFollowersViewCell
             print("ProfileFollowersViewCell")
             cell.navigationController = navigationController as? NavigationController
-            cell.viewIsActive()
+            //cell.viewIsActive()
             
             
             return cell

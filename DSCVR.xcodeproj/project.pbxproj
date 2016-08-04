@@ -161,7 +161,6 @@
 		8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1B1B8F01DF00B4C8CB /* LoginViewModel.swift */; };
 		8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */; };
 		8FAB9F531B8F01DF00B4C8CB /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */; };
-		8FAB9F541B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F211B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift */; };
 		8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */; };
 		8FAB9F591B8F01DF00B4C8CB /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */; };
 		8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */; };
@@ -465,7 +464,6 @@
 		8FAB9F1B1B8F01DF00B4C8CB /* LoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
-		8FAB9F211B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileOptographCollectionViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileNavViewController.swift; sourceTree = "<group>"; };
 		8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraDebugService.swift; sourceTree = "<group>"; };
@@ -1054,7 +1052,6 @@
 				8FAB9F261B8F01DF00B4C8CB /* ProfileViewModel.swift */,
 				8FAB9F1F1B8F01DF00B4C8CB /* EditProfileViewController.swift */,
 				8FAB9F201B8F01DF00B4C8CB /* EditProfileViewModel.swift */,
-				8FAB9F211B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift */,
 				8FAB9F241B8F01DF00B4C8CB /* ProfileNavViewController.swift */,
 				5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */,
 				59DBBF951D1A43880072AA3E /* ProfileFollowersViewCell.swift */,
@@ -1800,7 +1797,6 @@
 				59ECBB981D38929000B57FB2 /* OnboardingViewModel.swift in Sources */,
 				8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */,
 				5917C8211CE441F200CD5A6D /* SharingViewController.swift in Sources */,
-				8FAB9F541B8F01DF00B4C8CB /* ProfileOptographCollectionViewModel.swift in Sources */,
 				8FC7E3771BD15B9D00E97CC3 /* Vector3d.mm in Sources */,
 				8F5335AA1BDBC09A0058961A /* ActivityResourceFollow.swift in Sources */,
 				8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */,
@@ -2077,9 +2073,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-
 				PROVISIONING_PROFILE = "cb2e4d66-b7d8-442c-993b-e5c75e0737bd";
-
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2114,7 +2108,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-
 				PROVISIONING_PROFILE = "cb2e4d66-b7d8-442c-993b-e5c75e0737bd";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};

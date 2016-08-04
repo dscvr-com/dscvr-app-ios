@@ -22,6 +22,8 @@ class UploadItemCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        let buttonWidth = (self.frame.width/3) + 20
+        
         self.uploadItem = UIImageView(frame: CGRect(x: 0, y: 0, width: 85.0, height: 71.0))
         self.uploadItem.center = CGPoint(x: self.uploadItem.frame.size.width/2.0 + 10.0, y: self.contentView.frame.height/2 + 15.0)
         self.uploadItem.backgroundColor = UIColor.lightGrayColor()
@@ -40,7 +42,7 @@ class UploadItemCell: UITableViewCell {
         
         self.uploadButton.autoAlignAxisToSuperviewAxis(.Horizontal)
         self.uploadButton.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
-        self.uploadButton.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
+        self.uploadButton.autoSetDimensionsToSize(CGSize(width: buttonWidth, height: 25))
         
         self.uploadLabel.backgroundColor = UIColor.blackColor()
         self.uploadLabel.textColor = UIColor.whiteColor()
@@ -53,7 +55,7 @@ class UploadItemCell: UITableViewCell {
         
         self.uploadLabel.autoAlignAxisToSuperviewAxis(.Horizontal)
         self.uploadLabel.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
-        self.uploadLabel.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
+        self.uploadLabel.autoSetDimensionsToSize(CGSize(width: buttonWidth, height: 25))
         self.uploadLabel.hidden = true
         
         self.uploadProgress = UIProgressView(progressViewStyle: UIProgressViewStyle.Default)
@@ -65,20 +67,20 @@ class UploadItemCell: UITableViewCell {
         
         self.uploadProgress!.autoAlignAxisToSuperviewAxis(.Horizontal)
         self.uploadProgress!.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
-        self.uploadProgress!.autoSetDimensionsToSize(CGSize(width: 75, height: 25))
+        self.uploadProgress!.autoSetDimensionsToSize(CGSize(width: buttonWidth, height: 25))
         self.uploadProgress!.hidden = true
         
-        PipelineService.stitchingStatus.producer
-            .observeOnMain()
-            .startWithNext { [weak self] status in
-                switch status {
-                case let .Stitching(progress):
-                    self?.uploadLabel.text = "Stitching.."
-                    self?.uploadProgress!.setProgress(progress, animated: true)
-                default:
-                    print("wala")
-                }
-        }
+//        PipelineService.stitchingStatus.producer
+//            .observeOnMain()
+//            .startWithNext { [weak self] status in
+//                switch status {
+//                case let .Stitching(progress):
+//                    self?.uploadLabel.text = "Stitching.."
+//                    self?.uploadProgress!.setProgress(progress, animated: true)
+//                default:
+//                    print("wala")
+//                }
+//        }
         
     }
     

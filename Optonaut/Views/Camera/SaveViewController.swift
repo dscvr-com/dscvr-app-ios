@@ -45,8 +45,6 @@ class SaveViewController: UIViewController, RedNavbar {
     private let moreSocialButton = SocialButton()
     private var placeholderImage: SKTexture?
     private var postLater = TButton()
-    private var postLaterText = UILabel()
-    private var uploadNowText = UILabel()
     
     private let readyNotification = NotificationSignal<Void>()
     //private let tabView = TabView()
@@ -268,17 +266,6 @@ class SaveViewController: UIViewController, RedNavbar {
         postLater.addTarget(self, action: #selector(postLaterAction), forControlEvents: .TouchUpInside)
         scrollView.addSubview(postLater)
         
-        
-        postLaterText.text = "POST LATER"
-        postLaterText.font = UIFont.fontDisplay(8, withType: .Regular)
-        postLaterText.textAlignment = .Center
-        scrollView.addSubview(postLaterText)
-        
-        uploadNowText.text = "UPLOAD NOW"
-        uploadNowText.font = UIFont.fontDisplay(8, withType: .Regular)
-        uploadNowText.textAlignment = .Center
-        scrollView.addSubview(uploadNowText)
-        
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
             self?.cameraButton.loading = !isReady
             self!.postLater.loading = !isReady
@@ -336,9 +323,6 @@ class SaveViewController: UIViewController, RedNavbar {
         cameraButton.align(.UnderCentered, relativeTo: shareBackgroundView, padding: 25, width: 80, height: 80)
         
         postLater.anchorInCorner(.BottomRight, xPad: 20, yPad: view.frame.size.height - (cameraButton.frame.size.height + cameraButton.frame.origin.y - 10), width: postLater.icon.size.width, height: postLater.icon.size.height)
-        
-        uploadNowText.align(.UnderCentered, relativeTo: cameraButton, padding: 5, width: 75, height: 8)
-        postLaterText.align(.UnderCentered, relativeTo: postLater, padding: 5, width: 75, height: 8)
     }
     
     override func viewWillAppear(animated: Bool) {

@@ -34,10 +34,20 @@ class ProfileOptographsViewModel {
                         let optograph = Optograph.fromSQL(row)
                         Models.optographs.touch(optograph)
                         Models.persons.touch(Person.fromSQL(row))
+                        Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
                         
-                        if row[OptographSchema.locationID] != nil {
-                            Models.locations.touch(Location.fromSQL(row))
-                        }
+//                        let coords = LocationService.lastLocation()!
+//                        var location = Location.newInstance()
+//                        location.latitude = coords.latitude
+//                        location.longitude = coords.longitude
+//                        
+//                        var locationBox: ModelBox<Location>?
+//                        locationBox = Models.locations.create(location)
+//                        locationBox!.insertOrUpdate()
+//                        
+//                        Models.optographs.touch(optograph).insertOrUpdate { box in
+//                            box.model.locationID = row[OptographSchema.locationID]
+//                        }
                         
                         return optograph
                     }
