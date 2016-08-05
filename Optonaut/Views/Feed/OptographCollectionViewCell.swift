@@ -310,7 +310,7 @@ private class OverlayViewModel {
         let optograph = optographBox.model
         
         SignalProducer<Bool, ApiError>(value: starredBefore)
-            .flatMap(.Latest) { followedBefore in
+            .flatMap(.Latest) { starredBefore in
                 starredBefore
                     ? ApiService<EmptyResponse>.delete("optographs/\(optograph.ID)/star")
                     : ApiService<EmptyResponse>.post("optographs/\(optograph.ID)/star", parameters: nil)

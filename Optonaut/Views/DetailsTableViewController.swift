@@ -308,6 +308,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         vrIcon = vrIcon?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         let vrButton = UIBarButtonItem(image:vrIcon , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(vrIconTouched))
         let exportBtn = UIBarButtonItem(image:UIImage(named:"export_icn") , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(exportImage))
+        exportBtn.tintColor = UIColor.whiteColor()
         
         navigationItem.rightBarButtonItems = [vrButton,exportBtn]
         
