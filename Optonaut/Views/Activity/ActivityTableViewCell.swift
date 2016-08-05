@@ -80,7 +80,7 @@ class ActivityTableViewCell: UITableViewCell {
         causingImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
         causingImageView.autoSetDimensionsToSize(CGSize(width: 50, height: 50))
         
-        eliteImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 20)
+        eliteImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 22)
         eliteImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: causingImageView, withOffset: -8)
         let size = UIImage(named: "elite_beta_icn")!.size
         eliteImageView.autoSetDimensionsToSize(CGSize(width: size.width, height: size.height))

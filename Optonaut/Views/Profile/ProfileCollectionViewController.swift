@@ -436,7 +436,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("followers-cell", forIndexPath: indexPath) as! ProfileFollowersViewCell
             print("ProfileFollowersViewCell")
             cell.navigationController = navigationController as? NavigationController
-            //cell.viewIsActive()
+            cell.viewIsActive()
             
             
             return cell

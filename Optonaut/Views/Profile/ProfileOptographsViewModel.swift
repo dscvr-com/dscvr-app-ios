@@ -83,6 +83,24 @@ class ProfileOptographsViewModel {
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
         
+        
+        
+//        refreshNotification.signal
+//            .takeWhile { _ in Reachability.connectedToNetwork() }
+//            .flatMap(.Latest) { _ in
+//                ApiService<StoryObject>.getForGate("story/248761f4-9a83-4cf3-b2a4-f986fee02ee4",queries: ["story_person_id" : "7753e6e9-23c6-46ec-9942-35a5ea744ece"])
+//                    .observeOnUserInitiated()
+//                    .on(next: { apiModel in
+//                        print(apiModel)
+//                    })
+//                    .ignoreError()
+//                    .collect()
+//                    .startOnUserInitiated()
+//            }
+//            .observeOnMain()
+//            .map { print($0) }
+//            .observeNext {}
+        
         loadMoreNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .map { _ in self.results.value.models.last }

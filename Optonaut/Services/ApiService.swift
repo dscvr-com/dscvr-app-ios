@@ -60,6 +60,9 @@ class ApiService<T: Mappable> {
     static func postForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return requestForGate(endpoint, method: .POST, queries: queries, parameters: parameters)
     }
+    static func getForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+        return requestForGate(endpoint, method: .GET, queries: queries, parameters: parameters)
+    }
     
     static func put(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .PUT, queries: queries, parameters: parameters)
@@ -102,6 +105,13 @@ class ApiService<T: Mappable> {
             }
         }
     }
+//    func downloadImage() {
+//        Alamofire.request(.GET, "https://robohash.org/123.png")
+//            .response { (request, response, data, error) in
+//            self.myImageView.image = UIImage(data: data, scale:1)
+//        }
+//    
+//    }
     
     static func upload(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
         return SignalProducer { sink, disposable in
@@ -288,6 +298,7 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                                    print(json)
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
                                     } else if let array = Mapper<T>().mapArray(json) {
