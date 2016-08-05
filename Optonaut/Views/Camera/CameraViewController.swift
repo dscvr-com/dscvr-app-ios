@@ -230,8 +230,10 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             //000102030405060708
            //bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms forward
           //bleService.sendCommand("fe070100001c20019000d3ffffffffffff"); //move 18 ms forward
-          //  bleService.sendCommand("fe070100001c20015e00a1ffffffffffff"); //move 18 ms forward
-            bleService.sendCommand("fe070100001c20014a008dffffffffffff");
+        //  bleService.sendCommand("fe070100001c20015e00a1ffffffffffff"); //move 18 ms forward
+            bleService.sendCommand("fe070100003be302bf00e5ffffffffffff"); // josepeh's motor
+                 //    bleService.sendCommand("fe070100001c20014a008dffffffffffff")
+        
             //bleService.sendCommand("fe070100001c20019000a1ffffffffffff"); //move right 95  75789 ms forward
             //  bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff"); // reverse
             //bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process
@@ -760,7 +762,11 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             
             //Motor Fixed 1ring
             let mediaTime = CACurrentMediaTime()
+            print("mediaTime \(mediaTime)")
             let timeDiff = mediaTime - lastElapsedTime
+            print("timeDiff \(timeDiff)")
+            
+            print("lastElapsedTime \(lastElapsedTime)")
             
             // static degree per 0.0001ms = 0.000475 for 75.789 s
             // static degree per 0.0001ms = 0.002 for 18.0 s
@@ -770,7 +776,8 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             //let degreeIncr = (timeDiff / 0.0001 ) * 0.00175
             //let degreeIncr = (timeDiff / 0.0001 ) * 0.000475
             //var degreeIncr = (timeDiff / 0.0001 ) * 0.000850013
-            var degreeIncr = (timeDiff / 0.0001) * 0.00165001
+            //var degreeIncr = (timeDiff / 0.0001) * 0.00165001 //<- our version
+            var degreeIncr = (timeDiff / 0.0001) * 0.001650846
             
             print("degreeIncr \(degreeIncr) M_PI \(-M_PI_2)")
             
@@ -778,13 +785,19 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
                 currentDegree -= Float(degreeIncr)
                 //currentDegree += Float(degreeIncr)
             }
+            print("currentDegree \(currentDegree)")
+
          
             lastElapsedTime = mediaTime
             
             var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
+            
+            print("rotation \(rotation)")
+            
            // var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
             
             var currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
+            print("currentRotation \(currentRotation)")
            // currentRotation = GLKMatrix4Multiply(currentRotation, rotation)
             
             //var currentRad = currentDegree  * Float(M_PI / 180.0)
@@ -794,6 +807,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             print("currentDegree \(currentDegree) CACurrentMediaTime \(mediaTime) ")
             
             currentPhi = GLKMathDegreesToRadians(Float(currentDegree))
+            print("currentPhi \(currentPhi)")
             
             let cmRotation = self.rotationSource.getRotationMatrixMotor(currentPhi, thetaValue: currentTheta)
             print("Matrix: [\(cmRotation.m00), \(cmRotation.m01), \(cmRotation.m02), \(cmRotation.m03)")
@@ -806,7 +820,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
                 viewModel.isRecording.value = true
                 
             }
-            
+            print("currentPhi <  \(Float((-2.0 * M_PI) - 0.01))")
             if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
                 viewModel.isRecording.value = false //<-
                 
@@ -824,10 +838,10 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
                 } else if(currentTheta > 0) {
                     currentTheta = Float(0)
                 }
-                
                 currentDegree = 0
-
             }
+            print("currentTheta \(currentTheta)")
+            
             
             recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             //recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)

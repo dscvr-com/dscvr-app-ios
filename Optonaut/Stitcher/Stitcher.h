@@ -7,5 +7,6 @@
 - (void)clear;
 - (bool)hasUnstitchedRecordings;
 - (void)setProgressCallback:(bool(^)(float))progressHandler;
+- (struct ImageBuffer)getLeftEquirectangularResult;
 
 @end

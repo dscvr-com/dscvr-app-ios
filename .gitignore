@@ -51,3 +51,5 @@ fastlane/screenshots
 *.dSYM.zip
 *.mobileprovision
 Preview.html
+
+DSCVR.xcodeproj
