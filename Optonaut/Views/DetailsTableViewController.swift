@@ -607,6 +607,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         if let url = NSURL(string: imageToSaveUrl) {
             let request = NSURLRequest(URL: url)
             
+            SwiftSpinner.show("Exporting 360 image..")
+            
             NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler:{(response: NSURLResponse?, data: NSData?, error: NSError?) -> Void in
                 let asset = ALAssetsLibrary()
                 
@@ -629,6 +631,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 asset.writeImageDataToSavedPhotosAlbum(destData, metadata: meta as [NSObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
                     print("meta path >>> \(path)")
                     print("meta error >>> \(error)")
+                    
+                    SwiftSpinner.hide()
+                    
                     if error == nil {
                         self.returnSuccesAlert("Export Completed", stringMessage:"Saved into your Photo Library.")
                     } else {
