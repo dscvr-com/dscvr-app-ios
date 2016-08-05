@@ -366,6 +366,26 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     
+    func addNodeFromServer(translation: SCNVector3, rotation: SCNVector3){
+        
+        print("addNodeFromServer(translation: SCNVector3, rotation: SCNVector3)")
+        
+        let planeGeo = SCNPlane(width: 0.1, height: 0.1)
+        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        
+        let circleGeo = SCNSphere(radius: 0.01)
+        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        let markNode = SCNNode(geometry: planeGeo)
+        
+        markNode.position = translation
+        markNode.eulerAngles = rotation
+        
+        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
+        
+        scene.rootNode.addChildNode(markNode)
+        markers.append(markNode)
+    }
+    
     
     
     
@@ -570,12 +590,12 @@ class CubeRenderDelegate: RenderDelegate {
             let markername = marknode.name
 //            print ("marker name \(markername) ")
                
-                if (markername! == "Text Item2") {
-//                    print("resetToBlack")
-                  
-                  
-                    
-                }
+//                if (markername! == "Text Item2") {
+////                    print("resetToBlack")
+//                  
+//                  
+//                    
+//                }
           delegate!.didEnterFrustrum(markername!, inFrustrum: true)
         }
             else{

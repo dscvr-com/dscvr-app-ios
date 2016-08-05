@@ -39,6 +39,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
     
+    var mapChild: StorytellingChildren?
+    var storyTellingData: mapChildren?
+    
     var direction: Direction {
         set(direction) {
             combinedMotionManager.setDirection(direction)
@@ -112,6 +115,33 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         logRetain()
     }
     
+    func receiveStory (){
+        ApiService<StoryObject>.getForGate("story/62f1c6cb-cb90-4ade-810d-c6c1bbeee85a", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
+            story in
+            
+            self.storyTellingData = story.children![0];
+            self.mapChild = self.storyTellingData!.children![0];
+            
+            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
+            self.setCubeImageCache(cubeImageCache)
+            
+            let nodeTranslation = SCNVector3Make(Float(self.mapChild!.story_object_position[0])!, Float(self.mapChild!.story_object_position[1])!, Float(self.mapChild!.story_object_position[2])!)
+            
+            let nodeRotation = SCNVector3Make(Float(self.mapChild!.story_object_rotation[0])!, Float(self.mapChild!.story_object_rotation[1])!, Float(self.mapChild!.story_object_rotation[2])!)
+            
+            print("node translation: \(nodeTranslation.x)");
+            print("node rotation: \(nodeRotation.x)");
+            
+            self.renderDelegate.addNodeFromServer(nodeTranslation, rotation: nodeRotation)
+            
+            //            for data in story.children!{
+            //                for child in data.children!{
+            //                    print("child id: \(child.story_object_story_id)");
+            //                }
+            //            }
+        }).start();
+    }
+    
     func sendOptographData(){
         
         /*
@@ -138,7 +168,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
                      "story_object_media_face": "pin",
                      "story_object_media_description": "description",
-                     "story_object_media_additional_data": "sample data",
+                     "story_object_media_additional_data": nodeItem.optographID,
                      "story_object_position": translationArray,
                      "story_object_rotation": rotationArray]
         
@@ -146,8 +176,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                           "story_person_id": SessionService.personID,
                           "children":[child]]
         
-        ApiService<StorytellingResponse>.post("/story", parameters: parameters as? [String : AnyObject]).on(next: { data in
-            
+        ApiService<StorytellingResponse>.post("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
+            print("data story id: \(data.data)");
+            print("user: \(SessionService.personID)")
             
             
         }).start();
@@ -185,12 +216,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     print("markerName: \(self.markerNameLabel.text!)")
                     
                     
-                    if (self.markerNameLabel.text! == "Text Item2") {
-                        print("resetToBlack")
-                      
-                        let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: "8e8fcab1-761e-4ef8-a969-0c1346b39bf3", side: .Left)
-                        self.setCubeImageCache(cubeImageCache  )
-                    }
+//                    if (self.markerNameLabel.text! == "Text Item2") {
+//                        print("resetToBlack")
+//                      
+//                        let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: "8e8fcab1-761e-4ef8-a969-0c1346b39bf3", side: .Left)
+//                        self.setCubeImageCache(cubeImageCache)
+//                    }
+                    
+                    let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: (self.mapChild?.story_object_media_additional_data)!, side: .Left)
+                    self.setCubeImageCache(cubeImageCache)
 
                 }
                 else{
@@ -237,6 +271,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         print("optoID: \(optographID)")
         
+//        ApiService<StoryObject>.getForGate("story/248761f4-9a83-4cf3-b2a4-f986fee02ee4", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
+//            story in
+//            print("story object id: \(story.data)");
+//        }).start();
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
@@ -255,6 +293,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //viewModel.viewIsActive.value = true
         
         
+        
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
             rotationSignal
                 .skipRepeats()
@@ -265,115 +304,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
         }
         
-        let targetOverlay = UIView(frame: CGRect(x: 0, y: self.view.frame.size.height - 225, width: self.view.frame.size.width, height: 125))
-        targetOverlay.backgroundColor = UIColor.blackColor().alpha(0.6)
         
-        let pinImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        pinImage.backgroundColor = UIColor(hex:0xffd24e)
-        
-        let targetLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        targetLabel.text = "PLACE TARGET"
-        targetLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
-        targetLabel.textColor = UIColor.whiteColor()
-        targetLabel.sizeToFit()
-        targetLabel.center = CGPoint(x: self.view.center.x + 20, y: targetLabel.frame.size.height)
-        
-        pinImage.center = CGPoint(x: targetLabel.frame.origin.x - 10, y: targetLabel.center.y)
-        
-        let addMedia = UIButton(frame: CGRect(x: pinImage.frame.origin.x - 30.0, y: pinImage.frame.origin.y + pinImage.frame.size.height + 20, width: 100.0, height: 35.0))
-        addMedia.backgroundColor = UIColor(hex:0xffd24e)
-        addMedia.titleLabel?.font = UIFont(name: "Avenir-Heavy", size: 13.0)
-        addMedia.setTitle("ADD MEDIA", forState: UIControlState.Normal)
-        addMedia.setTitleColor(UIColor.blackColor().alpha(0.6), forState: UIControlState.Normal)
-        addMedia.layer.cornerRadius = 16.0
-        addMedia.addTarget(self, action: #selector(toggleAttachmentButtons), forControlEvents: .TouchUpInside)
-        
-        let doneButton = UIButton(frame: CGRect(x: addMedia.frame.origin.x + addMedia.frame.size.width + 40.0, y: addMedia.frame.origin.y, width: 100.0, height: 35.0))
-        doneButton.backgroundColor = UIColor(hex:0xffd24e)
-        doneButton.titleLabel?.font = UIFont(name: "Avenir-Heavy", size: 13.0)
-        doneButton.setTitle("DONE", forState: UIControlState.Normal)
-        doneButton.setTitleColor(UIColor.blackColor().alpha(0.6), forState: UIControlState.Normal)
-        doneButton.layer.cornerRadius = 17.0
-        
-        textButtonContainer.frame = CGRect(x: addMedia.frame.origin.x - 20.0, y: targetOverlay.frame.origin.y + targetOverlay.frame.size.height + 20.0, width: 80.0, height: 60.0)
-        textButtonContainer.backgroundColor = UIColor.blackColor().alpha(0.6)
-        textButtonContainer.layer.cornerRadius = 10.0
-        
-        textButton.frame = CGRect(x: 0, y: 0, width: 80.0, height: 60.0)
-        textButton.backgroundColor = UIColor.clearColor()
-        textButton.layer.cornerRadius = 10.0
-        textButton.addTarget(self, action: #selector(textButtonDown), forControlEvents: .TouchUpInside)
-        
-        let textButtonLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        textButtonLabel.text = "TEXT"
-        textButtonLabel.font = UIFont(name:"Avenir-Book", size: 12.0)
-        textButtonLabel.textColor = UIColor.whiteColor()
-        textButtonLabel.sizeToFit()
-        textButtonLabel.center = CGPoint(x: textButtonContainer.frame.size.width/2, y: textButtonContainer.frame.size.height - textButtonLabel.frame.size.height + 5)
-        
-        textButtonContainer.addSubview(textButtonLabel)
-        textButtonContainer.addSubview(textButton)
-        textButtonContainer.hidden = true
-        
-        imageButtonContainer.frame = CGRect(x: textButtonContainer.frame.origin.x + textButtonContainer.frame.size.width + 20.0, y: textButtonContainer.frame.origin.y, width: 80.0, height: 60.0)
-        imageButtonContainer.backgroundColor = UIColor.blackColor().alpha(0.6)
-        imageButtonContainer.layer.cornerRadius = 10.0
-        
-        imageButton.frame = CGRect(x: 0, y: 0, width: 80.0, height: 60.0)
-        imageButton.backgroundColor = UIColor.clearColor()
-        imageButton.layer.cornerRadius = 10.0
-        imageButton.addTarget(self, action: #selector(imageButtonDown), forControlEvents: .TouchUpInside)
-        
-        let imageButtonLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        imageButtonLabel.text = "IMAGE"
-        imageButtonLabel.font = UIFont(name:"Avenir-Book", size: 12.0)
-        imageButtonLabel.textColor = UIColor.whiteColor()
-        imageButtonLabel.sizeToFit()
-        imageButtonLabel.center = CGPoint(x: imageButtonContainer.frame.size.width/2, y: imageButtonContainer.frame.size.height - imageButtonLabel.frame.size.height + 5)
-        
-        imageButtonContainer.addSubview(imageButtonLabel)
-        imageButtonContainer.addSubview(imageButton)
-        imageButtonContainer.hidden = true
-        
-        audioButtonContainer.frame = CGRect(x: imageButtonContainer.frame.origin.x + imageButtonContainer.frame.size.width + 20.0, y: imageButtonContainer.frame.origin.y, width: 80.0, height: 60.0)
-        audioButtonContainer.backgroundColor = UIColor.blackColor().alpha(0.6)
-        audioButtonContainer.layer.cornerRadius = 10.0
-        
-        audioButton.frame = CGRect(x: 0, y: 0, width: 80.0, height: 60.0)
-        audioButton.backgroundColor = UIColor.clearColor()
-        audioButton.layer.cornerRadius = 10.0
-        audioButton.addTarget(self, action: #selector(audioButtonDown), forControlEvents: .TouchUpInside)
-        
-        let audioButtonLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        audioButtonLabel.text = "AUDIO"
-        audioButtonLabel.font = UIFont(name:"Avenir-Book", size: 12.0)
-        audioButtonLabel.textColor = UIColor.whiteColor()
-        audioButtonLabel.sizeToFit()
-        audioButtonLabel.center = CGPoint(x: audioButtonContainer.frame.size.width/2, y: audioButtonContainer.frame.size.height - audioButtonLabel.frame.size.height + 5)
-        
-        audioButtonContainer.addSubview(audioButtonLabel)
-        audioButtonContainer.addSubview(audioButton)
-        audioButtonContainer.hidden = true
-        
-        self.markerNameLabel.frame = audioButtonLabel.frame
-        self.markerNameLabel.font = UIFont(name:"Avenir-Book", size: 12.0)
-        self.markerNameLabel.backgroundColor = UIColor.whiteColor()
-        self.markerNameLabel.textColor = UIColor.blackColor()
-        self.markerNameLabel.text = "text"
-        self.markerNameLabel.hidden = true
-        
-        targetOverlay.addSubview(addMedia)
-        targetOverlay.addSubview(doneButton)
-        targetOverlay.addSubview(pinImage)
-        targetOverlay.addSubview(targetLabel)
-        
-        //add toggling buttons
-        
-        self.view.addSubview(targetOverlay)
-        self.view.addSubview(textButtonContainer)
-        self.view.addSubview(imageButtonContainer)
-        self.view.addSubview(audioButtonContainer)
-        self.view.addSubview(self.markerNameLabel)
         
         //        viewModel.optographReloaded.producer.startWithNext { [weak self] in
         //            if self?.viewModel.optograph.deletedAt != nil {
@@ -547,7 +478,122 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             shareButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(shareImageSize?.width)!, height: (shareImageSize?.height)!)
         }
         
+        self.prepareStoryTellingHUD();
+        
     }
+    
+    func prepareStoryTellingHUD(){
+        let targetOverlay = UIView(frame: CGRect(x: 0, y: self.view.frame.size.height - 225, width: self.view.frame.size.width, height: 125))
+        targetOverlay.backgroundColor = UIColor.blackColor().alpha(0.6)
+        
+        let pinImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        pinImage.backgroundColor = UIColor(hex:0xffd24e)
+        
+        let targetLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        targetLabel.text = "PLACE TARGET"
+        targetLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
+        targetLabel.textColor = UIColor.whiteColor()
+        targetLabel.sizeToFit()
+        targetLabel.center = CGPoint(x: self.view.center.x + 20, y: targetLabel.frame.size.height)
+        
+        pinImage.center = CGPoint(x: targetLabel.frame.origin.x - 10, y: targetLabel.center.y)
+        
+        let addMedia = UIButton(frame: CGRect(x: pinImage.frame.origin.x - 30.0, y: pinImage.frame.origin.y + pinImage.frame.size.height + 20, width: 100.0, height: 35.0))
+        addMedia.backgroundColor = UIColor(hex:0xffd24e)
+        addMedia.titleLabel?.font = UIFont(name: "Avenir-Heavy", size: 13.0)
+        addMedia.setTitle("ADD MEDIA", forState: UIControlState.Normal)
+        addMedia.setTitleColor(UIColor.blackColor().alpha(0.6), forState: UIControlState.Normal)
+        addMedia.layer.cornerRadius = 16.0
+        addMedia.addTarget(self, action: #selector(toggleAttachmentButtons), forControlEvents: .TouchUpInside)
+        
+        let doneButton = UIButton(frame: CGRect(x: addMedia.frame.origin.x + addMedia.frame.size.width + 40.0, y: addMedia.frame.origin.y, width: 100.0, height: 35.0))
+        doneButton.backgroundColor = UIColor(hex:0xffd24e)
+        doneButton.titleLabel?.font = UIFont(name: "Avenir-Heavy", size: 13.0)
+        doneButton.setTitle("DONE", forState: UIControlState.Normal)
+        doneButton.setTitleColor(UIColor.blackColor().alpha(0.6), forState: UIControlState.Normal)
+        doneButton.layer.cornerRadius = 17.0
+        
+        textButtonContainer.frame = CGRect(x: addMedia.frame.origin.x - 20.0, y: targetOverlay.frame.origin.y + targetOverlay.frame.size.height + 20.0, width: 80.0, height: 60.0)
+        textButtonContainer.backgroundColor = UIColor.blackColor().alpha(0.6)
+        textButtonContainer.layer.cornerRadius = 10.0
+        
+        textButton.frame = CGRect(x: 0, y: 0, width: 80.0, height: 60.0)
+        textButton.backgroundColor = UIColor.clearColor()
+        textButton.layer.cornerRadius = 10.0
+        textButton.addTarget(self, action: #selector(textButtonDown), forControlEvents: .TouchUpInside)
+        
+        let textButtonLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        textButtonLabel.text = "TEXT"
+        textButtonLabel.font = UIFont(name:"Avenir-Book", size: 12.0)
+        textButtonLabel.textColor = UIColor.whiteColor()
+        textButtonLabel.sizeToFit()
+        textButtonLabel.center = CGPoint(x: textButtonContainer.frame.size.width/2, y: textButtonContainer.frame.size.height - textButtonLabel.frame.size.height + 5)
+        
+        textButtonContainer.addSubview(textButtonLabel)
+        textButtonContainer.addSubview(textButton)
+        textButtonContainer.hidden = true
+        
+        imageButtonContainer.frame = CGRect(x: textButtonContainer.frame.origin.x + textButtonContainer.frame.size.width + 20.0, y: textButtonContainer.frame.origin.y, width: 80.0, height: 60.0)
+        imageButtonContainer.backgroundColor = UIColor.blackColor().alpha(0.6)
+        imageButtonContainer.layer.cornerRadius = 10.0
+        
+        imageButton.frame = CGRect(x: 0, y: 0, width: 80.0, height: 60.0)
+        imageButton.backgroundColor = UIColor.clearColor()
+        imageButton.layer.cornerRadius = 10.0
+        imageButton.addTarget(self, action: #selector(imageButtonDown), forControlEvents: .TouchUpInside)
+        
+        let imageButtonLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        imageButtonLabel.text = "IMAGE"
+        imageButtonLabel.font = UIFont(name:"Avenir-Book", size: 12.0)
+        imageButtonLabel.textColor = UIColor.whiteColor()
+        imageButtonLabel.sizeToFit()
+        imageButtonLabel.center = CGPoint(x: imageButtonContainer.frame.size.width/2, y: imageButtonContainer.frame.size.height - imageButtonLabel.frame.size.height + 5)
+        
+        imageButtonContainer.addSubview(imageButtonLabel)
+        imageButtonContainer.addSubview(imageButton)
+        imageButtonContainer.hidden = true
+        
+        audioButtonContainer.frame = CGRect(x: imageButtonContainer.frame.origin.x + imageButtonContainer.frame.size.width + 20.0, y: imageButtonContainer.frame.origin.y, width: 80.0, height: 60.0)
+        audioButtonContainer.backgroundColor = UIColor.blackColor().alpha(0.6)
+        audioButtonContainer.layer.cornerRadius = 10.0
+        
+        audioButton.frame = CGRect(x: 0, y: 0, width: 80.0, height: 60.0)
+        audioButton.backgroundColor = UIColor.clearColor()
+        audioButton.layer.cornerRadius = 10.0
+        audioButton.addTarget(self, action: #selector(audioButtonDown), forControlEvents: .TouchUpInside)
+        
+        let audioButtonLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        audioButtonLabel.text = "AUDIO"
+        audioButtonLabel.font = UIFont(name:"Avenir-Book", size: 12.0)
+        audioButtonLabel.textColor = UIColor.whiteColor()
+        audioButtonLabel.sizeToFit()
+        audioButtonLabel.center = CGPoint(x: audioButtonContainer.frame.size.width/2, y: audioButtonContainer.frame.size.height - audioButtonLabel.frame.size.height + 5)
+        
+        audioButtonContainer.addSubview(audioButtonLabel)
+        audioButtonContainer.addSubview(audioButton)
+        audioButtonContainer.hidden = true
+        
+        self.markerNameLabel.frame = audioButtonLabel.frame
+        self.markerNameLabel.font = UIFont(name:"Avenir-Book", size: 12.0)
+        self.markerNameLabel.backgroundColor = UIColor.whiteColor()
+        self.markerNameLabel.textColor = UIColor.blackColor()
+        self.markerNameLabel.text = "text"
+        self.markerNameLabel.hidden = true
+        
+        targetOverlay.addSubview(addMedia)
+        targetOverlay.addSubview(doneButton)
+        targetOverlay.addSubview(pinImage)
+        targetOverlay.addSubview(targetLabel)
+        
+        //add toggling buttons
+        
+        self.view.addSubview(targetOverlay)
+        self.view.addSubview(textButtonContainer)
+        self.view.addSubview(imageButtonContainer)
+        self.view.addSubview(audioButtonContainer)
+        self.view.addSubview(self.markerNameLabel)
+    }
+    
     func share() {
         let share = DetailsShareViewController()
         share.optographId = optographID
@@ -578,7 +624,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     //create a function with button tag switch for color changes
     func textButtonDown(){
         renderDelegate.addMarker(UIColor.blueColor(), type:"Text Item")
-        nodeItem.objectType = "Text"
+        nodeItem.objectType = "NAV"
         
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optocollection.delegate = self;
@@ -590,16 +636,18 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func imageButtonDown(){
-        renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-        nodeItem.objectType = "Image"
+//        renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
+//        nodeItem.objectType = "Image"
+//        
+//        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+//        optocollection.delegate = self;
+//        
+//        let naviCon = UINavigationController()
+//        naviCon.viewControllers = [optocollection]
+//        
+//        self.presentViewController(naviCon, animated: true, completion: nil)
         
-        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
-        optocollection.delegate = self;
-        
-        let naviCon = UINavigationController()
-        naviCon.viewControllers = [optocollection]
-        
-        self.presentViewController(naviCon, animated: true, completion: nil)
+        self.receiveStory()
     }
     
     func audioButtonDown(){

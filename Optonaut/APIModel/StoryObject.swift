@@ -10,33 +10,22 @@ import Foundation
 import ObjectMapper
 
 struct StoryObject: Mappable {
-    var story_id: String = ""
-    var story_optograph_id:  String = ""
-    var story_person_id: String = ""
-    var story_created_at: String = ""
-    var story_updated_at: String = ""
-    var story_deleted_at: String = ""
-    var children: [String] = []
-    var child: [String] = []
-    var story_object_created_at: String = ""
-    var story_object_deleted_at: String = ""
-    var story_object_media_filename: String = ""
-    var story_object_media_fileurl: String = ""
+    var status: String = ""
+    var message:  String = ""
+    var children:[mapChildren]?
     
     init?(_ map: Map) {}
     
+    subscript(index: Int) -> mapChildren? {
+        guard let coordinate = children?[0] else {
+            return nil
+        }
+        return coordinate
+    }
+    
     mutating func mapping(map: Map) {
-        story_id              <- map["story_object_id"]
-        story_optograph_id                 <- map["story_object_story_id"]
-        story_person_id  <- map["story_object_media_type"]
-        story_created_at  <- map["story_object_media_face"]
-        story_updated_at  <- map["story_object_media_description"]
-        story_deleted_at  <- map["story_object_media_additional_data"]
-        children  <- map["story_object_position"]
-        story_object_rotation  <- map["story_object_rotation"]
-        story_object_created_at  <- map["story_object_created_at"]
-        story_object_deleted_at  <- map["story_object_deleted_at"]
-        story_object_media_filename  <- map["story_object_media_filename"]
-        story_object_media_fileurl  <- map["story_object_media_fileurl"]
+        status              <- map["status"]
+        message                 <- map["message"]
+        children <- map["data"]
     }
 }
