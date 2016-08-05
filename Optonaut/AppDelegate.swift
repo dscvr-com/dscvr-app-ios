@@ -58,6 +58,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Defaults[.SessionUseMultiRing] = true
             }
             
+            Defaults[.SessionUseMultiRing] = true
+
+            
             Mixpanel.sharedInstance().track("Launch.Notification")
             
             Defaults[.SessionPhoneModel] = UIDevice.currentDevice().modelName

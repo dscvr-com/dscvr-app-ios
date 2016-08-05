@@ -34,6 +34,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     private var pullButton = SettingsButton()
     private var gyroButton = SettingsButton()
     private var littlePlanet = SettingsButton()
+    private var interruptButton = SettingsButton()
+    private var interruptLabel = UILabel()
     
     var delegate: TabControllerDelegate?
     
@@ -329,11 +331,11 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         let labelCapture = UILabel()
         labelCapture.textAlignment = NSTextAlignment.Center
-        labelCapture.text = "CAPTURE TYPE"
+        labelCapture.text = "MOTOR CONTROLS"
         labelCapture.textColor = UIColor.blackColor()
         labelCapture.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(labelCapture)
-        labelCapture.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 4, width: calcTextWidth("CAPTURE TYPE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
+        labelCapture.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 4, width: calcTextWidth("MOTOR CONTROLS", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
         
         let dividerThree = UILabel()
         dividerThree.backgroundColor = UIColor(hex:0xa5a5a5)
@@ -345,7 +347,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         manualButton.align(.ToTheLeftMatchingTop, relativeTo: dividerThree, padding: 12, width: manualButton.icon.size.width, height: manualButton.icon.size.height)
         
         labelManual.textAlignment = NSTextAlignment.Center
-        labelManual.text = "MANUAL"
+        labelManual.text = "CLOSE"
         labelManual.textColor = UIColor(hex:0xffbc00)
         labelManual.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(labelManual)
@@ -356,11 +358,31 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         thisView.addSubview(motorButton)
         
         labelMotor.textAlignment = NSTextAlignment.Center
-        labelMotor.text = "MOTOR"
+        labelMotor.text = "MOTOR ON"
         labelMotor.textColor = UIColor(hex:0xffbc00)
         labelMotor.font = .fontDisplay(18, withType: .Semibold)
-        labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 24, width: calcTextWidth("MOTOR", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
+        labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 24, width: calcTextWidth("MOTOR ON", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         thisView.addSubview(labelMotor)
+        
+        motorButton.addTarget(self, action: #selector(TabViewController.motorButtonTouched), forControlEvents:.TouchUpInside)
+        motorButton.align(.UnderCentered, relativeTo: manualButton, padding: 7, width: motorButton.icon.size.width, height: motorButton.icon.size.height)
+        thisView.addSubview(motorButton)
+        
+        thisView.addSubview(interruptButton)
+        thisView.addSubview(interruptLabel)
+        
+        interruptButton.icon = UIImage(named: "off_motor_icn")!
+        
+        interruptButton.addTarget(self, action: #selector(TabViewController.interrupt), forControlEvents:.TouchUpInside)
+        interruptButton.align(.UnderCentered, relativeTo: motorButton, padding: 7, width: motorButton.icon.size.width, height: interruptButton.icon.size.height)
+        thisView.addSubview(interruptButton)
+        
+        interruptLabel.textAlignment = NSTextAlignment.Center
+        interruptLabel.text = "INTERRUPT"
+        interruptLabel.textColor = UIColor(hex:0xffbc00)
+        interruptLabel.font = .fontDisplay(18, withType: .Semibold)
+        interruptLabel.align(.ToTheRightCentered, relativeTo: interruptButton, padding: 24, width: calcTextWidth("INTERRUPT", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
+        thisView.addSubview(interruptLabel)
         
         isSettingsViewOpen.producer.startWithNext{ val in
             if val {
@@ -401,12 +423,25 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         motorButton.hidden = true
         dividerThree.hidden = true
         
+        interruptLabel.hidden = true
+        interruptButton.hidden = true
+        
+    
+        
         let versionLabel = UILabel()
-        versionLabel.text = "v0.87"
+        versionLabel.text = "v0.8.motor"
         versionLabel.textAlignment = .Center
         versionLabel.font = .fontDisplay(10, withType: .Semibold)
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
         thisView.addSubview(versionLabel)
+        
+    }
+    func interrupt() {
+        
+       /* if let bleService = btDiscoverySharedInstance.bleService {
+            bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process
+        }*/
+    
     }
     func inGyroMode() {
         if Defaults[.SessionGyro] {
@@ -450,11 +485,22 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     func motorButtonTouched() {
         Defaults[.SessionMotor] = true
         self.activeModeButtons(true)
+        
+        
+        /*if let bleService = btDiscoverySharedInstance.bleService {
+            bleService.sendCommand("fe0702ffffee6b012c008bffffffffffff"); //open motor
+        } */
     }
     
     func manualButtonTouched() {
         Defaults[.SessionMotor] = false
         self.activeModeButtons(false)
+        
+        /*if let bleService = btDiscoverySharedInstance.bleService {
+            bleService.sendCommand("fe070200001388012c00cfffffffffffff"); //close motor
+        }*/
+        
+        
     }
     
     func oneRingButtonTouched() {

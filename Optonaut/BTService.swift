@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreBluetooth
+import SwiftyUserDefaults
 
 /* Services & Characteristics UUIDs */
 //let BLEServiceUUID = CBUUID(string: "0000fff0-0000-1000-8000-00805f9b34fb")
@@ -16,6 +17,12 @@ let BLEServiceUUID = CBUUID(string: "00001000-0000-1000-8000-00805f9b34fb")
 let PositionCharUUID = CBUUID(string: "00001001-0000-1000-8000-00805f9b34fb")
 let ResponseCharUUID = CBUUID(string: "00001002-0000-1000-8000-00805f9b34fb")
 let BLEServiceChangedStatusNotification = "kBLEServiceChangedStatusNotification"
+
+
+
+
+
+//BLE#0x44A6E503892F
 
 
 protocol ResponseDataRequestDelegate {
@@ -28,6 +35,8 @@ class BTService: NSObject, CBPeripheralDelegate {
     var peripheral: CBPeripheral?
     var positionCharacteristic: CBCharacteristic?
     var ringFlag = 0 //  0 =  center; 1 =top ; 2 bot
+    var motorFlag = 0
+    
     
     init(initWithPeripheral peripheral: CBPeripheral) {
         super.init()
@@ -90,6 +99,8 @@ class BTService: NSObject, CBPeripheralDelegate {
         
         let responseValue = hexString(responseData!)
         
+    if Defaults[.SessionUseMultiRing]{
+        
         if responseValue != "" {
         
         let index = responseValue.startIndex.advancedBy(14)
@@ -118,45 +129,66 @@ class BTService: NSObject, CBPeripheralDelegate {
         
             // strip data - get the ydirection data
             if ringFlag == 0 {
-                if yDirection == "000005db" {
+                if motorFlag == 0 {
+                               //"ffffee99" <- our motor
                     // Y is on center
-                    sendCommand("fe0702fffff830012c005affffffffffff") //move to top command
+                  //sendCommand("fe07020000081f012c005bffffffffffff") //move to top command
+                    sendCommand("fe0702000007bc012c00f7ffffffffffff") //move to top command v2
+                    //sendCommand("fe0702fffff9f7012c0022ffffffffffff") // top_ring
                     print("blecommanddone")
                     bData.dataHasCome.value = false
+                    motorFlag = 1
                     
                     
-                }else if yDirection == "fffffe0b" {
-                    
+                }else if motorFlag == 1 {
+                                    // "ffffe890"
                     print("got2topring")
                     bData.dataHasCome.value = true
                     // not sure if this is the return data for the top
-                    sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
+                   sendCommand("fe070100003be302bf00e5ffffffffffff") // josepeh's motor //rotate the motor x
+                 //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
+                    
+                    motorFlag = 2
                     ringFlag = 1
                 }
          
             } else if ringFlag == 1 {
-                if yDirection == "fffffe0b" {
+                if motorFlag == 2 {
+                              // "ffffe890"
                     // Y is on top
                     bData.dataHasCome.value = false
-                    sendCommand("fe070200000ea6012c00e8ffffffffffff") //move to bot command
-                }else if yDirection == "00000cb1" {
+                  //sendCommand("fe0702ffffefc2012c00e3ffffffffffff") //move to bot command joseph's motor
+                    sendCommand("fe0702fffff025012c0047ffffffffffff") //move to bot command joseph's motor v2
+                    
+                     //sendCommand("fe070200000c12012c0052ffffffffffff") // bot_ring
+                    motorFlag = 3
+                    
+                }else if motorFlag == 3 {
+                                    // "fffff4a2"
+                    
                     // not sure if this is the return data for the bot
                     bData.dataHasCome.value = true
-                    sendCommand("fe070100001c20014a008dffffffffffff") //rotate the motor x
+                    sendCommand("fe070100003be302bf00e5ffffffffffff"); // josepeh's motor //rotate the motor x
+                    //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
                     ringFlag = 2
+                    motorFlag = 4
                 }
 
          
             } else if ringFlag == 2 {
          
-                if yDirection == "00000cb1" {
+                if motorFlag == 4 {
+                             //  "fffff4a2"
                     bData.dataHasCome.value = false
+                    motorFlag = 5
                     // Y is on bot
-                    sendCommand("fe0702fffff92a012c0055ffffffffffff") //move to center command
-                }else if yDirection == "000004e1" {
+                   sendCommand("fe07020000081f012c005bffffffffffff") //move to top command                     sendCommand("fe0702fffff9f7012c0022ffffffffffff") // top_ring
+                }else if motorFlag == 5  {
+                                     //"ffffee99" <- our motor
                     // not sure if this is the return data for the bot
                     bData.dataHasCome.value = false
                     ringFlag = 3 // means done
+                    motorFlag = 6
                 }
 
             }
@@ -171,7 +203,7 @@ class BTService: NSObject, CBPeripheralDelegate {
             
         }
         
-        
+        }
         
     }
     
