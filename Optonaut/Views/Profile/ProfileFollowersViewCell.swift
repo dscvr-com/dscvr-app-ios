@@ -16,8 +16,6 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
     var data:[Person] = []
     
     weak var navigationController: NavigationController?
-    let viewNoFollowers = UIView()
-    let text = UILabel()
     
     override init(frame: CGRect) {
         
@@ -26,19 +24,9 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
         tableView.frame = CGRect(origin: CGPointZero, size: frame.size)
         tableView.dataSource = self;
         tableView.delegate = self;
+        tableView.registerClass(PlaceholderTableViewCell.self, forCellReuseIdentifier: "placeholder-cell")
         tableView.registerClass(FollowersTableViewCell.self, forCellReuseIdentifier: "userFollowers");
         contentView.addSubview(tableView)
-        
-        viewNoFollowers.frame = CGRect(origin: CGPointZero, size: frame.size)
-        viewNoFollowers.backgroundColor = UIColor.whiteColor()
-        contentView.addSubview(viewNoFollowers)
-        
-        text.text = "You have no followers!"
-        text.textAlignment = .Center
-        text.textColor = UIColor.grayColor()
-        viewNoFollowers.addSubview(text)
-        text.autoAlignAxis(.Horizontal, toSameAxisOfView: contentView, withOffset: -50)
-        text.autoAlignAxisToSuperviewAxis(.Vertical)
     }
     
     func viewIsActive() {
@@ -59,27 +47,36 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 75.0
+        if data.isEmpty {
+            return contentView.frame.height
+        } else {
+            return 75
+        }
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+        return data.isEmpty ? 1 : data.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("userFollowers") as! FollowersTableViewCell
-        
-        let datas = data[indexPath.item]
-        cell.nameLabel.text = datas.displayName
-        let imageUrl = ImageURL("persons/\(datas.ID)/\(datas.avatarAssetID).jpg", width: 47, height: 47)
-        cell.userImage.kf_setImageWithURL(NSURL(string:imageUrl)!)
-        cell.bind(datas.ID)
-        
-        if datas.isFollowed {
-            cell.isFollowed.value = true
+        if data.isEmpty {
+            let cell = tableView.dequeueReusableCellWithIdentifier("placeholder-cell") as! PlaceholderTableViewCell
+            cell.textView.text = "You have no followers yet."
+            //cell.iconView.text = String.iconWithName(.Inbox)
+            cell.iconView.textColor = .LightGrey
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCellWithIdentifier("userFollowers") as! FollowersTableViewCell
+            
+            let datas = data[indexPath.item]
+            cell.nameLabel.text = datas.userName
+            let imageUrl = ImageURL("persons/\(datas.ID)/\(datas.avatarAssetID).jpg", width: 47, height: 47)
+            cell.userImage.kf_setImageWithURL(NSURL(string:imageUrl)!)
+            cell.bind(datas.ID)
+            cell.selectionStyle = .None
+            
+            return cell;
         }
-        
-        return cell;
     }
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let datas = data[indexPath.item]
@@ -90,11 +87,6 @@ class ProfileFollowersViewCell: UICollectionViewCell,UITableViewDataSource, UITa
     }
     func reloadTable() {
         tableView.reloadData()
-        if data.count != 0 {
-            viewNoFollowers.hidden = true
-        } else {
-            viewNoFollowers.hidden = false
-        }
     }
     
 }

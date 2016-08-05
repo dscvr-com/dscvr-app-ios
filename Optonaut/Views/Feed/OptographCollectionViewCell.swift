@@ -292,11 +292,14 @@ private class OverlayViewModel {
                     self?.personBox.insertOrUpdate { box in
                         box.model.isFollowed = !followedBefore
                     }
+                    
+                    self?.isFollowed.value = !followedBefore
                 },
                 failed: { [weak self] _ in
                     self?.personBox.insertOrUpdate { box in
                         box.model.isFollowed = followedBefore
                     }
+                    self?.isFollowed.value = followedBefore
                 }
             )
             .start()
@@ -435,7 +438,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     private let whiteBackground = UIView()
     private let avatarImageView = UIImageView()
     private let locationTextView = UILabel()
-    private let likeCountView = UILabel()
+    //private let likeCountView = UILabel()
     private let personNameView = BoundingLabel()
     private let optionsButtonView = BoundingButton()
     private let likeButtonView = BoundingButton()
@@ -468,11 +471,11 @@ class OptographCollectionViewCell: UICollectionViewCell{
     let playerLayer = AVPlayerLayer()
     let eliteImageView = UIImageView()
     
-    var video:AVPlayer? {
-        didSet {
-            self.playerLayer.player = video
-        }
-    }
+//    var video:AVPlayer? {
+//        didSet {
+//            self.playerLayer.player = video
+//        }
+//    }
     var id: Int = 0 {
         didSet {
             //
@@ -482,33 +485,34 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     private var imageCache: CollectionImageCache
     
-    func setRotation (isRotating:Bool) {
-        
-        previewImage.hidden = false
-        
-        if let gyroVideo = self.video {
-            if isRotating {
-                if gyroVideo.status == .ReadyToPlay {
-                    previewImage.hidden = true
-                    gyroVideo.play()
-                } else {
-                    previewImage.hidden = false
-                }
-            } else {
-                gyroVideo.pause()
-            }
-        } else {
-            previewImage.hidden = false
-        }
-    }
+//    func setRotation (isRotating:Bool) {
+//        hidePreviewImage(false)
+//        if let gyroVideo = self.video {
+//            if isRotating {
+//                if gyroVideo.status == .ReadyToPlay {
+//                    hidePreviewImage(true)
+//                    gyroVideo.play()
+//                } else {
+//                    hidePreviewImage(false)
+//                }
+//            } else {
+//                gyroVideo.pause()
+//            }
+//        } else {
+//            hidePreviewImage(false)
+//        }
+//        
+//    }
     
-    func loadPreviewImage() {
-        previewImage.hidden = false
+    func hidePreviewImage(val:Bool) {
+        UIView.animateWithDuration(0.5, animations: {
+            self.previewImage.hidden = val
+            }, completion:nil)
     }
     
     dynamic private func pushDetails() {
         
-        let detailsViewController = DetailsTableViewController(optographId:optoId)
+        let detailsViewController = DetailsTableViewController(optoList:[optoId])
         detailsViewController.cellIndexpath = id
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
@@ -529,7 +533,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         
         
-        contentView.backgroundColor = UIColor(hex:0xffbc00)
+        contentView.backgroundColor = UIColor(hex:0xFF5E00)
         
         shareImageAsset.layer.cornerRadius = avatarImageView.frame.size.width / 2
         shareImageAsset.image = UIImage(named: "share_hidden_icn")
@@ -553,7 +557,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         avatarImageView.image = UIImage(named: "avatar-placeholder")!
         avatarImageView.layer.cornerRadius = 25
-        avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        avatarImageView.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         avatarImageView.layer.borderWidth = 2.0
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
@@ -571,7 +575,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         whiteBackground.addSubview(optionsButtonView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
-        personNameView.textColor = UIColor(0xffbc00)
+        personNameView.textColor = UIColor.whiteColor()
         personNameView.userInteractionEnabled = true
         personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pushProfile)))
         whiteBackground.addSubview(personNameView)
@@ -584,10 +588,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
         locationTextView.textColor = UIColor.whiteColor()
         whiteBackground.addSubview(locationTextView)
         
-        likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
-        likeCountView.textColor = .whiteColor()
-        likeCountView.textAlignment = .Right
-        whiteBackground.addSubview(likeCountView)
+//        likeCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
+//        likeCountView.textColor = .whiteColor()
+//        likeCountView.textAlignment = .Right
+//        whiteBackground.addSubview(likeCountView)
         
         hiddenGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(OptographCollectionViewCell.handlePan(_:)))
         bouncingButton.addGestureRecognizer(hiddenGestureRecognizer)
@@ -620,7 +624,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
+        //likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
         optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x + 2 - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.height * 0.75) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight)
@@ -771,8 +775,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
             }
         }
         likeButtonView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
-        likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
-        likeCountView.rac_text <~ viewModel.likeCount.producer.map { "\($0)" }
+//        likeCountView.rac_hidden <~ viewModel.uploadStatus.producer.equalsTo(.Uploaded).map(negate)
+//        likeCountView.rac_text <~ viewModel.likeCount.producer.map { "\($0)" }
         
         viewModel.liked.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
@@ -815,15 +819,15 @@ class OptographCollectionViewCell: UICollectionViewCell{
             
         }
         
-        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/pan.mp4"
-        
-        let returnData = imageCache.insertMp4IntoCache(filename,optographId:optographId)
-        
-        if returnData != "" {
-            self.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
-        } else {
-            self.video = nil
-        }
+//        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/pan.mp4"
+//        
+//        let returnData = imageCache.insertMp4IntoCache(filename,optographId:optographId)
+//        
+//        if returnData != "" {
+//            self.video = AVPlayer(URL: NSURL(fileURLWithPath: returnData))
+//        } else {
+//            self.video = nil
+//        }
 
     }
     

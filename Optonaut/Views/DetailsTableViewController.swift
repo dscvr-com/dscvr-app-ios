@@ -14,6 +14,8 @@ import ReactiveCocoa
 import Kingfisher
 import SpriteKit
 import SwiftyUserDefaults
+import AssetsLibrary
+import ImageIO
 
 let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
 
@@ -29,8 +31,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private var renderDelegate: CubeRenderDelegate!
     private var scnView: SCNView!
     
-    private var imageDownloadDisposable: Disposable?
-    
     private var rotationAlert: UIAlertController?
     
     private enum LoadingStatus { case Nothing, Preview, Loaded }
@@ -39,6 +39,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
+    
+    var optographTopPick:NSArray = []
     
     var direction: Direction {
         set(direction) {
@@ -70,7 +72,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var transformBegin:CGAffineTransform?
     let deleteButton = UIButton()
     
-    
     var gyroImageActive = UIImage(named: "details_gyro_active")
     var gyroImageInactive = UIImage(named: "details_gyro_inactive")
     var vrIcon = UIImage(named: "vr_icon")
@@ -78,12 +79,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var backButton = UIImage(named: "back_yellow_icn")
     var shareButton = UIButton()
     var gyroTypeBtn = UIButton()
+    var eliteImageView = UIImageView()
+    var descriptionLabel = UILabel()
+    var exportButton = UIButton()
     
-    required init(optographId:UUID) {
+    required init(optoList:[UUID]) {
         
-        optographID = optographId
+        optographID = optoList[0]
+        optographTopPick = optoList
         
-        viewModel = DetailsViewModel(optographID: optographId)
+        viewModel = DetailsViewModel(optographID: optographID)
         let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
         imageCache = CollectionImageCache(textureSize: textureSize)
         
@@ -133,9 +138,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
         
-        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographID]!.model)
+        let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick as! [UUID] ,selfOptograph:optographID )
         navigationController?.pushViewController(viewerViewController, animated: false)
-        //        viewModel.increaseViewsCount()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -164,8 +168,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
         self.view.addSubview(whiteBackground)
         
+        descriptionLabel.numberOfLines = 0
+        //descriptionLabel.font = UIFont.textOfSize(15, withType: .Regular)
+        descriptionLabel.textColor = .whiteColor()
+        descriptionLabel.backgroundColor = UIColor.clearColor()
+        descriptionLabel.font = UIFont(name: "HelveticaNeue-ThinItalic",size: 15)
+        self.view.addSubview(descriptionLabel)
+        
         avatarImageView.layer.cornerRadius = 23.5
-        avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        avatarImageView.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         avatarImageView.layer.borderWidth = 2.0
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
@@ -174,6 +185,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL(viewModel.avatarImageUrl.value, width: 47, height: 47))!)
         whiteBackground.addSubview(avatarImageView)
         
+        eliteImageView.image = UIImage(named: "elite_beta_icn")!
+        whiteBackground.addSubview(eliteImageView)
+        
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor.whiteColor(), forState: .Normal)
@@ -181,7 +195,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(optionsButtonView)
         
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
-        personNameView.textColor = UIColor(0xffbc00)
+        personNameView.textColor = UIColor(0xFF5E00)
         personNameView.userInteractionEnabled = true
         personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pushProfile)))
         whiteBackground.addSubview(personNameView)
@@ -209,10 +223,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(likeCountView)
         
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
+        let deleteImageSize1 = UIImage(named:"profile_delete_icn")?.size
+        descriptionLabel.frame = CGRect(x: whiteBackground.frame.origin.x + 10,y: view.frame.height - whiteBackground.frame.height - 40,width: view.frame.width - 10 - (deleteImageSize1?.width)!,height: 20)
+        
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
-        
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         
         //commentButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:24, height: 28)
@@ -223,8 +239,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         optionsButtonView.frame = CGRect(x: avatarImageView.frame.origin.x + 2 - (followSizeWidth / 2),y: avatarImageView.frame.origin.y + (avatarImageView.frame.height * 0.75) - (followSizeWidth / 2),width: followSizeWidth,height: followSizeHeight)
         
+        let icnWidth = UIImage(named: "elite_beta_icn")!
+        eliteImageView.anchorInCorner(.BottomLeft, xPad: optionsButtonView.frame.origin.x + (optionsButtonView.frame.width/2), yPad: 6, width: icnWidth.size.width, height: icnWidth.size.height)
+        
         personNameView.rac_text <~ viewModel.creator_username
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
+        descriptionLabel.rac_text <~ viewModel.text
+        
         //commentCountView.rac_text <~ viewModel.commentsCount.producer.map{ "\($0)" }
         
         viewModel.isStarred.producer.startWithNext { [weak self] liked in
@@ -270,6 +291,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         gyroTypeBtn.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
         gyroTypeBtn.addTarget(self, action: #selector(gyroButtonTouched), forControlEvents:.TouchUpInside)
         
+        
+//        let exportImageIcon = UIImage(named:"export_icn")
+//        exportButton.setBackgroundImage(exportImageIcon, forState: .Normal)
+//        
+//        self.view.addSubview(exportButton)
+//        exportButton.align(.UnderCentered, relativeTo: gyroTypeBtn, padding: 20, width: (exportImageIcon?.size.width)!, height: exportImageIcon!.size.height)
+//        exportButton.addTarget(self, action: #selector(exportImage), forControlEvents:.TouchUpInside)
+        
         if  Defaults[.SessionGyro] {
             self.changeButtonIcon(true)
         } else {
@@ -277,7 +306,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         }
         
         vrIcon = vrIcon?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image:vrIcon , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(vrIconTouched))
+        let vrButton = UIBarButtonItem(image:vrIcon , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(vrIconTouched))
+        let exportBtn = UIBarButtonItem(image:UIImage(named:"export_icn") , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(exportImage))
+        
+        navigationItem.rightBarButtonItems = [vrButton,exportBtn]
         
         backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeDetailsPage))
@@ -331,6 +363,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             let shareImageSize = UIImage(named:"share_white_details")?.size
             shareButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(shareImageSize?.width)!, height: (shareImageSize?.height)!)
         }
+        viewModel.isElite.producer.startWithNext{ val in
+            if val == 0 {
+                self.eliteImageView.hidden = true
+            } else {
+                self.eliteImageView.hidden = false
+            }
+            
+        }
         
     }
     func share() {
@@ -364,7 +404,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         }
     }
     func closeDetailsPage() {
+        
+        renderDelegate.dispose()
+        imageCache.reset()
+        didEndDisplay()
+        
         self.navigationController?.popViewControllerAnimated(true)
+        //self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
     func toggleComment() {
@@ -452,6 +498,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.isUIHide = true
         deleteButton.hidden = true
         gyroTypeBtn.hidden = true
+        descriptionLabel.hidden = true
         self.navigationController?.navigationBarHidden = true
     }
     
@@ -463,29 +510,32 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.isUIHide = false
         deleteButton.hidden = false
         gyroTypeBtn.hidden = false
+        descriptionLabel.hidden = false
         self.navigationController?.navigationBarHidden = false
     }
     
     func oneTap(recognizer:UITapGestureRecognizer) {
         if !isUIHide {
-            UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
+            UIView.animateWithDuration(0.4,delay: 0.1, options: .CurveEaseOut, animations: {
                 self.whiteBackground.hidden = true
                 self.hideSelectorButton.hidden = true
                 //self.gyroButton.hidden = true
                 self.gyroTypeBtn.hidden = true
                 self.deleteButton.hidden = true
                 self.littlePlanetButton.hidden = true
+                self.descriptionLabel.hidden = true
                 self.isUIHide = true
                 },completion: nil)
             self.navigationController?.navigationBarHidden = true
         } else {
-            UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
+            UIView.animateWithDuration(0.4,delay: 0.1, options: .CurveEaseOut, animations: {
                 self.whiteBackground.hidden = false
                 self.hideSelectorButton.hidden = false
                 //self.gyroButton.hidden = false
                 self.gyroTypeBtn.hidden = false
                 self.deleteButton.hidden = false
                 self.littlePlanetButton.hidden = false
+                self.descriptionLabel.hidden = false
                 self.isUIHide = false
                 },completion: nil)
             self.navigationController?.navigationBarHidden = false
@@ -550,6 +600,61 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             Defaults[.SessionGyro] = true
             self.changeButtonIcon(true)
         }
+    }
+    func export() {
+        let imageToSaveUrl = "http://bucket.dscvr.com/textures/\(optographID)/placeholder.jpg"
+        
+        if let url = NSURL(string: imageToSaveUrl) {
+            let request = NSURLRequest(URL: url)
+            
+            NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler:{(response: NSURLResponse?, data: NSData?, error: NSError?) -> Void in
+                let asset = ALAssetsLibrary()
+                
+                let strModel = "RICOH THETA S" as String
+                let strMake = "RICOH" as String
+                
+                let meta:NSDictionary = [kCGImagePropertyTIFFModel as String :strModel,kCGImagePropertyTIFFMake as String:strMake]
+                
+                let source:CGImageSourceRef = CGImageSourceCreateWithData(data!, nil)!
+                let UTI:CFStringRef = CGImageSourceGetType(source)!
+                
+                let destData = NSMutableData()
+                let destination:CGImageDestinationRef = CGImageDestinationCreateWithData(destData, UTI, 1, nil)!
+                
+                CGImageDestinationAddImageFromSource(destination, source, 0, meta)
+                
+                CGImageDestinationFinalize(destination)
+                
+                
+                asset.writeImageDataToSavedPhotosAlbum(destData, metadata: meta as [NSObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
+                    print("meta path >>> \(path)")
+                    print("meta error >>> \(error)")
+                    if error == nil {
+                        self.returnSuccesAlert("Export Completed", stringMessage:"Saved into your Photo Library.")
+                    } else {
+                        self.returnSuccesAlert("Export Failed", stringMessage:"Please try again.")
+                    }
+                })
+            })
+        }
+    }
+    func returnSuccesAlert(stringTitle:String, stringMessage:String) {
+        let alert = UIAlertController(title: stringTitle, message: stringMessage, preferredStyle: .Alert)
+        
+        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func exportImage() {
+        
+        let alert = UIAlertController(title: "Export 360 Image", message: "Do you want to export this 360 image?", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Export", style: .Default, handler: { _ in
+            self.export()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     func changeButtonIcon(isGyro:Bool) {
@@ -627,9 +732,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        imageDownloadDisposable?.dispose()
-        imageDownloadDisposable = nil
-//        CoreMotionRotationSource.Instance.stop()
+        CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
         tabController!.enableScrollView()
         
@@ -700,13 +803,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func forgetTextures() {
         renderDelegate.reset()
     }
-    //    private func pushViewer(orientation: UIInterfaceOrientation) {
-    //        rotationAlert?.dismissViewControllerAnimated(true, completion: nil)
-    //        let viewerViewController = ViewerViewController(orientation: orientation, optograph: viewModel.optograph)
-    //        viewerViewController.hidesBottomBarWhenPushed = true
-    //        navigationController?.pushViewController(viewerViewController, animated: false)
-    //        viewModel.increaseViewsCount()
-    //    }
     
     func showRotationAlert() {
         rotationAlert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)

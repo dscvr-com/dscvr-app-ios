@@ -16,7 +16,7 @@ class LoginOverlayViewController: UIViewController{
     private let logoImageView = UIImageView()
     private let facebookButtonView = UIButton()
     
-    private let contentView = UIView()
+    private let contentView = UIImageView()
     
     private let viewModel = LoginOverlayViewModel()
     
@@ -33,14 +33,16 @@ class LoginOverlayViewController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         navigationController?.navigationBarHidden = true
         
         contentView.frame = UIScreen.mainScreen().bounds
-        contentView.backgroundColor = UIColor(hex:0xf7f7f7)
+        contentView.image = UIImage(named:"gradient_bg")
+        contentView.userInteractionEnabled = true
         view.addSubview(contentView)
         
-        let imageSize = UIImage(named: "logo_big")
-        logoImageView.image = UIImage(named: "logo_big")
+        let imageSize = UIImage(named: "logo_settings")
+        logoImageView.image = UIImage(named: "logo_settings")
         contentView.addSubview(logoImageView)
         
         //facebookButtonView.rac_loading <~ viewModel.facebookPending
@@ -49,7 +51,8 @@ class LoginOverlayViewController: UIViewController{
         contentView.addSubview(facebookButtonView)
         
         logoImageView.anchorToEdge(.Top, padding: 200, width: imageSize!.size.width, height: imageSize!.size.height)
-        facebookButtonView.align(.UnderCentered, relativeTo: logoImageView, padding: 30, width: contentView.frame.width - 85, height: 50)
+        let buttonSize = UIImage(named:"facebook_btn")?.size
+        facebookButtonView.align(.UnderCentered, relativeTo: logoImageView, padding: 30, width: (buttonSize?.width)!, height: (buttonSize?.height)!)
     }
     
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
@@ -78,6 +81,8 @@ class LoginOverlayViewController: UIViewController{
     }
     
     dynamic private func facebook() {
+//        let username = AddUsernameViewController()
+//        navigationController?.pushViewController(username, animated: false)
         let loginManager = FBSDKLoginManager()
         let readPermission = ["public_profile","email","user_friends"]
         

@@ -45,11 +45,9 @@ class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControlle
             .startWithNext { [weak self] (isUploaded, optographID) in
                 if isUploaded {
                     let url = TextureURL(optographID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
-                    print("cell",url)
                     self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
                 } else {
                     let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
-                    print("cell1",url)
                     if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
                         dispatch_async(dispatch_get_main_queue()) {
                             self?.imageView.image = originalImage.resized(.Width, value: frame.width)

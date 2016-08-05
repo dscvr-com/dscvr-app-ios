@@ -46,22 +46,20 @@ class TabView: PTView {
             self?.bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: offset)
             CATransaction.commit()
         }
-        
-        //cameraButton.frame = CGRect(x: frame.width / 2 - 35, y: 126 / 2 - 35, width: 80, height: 80)
         cameraButton.icon = UIImage(named:"camera_icn")!
-        cameraButton.anchorToEdge(.Bottom, padding: 20, width: 80, height: 80)
+        let size = UIImage(named:"camera_icn")!.size
+        cameraButton.anchorToEdge(.Bottom, padding: 20, width: size.width, height: size.height)
         addSubview(cameraButton)
         
-        
-        //let buttonSpacing = (frame.width / 2 - 35) / 2 - 40
-        //leftButton.frame = CGRect(x: buttonSpacing, y: 126 / 2 - 12, width: 35, height: 35)
         leftButton.icon = UIImage(named:"photo_library_icn")!
         addSubview(leftButton)
-        leftButton.anchorInCorner(.BottomLeft, xPad: 20, yPad: 20, width: 35, height: 35)
+        let librarySizeButton = UIImage(named:"photo_library_icn")!.size
+        //leftButton.anchorInCorner(.BottomLeft, xPad: 20, yPad: 20, width: librarySizeButton.width, height: librarySizeButton.height)
+        leftButton.align(.ToTheLeftMatchingBottom, relativeTo: cameraButton, padding: 30, width: librarySizeButton.width, height: librarySizeButton.height)
         
-        //rightButton.frame = CGRect(x: frame.width - buttonSpacing - 28, y: 126 / 2 - 12, width: 35, height: 35)
         rightButton.icon = UIImage(named:"settings_icn")!
-        rightButton.anchorInCorner(.BottomRight, xPad: 20, yPad: 20, width: 35, height: 35)
+        let rightButtonSize = UIImage(named:"settings_icn")!.size
+        rightButton.align(.ToTheRightMatchingBottom, relativeTo: cameraButton, padding: 30, width: rightButtonSize.width, height: rightButtonSize.height)
         addSubview(rightButton)
     }
 

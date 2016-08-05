@@ -36,6 +36,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     
     //private let postCountView = UILabel()
     private let editSubView = UIImageView()
+    private let atSign = UIImageView()
     
     private let dividerDescription = UILabel()
     
@@ -49,22 +50,25 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = UIColor(hex:0xf7f7f7)
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
-        avatarImageView.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        avatarImageView.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         avatarImageView.layer.borderWidth = 3.0
         avatarImageView.layer.cornerRadius = 50
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
         contentView.addSubview(avatarImageView)
         
-        displayNameView.font = UIFont.fontDisplay(20, withType: .Semibold)
-        displayNameView.textColor = UIColor(0xffbc00)
+        displayNameView.font = UIFont (name: "Avenir-Heavy", size: 20)
+        displayNameView.textColor = UIColor(0xFF5E00)
         displayNameView.textAlignment = .Center
         contentView.addSubview(displayNameView)
+        
+//        atSign.image = UIImage(named:"atSign")
+//        contentView.addSubview(atSign)
         
         displayNameInputView.placeholder = "Enter your name"
         displayNameInputView.font = UIFont.fontDisplay(20, withType: .Semibold)
         displayNameInputView.textAlignment = .Center
-        displayNameInputView.textColor = UIColor(0xffbc00)
+        displayNameInputView.textColor = UIColor(0xFF5E00)
         displayNameInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         displayNameInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         displayNameInputView.returnKeyType = .Done
@@ -116,12 +120,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         postHeadingView.backgroundColor = UIColor(hex:0x3E3D3D)
         contentView.addSubview(postHeadingView)
         
-        postHeadingView1.text = "Images"
-        postHeadingView1.textColor = UIColor(0xffbc00)
+        postHeadingView1.text = "Notifications"
+        postHeadingView1.textColor = UIColor(0xFF5E00)
         postHeadingView1.textAlignment = .Center
         postHeadingView1.font = UIFont(name: "Avenir-Book", size: 17)
         postHeadingView1.backgroundColor = UIColor(hex:0x3E3D3D)
-        postHeadingView1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.imagePageTabTouched)))
+        postHeadingView1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.notifPageTabTouched)))
         postHeadingView1.userInteractionEnabled = true
         contentView.addSubview(postHeadingView1)
         
@@ -134,44 +138,44 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         postHeadingView2.userInteractionEnabled = true
         contentView.addSubview(postHeadingView2)
         
-        postHeadingView3.text = "Notifications"
+        postHeadingView3.text = "Images"
         postHeadingView3.textColor = UIColor.whiteColor()
         postHeadingView3.textAlignment = .Center
         postHeadingView3.font = UIFont(name: "Avenir-Book", size: 17)
         postHeadingView3.backgroundColor = UIColor(hex:0x3E3D3D)
-        postHeadingView3.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.notifPageTabTouched)))
+        postHeadingView3.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.imagePageTabTouched)))
         postHeadingView3.userInteractionEnabled = true
         contentView.addSubview(postHeadingView3)
         
-        yellowLine.backgroundColor = UIColor(0xffbc00)
+        yellowLine.backgroundColor = UIColor(0xFF5E00)
         contentView.addSubview(yellowLine)
         
         contentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.dismissKeyboard)))
     }
     
     func followTabTouched() {
-        postHeadingView2.textColor = UIColor(0xffbc00)
+        postHeadingView2.textColor = UIColor(0xFF5E00)
         postHeadingView1.textColor = UIColor.whiteColor()
         postHeadingView3.textColor = UIColor.whiteColor()
         yellowLine.anchorInCorner(.BottomRight, xPad: (contentView.frame.width/3), yPad: 0, width: contentView.frame.width/3, height: 2)
         viewModel.followTabTouched.value = true
         viewModel.notifTabTouched.value = false
     }
-    func imagePageTabTouched() {
-        postHeadingView1.textColor = UIColor(0xffbc00)
+    func notifPageTabTouched() {
+        postHeadingView1.textColor = UIColor(0xFF5E00)
         postHeadingView2.textColor = UIColor.whiteColor()
         postHeadingView3.textColor = UIColor.whiteColor()
         yellowLine.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/3, height: 2)
-        viewModel.followTabTouched.value = false
-        viewModel.notifTabTouched.value = false
+        
+        viewModel.notifTabTouched.value = true
     }
-    
-    func notifPageTabTouched() {
+    func imagePageTabTouched() {
         postHeadingView1.textColor = UIColor.whiteColor()
         postHeadingView2.textColor = UIColor.whiteColor()
-        postHeadingView3.textColor = UIColor(0xffbc00)
+        postHeadingView3.textColor = UIColor(0xFF5E00)
         yellowLine.anchorInCorner(.BottomLeft, xPad: (contentView.frame.width/3) * 2, yPad: 0, width: contentView.frame.width/3, height: 2)
-        viewModel.notifTabTouched.value = true
+        viewModel.followTabTouched.value = false
+        viewModel.notifTabTouched.value = false
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -200,6 +204,9 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
         avatarImageView.frame = CGRect(x: size.width / 2 - 50, y: 20, width: 100, height: 100)
         displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 30)
+        
+//        let atSignSize = UIImage(named:"atSign")?.size
+//        atSign.align(.ToTheLeftCentered, relativeTo: displayNameView, padding: 0, width: (atSignSize?.width)!, height: atSignSize!.height)
         displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)
@@ -242,7 +249,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         }
         
         viewModel.isFollowed.producer.startWithNext{ [weak self] val in
-            print(">>>+++",val)
             val ? self?.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self?.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         }
         
@@ -250,7 +256,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameView.rac_hidden <~ viewModel.isEditing
         displayNameInputView.rac_hidden <~ viewModel.isEditing.producer.map(negate)
         displayNameInputView.rac_textSignal().toSignalProducer().skip(1).startWithNext { [weak self] val in
-            self?.viewModel.userName.value = val as! String
+            self?.viewModel._userName = val as! String
         }
         
         textView.rac_text <~ viewModel.text
@@ -313,7 +319,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         if UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary) {
             
             imagePickerController.navigationBar.translucent = false
-            imagePickerController.navigationBar.barTintColor = UIColor(hex:0xffbc00)
+            imagePickerController.navigationBar.barTintColor = UIColor(hex:0xFF5E00)
             imagePickerController.navigationBar.titleTextAttributes = [
                 //                NSFontAttributeName: UIFont.robotoOfSize(17, withType: .Medium),
                 NSForegroundColorAttributeName: UIColor.whiteColor(),

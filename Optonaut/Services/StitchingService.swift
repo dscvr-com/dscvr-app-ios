@@ -10,6 +10,8 @@ import Foundation
 import ReactiveCocoa
 import Mixpanel
 import Async
+import ImageIO
+import AssetsLibrary
 
 enum StitchingError: ErrorType {
     case Busy
@@ -118,17 +120,72 @@ class StitchingService {
                 let erImage = stitcher.getLeftEquirectangularResult()
                 autoreleasepool {
                     
-                    UIImageWriteToSavedPhotosAlbum(UIImage(CGImage: ImageBufferToCGImage(erImage)), self
-                        , nil, nil)
+//                  UIImageWriteToSavedPhotosAlbum(UIImage(CGImage: ImageBufferToCGImage(erImage)), self
+//                        , nil, nil)
                     
                     
+                    //let asset = ALAssetsLibrary()
+//                    let image = UIImage(CGImage: ImageBufferToCGImage(erImage))
+//                    let imageData = UIImageJPEGRepresentation(image, 1.0)
+//                    
+//                    let strModel = "RICOH THETA S" as String
+//                    let strMake = "RICOH" as String
+//                    
+//                    let meta:NSDictionary = [kCGImagePropertyTIFFModel as String :strModel,kCGImagePropertyTIFFMake as String:strMake]
+//                    
+//                    let source:CGImageSourceRef = CGImageSourceCreateWithData(imageData!, nil)!
+//                    let UTI:CFStringRef = CGImageSourceGetType(source)!
+//                    
+//                    let destData = NSMutableData()
+//                    let destination:CGImageDestinationRef = CGImageDestinationCreateWithData(destData, UTI, 1, nil)!
+//                    
+//                    CGImageDestinationAddImageFromSource(destination, source, 0, meta)
+//                    
+//                    CGImageDestinationFinalize(destination)
+//                    
+//                    UIImageWriteToSavedPhotosAlbum(UIImage(data:destData,scale:1.0)!, self, nil, nil)
+                    
+//                    asset.writeImageDataToSavedPhotosAlbum(imageData, metadata: meta as [AnyObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
+//                        print("meta path >>> \(path)")
+//                        print("meta error >>> \(error)")
+//                    })
+                    
+                    let image = UIImage(CGImage: ImageBufferToCGImage(erImage))
+                    let imageData = UIImageJPEGRepresentation(image, 1.0)
+                    
+                    let asset = ALAssetsLibrary()
+                    
+                    let strModel = "RICOH THETA S" as String
+                    let strMake = "RICOH" as String
+                    
+                    let meta:NSDictionary = [kCGImagePropertyTIFFModel as String :strModel,kCGImagePropertyTIFFMake as String:strMake]
+                    
+                    let source:CGImageSourceRef = CGImageSourceCreateWithData(imageData!, nil)!
+                    let UTI:CFStringRef = CGImageSourceGetType(source)!
+                    
+                    let destData = NSMutableData()
+                    let destination:CGImageDestinationRef = CGImageDestinationCreateWithData(destData, UTI, 1, nil)!
+                    
+                    CGImageDestinationAddImageFromSource(destination, source, 0, meta)
+                    
+                    CGImageDestinationFinalize(destination)
+                    
+                    
+                    asset.writeImageDataToSavedPhotosAlbum(destData, metadata: meta as [NSObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
+                        print("meta path >>> \(path)")
+                        print("meta error >>> \(error)")
+                    })
+
                 }
                 Recorder.freeImageBuffer(erImage)
                 
                 
             }
             
+<<<<<<< HEAD
             
+=======
+>>>>>>> profile_notification_added
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getRightResult().enumerate() {
                     var rightFace = ImageBuffer()
@@ -161,6 +218,9 @@ class StitchingService {
         
         return signal
     }
+    
+    
+   
     
     static func removeUnstitchedRecordings() {
         assert(!isStitching())

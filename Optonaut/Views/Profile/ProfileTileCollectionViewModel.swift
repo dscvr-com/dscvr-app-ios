@@ -23,7 +23,10 @@ class ProfileTileCollectionViewModel {
     private var disposable: Disposable?
     var optographBox: ModelBox<Optograph>!
     var userId = MutableProperty<Bool>(false)
+    var uploadPercentStatus = MutableProperty<Float>(0.0)
     
+    var leftCount = 0
+    var rightCount = 0
     
     func bind(optographID: UUID) {
         disposable?.dispose()
@@ -37,6 +40,7 @@ class ProfileTileCollectionViewModel {
             .startWithNext { [weak self] optograph in
                 self?.isPrivate.value = optograph.isPrivate
                 self?.isStitched.value = optograph.isStitched
+                
                 if optograph.personID == SessionService.personID {
                     self?.userId.value = true
                 }
@@ -45,10 +49,45 @@ class ProfileTileCollectionViewModel {
                     self?.uploadStatus.value = .Uploaded
                 } else if optograph.isUploading {
                     self?.uploadStatus.value = .Uploading
+                    self?.getUploadStatus(optograph.rightCubeTextureStatusUpload?.status, lindex: optograph.leftCubeTextureStatusUpload?.status)
                 } else {
                     self?.uploadStatus.value = .Offline
                 }
             }
+    }
+    
+    func getUploadStatus(rindex:[Bool]?,lindex:[Bool]?) {
+        
+        var val = 1
+        
+        print("rindex>>",rindex)
+        print("lindex>>",lindex)
+        
+        if lindex != nil {
+            val = 0
+            for l in lindex! {
+                if l {
+                    val += 1
+                    leftCount = val
+                }
+            }
+        }
+        
+        if rindex != nil {
+            val = 0
+            for r in rindex! {
+                if r {
+                    val += 1
+                    rightCount = val
+                }
+            }
+        }
+        
+        val = leftCount + rightCount
+        
+        print(Float(val) * 0.08333333)
+        
+        self.uploadPercentStatus.value = Float(val) * 0.08333333
     }
     
     func deleteOpto() {
@@ -78,7 +117,9 @@ class ProfileTileCollectionViewModel {
     }
     
     func upload() {
+        
         if !optographBox.model.isOnServer {
+            print("pumasok sa if upload")
             let optograph = optographBox.model
             
             optographBox.update { box in
@@ -120,6 +161,8 @@ class ProfileTileCollectionViewModel {
                 ]
             }
             
+            print(postParameters)
+            
             SignalProducer<Bool, ApiError>(value: !optographBox.model.shareAlias.isEmpty)
                 .flatMap(.Latest) { alreadyPosted -> SignalProducer<Void, ApiError> in
                     print(alreadyPosted)
@@ -138,7 +181,7 @@ class ProfileTileCollectionViewModel {
                 .flatMap(.Latest) {
                     ApiService<EmptyResponse>.put("optographs/\(optograph.ID)", parameters: putParameters)
                         .on(failed: { [weak self] failedString in
-                            print(failedString)
+                            print("FAiled",failedString)
                             self?.optographBox.update { box in
                                 box.model.isUploading = false
                             }
@@ -156,6 +199,7 @@ class ProfileTileCollectionViewModel {
             
             
         } else {
+            print("pumasok sa else upload")
             optographBox.insertOrUpdate { box in
                 box.model.shouldBePublished = true
                 box.model.isUploading = true

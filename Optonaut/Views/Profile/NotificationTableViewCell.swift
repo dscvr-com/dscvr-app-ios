@@ -52,8 +52,7 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
         tableView.addSubview(refreshControl)
         
         viewModel.results.producer
-            .on(
-                next: { results in
+            .on( next: { results in
                     let wasEmptyBefore = self.items.isEmpty
                     
                     self.items = results.models
@@ -76,7 +75,7 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
                     
                     self.refreshControl.endRefreshing()
                     
-//                    NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(NotificationTableViewCell.markVisibleAsRead), userInfo: nil, repeats: false)
+                    //NSTimer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(NotificationTableViewCell.markVisibleAsRead), userInfo: nil, repeats: false)
                 },
                 failed: { _ in
                     self.refreshControl.endRefreshing()
@@ -86,12 +85,15 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
         
         contentView.addSubview(tableView)
         
-        //contentView.setNeedsUpdateConstraints()
+        contentView.setNeedsUpdateConstraints()
     }
     
 //    override func awakeFromNib() {
 //        tableView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
 //    }
+    func isActive() {
+        viewModel.refresh()
+    }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if items.isEmpty {
@@ -103,38 +105,38 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
         }
     }
     
-//    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-//        markVisibleAsRead()
-//    }
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        markVisibleAsRead()
+    }
     
-//    dynamic func markVisibleAsRead() {
-//        guard let visibleCells = tableView.visibleCells as? [ActivityTableViewCell] else {
-//            return
-//        }
-//        
-//        let unreadActivities = visibleCells.map({ $0.activity }).filter({ !$0.isRead })
-//        
-//        if unreadActivities.isEmpty {
-//            return
-//        }
-//        
-//        SignalProducer<Activity!, NoError>.fromValues(unreadActivities)
-//            .observeOnUserInteractive()
-//            .flatMap(.Merge) {
-//                ApiService<EmptyResponse>.post("activities/\($0.ID)/read")
-//                    .ignoreError()
-//                    .startOnUserInteractive()
-//            }
-//            .observeOnMain()
-//            .startWithCompleted { [weak self] in
-//                self?.viewModel.refreshNotification.notify(())
-//        }
-//    }
+    dynamic func markVisibleAsRead() {
+        guard let visibleCells = tableView.visibleCells as? [ActivityTableViewCell] else {
+            return
+        }
+        
+        let unreadActivities = visibleCells.map({ $0.activity }).filter({ !$0.isRead })
+        
+        if unreadActivities.isEmpty {
+            return
+        }
+        
+        SignalProducer<Activity!, NoError>.fromValues(unreadActivities)
+            .observeOnUserInteractive()
+            .flatMap(.Merge) {
+                ApiService<EmptyResponse>.post("activities/\($0.ID)/read")
+                    .ignoreError()
+                    .startOnUserInteractive()
+            }
+            .observeOnMain()
+            .startWithCompleted { [weak self] in
+                self?.viewModel.refreshNotification.notify(())
+        }
+    }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if items.isEmpty {
             let cell = tableView.dequeueReusableCellWithIdentifier("placeholder-cell") as! PlaceholderTableViewCell
-            cell.textView.text = "Nothing new yet"
+            cell.textView.text = "Nothing new yet."
             //cell.iconView.text = String.iconWithName(.Inbox)
             cell.iconView.textColor = .LightGrey
             return cell
@@ -153,7 +155,6 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
             default:
                 fatalError()
             }
-            print("my activity>>",activity)
             
             cell.update(activity)
             cell.navigationController = navigationController
@@ -176,7 +177,6 @@ class NotificationTableViewCell: UICollectionViewCell,UITableViewDataSource, UIT
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print(items.count)
         return items.isEmpty ? 1 : items.count
     }
     

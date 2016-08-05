@@ -33,7 +33,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     let headerView = UIView()
     var isProfileVisit:Bool = false
     var isFollowClicked:Bool = false
-    var isNotifClicked:Bool = false
+    var isNotifClicked:Bool = true
     var fromLoginPage:Bool = false
     var finishReloadingCollectionView = MutableProperty<Bool>(false)
     
@@ -72,7 +72,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         tabController?.delegate = self
         
         if !isProfileVisit {
-            var image = UIImage(named: "logo_small")
+            //var image = UIImage(named: "logo_small")
+            var image = UIImage(named:"iam360_navTitle")
             image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
             originalBackButton = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.goToFeeds))
         }
@@ -95,22 +96,34 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
             if isFollowTabTap {
-                print("click")
                 self!.isFollowClicked = true
                 self!.isNotifClicked = false
             } else {
-                print("not click")
                 self!.isFollowClicked = false
                 self!.isNotifClicked = false
             }
             self!.collectionView?.reloadData()
             self!.collectionViewModel.refreshNotification.notify(())
+            
+//            if self?.optographIDsNotUploaded.count != 0 {
+//                let indexPath = NSIndexPath(forRow: 1, inSection: 0)
+//                self?.collectionView?.reloadItemsAtIndexPaths([indexPath])
+//            }
         }
         
         profileViewModel.notifTabTouched.producer.startWithNext { [weak self] isNotifTabTap in
             if isNotifTabTap {
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
+                self!.readAllNotification()
+                    .on(
+                        completed: { [weak self] in
+                            UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                            ActivitiesService.unreadCount.value = 0
+                        }
+                    )
+                    .start()
+                
                 self!.collectionView?.reloadData()
             }
         }
@@ -119,12 +132,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple("Save", String.iconWithName(.More))
         rightBarButton.font = UIFont.iconOfSize(15)
         rightBarButton.userInteractionEnabled = true
-        rightBarButton.textColor = .blackColor()
+        rightBarButton.textColor = UIColor(hex:0xFF5E00)
         rightBarButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileCollectionViewController.tapRightBarButton)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBarButton)
         
         editOverlayView.backgroundColor = UIColor.blackColor().alpha(0.6)
-        //editOverlayView.backgroundColor = UIColor.whiteColor()
         editOverlayView.rac_hidden <~ profileViewModel.isEditing.producer.map(negate)
         view.addSubview(editOverlayView)
         _ = self.navigationController?.navigationBar.frame.height
@@ -148,15 +160,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 } else {
                     self?.rightBarButton.frame = CGRect(x: 0, y: -2, width: 20, height: 21)
                     strongSelf.title = "My Profile"
-
+                    
                 }
                 
                 strongSelf.collectionView!.scrollEnabled = !isEditing
             }
         }
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
         
         // Register cell classes
         collectionView!.registerClass(ProfileHeaderCollectionViewCell.self, forCellWithReuseIdentifier: "top-cell")
@@ -181,20 +190,19 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             .on(next: { [weak self] results in
                 
                 if let strongSelf = self {
-                    print("nagreload")
                     strongSelf.optographIDsNotUploaded = results.models
                         .filter{ !$0.isPublished && !$0.isUploading}
                         .map{$0.ID}
                     
                     strongSelf.optographIDs = results.models
-                        .filter{ $0.isPublished || $0.isUploading}
+                        .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
                     
-//                    strongSelf.collectionView!.performBatchUpdates({
-//                        strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-//                        strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-//                        strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-//                        }, completion: nil)
+                    //                    strongSelf.collectionView!.performBatchUpdates({
+                    //                        strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+                    //                        strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+                    //                        strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
+                    //                        }, completion: nil)
                 }
                 })
             .startWithNext { _ in
@@ -205,6 +213,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if isProfileVisit {
             tabController!.disableScrollView()
         }
+    }
+    func readAllNotification() -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.post("activities/read_all")
     }
     
     deinit {
@@ -289,36 +300,19 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                         .map{$0.ID}
                     
                     strongSelf.optographIDs = results.models
-                        .filter{ $0.isPublished || $0.isUploading}
+                        .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
-                    
-                    strongSelf.optographIDs = results.models.map { $0.ID }
                 }
                 })
             .startWithNext { _ in
                 self.collectionView?.reloadData()
         }
         
-//        profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
-//            if let strongSelf = self {
-//                if isFollowTabTap {
-//                    print("click")
-//                    strongSelf.isFollowClicked = true
-//                } else {
-//                    print("not click")
-//                    strongSelf.isFollowClicked = false
-//                }
-//                strongSelf.collectionView?.reloadData()
-//                strongSelf.collectionViewModel.refreshNotification.notify(())
-//            }
-//        }
         profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
             if isFollowTabTap {
-                print("click")
                 self!.isFollowClicked = true
                 self!.isNotifClicked = false
             } else {
-                print("not click")
                 self!.isFollowClicked = false
                 self!.isNotifClicked = false
             }
@@ -331,6 +325,13 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 print("click notification")
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
+                self!.readAllNotification()
+                    .on(
+                        completed: { [weak self] in
+                        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                        ActivitiesService.unreadCount.value = 0
+                    }).start()
+                
                 self!.collectionView?.reloadData()
             }
         }
@@ -357,7 +358,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if isProfileVisit {
             tabController!.disableScrollView()
         }
-        self.navigationController?.navigationBar.tintColor = UIColor(hex:0xffbc00)
+        self.navigationController?.navigationBar.tintColor = UIColor(hex:0xFF5E00)
         
         if fromLoginPage {
             goToFeeds()
@@ -398,13 +399,13 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     }
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if isFollowClicked || isNotifClicked {
+        if (isFollowClicked || isNotifClicked) && profileViewModel.isMe {
             return 2
         } else {
             print("count3",optographIDs.count)
             print(("count2",optographIDsNotUploaded.count > 0 ? 1:0))
             print("count1",optographIDsNotUploaded.count)
-            print("number of itens",optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0))
+            print("number of items",optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0))
             return optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0)
         }
         
@@ -413,33 +414,36 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         if indexPath.item == 0 {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("top-cell", forIndexPath: indexPath) as! ProfileHeaderCollectionViewCell
+            print("ProfileHeaderCollectionViewCell")
             
             cell.bindViewModel(profileViewModel)
             cell.navigationController = navigationController as? NavigationController
             cell.parentViewController = self
             
             return cell
-        } else if indexPath.item == 1 && !isFollowClicked && optographIDsNotUploaded.count != 0 && !isNotifClicked{
+        } else if (indexPath.item == 1 && !isFollowClicked && optographIDsNotUploaded.count != 0 && !isNotifClicked ) && profileViewModel.isMe{
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("upload-cell", forIndexPath: indexPath) as! ProfileUploadCollectionViewCell
+            print("ProfileUploadCollectionViewCell")
             
             cell.optographIDsNotUploaded = optographIDsNotUploaded
             cell.navigationController = navigationController as? NavigationController
+            cell.refreshNotification = collectionViewModel.refreshNotification
             cell.reloadTable()
             
             return cell
-        
-        } else if indexPath.item == 1 && isFollowClicked && !isNotifClicked{
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("followers-cell", forIndexPath: indexPath) as! ProfileFollowersViewCell
             
+        } else if (indexPath.item == 1 && isFollowClicked && !isNotifClicked) && profileViewModel.isMe{
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("followers-cell", forIndexPath: indexPath) as! ProfileFollowersViewCell
+            print("ProfileFollowersViewCell")
             cell.navigationController = navigationController as? NavigationController
             cell.viewIsActive()
-
+            
             
             return cell
             
-        } else if indexPath.item == 1 && isNotifClicked {
+        } else if (indexPath.item == 1 && isNotifClicked) && profileViewModel.isMe {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("notification-cell", forIndexPath: indexPath) as! NotificationTableViewCell
-            
+            print("NotificationTableViewCell")
             cell.navigationController = navigationController as? NavigationController
             
             return cell
@@ -447,16 +451,18 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         } else {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! ProfileTileCollectionViewCell
             var cellCount:Int = 1
-            
+            print("ProfileTileCollectionViewCell")
             if optographIDsNotUploaded.count != 0 {
                 cellCount += 1
             }
+            if optographIDs.count != 0 {
+                let optographID = optographIDs[indexPath.item - cellCount]
+                cell.bind(optographID)
+                cell.refreshNotification = collectionViewModel.refreshNotification
+                cell.navigationController = navigationController as? NavigationController
+                cell.backgroundColor = UIColor.blackColor()
+            }
             
-            let optographID = optographIDs[indexPath.item - cellCount]
-            cell.bind(optographID)
-            cell.refreshNotification = collectionViewModel.refreshNotification
-            cell.navigationController = navigationController as? NavigationController
-            cell.backgroundColor = UIColor.blackColor()
             
             return cell
         }
@@ -486,10 +492,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if indexPath.item == 0 {
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             return CGSize(width: self.view.frame.width, height: 267 + textHeight)
-        } else if indexPath.item == 1 && (isFollowClicked || isNotifClicked){
+        } else if indexPath.item == 1 && (isFollowClicked || isNotifClicked) && profileViewModel.isMe{
             let textHeight = calcTextHeight(profileViewModel.text.value, withWidth: collectionView.frame.width - 28, andFont: UIFont.displayOfSize(12, withType: .Regular))
             return CGSize(width: self.view.frame.width, height: self.view.frame.height - (267 + textHeight))
-        } else if indexPath.item == 1 && !isFollowClicked && optographIDsNotUploaded.count != 0{
+        } else if (indexPath.item == 1 && !isFollowClicked && optographIDsNotUploaded.count != 0) && profileViewModel.isMe{
             let width = (self.view.frame.size.width)
             return CGSize(width: width, height: CGFloat(optographIDsNotUploaded.count * 75) + CGFloat(optographIDsNotUploaded.count * 1))
         } else {
@@ -524,11 +530,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             if optographIDsNotUploaded.count != 0 {
                 cellCount += 1
             }
-            let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item - cellCount])
+            let detailsViewController = DetailsTableViewController(optoList: [optographIDs[indexPath.item - cellCount]])
             detailsViewController.cellIndexpath = cellCount
             navigationController?.pushViewController(detailsViewController, animated: true)
         }
-        
     }
     
     dynamic private func tapLeftBarButton() {
@@ -544,8 +549,20 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             
             if profileViewModel.isMe {
                 settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
-                    SessionService.logoutReset()
-                    SessionService.logout()
+                    
+                    if self.optographIDsNotUploaded.count != 0 {
+                        let confirmAlert = UIAlertController(title: "Are you sure want to logout?", message: "Some optographs are still not uploaded and will be deleted if you logout.", preferredStyle: .Alert)
+                        confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+                        confirmAlert.addAction(UIAlertAction(title: "Logout", style: .Default, handler: { _ in
+                            SessionService.logoutReset()
+                            SessionService.logout()
+                        }))
+                        
+                        self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
+                    } else {
+                        SessionService.logoutReset()
+                        SessionService.logout()
+                    }
                 }))
             } else {
                 settingsSheet.addAction(UIAlertAction(title: "Report user", style: .Destructive, handler: { _ in
@@ -563,14 +580,4 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             navigationController?.presentViewController(settingsSheet, animated: true, completion: nil)
         }
     }
-    
-}
-
-// MARK: - UITabBarControllerDelegate
-extension ProfileCollectionViewController: DefaultTabControllerDelegate {
-    
-    func jumpToTop() {
-        collectionViewModel.refreshNotification.notify(())
-        collectionView!.setContentOffset(CGPointZero, animated: true)
-    } 
 }

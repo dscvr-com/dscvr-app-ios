@@ -172,7 +172,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         view.addSubview(circleView)
         
         arrowView.text = String.iconWithName(.Next)
-        arrowView.textColor = UIColor(hex:0xffbc00)
+        arrowView.textColor = UIColor(hex:0xFF5E00)
         arrowView.textAlignment = .Center
         arrowView.font = UIFont.iconOfSize(40)
         arrowView.rac_alpha <~ viewModel.distXY.producer.map { distXY in
@@ -181,28 +181,15 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         }
         viewModel.headingToDot.producer
             .map { CGAffineTransformMakeRotation(CGFloat($0) + CGFloat(M_PI_2)) }
-            //            .map { CGAffineTransformMakeRotation(CGFloat($0) - CGFloat(M_PI_2)) }
             .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
         view.addSubview(arrowView)
         
-        //        recordButtonView.rac_backgroundColor <~ viewModel.isRecording.producer.map { $0 ? UIColor.Accent.hatched2 : UIColor.whiteColor().hatched2 }
-        //        recordButtonView.layer.cornerRadius = 35
-        //        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents(.TouchDown).toSignalProducer()
-        //            .map { _ in true }
-        //            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-        //        viewModel.isRecording <~ recordButtonView.rac_signalForControlEvents([.TouchUpInside, .TouchUpOutside]).toSignalProducer()
-        //            .map { _ in false }
-        //            .flatMapError { _ in SignalProducer<Bool, NoError>.empty }
-        //        view.addSubview(recordButtonView)
-        
-        //        if Defaults[.SessionDebuggingEnabled] {
 //        #if DEBUG
 //            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
 //            tapGestureRecognizer.numberOfTapsRequired = 3
 //            view.addGestureRecognizer(tapGestureRecognizer)
 //        #endif
-        //        }
-        //tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
+        
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         scnView.addSubview(tabView)
         
@@ -255,13 +242,6 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         
     }
     
-    /*func touchStartCameraButton() {
-    //tapCameraButtonCallback?()
-    print("ewe")
-    tabView.cameraButton.hidden = true
-    viewModel.isRecording.value = true
-    }*/
-    
     func touchEndCameraButton() {
         //viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
@@ -279,7 +259,8 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         
         stopSession()
         
-        recorder.cancel()
+        //recorder.cancel()
+        recorder.finish()
         recorder.dispose()
         
         if StitchingService.hasUnstitchedRecordings() {
@@ -338,7 +319,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             videoDevice!.unlockForConfiguration()
         
         } catch {
-            print("setExposureMode")
+            print("error on setExposureMode")
         
         }
     }
@@ -454,6 +435,11 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         super.viewDidDisappear(animated)
         Mixpanel.sharedInstance().track("View.Camera")
     }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        tabController!.disableScrollView()
+    }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
@@ -538,7 +524,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         let ballGeometry = SCNSphere(radius: CGFloat(0.04))
         
         ballNode.geometry = ballGeometry
-        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor(hex:0xffbc00)
+        ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor(hex:0xFF5E00)
         
         
         scene.rootNode.addChildNode(ballNode)
@@ -667,8 +653,6 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
                 
             }
         }
-        
-        print(String(maxFps) + "fps");
         
         if videoDevice!.activeFormat.videoHDRSupported.boolValue {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
@@ -942,7 +926,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
                 }
                 else if currentKeyframe.globalId != lastKeyframe?.globalId {
                     let recordedEdge = Edge(lastKeyframe!, currentKeyframe)
-                    edges[recordedEdge]?.geometry!.firstMaterial!.diffuse.contents = UIColor(hex:0xffbc00)
+                    edges[recordedEdge]?.geometry!.firstMaterial!.diffuse.contents = UIColor(hex:0xFF5E00)
                     lastKeyframe = currentKeyframe
                 }
             }
@@ -1063,7 +1047,7 @@ private class DashedCircleView: UIView {
     
     var isActive = false {
         didSet {
-            border.strokeColor = isActive ? UIColor(hex:0xffbc00).CGColor : UIColor.whiteColor().CGColor
+            border.strokeColor = isActive ? UIColor(hex:0xFF5E00).CGColor : UIColor.whiteColor().CGColor
         }
     }
     
@@ -1111,8 +1095,8 @@ private class CameraProgressView: UIView {
     }
     var isActive = false {
         didSet {
-            foregroundLine.backgroundColor = isActive ? UIColor(hex:0xffbc00).CGColor : UIColor.whiteColor().CGColor
-            trackingPoint.backgroundColor = isActive ? UIColor(hex:0xffbc00).CGColor : UIColor.whiteColor().CGColor
+            foregroundLine.backgroundColor = isActive ? UIColor(hex:0xFF5E00).CGColor : UIColor.whiteColor().CGColor
+            trackingPoint.backgroundColor = isActive ? UIColor(hex:0xFF5E00).CGColor : UIColor.whiteColor().CGColor
         }
     }
     
@@ -1193,18 +1177,18 @@ private class TiltView: UIView {
         diagonalLine.lineWidth = 2
         layer.addSublayer(diagonalLine)
         
-        verticalLine.strokeColor = UIColor(hex:0xffbc00).CGColor
+        verticalLine.strokeColor = UIColor(hex:0xFF5E00).CGColor
         verticalLine.fillColor = UIColor.clearColor().CGColor
         verticalLine.lineWidth = 2
         layer.addSublayer(verticalLine)
         
-        ringSegment.strokeColor = UIColor(hex:0xffbc00).CGColor
-        ringSegment.fillColor = UIColor(hex:0xffbc00).CGColor
+        ringSegment.strokeColor = UIColor(hex:0xFF5E00).CGColor
+        ringSegment.fillColor = UIColor(hex:0xFF5E00).CGColor
         ringSegment.lineWidth = 2
         layer.addSublayer(ringSegment)
         
         circleSegment.strokeColor = UIColor.clearColor().CGColor
-        circleSegment.fillColor = UIColor(hex:0xffbc00).hatched2.CGColor
+        circleSegment.fillColor = UIColor(hex:0xFF5E00).hatched2.CGColor
         layer.addSublayer(circleSegment)
     }
     

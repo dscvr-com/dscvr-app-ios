@@ -34,15 +34,20 @@ class ProfileOptographsViewModel {
                         let optograph = Optograph.fromSQL(row)
                         Models.optographs.touch(optograph)
                         Models.persons.touch(Person.fromSQL(row))
+                        Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
                         
-                        if row[OptographSchema.locationID] != nil {
-//                            if let locationRow = Location.fromSQL(row){
-//                            
-//                            }
-//                            
-                            Models.locations.touch(Location.fromSQL(row))
-                            
-                        }
+//                        let coords = LocationService.lastLocation()!
+//                        var location = Location.newInstance()
+//                        location.latitude = coords.latitude
+//                        location.longitude = coords.longitude
+//                        
+//                        var locationBox: ModelBox<Location>?
+//                        locationBox = Models.locations.create(location)
+//                        locationBox!.insertOrUpdate()
+//                        
+//                        Models.optographs.touch(optograph).insertOrUpdate { box in
+//                            box.model.locationID = row[OptographSchema.locationID]
+//                        }
                         
                         return optograph
                     }
@@ -59,7 +64,7 @@ class ProfileOptographsViewModel {
             .flatMap(.Latest) { _ in
                 ApiService<OptographApiModel>.get("persons/\(personID)/optographs")
                     .observeOnUserInitiated()
-                    .filter({ return $0.deletedAt == nil })
+                    //.filter({ return $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
@@ -78,6 +83,24 @@ class ProfileOptographsViewModel {
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
         
+        
+        
+//        refreshNotification.signal
+//            .takeWhile { _ in Reachability.connectedToNetwork() }
+//            .flatMap(.Latest) { _ in
+//                ApiService<StoryObject>.getForGate("story/248761f4-9a83-4cf3-b2a4-f986fee02ee4",queries: ["story_person_id" : "7753e6e9-23c6-46ec-9942-35a5ea744ece"])
+//                    .observeOnUserInitiated()
+//                    .on(next: { apiModel in
+//                        print(apiModel)
+//                    })
+//                    .ignoreError()
+//                    .collect()
+//                    .startOnUserInitiated()
+//            }
+//            .observeOnMain()
+//            .map { print($0) }
+//            .observeNext {}
+        
         loadMoreNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .map { _ in self.results.value.models.last }
@@ -85,7 +108,7 @@ class ProfileOptographsViewModel {
             .flatMap(.Latest) { oldestResult in
                 ApiService<OptographApiModel>.get("persons/\(personID)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
-                    .filter({ $0.deletedAt == nil })
+                    //.filter({ $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
@@ -109,17 +132,7 @@ class ProfileOptographsViewModel {
         refreshNotification.notify(())
     }
     
-//    func createLocationWhenNil() {
-//        let coords = LocationService.lastLocation()!
-//        var location = Location.newInstance()
-//        location.latitude = coords.latitude
-//        location.longitude = coords.longitude
-//        var locationBox: ModelBox<Location>?
-//        
-//        locationBox = Models.locations.create(location)
-//        locationBox!.insertOrUpdate()
-//        optographBox.insertOrUpdate { box in
-//            box.model.locationID = location.ID
-//    
-//    }
+    func createLocationWhenNil() {
+    
+    }
 }

@@ -278,6 +278,7 @@ class SaveViewModel {
             box.model.directionTheta = directionTheta
             if (Defaults[.SessionUploadMode]) != "theta" {
                 box.model.ringCount = Defaults[.SessionUseMultiRing] ? "three":"one"
+                print("uploading not theta")
             }
         }
         if isOnline.value && isLoggedIn.value {

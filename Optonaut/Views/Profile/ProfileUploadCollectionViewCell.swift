@@ -13,8 +13,9 @@ import Kingfisher
 
 class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSource, UITableViewDelegate{
     
-    var tableView: UITableView!
+    var tableView =  UITableView()
     var optographIDsNotUploaded: [UUID]?
+    var refreshNotification = NotificationSignal<Void>()
     
     weak var navigationController: NavigationController?
     
@@ -22,11 +23,12 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
         
         super.init(frame: frame)
         
-        tableView = UITableView(frame: CGRect(x: 0, y: 0, width: Int(frame.size.width), height:Int(frame.size.height)));
-        tableView.dataSource = self;
-        tableView.delegate = self;
-        tableView.registerClass(UploadItemCell.self, forCellReuseIdentifier: "uploadImages");
+//        tableView = UITableView(frame: CGRect(x: 0, y: 0, width: Int(frame.size.width), height:Int(frame.size.height)));
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.registerClass(UploadItemCell.self, forCellReuseIdentifier: "uploadImages")
         contentView.addSubview(tableView)
+        tableView.fillSuperview()
 
     }
     
@@ -46,15 +48,23 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
         let cell = tableView.dequeueReusableCellWithIdentifier("uploadImages") as! UploadItemCell
         
         cell.bind(optographIDsNotUploaded![indexPath.item])
+        cell.selectionStyle = .None
+        cell.uploadFinish.producer.startWithNext{ val in
+            if val {
+                print("upload finish")
+                self.refreshNotification.notify()
+            }
+        }
         
         return cell;
     }
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let detailsViewController = DetailsTableViewController(optographId: optographIDsNotUploaded![indexPath.item])
+        let detailsViewController = DetailsTableViewController(optoList:[optographIDsNotUploaded![indexPath.item]])
         detailsViewController.cellIndexpath = indexPath.item
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
     func reloadTable() {
+        tableView.fillSuperview()
         tableView.reloadData()
     
     }

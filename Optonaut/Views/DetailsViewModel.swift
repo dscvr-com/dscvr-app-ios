@@ -40,15 +40,34 @@ class DetailsViewModel {
     
     var optographId:UUID
     
-    
     var optographBox: ModelBox<Optograph>!
     var creatorDetails:ModelBox<Person>!
+    var isElite = MutableProperty<Int>(0)
     
     init(optographID: UUID) {
         
         logInit()
         optographBox = Models.optographs[optographID]!
         optographId = optographID
+        
+//        optographBox.producer.startWithNext{ [weak self] optograph in
+        
+//        if optograph.isPublished {
+//            ApiService<OptographApiModel>.get("optographs/\(optographID)")
+//                .on(next: { apiModel in
+//                    Models.optographs.touch(apiModel).insertOrUpdate { box in
+//                        box.model.isInFeed = true
+//                        box.model.isStitched = true
+//                        box.model.isPublished = true
+//                        box.model.isSubmitted = true
+//                    }
+//                    Models.persons.touch(apiModel.person).insertOrUpdate()
+//                    Models.locations.touch(apiModel.location)?.insertOrUpdate()
+//                }).startWithNext { optograph in
+//                    self?.updatePropertiesDetails()
+//                }
+//            }
+//        }
         
         updatePropertiesDetails()
         
@@ -76,11 +95,13 @@ class DetailsViewModel {
                 started: { [weak self] in
                     self?.creatorDetails.insertOrUpdate { box in
                         box.model.isFollowed = !followedBefore
+                        self?.isFollowed.value = !followedBefore
                     }
                 },
                 failed: { [weak self] _ in
                     self?.creatorDetails.insertOrUpdate { box in
                         box.model.isFollowed = followedBefore
+                        self?.isFollowed.value = followedBefore
                     }
                 }
             )
@@ -157,6 +178,7 @@ class DetailsViewModel {
                 self?.avatarImageUrl.value = "persons/\(person.ID)/\(person.avatarAssetID).jpg"
                 self?.creator_username.value = person.userName
                 self?.isFollowed.value = person.isFollowed
+                self?.isElite.value = person.eliteStatus
             }
         }
     }

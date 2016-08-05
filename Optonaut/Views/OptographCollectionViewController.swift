@@ -12,7 +12,7 @@ import SpriteKit
 import Async
 import Kingfisher
 import SwiftyUserDefaults
-//import FillableLoaders
+import AssetsLibrary
 
 typealias Direction = (phi: Float, theta: Float)
 
@@ -47,14 +47,14 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     private let fileManager = NSFileManager.defaultManager()
     
-    let isThetaImage = MutableProperty<Bool>(false)
+    //let isThetaImage = MutableProperty<Bool>(false)
     
     var imageView: UIImageView!
     var imagePicker = UIImagePickerController()
     
     let shareData = ShareData.sharedInstance
     
-    //var loader: FillableLoader = FillableLoader()
+    //var progress = KDCircularProgress()
     
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
@@ -116,15 +116,14 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapRightButton))
         
         viewModel.results.producer
-            .filter {return $0.changed }
+            .filter {$0.changed }
             .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
             .delayAllUntil(viewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
-                print("reload data =======")
                 
                 if let strongSelf = self {
-                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+                    //let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
                     strongSelf.optographIDs = results.models.map { $0.ID }
                     
                     for optograph in results.models {
@@ -135,6 +134,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     }
                     
                     if results.models.count == 1 {
+                        print("no reload")
                         strongSelf.collectionView!.reloadData()
                     } else {
                         CATransaction.begin()
@@ -142,23 +142,24 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                             strongSelf.collectionView!.performBatchUpdates({
                                 strongSelf.imageCache.delete(results.delete)
                                 strongSelf.imageCache.insert(results.insert)
-                                print("need to delete>>",results.delete)
-                                print("need to update>>",results.update)
-                                print("need to insert>>",results.insert)
-                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection: 0) })
+                                for data in results.delete {
+                                    strongSelf.imageCache.deleteMp4((strongSelf.optographIDs[data]))
+                                }
+                                
+                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection:
+                                    0) })
                                 strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
                                 strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
                             }, completion: { _ in
                                 if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
                                     // preserves scroll position
-                                    if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
-                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
-                                    }
+//                                    if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
+//                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
+//                                    }
                                 }
                                 strongSelf.refreshControl.endRefreshing()
                                 CATransaction.commit()
                             })
-                        strongSelf.collectionView!.reloadData()
                     }
                 }
             })
@@ -174,11 +175,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         view.addSubview(tabView)
         
-//        loader = WavesLoader.showLoaderWithPath(self.path(), onView:view)
-//        loader.progressBased = true
-//        loader.loaderColor = UIColor(0xffbc00)
-//        loader.frame = CGRect(x: 50,y: 200 ,width: 0,height: 0)
-        
         tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
         tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
         tabView.cameraButton.addTarget(self, action: #selector(touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
@@ -186,6 +182,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         tabView.leftButton.addTarget(self, action: #selector(tapLeftButton), forControlEvents: [.TouchDown])
         
         tabView.rightButton.addTarget(self, action: #selector(tapRightButtonTab), forControlEvents: [.TouchUpInside])
+        
+        //createStitchingProgressBar()
         
         PipelineService.stitchingStatus.producer
             .observeOnMain()
@@ -203,31 +201,45 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     print("Idle")
                 case let .Stitching(progress):
                     self?.tabView.cameraButton.progress = CGFloat(progress)
-                    //self!.loader.progress = CGFloat(progress)
-                    print("Stitching")
+//                    if self?.progress.hidden == true {
+//                        self?.progress.hidden = false
+//                    }
+//                    let progressSize:Double = Double(progress * 360)
+//                    self?.progress.angle = progressSize
                 case .StitchingFinished(_):
+//                    self?.progress.hidden = true
                     self?.tabView.cameraButton.progress = nil
+                    self?.viewModel.refresh()
                     print("StitchingFinished")
                 }
         }
         updateTabs()
-        //initNotificationIndicator()
+        initNotificationIndicator()
         imagePicker.delegate = self
-        
-        isThetaImage.producer
-            .filter(isTrue)
-            .startWithNext{ _ in
-                let alert = UIAlertController(title: "Ooops!", message: "Not a Theta Image, Please choose another photo", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler:{ _ in
-                    self.isThetaImage.value = false
-                }))
-                self.presentViewController(alert, animated: true, completion: nil)
-        }
         
         PipelineService.checkStitching()
         PipelineService.checkUploading()
         
+        viewModel.isActive.value = true
     }
+    
+//    func createStitchingProgressBar() {
+//        let sizeWidth = UIImage(named:"camera_icn")!.size.width
+//        let sizeHeight = UIImage(named:"camera_icn")!.size.height
+//        
+//        progress = KDCircularProgress(frame: CGRect(x: ((view.frame.width/2) - ((sizeWidth+30)/2)), y: (view.frame.height) - sizeHeight - 30, width: sizeWidth+30, height: sizeHeight+30))
+//        progress.progressThickness = 0.2
+//        progress.trackThickness = 0.7
+//        progress.clockwise = true
+//        progress.gradientRotateSpeed = 2
+//        progress.roundedCorners = true
+//        progress.angle = 300
+//        progress.glowMode = .Forward
+//        progress.setColors(UIColor.cyanColor() ,UIColor.whiteColor(), UIColor.magentaColor())
+//        progress.hidden = true
+//        view.addSubview(progress)
+//    }
+    
     func path() -> CGPath{
         return SamplePaths.cameraPath()
     }
@@ -263,12 +275,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             if pickedImage.size.height == 2688 && pickedImage.size.width == 5376 {
                 uploadTheta(pickedImage)
             } else {
-                isThetaImage.value = false
+                //isThetaImage.value = false
             }
         }
         
         self.dismissViewControllerAnimated(true, completion: nil)
     }
+    
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -286,7 +299,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             if Defaults[.SessionEliteUser] {
                 navigationController?.pushViewController(CameraViewController(), animated: false)
             } else{
-                //self.presentViewController(InvitationViewController(), animated: true, completion: nil)
                 self.tapRightButton()
             }
             
@@ -294,10 +306,14 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
             tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
-        case let .StitchingFinished(optographID):
-            scrollToOptographFeed(optographID)
-            PipelineService.stitchingStatus.value = .Idle
         case .Uninitialized: ()
+            
+        default:
+            print("wala")
+            PipelineService.stitchingStatus.value = .Idle
+            //        case let .StitchingFinished(optographID):
+            //            scrollToOptographFeed(optographID)
+            //            PipelineService.stitchingStatus.value = .Idle
         }
     }
     
@@ -321,6 +337,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             self.presentViewController(alert, animated: true, completion: nil)
         }
+//self.presentViewController(InvitationViewController(), animated: true, completion: nil)
     }
     func tapRightButtonTab() {
         tabController!.tapNavBarTitleForFeedClass()
@@ -328,6 +345,16 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     func tapRightButton() {
         tabController!.rightButtonAction()
+        readAllNotification()
+            .on(
+                completed: { [weak self] in
+                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                    ActivitiesService.unreadCount.value = 0
+                }).start()
+    }
+    
+    func readAllNotification() -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.post("activities/read_all")
     }
     
     func tapLeftBarButton() {
@@ -344,7 +371,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     private func initNotificationIndicator() {
         let circle = UILabel()
-        circle.frame = CGRect(x: tabView.rightButton.frame.origin.x + 25, y: tabView.rightButton.frame.origin.y - 3, width: 16, height: 16)
+        circle.frame = CGRect(x: view.frame.width - 25, y: 25, width: 10, height: 10)
         circle.backgroundColor = .Accent
         circle.font = UIFont.displayOfSize(10, withType: .Regular)
         circle.textAlignment = .Center
@@ -352,12 +379,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         circle.layer.cornerRadius = 8
         circle.clipsToBounds = true
         circle.hidden = true
-        tabView.addSubview(circle)
+        view.addSubview(circle)
         
         ActivitiesService.unreadCount.producer.startWithNext { count in
             let hidden = count <= 0
             circle.hidden = hidden
-            circle.text = "\(count)"
+            //circle.text = "\(count)"
         }
     }
     
@@ -373,15 +400,19 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         
         uiHidden.value = false
-        
-        viewModel.refresh()
-        viewModel.isActive.value = true
+        //viewModel.isActive.value = true
         
         showUI()
         tabController!.enableScrollView()
         tabController!.enableNavBarGesture()
         
         view.bounds = UIScreen.mainScreen().bounds
+        
+        if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) as? OptographCollectionViewCell {
+            collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
+        }
+        
+        //viewModel.isActive.value = true
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -427,15 +458,15 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("count ng mga optograph",optographIDs.count)
         return optographIDs.count
     }
-
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+        
+        guard let cell = cell as? OptographCollectionViewCell else {
+            return
+        }
         
         let optographID = optographIDs[indexPath.row]
-        
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
         
         cell.navigationController = navigationController as? NavigationController
         cell.bindModel(optographID)
@@ -452,34 +483,52 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if indexPath.row > optographIDs.count - 3 {
             viewModel.loadMore()
         }
-//        if arrayOfDir.indices.contains(indexPath.row) {
-//            if arrayOfDir[indexPath.row] != "" {
-//                cell.video = AVPlayer(URL: NSURL(fileURLWithPath: arrayOfDir[indexPath.row]))
-//            } else {
-//                cell.video = nil
-//            }
-//        } else {
-//            cell.video = nil
+    }
+
+    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        //let optographID = optographIDs[indexPath.row]
+        
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
+        
+//        cell.navigationController = navigationController as? NavigationController
+//        cell.bindModel(optographID)
+//        cell.swipeView = tabController!.scrollView
+//        cell.collectionView = collectionView
+//        cell.isShareOpen.producer
+//            .startWithNext{ val in
+//                if val{
+//                    self.shareData.optographId.value = optographID
+//                    self.shareData.isSharePageOpen.value = true
+//                }
 //        }
-    
+//        
+//        if indexPath.row > optographIDs.count - 3 {
+//            viewModel.loadMore()
+//        }
+        
         return cell
     }
-//    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-//        
-//        let optographID = optographIDs[indexPath.row]
-//        
-//        let filename = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographID)/pan.mp4"
-//        
-//        let returnData = imageCache.insertMp4IntoCache(filename,optographId:optographID)
-//        
-//        arrayOfDir.insert(returnData, atIndex: indexPath.row)
-//        
-//    }
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        let detailsViewController = DetailsTableViewController(optographId:optographIDs[indexPath.row])
+        var optographsToPick: [UUID] = []
+        optographsToPick.append(optographIDs[indexPath.row])
+        
+        if (indexPath.row + 5 ) >= optographIDs.count {
+            for a in 1...5 {
+                optographsToPick.append(optographIDs[(indexPath.row + a) % optographIDs.count])
+            }
+        } else {
+            for a in 1...5 {
+                optographsToPick.append(optographIDs[indexPath.row + a])
+            }
+        }
+        
+        let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
+        
         detailsViewController.cellIndexpath = indexPath.item
+        
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
@@ -489,48 +538,42 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     //size
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        
+
         return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/5)*2))
     }
     
     
-    
-    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-        
-        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-        for cell in cells {
-            cell.setRotation(false)
-        }
-        
-        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds))
-        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter){
-            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
-            
-                cell.setRotation(true)
-            }
-        }
-    }
-    
-    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        
-        
-        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-        for cell in cells {
-            cell.setRotation(false)
-        }
-        
-        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds))
-        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter) {
-            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
-                cell.setRotation(true)
-            }
-        }
-    }
-    
-}
-
-// MARK: - UITabBarControllerDelegate
-extension OptographCollectionViewController: DefaultTabControllerDelegate {
+//    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+//        
+//        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+//        for cell in cells {
+//            cell.setRotation(false)
+//        }
+//        
+//        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds)-20)
+//        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter){
+//            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
+//            
+//                cell.setRotation(true)
+//            }
+//        }
+//    }
+//    
+//    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+//        
+//        
+//        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
+//        for cell in cells {
+//            cell.setRotation(false)
+//        }
+//        
+//        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds)-20)
+//        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter) {
+//            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
+//                cell.setRotation(true)
+//            }
+//        }
+//    }
     
     func jumpToTop() {
         viewModel.refresh()
@@ -541,4 +584,5 @@ extension OptographCollectionViewController: DefaultTabControllerDelegate {
         let row = optographIDs.indexOf(optographID)
         collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
     }
+    
 }

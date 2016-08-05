@@ -23,7 +23,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad();
         
-        searchBar.placeholder = "Search People";
+        searchBar.placeholder = "Search Username";
         searchBar.delegate = self;
         searchBar.showsCancelButton = true;
         searchBar.tintColor = UIColor.blackColor();
@@ -52,7 +52,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     }
     
     override func viewWillAppear(animated: Bool) {
-        self.navigationController?.navigationBar.barTintColor = UIColor(hex:0xffbc00)
+        self.navigationController?.navigationBar.barTintColor = UIColor(hex:0xFF5E00)
         self.navigationController?.navigationBar.translucent = false;
         
         navigationController?.navigationBar.titleTextAttributes = [

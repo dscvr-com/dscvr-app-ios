@@ -55,12 +55,15 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
             let url = TextureURL(activity.activityResourceStar!.optograph.ID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
             self.optographImageView.kf_setImageWithURL(NSURL(string: url)!)
             
+            //eliteImageView.hidden = activity.activityResourceStar!.causingPerson.eliteUser == 1 ? false : true
         }
         
         super.update(activity)
     }
     
     func pushProfile() {
+        
+        self.read()
         
         let profilepage = ProfileCollectionViewController(personID: self.activity.activityResourceStar!.causingPerson.ID)
         profilepage.isProfileVisit = true
@@ -69,7 +72,9 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     
     func pushDetails() {
         
-        let detailsViewController = DetailsTableViewController(optographId:activity.activityResourceStar!.optograph.ID)
+        self.read()
+        
+        let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceStar!.optograph.ID])
         detailsViewController.cellIndexpath = 0
         navigationController?.pushViewController(detailsViewController, animated: true)
     }

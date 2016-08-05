@@ -21,7 +21,7 @@ class UserTableViewCell: UITableViewCell {
         self.userImage.center = CGPoint(x: userImage.frame.size.width/2.0 + 20.0, y: self.contentView.frame.height/2 + 15.0)
         self.userImage.backgroundColor = UIColor.lightGrayColor()
         self.userImage.layer.cornerRadius = self.userImage.frame.size.width/2
-        self.userImage.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        self.userImage.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         self.userImage.layer.borderWidth = 2.0
         self.userImage.clipsToBounds = true
         self.userImage.image = UIImage(named: "avatar-placeholder")!

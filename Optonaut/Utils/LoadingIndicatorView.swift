@@ -1,5 +1,5 @@
 //
-//  TabView.swift
+//  LoadingIndicatorView.swift
 //  Iam360
 //
 //  Created by robert john alkuino on 5/7/16.

@@ -61,7 +61,7 @@ extension Location: MergeApiModel {
     }
 }
 
-extension Location: SQLiteModel {
+extension Location: SQLiteModel  {
     
     static func schema() -> ModelSchema {
         return LocationSchema
@@ -71,7 +71,7 @@ extension Location: SQLiteModel {
         return LocationTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> Location {
+    static func fromSQL(row: SQLiteRow) -> Location{
         return Location(
             ID: row[LocationSchema.ID],
             createdAt: row[LocationSchema.createdAt],

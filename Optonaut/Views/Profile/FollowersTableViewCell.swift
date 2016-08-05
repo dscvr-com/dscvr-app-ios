@@ -16,6 +16,7 @@ class FollowersTableViewCell: UITableViewCell {
     var followButton = UIButton()
     var personBox: ModelBox<Person>!
     var isFollowed = MutableProperty<Bool>(false)
+    var eliteImageView = UIImageView()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -24,15 +25,16 @@ class FollowersTableViewCell: UITableViewCell {
         self.userImage.center = CGPoint(x: userImage.frame.size.width/2.0 + 20.0, y: self.contentView.frame.height/2 + 15.0)
         self.userImage.backgroundColor = UIColor.lightGrayColor()
         self.userImage.layer.cornerRadius = self.userImage.frame.size.width/2
-        self.userImage.layer.borderColor = UIColor(hex:0xffbc00).CGColor
+        self.userImage.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
         self.userImage.layer.borderWidth = 2.0
         self.userImage.clipsToBounds = true
         self.userImage.image = UIImage(named: "avatar-placeholder")!
         
-        self.nameLabel = UILabel(frame: CGRect(x: self.userImage.frame.origin.x + self.userImage.frame.size.width + 10.0, y: self.userImage.frame.origin.y + 10.0, width: 100.0, height: 30.0))
-        self.nameLabel.font = UIFont.systemFontOfSize(15.0, weight: UIFontWeightMedium)
+        eliteImageView.image = UIImage(named: "elite_beta_icn")!
         
-        self.nameLabel.textColor = UIColor.darkGrayColor()
+        self.nameLabel = UILabel(frame: CGRect(x: self.userImage.frame.origin.x + self.userImage.frame.size.width + 10.0, y: self.userImage.frame.origin.y + 10.0, width: 100.0, height: 30.0))
+        self.nameLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
+        self.nameLabel.textColor = UIColor(0xFF5E00)
         
         let followButtonSize = UIImage(named: "follow_button")?.size
         followButton.addTarget(self, action: #selector(toggleFollow), forControlEvents:.TouchUpInside)
@@ -42,9 +44,13 @@ class FollowersTableViewCell: UITableViewCell {
         
         self.addSubview(followButton)
         self.addSubview(userImage)
+        self.addSubview(eliteImageView)
         self.addSubview(nameLabel)
         
         self.nameLabel.align(.ToTheRightCentered, relativeTo: self.userImage, padding: 10, width: 100, height: 30)
+        let icnWidth = UIImage(named: "elite_beta_icn")!
+        
+        eliteImageView.frame = CGRect(x: userImage.frame.origin.x + 2,y: userImage.frame.origin.y + userImage.frame.height - (icnWidth.size.height/2) - 2,width: icnWidth.size.width, height: icnWidth.size.height)
         
         isFollowed.producer.startWithNext{val in
             if val {
@@ -57,19 +63,26 @@ class FollowersTableViewCell: UITableViewCell {
     func bind(personId:UUID) {
         personBox = Models.persons[personId]!
         
-//        personBox.producer
-//            .skipRepeats()
-//            .startWithNext { [weak self] person in
-////                self?.displayName.value = "@\(person.displayName)"
-////                self?.userName.value = "@\(person.userName)"
-////                self?.text.value = person.text
-////                self?.postCount.value = person.optographsCount
-////                self?.followersCount.value = person.followersCount
-////                self?.followingCount.value = person.followedCount
-//                self?.isFollowed.value = person.isFollowed
-////                self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 84, height: 84)
-//        }
-        
+        personBox.producer
+            .skipRepeats()
+            .startWithNext { [weak self] person in
+                print("bind>>",person.isFollowed)
+//                self?.displayName.value = "@\(person.displayName)"
+//                self?.userName.value = "@\(person.userName)"
+//                self?.text.value = person.text
+//                self?.postCount.value = person.optographsCount
+//                self?.followersCount.value = person.followersCount
+//                self?.followingCount.value = person.followedCount
+                self?.isFollowed.value = person.isFollowed
+                
+                if person.eliteStatus == 0 {
+                    self?.eliteImageView.hidden = true
+                } else {
+                    self?.eliteImageView.hidden = false
+                }
+                
+//                self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 84, height: 84)
+        }
     }
     
     func toggleFollow() {
@@ -88,8 +101,7 @@ class FollowersTableViewCell: UITableViewCell {
                         box.model.isFollowed = !followedBefore
                         self?.isFollowed.value = !followedBefore
                     }
-                },
-                failed: { [weak self] _ in
+                },failed: { [weak self] _ in
                     self?.personBox.insertOrUpdate { box in
                         box.model.isFollowed = followedBefore
                         self?.isFollowed.value = followedBefore

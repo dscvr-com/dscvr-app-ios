@@ -42,7 +42,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     let titleText = UILabel()
     var textToShare:String = ""
     var shareUrl:NSURL = NSURL(string: "")!
-    var imageToShare: UIImage?
+    //var imageToShare: UIImage?
     var placeHolderToShare = UIImageView()
     var urlToShare:String = ""
     var descriptionToShare:String = ""
@@ -53,7 +53,8 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let image: UIImage = UIImage(named: "logo_settings")!
+        let image: UIImage = UIImage(named: "logo_share")!
+        //let image: UIImage = UIImage(named:"iam360_navTitle")!
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
         self.view.addSubview(bgImage!)
@@ -104,7 +105,8 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         
         self.view.backgroundColor = UIColor.whiteColor()
         
-        var leftBarImage = UIImage(named: "logo_small")
+       // var leftBarImage = UIImage(named: "logo_small")
+        var leftBarImage = UIImage(named:"iam360_navTitle")
         leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.tapRightButton))
         
@@ -123,14 +125,14 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
                 
                 placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
                 
-                ImageManager.sharedInstance.downloadImage(
-                    NSURL(string:self.urlToShare)!, requester: self,
-                    completionHandler: { (image, error, _, _) in
-                        if let error = error where error.code != -999 {
-                            print(error)
-                        }
-                        self.imageToShare = image
-                })
+//                ImageManager.sharedInstance.downloadImage(
+//                    NSURL(string:self.urlToShare)!, requester: self,
+//                    completionHandler: { (image, error, _, _) in
+//                        if let error = error where error.code != -999 {
+//                            print(error)
+//                        }
+//                        self.imageToShare = image
+//                })
                 
                 let optographBox = Models.optographs[val]!
                 let optograph = optographBox.model

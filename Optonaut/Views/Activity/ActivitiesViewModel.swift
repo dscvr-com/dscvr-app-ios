@@ -40,19 +40,6 @@ class ActivitiesViewModel: NSObject {
 //                DatabaseService.query(.Many, query: query)
 //                    .observeOnUserInteractive()
 //                    .map { row -> Activity in
-//                        let person = Person.fromSQL(row)
-//                        let location = Location.fromSQL(row)
-//                        //let optograph = Optograph.fromSQL(row)
-//                        
-//                        //Models.optographs.touch(optograph)
-//                        Models.persons.touch(person)
-//                        
-//                        
-//                        if row[OptographSchema.locationID] != nil {
-//                            Models.locations.touch(Location.fromSQL(row))
-//                        }
-//
-//                        
 //                        return Activity.fromSQL(row)
 //                    }
 //                    .ignoreError()
@@ -67,11 +54,9 @@ class ActivitiesViewModel: NSObject {
             .takeWhile { _ in Reachability.connectedToNetwork() && SessionService.isLoggedIn }
             .flatMap(.Latest) { _ in
                 ApiService<Activity>.get("activities")
-                    .observeOnUserInteractive()
+                    .observeOnUserInitiated()
                     .on(next: { activity in
-                        
-                        print(activity)
-//                        try! activity.insertOrUpdate()
+                        try! activity.insertOrUpdate()
 //                        try! activity.activityResourceStar?.insertOrUpdate()
 //                        activity.activityResourceStar?.optograph.insertOrIgnore()
 //                        activity.activityResourceStar?.causingPerson.insertOrIgnore()
@@ -86,10 +71,10 @@ class ActivitiesViewModel: NSObject {
                     })
                     .ignoreError()
                     .collect()
-                    .startOnUserInteractive()
+                    .startOnUserInitiated()
             }
             .observeOnMain()
-            .map { self.results.value.merge($0, deleteOld: false) }
+            .map {self.results.value.mergeForNotification($0, deleteOld: false) }
             .observeNext { results in
                 self.unreadCount.value = results.models.reduce(0) { (acc, activity) in acc + (activity.isRead ? 0 : 1) }
                 self.results.value = results

@@ -14,6 +14,7 @@ class OnboardingViewModel {
     let results = MutableProperty<[Person]>([])
     let searchText = MutableProperty<String>("")
     private var personBox: ModelBox<Person>!
+    let nameOk = MutableProperty<Bool>(false)
     
     init() {
         let queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
@@ -22,14 +23,17 @@ class OnboardingViewModel {
                 if str.isEmpty {
                     self.results.value = []
                 }
+                print(">>",str)
             })
-            .filter { $0.characters.count > 2 }
+            .filter { $0.characters.count >= 5 }
             .throttle(0.3, onScheduler: QueueScheduler(queue: queue))
             .map(escape)
             .flatMap(.Latest) { keyword in
                 return ApiService<PersonApiModel>.get("persons/username_search?keyword=\(keyword)")
                     .on(next: { apiModel in
                         Models.persons.touch(apiModel).insertOrUpdate()
+                        },failed:{ val in
+                            self.nameOk.value = true
                     })
                     .ignoreError()
                     .map(Person.fromApiModel)
