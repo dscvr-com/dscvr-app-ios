@@ -596,7 +596,7 @@ class CubeRenderDelegate: RenderDelegate {
 //                  
 //                    
 //                }
-          delegate!.didEnterFrustrum(markername!, inFrustrum: true)
+          delegate!.didEnterFrustrum("", inFrustrum: true)
         }
             else{
                 delegate!.didEnterFrustrum("", inFrustrum: false)
