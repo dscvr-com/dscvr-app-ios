@@ -268,6 +268,9 @@
 		B1754D5C1D0E82CD005A3E85 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */; };
 		B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */; };
 		B1754D5E1D0E82CD005A3E85 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */; };
+		B1AA5A841D54A186003BD9A4 /* StoryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AA5A831D54A186003BD9A4 /* StoryObject.swift */; };
+		B1AA5A861D54A1B7003BD9A4 /* StorytellingChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AA5A851D54A1B7003BD9A4 /* StorytellingChildren.swift */; };
+		B1AA5A8A1D54A231003BD9A4 /* mapChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1AA5A891D54A231003BD9A4 /* mapChildren.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -644,6 +647,9 @@
 		B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
 		B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewController.swift; sourceTree = "<group>"; };
 		B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
+		B1AA5A831D54A186003BD9A4 /* StoryObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryObject.swift; sourceTree = "<group>"; };
+		B1AA5A851D54A1B7003BD9A4 /* StorytellingChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingChildren.swift; sourceTree = "<group>"; };
+		B1AA5A891D54A231003BD9A4 /* mapChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mapChildren.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -908,6 +914,9 @@
 				8F7738131B380F5D001F642B /* Optograph.swift */,
 				8F900B461B839E690085566C /* Location.swift */,
 				8F7738141B380F5D001F642B /* Person.swift */,
+				B1AA5A831D54A186003BD9A4 /* StoryObject.swift */,
+				B1AA5A851D54A1B7003BD9A4 /* StorytellingChildren.swift */,
+				B1AA5A891D54A231003BD9A4 /* mapChildren.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1727,6 +1736,7 @@
 				59FB1D601CF5AFC100C5C333 /* ViewController.swift in Sources */,
 				59ECBB9A1D390E5F00B57FB2 /* NotificationTableViewCell.swift in Sources */,
 				A5FD5D7D1BEA5A4E0031ED1E /* image.cpp in Sources */,
+				B1AA5A841D54A186003BD9A4 /* StoryObject.swift in Sources */,
 				A5FD5D821BEA5A4E0031ED1E /* io.cpp in Sources */,
 				8F23AA521BFF31B4008926A8 /* HashtagTable.swift in Sources */,
 				8FC7E3761BD15B9D00E97CC3 /* SO3Util.mm in Sources */,
@@ -1740,6 +1750,7 @@
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */,
 				8FD845B81BC870B90064048D /* Debug.swift in Sources */,
+				B1AA5A861D54A1B7003BD9A4 /* StorytellingChildren.swift in Sources */,
 				8F23AA4E1BFF31B4008926A8 /* ActivityResourceStarTable.swift in Sources */,
 				8F0B17861BAC193000FAF649 /* LineTextField.swift in Sources */,
 				8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */,
@@ -1752,6 +1763,7 @@
 				590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */,
 				8F23AA531BFF31B4008926A8 /* LocationTable.swift in Sources */,
+				B1AA5A8A1D54A231003BD9A4 /* mapChildren.swift in Sources */,
 				A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */,
 				8FAB9F321B8F01DF00B4C8CB /* BottomLineTextField.swift in Sources */,
 				8FAB9F301B8F01DF00B4C8CB /* SaveViewController.swift in Sources */,

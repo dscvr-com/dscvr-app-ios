@@ -61,6 +61,12 @@ class ApiService<T: Mappable> {
         return requestForGate(endpoint, method: .POST, queries: queries, parameters: parameters)
     }
     
+    static func getForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+        return requestForGate(endpoint, method: .GET, queries: queries, parameters: parameters)
+    }
+    
+    
+    
     static func put(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .PUT, queries: queries, parameters: parameters)
     }
