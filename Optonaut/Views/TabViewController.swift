@@ -448,13 +448,13 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         if (Defaults[.SessionTopCount] == nil) {
            // Defaults[.SessionTopCount] = -1545
-            Defaults[.SessionTopCount] = 1881 // joseph
+            Defaults[.SessionTopCount] = 2060 // joseph
         }
         
         
         if (Defaults[.SessionBotCount] == nil) {
            // Defaults[.SessionBotCount] = 3030
-            Defaults[.SessionBotCount] = -3959 // joseph
+            Defaults[.SessionBotCount] = -4120 // joseph
         }
         
         
@@ -480,11 +480,11 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         mButtonUp.addTarget(self, action: #selector(TabViewController.motorButtonUp), forControlEvents:.TouchUpInside)
         thisView.addSubview(mButtonUp)
         
-        motor1.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 20, width: (view.frame.width * 0.5), height: 40)
-        mButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor1, padding: 10, width: 40, height: 40)
+        motor1.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 10, width: (view.frame.width * 0.5), height: 30)
+        mButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor1, padding: 10, width: 40, height: 30)
         
 
-        mButtonUp.align(.ToTheRightMatchingTop, relativeTo: mButtonDown, padding: 2, width: 40, height: 40)
+        mButtonUp.align(.ToTheRightMatchingTop, relativeTo: mButtonDown, padding: 5, width: 40, height: 30)
         
         
         
@@ -503,10 +503,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         m2ButtonUp.addTarget(self, action: #selector(TabViewController.motorRotateButtonUp), forControlEvents:.TouchUpInside)
         thisView.addSubview(m2ButtonUp)
         
-        motor2.align(.UnderMatchingLeft, relativeTo: motor1, padding: 20, width: (view.frame.width * 0.5), height: 40)
+        motor2.align(.UnderMatchingLeft, relativeTo: motor1, padding: 10, width: (view.frame.width * 0.5), height: 30)
        
-        m2ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor2, padding: 10, width: 40, height: 40)
-        m2ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m2ButtonDown, padding: 2, width: 40, height: 40)
+        m2ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor2, padding: 10, width: 40, height: 30)
+        m2ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m2ButtonDown, padding: 5, width: 40, height: 30)
         
         
         motorTopVal = Defaults[.SessionTopCount]!
@@ -524,10 +524,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         m3ButtonUp.addTarget(self, action: #selector(TabViewController.motorTopButtonUp), forControlEvents:.TouchUpInside)
         thisView.addSubview(m3ButtonUp)
         
-        motor3.align(.UnderMatchingLeft, relativeTo: motor2, padding: 20, width: (view.frame.width * 0.5), height: 40)
+        motor3.align(.UnderMatchingLeft, relativeTo: motor2, padding: 10, width: (view.frame.width * 0.5), height: 30)
         
-        m3ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor3, padding: 10, width: 40, height: 40)
-        m3ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m3ButtonDown, padding: 2, width: 40, height: 40)
+        m3ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor3, padding: 10, width: 40, height: 30)
+        m3ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m3ButtonDown, padding: 5, width: 40, height: 30)
         
         
         
@@ -546,10 +546,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         m4ButtonUp.addTarget(self, action: #selector(TabViewController.motorBotButtonUp), forControlEvents:.TouchUpInside)
         thisView.addSubview(m4ButtonUp)
         
-        motor4.align(.UnderMatchingLeft, relativeTo: motor3, padding: 20, width: (view.frame.width * 0.5), height: 40)
+        motor4.align(.UnderMatchingLeft, relativeTo: motor3, padding: 10, width: (view.frame.width * 0.5), height: 30)
         
-        m4ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor4, padding: 10, width: 40, height: 40)
-        m4ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m4ButtonDown, padding: 2, width: 40, height: 40)
+        m4ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor4, padding: 10, width: 40, height: 30)
+        m4ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m4ButtonDown, padding: 5, width: 40, height: 30)
 
         
         
@@ -569,10 +569,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         m5ButtonUp.addTarget(self, action: #selector(TabViewController.motorBuffButtonUp), forControlEvents:.TouchUpInside)
         thisView.addSubview(m5ButtonUp)
         
-        motor5.align(.UnderMatchingLeft, relativeTo: motor4, padding: 20, width: (view.frame.width * 0.5), height: 40)
+        motor5.align(.UnderMatchingLeft, relativeTo: motor4, padding: 10, width: (view.frame.width * 0.5), height: 30)
         
-        m5ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor5, padding: 10, width: 40, height: 40)
-        m5ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m5ButtonDown, padding: 2, width: 40, height: 40)
+        m5ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor5, padding: 10, width: 40, height: 30)
+        m5ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m5ButtonDown, padding: 5, width: 40, height: 30)
         
     }
     

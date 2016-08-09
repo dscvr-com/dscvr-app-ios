@@ -46,9 +46,9 @@ class BTService: NSObject, CBPeripheralDelegate {
         self.peripheral?.delegate = self
         
         // test the computations
-        self.computeBotRotation()
-        self.computeRotationX()
-        self.computeTopRotation()
+        print("computeBotRotation \(self.computeBotRotation())")
+        print("computeRotationX \(self.computeRotationX())")
+        print("computeTopRotation \(self.computeTopRotation())")
         
          
     }
@@ -295,6 +295,7 @@ class BTService: NSObject, CBPeripheralDelegate {
         }
     }
     func sendCommand(stringServiceCommand:String) {
+        print("sendCommand \(stringServiceCommand)")
         // See if characteristic has been discovered before writing to it
         if let positionCharacteristic = self.positionCharacteristic {
             // Need a mutable var to pass to writeValue function
