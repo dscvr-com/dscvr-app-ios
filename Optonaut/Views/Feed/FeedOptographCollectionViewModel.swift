@@ -27,8 +27,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         let query = OptographTable.select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .filter(OptographTable[OptographSchema.isInFeed])
-            //.filter(PersonTable[PersonSchema.isFollowed] || OptographTable[OptographSchema.isStaffPick])
+            .filter(OptographTable[OptographSchema.isInFeed] && OptographTable[OptographSchema.isOnServer] && OptographTable[OptographSchema.isPublished])
             .filter(OptographTable[OptographSchema.isStaffPick] || PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == (Defaults[.SessionPersonID] ?? Person.guestID) || PersonTable[PersonSchema.ID] == Person.guestID)
             .order(OptographTable[OptographSchema.createdAt].asc)
         

@@ -34,20 +34,36 @@ class ProfileOptographsViewModel {
                         let optograph = Optograph.fromSQL(row)
                         Models.optographs.touch(optograph)
                         Models.persons.touch(Person.fromSQL(row))
-                        Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
                         
-//                        let coords = LocationService.lastLocation()!
-//                        var location = Location.newInstance()
-//                        location.latitude = coords.latitude
-//                        location.longitude = coords.longitude
-//                        
-//                        var locationBox: ModelBox<Location>?
-//                        locationBox = Models.locations.create(location)
-//                        locationBox!.insertOrUpdate()
-//                        
-//                        Models.optographs.touch(optograph).insertOrUpdate { box in
-//                            box.model.locationID = row[OptographSchema.locationID]
-//                        }
+                        if row[OptographSchema.locationID] != nil {
+                            if Models.locations[row[OptographSchema.locationID]] == nil {
+                                print("no location!!")
+                                let coords = LocationService.lastLocation()
+                                var location = Location.newInstance()
+                                if coords == nil {
+                                    location.latitude = 14.5995
+                                    location.longitude = 120.9842
+                                } else {
+                                    location.latitude = coords!.latitude
+                                    location.longitude = coords!.longitude
+                                }
+                                var locationBox: ModelBox<Location>?
+                                locationBox = Models.locations.create(location)
+                                locationBox!.insertOrUpdate()
+                                
+                                Models.optographs.touch(optograph).insertOrUpdate { box in
+                                    box.model.locationID = row[OptographSchema.locationID]
+                                }
+                            } else {
+                                Models.locations.touch(Location.fromSQL(row))
+                            }
+                        } else {
+                            Models.locations.touch(nil)
+                        }
+                        
+                        
+                        
+                        //Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
                         
                         return optograph
                     }

@@ -22,7 +22,7 @@ class CameraViewModel {
     init() {
         isRecording.producer.startWithNext { [unowned self] isRecording in
             if isRecording {
-                self.instruction.value = "Follow the yellow dot"
+                self.instruction.value = "Follow the orange dot"
             } else {
                 self.instruction.value = "Press the button below\r\nto start recording"
             }

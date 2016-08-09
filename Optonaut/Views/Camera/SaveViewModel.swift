@@ -195,7 +195,6 @@ class SaveViewModel {
                 self.optographBox.insertOrUpdate()
                 print("pumasok dito sa else ng readynotification")
                 self.isInitialized.value = true
-                self.placeID.producer.startWithNext{ print("placeId \($0)") }
                 self.placeID.producer
                     .delayLatestUntil(self.isInitialized.producer)
                     .ignoreNil()
