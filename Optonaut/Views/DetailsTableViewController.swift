@@ -14,6 +14,8 @@ import ReactiveCocoa
 import Kingfisher
 import SpriteKit
 import SwiftyUserDefaults
+import AssetsLibrary
+import ImageIO
 
 let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
 
@@ -78,6 +80,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var backButton = UIImage(named: "back_yellow_icn")
     var shareButton = UIButton()
     var gyroTypeBtn = UIButton()
+    var exportButton = UIButton()
     
     required init(optographId:UUID) {
         
@@ -277,7 +280,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         }
         
         vrIcon = vrIcon?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image:vrIcon , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(vrIconTouched))
+        //navigationItem.rightBarButtonItem = UIBarButtonItem(image:vrIcon , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(vrIconTouched))
+        let vrButton = UIBarButtonItem(image:vrIcon , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(vrIconTouched))
+        let exportBtn = UIBarButtonItem(image:UIImage(named:"export_icn") , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(exportImage))
+    
+        navigationItem.rightBarButtonItems = [vrButton,exportBtn]
         
         backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeDetailsPage))
@@ -551,6 +558,66 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.changeButtonIcon(true)
         }
     }
+    
+    func export() {
+            let imageToSaveUrl = "http://bucket.dscvr.com/textures/\(optographID)/placeholder.jpg"
+        
+            if let url = NSURL(string: imageToSaveUrl) {
+                let request = NSURLRequest(URL: url)
+            
+                NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler:{(response: NSURLResponse?, data: NSData?, error: NSError?) -> Void in
+                    let asset = ALAssetsLibrary()
+            
+                    let strModel = "RICOH THETA S" as String
+                    let strMake = "RICOH" as String
+            
+                    let meta:NSDictionary = [kCGImagePropertyTIFFModel as String :strModel,kCGImagePropertyTIFFMake as String:strMake]
+            
+                    let source:CGImageSourceRef = CGImageSourceCreateWithData(data!, nil)!
+                    let UTI:CFStringRef = CGImageSourceGetType(source)!
+            
+                    let destData = NSMutableData()
+                    let destination:CGImageDestinationRef = CGImageDestinationCreateWithData(destData, UTI, 1, nil)!
+            
+                    CGImageDestinationAddImageFromSource(destination, source, 0, meta)
+            
+                    CGImageDestinationFinalize(destination)
+            
+            
+                    asset.writeImageDataToSavedPhotosAlbum(destData, metadata: meta as [NSObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
+                        print("meta path >>> \(path)")
+                        print("meta error >>> \(error)")
+                        if error == nil {
+                            self.returnSuccesAlert("Export Completed", stringMessage:"Saved into your Photo Library.")
+                        } else {
+                            self.returnSuccesAlert("Export Failed", stringMessage:"Please try again.")
+                        }
+                    })
+                })
+            }
+        }
+        func returnSuccesAlert(stringTitle:String, stringMessage:String) {
+        let alert = UIAlertController(title: stringTitle, message: stringMessage, preferredStyle: .Alert)
+        
+        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+        
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    
+        func exportImage() {
+        
+        let alert = UIAlertController(title: "Export 360 Image", message: "Do you want to export this 360 image?", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Export", style: .Default, handler: { _ in
+            self.export()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: nil))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    
+    
+    
     
     func changeButtonIcon(isGyro:Bool) {
         

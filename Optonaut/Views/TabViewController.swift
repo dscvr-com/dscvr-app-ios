@@ -34,8 +34,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     private var pullButton = SettingsButton()
     private var gyroButton = SettingsButton()
     private var littlePlanet = SettingsButton()
-    private var interruptButton = SettingsButton()
-    private var interruptLabel = UILabel()
     
     var delegate: TabControllerDelegate?
     
@@ -54,8 +52,35 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     let labelMotor = UILabel()
     let labelGyro = UILabel()
     let planet = UILabel()
+    let motor1 = UILabel()
+    let mButtonUp = UIButton()
+    let mButtonDown = UIButton()
     
     var lastContentOffset:CGFloat = 0
+    var motorPPSVal:Int = 0
+    var motorRotateVal:Int = 0
+    var motorTopVal:Int = 0
+    var motorBotVal:Int = 0
+    var motorBuffVal:Int = 0
+    
+    let motor2 = UILabel()
+    let m2ButtonUp = UIButton()
+    let m2ButtonDown = UIButton()
+    
+    let motor3 = UILabel()
+    let m3ButtonUp = UIButton()
+    let m3ButtonDown = UIButton()
+    
+    let motor4 = UILabel()
+    let m4ButtonUp = UIButton()
+    let m4ButtonDown = UIButton()
+    
+    let motor5 = UILabel()
+    let m5ButtonUp = UIButton()
+    let m5ButtonDown = UIButton()
+    
+
+    
     
     let shareData = ShareData.sharedInstance
     
@@ -64,7 +89,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         centerViewController = FeedNavViewController()
         rightViewController =  ProfileNavViewController()
         leftViewController = SharingNavViewController()
-    
+        
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -72,7 +97,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -225,7 +250,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         bgImage!.align(.UnderCentered, relativeTo: titleSettings,padding: 25, width: image.size.width, height: image.size.height)
         
         let textHeight = calcTextHeight("VR IMAGE VIEW STYLE", withWidth: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Light)), andFont: .fontDisplay(12, withType: .Semibold))
-        	
+        
         let vrImageLabel = UILabel()
         vrImageLabel.frame = CGRect(x: 70,y: bgImage!.frame.origin.y + (bgImage?.frame.height)! + 20 ,width: calcTextWidth("VR IMAGE VIEW STYLE", withFont: .fontDisplay(12, withType: .Semibold)),height: textHeight)
         vrImageLabel.text = "VR IMAGE VIEW STYLE"
@@ -240,7 +265,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         dividerFour.frame = CGRect(x: 70 + gyroButton.icon.size.width + 12 ,y: vrImageLabel.frame.origin.y + vrImageLabel.frame.height+2,width: 1,height: 12)
         
         let vrText = UILabel()
-//        vrText.frame = CGRect(x: 38,y: titleSettings.frame.origin.y + 30+50,width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(18, withType: .Semibold)),height: 30)
+        //        vrText.frame = CGRect(x: 38,y: titleSettings.frame.origin.y + 30+50,width: calcTextWidth("VIEW IAM360 IN", withFont: .fontDisplay(18, withType: .Semibold)),height: 30)
         vrText.text = "VIEW 360 IMAGE IN"
         vrText.textAlignment = .Center
         vrText.textColor = UIColor.grayColor()
@@ -301,8 +326,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         labelMode.text = "CAPTURE MODE"
         labelMode.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(labelMode)
-//        labelMode.align(.UnderMatchingLeft, relativeTo: littlePlanet, padding: 4, width: calcTextWidth("CAPTURE MODE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
-         labelMode.align(.UnderMatchingLeft, relativeTo: gyroButton, padding: 4, width: calcTextWidth("CAPTURE MODE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
+        //        labelMode.align(.UnderMatchingLeft, relativeTo: littlePlanet, padding: 4, width: calcTextWidth("CAPTURE MODE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
+        labelMode.align(.UnderMatchingLeft, relativeTo: gyroButton, padding: 4, width: calcTextWidth("CAPTURE MODE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
         
         let dividerTwo = UILabel()
         dividerTwo.backgroundColor = UIColor(hex:0xa5a5a5)
@@ -331,11 +356,11 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         let labelCapture = UILabel()
         labelCapture.textAlignment = NSTextAlignment.Center
-        labelCapture.text = "MOTOR CONTROLS"
+        labelCapture.text = "CAPTURE TYPE"
         labelCapture.textColor = UIColor.blackColor()
         labelCapture.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(labelCapture)
-        labelCapture.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 4, width: calcTextWidth("MOTOR CONTROLS", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
+        labelCapture.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 4, width: calcTextWidth("CAPTURE TYPE", withFont: .fontDisplay(12, withType: .Semibold)), height: textHeight)
         
         let dividerThree = UILabel()
         dividerThree.backgroundColor = UIColor(hex:0xa5a5a5)
@@ -347,8 +372,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         manualButton.align(.ToTheLeftMatchingTop, relativeTo: dividerThree, padding: 12, width: manualButton.icon.size.width, height: manualButton.icon.size.height)
         
         labelManual.textAlignment = NSTextAlignment.Center
-        labelManual.text = "CLOSE"
-        labelManual.textColor = UIColor(hex:0xffbc00)
+        labelManual.text = "MANUAL"
+        labelManual.textColor = UIColor(hex:0xFF5E00)
         labelManual.font = .fontDisplay(18, withType: .Semibold)
         thisView.addSubview(labelManual)
         labelManual.align(.ToTheRightCentered, relativeTo: manualButton, padding: 24, width: calcTextWidth("MANUAL", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
@@ -358,31 +383,11 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         thisView.addSubview(motorButton)
         
         labelMotor.textAlignment = NSTextAlignment.Center
-        labelMotor.text = "MOTOR ON"
-        labelMotor.textColor = UIColor(hex:0xffbc00)
+        labelMotor.text = "MOTOR"
+        labelMotor.textColor = UIColor(hex:0xFF5E00)
         labelMotor.font = .fontDisplay(18, withType: .Semibold)
-        labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 24, width: calcTextWidth("MOTOR ON", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
+        labelMotor.align(.ToTheRightCentered, relativeTo: motorButton, padding: 24, width: calcTextWidth("MOTOR", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         thisView.addSubview(labelMotor)
-        
-        motorButton.addTarget(self, action: #selector(TabViewController.motorButtonTouched), forControlEvents:.TouchUpInside)
-        motorButton.align(.UnderCentered, relativeTo: manualButton, padding: 7, width: motorButton.icon.size.width, height: motorButton.icon.size.height)
-        thisView.addSubview(motorButton)
-        
-        thisView.addSubview(interruptButton)
-        thisView.addSubview(interruptLabel)
-        
-        interruptButton.icon = UIImage(named: "off_motor_icn")!
-        
-        interruptButton.addTarget(self, action: #selector(TabViewController.interrupt), forControlEvents:.TouchUpInside)
-        interruptButton.align(.UnderCentered, relativeTo: motorButton, padding: 7, width: motorButton.icon.size.width, height: interruptButton.icon.size.height)
-        thisView.addSubview(interruptButton)
-        
-        interruptLabel.textAlignment = NSTextAlignment.Center
-        interruptLabel.text = "INTERRUPT"
-        interruptLabel.textColor = UIColor(hex:0xffbc00)
-        interruptLabel.font = .fontDisplay(18, withType: .Semibold)
-        interruptLabel.align(.ToTheRightCentered, relativeTo: interruptButton, padding: 24, width: calcTextWidth("INTERRUPT", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
-        thisView.addSubview(interruptLabel)
         
         isSettingsViewOpen.producer.startWithNext{ val in
             if val {
@@ -392,21 +397,22 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 self.activeDisplayButtons(Defaults[.SessionGyro])
             }
         }
-        let pullView = UIView()
-        pullView.backgroundColor = UIColor.clearColor()
-        pullView.anchorToEdge(.Bottom, padding: 0, width: 40, height: 25)
-        thisView.addSubview(pullView)
         
-
         pullButton.icon = UIImage(named:"arrow_pull")!
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
-        pullView.addGestureRecognizer(panGestureRecognizer)
-        pullView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pullButtonTap(_:))))
         
         thisView.addGestureRecognizer(panGestureRecognizer)
         
         thisView.addSubview(pullButton)
         pullButton.anchorToEdge(.Bottom, padding: 5, width: 20, height: 15)
+        
+        let pullView = UIView()
+        pullView.backgroundColor = UIColor.clearColor()
+        thisView.addSubview(pullView)
+        pullView.anchorToEdge(.Bottom, padding: 0, width: 60, height: 35)
+        
+        pullView.addGestureRecognizer(panGestureRecognizer)
+        pullView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pullButtonTap(_:))))
         
         for family: String in UIFont.familyNames()
         {
@@ -423,26 +429,217 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         motorButton.hidden = true
         dividerThree.hidden = true
         
-        interruptLabel.hidden = true
-        interruptButton.hidden = true
-        
-    
-        
         let versionLabel = UILabel()
-        versionLabel.text = "v0.8.motor"
+        versionLabel.text = "v0.91"
         versionLabel.textAlignment = .Center
         versionLabel.font = .fontDisplay(10, withType: .Semibold)
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
         thisView.addSubview(versionLabel)
         
-    }
-    func interrupt() {
+        if (Defaults[.SessionPPS] == nil) {
+           // Defaults[.SessionPPS] = 330 // ours
+            Defaults[.SessionPPS] = 630 // joseph
+        }
         
-       /* if let bleService = btDiscoverySharedInstance.bleService {
-            bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process
-        }*/
+        if (Defaults[.SessionRotateCount] == nil) {
+            //Defaults[.SessionRotateCount] = 7200 // ours
+            Defaults[.SessionRotateCount] = 15331 // ours
+        }
+        
+        if (Defaults[.SessionTopCount] == nil) {
+           // Defaults[.SessionTopCount] = -1545
+            Defaults[.SessionTopCount] = 1881 // joseph
+        }
+        
+        
+        if (Defaults[.SessionBotCount] == nil) {
+           // Defaults[.SessionBotCount] = 3030
+            Defaults[.SessionBotCount] = -3959 // joseph
+        }
+        
+        
+        if (Defaults[.SessionBuffCount] == nil) {
+           // Defaults[.SessionBuffCount] = 100
+            Defaults[.SessionBuffCount] = 0 // joseph
+        }
+
+        
+        
+        motorPPSVal = Defaults[.SessionPPS]!
+        motor1.text = "Pulse/Sec: \(motorPPSVal)"
+        motor1.backgroundColor = UIColor.lightGrayColor()
+        thisView.addSubview(motor1)
+        
     
+        
+        mButtonDown.backgroundColor = UIColor.redColor()
+        mButtonDown.addTarget(self, action: #selector(TabViewController.motorButtonDown), forControlEvents:.TouchUpInside)
+        thisView.addSubview(mButtonDown)
+        
+        mButtonUp.backgroundColor = UIColor.yellowColor()
+        mButtonUp.addTarget(self, action: #selector(TabViewController.motorButtonUp), forControlEvents:.TouchUpInside)
+        thisView.addSubview(mButtonUp)
+        
+        motor1.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 20, width: (view.frame.width * 0.5), height: 40)
+        mButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor1, padding: 10, width: 40, height: 40)
+        
+
+        mButtonUp.align(.ToTheRightMatchingTop, relativeTo: mButtonDown, padding: 2, width: 40, height: 40)
+        
+        
+        
+        motorRotateVal = Defaults[.SessionRotateCount]!
+        motor2.text = "RotateCount: \(motorRotateVal)"
+        motor2.backgroundColor = UIColor.lightGrayColor()
+        thisView.addSubview(motor2)
+        
+       
+        
+        m2ButtonDown.backgroundColor = UIColor.redColor()
+        m2ButtonDown.addTarget(self, action: #selector(TabViewController.motorRotateButtonDown), forControlEvents:.TouchUpInside)
+        thisView.addSubview(m2ButtonDown)
+        
+        m2ButtonUp.backgroundColor = UIColor.yellowColor()
+        m2ButtonUp.addTarget(self, action: #selector(TabViewController.motorRotateButtonUp), forControlEvents:.TouchUpInside)
+        thisView.addSubview(m2ButtonUp)
+        
+        motor2.align(.UnderMatchingLeft, relativeTo: motor1, padding: 20, width: (view.frame.width * 0.5), height: 40)
+       
+        m2ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor2, padding: 10, width: 40, height: 40)
+        m2ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m2ButtonDown, padding: 2, width: 40, height: 40)
+        
+        
+        motorTopVal = Defaults[.SessionTopCount]!
+        motor3.text = "TopCount: \(motorTopVal)"
+        motor3.backgroundColor = UIColor.lightGrayColor()
+        thisView.addSubview(motor3)
+      
+        
+        m3ButtonDown.backgroundColor = UIColor.redColor()
+        m3ButtonDown.addTarget(self, action: #selector(TabViewController.motorTopButtonDown), forControlEvents:.TouchUpInside)
+        thisView.addSubview(m3ButtonDown)
+        
+        
+        m3ButtonUp.backgroundColor = UIColor.yellowColor()
+        m3ButtonUp.addTarget(self, action: #selector(TabViewController.motorTopButtonUp), forControlEvents:.TouchUpInside)
+        thisView.addSubview(m3ButtonUp)
+        
+        motor3.align(.UnderMatchingLeft, relativeTo: motor2, padding: 20, width: (view.frame.width * 0.5), height: 40)
+        
+        m3ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor3, padding: 10, width: 40, height: 40)
+        m3ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m3ButtonDown, padding: 2, width: 40, height: 40)
+        
+        
+        
+        motorBotVal = Defaults[.SessionBotCount]!
+        motor4.text = "BotCount: \(motorBotVal)"
+        motor4.backgroundColor = UIColor.lightGrayColor()
+        thisView.addSubview(motor4)
+        
+      
+        
+        m4ButtonDown.backgroundColor = UIColor.redColor()
+        m4ButtonDown.addTarget(self, action: #selector(TabViewController.motorBotButtonDown), forControlEvents:.TouchUpInside)
+        thisView.addSubview(m4ButtonDown)
+        
+        m4ButtonUp.backgroundColor = UIColor.yellowColor()
+        m4ButtonUp.addTarget(self, action: #selector(TabViewController.motorBotButtonUp), forControlEvents:.TouchUpInside)
+        thisView.addSubview(m4ButtonUp)
+        
+        motor4.align(.UnderMatchingLeft, relativeTo: motor3, padding: 20, width: (view.frame.width * 0.5), height: 40)
+        
+        m4ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor4, padding: 10, width: 40, height: 40)
+        m4ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m4ButtonDown, padding: 2, width: 40, height: 40)
+
+        
+        
+        
+        motorBuffVal = Defaults[.SessionBuffCount]!
+        motor5.text = "BufferCount: \(motorBuffVal)"
+        motor5.backgroundColor = UIColor.lightGrayColor()
+        thisView.addSubview(motor5)
+        
+        
+        
+        m5ButtonDown.backgroundColor = UIColor.redColor()
+        m5ButtonDown.addTarget(self, action: #selector(TabViewController.motorBuffButtonDown), forControlEvents:.TouchUpInside)
+        thisView.addSubview(m5ButtonDown)
+        
+        m5ButtonUp.backgroundColor = UIColor.yellowColor()
+        m5ButtonUp.addTarget(self, action: #selector(TabViewController.motorBuffButtonUp), forControlEvents:.TouchUpInside)
+        thisView.addSubview(m5ButtonUp)
+        
+        motor5.align(.UnderMatchingLeft, relativeTo: motor4, padding: 20, width: (view.frame.width * 0.5), height: 40)
+        
+        m5ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor5, padding: 10, width: 40, height: 40)
+        m5ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m5ButtonDown, padding: 2, width: 40, height: 40)
+        
     }
+    
+    func motorButtonUp() {
+        motorPPSVal += 1
+        motor1.text = "Pulse/Sec: \(motorPPSVal)"
+        Defaults[.SessionPPS] = motorPPSVal
+    }
+    
+    func motorButtonDown() {
+        motorPPSVal -= 1
+        motor1.text = "Pulse/Sec: \(motorPPSVal)"
+        Defaults[.SessionPPS] = motorPPSVal
+    }
+    
+    func motorRotateButtonUp() {
+        motorRotateVal += 1
+        motor2.text = "RotateCount: \(motorRotateVal)"
+        Defaults[.SessionRotateCount] = motorRotateVal
+    }
+    
+    func motorRotateButtonDown() {
+        motorRotateVal -= 1
+        motor2.text = "RotateCount: \(motorRotateVal)"
+        Defaults[.SessionRotateCount] = motorRotateVal
+    }
+    
+    
+    func motorTopButtonUp() {
+        motorTopVal += 1
+        motor3.text = "TopCount: \(motorTopVal)"
+        Defaults[.SessionTopCount] = motorTopVal
+    }
+    
+    func motorTopButtonDown() {
+        motorTopVal -= 1
+        motor3.text = "TopCount: \(motorTopVal)"
+        Defaults[.SessionTopCount] = motorTopVal
+    }
+    
+    
+    func motorBotButtonUp() {
+        motorBotVal += 1
+        motor4.text = "BotCount: \(motorBotVal)"
+        Defaults[.SessionBotCount] = motorBotVal
+    }
+    
+    func motorBotButtonDown() {
+        motorBotVal -= 1
+        motor4.text = "BotCount: \(motorBotVal)"
+        Defaults[.SessionBotCount] = motorBotVal
+    }
+    
+    func motorBuffButtonUp() {
+        motorBuffVal += 1
+        motor5.text = "BufferCount: \(motorBuffVal)"
+        Defaults[.SessionBuffCount] = motorBuffVal
+    }
+    
+    func motorBuffButtonDown() {
+        motorBuffVal -= 1
+        motor5.text = "BufferCount: \(motorBuffVal)"
+        Defaults[.SessionBuffCount] = motorBuffVal
+    }
+    
+
+
     func inGyroMode() {
         if Defaults[.SessionGyro] {
             gyroButton.icon = UIImage(named: "gyro_inactive_icn")!
@@ -451,7 +648,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         } else {
             gyroButton.icon = UIImage(named: "gyro_active_icn")!
             Defaults[.SessionGyro] = true
-            labelGyro.textColor = UIColor(hex:0xffbc00)
+            labelGyro.textColor = UIColor(hex:0xFF5E00)
         }
     }
     
@@ -462,14 +659,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func pullButtonTap(recognizer:UITapGestureRecognizer) {
-        UIView.animateWithDuration(1.0, delay: 1.2, options: .CurveEaseOut, animations: {
-            if var settingsViewCount:CGFloat = self.thisView.frame.origin.y {
-                settingsViewCount -= self.view.frame.origin.y
-                self.thisView.frame = CGRectMake(0, settingsViewCount , self.view.frame.width, self.view.frame.height)
-            }
-            }, completion: { finished in
+        print("tangina!")
+        
+        UIView.animateWithDuration(0.5, animations: {
+            self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
+            }, completion:{ finished in
                 self.isSettingsViewOpen.value = false
-                
         })
     }
     func gyroButtonTouched() {
@@ -485,22 +680,11 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     func motorButtonTouched() {
         Defaults[.SessionMotor] = true
         self.activeModeButtons(true)
-        
-        
-        /*if let bleService = btDiscoverySharedInstance.bleService {
-            bleService.sendCommand("fe0702ffffee6b012c008bffffffffffff"); //open motor
-        } */
     }
     
     func manualButtonTouched() {
         Defaults[.SessionMotor] = false
         self.activeModeButtons(false)
-        
-        /*if let bleService = btDiscoverySharedInstance.bleService {
-            bleService.sendCommand("fe070200001388012c00cfffffffffffff"); //close motor
-        }*/
-        
-        
     }
     
     func oneRingButtonTouched() {
@@ -535,12 +719,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             manualButton.icon = UIImage(named: "manual_inactive_icn")!
             
             labelManual.textColor = UIColor.grayColor()
-            labelMotor.textColor = UIColor(hex:0xffbc00)
+            labelMotor.textColor = UIColor(hex:0xFF5E00)
         } else {
             motorButton.icon = UIImage(named: "motor_inactive_icn")!
             manualButton.icon = UIImage(named: "manual_active_icn")!
             
-            labelManual.textColor = UIColor(hex:0xffbc00)
+            labelManual.textColor = UIColor(hex:0xFF5E00)
             labelMotor.textColor = UIColor.grayColor()
         }
     }
@@ -551,7 +735,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             threeRingButton.icon = UIImage(named: "threeRing_active_icn")!
             oneRingButton.icon = UIImage(named: "oneRing_inactive_icn")!
             
-            labelRing3.textColor = UIColor(hex:0xffbc00)
+            labelRing3.textColor = UIColor(hex:0xFF5E00)
             labelRing1.textColor = UIColor.grayColor()
             
         } else {
@@ -559,7 +743,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             oneRingButton.icon = UIImage(named: "oneRing_active_icn")!
             
             labelRing3.textColor = UIColor.grayColor()
-            labelRing1.textColor = UIColor(hex:0xffbc00)
+            labelRing1.textColor = UIColor(hex:0xFF5E00)
         }
     }
     func activeDisplayButtons(isGyro:Bool) {
@@ -568,7 +752,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             gyroButton.icon = UIImage(named: "gyro_active_icn")!
             littlePlanet.icon = UIImage(named: "littlePlanet_inactive_icn")!
             
-            labelGyro.textColor = UIColor(hex:0xffbc00)
+            labelGyro.textColor = UIColor(hex:0xFF5E00)
             planet.textColor = UIColor.grayColor()
             
         } else {
@@ -576,7 +760,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             littlePlanet.icon = UIImage(named: "littlePlanet_active_icn")!
             
             labelGyro.textColor = UIColor.grayColor()
-            planet.textColor = UIColor(hex:0xffbc00)
+            planet.textColor = UIColor(hex:0xFF5E00)
         }
     }
     
@@ -642,7 +826,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 self.thisView.frame = CGRectMake(0, 0 , self.view.frame.width, self.view.frame.height)
                 }, completion:{ finished in
                     self.isSettingsViewOpen.value = true
-            
+                    
             })
         } else {
             UIView.animateWithDuration(0.3, animations: {
@@ -879,51 +1063,51 @@ extension TabControllerDelegate {
     func swipeToShare(){}
 }
 
-protocol DefaultTabControllerDelegate: TabControllerDelegate {}
-
-extension DefaultTabControllerDelegate {
-    
-    func onTapCameraButton() {
-        switch PipelineService.stitchingStatus.value {
-        case .Idle:
-            self.tabController!.centerViewController.cleanup()
-            self.tabController?.centerViewController.pushViewController(CameraViewController(), animated: false)
-            
-        case .Stitching(_):
-            
-            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
-        case let .StitchingFinished(optographID):
-            scrollToOptograph(optographID)
-            PipelineService.stitchingStatus.value = .Idle
-        case .Uninitialized: ()
-        }
-    }
-    func swipeToShare(){
-        print("swipe")
-    }
-    
-    func onTapLeftButton() {
-//        if tabController?.activeViewController == tabController?.leftViewController {
-//            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
-//                jumpToTop()
-//            }
-//        } else {
-//            tabController?.updateActiveTab(.Left)
+//protocol DefaultTabControllerDelegate: TabControllerDelegate {}
+//
+//extension DefaultTabControllerDelegate {
+//
+//    func onTapCameraButton() {
+//        switch PipelineService.stitchingStatus.value {
+//        case .Idle:
+//            self.tabController!.centerViewController.cleanup()
+//            self.tabController?.centerViewController.pushViewController(CameraViewController(), animated: false)
+//
+//        case .Stitching(_):
+//
+//            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
+//            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+//            tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
+//        case let .StitchingFinished(optographID):
+//            scrollToOptograph(optographID)
+//            PipelineService.stitchingStatus.value = .Idle
+//        case .Uninitialized: ()
 //        }
-    }
-    
-    func onTapRightButton() {
-//        if tabController?.activeViewController == tabController?.rightViewController {
-//            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
-//                jumpToTop()
-//            }
-//        } else {
-//            tabController?.updateActiveTab(.Right)
-//        }
-    }
-}
+//    }
+//    func swipeToShare(){
+//        print("swipe")
+//    }
+//
+//    func onTapLeftButton() {
+////        if tabController?.activeViewController == tabController?.leftViewController {
+////            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
+////                jumpToTop()
+////            }
+////        } else {
+////            tabController?.updateActiveTab(.Left)
+////        }
+//    }
+//
+//    func onTapRightButton() {
+////        if tabController?.activeViewController == tabController?.rightViewController {
+////            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
+////                jumpToTop()
+////            }
+////        } else {
+////            tabController?.updateActiveTab(.Right)
+////        }
+//    }
+//}
 
 extension UIViewController {
     var tabController: TabViewController? {

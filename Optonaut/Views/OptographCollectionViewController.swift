@@ -530,15 +530,15 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 }
 
 // MARK: - UITabBarControllerDelegate
-extension OptographCollectionViewController: DefaultTabControllerDelegate {
-    
-    func jumpToTop() {
-        viewModel.refresh()
-        collectionView!.setContentOffset(CGPointZero, animated: true)
-    }
-    
-    func scrollToOptograph(optographID: UUID) {
-        let row = optographIDs.indexOf(optographID)
-        collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
-    }
-}
+//extension OptographCollectionViewController: DefaultTabControllerDelegate {
+//    
+//    func jumpToTop() {
+//        viewModel.refresh()
+//        collectionView!.setContentOffset(CGPointZero, animated: true)
+//    }
+//    
+//    func scrollToOptograph(optographID: UUID) {
+//        let row = optographIDs.indexOf(optographID)
+//        collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
+//    }
+//}

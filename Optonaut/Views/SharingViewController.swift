@@ -123,14 +123,14 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
                 
                 placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
                 
-                ImageManager.sharedInstance.downloadImage(
-                    NSURL(string:self.urlToShare)!, requester: self,
-                    completionHandler: { (image, error, _, _) in
-                        if let error = error where error.code != -999 {
-                            print(error)
-                        }
-                        self.imageToShare = image
-                })
+//                ImageManager.sharedInstance.downloadImage(
+//                    NSURL(string:self.urlToShare)!, requester: self,
+//                    completionHandler: { (image, error, _, _) in
+//                        if let error = error where error.code != -999 {
+//                            print(error)
+//                        }
+//                        self.imageToShare = image
+//                })
                 
                 let optographBox = Models.optographs[val]!
                 let optograph = optographBox.model

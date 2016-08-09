@@ -67,6 +67,9 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
     private var scnView : SCNView!
     private let scene = SCNScene()
     private var currentDegree : Float
+    private var DegreeIncrPerMicro : Double
+    
+    
     
     // ball
     private let ballNode = SCNNode()
@@ -83,12 +86,17 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
     private let tabView = TabView()
     private let bData = BService.sharedInstance
     
+    private var RotateData = String("")
+    
+   
+    
     //for motor
     var ringFlag = 0
     
     required init() {
         
         currentDegree = 0.03
+        DegreeIncrPerMicro = 0.0
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
@@ -102,6 +110,12 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         
         super.init(nibName: nil, bundle: nil)
         
+        
+        RotateData = self.computeRotationX()
+        
+        
+        
+
         tapCameraButtonCallback = { [weak self] in
             let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
             confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
@@ -109,6 +123,70 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             
         }
     }
+    
+    
+    func computeRotationX ( ) -> String {
+        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]
+        
+        // get number of rotation
+        let xnumberSteps = Defaults[.SessionRotateCount]
+        rotateByteData.append(UInt8(xnumberSteps! >> 24))
+        rotateByteData.append(UInt8(xnumberSteps! >> 16))
+        rotateByteData.append(UInt8(xnumberSteps! >> 8))
+        rotateByteData.append(UInt8(xnumberSteps! & 0xff))
+        print("rotateByteData1 \(rotateByteData)")
+        // get pps
+        let pps = Defaults[.SessionPPS]
+        rotateByteData.append(UInt8(pps! >> 8))
+        rotateByteData.append(UInt8(pps! & 0xff))
+        // add full step
+        rotateByteData.append(UInt8(0x00))
+        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
+        // compute for checksum
+        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
+        print("rotateByteData \(rotateByteData)")
+        // append padding
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        // convert to hex string
+        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
+    
+    }
+    
+    
+    func checkSum(data: NSData) -> Int {
+        let b = UnsafeBufferPointer<UInt8>(start:
+            UnsafePointer(data.bytes), count: data.length)
+        
+        var sum = 0
+        for i in 0..<data.length {
+            sum += Int(b[i])
+        }
+        return sum & 0xff
+    }
+    
+    func hexString(data:NSData)->String{
+        if data.length > 0 {
+            let  hexChars = Array("0123456789abcdef".utf8) as [UInt8];
+            let buf = UnsafeBufferPointer<UInt8>(start: UnsafePointer(data.bytes), count: data.length);
+            var output = [UInt8](count: data.length*2 + 1, repeatedValue: 0);
+            var ix:Int = 0;
+            for b in buf {
+                let hi  = Int((b & 0xf0) >> 4);
+                let low = Int(b & 0x0f);
+                output[ix++] = hexChars[ hi];
+                output[ix++] = hexChars[low];
+            }
+            let result = String.fromCString(UnsafePointer(output))!;
+            return result;
+        }
+        return "";
+    }
+    
     
     func peripheral( peripheral: CBPeripheral,
                      didUpdateValueForCharacteristic characteristic: CBCharacteristic,
@@ -223,6 +301,14 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
     func tapCameraButton() {
         //tapCameraButtonCallback?()
         print("ewe")
+        print("SessionRotateCount \(Defaults[.SessionRotateCount]!)")
+        print("SessionPPS \(Defaults[.SessionPPS]!)")
+        
+        let rotatePlusBuff = (Defaults[.SessionRotateCount]! + Defaults[.SessionBuffCount]!)
+        
+        
+        DegreeIncrPerMicro = (0.036 / ( Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ))
+        print("DegreeIncrPerMicro \(DegreeIncrPerMicro)")
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true // <-
         
@@ -231,8 +317,10 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
            //bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms forward
           //bleService.sendCommand("fe070100001c20019000d3ffffffffffff"); //move 18 ms forward
         //  bleService.sendCommand("fe070100001c20015e00a1ffffffffffff"); //move 18 ms forward
-            bleService.sendCommand("fe070100003be302bf00e5ffffffffffff"); // josepeh's motor
-                 //    bleService.sendCommand("fe070100001c20014a008dffffffffffff")
+          //bleService.sendCommand("fe070100003be302bf00e5ffffffffffff"); // josepeh's motor
+            //bleService.sendCommand("fe070100003be30276009cffffffffffff"); // josepeh's motor v2
+            bleService.sendCommand(self.computeRotationX())
+            //    bleService.sendCommand("fe070100001c20014a008dffffffffffff")
         
             //bleService.sendCommand("fe070100001c20019000a1ffffffffffff"); //move right 95  75789 ms forward
             //  bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff"); // reverse
@@ -776,8 +864,9 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             //let degreeIncr = (timeDiff / 0.0001 ) * 0.00175
             //let degreeIncr = (timeDiff / 0.0001 ) * 0.000475
             //var degreeIncr = (timeDiff / 0.0001 ) * 0.000850013
-            //var degreeIncr = (timeDiff / 0.0001) * 0.00165001 //<- our version
-            var degreeIncr = (timeDiff / 0.0001) * 0.001650846
+        var degreeIncr = ((timeDiff / 0.0001) * DegreeIncrPerMicro )//<- our version
+            //var degreeIncr = (timeDiff / 0.0001) * 0.001650846
+            //var degreeIncr = (timeDiff / 0.0001) * 0.001479411
             
             print("degreeIncr \(degreeIncr) M_PI \(-M_PI_2)")
             

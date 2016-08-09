@@ -567,10 +567,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
 }
 
 // MARK: - UITabBarControllerDelegate
-extension ProfileCollectionViewController: DefaultTabControllerDelegate {
-    
-    func jumpToTop() {
-        collectionViewModel.refreshNotification.notify(())
-        collectionView!.setContentOffset(CGPointZero, animated: true)
-    } 
-}
+//extension ProfileCollectionViewController: DefaultTabControllerDelegate {
+//    
+//    func jumpToTop() {
+//        collectionViewModel.refreshNotification.notify(())
+//        collectionView!.setContentOffset(CGPointZero, animated: true)
+//    } 
+//}
