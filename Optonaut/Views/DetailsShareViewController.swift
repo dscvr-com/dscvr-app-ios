@@ -29,47 +29,66 @@ class DetailsShareViewController: UIViewController ,TabControllerDelegate,MFMail
     var descriptionToShare:String = ""
     var optographId:String = ""
     var tField: UITextField!
+    var scrollView: UIScrollView?
+    var shareView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        scrollView = UIScrollView(frame: view.bounds)
+        view.addSubview(scrollView!)
+        
+        scrollView!.addSubview(shareView)
+        scrollView?.scrollEnabled = true
+        
+        if view.frame.height != 568.0 {
+            scrollView?.scrollEnabled = false
+            shareView.fillSuperview()
+            print("view height>>>>",view.frame.height)
+        } else {
+            print("view height>>",view.frame.height)
+            shareView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height + 50)
+        }
+        
+        scrollView!.contentSize = shareView.bounds.size
         
         let closeButton = UIButton()
         closeButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
         closeButton.anchorInCorner(.TopLeft, xPad: 10, yPad: 20, width: 30 , height: 30)
         closeButton.addTarget(self, action: #selector(closeShare), forControlEvents: .TouchUpInside)
-        self.view.addSubview(closeButton)
+        shareView.addSubview(closeButton)
         
         let shareTitle = UILabel()
         shareTitle.text = "Share"
         shareTitle.textAlignment = .Center
         shareTitle.font = UIFont(name: "Avenir-Book", size: 25)
-        self.view.addSubview(shareTitle)
+        shareView.addSubview(shareTitle)
         
         let textwidth = calcTextWidth("Share", withFont: .displayOfSize(25, withType: .Semibold))
         shareTitle.anchorToEdge(.Top, padding: 25, width: textwidth, height: 20)
         
         let lineDivider = UILabel()
         lineDivider.backgroundColor = UIColor.lightGrayColor()
-        self.view.addSubview(lineDivider)
+        shareView.addSubview(lineDivider)
         lineDivider.align(.UnderCentered, relativeTo: shareTitle, padding: 10, width: self.view.frame.width , height: 1)
         
-        let image: UIImage = UIImage(named: "logo_settings")!
+        let image: UIImage = UIImage(named: "logo_share")!
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
-        self.view.addSubview(bgImage!)
+        shareView.addSubview(bgImage!)
         bgImage!.align(.UnderCentered, relativeTo: lineDivider, padding: 10, width:image.size.width, height: image.size.height)
         
         let placeholderImageViewImage: UIImage = UIImage(named: "logo_settings")!
         var placeholderImageView: UIImageView?
         placeholderImageView = UIImageView(image: placeholderImageViewImage)
         placeholderImageView?.backgroundColor = UIColor.blackColor()
-        self.view.addSubview(placeholderImageView!)
+        shareView.addSubview(placeholderImageView!)
         placeholderImageView!.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width:  self.view.frame.width - 56, height: 130)
         
         titleText.text = "Share this 360 image:"
         titleText.textAlignment = .Center
         titleText.font = UIFont(name: "Avenir-Book", size: 25)
-        self.view.addSubview(titleText)
+        shareView.addSubview(titleText)
         titleText.align(.UnderCentered, relativeTo: placeholderImageView!, padding: 5, width: self.view.frame.width - 40, height: 40)
         
         buttonEmail.setImage(UIImage(named: "sharing_email") , forState: .Normal)
@@ -87,19 +106,19 @@ class DetailsShareViewController: UIViewController ,TabControllerDelegate,MFMail
         buttonTwitter.setImage(UIImage(named: "sharing_twitter_btn") , forState: .Normal)
         buttonTwitter.addTarget(self, action: #selector(shareTwitter), forControlEvents: .TouchUpInside)
         
-        self.view.addSubview(buttonEmail)
+        shareView.addSubview(buttonEmail)
         buttonEmail.align(.UnderCentered, relativeTo: titleText, padding: 10, width: self.view.frame.width - 40, height: 50)
         
-        self.view.addSubview(buttonCopyLink)
+        shareView.addSubview(buttonCopyLink)
         buttonCopyLink.align(.UnderCentered, relativeTo: buttonEmail, padding: 10, width: self.view.frame.width - 40, height: 50)
         
-        self.view.addSubview(buttonFacebook)
+        shareView.addSubview(buttonFacebook)
         buttonFacebook.align(.UnderCentered, relativeTo: buttonCopyLink, padding: 10, width: self.view.frame.width - 40, height: 50)
         
         //        self.view.addSubview(buttonMessenger)
         //        buttonMessenger.align(.UnderCentered, relativeTo: buttonFacebook, padding: 10, width: self.view.frame.width - 40, height: 50)
         
-        self.view.addSubview(buttonTwitter)
+        shareView.addSubview(buttonTwitter)
         buttonTwitter.align(.UnderCentered, relativeTo: buttonFacebook, padding: 10, width: self.view.frame.width - 40, height: 50)
         
         self.view.backgroundColor = UIColor.whiteColor()

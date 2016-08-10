@@ -49,29 +49,48 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     var optographId:String = ""
     var tField: UITextField!
     var activityIndicator = UIActivityIndicatorView()
+    var scrollView: UIScrollView?
+    var shareView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        scrollView = UIScrollView(frame: view.bounds)
+        view.addSubview(scrollView!)
+        
+        scrollView!.addSubview(shareView)
+        scrollView?.scrollEnabled = true
+        
+        if view.frame.height != 568.0 {
+            scrollView?.scrollEnabled = false
+            shareView.fillSuperview()
+            print("view height>>>>",view.frame.height)
+        } else {
+            print("view height>>",view.frame.height)
+            shareView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height + 50)
+        }
+        
+        scrollView!.contentSize = shareView.bounds.size
+        
         let image: UIImage = UIImage(named: "logo_share")!
-        //let image: UIImage = UIImage(named:"iam360_navTitle")!
         var bgImage: UIImageView?
         bgImage = UIImageView(image: image)
-        self.view.addSubview(bgImage!)
-        bgImage!.anchorToEdge(.Top, padding: (navigationController?.navigationBar.frame.height)! + 25, width: image.size.width, height: image.size.height)
+        shareView.addSubview(bgImage!)
+        bgImage!.anchorToEdge(.Top, padding: 10, width: image.size.width, height: image.size.height)
         
         let placeholderImageViewImage: UIImage = UIImage(named: "logo_settings")!
         var placeholderImageView: UIImageView?
         placeholderImageView = UIImageView(image: placeholderImageViewImage)
         placeholderImageView?.backgroundColor = UIColor.blackColor()
-        self.view.addSubview(placeholderImageView!)
+        shareView.addSubview(placeholderImageView!)
         placeholderImageView!.align(.UnderCentered, relativeTo: bgImage!, padding: 15, width: self.view.frame.width - 56, height: 130)
         
         titleText.text = "Share this 360 image:"
         titleText.textAlignment = .Center
         titleText.font = UIFont(name: "Avenir-Book", size: 25)
-        self.view.addSubview(titleText)
+        shareView.addSubview(titleText)
         titleText.align(.UnderCentered, relativeTo: placeholderImageView!, padding: 5, width: self.view.frame.width - 40, height: 40)
+        
         
         buttonEmail.setImage(UIImage(named: "sharing_email") , forState: .Normal)
         buttonEmail.addTarget(self, action: #selector(sendEmailButtonTapped), forControlEvents: .TouchUpInside)
@@ -88,19 +107,19 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         buttonTwitter.setImage(UIImage(named: "sharing_twitter_btn") , forState: .Normal)
         buttonTwitter.addTarget(self, action: #selector(shareTwitter), forControlEvents: .TouchUpInside)
         
-        self.view.addSubview(buttonEmail)
+        shareView.addSubview(buttonEmail)
         buttonEmail.align(.UnderCentered, relativeTo: titleText, padding: 10, width: self.view.frame.width - 40, height: 50)
         
-        self.view.addSubview(buttonCopyLink)
+        shareView.addSubview(buttonCopyLink)
         buttonCopyLink.align(.UnderCentered, relativeTo: buttonEmail, padding: 10, width: self.view.frame.width - 40, height: 50)
         
-        self.view.addSubview(buttonFacebook)
+        shareView.addSubview(buttonFacebook)
         buttonFacebook.align(.UnderCentered, relativeTo: buttonCopyLink, padding: 10, width: self.view.frame.width - 40, height: 50)
         
 //        self.view.addSubview(buttonMessenger)
 //        buttonMessenger.align(.UnderCentered, relativeTo: buttonFacebook, padding: 10, width: self.view.frame.width - 40, height: 50)
         
-        self.view.addSubview(buttonTwitter)
+        shareView.addSubview(buttonTwitter)
         buttonTwitter.align(.UnderCentered, relativeTo: buttonFacebook, padding: 10, width: self.view.frame.width - 40, height: 50)
         
         self.view.backgroundColor = UIColor.whiteColor()
@@ -125,15 +144,6 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
                 
                 placeholderImageView!.kf_setImageWithURL(NSURL(string: url)!)
                 
-//                ImageManager.sharedInstance.downloadImage(
-//                    NSURL(string:self.urlToShare)!, requester: self,
-//                    completionHandler: { (image, error, _, _) in
-//                        if let error = error where error.code != -999 {
-//                            print(error)
-//                        }
-//                        self.imageToShare = image
-//                })
-                
                 let optographBox = Models.optographs[val]!
                 let optograph = optographBox.model
                 let person = Models.persons[optograph.personID]!.model
@@ -153,7 +163,19 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         
         self.view.addSubview(activityIndicator)
         
+//        let result = FBSDKMessengerSharer.messengerPlatformCapabilities().rawValue & FBSDKMessengerPlatformCapability.Image.rawValue
+//        if result != 0 {
+//            // ok now share
+//            if let sharingImage = sharingImage {
+//                FBSDKMessengerSharer.shareImage(sharingImage, withOptions: nil)
+//            }
+//        } else {
+//            // not installed then open link. Note simulator doesn't open iTunes store.
+//            UIApplication.sharedApplication().openURL(NSURL(string: "itms://itunes.apple.com/us/app/facebook-messenger/id454638411?mt=8")!)
+//        }
+        
     }
+    
 
     func copyLink() {
         UIPasteboard.generalPasteboard().string = "\(self.shareUrl)"
@@ -260,7 +282,11 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
 //        let messengerUrl: String = "fb-messenger://user-thread/" + String(uid)
 //        UIApplication.sharedApplication().openURL(NSURL(string: messengerUrl)!)
         
-        
+        if UIApplication.sharedApplication().canOpenURL(NSURL(string:"fb-messenger://")!) {
+            UIApplication.sharedApplication().openURL(NSURL(string:"fb-messenger://")!)
+        } else {
+            print("can't send an fb messenger!")
+        }
     }
     
     func sendEmailButtonTapped() {
@@ -276,7 +302,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         let mailComposerVC = MFMailComposeViewController()
         mailComposerVC.mailComposeDelegate = self
         
-        //mailComposerVC.setToRecipients(["nurdin@gmail.com"])
+        //mailComposerVC.setToRecipients(["robert.alkuino@gmail.com"])
         mailComposerVC.setSubject("Sharing IAM360 image")
         mailComposerVC.setMessageBody("\(self.textToShare) \n\n \(self.shareUrl)", isHTML: true)
         

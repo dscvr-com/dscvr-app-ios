@@ -19,6 +19,11 @@ class SharingNavViewController: NavigationController {
         viewController.navigationItem.title = "Share"
         
         navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont(name: "Avenir-Book", size: 20)!]
+        
+        navigationBarHidden = false
+        navigationBar.translucent = false
+        navigationBar.barTintColor = UIColor.whiteColor()
+        
         pushViewController(viewController, animated: false)
     }
 

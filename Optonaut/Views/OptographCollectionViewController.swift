@@ -249,20 +249,21 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         return SamplePaths.cameraPath()
     }
     func openGallary() {
-        if Defaults[.SessionEliteUser] {
-            let imagePickVC = ViewController()
-            
-            imagePickVC.imagePicked.producer.startWithNext{ image in
-                if image != nil {
-                    self.uploadTheta(image!)
-                }
-            }
-            
-            self.presentViewController(imagePickVC, animated: true, completion: nil)
-        } else{
-            //self.presentViewController(InvitationViewController(), animated: true, completion: nil)
-            self.tapRightButton()
-        }
+//        if Defaults[.SessionEliteUser] {
+//            let imagePickVC = ViewController()
+//            
+//            imagePickVC.imagePicked.producer.startWithNext{ image in
+//                if image != nil {
+//                    self.uploadTheta(image!)
+//                }
+//            }
+//            
+//            self.presentViewController(imagePickVC, animated: true, completion: nil)
+//        } else{
+//            //self.presentViewController(InvitationViewController(), animated: true, completion: nil)
+//            self.tapRightButton()
+//        }
+        self.presentViewController(InvitationViewController(), animated: true, completion: nil)
     }
     
     func uploadTheta(thetaImage:UIImage) {

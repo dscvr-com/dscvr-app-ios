@@ -28,15 +28,32 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
     
     var parentView = UIImageView()
     
+    var scrollView:UIScrollView?
+    var shareView = UIView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        parentView.image = UIImage(named:"gradient_bg")
-//        parentView.frame = view.bounds
+        scrollView = UIScrollView(frame: view.bounds)
+        view.addSubview(scrollView!)
+        
+        scrollView!.addSubview(shareView)
+        scrollView?.scrollEnabled = true
+        
+        if view.frame.height != 568.0 {
+            scrollView?.scrollEnabled = false
+            shareView.fillSuperview()
+            print("view height>>>>",view.frame.height)
+        } else {
+            print("view height>>",view.frame.height)
+            shareView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height + 100)
+        }
+        
+        scrollView!.contentSize = shareView.bounds.size
         
         backView.backgroundColor = UIColor(0xf7f7f7)
-        backView.frame = view.bounds
-        view.addSubview(backView)
+        backView.frame = shareView.bounds
+        shareView.addSubview(backView)
         
         let logo: UIImage = UIImage(named: "logo_invite")!
         logoImageView.image = logo
