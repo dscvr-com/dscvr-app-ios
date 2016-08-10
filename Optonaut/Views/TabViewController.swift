@@ -437,29 +437,29 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         thisView.addSubview(versionLabel)
         
         if (Defaults[.SessionPPS] == nil) {
-           // Defaults[.SessionPPS] = 330 // ours
+//            Defaults[.SessionPPS] = 330 // ours
             Defaults[.SessionPPS] = 630 // joseph
         }
         
         if (Defaults[.SessionRotateCount] == nil) {
-            //Defaults[.SessionRotateCount] = 7200 // ours
+//            Defaults[.SessionRotateCount] = 7200 // ours
             Defaults[.SessionRotateCount] = 15331 // ours
         }
         
         if (Defaults[.SessionTopCount] == nil) {
-           // Defaults[.SessionTopCount] = -1545
+//            Defaults[.SessionTopCount] = -1545
             Defaults[.SessionTopCount] = 2060 // joseph
         }
         
         
         if (Defaults[.SessionBotCount] == nil) {
-           // Defaults[.SessionBotCount] = 3030
+//            Defaults[.SessionBotCount] = 3030
             Defaults[.SessionBotCount] = -4120 // joseph
         }
         
         
         if (Defaults[.SessionBuffCount] == nil) {
-           // Defaults[.SessionBuffCount] = 100
+//            Defaults[.SessionBuffCount] = 0
             Defaults[.SessionBuffCount] = 0 // joseph
         }
 

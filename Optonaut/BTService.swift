@@ -49,6 +49,8 @@ class BTService: NSObject, CBPeripheralDelegate {
         print("computeBotRotation \(self.computeBotRotation())")
         print("computeRotationX \(self.computeRotationX())")
         print("computeTopRotation \(self.computeTopRotation())")
+        ringFlag = 0
+        motorFlag = 0
         
          
     }
@@ -65,7 +67,8 @@ class BTService: NSObject, CBPeripheralDelegate {
         if peripheral != nil {
             peripheral = nil
         }
-        
+        ringFlag = 0
+        motorFlag = 0
         // Deallocating therefore send notification
         self.sendBTServiceNotificationWithIsBluetoothConnected(false)
     }
@@ -203,8 +206,8 @@ class BTService: NSObject, CBPeripheralDelegate {
                                      //"ffffee99" <- our motor
                     // not sure if this is the return data for the bot
                     bData.dataHasCome.value = false
-                    ringFlag = 3 // means done
-                    motorFlag = 6
+                    ringFlag = 0 // means done
+                    motorFlag = 0
                 }
 
             }
