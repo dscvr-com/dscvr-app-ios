@@ -35,6 +35,8 @@ extension DefaultsKeys {
     static let SessionPhoneOS = DefaultsKey<String?>("session_phone_os")
     static let SessionEliteUser = DefaultsKey<Bool>("session_elite_user")
     static let SessionUserDidFirstLogin = DefaultsKey<Bool>("session_did_first_login")
+    static let SessionBPS = DefaultsKey<String?>("session_ball_per_second")
+    static let SessionStepCount = DefaultsKey<String?>("session_step_count")
 }
 
 let DefaultVRGlasses = "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"

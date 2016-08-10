@@ -540,6 +540,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         profileViewModel.cancelEdit()
     }
     
+    func report() -> SignalProducer<EmptyResponse, ApiError> {
+        return ApiService<EmptyResponse>.post("optographs/\(profileViewModel.personID)/report")
+    }
+    
     dynamic private func tapRightBarButton() {
         
         if profileViewModel.isEditing.value {
@@ -569,7 +573,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                     let confirmAlert = UIAlertController(title: "Are you sure?", message: "This action will message one of the moderators.", preferredStyle: .Alert)
                     confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
                     confirmAlert.addAction(UIAlertAction(title: "Report", style: .Destructive, handler: { _ in
-                        //                    self.viewModel.person.report().start()
+                        self.report().start()
                     }))
                     self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
                 }))

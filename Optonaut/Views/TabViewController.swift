@@ -52,8 +52,17 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     let labelMotor = UILabel()
     let labelGyro = UILabel()
     let planet = UILabel()
+//    let motor1 = UILabel()
+//    let mButtonUp = UIButton()
+//    let mButtonDown = UIButton()
     
     var lastContentOffset:CGFloat = 0
+//    var motor1Val:CGFloat = 0
+//    var motor2Val:CGFloat = 0
+//    
+//    let motor2 = UILabel()
+//    let m2ButtonUp = UIButton()
+//    let m2ButtonDown = UIButton()
     
     let shareData = ShareData.sharedInstance
     
@@ -408,7 +417,64 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         versionLabel.font = .fontDisplay(10, withType: .Semibold)
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
         thisView.addSubview(versionLabel)
+        
+//        motor1.text = "value"
+//        motor1.backgroundColor = UIColor.lightGrayColor()
+//        thisView.addSubview(motor1)
+//        
+//        mButtonUp.backgroundColor = UIColor.yellowColor()
+//        mButtonUp.addTarget(self, action: #selector(TabViewController.motorButtonUp), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(mButtonUp)
+//        
+//        mButtonDown.backgroundColor = UIColor.redColor()
+//        mButtonDown.addTarget(self, action: #selector(TabViewController.motorButtonDown), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(mButtonDown)
+//        
+//        motor1.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 40, width: (view.frame.width * 0.5), height: 40)
+//        mButtonUp.align(.ToTheRightMatchingTop, relativeTo: motor1, padding: 2, width: 30, height: 19)
+//        mButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor1, padding: 2, width: 30, height: 19)
+//        
+//        motor2.text = "value"
+//        motor2.backgroundColor = UIColor.lightGrayColor()
+//        thisView.addSubview(motor2)
+//        
+//        m2ButtonUp.backgroundColor = UIColor.yellowColor()
+//        m2ButtonUp.addTarget(self, action: #selector(TabViewController.motor2ButtonUp), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m2ButtonUp)
+//        
+//        m2ButtonDown.backgroundColor = UIColor.redColor()
+//        m2ButtonDown.addTarget(self, action: #selector(TabViewController.motor2ButtonDown), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m2ButtonDown)
+//        
+//        motor2.align(.UnderMatchingLeft, relativeTo: motor1, padding: 40, width: (view.frame.width * 0.5), height: 40)
+//        m2ButtonUp.align(.ToTheRightMatchingTop, relativeTo: motor2, padding: 2, width: 30, height: 19)
+//        m2ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor2, padding: 2, width: 30, height: 19)
     }
+    
+//    func motorButtonUp() {
+//        motor1Val += 1
+//        motor1.text = "motor1: \(motor1Val)"
+//        Defaults[.SessionBPS] = "\(motor1Val)"
+//    }
+//    
+//    func motorButtonDown() {
+//        motor1Val -= 1
+//        motor1.text = "motor1: \(motor1Val)"
+//        Defaults[.SessionBPS] = "\(motor1Val)"
+//    }
+//    
+//    func motor2ButtonUp() {
+//        motor2Val += 1
+//        motor2.text = "motor2: \(motor2Val)"
+//        Defaults[.SessionStepCount] = "\(motor2Val)"
+//    }
+//    
+//    func motor2ButtonDown() {
+//        motor2Val -= 1
+//        motor2.text = "motor2: \(motor2Val)"
+//        Defaults[.SessionStepCount] = "\(motor2Val)"
+//    }
+    
     func inGyroMode() {
         if Defaults[.SessionGyro] {
             gyroButton.icon = UIImage(named: "gyro_inactive_icn")!
