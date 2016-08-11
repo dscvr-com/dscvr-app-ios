@@ -2056,8 +2056,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2087,9 +2087,9 @@
 				);
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "431313f9-a8d4-4306-a314-818c26c310c3";
+				PROVISIONING_PROFILE = "fb96e6c1-8171-411a-98c4-62047c4392e2";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2103,8 +2103,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2122,9 +2122,9 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/stitcher/vendor",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "431313f9-a8d4-4306-a314-818c26c310c3";
+				PROVISIONING_PROFILE = "fb96e6c1-8171-411a-98c4-62047c4392e2";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

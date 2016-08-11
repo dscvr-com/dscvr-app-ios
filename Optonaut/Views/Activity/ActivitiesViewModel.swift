@@ -61,6 +61,9 @@ class ActivitiesViewModel: NSObject {
 //                        if activity.activityResourceStar?.optograph != nil {
 //                            Models.optographs.touch((activity.activityResourceStar?.optograph)!).insertOrUpdate()
 //                        }
+                        if activity.activityResourceStar?.causingPerson != nil {
+                            Models.persons.touch((activity.activityResourceStar?.causingPerson)!).insertOrIgnore()
+                        }
                         
 //                        try! activity.activityResourceStar?.insertOrUpdate()
 //                        activity.activityResourceStar?.optograph.insertOrIgnore()
