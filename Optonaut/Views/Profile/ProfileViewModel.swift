@@ -27,7 +27,7 @@ class ProfileViewModel {
     let isMe: Bool
     let personID: UUID
     
-    var _userName:String = ""
+    //var _userName:String = ""
     
 //    var person = Person.newInstance()
     private var personBox: ModelBox<Person>!
@@ -42,9 +42,9 @@ class ProfileViewModel {
             .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
             .startWithNext { [weak self] apiModel in
                 self?.personBox.model.mergeApiModel(apiModel)
-                self?._userName = apiModel.userName
-                self?.displayName.value = "\(apiModel.displayName)"
-                self?.userName.value = "@\(apiModel.userName)"
+                //self?._userName = apiModel.userName
+                self?.displayName.value = apiModel.displayName
+                self?.userName.value = apiModel.userName
                 self?.text.value = apiModel.text
                 self?.postCount.value = apiModel.optographsCount
                 self?.followersCount.value = apiModel.followersCount
@@ -56,10 +56,10 @@ class ProfileViewModel {
         personBox.producer
             .skipRepeats()
             .startWithNext { [weak self] person in
-                self?.displayName.value = "\(person.displayName)"
-                self?.userName.value = "@\(person.userName)"
+                self?.displayName.value = person.displayName
+                self?.userName.value = person.userName
                 self?.text.value = person.text
-                self?._userName = person.userName
+                //self?._userName = person.userName
                 self?.postCount.value = person.optographsCount
                 self?.followersCount.value = person.followersCount
                 self?.followingCount.value = person.followedCount
@@ -72,24 +72,25 @@ class ProfileViewModel {
         personBox.producer
             .skipRepeats()
             .startWithNext { [weak self] person in
-                self?.displayName.value = "\(person.displayName)"
-                self?.userName.value = "@\(person.userName)"
-                self?._userName = person.userName
+                self?.displayName.value = person.displayName
+                self?.userName.value = person.userName
+                //self?._userName = person.userName
         }
     }
     
     func saveEdit() {
         let parameters = [
-            "display_name": _userName,
-            "user_name": _userName,
+            "display_name": displayName.value.stringByReplacingOccurrencesOfString("@", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil),
+            "user_name": userName.value.stringByReplacingOccurrencesOfString("@", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil),
             "text": text.value,
         ]
+        print("parameters",parameters)
         ApiService<PersonApiModel>.put("persons/me", parameters: parameters)
             .startWithCompleted { [weak self] in
                 if let strongSelf = self {
                     strongSelf.personBox.insertOrUpdate { box in
                         box.model.displayName = strongSelf.displayName.value
-                        box.model.userName = strongSelf._userName
+                        box.model.userName = strongSelf.userName.value
                         box.model.text = strongSelf.text.value
                     }
                     strongSelf.isEditing.value = false
@@ -98,8 +99,8 @@ class ProfileViewModel {
     }
     
     func cancelEdit() {
-        displayName.value = "\(personBox.model.displayName)"
-        userName.value = "@\(personBox.model.userName)"
+        displayName.value = personBox.model.userName
+        userName.value = personBox.model.userName
         text.value = personBox.model.text
         isEditing.value = false
     }

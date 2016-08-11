@@ -246,18 +246,22 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         viewModel.isEditing.producer.startWithNext{ [weak self] val in
             val ? self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.updateImage))) : self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
             self?.editSubView.hidden = val ? true : false
+            if val == false{
+                self?.dismissKeyboard()
+            }
         }
         
         viewModel.isFollowed.producer.startWithNext{ [weak self] val in
             val ? self?.buttonFollow.setBackgroundImage(UIImage(named:"follow_button"), forState: .Normal) : self?.buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         }
         
-        displayNameView.rac_text <~ viewModel.userName
+        viewModel.userName.producer.startWithNext{ val in
+            self.displayNameView.text = "@" + val
+            self.displayNameInputView.text = "@" + val
+        }
         displayNameView.rac_hidden <~ viewModel.isEditing
         displayNameInputView.rac_hidden <~ viewModel.isEditing.producer.map(negate)
-        displayNameInputView.rac_textSignal().toSignalProducer().skip(1).startWithNext { [weak self] val in
-            self?.viewModel._userName = val as! String
-        }
+        displayNameInputView.rac_text <~ viewModel.userName
         
         textView.rac_text <~ viewModel.text
         textView.rac_hidden <~ viewModel.isEditing
