@@ -74,11 +74,13 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                 ApiService<OptographApiModel>.get("optographs/feed")
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
+                        print(">>>>>>>>>>>>",apiModel.ID,apiModel.starsCount)
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isInFeed = true
                             box.model.isStitched = true
                             box.model.isPublished = true
                             box.model.isSubmitted = true
+                            box.model.starsCount = apiModel.starsCount
                         }
                         Models.persons.touch(apiModel.person).insertOrUpdate()
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()

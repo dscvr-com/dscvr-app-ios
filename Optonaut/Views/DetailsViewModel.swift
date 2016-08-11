@@ -51,21 +51,21 @@ class DetailsViewModel {
         optographId = optographID
         
 //        optographBox.producer.startWithNext{ [weak self] optograph in
-        
-//        if optograph.isPublished {
-//            ApiService<OptographApiModel>.get("optographs/\(optographID)")
-//                .on(next: { apiModel in
-//                    Models.optographs.touch(apiModel).insertOrUpdate { box in
-//                        box.model.isInFeed = true
-//                        box.model.isStitched = true
-//                        box.model.isPublished = true
-//                        box.model.isSubmitted = true
+//        
+//            if optograph.isPublished {
+//                ApiService<OptographApiModel>.get("optographs/\(optographID)")
+//                    .on(next: { apiModel in
+//                        Models.optographs.touch(apiModel).insertOrUpdate { box in
+//                            box.model.isInFeed = true
+//                            box.model.isStitched = true
+//                            box.model.isPublished = true
+//                            box.model.isSubmitted = true
+//                        }
+//                        Models.persons.touch(apiModel.person).insertOrUpdate()
+//                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
+//                    }).startWithNext { optograph in
+//                        self?.updatePropertiesDetails()
 //                    }
-//                    Models.persons.touch(apiModel.person).insertOrUpdate()
-//                    Models.locations.touch(apiModel.location)?.insertOrUpdate()
-//                }).startWithNext { optograph in
-//                    self?.updatePropertiesDetails()
-//                }
 //            }
 //        }
         

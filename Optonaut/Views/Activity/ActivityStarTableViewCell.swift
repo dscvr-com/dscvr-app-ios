@@ -50,7 +50,7 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
             
             nameView.text = activity.activityResourceStar!.causingPerson.userName
             
-            Models.persons.touch(activity.activityResourceStar!.causingPerson).insertOrUpdate()
+            //Models.persons.touch(activity.activityResourceStar!.causingPerson).insertOrUpdate()
             
             let url = TextureURL(activity.activityResourceStar!.optograph.ID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
             self.optographImageView.kf_setImageWithURL(NSURL(string: url)!)
@@ -70,7 +70,8 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
     }
     
     func pushDetails() {
-        if Models.optographs[self.activity.activityResourceStar!.causingPerson.ID] != nil {
+        if Models.optographs[self.activity.activityResourceStar!.optograph.ID] != nil {
+            print("wew")
             self.read()
             let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceStar!.optograph.ID])
             detailsViewController.cellIndexpath = 0

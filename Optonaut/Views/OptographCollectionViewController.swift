@@ -124,6 +124,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             .observeOnMain()
             .on(next: { [weak self] results in
                 
+                print("nagreload!!")
+                
                 if let strongSelf = self {
                     let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
                     strongSelf.optographIDs = results.models.map { $0.ID }
@@ -136,8 +138,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     }
                     
                     if results.models.count == 1 {
+                        print("nagreload lahat")
                         strongSelf.collectionView!.reloadData()
                     } else {
+                        print("nagreload paisa isa")
                         CATransaction.begin()
                         CATransaction.setDisableActions(true)
                             strongSelf.collectionView!.performBatchUpdates({
@@ -225,7 +229,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         PipelineService.checkStitching()
         PipelineService.checkUploading()
         
-        viewModel.isActive.value = true
     }
     
 //    func createStitchingProgressBar() {
@@ -404,6 +407,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        viewModel.isActive.value = true
         
         SwiftSpinner.setTitleFont(UIFont(name: "Avenir-Book", size: 20.0))
         

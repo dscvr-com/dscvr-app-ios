@@ -82,6 +82,7 @@ class ProfileOptographsViewModel {
                     .observeOnUserInitiated()
                     //.filter({ return $0.deletedAt == nil })
                     .on(next: { apiModel in
+                        print("++++++++",apiModel.ID,apiModel.starsCount)
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
                             box.model.isPublished = true

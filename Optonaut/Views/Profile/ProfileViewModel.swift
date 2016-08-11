@@ -41,7 +41,6 @@ class ProfileViewModel {
         SignalProducer<Bool, ApiError>(value: isMe)
             .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
             .startWithNext { [weak self] apiModel in
-                print("apimodel",apiModel)
                 self?.personBox.model.mergeApiModel(apiModel)
                 self?._userName = apiModel.userName
                 self?.displayName.value = "\(apiModel.displayName)"
@@ -64,7 +63,6 @@ class ProfileViewModel {
                 self?.postCount.value = person.optographsCount
                 self?.followersCount.value = person.followersCount
                 self?.followingCount.value = person.followedCount
-                print("class followed",person.isFollowed)
                 self?.isFollowed.value = person.isFollowed
                 self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 84, height: 84)
             }
@@ -86,7 +84,6 @@ class ProfileViewModel {
             "user_name": _userName,
             "text": text.value,
         ]
-        print(parameters)
         ApiService<PersonApiModel>.put("persons/me", parameters: parameters)
             .startWithCompleted { [weak self] in
                 if let strongSelf = self {

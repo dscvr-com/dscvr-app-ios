@@ -126,7 +126,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
         label1.align(.AboveMatchingLeft, relativeTo: view1, padding: 16, width: dragTextWidth, height: 25)
         orImage.align(.UnderCentered, relativeTo: view1, padding: 49, width: orText.size.width, height: orText.size.height)
         
-        label2.align(.UnderMatchingLeft, relativeTo: orImage, padding: 49, width: view.frame.width-44, height: 25)
+        label2.align(.UnderMatchingLeft, relativeTo: view1, padding: 49+49+orText.size.height, width: view.frame.width-44, height: 25)
         textRequestCode.align(.UnderMatchingLeft, relativeTo: label2, padding: 16, width: view.frame.width-44, height: 50)
         requestButton.align(.UnderCentered, relativeTo: textRequestCode, padding: 13, width: view.frame.width-44, height: 50)
         

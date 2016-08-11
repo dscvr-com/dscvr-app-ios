@@ -494,7 +494,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func pullButtonTap(recognizer:UITapGestureRecognizer) {
-        print("tangina!")
         
         UIView.animateWithDuration(0.5, animations: {
             self.thisView.frame = CGRectMake(0, -(self.view.frame.height) , self.view.frame.width, self.view.frame.height)
