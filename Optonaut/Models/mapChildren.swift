@@ -18,4 +18,5 @@ struct mapChildren: Mappable {
     mutating func mapping(map: Map) {
         children              <- map["children"]
     }
+
 }

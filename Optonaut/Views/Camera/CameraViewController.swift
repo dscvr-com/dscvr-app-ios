@@ -18,17 +18,17 @@ import Async
 import Mixpanel
 import SwiftyUserDefaults
 import Photos
-
+import CoreBluetooth
 
 struct staticVariables {
     static var isCenter:Bool!
 }
 
-class CameraViewController: UIViewController,TabControllerDelegate {
+class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralDelegate {
     
     private let viewModel = CameraViewModel()
-    private let motionManager = CMMotionManager()
-    
+    //private let motionManager = CMMotionManager()
+    private let rotationSource = CustomRotationMatrixSource.Instance
     // camera
     private let session = AVCaptureSession()
     private let sessionQueue: dispatch_queue_t
@@ -66,19 +66,37 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     private let cameraNode = SCNNode()
     private var scnView : SCNView!
     private let scene = SCNScene()
+    private var currentDegree : Float
+    private var DegreeIncrPerMicro : Double
+    
+    
     
     // ball
     private let ballNode = SCNNode()
     private var ballSpeed = GLKVector3Make(0, 0, 0)
+    private let baseMatrix = GLKMatrix4Make(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1 , 0.0, 0.0, -1.0, 0.00, 0.0, 0.0, 0.0, 0.0, 1.0)
     
     private var tapCameraButtonCallback: (() -> ())?
+    private var lastElapsedTime = CACurrentMediaTime() ;
+    private var currentTheta = Float(0.0)
+    private var currentPhi = Float(0.0)
     
     private let cancelButton = UIButton()
     
     private let tabView = TabView()
+    private let bData = BService.sharedInstance
     
-        
+    private var RotateData = String("")
+    
+   
+    
+    //for motor
+    var ringFlag = 0
+    
     required init() {
+        
+        currentDegree = 0.03
+        DegreeIncrPerMicro = 0.0
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
@@ -92,6 +110,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         super.init(nibName: nil, bundle: nil)
         
+        
+        RotateData = self.computeRotationX()
+        
+        
+        
+
         tapCameraButtonCallback = { [weak self] in
             let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
             confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
@@ -100,13 +124,86 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         }
     }
     
+    
+    func computeRotationX ( ) -> String {
+        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]
+        
+        // get number of rotation
+        let xnumberSteps = Defaults[.SessionRotateCount]
+        rotateByteData.append(UInt8(xnumberSteps! >> 24))
+        rotateByteData.append(UInt8(xnumberSteps! >> 16))
+        rotateByteData.append(UInt8(xnumberSteps! >> 8))
+        rotateByteData.append(UInt8(xnumberSteps! & 0xff))
+        print("rotateByteData1 \(rotateByteData)")
+        // get pps
+        let pps = Defaults[.SessionPPS]
+        rotateByteData.append(UInt8(pps! >> 8))
+        rotateByteData.append(UInt8(pps! & 0xff))
+        // add full step
+        rotateByteData.append(UInt8(0x00))
+        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
+        // compute for checksum
+        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
+        print("rotateByteData \(rotateByteData)")
+        // append padding
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        // convert to hex string
+        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
+    
+    }
+    
+    
+    func checkSum(data: NSData) -> Int {
+        let b = UnsafeBufferPointer<UInt8>(start:
+            UnsafePointer(data.bytes), count: data.length)
+        
+        var sum = 0
+        for i in 0..<data.length {
+            sum += Int(b[i])
+        }
+        return sum & 0xff
+    }
+    
+    func hexString(data:NSData)->String{
+        if data.length > 0 {
+            let  hexChars = Array("0123456789abcdef".utf8) as [UInt8];
+            let buf = UnsafeBufferPointer<UInt8>(start: UnsafePointer(data.bytes), count: data.length);
+            var output = [UInt8](count: data.length*2 + 1, repeatedValue: 0);
+            var ix:Int = 0;
+            for b in buf {
+                let hi  = Int((b & 0xf0) >> 4);
+                let low = Int(b & 0x0f);
+                output[ix++] = hexChars[ hi];
+                output[ix++] = hexChars[low];
+            }
+            let result = String.fromCString(UnsafePointer(output))!;
+            return result;
+        }
+        return "";
+    }
+    
+    
+    func peripheral( peripheral: CBPeripheral,
+                     didUpdateValueForCharacteristic characteristic: CBCharacteristic,
+                                                     error: NSError?) {
+        
+        let responseData = characteristic.value
+        print("reponsse data processed \(responseData)")
+        
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     deinit {
-        motionManager.stopDeviceMotionUpdates()
-        
+       // motionManager.stopDeviceMotionUpdates()
+        rotationSource.stop()
         //We do that in our signal as soon as everything's finished
         //recorder.dispose()
         
@@ -174,7 +271,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         scnView.addSubview(tabView)
         
-        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+       // motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
         
@@ -191,8 +288,46 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     func tapCameraButton() {
         //tapCameraButtonCallback?()
         print("ewe")
+        print("SessionRotateCount \(Defaults[.SessionRotateCount]!)")
+        print("SessionPPS \(Defaults[.SessionPPS]!)")
+        
+        let rotatePlusBuff = (Defaults[.SessionRotateCount]! + Defaults[.SessionBuffCount]!)
+        
+        
+        DegreeIncrPerMicro = (0.036 / ( Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ))
+        print("DegreeIncrPerMicro \(DegreeIncrPerMicro)")
         tabView.cameraButton.hidden = true
-        viewModel.isRecording.value = true
+        viewModel.isRecording.value = true // <-
+        
+        if let bleService = btDiscoverySharedInstance.bleService {
+            //000102030405060708
+           //bleService.sendCommand("fe070100001c20005f00a1ffffffffffff"); //move right 95  75789 ms forward
+          //bleService.sendCommand("fe070100001c20019000d3ffffffffffff"); //move 18 ms forward
+        //  bleService.sendCommand("fe070100001c20015e00a1ffffffffffff"); //move 18 ms forward
+          //bleService.sendCommand("fe070100003be302bf00e5ffffffffffff"); // josepeh's motor
+            //bleService.sendCommand("fe070100003be30276009cffffffffffff"); // josepeh's motor v2
+            bleService.sendCommand(self.computeRotationX())
+            //    bleService.sendCommand("fe070100001c20014a008dffffffffffff")
+        
+            //bleService.sendCommand("fe070100001c20019000a1ffffffffffff"); //move right 95  75789 ms forward
+            //  bleService.sendCommand("fe0701ffffe3e001900058ffffffffffff"); // reverse
+            //bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process
+        
+       
+  
+          /*
+            bData.dataHasCome.producer.startWithNext{ val in
+                if val{
+                    print("bData>>>>>>>>>>>>",self.bData.bluetoothData)
+                    self.bData.dataHasCome.value = false
+                }
+                
+            }
+ */
+
+        }
+        
+        
     }
     
     func touchEndCameraButton() {
@@ -202,6 +337,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     
     func cancelRecording() {
+        
+        if let bleService = btDiscoverySharedInstance.bleService {
+                                  //fe000402ffffffffffffffffffffffffff"
+            bleService.sendCommand("fe000402ffffffffffffffffffffffffff"); //stop process        
+        }
+        
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
         
         stopSession()
@@ -374,7 +515,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         UIApplication.sharedApplication().idleTimerDisabled = true
         
-        motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
+    //    motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
+        rotationSource.start()
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -471,6 +613,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         ballNode.geometry = ballGeometry
         ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor(hex:0xFF5E00)
+        
         
         scene.rootNode.addChildNode(ballNode)
     }
@@ -650,6 +793,16 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         }
     }
     
+    
+    func delay(delay:Double, closure:()->()) {
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
+    }
+    
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
         
         if recorder.isFinished() {
@@ -658,10 +811,17 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         
-        if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
-            
-            let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
+        //if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
+        if let pixelBuffer = pixelBuffer {
+        
+
+      //      let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
+           
+            
+        //    print("pitch \(motion.attitude.pitch)")
+        //    print("yaw \(motion.attitude.yaw)")
+        //    print("roll \(motion.attitude.roll)")
             
             var buf = ImageBuffer()
             buf.data = CVPixelBufferGetBaseAddress(pixelBuffer)
@@ -672,12 +832,99 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             
             recorder.setIdle(!self.viewModel.isRecording.value)
             
+            //Motor Fixed 1ring
+            let mediaTime = CACurrentMediaTime()
+            print("mediaTime \(mediaTime)")
+            let timeDiff = mediaTime - lastElapsedTime
+            print("timeDiff \(timeDiff)")
+            
+            print("lastElapsedTime \(lastElapsedTime)")
+            
+            // static degree per 0.0001ms = 0.000475 for 75.789 s
+            // static degree per 0.0001ms = 0.002 for 18.0 s
+            // static degree per 0.0001ms = 0.00175 for 20.571 s
+            
+            
+            //let degreeIncr = (timeDiff / 0.0001 ) * 0.00175
+            //let degreeIncr = (timeDiff / 0.0001 ) * 0.000475
+            //var degreeIncr = (timeDiff / 0.0001 ) * 0.000850013
+        var degreeIncr = ((timeDiff / 0.0001) * DegreeIncrPerMicro )//<- our version
+            //var degreeIncr = (timeDiff / 0.0001) * 0.001650846
+            //var degreeIncr = (timeDiff / 0.0001) * 0.001479411
+            
+            print("degreeIncr \(degreeIncr) M_PI \(-M_PI_2)")
+            
+            if viewModel.isRecording.value {
+                currentDegree -= Float(degreeIncr)
+                //currentDegree += Float(degreeIncr)
+            }
+            print("currentDegree \(currentDegree)")
+
+         
+            lastElapsedTime = mediaTime
+            
+            var rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
+            
+            print("rotation \(rotation)")
+            
+           // var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
+            
+            var currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
+            print("currentRotation \(currentRotation)")
+           // currentRotation = GLKMatrix4Multiply(currentRotation, rotation)
+            
+            //var currentRad = currentDegree  * Float(M_PI / 180.0)
+            //print("currentRad  \(currentRad)" )
+            //var currentRotation = GLKMatrix4Rotate(baseMatrix, 1.0, 0.0, currentRad, 0.0)
+            
+            print("currentDegree \(currentDegree) CACurrentMediaTime \(mediaTime) ")
+            
+            currentPhi = GLKMathDegreesToRadians(Float(currentDegree))
+            print("currentPhi \(currentPhi)")
+            
+            let cmRotation = self.rotationSource.getRotationMatrixMotor(currentPhi, thetaValue: currentTheta)
+            print("Matrix: [\(cmRotation.m00), \(cmRotation.m01), \(cmRotation.m02), \(cmRotation.m03)")
+            print("______: [\(cmRotation.m10), \(cmRotation.m11), \(cmRotation.m12), \(cmRotation.m13)")
+            print("______: [\(cmRotation.m20), \(cmRotation.m21), \(cmRotation.m22), \(cmRotation.m23)")
+            print("______: [\(cmRotation.m30), \(cmRotation.m31), \(cmRotation.m32), \(cmRotation.m33)")
+            
+            
+            if bData.dataHasCome.value  {
+                viewModel.isRecording.value = true
+                
+            }
+            print("currentPhi <  \(Float((-2.0 * M_PI) - 0.01))")
+            if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
+                viewModel.isRecording.value = false //<-
+                
+                /*print("ito?>>>>>",bData.ydirection)
+                    if self.bData.ydirection == "fffffe0b"{
+                        print(">>>>why?")
+                        viewModel.isRecording.value = true
+                        
+                    }*/
+                
+                if(currentTheta == 0) {
+                    currentTheta = Float(-0.718)
+                } else if(currentTheta < 0) {
+                    currentTheta = Float(0.718)
+                } else if(currentTheta > 0) {
+                    currentTheta = Float(0)
+                }
+                currentDegree = 0
+            }
+            print("currentTheta \(currentTheta)")
+            
             
             recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
+            //recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
             
             let errorVec = recorder.getAngularDistanceToBall()
             let r = recorder.getCurrentRotation()
             // let exposureHintC = recorder.getExposureHint()
+            
+            // checking the bluetooth value
+         
             
             Async.main {
                 if self.isViewLoaded() {
@@ -837,6 +1084,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             
             recorder_.dispose()
         }
+        
+
         let createOptographViewController = SaveViewController(recorderCleanup: recorderCleanup)
         createOptographViewController.hidesBottomBarWhenPushed = true
         navigationController!.pushViewController(createOptographViewController, animated: false)
@@ -1107,3 +1356,23 @@ private class TiltView: UIView {
     }
     
 }
+
+
+//                    func custoBLE (seconds : Double, isRecording : Bool, command : String
+//                        ){
+//
+//                        let seconds = seconds
+//                        let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds
+//                        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+//
+//                        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
+//
+//                            self.viewModel.isRecording.value = isRecording
+//
+//                            if let bleService = btDiscoverySharedInstance.bleService {
+//                                bleService.sendCommand(command);
+//                                //bleService.sendCommand("fe070200000ea6012c00e8ffffffffffff");
+//                            }
+//                        })
+//                    }
+

@@ -39,4 +39,5 @@ struct StorytellingChildren: Mappable {
         story_object_media_filename  <- map["story_object_media_filename"]
         story_object_media_fileurl  <- map["story_object_media_fileurl"]
     }
+
 }

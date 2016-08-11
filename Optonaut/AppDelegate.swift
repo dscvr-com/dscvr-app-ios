@@ -58,6 +58,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Defaults[.SessionUseMultiRing] = true
             }
             
+            Defaults[.SessionUseMultiRing] = true
+
+            
             Mixpanel.sharedInstance().track("Launch.Notification")
             
             Defaults[.SessionPhoneModel] = UIDevice.currentDevice().modelName
@@ -72,6 +75,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.sendCheckElite().start()
             
             }
+            
+            //Bluetooth Notif
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("connectionChanged:"), name: BLEServiceChangedStatusNotification, object: nil)
+            // Start the Bluetooth discovery process
+            btDiscoverySharedInstance
+            print("puamsok dito")
+            
+            
         }
         return true
     }
@@ -91,6 +102,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             })
     }
+    
+    //Bluetooth connect
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: BLEServiceChangedStatusNotification, object: nil)
+         }
+    func connectionChanged(notification: NSNotification) {
+        print("pumasok dsa functino")
+        // Connection status changed. Indicate on GUI.
+        let userInfo = notification.userInfo as! [String: Bool]
+            
+        dispatch_async(dispatch_get_main_queue(), {
+            // Set image based on connection status
+            if let isConnected: Bool = userInfo["isConnected"] {
+                if isConnected {
+                    //self.imgBluetoothStatus.image = UIImage(named: "Bluetooth_Connected")
+                    print("Bluetooth_Connected")
+                    
+                    // Send current slider position
+                    //self.sendPosition(UInt8( self.positionSlider.value))
+                } else {
+                    
+                    //self.imgBluetoothStatus.image = UIImage(named: "Bluetooth_Disconnected")
+                    print("Bluetooth_Disconnected")                }
+            }
+        });
+    }
+    
     
     func applicationWillResignActive(application: UIApplication) {
         ScreenService.sharedInstance.hardReset()

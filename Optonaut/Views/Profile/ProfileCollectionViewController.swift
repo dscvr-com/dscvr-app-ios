@@ -580,4 +580,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             navigationController?.presentViewController(settingsSheet, animated: true, completion: nil)
         }
     }
+
 }
+
+    

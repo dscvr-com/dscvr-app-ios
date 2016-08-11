@@ -179,7 +179,9 @@ class ApiService<T: Mappable> {
             }
         }
         
+
         let URL = NSURL(string: "https://mapi.dscvr.com/\(endpoint)\(queryStr)")!
+
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
