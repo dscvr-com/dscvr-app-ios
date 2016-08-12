@@ -95,6 +95,14 @@ class UploadItemCell: UITableViewCell {
                 self.uploadItem.image = originalImage.resized(.Width, value: self.uploadItem.frame.width)
             }
         }
+        viewModel.isStitched.producer.startWithNext{ val in
+            if val {
+                self.uploadButton.userInteractionEnabled = true
+            } else {
+                self.uploadButton.userInteractionEnabled = false
+            }
+        }
+        
         viewModel.uploadStatus.producer
             .skipRepeats()
             .startWithNext{ uploadStatus in

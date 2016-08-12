@@ -55,7 +55,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     let shareData = ShareData.sharedInstance
     
-    //var progress = KDCircularProgress()
+    var progress = KDCircularProgress()
     private var refreshTimer: NSTimer?
     
     init(viewModel: OptographCollectionViewModel) {
@@ -192,14 +192,14 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         tabView.rightButton.addTarget(self, action: #selector(tapRightButtonTab), forControlEvents: [.TouchUpInside])
         
-        //createStitchingProgressBar()
+        createStitchingProgressBar()
         
         PipelineService.stitchingStatus.producer
             .observeOnMain()
             .startWithNext { [weak self] status in
                 switch status {
                 case .Uninitialized:
-                    self?.tabView.cameraButton.loading = true
+                    //self?.tabView.cameraButton.loading = true
                     print("uninitialized")
                 case .Idle:
                     self?.tabView.cameraButton.progress = nil
@@ -209,14 +209,14 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     }
                     print("Idle")
                 case let .Stitching(progress):
-                    self?.tabView.cameraButton.progress = CGFloat(progress)
-//                    if self?.progress.hidden == true {
-//                        self?.progress.hidden = false
-//                    }
-//                    let progressSize:Double = Double(progress * 360)
-//                    self?.progress.angle = progressSize
+                    //self?.tabView.cameraButton.progress = CGFloat(progress)
+                    if self?.progress.hidden == true {
+                        self?.progress.hidden = false
+                    }
+                    let progressSize:Double = Double(progress * 360)
+                    self?.progress.angle = progressSize
                 case .StitchingFinished(_):
-//                    self?.progress.hidden = true
+                    self?.progress.hidden = true
                     self?.tabView.cameraButton.progress = nil
                     self?.viewModel.refresh()
                     print("StitchingFinished")
@@ -231,22 +231,22 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
     }
     
-//    func createStitchingProgressBar() {
-//        let sizeWidth = UIImage(named:"camera_icn")!.size.width
-//        let sizeHeight = UIImage(named:"camera_icn")!.size.height
-//        
-//        progress = KDCircularProgress(frame: CGRect(x: ((view.frame.width/2) - ((sizeWidth+30)/2)), y: (view.frame.height) - sizeHeight - 30, width: sizeWidth+30, height: sizeHeight+30))
-//        progress.progressThickness = 0.2
-//        progress.trackThickness = 0.7
-//        progress.clockwise = true
-//        progress.gradientRotateSpeed = 2
-//        progress.roundedCorners = true
-//        progress.angle = 300
-//        progress.glowMode = .Forward
-//        progress.setColors(UIColor.cyanColor() ,UIColor.whiteColor(), UIColor.magentaColor())
-//        progress.hidden = true
-//        view.addSubview(progress)
-//    }
+    func createStitchingProgressBar() {
+        let sizeWidth = UIImage(named:"camera_icn")!.size.width
+        let sizeHeight = UIImage(named:"camera_icn")!.size.height
+        
+        progress = KDCircularProgress(frame: CGRect(x: ((view.frame.width/2) - ((sizeWidth+40)/2)), y: (view.frame.height) - sizeHeight - 40, width: sizeWidth+40, height: sizeHeight+40))
+        progress.progressThickness = 0.2
+        progress.trackThickness = 0.7
+        progress.clockwise = true
+        progress.startAngle = 360
+        progress.gradientRotateSpeed = 2
+        progress.roundedCorners = true
+        progress.glowMode = .Forward
+        progress.setColors(UIColor(hex:0xFF5E00) ,UIColor(hex:0xFF7300), UIColor(hex:0xffbc00))
+        progress.hidden = true
+        view.addSubview(progress)
+    }
     
     func path() -> CGPath{
         return SamplePaths.cameraPath()
