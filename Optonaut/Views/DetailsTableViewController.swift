@@ -95,6 +95,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var nodeItem = StorytellingObject()
     
+    var playerItem:AVPlayerItem?
+    var player:AVPlayer?
+    
+    var isStorytelling:Bool = false
+    
     required init(optographId:UUID) {
         
         optographID = optographId
@@ -119,11 +124,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         ApiService<StoryObject>.getForGate("story/62f1c6cb-cb90-4ade-810d-c6c1bbeee85a", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
             story in
             
-            self.storyTellingData = story.children![0];
+            self.storyTellingData = story.children;
             self.mapChild = self.storyTellingData!.children![0];
             
-            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
-            self.setCubeImageCache(cubeImageCache)
+//            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
+//            self.setCubeImageCache(cubeImageCache)
             
             let nodeTranslation = SCNVector3Make(Float(self.mapChild!.story_object_position[0])!, Float(self.mapChild!.story_object_position[1])!, Float(self.mapChild!.story_object_position[2])!)
             
@@ -225,6 +230,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     
                     let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: (self.mapChild?.story_object_media_additional_data)!, side: .Left)
                     self.setCubeImageCache(cubeImageCache)
+                    
+                    //if type is audio
+                    /*
+                     let url = NSURL(string: "http://jumpserver.mine.nu/albatroz.mp3")
+                     playerItem = AVPlayerItem(URL: url!)
+                     player=AVPlayer(playerItem: playerItem!)
+                     player?.rate = 1.0
+                     player?.volume = 1.0
+                     player!.play()
+                     */
 
                 }
                 else{
@@ -270,6 +285,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         ///addd flags to control adding texture
         
         print("optoID: \(optographID)")
+        print("indexPath: \(cellIndexpath)")
+        
+        //// add flag in viewdidload/add to didenterfrustrum
+        let url = NSURL(string: "http://jumpserver.mine.nu/albatroz.mp3")
+        playerItem = AVPlayerItem(URL: url!)
+        player=AVPlayer(playerItem: playerItem!)
+        player?.rate = 1.0
+        player?.volume = 1.0
+        player!.play()
+        //// add flag in viewdidload/add to didenterfrustrum
         
 //        ApiService<StoryObject>.getForGate("story/248761f4-9a83-4cf3-b2a4-f986fee02ee4", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
 //            story in
@@ -314,6 +339,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         ///add flags to check if editing optograph
         /**/
+        
+        if isStorytelling{
+            self.prepareStoryTellingHUD();
+        }
+        else{
+            self.prepareDetailsHUD();
+        }
+    }
+    
+    func prepareDetailsHUD(){
         whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
         self.view.addSubview(whiteBackground)
         
@@ -409,17 +444,17 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //self.view.addSubview(gyroButton)
         
         
-//        hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
-//        hideSelectorButton.addTarget(self, action: #selector(self.selectorButton), forControlEvents:.TouchUpInside)
-//        
-//        littlePlanetButton.align(.UnderCentered, relativeTo: hideSelectorButton, padding: 10, width: 35, height: 35)
-//        littlePlanetButton.addTarget(self, action: #selector(self.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
+        //        hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
+        //        hideSelectorButton.addTarget(self, action: #selector(self.selectorButton), forControlEvents:.TouchUpInside)
+        //
+        //        littlePlanetButton.align(.UnderCentered, relativeTo: hideSelectorButton, padding: 10, width: 35, height: 35)
+        //        littlePlanetButton.addTarget(self, action: #selector(self.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
         
-//        gyroButton.align(.UnderCentered, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
+        //        gyroButton.align(.UnderCentered, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
         
-//        gyroButton.anchorInCorner(.TopRight, xPad: 20, yPad: 30, width: 40, height: 40)
-//        gyroButton.userInteractionEnabled = true
-//        gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
+        //        gyroButton.anchorInCorner(.TopRight, xPad: 20, yPad: 30, width: 40, height: 40)
+        //        gyroButton.userInteractionEnabled = true
+        //        gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
         
         gyroImageActive = gyroImageActive?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         gyroImageInactive = gyroImageInactive?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
@@ -477,9 +512,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             let shareImageSize = UIImage(named:"share_white_details")?.size
             shareButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(shareImageSize?.width)!, height: (shareImageSize?.height)!)
         }
-        
-        self.prepareStoryTellingHUD();
-        
     }
     
     func prepareStoryTellingHUD(){
@@ -623,14 +655,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     //create a function with button tag switch for color changes
     func textButtonDown(){
-        renderDelegate.addMarker(UIColor.blueColor(), type:"Text Item")
-        nodeItem.objectType = "NAV"
+         
+        
+        let storyCollection = StorytellingCollectionViewController(personID: SessionService.personID)
         
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optocollection.delegate = self;
         
         let naviCon = UINavigationController()
-        naviCon.viewControllers = [optocollection]
+//        naviCon.viewControllers = [optocollection]
+        naviCon.viewControllers = [storyCollection]
         
         self.presentViewController(naviCon, animated: true, completion: nil)
     }
@@ -669,7 +703,20 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func deleteOpto() {
         print("test")
+        
+        let storyCollection = StorytellingCollectionViewController(personID: SessionService.personID)
+        
+        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+        optocollection.delegate = self;
+        
+        let naviCon = UINavigationController()
+        //        naviCon.viewControllers = [optocollection]
+        naviCon.viewControllers = [storyCollection]
+        
+//        self.presentViewController(naviCon, animated: true, completion: nil)
 //        renderDelegate.addMarker(sphereColor)
+        
+        navigationController?.pushViewController(storyCollection, animated: true)
         
         
         /*

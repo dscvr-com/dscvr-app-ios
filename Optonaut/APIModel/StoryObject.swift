@@ -12,20 +12,20 @@ import ObjectMapper
 struct StoryObject: Mappable {
     var status: String = ""
     var message:  String = ""
-    var children:[mapChildren]?
+    var children: mapChildren?
     
-    init?(_ map: Map) {}
+    init?(_ map: Map) {
     
-    subscript(index: Int) -> mapChildren? {
-        guard let coordinate = children?[0] else {
-            return nil
-        }
-        return coordinate
     }
     
+//    subscript(index: Int) -> mapChildren? {
+//        guard let coordinate = children?[0] else {
+//            return nil
+//        }
+//        return coordinate
+//    }
+    
     mutating func mapping(map: Map) {
-        status              <- map["status"]
-        message                 <- map["message"]
-        children <- map["data"]
+        children <- map["story"]
     }
 }
