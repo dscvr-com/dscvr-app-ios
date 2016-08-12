@@ -96,6 +96,9 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
     required init() {
         
         currentDegree = 0.03
+        //currentDegree = 0.035
+        //currentDegree = 0.02
+        
         DegreeIncrPerMicro = 0.0
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)

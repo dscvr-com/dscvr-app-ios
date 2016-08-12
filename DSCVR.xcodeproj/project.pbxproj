@@ -784,6 +784,7 @@
 				59FB1D5E1CF5AFC100C5C333 /* ViewController.swift */,
 			);
 			name = PhotoLibrary;
+			path = ../Views;
 			sourceTree = "<group>";
 		};
 		8F23AA401BFF31B4008926A8 /* Migrations */ = {
@@ -938,7 +939,6 @@
 			children = (
 				59306C021D24DFEF009BF7BE /* BetaInvitePage */,
 				595D87671D083D4100866FF2 /* Search */,
-				59FB1D5C1CF5AFAE00C5C333 /* PhotoLibrary */,
 				59848B261CEAE10F00829963 /* Settings */,
 				5917C8241CE49C3000CD5A6D /* Details */,
 				5917C81F1CE441C700CD5A6D /* Share */,
@@ -1077,6 +1077,7 @@
 		8FAB9F5F1B8F02D500B4C8CB /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				59FB1D5C1CF5AFAE00C5C333 /* PhotoLibrary */,
 				5937D1C31D5479980040BD6B /* SwiftSpinner.swift */,
 				5945F4051D46042C002B4CCD /* KDCircularProgress.swift */,
 				594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */,
