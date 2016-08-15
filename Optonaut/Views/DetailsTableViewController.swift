@@ -82,6 +82,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var eliteImageView = UIImageView()
     var descriptionLabel = UILabel()
     var exportButton = UIButton()
+    var descriptionOpen:Bool = false
     
     required init(optoList:[UUID]) {
         
@@ -169,11 +170,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.view.addSubview(whiteBackground)
         
         descriptionLabel.numberOfLines = 0
-        //descriptionLabel.font = UIFont.textOfSize(15, withType: .Regular)
         descriptionLabel.textColor = .whiteColor()
         descriptionLabel.backgroundColor = UIColor.clearColor()
         descriptionLabel.font = UIFont(name: "HelveticaNeue-ThinItalic",size: 15)
         self.view.addSubview(descriptionLabel)
+        descriptionLabel.userInteractionEnabled = true
+        descriptionLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.adjustDescriptionLabel(_:))))
         
         avatarImageView.layer.cornerRadius = 23.5
         avatarImageView.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
@@ -224,7 +226,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
         let deleteImageSize1 = UIImage(named:"profile_delete_icn")?.size
-        descriptionLabel.frame = CGRect(x: whiteBackground.frame.origin.x + 10,y: view.frame.height - whiteBackground.frame.height - 40,width: view.frame.width - 10 - (deleteImageSize1?.width)!,height: 20)
+        descriptionLabel.frame = CGRect(x: whiteBackground.frame.origin.x + 10,y: view.frame.height - whiteBackground.frame.height - 30,width: view.frame.width - 30 - (deleteImageSize1?.width)!,height: 20)
         
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
@@ -338,6 +340,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 $0 ? self.optionsButtonView.setImage(UIImage(named:"follow_active"), forState: .Normal) : self.optionsButtonView.setImage(UIImage(named:"follow_inactive"), forState: .Normal)
             }
         }
+        
         if isMe {
             deleteButton.setBackgroundImage(UIImage(named: "profile_delete_icn"), forState: .Normal)
             deleteButton.addTarget(self, action: #selector(deleteOpto), forControlEvents: .TouchUpInside)
@@ -374,6 +377,32 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         }
         
     }
+    func adjustDescriptionLabel(recognizer:UITapGestureRecognizer) {
+        
+        let deleteImageSize1 = UIImage(named:"profile_delete_icn")?.size
+        
+        if !descriptionOpen {
+            let maxWidth = self.view.frame.width - 30 - (deleteImageSize1?.width)!
+            let maximumLabelSize = CGSizeMake(maxWidth, 9999);
+            let expectedSize = self.descriptionLabel.sizeThatFits(maximumLabelSize)
+            
+            UIView.animateWithDuration(0.3, animations: {
+                self.descriptionLabel.frame = CGRectMake(self.whiteBackground.frame.origin.x + 10, self.view.frame.height - self.whiteBackground.frame.height - expectedSize.height - 10, expectedSize.width, expectedSize.height)
+                }, completion:{ val in
+                    self.descriptionOpen = true
+            })
+        
+        } else {
+            
+            UIView.animateWithDuration(0.3, animations: {
+                
+                self.descriptionLabel.frame = CGRect(x: self.whiteBackground.frame.origin.x + 10,y: self.view.frame.height - self.whiteBackground.frame.height - 30,width: self.view.frame.width - 30 - (deleteImageSize1?.width)!,height: 20)
+                }, completion:{ val in
+                    self.descriptionOpen = false
+            })
+        }
+    }
+    
     func share() {
         let share = DetailsShareViewController()
         share.optographId = optographID
