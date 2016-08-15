@@ -95,7 +95,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
     
     required init() {
         
-        currentDegree = 0.03
+        currentDegree = 0.0
         //currentDegree = 0.035
         //currentDegree = 0.02
         
@@ -296,8 +296,8 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         
         let rotatePlusBuff = (Defaults[.SessionRotateCount]! + Defaults[.SessionBuffCount]!)
         
-        
-        DegreeIncrPerMicro = (0.036 / ( Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ))
+        let missingSecs =  Double (rotatePlusBuff * 90)
+        DegreeIncrPerMicro = (0.036 / ( (Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ) - missingSecs ))
         print("DegreeIncrPerMicro \(DegreeIncrPerMicro)")
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true // <-

@@ -201,7 +201,7 @@ class BTService: NSObject, CBPeripheralDelegate {
                     motorFlag = 5
                     // Y is on bot
                    //sendCommand("fe07020000081f012c005bffffffffffff") //move to top command                     sendCommand("fe0702fffff9f7012c0022ffffffffffff") // top_ring
-                    sendCommand(self.computeTopRotation())
+                    sendCommand(self.computeMidRotation())
                 }else if motorFlag == 5  {
                                      //"ffffee99" <- our motor
                     // not sure if this is the return data for the bot
@@ -416,6 +416,49 @@ class BTService: NSObject, CBPeripheralDelegate {
         return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
         
     }
+    
+    
+    
+    func computeMidRotation ( ) -> String {
+        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x02]
+        
+        let midSteps = Defaults[.SessionBotCount]! - Defaults[.SessionTopCount]!
+        
+        var xnumberSteps = toByteArray(midSteps)
+        
+        
+        
+        // get number of rotation
+        print("SessionTopCount \(Defaults[.SessionBotCount]!)")
+        rotateByteData.append(xnumberSteps[3])
+        rotateByteData.append(xnumberSteps[2])
+        rotateByteData.append(xnumberSteps[1])
+        rotateByteData.append(xnumberSteps[0])
+        
+        
+        print("rotateByteData1 \(rotateByteData)")
+        // get pps
+        let pps = Defaults[.SessionPPS]
+        rotateByteData.append(UInt8(pps! >> 8))
+        rotateByteData.append(UInt8(pps! & 0xff))
+        // add full step
+        rotateByteData.append(UInt8(0x00))
+        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
+        // compute for checksum
+        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
+        print("rotateByteData \(rotateByteData)")
+        // append padding
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        // convert to hex string
+        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
+        
+    }
+
     
     
     
