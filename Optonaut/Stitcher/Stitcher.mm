@@ -82,11 +82,11 @@ struct StitcherCancellation {
     
     optonaut::Stitcher stitcher(Stores::left);
     cv::Mat sphere = stitcher.Finish(optonaut::ProgressCallback::Empty)->image.data;
-    cv::Mat blurred;
+    cv::Mat blackMat;
     optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
-    panoBlur.Blur(sphere, blurred);
+    panoBlur.Black(sphere, blackMat);
 
-    return CVMatToImageBuffer(blurred);
+    return CVMatToImageBuffer(blackMat);
     
 }
 

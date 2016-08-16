@@ -151,6 +151,33 @@ class StitchingService {
 //                        print("meta path >>> \(path)")
 //                        print("meta error >>> \(error)")
 //                    })
+                    
+                    
+                    
+                    let image = UIImage(CGImage: ImageBufferToCGImage(erImage))
+                    let imageData = UIImageJPEGRepresentation(image, 1.0)
+                    
+                    let asset = ALAssetsLibrary()
+                    
+                    let strModel = "RICOH THETA S" as String
+                    let strMake = "RICOH" as String
+                    
+                    
+                    let metaData = NSMutableDictionary()
+                    let tiffData = NSMutableDictionary()
+                    
+                    tiffData.setObject(strModel, forKey: kCGImagePropertyTIFFModel as String)
+                    tiffData.setObject(strMake, forKey: kCGImagePropertyTIFFMake as String)
+                    
+                    metaData.setObject(tiffData, forKey: kCGImagePropertyTIFFDictionary as String)
+                    
+
+                    
+                    asset.writeImageDataToSavedPhotosAlbum(imageData, metadata: metaData as [NSObject : AnyObject] , completionBlock: { (path:NSURL!, error:NSError!) -> Void in
+                        print("meta path >>> \(path)")
+                        print("meta error >>> \(error)")
+                    })
+                    
                 }
                 Recorder.freeImageBuffer(erImage)
                 
