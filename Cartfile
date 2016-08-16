@@ -1,14 +1,2 @@
-github "PureLayout/PureLayout"
-github "Alamofire/Alamofire"
-github "ReactiveCocoa/ReactiveCocoa" "master"
-github "Hearst-DD/ObjectMapper"
-github "schickling/Device.swift" >= 0.3.0
-github "artman/HexColor" ~> 1.0
-github "stephencelis/SQLite.swift" >= 0.10.1
-github "duemunk/Async"
-github "MoZhouqi/KMPlaceholderTextView"
 github "mixpanel/mixpanel-iphone"
-github "optonaut/CardboardParams.swift" >= 0.1.4
-github "radex/SwiftyUserDefaults"
-github "onevcat/Kingfisher" "master"
-github "mamaral/Neon" "master"
+

@@ -393,7 +393,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             })
         
         } else {
-            
             UIView.animateWithDuration(0.3, animations: {
                 
                 self.descriptionLabel.frame = CGRect(x: self.whiteBackground.frame.origin.x + 10,y: self.view.frame.height - self.whiteBackground.frame.height - 30,width: self.view.frame.width - 30 - (deleteImageSize1?.width)!,height: 20)
