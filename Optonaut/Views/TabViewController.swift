@@ -438,7 +438,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         if (Defaults[.SessionPPS] == nil) {
 //            Defaults[.SessionPPS] = 330 // ours
-            Defaults[.SessionPPS] = 630 // joseph
+            Defaults[.SessionPPS] = 600 // joseph
         }
         
         if (Defaults[.SessionRotateCount] == nil) {

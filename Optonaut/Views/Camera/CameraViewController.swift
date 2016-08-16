@@ -296,7 +296,8 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
         
         let rotatePlusBuff = (Defaults[.SessionRotateCount]! + Defaults[.SessionBuffCount]!)
         
-        let missingSecs =  Double (rotatePlusBuff * 90)
+        //let missingSecs =  Double (rotatePlusBuff * 90)
+        let missingSecs = 0.0
         DegreeIncrPerMicro = (0.036 / ( (Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ) - missingSecs ))
         print("DegreeIncrPerMicro \(DegreeIncrPerMicro)")
         tabView.cameraButton.hidden = true
@@ -891,11 +892,6 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             print("______: [\(cmRotation.m20), \(cmRotation.m21), \(cmRotation.m22), \(cmRotation.m23)")
             print("______: [\(cmRotation.m30), \(cmRotation.m31), \(cmRotation.m32), \(cmRotation.m33)")
             
-            
-            if bData.dataHasCome.value  {
-                viewModel.isRecording.value = true
-                
-            }
             print("currentPhi <  \(Float((-2.0 * M_PI) - 0.01))")
             if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
                 viewModel.isRecording.value = false //<-
@@ -918,6 +914,16 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             }
             print("currentTheta \(currentTheta)")
             
+            if bData.dataHasCome.value  {
+                viewModel.isRecording.value = true
+                
+            }
+            
+            
+            
+            
+            
+            
             
             recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             //recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
@@ -927,7 +933,6 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             // let exposureHintC = recorder.getExposureHint()
             
             // checking the bluetooth value
-         
             
             Async.main {
                 if self.isViewLoaded() {

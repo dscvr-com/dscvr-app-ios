@@ -142,24 +142,22 @@ class BTService: NSObject, CBPeripheralDelegate {
                 if motorFlag == 0 {
                                //"ffffee99" <- our motor
                     // Y is on center
-                  //sendCommand("fe07020000081f012c005bffffffffffff") //move to top command
-                  //sendCommand("fe0702000007bc012c00f7ffffffffffff") //move to top command v2
-                   // sendCommand("fe070200000759012c0094ffffffffffff") //move to top command v3
+
+                    bData.dataHasCome.value = false
                     sendCommand(self.computeTopRotation());
                     //sendCommand("fe0702fffff9f7012c0022ffffffffffff") // top_ring
                     print("blecommanddone")
-                    bData.dataHasCome.value = false
+                   
                     motorFlag = 1
                     
                     
                 }else if motorFlag == 1 {
                                     // "ffffe890"
                     print("got2topring")
-                    bData.dataHasCome.value = true
-                    // not sure if this is the return data for the top
                     //sendCommand("fe070100003be30276009cffffffffffff"); // rotate josepeh's motor v2
-                                                //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
+                    //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
                     sendCommand(self.computeRotationX());
+                    bData.dataHasCome.value = true
                     
                     motorFlag = 2
                     ringFlag = 1
@@ -170,9 +168,6 @@ class BTService: NSObject, CBPeripheralDelegate {
                               // "ffffe890"
                     // Y is on top
                     bData.dataHasCome.value = false
-                  //sendCommand("fe0702ffffefc2012c00e3ffffffffffff") //move to bot command joseph's motor
-                  //sendCommand("fe0702fffff025012c0047ffffffffffff") //move to bot command joseph's motor v2
-                   // sendCommand("fe0702fffff088012c00aaffffffffffff") //move to bot command joseph's motor v3
                     sendCommand(self.computeBotRotation());
 
                      //sendCommand("fe070200000c12012c0052ffffffffffff") // bot_ring
@@ -180,13 +175,10 @@ class BTService: NSObject, CBPeripheralDelegate {
                     
                 }else if motorFlag == 3 {
                                     // "fffff4a2"
-                    
-                    // not sure if this is the return data for the bot
-                    bData.dataHasCome.value = true
                   //sendCommand("fe070100003be302bf00e5ffffffffffff"); // josepeh's motor //rotate the motor x
-                   // sendCommand("fe070100003be30276009cffffffffffff"); // rotate josepeh's motor v2
+                 // sendCommand("fe070100003be30276009cffffffffffff"); // rotate josepeh's motor v2
                     sendCommand(self.computeRotationX());
-                    
+                    bData.dataHasCome.value = true
                     //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
                     ringFlag = 2
                     motorFlag = 4
@@ -198,10 +190,12 @@ class BTService: NSObject, CBPeripheralDelegate {
                 if motorFlag == 4 {
                              //  "fffff4a2"
                     bData.dataHasCome.value = false
-                    motorFlag = 5
+                    sendCommand(self.computeMidRotation())
+
                     // Y is on bot
                    //sendCommand("fe07020000081f012c005bffffffffffff") //move to top command                     sendCommand("fe0702fffff9f7012c0022ffffffffffff") // top_ring
-                    sendCommand(self.computeMidRotation())
+                    
+                    motorFlag = 5
                 }else if motorFlag == 5  {
                                      //"ffffee99" <- our motor
                     // not sure if this is the return data for the bot
@@ -422,7 +416,7 @@ class BTService: NSObject, CBPeripheralDelegate {
     func computeMidRotation ( ) -> String {
         var rotateByteData:[UInt8] = [0xfe, 0x07, 0x02]
         
-        let midSteps = Defaults[.SessionBotCount]! - Defaults[.SessionTopCount]!
+        let midSteps = abs(Defaults[.SessionBotCount]!) - Defaults[.SessionTopCount]!
         
         var xnumberSteps = toByteArray(midSteps)
         
