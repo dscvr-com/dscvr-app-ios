@@ -892,10 +892,7 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             print("______: [\(cmRotation.m30), \(cmRotation.m31), \(cmRotation.m32), \(cmRotation.m33)")
             
             
-            if bData.dataHasCome.value  {
-                viewModel.isRecording.value = true
-                
-            }
+         
             print("currentPhi <  \(Float((-2.0 * M_PI) - 0.01))")
             if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
                 viewModel.isRecording.value = false //<-
@@ -928,6 +925,11 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             
             // checking the bluetooth value
          
+            
+            if bData.dataHasCome.value  {
+                viewModel.isRecording.value = true
+                
+            }
             
             Async.main {
                 if self.isViewLoaded() {

@@ -145,21 +145,23 @@ class BTService: NSObject, CBPeripheralDelegate {
                   //sendCommand("fe07020000081f012c005bffffffffffff") //move to top command
                   //sendCommand("fe0702000007bc012c00f7ffffffffffff") //move to top command v2
                    // sendCommand("fe070200000759012c0094ffffffffffff") //move to top command v3
+                    bData.dataHasCome.value = false
                     sendCommand(self.computeTopRotation());
                     //sendCommand("fe0702fffff9f7012c0022ffffffffffff") // top_ring
                     print("blecommanddone")
-                    bData.dataHasCome.value = false
+                   
                     motorFlag = 1
                     
                     
                 }else if motorFlag == 1 {
                                     // "ffffe890"
                     print("got2topring")
-                    bData.dataHasCome.value = true
+                    
                     // not sure if this is the return data for the top
                     //sendCommand("fe070100003be30276009cffffffffffff"); // rotate josepeh's motor v2
                                                 //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
                     sendCommand(self.computeRotationX());
+                    bData.dataHasCome.value = true
                     
                     motorFlag = 2
                     ringFlag = 1
@@ -182,10 +184,11 @@ class BTService: NSObject, CBPeripheralDelegate {
                                     // "fffff4a2"
                     
                     // not sure if this is the return data for the bot
-                    bData.dataHasCome.value = true
+                    
                   //sendCommand("fe070100003be302bf00e5ffffffffffff"); // josepeh's motor //rotate the motor x
                    // sendCommand("fe070100003be30276009cffffffffffff"); // rotate josepeh's motor v2
                     sendCommand(self.computeRotationX());
+                    bData.dataHasCome.value = true
                     
                     //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
                     ringFlag = 2

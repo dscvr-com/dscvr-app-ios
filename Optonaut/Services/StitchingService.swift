@@ -158,6 +158,20 @@ class StitchingService {
                     let strModel = "RICOH THETA S" as String
                     let strMake = "RICOH" as String
                     
+                    
+                    let metaData = NSMutableDictionary()
+                    let tiffData = NSMutableDictionary()
+                   
+                    tiffData.setObject(strModel, forKey: kCGImagePropertyTIFFModel as String)
+                    tiffData.setObject(strMake, forKey: kCGImagePropertyTIFFMake as String)
+                    
+                    metaData.setObject(tiffData, forKey: kCGImagePropertyTIFFDictionary as String)
+                    
+                    
+                    
+                
+                /*
+                    
                     let meta:NSDictionary = [kCGImagePropertyTIFFModel as String :strModel,kCGImagePropertyTIFFMake as String:strMake]
                     
                     let source:CGImageSourceRef = CGImageSourceCreateWithData(imageData!, nil)!
@@ -170,8 +184,10 @@ class StitchingService {
                     
                     CGImageDestinationFinalize(destination)
                     
+                    */
                     
-                    asset.writeImageDataToSavedPhotosAlbum(destData, metadata: meta as [NSObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
+                    
+                    asset.writeImageDataToSavedPhotosAlbum(imageData, metadata: metaData as [NSObject : AnyObject] , completionBlock: { (path:NSURL!, error:NSError!) -> Void in
                         print("meta path >>> \(path)")
                         print("meta error >>> \(error)")
                     })
