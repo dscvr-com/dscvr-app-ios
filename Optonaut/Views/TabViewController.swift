@@ -396,14 +396,14 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         pullView.addGestureRecognizer(panGestureRecognizer)
         pullView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pullButtonTap(_:))))
         
-        for family: String in UIFont.familyNames()
-        {
-            print("\(family)")
-            for names: String in UIFont.fontNamesForFamilyName(family)
-            {
-                print("== \(names)")
-            }
-        }
+//        for family: String in UIFont.familyNames()
+//        {
+//            print("\(family)")
+//            for names: String in UIFont.fontNamesForFamilyName(family)
+//            {
+//                print("== \(names)")
+//            }
+//        }
         labelCapture.hidden = true
         labelManual.hidden = true
         labelMotor.hidden = true
