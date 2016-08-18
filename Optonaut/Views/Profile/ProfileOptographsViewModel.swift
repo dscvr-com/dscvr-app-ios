@@ -37,7 +37,6 @@ class ProfileOptographsViewModel {
                         
                         if row[OptographSchema.locationID] != nil {
                             if Models.locations[row[OptographSchema.locationID]] == nil {
-                                print("no location!!")
                                 let coords = LocationService.lastLocation()
                                 var location = Location.newInstance()
                                 if coords == nil {
