@@ -345,8 +345,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         }
         
         CoreMotionRotationSource.Instance.start()
-        collectionViewModel.refreshNotification.notify(())
-        collectionViewModel.isActive.value = true
+        
+        if tabController?.pageStatus.value == .Profile {
+            collectionViewModel.refreshNotification.notify(())
+            collectionViewModel.isActive.value = true
+        }
         
         profileViewModel.refreshData()
         

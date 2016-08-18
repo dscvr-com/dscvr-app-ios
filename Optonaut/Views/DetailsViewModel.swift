@@ -44,31 +44,16 @@ class DetailsViewModel {
     var creatorDetails:ModelBox<Person>!
     var isElite = MutableProperty<Int>(0)
     
+    var disposable: Disposable?
+    
     init(optographID: UUID) {
+        
+        disposable?.dispose()
         
         logInit()
         optographBox = Models.optographs[optographID]!
         optographId = optographID
-        
-//        optographBox.producer.startWithNext{ [weak self] optograph in
-//        
-//            if optograph.isPublished {
-//                ApiService<OptographApiModel>.get("optographs/\(optographID)")
-//                    .on(next: { apiModel in
-//                        Models.optographs.touch(apiModel).insertOrUpdate { box in
-//                            box.model.isInFeed = true
-//                            box.model.isStitched = true
-//                            box.model.isPublished = true
-//                            box.model.isSubmitted = true
-//                        }
-//                        Models.persons.touch(apiModel.person).insertOrUpdate()
-//                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
-//                    }).startWithNext { optograph in
-//                        self?.updatePropertiesDetails()
-//                    }
-//            }
-//        }
-        
+ 
         updatePropertiesDetails()
         
         postingEnabled <~ text.producer.map(isNotEmpty)
@@ -158,7 +143,7 @@ class DetailsViewModel {
     }
     
     private func updatePropertiesDetails() {
-        optographBox.producer.startWithNext{ [weak self] optograph in
+        disposable = optographBox.producer.startWithNext{ [weak self] optograph in
             self?.isStarred.value = optograph.isStarred
             self?.starsCount.value = optograph.starsCount
             self?.viewsCount.value = optograph.viewsCount

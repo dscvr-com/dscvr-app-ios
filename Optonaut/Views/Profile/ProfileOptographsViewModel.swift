@@ -37,22 +37,11 @@ class ProfileOptographsViewModel {
                         
                         if row[OptographSchema.locationID] != nil {
                             if Models.locations[row[OptographSchema.locationID]] == nil {
-                                let coords = LocationService.lastLocation()
-                                var location = Location.newInstance()
-                                if coords == nil {
-                                    location.latitude = 14.5995
-                                    location.longitude = 120.9842
-                                } else {
-                                    location.latitude = coords!.latitude
-                                    location.longitude = coords!.longitude
-                                }
-                                var locationBox: ModelBox<Location>?
-                                locationBox = Models.locations.create(location)
-                                locationBox!.insertOrUpdate()
-                                
+                                print("Walang location!")
                                 Models.optographs.touch(optograph).insertOrUpdate { box in
-                                    box.model.locationID = row[OptographSchema.locationID]
+                                    box.model.locationID = nil
                                 }
+                                Models.locations.touch(nil)
                             } else {
                                 Models.locations.touch(Location.fromSQL(row))
                             }
@@ -60,9 +49,6 @@ class ProfileOptographsViewModel {
                             Models.locations.touch(nil)
                         }
                         
-                        
-                        
-                        //Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
                         
                         return optograph
                     }
@@ -79,7 +65,6 @@ class ProfileOptographsViewModel {
             .flatMap(.Latest) { _ in
                 ApiService<OptographApiModel>.get("persons/\(personID)/optographs")
                     .observeOnUserInitiated()
-                    //.filter({ return $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
@@ -99,23 +84,6 @@ class ProfileOptographsViewModel {
             .observeNext { self.results.value = $0 }
         
         
-        
-//        refreshNotification.signal
-//            .takeWhile { _ in Reachability.connectedToNetwork() }
-//            .flatMap(.Latest) { _ in
-//                ApiService<StoryObject>.getForGate("story/248761f4-9a83-4cf3-b2a4-f986fee02ee4",queries: ["story_person_id" : "7753e6e9-23c6-46ec-9942-35a5ea744ece"])
-//                    .observeOnUserInitiated()
-//                    .on(next: { apiModel in
-//                        print(apiModel)
-//                    })
-//                    .ignoreError()
-//                    .collect()
-//                    .startOnUserInitiated()
-//            }
-//            .observeOnMain()
-//            .map { print($0) }
-//            .observeNext {}
-        
         loadMoreNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .map { _ in self.results.value.models.last }
@@ -123,7 +91,6 @@ class ProfileOptographsViewModel {
             .flatMap(.Latest) { oldestResult in
                 ApiService<OptographApiModel>.get("persons/\(personID)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
-                    //.filter({ $0.deletedAt == nil })
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isStitched = true
@@ -145,9 +112,5 @@ class ProfileOptographsViewModel {
     
     func refresh() {
         refreshNotification.notify(())
-    }
-    
-    func createLocationWhenNil() {
-    
     }
 }

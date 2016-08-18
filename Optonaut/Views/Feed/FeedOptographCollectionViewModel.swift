@@ -34,7 +34,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         refreshNotification.signal
             .flatMap(.Latest) { _ in
                 DatabaseService.query(.Many, query: query)
-                    .observeOnUserInitiated()
+                    .observeOnUserInteractive()
                     .on(next: { row in
                         Models.optographs.touch(Optograph.fromSQL(row))
                         Models.persons.touch(Person.fromSQL(row))
@@ -43,7 +43,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                     .map(Optograph.fromSQL)
                     .ignoreError()
                     .collect()
-                    .startOnUserInitiated()
+                    .startOnUserInteractive()
             }
             .observeOnMain()
             .map {self.results.value.merge($0, deleteOld: false) }

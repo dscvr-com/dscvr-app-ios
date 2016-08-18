@@ -35,6 +35,9 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     private var gyroButton = SettingsButton()
     private var littlePlanet = SettingsButton()
     
+    enum PageStatus { case Profile, Share, Feed }
+    let pageStatus = MutableProperty<PageStatus>(.Feed)
+    
     var delegate: TabControllerDelegate?
     
     var BFrame:CGRect   = CGRect (
@@ -170,18 +173,35 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
             scrollView.contentOffset.x = self.view.frame.width
         }
+        
+        if scrollView.contentOffset.x == self.view.frame.width {
+            print("nasa feed ka")
+            pageStatus.value = .Feed
+        } else if scrollView.contentOffset.x == 0 {
+            print("nasa share ka")
+            pageStatus.value = .Share
+        } else {
+            print("nasa profile ka")
+            pageStatus.value = .Profile
+        }
     }
     
     func rightButtonAction() {
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.BFrame,animated: false)
-            }, completion:nil)
+            }, completion:{ _ in
+                print("nasa profile ka")
+                self.pageStatus.value = .Profile
+        })
     }
     
     func leftButtonAction() {
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.adminFrame,animated: false)
-            }, completion:nil)
+            }, completion:{ _ in
+                print("nasa feed ka")
+                self.pageStatus.value = .Feed
+        })
     }
     
     func disableScrollView() {

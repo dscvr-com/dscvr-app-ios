@@ -22,7 +22,7 @@ struct OptographApiModel: ApiModel, Mappable {
     var starsCount: Int = 0
     var commentsCount: Int = 0
     var viewsCount: Int = 0
-    var location: LocationApiModel? = nil
+    var location: LocationApiModel?
     var stitcherVersion: String = ""
     var shareAlias: String = ""
     var isStaffPick: Bool = false

@@ -136,7 +136,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                             strongSelf.optographDirections[optograph.ID] = (phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta))
                         }
                     }
-                    print(results)
                     
                     if results.models.count == 1 {
                         print("nagreload lahat")
@@ -406,7 +405,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        viewModel.isActive.value = true
+        if tabController?.pageStatus.value == .Feed {
+            viewModel.isActive.value = true
+        }
         
         SwiftSpinner.setTitleFont(UIFont(name: "Avenir-Book", size: 20.0))
         
