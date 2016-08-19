@@ -26,11 +26,11 @@ class ProfileNavViewController: NavigationController {
                 pushViewController(username, animated: false)
             }
             
-            if !Defaults[.SessionEliteUser] {
-                let gate = InvitationViewController()
-                gate.fromProfilePage = true
-                pushViewController(gate, animated: false)
-            }
+//            if !Defaults[.SessionEliteUser] {
+//                let gate = InvitationViewController()
+//                gate.fromProfilePage = true
+//                pushViewController(gate, animated: false)
+//            }
             
         } else {
             pushViewController(loginOverlayViewController, animated: false)
@@ -44,11 +44,11 @@ class ProfileNavViewController: NavigationController {
                     self.pushViewController(username, animated: false)
                 }
                 
-                if !Defaults[.SessionEliteUser] {
-                    let gate = InvitationViewController()
-                    gate.fromProfilePage = true
-                    self.pushViewController(gate, animated: false)
-                }
+//                if !Defaults[.SessionEliteUser] {
+//                    let gate = InvitationViewController()
+//                    gate.fromProfilePage = true
+//                    self.pushViewController(gate, animated: false)
+//                }
             }
         }
     }

@@ -71,10 +71,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             Defaults[.SessionGyro] = true
             
-            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
-                self.sendCheckElite().start()
-            
-            }
+//            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
+//                self.sendCheckElite().start()
+//            
+//            }
+            Defaults[.SessionEliteUser] = true
             
             //Bluetooth Notif
             NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("connectionChanged:"), name: BLEServiceChangedStatusNotification, object: nil)
