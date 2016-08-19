@@ -39,10 +39,14 @@ class FollowersTableViewCell: UITableViewCell {
         let followButtonSize = UIImage(named: "follow_button")?.size
         followButton.addTarget(self, action: #selector(toggleFollow), forControlEvents:.TouchUpInside)
         
-        self.followButton.frame = CGRect(x: 0, y: 0,  width: (followButtonSize?.width)!, height: (followButtonSize?.height)!)
-        self.followButton.center = CGPoint(x: self.contentView.frame.size.width - 10, y: self.userImage.center.y)
+//        self.followButton.frame = CGRect(x: 0, y: 0,  width: (followButtonSize?.width)!, height: (followButtonSize?.height)!)
+//        self.followButton.center = CGPoint(x: self.contentView.frame.size.width - 10, y: self.userImage.center.y)
         
         self.addSubview(followButton)
+        self.followButton.autoAlignAxisToSuperviewAxis(.Horizontal)
+        self.followButton.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -20)
+        self.followButton.autoSetDimensionsToSize(CGSize(width: (followButtonSize?.width)!, height: (followButtonSize?.height)!))
+        
         self.addSubview(userImage)
         self.addSubview(eliteImageView)
         self.addSubview(nameLabel)
