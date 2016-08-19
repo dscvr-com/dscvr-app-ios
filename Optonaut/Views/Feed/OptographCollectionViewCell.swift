@@ -240,8 +240,10 @@ private class OverlayViewModel {
     let locationID = MutableProperty<UUID?>("")
     var isMe = false
     var isElite = MutableProperty<Int>(0)
+    private var disposable: Disposable?
     
     func bind(optographID: UUID) {
+        disposable?.dispose()
         
         optographBox = Models.optographs[optographID]!
         personBox = Models.persons[optographBox.model.personID]!
@@ -250,7 +252,7 @@ private class OverlayViewModel {
         
         textToggled.value = false
         
-        optographBox.producer.startWithNext { [weak self] optograph in
+        disposable = optographBox.producer.startWithNext { [weak self] optograph in
             self?.likeCount.value = optograph.starsCount
             self?.liked.value = optograph.isStarred
             
