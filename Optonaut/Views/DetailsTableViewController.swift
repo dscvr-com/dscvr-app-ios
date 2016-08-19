@@ -256,18 +256,31 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             }
         }
         
-        let optograph = Models.optographs[optographID]!.model
+//        let optograph = Models.optographs[optographID]!.model
+//        
+//        if let locationID = optograph.locationID {
+//            let location = Models.locations[locationID]!.model
+//            locationTextView.text = "\(location.text), \(location.countryShort)"
+//            self.personNameView.align(.ToTheRightMatchingTop, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
+//            self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
+//        } else {
+//            personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+//            locationTextView.text = ""
+//        }
         
-        if let locationID = optograph.locationID {
-            let location = Models.locations[locationID]!.model
-            locationTextView.text = "\(location.text), \(location.countryShort)"
-            self.personNameView.align(.ToTheRightMatchingTop, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
-            self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
-            locationTextView.text = location.text
-        } else {
-            personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
-            locationTextView.text = ""
+        
+        viewModel.locationText.producer.startWithNext{ val in
+            if val == "" {
+                self.personNameView.align(.ToTheRightCentered, relativeTo: self.avatarImageView, padding: 9.5, width: 100, height: 18)
+                self.locationTextView.text = ""
+            } else {
+                self.locationTextView.text = val
+                self.personNameView.align(.ToTheRightMatchingTop, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
+                self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
+            }
+        
         }
+        
         
         
         //hideSelectorButton.setBackgroundImage(UIImage(named:"oval_up"), forState: .Normal)

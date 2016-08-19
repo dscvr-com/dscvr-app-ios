@@ -213,6 +213,15 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if isProfileVisit {
             tabController!.disableScrollView()
         }
+        
+        tabController?.pageStatus.producer.startWithNext { val in
+            if val == .Profile {
+                self.collectionViewModel.refreshNotification.notify(())
+                self.collectionViewModel.isActive.value = true
+            } else {
+                self.collectionViewModel.isActive.value = false
+            }
+        }
     }
     func readAllNotification() -> SignalProducer<EmptyResponse, ApiError> {
         return ApiService<EmptyResponse>.post("activities/read_all")
@@ -345,11 +354,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         }
         
         CoreMotionRotationSource.Instance.start()
-        
-        if tabController?.pageStatus.value == .Profile {
-            collectionViewModel.refreshNotification.notify(())
-            collectionViewModel.isActive.value = true
-        }
         
         profileViewModel.refreshData()
         

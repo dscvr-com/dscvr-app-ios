@@ -238,7 +238,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         progress.progressThickness = 0.2
         progress.trackThickness = 0.7
         progress.clockwise = true
-        progress.startAngle = 360
+        progress.startAngle = 270
         progress.gradientRotateSpeed = 2
         progress.roundedCorners = true
         progress.glowMode = .Forward

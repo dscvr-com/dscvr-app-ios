@@ -154,8 +154,11 @@ class DetailsViewModel {
             self?.isPublished.value = optograph.isPublished
             
             if let locationID = optograph.locationID {
-                let location = Models.locations[locationID]!.model
-                self?.locationText.value = location.countryShort
+                
+                if let location =  Models.locations[locationID] {
+                    self?.locationText.value = "\(location.model.text), \(location.model.countryShort)"
+                }
+                
             }
             
             self?.creatorDetails = Models.persons[optograph.personID]!
