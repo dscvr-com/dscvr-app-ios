@@ -264,7 +264,23 @@ class SaveViewModel {
             PipelineService.stitchingStatus.value = .StitchingFinished(optograph.ID)
             
         }
+    }
+    
+    func deleteOpto() {
         
+        
+        SignalProducer<Bool, ApiError>(value: true)
+            .flatMap(.Latest) { followedBefore in
+                ApiService<EmptyResponse>.delete("optographs/\(self.optographBox.model.ID)")
+            }
+            .start()
+        
+        PipelineService.stopStitching()
+        optographBox.insertOrUpdate { box in
+            print("date today \(NSDate())")
+            print(box.model.ID)
+            return box.model.deletedAt = NSDate()
+        }
         
     }
     

@@ -117,7 +117,9 @@ class PipelineService {
             .observeCompleted {
                 stitchingStatus.value = .Stitching(1)
                 stitchingStatus.value = .StitchingFinished(optographID)
-                upload(optographID)
+                if optographBox.model.shouldBePublished {
+                    upload(optographID)
+                }
             }
     }
     
