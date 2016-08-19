@@ -26,34 +26,36 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
     var personBox: ModelBox<Person>!
     var fromProfilePage:Bool = false
     
-    var parentView = UIImageView()
-    
-    var scrollView:UIScrollView?
-    var shareView = UIView()
+//    var scrollView:UIScrollView?
+//    var shareView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        scrollView = UIScrollView(frame: view.bounds)
-        view.addSubview(scrollView!)
-        
-        scrollView!.addSubview(shareView)
-        scrollView?.scrollEnabled = true
-        
-        if view.frame.height != 568.0 {
-            scrollView?.scrollEnabled = false
-            shareView.fillSuperview()
-            print("view height>>>>",view.frame.height)
-        } else {
-            print("view height>>",view.frame.height)
-            shareView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height + 100)
-        }
-        
-        scrollView!.contentSize = shareView.bounds.size
+//        scrollView = UIScrollView(frame: view.bounds)
+//        view.addSubview(scrollView!)
+//        
+//        scrollView!.addSubview(shareView)
+//        scrollView?.scrollEnabled = true
+//        
+//        if view.frame.height != 568.0 {
+//            scrollView?.scrollEnabled = false
+//            shareView.fillSuperview()
+//            print("view height>>>>",view.frame.height)
+//        } else {
+//            print("view height>>",view.frame.height)
+//            shareView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height + 100)
+//        }
+//        
+//        scrollView!.contentSize = view.bounds.size
+//        
+//        backView.backgroundColor = UIColor(0xf7f7f7)
+//        backView.frame = shareView.bounds
+//        shareView.addSubview(backView)
         
         backView.backgroundColor = UIColor(0xf7f7f7)
-        backView.frame = shareView.bounds
-        shareView.addSubview(backView)
+        view.addSubview(backView)
+        backView.fillSuperview()
         
         let logo: UIImage = UIImage(named: "logo_invite")!
         logoImageView.image = logo
