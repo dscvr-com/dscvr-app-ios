@@ -57,6 +57,8 @@ class PipelineService {
     }
     
     static func stitch(optographID: UUID) {
+        stitchingStatus.value = .Stitching(0.01)
+        
         let stitchingSignal = StitchingService.startStitching(optographID)
         
         let optographBox = Models.optographs[optographID]!

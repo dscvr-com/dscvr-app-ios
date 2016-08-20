@@ -204,6 +204,9 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     func cancelRecording() {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
         
+        viewModel.isRecording.value = false
+        tapCameraButtonCallback = nil
+        
         stopSession()
         
         //recorder.cancel()

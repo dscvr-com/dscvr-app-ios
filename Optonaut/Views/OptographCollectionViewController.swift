@@ -196,9 +196,11 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         PipelineService.stitchingStatus.producer
             .observeOnMain()
             .startWithNext { [weak self] status in
+                print("The status>>>",status)
+                
                 switch status {
                 case .Uninitialized:
-                    //self?.tabView.cameraButton.loading = true
+                    self?.tabView.cameraButton.loading = true
                     print("uninitialized")
                 case .Idle:
                     self?.tabView.cameraButton.progress = nil
@@ -215,6 +217,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     let progressSize:Double = Double(progress * 360)
                     self?.progress.angle = progressSize
                 case .StitchingFinished(_):
+                    self?.progress.angle = 360
                     self?.progress.hidden = true
                     self?.tabView.cameraButton.progress = nil
                     self?.viewModel.refresh()
