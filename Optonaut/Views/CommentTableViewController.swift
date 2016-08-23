@@ -10,45 +10,58 @@ import UIKit
 
 class CommentTableViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
     
-    private let viewModel: DetailsViewModel
-    private let tableView = UITableView()
+    var viewModel: DetailsViewModel!
+    private var tableView = UITableView()
     private let commentField = UIView()
     private let commentTextField = UITextField()
     private let postButton = UIButton()
+    private let commentView = UIView()
+    private let imageView = UIImageView()
     
     let dismissButton = UIButton()
 
-    required init(optographID: UUID) {
-        viewModel = DetailsViewModel(optographID: optographID)
-        logInit()
-        super.init(nibName: nil, bundle: nil)
-    }
+//    required init(optographID: UUID) {
+//        //viewModel = DetailsViewModel(optographID: optographID)
+//        logInit()
+//        super.init(nibName: nil, bundle: nil)
+//    }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    deinit {
-        logRetain()
-    }
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//    deinit {
+//        logRetain()
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //view.frame = CGRect(x: 0,y: 0,width: 0,height: 0)
-
+        
+        view.backgroundColor = UIColor(hex:0x595959).alpha(0.70)
+        view.opaque = false
+//        
+//        view.addSubview(imageView)
+//        imageView.image
+//        imageView.fillSuperview()
+        
+        commentView.frame = CGRect(x: 5,y: 20,width: view.frame.width - 10,height: view.frame.height - 40)
+        commentView.backgroundColor = UIColor.whiteColor()
+        commentView.layer.cornerRadius = 8
+        commentView.clipsToBounds = true
+        view.addSubview(commentView)
+        
+        self.tableView.frame = CGRect(x: 5,y: 80,width: view.frame.width - 10,height: commentView.frame.height - 80)
         self.tableView.registerClass(CommentTableViewCell.self, forCellReuseIdentifier: "comment-cell")
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.scrollEnabled = true
-        tableView.frame = CGRect(x: 0, y: 90, width: view.frame.width, height: view.frame.height - 60)
-        tableView.scrollEnabled = true
-        
-        view.addSubview(tableView)
+        commentView.addSubview(self.tableView)
         
         let headerView = UIView()
         headerView.backgroundColor = UIColor.whiteColor()
-        view.addSubview(headerView)
-        headerView.anchorToEdge(.Top, padding: 0, width: view.frame.width, height: 80)
+        commentView.addSubview(headerView)
+        headerView.anchorToEdge(.Top, padding: 0, width: commentView.frame.width, height: 80)
         
         let label = UILabel()
         label.text = "Comment"
@@ -57,9 +70,9 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         label.anchorToEdge(.Top, padding: 25, width: 150, height: 30)
         
         let labelLine = UILabel()
-        labelLine.backgroundColor = UIColor.grayColor()
+        labelLine.backgroundColor = UIColor.lightGrayColor()
         headerView.addSubview(labelLine)
-        labelLine.anchorToEdge(.Bottom, padding: 0, width: view.frame.width, height: 2)
+        labelLine.anchorToEdge(.Bottom, padding: 0, width: commentView.frame.width, height: 1)
         
         dismissButton.setTitle("DONE",forState: .Normal)
         dismissButton.titleLabel!.font = UIFont(name: "Helvetica",size: 15)
@@ -70,28 +83,31 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         //dismissButton.anchorInCorner(.TopRight, xPad: 10, yPad: 30, width: 100, height: 25)
         dismissButton.anchorToEdge(.Right, padding: 10, width: 100, height: 25)
         
-        view.addSubview(commentField)
+        commentView.addSubview(commentField)
         commentField.backgroundColor = UIColor.whiteColor()
         commentField.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 80)
         
         let labelLineComment = UILabel()
-        labelLineComment.backgroundColor = UIColor.grayColor()
-        labelLineComment.frame = CGRect(x: 0,y: 0,width: view.frame.width,height: 1)
+        labelLineComment.backgroundColor = UIColor.lightGrayColor()
+        labelLineComment.frame = CGRect(x: 0,y: 0,width: commentView.frame.width,height: 1)
         commentField.addSubview(labelLineComment)
 
         postButton.setTitle("POST",forState: .Normal)
         postButton.titleLabel!.font = UIFont(name: "HelveticaNeue-Bold",size: 16)
         postButton.titleLabel!.textAlignment = .Left
-        postButton.setTitleColor(UIColor.grayColor(), forState: .Normal)
+        postButton.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
         postButton.addTarget(self,action: #selector(CommentTableViewController.postComment),forControlEvents: .TouchUpInside)
         commentField.addSubview(postButton)
         postButton.anchorToEdge(.Right, padding: 15, width: 100, height: 30)
         
-        commentTextField.backgroundColor = UIColor.grayColor()
+        commentTextField.backgroundColor = UIColor.lightGrayColor()
         commentTextField.delegate = self
         commentTextField.returnKeyType = .Send
         commentTextField.layer.cornerRadius = 5
         commentTextField.clipsToBounds = true
+        commentTextField.becomeFirstResponder()
+        commentTextField.autocorrectionType = UITextAutocorrectionType.No
+        
         commentField.addSubview(commentTextField)
         commentTextField.align(.ToTheLeftMatchingBottom, relativeTo: postButton, padding: 5 , width: view.frame.width - 100-20-15, height: 40)
         
@@ -102,14 +118,6 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         
         commentTextField.attributedPlaceholder = NSAttributedString(string: "  Write a comment...", attributes:attributes)
         
-        
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        
         viewModel.comments.producer.startWithNext { [weak self] _ in
             self?.tableView.reloadData()
             
@@ -117,7 +125,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CommentTableViewController.dismissKeyboard))
         tapGestureRecognizer.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGestureRecognizer)
+        commentView.addGestureRecognizer(tapGestureRecognizer)
         
     }
     override func viewWillAppear(animated: Bool) {
@@ -139,10 +147,15 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
     
     func keyboardWillShow(notification: NSNotification) {
         let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
-        commentField.frame = CGRect(x: 0,y: view.frame.height - keyboardHeight - 80,width: view.frame.width,height: 80)
+        
+        commentView.frame = CGRect(x: 5,y: 20,width: view.frame.width - 10,height: view.frame.height - keyboardHeight - 40)
+        //tableView.frame = CGRect(x: 5,y: 30,width: view.frame.width - 10,height: commentView.frame.height - 80)
+        commentField.frame = CGRect(x: 0,y: view.frame.height - keyboardHeight - 80 - 40,width: view.frame.width,height: 80)
     }
     
     func keyboardWillHide(notification: NSNotification) {
+        
+        commentView.frame = CGRect(x: 5,y: 20,width: view.frame.width - 10,height: view.frame.height - 40)
         commentField.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 80)
     }
     

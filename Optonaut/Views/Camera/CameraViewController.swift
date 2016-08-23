@@ -77,6 +77,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     private let tabView = TabView()
     
+    var timer = NSTimer()
+    
         
     required init() {
         
@@ -209,13 +211,19 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         stopSession()
         
-        //recorder.cancel()
         recorder.finish()
         recorder.dispose()
         
         if StitchingService.hasUnstitchedRecordings() {
             StitchingService.removeUnstitchedRecordings()
         }
+        
+        timer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(CameraViewController.update), userInfo: nil, repeats: true)
+    }
+
+    func update() {
+        
+        timer.invalidate()
         
         self.navigationController?.popViewControllerAnimated(false)
     }

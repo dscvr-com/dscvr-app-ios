@@ -233,8 +233,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         likeButtonView.anchorInCorner(.BottomRight, xPad: 16, yPad: 21, width: 24, height: 28)
         likeCountView.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 10, width:20, height: 13)
         
-        //commentButtonView.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:24, height: 28)
-        //commentCountView.align(.ToTheLeftCentered, relativeTo: commentButtonView, padding: 10, width:20, height: 13)
         
         let followSizeWidth = UIImage(named:"follow_active")!.size.width
         let followSizeHeight = UIImage(named:"follow_active")!.size.height
@@ -248,26 +246,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
         descriptionLabel.rac_text <~ viewModel.text
         
-        //commentCountView.rac_text <~ viewModel.commentsCount.producer.map{ "\($0)" }
+        commentCountView.rac_text <~ viewModel.commentsCount.producer.map{ "\($0)" }
         
         viewModel.isStarred.producer.startWithNext { [weak self] liked in
             if let strongSelf = self {
                 strongSelf.likeButtonView.setImage(liked ? UIImage(named:"liked_button") : UIImage(named:"user_unlike_icn"), forState: .Normal)
             }
         }
-        
-//        let optograph = Models.optographs[optographID]!.model
-//        
-//        if let locationID = optograph.locationID {
-//            let location = Models.locations[locationID]!.model
-//            locationTextView.text = "\(location.text), \(location.countryShort)"
-//            self.personNameView.align(.ToTheRightMatchingTop, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
-//            self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
-//        } else {
-//            personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
-//            locationTextView.text = ""
-//        }
-        
         
         viewModel.locationText.producer.startWithNext{ val in
             if val == "" {
@@ -306,13 +291,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         gyroTypeBtn.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
         gyroTypeBtn.addTarget(self, action: #selector(gyroButtonTouched), forControlEvents:.TouchUpInside)
         
-        
-//        let exportImageIcon = UIImage(named:"export_icn")
-//        exportButton.setBackgroundImage(exportImageIcon, forState: .Normal)
-//        
-//        self.view.addSubview(exportButton)
-//        exportButton.align(.UnderCentered, relativeTo: gyroTypeBtn, padding: 20, width: (exportImageIcon?.size.width)!, height: exportImageIcon!.size.height)
-//        exportButton.addTarget(self, action: #selector(exportImage), forControlEvents:.TouchUpInside)
         
         if  Defaults[.SessionGyro] {
             self.changeButtonIcon(true)
@@ -380,6 +358,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             let shareImageSize = UIImage(named:"share_white_details")?.size
             shareButton.align(.ToTheLeftCentered, relativeTo: likeCountView, padding: 10, width:(shareImageSize?.width)!, height: (shareImageSize?.height)!)
         }
+        
         viewModel.isElite.producer.startWithNext{ val in
             if val == 0 {
                 self.eliteImageView.hidden = true
@@ -388,6 +367,23 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             }
             
         }
+        let commentButtonSize = UIImage(named:"comment_icn")!.size
+        
+        commentButtonView.align(.ToTheLeftCentered, relativeTo: shareButton, padding: 20, width:commentButtonSize.width, height: commentButtonSize.height)
+        commentCountView.align(.ToTheLeftCentered, relativeTo: commentButtonView, padding: 10, width:20, height: 13)
+        
+//        viewModel.isPublished.producer.startWithNext { val in
+//            if val {
+//                let url = TextureURL(optographID, side: .Left, size: view.frame.width, face: 0, x: 0, y: 0, d: 1)
+//                self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
+//            } else {
+//                let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+//                if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+//                    dispatch_async(dispatch_get_main_queue()) {
+//                        imageView.image = originalImage.resized(.Width, value: view.frame.width)
+//                }
+//            }
+//        }
         
     }
     func adjustDescriptionLabel(recognizer:UITapGestureRecognizer) {
@@ -450,14 +446,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         renderDelegate.dispose()
         imageCache.reset()
         didEndDisplay()
+        viewModel.disposable?.dispose()
         
         self.navigationController?.popViewControllerAnimated(true)
         //self.navigationController?.popToRootViewControllerAnimated(false)
     }
     
     func toggleComment() {
-        let commentPage = CommentTableViewController(optographID: optographID)
-        //commentPage.modalPresentationStyle = .OverCurrentContext
+        
+        let commentPage = CommentTableViewController()
+        commentPage.viewModel = viewModel
         self.navigationController?.presentViewController(commentPage, animated: true, completion: nil)
     }
     
@@ -783,7 +781,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         RotationService.sharedInstance.rotationDisable()
         tabController!.enableScrollView()
         
-        viewModel.disposable?.dispose()
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)

@@ -19,6 +19,7 @@ class CommentViewModel {
     let timeSinceCreated = MutableProperty<String>("")
     
     init(comment: Comment) {
+        print("comment>>>>",comment)
         text = ConstantProperty(comment.text)
         avatarImageUrl = ConstantProperty(ImageURL(comment.person.avatarAssetID, width: 40, height: 40))
         displayName = ConstantProperty(comment.person.displayName)

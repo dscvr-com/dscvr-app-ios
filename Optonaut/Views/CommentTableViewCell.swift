@@ -86,8 +86,10 @@ class CommentTableViewCell: UITableViewCell {
     func bindViewModel(comment: Comment) {
         viewModel = CommentViewModel(comment: comment)
         
-//        avatarImageView.rac_url <~ viewModel.avatarImageUrl
-//        dateView.rac_text <~ viewModel.timeSinceCreated
+        avatarImageView.rac_url <~ viewModel.avatarImageUrl
+        dateView.rac_text <~ viewModel.timeSinceCreated
+        textView.rac_text <~ viewModel.text
+        usernameView.rac_text <~ viewModel.userName
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

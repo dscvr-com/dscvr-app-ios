@@ -14,7 +14,7 @@ struct Comment: Model {
     var createdAt: NSDate
     var updatedAt: NSDate
     var text: String
-    var person: Person
+    var person: Person!
     var optograph: Optograph
     
     static func newInstance() -> Comment {
