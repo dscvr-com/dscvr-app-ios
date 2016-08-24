@@ -128,7 +128,7 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
         if startStory{
-            let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item])
+            let detailsViewController = StoryDetailsTableViewController(optographId: optographIDs[indexPath.item])
             detailsViewController.cellIndexpath = indexPath.item
             detailsViewController.isStorytelling = true
             

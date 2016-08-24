@@ -1,9 +1,9 @@
 //
-//  DetailsContainerView.swift
-//  Optonaut
+//  StoryDetailsTableViewController.swift
+//  DSCVR
 //
-//  Created by Robert John Alkuino on 8/14/15.
-//  Copyright © 2015 Optonaut. All rights reserved.
+//  Created by Thadz on 24/08/2016.
+//  Copyright © 2016 Optonaut. All rights reserved.
 //
 
 import Foundation
@@ -17,10 +17,8 @@ import SwiftyUserDefaults
 import MediaPlayer
 import AVKit
 
-let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
+class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate, FPOptographsCollectionViewControllerDelegate, MPMediaPickerControllerDelegate {
 
-class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate, FPOptographsCollectionViewControllerDelegate, MPMediaPickerControllerDelegate{
-    
     private let viewModel: DetailsViewModel!
     
     private var combinedMotionManager: CombinedMotionManager!
@@ -130,8 +128,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.storyTellingData = story.children;
             self.mapChild = self.storyTellingData!.children![0];
             
-//            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
-//            self.setCubeImageCache(cubeImageCache)
+            //            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
+            //            self.setCubeImageCache(cubeImageCache)
             
             let nodeTranslation = SCNVector3Make(Float(self.mapChild!.story_object_position[0])!, Float(self.mapChild!.story_object_position[1])!, Float(self.mapChild!.story_object_position[2])!)
             
@@ -157,15 +155,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
         
         let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
-                     "story_object_media_face": "pin",
-                     "story_object_media_description": "description",
-                     "story_object_media_additional_data": nodeItem.optographID,
-                     "story_object_position": translationArray,
-                     "story_object_rotation": rotationArray]
+                                    "story_object_media_face": "pin",
+                                    "story_object_media_description": "description",
+                                    "story_object_media_additional_data": nodeItem.optographID,
+                                    "story_object_position": translationArray,
+                                    "story_object_rotation": rotationArray]
         
         let parameters : NSDictionary =  ["story_optograph_id": optographID,
-                          "story_person_id": SessionService.personID,
-                          "children":nodes]
+                                          "story_person_id": SessionService.personID,
+                                          "children":nodes]
         
         print("nodes: \(nodes.count)")
         
@@ -211,8 +209,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func didEnterFrustrum(markerName: String, inFrustrum:Bool) {
         
-
-//        markerNameLabel.hidden = false
+        
+        //        markerNameLabel.hidden = false
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)){
             dispatch_async(dispatch_get_main_queue()){
                 if inFrustrum {
@@ -224,15 +222,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     print("markerName: \(self.markerNameLabel.text!)")
                     
                     
-//                    if (self.markerNameLabel.text! == "Text Item2") {
-//                        print("resetToBlack")
-//                      
-//                        let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: "8e8fcab1-761e-4ef8-a969-0c1346b39bf3", side: .Left)
-//                        self.setCubeImageCache(cubeImageCache)
-//                    }
+                    //                    if (self.markerNameLabel.text! == "Text Item2") {
+                    //                        print("resetToBlack")
+                    //
+                    //                        let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: "8e8fcab1-761e-4ef8-a969-0c1346b39bf3", side: .Left)
+                    //                        self.setCubeImageCache(cubeImageCache)
+                    //                    }
                     
-//                    let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: (self.mapChild?.story_object_media_additional_data)!, side: .Left)
-//                    self.setCubeImageCache(cubeImageCache)
+                    //                    let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: (self.mapChild?.story_object_media_additional_data)!, side: .Left)
+                    //                    self.setCubeImageCache(cubeImageCache)
                     
                     //if type is audio
                     /*
@@ -243,7 +241,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                      player?.volume = 1.0
                      player!.play()
                      */
-
+                    
                 }
                 else{
                     self.markerNameLabel.hidden = true
@@ -291,30 +289,32 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         print("indexPath: \(cellIndexpath)")
         
         //// add flag in viewdidload/add to didenterfrustrum
-//        let url = NSURL(string: "http://jumpserver.mine.nu/albatroz.mp3")
-//        playerItem = AVPlayerItem(URL: url!)
-//        player=AVPlayer(playerItem: playerItem!)
-//        player?.rate = 1.0
-//        player?.volume = 1.0
-//        player!.play()
+        //        let url = NSURL(string: "http://jumpserver.mine.nu/albatroz.mp3")
+        //        playerItem = AVPlayerItem(URL: url!)
+        //        player=AVPlayer(playerItem: playerItem!)
+        //        player?.rate = 1.0
+        //        player?.volume = 1.0
+        //        player!.play()
         
         //// add flag in viewdidload/add to didenterfrustrum
         
-//        ApiService<StoryObject>.getForGate("story/248761f4-9a83-4cf3-b2a4-f986fee02ee4", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
-//            story in
-//            print("story object id: \(story.data)");
-//        }).start();
+        //        ApiService<StoryObject>.getForGate("story/248761f4-9a83-4cf3-b2a4-f986fee02ee4", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
+        //            story in
+        //            print("story object id: \(story.data)");
+        //        }).start();
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
         
-//        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographID]!.model)
-//        navigationController?.pushViewController(viewerViewController, animated: false)
-//        //        viewModel.increaseViewsCount()
+        //        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographID]!.model)
+        //        navigationController?.pushViewController(viewerViewController, animated: false)
+        //        //        viewModel.increaseViewsCount()
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        print("STORY DETAILS VIEW CONTROLLER")
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
@@ -345,7 +345,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         /**/
         
         if isStorytelling{
-//            self.prepareStoryTellingHUD();
+            //            self.prepareStoryTellingHUD();
             self.prepareNewHUD();
         }
         else{
@@ -520,14 +520,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func prepareNewHUD(){
-//        let textPinImage = UIImage(named: "")
-//        let textPin = UIButton(frame: CGRect(x: 0, y: 0, width: (textPinImage?.size.width)!, height: (textPinImage?.size.height)!))
+        //        let textPinImage = UIImage(named: "")
+        //        let textPin = UIButton(frame: CGRect(x: 0, y: 0, width: (textPinImage?.size.width)!, height: (textPinImage?.size.height)!))
         
-//        let optoPinImage = UIImage(named: "")
-//        let optoPin = UIButton(frame: CGRect(x: 0, y: 0, width: (optoPinImage?.size.width)!, height: (optoPinImage?.size.height)!))
+        //        let optoPinImage = UIImage(named: "")
+        //        let optoPin = UIButton(frame: CGRect(x: 0, y: 0, width: (optoPinImage?.size.width)!, height: (optoPinImage?.size.height)!))
         
-//        let audioPinImage = UIImage(named: "")
-//        let audioPin = UIButton(frame: CGRect(x: 0, y: 0, width: (audioPinImage?.size.width)!, height: (audioPinImage?.size.height)!))
+        //        let audioPinImage = UIImage(named: "")
+        //        let audioPin = UIButton(frame: CGRect(x: 0, y: 0, width: (audioPinImage?.size.width)!, height: (audioPinImage?.size.height)!))
         
         let audioPin = UIButton(frame: CGRect(x: 10.0, y: self.view.frame.size.height - 50.0, width: 40.0, height: 40.0))
         audioPin.backgroundColor = UIColor.redColor()
@@ -683,7 +683,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func doneStorytelling(){
         self.sendOptographData();
-//        self.dismissViewControllerAnimated(true, completion: nil)
+        //        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     func dismissStorytelling(){
@@ -722,7 +722,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         optocollection.delegate = self;
         
         let naviCon = UINavigationController()
-//        naviCon.viewControllers = [optocollection]
+        //        naviCon.viewControllers = [optocollection]
         naviCon.viewControllers = [optocollection]
         
         self.presentViewController(naviCon, animated: true, completion: nil)
@@ -731,7 +731,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func imageButtonDown(){
         renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
         nodeItem.objectType = "Image"
-
+        
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optocollection.delegate = self;
         
@@ -740,21 +740,21 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         self.presentViewController(naviCon, animated: true, completion: nil)
         
-//        self.receiveStory()
+        //        self.receiveStory()
     }
     
     func audioButtonDown(){
-//        renderDelegate.addMarker(UIColor.greenColor(), type:"Audio Item")
-//        nodeItem.objectType = "Audio Item"
-//        
-//        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
-//        optocollection.delegate = self;
-//        
-//        let naviCon = UINavigationController()
-//        naviCon.viewControllers = [optocollection]
-//        
-//        self.presentViewController(naviCon, animated: true, completion: nil)
-//        self.sendOptographData();
+        //        renderDelegate.addMarker(UIColor.greenColor(), type:"Audio Item")
+        //        nodeItem.objectType = "Audio Item"
+        //
+        //        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+        //        optocollection.delegate = self;
+        //
+        //        let naviCon = UINavigationController()
+        //        naviCon.viewControllers = [optocollection]
+        //
+        //        self.presentViewController(naviCon, animated: true, completion: nil)
+        //        self.sendOptographData();
         
         let mediaPicker = MPMediaPickerController(mediaTypes: MPMediaType.Music)
         mediaPicker.allowsPickingMultipleItems = false
@@ -802,21 +802,21 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 
                 let base64: String = (data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength))!
                 
-//                print("base64string: \(base64)")
+                //                print("base64string: \(base64)")
                 
                 let translationArray = ["", "", ""]
                 
                 let rotationArray = ["", "", ""]
                 
                 /*
-                "story_object_media_type":            "Image",
-                "story_object_media_face":            "Yo",
-                "story_object_media_description":     "Desc 1",
-                "story_object_media_additional_data": "Data 1",
-                "story_object_position":              [123, 456, 789],
-                "story_object_rotation":              [987, 654, 321],
-                "story_object_media_filename":        "Thousand Minds Logo.png",
-                "story_object_media_base64":          "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABcc */
+                 "story_object_media_type":            "Image",
+                 "story_object_media_face":            "Yo",
+                 "story_object_media_description":     "Desc 1",
+                 "story_object_media_additional_data": "Data 1",
+                 "story_object_position":              [123, 456, 789],
+                 "story_object_rotation":              [987, 654, 321],
+                 "story_object_media_filename":        "Thousand Minds Logo.png",
+                 "story_object_media_base64":          "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABcc */
                 
                 let child : NSDictionary = ["story_object_media_type": "Music",
                     "story_object_media_face": "pin",
@@ -837,7 +837,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         })
     }
     
-//Media Picker Delegate Methods
+    //Media Picker Delegate Methods
     func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
         
         var itemURL = NSURL()
@@ -847,11 +847,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         self.mediaItemToData(itemURL)
         
-//        playerItem = AVPlayerItem(URL: itemURL)
-//        player=AVPlayer(playerItem: playerItem!)
-//        player?.rate = 1.0
-//        player?.volume = 1.0
-//        player!.play()
+        //        playerItem = AVPlayerItem(URL: itemURL)
+        //        player=AVPlayer(playerItem: playerItem!)
+        //        player?.rate = 1.0
+        //        player?.volume = 1.0
+        //        player!.play()
         
         mediaPicker.dismissViewControllerAnimated(true, completion: nil)
         print("you picked: \(mediaItemCollection)")
@@ -871,30 +871,30 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //        naviCon.viewControllers = [optocollection]
         naviCon.viewControllers = [storyCollection]
         
-//        self.presentViewController(naviCon, animated: true, completion: nil)
-//        renderDelegate.addMarker(sphereColor)
+        //        self.presentViewController(naviCon, animated: true, completion: nil)
+        //        renderDelegate.addMarker(sphereColor)
         
         navigationController?.pushViewController(storyCollection, animated: true)
         
         
         /*
-        
-        if SessionService.isLoggedIn {
-            let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this 360 image? You cannot undo this.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
-                self.viewModel.deleteOpto()
-                self.closeDetailsPage()
-            }))
-            alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
-            
-            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
-        } else {
-            let alert = UIAlertController(title:"", message: "Please login to delete this 360 image.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
-        }
- 
- */
+         
+         if SessionService.isLoggedIn {
+         let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this 360 image? You cannot undo this.", preferredStyle: .Alert)
+         alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
+         self.viewModel.deleteOpto()
+         self.closeDetailsPage()
+         }))
+         alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+         
+         self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+         } else {
+         let alert = UIAlertController(title:"", message: "Please login to delete this 360 image.", preferredStyle: .Alert)
+         alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+         self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+         }
+         
+         */
     }
     func closeDetailsPage() {
         self.navigationController?.popViewControllerAnimated(true)
@@ -1080,14 +1080,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func changeButtonIcon(isGyro:Bool) {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: isGyro ? gyroImageActive : gyroImageInactive, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(gyroButtonTouched))
         
-//        if isGyro {
-//            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_inactive"), forState: .Normal)
-//            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_active"), forState: .Normal)
-//            
-//        } else {
-//            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_active"), forState: .Normal)
-//            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_inactive"), forState: .Normal)
-//        }
+        //        if isGyro {
+        //            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_inactive"), forState: .Normal)
+        //            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_active"), forState: .Normal)
+        //
+        //        } else {
+        //            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_active"), forState: .Normal)
+        //            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_inactive"), forState: .Normal)
+        //        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -1152,7 +1152,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         imageDownloadDisposable?.dispose()
         imageDownloadDisposable = nil
-//        CoreMotionRotationSource.Instance.stop()
+        //        CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
         
         if !isStorytelling{
@@ -1246,87 +1246,3 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
 }
-
-//// MARK: - UITableViewDelegate
-//extension DetailsTableViewController: UITableViewDelegate {
-//
-//    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-////        let superView = tableView!.superview!
-//        if indexPath.row == 0 {
-//            let yOffset = max(0, tableView.frame.height - tableView.contentSize.height)
-//            UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
-//                animations: {
-//                    self.tableView.contentOffset = CGPoint(x: 0, y: -yOffset)
-//                },
-//                completion: nil)
-//        }
-//    }
-//
-//    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-//        if indexPath.row == 0 {
-//            let infoHeight = CGFloat(78)
-//            let textWidth = view.frame.width - 40
-//            let textHeight = calcTextHeight(viewModel.text.value, withWidth: textWidth, andFont: UIFont.textOfSize(14, withType: .Regular)) + 20
-//            let hashtagsHeight = calcTextHeight(viewModel.hashtags.value, withWidth: textWidth, andFont: UIFont.textOfSize(14, withType: .Semibold)) + 25
-//            return textHeight + hashtagsHeight + infoHeight
-//        } else if indexPath.row == 1 {
-//            return 60
-//        } else {
-//            let textWidth = view.frame.width - 40 - 40 - 20 - 30 - 20
-//            let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row - 2].text, withWidth: textWidth, andFont: UIFont.textOfSize(13, withType: .Regular)) + 15
-//            return max(textHeight, 60)
-//        }
-//    }
-//
-//}
-//
-//// MARK: - UITableViewDataSource
-//extension DetailsTableViewController: UITableViewDataSource {
-//
-//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-//        if indexPath.row == 0 {
-//            let cell = self.tableView.dequeueReusableCellWithIdentifier("details-cell") as! DetailsTableViewCell
-//            cell.viewModel = viewModel
-//            cell.navigationController = navigationController as? NavigationController
-//            cell.bindViewModel()
-//            return cell
-//        }
-//    }
-//
-//    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return viewModel.comments.value.count + 2
-//    }
-//
-//}
-//
-//
-//// MARK: - NewCommentTableViewDelegate
-//extension DetailsTableViewController: NewCommentTableViewDelegate {
-//    func newCommentAdded(comment: Comment) {
-//        self.viewModel.insertNewComment(comment)
-//    }
-//}
-
-//private class TableView: UITableView {
-//
-//    var horizontalScrollDistanceCallback: ((Float) -> ())?
-//
-//    private override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        super.touchesMoved(touches, withEvent: event)
-//
-//        if let touch = touches.first {
-//            let oldPoint = touch.previousLocationInView(self)
-//            let newPoint = touch.locationInView(self)
-//            self.horizontalScrollDistanceCallback?(Float(newPoint.x - oldPoint.x))
-//        }
-//    }
-//
-//    private override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
-//        // this took a lot of time. don't bother to understand this
-//        if frame.height + contentOffset.y - 78 < 80 && point.y < 0 && frame.width - point.x < 100 {
-//            return false
-//        }
-//        return true
-//    }
-//    
-//}

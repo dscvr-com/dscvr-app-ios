@@ -259,6 +259,7 @@
 		B1754D5C1D0E82CD005A3E85 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */; };
 		B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */; };
 		B1754D5E1D0E82CD005A3E85 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */; };
+		BB155A961D6DB31A002678A6 /* StoryDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB155A951D6DB31A002678A6 /* StoryDetailsTableViewController.swift */; };
 		BB49927E1D5452A1006A20D3 /* mapChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB49927B1D5452A1006A20D3 /* mapChildren.swift */; };
 		BB49927F1D5452A1006A20D3 /* StoryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB49927C1D5452A1006A20D3 /* StoryObject.swift */; };
 		BB4992801D5452A1006A20D3 /* StorytellingChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */; };
@@ -633,6 +634,7 @@
 		B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
 		B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewController.swift; sourceTree = "<group>"; };
 		B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
+		BB155A951D6DB31A002678A6 /* StoryDetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StoryDetailsTableViewController.swift; path = Storytelling/StoryDetailsTableViewController.swift; sourceTree = "<group>"; };
 		BB49927B1D5452A1006A20D3 /* mapChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mapChildren.swift; sourceTree = "<group>"; };
 		BB49927C1D5452A1006A20D3 /* StoryObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryObject.swift; sourceTree = "<group>"; };
 		BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingChildren.swift; sourceTree = "<group>"; };
@@ -1474,6 +1476,7 @@
 				BB7634531D42103A002486BF /* FPOptographsCollectionViewController.swift */,
 				BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */,
 				BB8AC1941D5B188F00A18BFF /* StorytellingCollectionViewCell.swift */,
+				BB155A951D6DB31A002678A6 /* StoryDetailsTableViewController.swift */,
 			);
 			name = Storytelling;
 			sourceTree = "<group>";
@@ -1867,6 +1870,7 @@
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
 				BB8AC1951D5B188F00A18BFF /* StorytellingCollectionViewCell.swift in Sources */,
 				8FD845C51BCAA4530064048D /* WebImage.swift in Sources */,
+				BB155A961D6DB31A002678A6 /* StoryDetailsTableViewController.swift in Sources */,
 				8F707C181C5A363F000AF7BF /* ProfileOptographsViewModel.swift in Sources */,
 				8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */,
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
