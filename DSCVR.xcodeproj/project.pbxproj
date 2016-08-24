@@ -19,9 +19,6 @@
 		5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */; };
 		5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17D1CAD34F500F808D8 /* simplePlaneStitcher.cpp */; };
 		5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17F1CAD34F500F808D8 /* simpleSphereStitcher.cpp */; };
-		5937D1BE1D5443760040BD6B /* StoryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937D1BD1D5443760040BD6B /* StoryObject.swift */; };
-		5937D1C01D5443D80040BD6B /* StorytellingChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937D1BF1D5443D80040BD6B /* StorytellingChildren.swift */; };
-		5937D1C21D544B6B0040BD6B /* mapChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937D1C11D544B6B0040BD6B /* mapChildren.swift */; };
 		5937D1C41D5479980040BD6B /* SwiftSpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937D1C31D5479980040BD6B /* SwiftSpinner.swift */; };
 		5937E0A51D262B3D00584F97 /* RequestCodeApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */; };
 		593C06F51D6D7C01000A019C /* StViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593C06F41D6D7C01000A019C /* StViewController.swift */; };
@@ -271,6 +268,14 @@
 		B1754D5C1D0E82CD005A3E85 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */; };
 		B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */; };
 		B1754D5E1D0E82CD005A3E85 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */; };
+		BB49927E1D5452A1006A20D3 /* mapChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB49927B1D5452A1006A20D3 /* mapChildren.swift */; };
+		BB49927F1D5452A1006A20D3 /* StoryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB49927C1D5452A1006A20D3 /* StoryObject.swift */; };
+		BB4992801D5452A1006A20D3 /* StorytellingChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */; };
+		BB7634541D42103A002486BF /* FPOptographsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7634531D42103A002486BF /* FPOptographsCollectionViewController.swift */; };
+		BB7634561D49E2F4002486BF /* StorytellingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7634551D49E2F3002486BF /* StorytellingObject.swift */; };
+		BB8AC1931D597B8D00A18BFF /* StorytellingCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */; };
+		BB8AC1951D5B188F00A18BFF /* StorytellingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8AC1941D5B188F00A18BFF /* StorytellingCollectionViewCell.swift */; };
+		BBBDE6CC1D5202AC00144DB4 /* StorytellingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBDE6CB1D5202AC00144DB4 /* StorytellingResponse.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -325,9 +330,6 @@
 		5936B1811CAD34F500F808D8 /* stitcher.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcher.hpp; sourceTree = "<group>"; };
 		5936B1821CAD34F500F808D8 /* stitcherSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitcherSink.hpp; sourceTree = "<group>"; };
 		5936B1831CAD34F500F808D8 /* stitchingResult.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stitchingResult.hpp; sourceTree = "<group>"; };
-		5937D1BD1D5443760040BD6B /* StoryObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryObject.swift; sourceTree = "<group>"; };
-		5937D1BF1D5443D80040BD6B /* StorytellingChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingChildren.swift; sourceTree = "<group>"; };
-		5937D1C11D544B6B0040BD6B /* mapChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mapChildren.swift; sourceTree = "<group>"; };
 		5937D1C31D5479980040BD6B /* SwiftSpinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSpinner.swift; sourceTree = "<group>"; };
 		5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestCodeApiModel.swift; sourceTree = "<group>"; };
 		593C06F41D6D7C01000A019C /* StViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StViewController.swift; sourceTree = "<group>"; };
@@ -650,6 +652,14 @@
 		B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
 		B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewController.swift; sourceTree = "<group>"; };
 		B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
+		BB49927B1D5452A1006A20D3 /* mapChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mapChildren.swift; sourceTree = "<group>"; };
+		BB49927C1D5452A1006A20D3 /* StoryObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryObject.swift; sourceTree = "<group>"; };
+		BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingChildren.swift; sourceTree = "<group>"; };
+		BB7634531D42103A002486BF /* FPOptographsCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPOptographsCollectionViewController.swift; path = Profile/FPOptographsCollectionViewController.swift; sourceTree = "<group>"; };
+		BB7634551D49E2F3002486BF /* StorytellingObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingObject.swift; sourceTree = "<group>"; };
+		BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StorytellingCollectionViewController.swift; path = Storytelling/StorytellingCollectionViewController.swift; sourceTree = "<group>"; };
+		BB8AC1941D5B188F00A18BFF /* StorytellingCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StorytellingCollectionViewCell.swift; path = Storytelling/StorytellingCollectionViewCell.swift; sourceTree = "<group>"; };
+		BBBDE6CB1D5202AC00144DB4 /* StorytellingResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -756,15 +766,6 @@
 			path = stitcher;
 			sourceTree = "<group>";
 		};
-		593C06F31D6D7BE5000A019C /* Stories */ = {
-			isa = PBXGroup;
-			children = (
-				593C06F41D6D7C01000A019C /* StViewController.swift */,
-				593C06F61D6D7CAD000A019C /* StNavViewController.swift */,
-			);
-			name = Stories;
-			sourceTree = "<group>";
-		};
 		595D87671D083D4100866FF2 /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -869,6 +870,10 @@
 				5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */,
 				59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */,
 				59405BF41D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift */,
+				BBBDE6CB1D5202AC00144DB4 /* StorytellingResponse.swift */,
+				BB49927B1D5452A1006A20D3 /* mapChildren.swift */,
+				BB49927C1D5452A1006A20D3 /* StoryObject.swift */,
+				BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */,
 			);
 			name = ApiModel;
 			path = APIModel;
@@ -912,8 +917,6 @@
 		8F7738121B380F5D001F642B /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				5937D1BF1D5443D80040BD6B /* StorytellingChildren.swift */,
-				5937D1BD1D5443760040BD6B /* StoryObject.swift */,
 				8F4CE79F1B6CEEC700BD8A71 /* Model.swift */,
 				8F5FDA001B3EECB0007E073C /* Activity.swift */,
 				8F5335A31BDBA7270058961A /* ActivityResourceStar.swift */,
@@ -925,7 +928,6 @@
 				8F7738131B380F5D001F642B /* Optograph.swift */,
 				8F900B461B839E690085566C /* Location.swift */,
 				8F7738141B380F5D001F642B /* Person.swift */,
-				5937D1C11D544B6B0040BD6B /* mapChildren.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -943,7 +945,7 @@
 		8FAB9EEC1B8F01DF00B4C8CB /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				593C06F31D6D7BE5000A019C /* Stories */,
+				BB8AC1911D597B0D00A18BFF /* Storytelling */,
 				59306C021D24DFEF009BF7BE /* BetaInvitePage */,
 				595D87671D083D4100866FF2 /* Search */,
 				59FB1D5C1CF5AFAE00C5C333 /* PhotoLibrary */,
@@ -1011,6 +1013,7 @@
 				8FAA02971B9DAE3200B5E6BC /* NavigationController.swift */,
 				8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */,
 				8F707C151C5A2A17000AF7BF /* TableViewResults.swift */,
+				BB7634551D49E2F3002486BF /* StorytellingObject.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1491,6 +1494,16 @@
 			path = stereo;
 			sourceTree = "<group>";
 		};
+		BB8AC1911D597B0D00A18BFF /* Storytelling */ = {
+			isa = PBXGroup;
+			children = (
+				BB7634531D42103A002486BF /* FPOptographsCollectionViewController.swift */,
+				BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */,
+				BB8AC1941D5B188F00A18BFF /* StorytellingCollectionViewCell.swift */,
+			);
+			name = Storytelling;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1723,6 +1736,7 @@
 				59848B231CEA204B00829963 /* LoginVC.swift in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
 				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
+				BB7634561D49E2F4002486BF /* StorytellingObject.swift in Sources */,
 				A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */,
 				8FD588721BB841E200C55711 /* OnboardingHashtagSummaryViewController.swift in Sources */,
 				8F4186071C552958009E1E3F /* ProfileTileCollectionViewCell.swift in Sources */,
@@ -1732,6 +1746,7 @@
 				8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */,
 				8F4185FB1C52DB08009E1E3F /* PersonApiModel.swift in Sources */,
 				8FC7E3731BD15B9D00E97CC3 /* HeadTracker.mm in Sources */,
+				BB4992801D5452A1006A20D3 /* StorytellingChildren.swift in Sources */,
 				8F4185F91C529C74009E1E3F /* OptographApiModel.swift in Sources */,
 				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
@@ -1749,7 +1764,6 @@
 				8F23AA521BFF31B4008926A8 /* HashtagTable.swift in Sources */,
 				8FC7E3761BD15B9D00E97CC3 /* SO3Util.mm in Sources */,
 				8F900B471B839E690085566C /* Location.swift in Sources */,
-				5937D1BE1D5443760040BD6B /* StoryObject.swift in Sources */,
 				5936B1871CAD34F500F808D8 /* simplePlaneStitcher.cpp in Sources */,
 				5937E0A51D262B3D00584F97 /* RequestCodeApiModel.swift in Sources */,
 				8F1287E91BA8A9730098ED24 /* NSURLExtensions.swift in Sources */,
@@ -1759,6 +1773,7 @@
 				8FCCA0531B3806680091F1B1 /* AppDelegate.swift in Sources */,
 				8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */,
 				8FD845B81BC870B90064048D /* Debug.swift in Sources */,
+				BB7634541D42103A002486BF /* FPOptographsCollectionViewController.swift in Sources */,
 				8F23AA4E1BFF31B4008926A8 /* ActivityResourceStarTable.swift in Sources */,
 				8F0B17861BAC193000FAF649 /* LineTextField.swift in Sources */,
 				8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */,
@@ -1770,6 +1785,7 @@
 				590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */,
 				8F23AA531BFF31B4008926A8 /* LocationTable.swift in Sources */,
+				BB49927F1D5452A1006A20D3 /* StoryObject.swift in Sources */,
 				A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */,
 				8FAB9F321B8F01DF00B4C8CB /* BottomLineTextField.swift in Sources */,
 				8FAB9F301B8F01DF00B4C8CB /* SaveViewController.swift in Sources */,
@@ -1824,7 +1840,6 @@
 				59ECBB981D38929000B57FB2 /* OnboardingViewModel.swift in Sources */,
 				8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */,
 				5917C8211CE441F200CD5A6D /* SharingViewController.swift in Sources */,
-				5937D1C01D5443D80040BD6B /* StorytellingChildren.swift in Sources */,
 				8FC7E3771BD15B9D00E97CC3 /* Vector3d.mm in Sources */,
 				8F5335AA1BDBC09A0058961A /* ActivityResourceFollow.swift in Sources */,
 				8F085AFD1BF549FE00607A25 /* PlaceholderTableViewCell.swift in Sources */,
@@ -1835,6 +1850,7 @@
 				A5FD5D811BEA5A4E0031ED1E /* inputImage.cpp in Sources */,
 				8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */,
 				8FD845C31BCA5AFA0064048D /* RenderDelegate.swift in Sources */,
+				BB8AC1931D597B8D00A18BFF /* StorytellingCollectionViewController.swift in Sources */,
 				8FCADEE01BAB1A080018674B /* OnboardingInfoViewController.swift in Sources */,
 				8FC7E3741BD15B9D00E97CC3 /* Matrix3x3d.mm in Sources */,
 				8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */,
@@ -1873,6 +1889,7 @@
 				8F4185FD1C52DBBD009E1E3F /* LocationApiModel.swift in Sources */,
 				8F1E0AC61B98304F002E2FB5 /* VersionService.swift in Sources */,
 				8F0B17801BAB6D2C00FAF649 /* OnboardingProfileViewController.swift in Sources */,
+				BBBDE6CC1D5202AC00144DB4 /* StorytellingResponse.swift in Sources */,
 				59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */,
 				8F1E0AC41B98251A002E2FB5 /* SessionService.swift in Sources */,
 				594F6B4F1D3619CF00A361B3 /* LoadingIndicatorView.swift in Sources */,
@@ -1882,6 +1899,7 @@
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
 				59405BEF1D3CDBC100D1BA45 /* Migration0008.swift in Sources */,
 				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
+				BB8AC1951D5B188F00A18BFF /* StorytellingCollectionViewCell.swift in Sources */,
 				8FD845C51BCAA4530064048D /* WebImage.swift in Sources */,
 				8F707C181C5A363F000AF7BF /* ProfileOptographsViewModel.swift in Sources */,
 				8FD588701BB83E8700C55711 /* OnboardingHashtagInfoViewController.swift in Sources */,
@@ -1890,6 +1908,7 @@
 				5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */,
 				594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */,
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
+				BB49927E1D5452A1006A20D3 /* mapChildren.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
 				8F707C161C5A2A17000AF7BF /* TableViewResults.swift in Sources */,
@@ -1910,7 +1929,6 @@
 				A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */,
 				594F6B4D1D36110500A361B3 /* UIImage+Gif.swift in Sources */,
 				59405BF31D3D36EB00D1BA45 /* ActivityResourceStarModel.swift in Sources */,
-				5937D1C21D544B6B0040BD6B /* mapChildren.swift in Sources */,
 				8F4186031C53D2AC009E1E3F /* ProfileHeaderCollectionViewCell.swift in Sources */,
 				8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,

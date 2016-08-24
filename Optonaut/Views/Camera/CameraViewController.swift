@@ -683,7 +683,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             
             recorder.setIdle(!self.viewModel.isRecording.value)
             
-            
+     
             recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             
             let errorVec = recorder.getAngularDistanceToBall()

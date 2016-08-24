@@ -134,7 +134,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
-
+        
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
@@ -206,18 +206,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(likeButtonView)
         
         
-        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
-        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
-        whiteBackground.addSubview(commentButtonView)
-        
-        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
-        commentCountView.textColor = .whiteColor()
-        commentCountView.textAlignment = .Right
-        whiteBackground.addSubview(commentCountView)
-        
-        
-//        commentButtonView.hidden = true
-//        commentCountView.hidden = true
+        //        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
+        //        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
+        //        whiteBackground.addSubview(commentButtonView)
+        //
+        //        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
+        //        commentCountView.textColor = .whiteColor()
+        //        commentCountView.textAlignment = .Right
+        //        whiteBackground.addSubview(commentCountView)
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
         locationTextView.textColor = UIColor.whiteColor()
@@ -267,7 +263,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.personNameView.align(.ToTheRightMatchingTop, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
                 self.locationTextView.align(.ToTheRightMatchingBottom, relativeTo: self.avatarImageView, padding: 15, width: 100, height: 18)
             }
-        
+            
         }
         
         
@@ -279,17 +275,17 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //self.view.addSubview(gyroButton)
         
         
-//        hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
-//        hideSelectorButton.addTarget(self, action: #selector(self.selectorButton), forControlEvents:.TouchUpInside)
-//        
-//        littlePlanetButton.align(.UnderCentered, relativeTo: hideSelectorButton, padding: 10, width: 35, height: 35)
-//        littlePlanetButton.addTarget(self, action: #selector(self.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
+        //        hideSelectorButton.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
+        //        hideSelectorButton.addTarget(self, action: #selector(self.selectorButton), forControlEvents:.TouchUpInside)
+        //
+        //        littlePlanetButton.align(.UnderCentered, relativeTo: hideSelectorButton, padding: 10, width: 35, height: 35)
+        //        littlePlanetButton.addTarget(self, action: #selector(self.littlePlanetButtonTouched), forControlEvents:.TouchUpInside)
         
-//        gyroButton.align(.UnderCentered, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
+        //        gyroButton.align(.UnderCentered, relativeTo: littlePlanetButton, padding: 10, width: 35, height: 35)
         
-//        gyroButton.anchorInCorner(.TopRight, xPad: 20, yPad: 30, width: 40, height: 40)
-//        gyroButton.userInteractionEnabled = true
-//        gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
+        //        gyroButton.anchorInCorner(.TopRight, xPad: 20, yPad: 30, width: 40, height: 40)
+        //        gyroButton.userInteractionEnabled = true
+        //        gyroButton.addTarget(self, action: #selector(self.gyroButtonTouched), forControlEvents:.TouchUpInside)
         
         self.view.addSubview(gyroTypeBtn)
         gyroTypeBtn.anchorInCorner(.TopRight, xPad: 10, yPad: 70, width: 40, height: 40)
@@ -316,9 +312,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         oneTapGestureRecognizer.numberOfTapsRequired = 1
         self.scnView.addGestureRecognizer(oneTapGestureRecognizer)
         
-//                let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
-//                twoTapGestureRecognizer.numberOfTapsRequired = 2
-//                self.view.addGestureRecognizer(twoTapGestureRecognizer)
+        //                let twoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.twoTap(_:)))
+        //                twoTapGestureRecognizer.numberOfTapsRequired = 2
+        //                self.view.addGestureRecognizer(twoTapGestureRecognizer)
         
         let pinchGestureRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(self.pinchGesture(_:)))
         
@@ -376,18 +372,18 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         commentButtonView.align(.ToTheLeftCentered, relativeTo: shareButton, padding: 20, width:commentButtonSize.width, height: commentButtonSize.height)
         commentCountView.align(.ToTheLeftCentered, relativeTo: commentButtonView, padding: 10, width:20, height: 13)
         
-//        viewModel.isPublished.producer.startWithNext { val in
-//            if val {
-//                let url = TextureURL(optographID, side: .Left, size: view.frame.width, face: 0, x: 0, y: 0, d: 1)
-//                self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
-//            } else {
-//                let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
-//                if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
-//                    dispatch_async(dispatch_get_main_queue()) {
-//                        imageView.image = originalImage.resized(.Width, value: view.frame.width)
-//                }
-//            }
-//        }
+        //        viewModel.isPublished.producer.startWithNext { val in
+        //            if val {
+        //                let url = TextureURL(optographID, side: .Left, size: view.frame.width, face: 0, x: 0, y: 0, d: 1)
+        //                self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
+        //            } else {
+        //                let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+        //                if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+        //                    dispatch_async(dispatch_get_main_queue()) {
+        //                        imageView.image = originalImage.resized(.Width, value: view.frame.width)
+        //                }
+        //            }
+        //        }
         
     }
     func adjustDescriptionLabel(recognizer:UITapGestureRecognizer) {
@@ -404,7 +400,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 }, completion:{ val in
                     self.descriptionOpen = true
             })
-        
+            
         } else {
             UIView.animateWithDuration(0.3, animations: {
                 
@@ -714,14 +710,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             gyroTypeBtn.setBackgroundImage(gyroImageInactive, forState: .Normal)
         }
         
-//        if isGyro {
-//            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_inactive"), forState: .Normal)
-//            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_active"), forState: .Normal)
-//            
-//        } else {
-//            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_active"), forState: .Normal)
-//            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_inactive"), forState: .Normal)
-//        }
+        //        if isGyro {
+        //            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_inactive"), forState: .Normal)
+        //            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_active"), forState: .Normal)
+        //
+        //        } else {
+        //            //littlePlanetButton.setBackgroundImage(UIImage(named:"details_littlePlanet_active"), forState: .Normal)
+        //            gyroButton.setBackgroundImage(UIImage(named:"details_gyro_inactive"), forState: .Normal)
+        //        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
