@@ -220,6 +220,13 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
     }
     
     func postComment() {
+        
+        if commentTextField.text != nil {
+            viewModel.commentText = commentTextField.text!
+        } else {
+            viewModel.commentText = ""
+        }
+        
         viewModel.postComment()
             .on(
                 next: self.newCommentAdded,

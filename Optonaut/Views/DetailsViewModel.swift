@@ -34,6 +34,7 @@ class DetailsViewModel {
     let isFollowed = MutableProperty<Bool>(false)
     var isMe = false
     let isThreeRing = MutableProperty<Bool>(false)
+    var commentText = ""
     
     let postingEnabled = MutableProperty<Bool>(false)
     let isPosting = MutableProperty<Bool>(false)
@@ -201,7 +202,7 @@ class DetailsViewModel {
     
     func postComment() -> SignalProducer<Comment, ApiError> {
         print("postComment >>","optographs/\(optographId)/comments",["text": text.value])
-        return ApiService.post("optographs/\(optographId)/comments", parameters: ["text": text.value])
+        return ApiService.post("optographs/\(optographId)/comments", parameters: ["text": commentText])
             .on(
                 started: {
                     self.isPosting.value = true
