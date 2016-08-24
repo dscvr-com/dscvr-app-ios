@@ -10,7 +10,7 @@ import UIKit
 
 class StNavViewController: NavigationController {
     
-    let viewController = StViewController()
+    let viewController = StorytellingCollectionViewController(personID: SessionService.personID)
 
     override func viewDidLoad() {
         super.viewDidLoad()
