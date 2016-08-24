@@ -41,7 +41,7 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
     override func viewDidLoad() {
         super.viewDidLoad();
         
-        self.title = "Optographs";
+        self.title = "Create a Story";
         
         collectionView!.backgroundColor = UIColor(hex:0xf7f7f7);
         collectionView!.alwaysBounceVertical = true;
@@ -130,6 +130,7 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
         if startStory{
             let detailsViewController = DetailsTableViewController(optographId: optographIDs[indexPath.item])
             detailsViewController.cellIndexpath = indexPath.item
+            detailsViewController.isStorytelling = true
             
             print("id: \(optographIDs[indexPath.item])");
             

@@ -34,14 +34,16 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
         
         super.init(frame: frame)
         
-        let whiteBG = UIView(frame: CGRect(x: 0, y: frame.height - 20.0, width: frame.width, height: frame.height))
+        let whiteBG = UIView(frame: CGRect(x: 0, y: frame.height - 40.0, width: frame.width, height: 40.0))
         whiteBG.backgroundColor = UIColor.whiteColor()
         
-//        uploaderLabel?.text = "sampleUser"
-//        uploaderLabel?.sizeToFit()
-//        uploaderLabel?.center = whiteBG.center
-//        
-//        whiteBG.addSubview(uploaderLabel!)
+        let uploaderLabel = UILabel()
+        uploaderLabel.text = "sampleUser"
+        uploaderLabel.font = UIFont(name: "Avenir-Heavy", size: 13.0)
+        uploaderLabel.sizeToFit()
+        uploaderLabel.center = CGPoint(x: frame.width/2, y: whiteBG.frame.height/2)
+        
+        whiteBG.addSubview(uploaderLabel)
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
         
