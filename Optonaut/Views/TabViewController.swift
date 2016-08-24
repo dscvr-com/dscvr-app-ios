@@ -19,6 +19,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     let centerViewController: NavigationController
     let rightViewController: NavigationController
     let leftViewController: NavigationController
+    let fourthViewController: NavigationController
     
     var thisView = UIView()
     var isSettingsViewOpen = MutableProperty<Bool>(false)
@@ -49,6 +50,11 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         size: UIScreen.mainScreen().bounds.size
     )
     
+    var fourthFrame:CGRect   = CGRect (
+        origin: CGPoint(x: 0, y: 0),
+        size: UIScreen.mainScreen().bounds.size
+    )
+    
     let labelRing1 = UILabel()
     let labelRing3 = UILabel()
     let labelManual = UILabel()
@@ -74,6 +80,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         centerViewController = FeedNavViewController()
         rightViewController =  ProfileNavViewController()
         leftViewController = SharingNavViewController()
+        fourthViewController = StNavViewController()
     
         
         super.init(nibName: nil, bundle: nil)
@@ -88,7 +95,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         scrollView = UIScrollView(frame: view.bounds)
         scrollView.backgroundColor = UIColor.blackColor()
-        let scrollWidth: CGFloat  = 3 * self.view.frame.width
+        let scrollWidth: CGFloat  = 4 * self.view.frame.width
         let scrollHeight: CGFloat  = self.view.frame.size.height
         self.scrollView!.contentSize = CGSizeMake(scrollWidth, scrollHeight)
         self.scrollView!.pagingEnabled = true;
@@ -105,6 +112,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         self.scrollView!.addSubview(rightViewController.view)
         rightViewController.didMoveToParentViewController(self)
         
+        self.addChildViewController(fourthViewController)
+        self.scrollView!.addSubview(fourthViewController.view)
+        fourthViewController.didMoveToParentViewController(self)
+        
         adminFrame = leftViewController.view.frame
         adminFrame.origin.x = adminFrame.width
         centerViewController.view.frame = adminFrame
@@ -112,6 +123,11 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         BFrame = centerViewController.view.frame
         BFrame.origin.x = 2*BFrame.width
         rightViewController.view.frame = BFrame
+        
+        fourthFrame = centerViewController.view.frame
+        fourthFrame.origin.x =  3 * BFrame.width
+        fourthViewController.view.frame = fourthFrame
+        
         view.addSubview(scrollView)
         
         scrollView.scrollRectToVisible(adminFrame,animated: false)
