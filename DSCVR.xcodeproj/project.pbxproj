@@ -269,6 +269,10 @@
 		B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */; };
 		B1754D5E1D0E82CD005A3E85 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */; };
 		BB155A961D6DB31A002678A6 /* StoryDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB155A951D6DB31A002678A6 /* StoryDetailsTableViewController.swift */; };
+		BB155A981D6E8C31002678A6 /* StorytellingFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB155A971D6E8C31002678A6 /* StorytellingFeed.swift */; };
+		BB155A9C1D6E8CAB002678A6 /* StorytellingMerged.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB155A9B1D6E8CAB002678A6 /* StorytellingMerged.swift */; };
+		BB155A9E1D6E8EC5002678A6 /* StorytellingLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB155A9D1D6E8EC5002678A6 /* StorytellingLocation.swift */; };
+		BB155AA21D6E8F06002678A6 /* StorytellingPerson.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB155AA11D6E8F06002678A6 /* StorytellingPerson.swift */; };
 		BB49927E1D5452A1006A20D3 /* mapChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB49927B1D5452A1006A20D3 /* mapChildren.swift */; };
 		BB49927F1D5452A1006A20D3 /* StoryObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB49927C1D5452A1006A20D3 /* StoryObject.swift */; };
 		BB4992801D5452A1006A20D3 /* StorytellingChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */; };
@@ -654,6 +658,10 @@
 		B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentTableViewController.swift; sourceTree = "<group>"; };
 		B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
 		BB155A951D6DB31A002678A6 /* StoryDetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StoryDetailsTableViewController.swift; path = Storytelling/StoryDetailsTableViewController.swift; sourceTree = "<group>"; };
+		BB155A971D6E8C31002678A6 /* StorytellingFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingFeed.swift; sourceTree = "<group>"; };
+		BB155A9B1D6E8CAB002678A6 /* StorytellingMerged.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingMerged.swift; sourceTree = "<group>"; };
+		BB155A9D1D6E8EC5002678A6 /* StorytellingLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingLocation.swift; sourceTree = "<group>"; };
+		BB155AA11D6E8F06002678A6 /* StorytellingPerson.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingPerson.swift; sourceTree = "<group>"; };
 		BB49927B1D5452A1006A20D3 /* mapChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mapChildren.swift; sourceTree = "<group>"; };
 		BB49927C1D5452A1006A20D3 /* StoryObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryObject.swift; sourceTree = "<group>"; };
 		BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingChildren.swift; sourceTree = "<group>"; };
@@ -876,6 +884,10 @@
 				BB49927B1D5452A1006A20D3 /* mapChildren.swift */,
 				BB49927C1D5452A1006A20D3 /* StoryObject.swift */,
 				BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */,
+				BB155A971D6E8C31002678A6 /* StorytellingFeed.swift */,
+				BB155A9B1D6E8CAB002678A6 /* StorytellingMerged.swift */,
+				BB155A9D1D6E8EC5002678A6 /* StorytellingLocation.swift */,
+				BB155AA11D6E8F06002678A6 /* StorytellingPerson.swift */,
 			);
 			name = ApiModel;
 			path = APIModel;
@@ -1876,9 +1888,11 @@
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
 				59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */,
 				59E9068B1D23CED30030FC65 /* FacebookShareViewController.swift in Sources */,
+				BB155A981D6E8C31002678A6 /* StorytellingFeed.swift in Sources */,
 				595D87691D083D5E00866FF2 /* SearchViewController.swift in Sources */,
 				8F4186091C552D02009E1E3F /* ProfileTileCollectionViewModel.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
+				BB155AA21D6E8F06002678A6 /* StorytellingPerson.swift in Sources */,
 				8F1E717C1BCAD84D00F3D6FB /* MotionService.swift in Sources */,
 				8FB634801B79AF9F00B48158 /* Comment.swift in Sources */,
 				A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */,
@@ -1916,7 +1930,9 @@
 				8FAB9F2B1B8F01DF00B4C8CB /* ActivityStarTableViewCell.swift in Sources */,
 				BB49927E1D5452A1006A20D3 /* mapChildren.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
+				BB155A9C1D6E8CAB002678A6 /* StorytellingMerged.swift in Sources */,
 				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
+				BB155A9E1D6E8EC5002678A6 /* StorytellingLocation.swift in Sources */,
 				8F707C161C5A2A17000AF7BF /* TableViewResults.swift in Sources */,
 				8F23AA571BFF31EC008926A8 /* Migration0001.swift in Sources */,
 				8FAB9F521B8F01DF00B4C8CB /* EditProfileViewController.swift in Sources */,
@@ -2095,7 +2111,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2127,7 +2143,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "b8db41f4-fc05-474d-b2ac-40350fa7ea61";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2142,7 +2158,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2162,7 +2178,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "b8db41f4-fc05-474d-b2ac-40350fa7ea61";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

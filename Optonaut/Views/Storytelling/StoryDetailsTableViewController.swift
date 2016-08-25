@@ -167,11 +167,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         print("nodes: \(nodes.count)")
         
-        ApiService<StorytellingResponse>.post("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
+        ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
             print("data story id: \(data.data)");
             print("user: \(SessionService.personID)")
-            
-            
         }).start();
     }
     

@@ -17,7 +17,7 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
     private let iconView = UILabel()
     
     private let loadingView = UIActivityIndicatorView()
-    private let imageView = PlaceholderImageView()
+    var imageView = PlaceholderImageView()
     
     private let viewModel = ProfileTileCollectionViewModel()
     
@@ -26,6 +26,7 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
     private let whiteBackground = UIView()
     private let deleteButton = UIButton()
     weak var navigationController: NavigationController?
+    weak var imageURL = NSURL()
 //    weak var uploaderLabel = UILabel()
     
     var refreshNotification = NotificationSignal<Void>()
@@ -34,45 +35,47 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
         
         super.init(frame: frame)
         
-        let whiteBG = UIView(frame: CGRect(x: 0, y: frame.height - 40.0, width: frame.width, height: 40.0))
-        whiteBG.backgroundColor = UIColor.whiteColor()
-        
-        let uploaderLabel = UILabel()
-        uploaderLabel.text = "sampleUser"
-        uploaderLabel.font = UIFont(name: "Avenir-Heavy", size: 13.0)
-        uploaderLabel.sizeToFit()
-        uploaderLabel.center = CGPoint(x: frame.width/2, y: whiteBG.frame.height/2)
-        
-        whiteBG.addSubview(uploaderLabel)
+//        let whiteBG = UIView(frame: CGRect(x: 0, y: frame.height - 40.0, width: frame.width, height: 40.0))
+//        whiteBG.backgroundColor = UIColor.whiteColor()
+//        
+//        let uploaderLabel = UILabel()
+//        uploaderLabel.text = "sampleUser"
+//        uploaderLabel.font = UIFont(name: "Avenir-Heavy", size: 13.0)
+//        uploaderLabel.sizeToFit()
+//        uploaderLabel.center = CGPoint(x: frame.width/2, y: whiteBG.frame.height/2)
+//        
+//        whiteBG.addSubview(uploaderLabel)
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
         
         imageView.layer.cornerRadius = 25.0;
         imageView.layer.borderColor = UIColor.clearColor().CGColor
         imageView.layer.masksToBounds = true;
-
-        imageView.backgroundColor = UIColor.blackColor()
         
-        imageView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
-        viewModel.uploadStatus.producer.equalsTo(.Uploaded)
-            .combineLatestWith(viewModel.optographID.producer)
-            .delayLatestUntil(viewModel.isStitched.producer)
-            .skipRepeats { $0.0 == $1.0 && $0.1 == $1.1 }
-            .startWithNext { [weak self] (isUploaded, optographID) in
-                if isUploaded {
-                    let url = TextureURL(optographID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
-                    print("cell",url)
-                    self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
-                } else {
-                    let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
-                    print("cell1",url)
-                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self?.imageView.image = originalImage.resized(.Width, value: frame.width)
-                        }
-                    }
-                }
-        }
+//        imageView.kf_setImageWithURL(imageURL!)
+
+//        imageView.backgroundColor = UIColor.blackColor()
+        
+//        imageView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
+//        viewModel.uploadStatus.producer.equalsTo(.Uploaded)
+//            .combineLatestWith(viewModel.optographID.producer)
+//            .delayLatestUntil(viewModel.isStitched.producer)
+//            .skipRepeats { $0.0 == $1.0 && $0.1 == $1.1 }
+//            .startWithNext { [weak self] (isUploaded, optographID) in
+//                if isUploaded {
+//                    let url = TextureURL(optographID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
+//                    print("cell",url)
+//                    self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
+//                } else {
+//                    let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+//                    print("cell1",url)
+//                    if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+//                        dispatch_async(dispatch_get_main_queue()) {
+//                            self?.imageView.image = originalImage.resized(.Width, value: frame.width)
+//                        }
+//                    }
+//                }
+//        }
         contentView.addSubview(imageView)
         
         iconView.frame = CGRect(x: frame.width - 32, y: 14, width: 18, height: 18)
@@ -110,7 +113,7 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
                 }
         }
         
-        contentView.addSubview(whiteBG)
+//        contentView.addSubview(whiteBG)
         
         //deleteButton.rac_hidden <~ viewModel.userId.producer.map(negate)
     }

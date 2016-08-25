@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class StorytellingCollectionViewController: UICollectionViewController,TabControllerDelegate {
     
@@ -17,13 +18,11 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
     private var feedIDs: [UUID] = [];
     
     private var storyIDs: [UUID] = []; //user stories
-    private var storyFeed: [UUID] = []; //feed available stories
+    private var storyFeed: [StorytellingFeed] = []; //feed available stories
     
     var startStory = false;
     var startOpto = ""
     var delegate: FPOptographsCollectionViewControllerDelegate?
-    
-    
     
     init(personID: UUID) {
         
@@ -79,8 +78,8 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
                         .filter{ $0.isPublished || $0.isUploading}
                         .map{$0.ID}
                     
-                    print("over here");
-                    print("id count: \(strongSelf.optographIDs.count)");
+//                    print("over here");
+//                    print("id count: \(strongSelf.optographIDs.count)");
                     strongSelf.feedsModel.isActive.value = true;
                     strongSelf.feedsModel.refresh()
                     strongSelf.collectionView?.reloadData();
@@ -98,16 +97,34 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
                 print("reload data =======")
                 
                 if let strongSelf = self {
-                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-                    strongSelf.feedIDs = results.models.map { $0.ID }
-                    strongSelf.optographIDs = strongSelf.optographIDs + results.models.map { $0.ID }
-                    print("feedIDs: \(strongSelf.optographIDs.count)");
-                    
-                    strongSelf.collectionView!.reloadData()
+//                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+//                    strongSelf.feedIDs = results.models.map { $0.ID }
+//                    strongSelf.optographIDs = strongSelf.optographIDs + results.models.map { $0.ID }
+////                    print("feedIDs: \(strongSelf.optographIDs.count)");
+//                    
+//                    strongSelf.collectionView!.reloadData()
                     
                 }
                 })
             .start()
+        
+        /*
+        ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
+            print("data story id: \(data.data)");
+            print("user: \(SessionService.personID)")
+        }).start();
+        */
+        
+        ApiService<StorytellingMerged>.getForGate("story/merged/"+SessionService.personID).on(next: { data in
+            print("feed count: \(data.feed.count)")
+            print("user count: \(data.user.count)")
+            
+            self.storyFeed = data.feed
+            
+            print("placeholder: \(data.feed[0].placeholder)")
+            self.collectionView?.reloadData()
+            
+            }).start()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -136,14 +153,14 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
 
     //UICollectionView Data Source
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return 2;
+        return 1;
     }
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 //        return optographIDs.count;
         
         
-        return 5;
+        return storyFeed.count;
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -153,18 +170,20 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         if  indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! StorytellingCollectionViewCell;
             
-            storyCell = cell
-            
             cell.layer.shadowColor = UIColor.grayColor().CGColor;
             cell.layer.shadowOffset = CGSizeMake(0, 2.0);
             cell.layer.shadowRadius = 2.0;
             cell.layer.shadowOpacity = 1.0;
             cell.layer.masksToBounds = false;
             cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
+            
+            cell.imageView.kf_setImageWithURL(NSURL(string: self.storyFeed[indexPath.row].placeholder)!)
+            print("placeholder image: \(self.storyFeed[indexPath.row].placeholder)")
+            
+            storyCell = cell
         }
         else{
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell-feed", forIndexPath: indexPath) as! ProfileTileCollectionViewCell;
-            storyCell = cell
             
             cell.layer.shadowColor = UIColor.grayColor().CGColor;
             cell.layer.shadowOffset = CGSizeMake(0, 2.0);
@@ -172,6 +191,8 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
             cell.layer.shadowOpacity = 1.0;
             cell.layer.masksToBounds = false;
             cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
+            
+            storyCell = cell
         }
         
         
@@ -264,10 +285,10 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         var referenceSize = CGSize()
         
         if section == 0{
-            referenceSize = CGSizeMake(self.view.width, 0)
+            referenceSize = CGSizeMake(self.view.width, 200)
         }
         else{
-            referenceSize = CGSizeMake(self.view.width, 200)
+            referenceSize = CGSizeMake(self.view.width, 0)
         }
         
         return referenceSize
@@ -279,10 +300,10 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         var referenceSize = CGSize()
         
         if section == 0{
-            referenceSize = CGSizeMake(self.view.width, 0)
+            referenceSize = CGSizeMake(self.view.width, 25.0)
         }
         else{
-            referenceSize = CGSizeMake(self.view.width, 25.0)
+            referenceSize = CGSizeMake(self.view.width, 0)
         }
         
         return referenceSize
@@ -302,7 +323,7 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         
         if indexPath.section == 0 {
             let width = ((self.view.frame.size.width)/3) - 20;
-            varyingSize = CGSize(width: width, height: width + 40);
+            varyingSize = CGSize(width: width, height: width);
         }
         
         else{
