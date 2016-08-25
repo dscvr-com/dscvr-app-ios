@@ -29,6 +29,7 @@ class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControlle
     private let whiteBackground = UIView()
     private let deleteButton = UIButton()
     weak var navigationController: NavigationController?
+    weak var imageURL = NSURL()
     
     var refreshNotification = NotificationSignal<Void>()
     
