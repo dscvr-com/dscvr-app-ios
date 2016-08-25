@@ -911,7 +911,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //        print("timeDiff \(timeDiff)")
         
         
-        //thadzNote for marc: pagkatapos nya pumasok dun sa next optograph, di nya madetect yung backpin
+        //thadzNote for marc: pagkatapos nya pumasok dun sa next optograph, di nya madetect yung backpin na nilagay ko
         //gamit yung
         //if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) 
         //condition sa
@@ -919,7 +919,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         if (last_optographID == nodeObject.optographID) {
             if inFrustrum{
-                print("inFrustrum")
+//                print("inFrustrum")
             // reset if difference is above 3 seconds
                 if timeDiff > 3.0 {
                     countDown = 3
@@ -940,7 +940,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     // reset countdown
                     countDown = 3
                     if inFrustrum{
-                        print("inFrustum")
+                        print("inFrustum: \(nodeObject.optographID)")
                         isInsideStory = true
                         
                         //check if node object is equal to home optograph id
@@ -983,12 +983,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                         }
                     }
                     else{
-                        print("!inFrustum")
+//                        print("!inFrustum")
                     }
                 }
             }
             else{
-                print("!inFrustrum")
+//                print("!inFrustrum")
                 countDown = 3
             }
             

@@ -184,12 +184,12 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         if  indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! StorytellingCollectionViewCell;
             
-            cell.layer.shadowColor = UIColor.grayColor().CGColor;
-            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
-            cell.layer.shadowRadius = 2.0;
-            cell.layer.shadowOpacity = 1.0;
-            cell.layer.masksToBounds = false;
-            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
+//            cell.layer.shadowColor = UIColor.grayColor().CGColor;
+//            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
+//            cell.layer.shadowRadius = 2.0;
+//            cell.layer.shadowOpacity = 1.0;
+//            cell.layer.masksToBounds = false;
+//            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
             
             cell.imageView.kf_setImageWithURL(NSURL(string: self.storyFeed[indexPath.row].placeholder)!)
             print("placeholder image: \(self.storyFeed[indexPath.row].placeholder)")
@@ -199,12 +199,12 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         else{
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell-feed", forIndexPath: indexPath) as! ProfileTileCollectionViewCell;
             
-            cell.layer.shadowColor = UIColor.grayColor().CGColor;
-            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
-            cell.layer.shadowRadius = 2.0;
-            cell.layer.shadowOpacity = 1.0;
-            cell.layer.masksToBounds = false;
-            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
+//            cell.layer.shadowColor = UIColor.grayColor().CGColor;
+//            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
+//            cell.layer.shadowRadius = 2.0;
+//            cell.layer.shadowOpacity = 1.0;
+//            cell.layer.masksToBounds = false;
+//            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
             
             storyCell = cell
         }

@@ -48,8 +48,8 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
         
-        imageView.layer.cornerRadius = 25.0;
-        imageView.layer.borderColor = UIColor.clearColor().CGColor
+//        imageView.layer.cornerRadius = 25.0;
+//        imageView.layer.borderColor = UIColor.clearColor().CGColor
         imageView.layer.masksToBounds = true;
         
 //        imageView.kf_setImageWithURL(imageURL!)
@@ -89,7 +89,7 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.7)
         loadingView.hidesWhenStopped = true
         loadingView.rac_animating <~ viewModel.isStitched.producer.map(negate)
-        contentView.addSubview(loadingView)
+//        contentView.addSubview(loadingView)
         
         contentView.backgroundColor = UIColor(0xcacaca)
         

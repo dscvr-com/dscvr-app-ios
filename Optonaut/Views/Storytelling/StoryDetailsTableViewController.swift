@@ -167,10 +167,18 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         print("nodes: \(nodes.count)")
         
-        ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
-            print("data story id: \(data.data)");
-            print("user: \(SessionService.personID)")
-        }).start();
+        if nodes.count > 0{
+            print("pass data")
+            ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
+                print("data story id: \(data.data)");
+                print("user: \(SessionService.personID)")
+            }).start();
+        }
+        else{
+            print("nodes count is zero")
+        }
+        
+        
     }
     
     func optographSelected(optographID: String) {

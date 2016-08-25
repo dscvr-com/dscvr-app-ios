@@ -638,6 +638,19 @@ class CubeRenderDelegate: RenderDelegate {
             
 //            print("marknode.name!: \(marknode.name)")
             
+            let backNode = SCNNode()
+            
+            /*
+            node x: 1.11453
+            node y: -0.0
+            node z: -0.212028
+            posi x: 0.191026
+            posi y: 0.875804
+            posi z: -0.443256
+            */
+            
+            
+            
             if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) {
           //      let angle = self.cameraNode.presentationNode.rotation.w * self.cameraNode.presentationNode.rotation.y
            // let elevation = self.cameraNode.rotation.w
