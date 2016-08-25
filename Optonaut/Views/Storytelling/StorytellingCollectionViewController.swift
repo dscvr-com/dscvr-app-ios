@@ -18,7 +18,7 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
     private var feedIDs: [UUID] = [];
     
     private var storyIDs: [UUID] = []; //user stories
-    private var storyFeed: [StorytellingFeed] = []; //feed available stories
+    private var storyFeed: [OptographApiModel] = []; //feed available stories
     
     var startStory = false;
     var startOpto = ""
@@ -64,49 +64,49 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: "footerView")
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerView")
         
-        collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID);
-        
-        collectionViewModel.results.producer
-            .filter{$0.changed}
-            .delayAllUntil(collectionViewModel.isActive.producer)
-            .observeOnMain()
-            .on(next: { [weak self] results in
-                
-                if let strongSelf = self {
-                    
-                    strongSelf.optographIDs = results.models
-                        .filter{ $0.isPublished || $0.isUploading}
-                        .map{$0.ID}
-                    
-//                    print("over here");
-//                    print("id count: \(strongSelf.optographIDs.count)");
-                    strongSelf.feedsModel.isActive.value = true;
-                    strongSelf.feedsModel.refresh()
-                    strongSelf.collectionView?.reloadData();
-                    strongSelf.collectionViewModel.isActive.value = false;
-                }
-                })
-            .start();
-        
-        feedsModel.results.producer
-            .filter {return $0.changed }
-            //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
-            .delayAllUntil(feedsModel.isActive.producer)
-            .observeOnMain()
-            .on(next: { [weak self] results in
-                print("reload data =======")
-                
-                if let strongSelf = self {
-//                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-//                    strongSelf.feedIDs = results.models.map { $0.ID }
-//                    strongSelf.optographIDs = strongSelf.optographIDs + results.models.map { $0.ID }
-////                    print("feedIDs: \(strongSelf.optographIDs.count)");
+//        collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID);
+//        
+//        collectionViewModel.results.producer
+//            .filter{$0.changed}
+//            .delayAllUntil(collectionViewModel.isActive.producer)
+//            .observeOnMain()
+//            .on(next: { [weak self] results in
+//                
+//                if let strongSelf = self {
 //                    
-//                    strongSelf.collectionView!.reloadData()
-                    
-                }
-                })
-            .start()
+//                    strongSelf.optographIDs = results.models
+//                        .filter{ $0.isPublished || $0.isUploading}
+//                        .map{$0.ID}
+//                    
+////                    print("over here");
+////                    print("id count: \(strongSelf.optographIDs.count)");
+////                    strongSelf.feedsModel.isActive.value = true;
+////                    strongSelf.feedsModel.refresh()
+//                    strongSelf.collectionView?.reloadData();
+//                    strongSelf.collectionViewModel.isActive.value = false;
+//                }
+//                })
+//            .start();
+        
+//        feedsModel.results.producer
+//            .filter {return $0.changed }
+//            //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
+//            .delayAllUntil(feedsModel.isActive.producer)
+//            .observeOnMain()
+//            .on(next: { [weak self] results in
+//                print("reload data =======")
+//                
+//                if let strongSelf = self {
+////                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+////                    strongSelf.feedIDs = results.models.map { $0.ID }
+////                    strongSelf.optographIDs = strongSelf.optographIDs + results.models.map { $0.ID }
+//////                    print("feedIDs: \(strongSelf.optographIDs.count)");
+////                    
+////                    strongSelf.collectionView!.reloadData()
+//                    
+//                }
+//                })
+//            .start()
         
         /*
         ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
@@ -118,10 +118,24 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         ApiService<StorytellingMerged>.getForGate("story/merged/"+SessionService.personID).on(next: { data in
             print("feed count: \(data.feed.count)")
             print("user count: \(data.user.count)")
+            print("sessionID: \(SessionService.personID)")
             
-            self.storyFeed = data.feed
             
-            print("placeholder: \(data.feed[0].placeholder)")
+            for user in data.user{
+                Models.optographs.touch(user)
+            }
+            
+//            Models.optographs.touch(data.feed)
+            
+            self.storyFeed = data.user
+//
+//            let dataToInsert:Optograph = data.feed[0]
+//            
+//            Models.optographs.touch(dataToInsert).insertOrUpdate()
+            
+//            print("placeholder: \(data.feed[0].placeholder)")
+//            print("indexValue: \(self.storyFeed[0].story?.children![0].story_object_media_additional_data)")
+//            print("locationValue: \(self.storyFeed[0].location)")
             self.collectionView?.reloadData()
             
             }).start()
@@ -131,8 +145,8 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         super.viewWillAppear(animated);
         print("did appear");
         
-        collectionViewModel.isActive.value = true;
-        collectionViewModel.refresh();
+//        collectionViewModel.isActive.value = true;
+//        collectionViewModel.refresh();
     }
     
     func showDetailsViewController(){
@@ -215,6 +229,14 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
     //UICollectionView Delegate
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
+        let startOptograph = self.storyFeed[indexPath.row].ID
+        print("startOpto: \(startOptograph)")
+        
+        let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
+        detailsViewController.cellIndexpath = indexPath.item
+        detailsViewController.isStory = true
+        detailsViewController.storyNodes = self.storyFeed[indexPath.row].story!.children!
+        navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
     //UICollectionViewFlowLayout Delegate

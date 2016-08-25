@@ -12,7 +12,7 @@ import ObjectMapper
 struct StoryObject: Mappable {
     var status: String = ""
     var message:  String = ""
-    var children: mapChildren?
+    var children: [StorytellingChildren]?
     
     init?(_ map: Map) {
     
@@ -26,6 +26,6 @@ struct StoryObject: Mappable {
 //    }
     
     mutating func mapping(map: Map) {
-        children <- map["story"]
+        children <- map["children"]
     }
 }

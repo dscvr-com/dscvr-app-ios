@@ -19,7 +19,7 @@ import ImageIO
 
 let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
 
-class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate{
+class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate{
     
     private let viewModel: DetailsViewModel!
     
@@ -39,6 +39,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
+    var countDown:Int = 3
+    var last_optographID:UUID = ""
+    private var lastElapsedTime = CACurrentMediaTime() ;
+    
+    
     
     var optographTopPick:NSArray = []
     
@@ -84,6 +89,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var exportButton = UIButton()
     var descriptionOpen:Bool = false
     
+    var isStory: Bool = false
+    var storyNodes: [StorytellingChildren] = []
+    private var isInsideStory: Bool = false
+    
     required init(optoList:[UUID]) {
         
         optographID = optoList[0]
@@ -125,6 +134,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
         renderDelegate.scnView = scnView
+        renderDelegate.delegate = self
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
         scnView.backgroundColor = .clearColor()
@@ -755,6 +765,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         super.viewDidDisappear(animated)
         
         //Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID, "optograph_description" : viewModel.optograph.text])
+        
         Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": "", "optograph_description" : ""])
     }
     
@@ -833,6 +844,36 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 cache.forget(index)
             }
         }
+        
+        if isInsideStory{
+            
+        }
+        else{
+            if isStory{
+                for nodes in storyNodes{
+                    
+                    if nodes.story_object_position.count >= 2{
+                        let nodeItem = StorytellingObject()
+                        
+                        let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
+                        let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
+                        
+                        nodeItem.objectRotation = nodeRotation
+                        nodeItem.objectVector3 = nodeTranslation
+                        nodeItem.optographID = nodes.story_object_media_additional_data
+                        
+                        print("node id: \(nodeItem.optographID)")
+                        
+                        renderDelegate.addNodeFromServer(nodeItem)
+
+                    }
+                    
+                    
+                    print("counts: \(nodes.story_object_position.count)")
+                    print("counts: \(nodes.story_object_rotation.count)")
+                }
+            }
+        }
     }
     
     func willDisplay() {
@@ -854,6 +895,108 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         rotationAlert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
         rotationAlert!.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
         self.navigationController?.presentViewController(rotationAlert!, animated: true, completion: nil)
+    }
+    
+    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3) {
+        
+    }
+    
+    func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
+//        print("nodeObject: \(nodeObject.optographID)")
+        
+        
+        let mediaTime = CACurrentMediaTime()
+//        print("mediaTime \(mediaTime)")
+        var timeDiff = mediaTime - lastElapsedTime
+//        print("timeDiff \(timeDiff)")
+        
+        
+        //thadzNote for marc: pagkatapos nya pumasok dun sa next optograph, di nya madetect yung backpin
+        //gamit yung
+        //if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) 
+        //condition sa
+        //override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval)
+        
+        if (last_optographID == nodeObject.optographID) {
+            if inFrustrum{
+                print("inFrustrum")
+            // reset if difference is above 3 seconds
+                if timeDiff > 3.0 {
+                    countDown = 3
+                    timeDiff = 0.0
+                    lastElapsedTime = mediaTime
+                }
+                
+                // per second countdown
+                if timeDiff > 1.0  {
+                    countDown -= 1
+                    print("countdown \(countDown)")
+                    lastElapsedTime = mediaTime
+                    
+                }
+                
+                
+                if countDown == 0 {
+                    // reset countdown
+                    countDown = 3
+                    if inFrustrum{
+                        print("inFrustum")
+                        isInsideStory = true
+                        
+                        //check if node object is equal to home optograph id
+                        if nodeObject.optographID == optographID{
+                            dispatch_async(dispatch_get_main_queue(), {
+                                let cubeImageCache = self.imageCache.getStory(nodeObject.optographID, side: .Left)
+                                self.setCubeImageCache(cubeImageCache)
+                                
+                                for nodes in self.storyNodes{
+                                    if nodes.story_object_position.count >= 2{
+                                        let nodeItem = StorytellingObject()
+                                        
+                                        let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
+                                        let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
+                                        
+                                        nodeItem.objectRotation = nodeRotation
+                                        nodeItem.objectVector3 = nodeTranslation
+                                        nodeItem.optographID = nodes.story_object_media_additional_data
+                                        
+                                        print("node id: \(nodeItem.optographID)")
+                                        
+                                        self.renderDelegate.addNodeFromServer(nodeItem)
+                                        
+                                    }
+                                }
+                                
+                                self.renderDelegate.removeAllNodes(self.optographID)
+                            })
+                        }
+                            
+                        //else move forward and place a back pin at designated vector3
+                        else{
+                            dispatch_async(dispatch_get_main_queue(), {
+                                let cubeImageCache = self.imageCache.getStory(nodeObject.optographID, side: .Left)
+                                self.setCubeImageCache(cubeImageCache)
+                                
+                                self.renderDelegate.removeAllNodes(nodeObject.optographID)
+                                self.renderDelegate.addBackPin(self.optographID)
+                            })
+                        }
+                    }
+                    else{
+                        print("!inFrustum")
+                    }
+                }
+            }
+            else{
+                print("!inFrustrum")
+                countDown = 3
+            }
+            
+            
+        }
+        else{ // this is a new id
+            last_optographID = nodeObject.optographID
+        }
     }
     
 }

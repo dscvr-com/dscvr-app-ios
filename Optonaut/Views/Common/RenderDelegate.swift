@@ -55,6 +55,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         
     
         cameraCrosshair.position = SCNVector3(x: 0, y: 0, z: 0)
+        cameraCrosshair.name = "cameraCrosshair"
         scene.rootNode.addChildNode(cameraCrosshair)
         
     
@@ -142,7 +143,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 }
 
 protocol CubeRenderDelegateDelegate {
-    func didEnterFrustrum(markerName: String, inFrustrum: Bool)
+    func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool)
     func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3)
 }
 
@@ -314,6 +315,22 @@ class CubeRenderDelegate: RenderDelegate {
         return [SCNNode](sorted.prefix(k))
     }
     
+    func removeAllNodes(nodeName: String){
+        scene.rootNode.enumerateChildNodesUsingBlock{
+            (node, stop) -> Void in
+            if node.name == nodeName{
+                node.removeFromParentNode()
+            }
+        }
+    }
+    
+    func listAllNodes(){
+        scene.rootNode.enumerateChildNodesUsingBlock{
+            (node, stop) -> Void in
+            print("node named: \(node.name)")
+        }
+    }
+    
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
         if let item = planes[index] {
             //print("settex \(id) \(index)")
@@ -354,6 +371,9 @@ class CubeRenderDelegate: RenderDelegate {
         print("node x: \(markNode.eulerAngles.x)")
         print("node y: \(markNode.eulerAngles.y)")
         print("node z: \(markNode.eulerAngles.z)")
+        print("posi x: \(markNode.position.x)")
+        print("posi y: \(markNode.position.y)")
+        print("posi z: \(markNode.position.z)")
         
         markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
         
@@ -367,7 +387,7 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     
-    func addNodeFromServer(translation: SCNVector3, rotation: SCNVector3){
+    func addNodeFromServer(nodeData: StorytellingObject){
         
         print("addNodeFromServer(translation: SCNVector3, rotation: SCNVector3)")
         
@@ -378,16 +398,44 @@ class CubeRenderDelegate: RenderDelegate {
         circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         let markNode = SCNNode(geometry: planeGeo)
         
-        markNode.position = translation
-        markNode.eulerAngles = rotation
+        markNode.position = nodeData.objectVector3
+        markNode.eulerAngles = nodeData.objectRotation
         
         markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
+        
+        markNode.name = nodeData.optographID
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
     }
     
-    
+    func addBackPin(homeID: String){
+        let planeGeo = SCNPlane(width: 0.1, height: 0.1)
+        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        
+        let circleGeo = SCNSphere(radius: 0.01)
+        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        let markNode = SCNNode(geometry: planeGeo)
+        
+        /*
+        node x: 1.11453
+        node y: -0.0
+        node z: -0.212028
+        posi x: 0.191026
+        posi y: 0.875804
+        posi z: -0.443256
+        */
+        
+        markNode.position = SCNVector3Make(0.191026, 0.875804, -0.443256)
+        markNode.eulerAngles = SCNVector3Make(1.11453, -0.0, -0.212028)
+        
+        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
+        
+        markNode.name = homeID
+        
+        scene.rootNode.addChildNode(markNode)
+        markers.append(markNode)
+    }
     
     
     
@@ -580,7 +628,15 @@ class CubeRenderDelegate: RenderDelegate {
      //   print("next point \(nextpoint)")
         
         
+        
         for marknode in markers {
+            let node = StorytellingObject()
+            
+            node.objectRotation = marknode.eulerAngles
+            node.objectVector3 = marknode.position
+            node.optographID = marknode.name!
+            
+//            print("marknode.name!: \(marknode.name)")
             
             if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) {
           //      let angle = self.cameraNode.presentationNode.rotation.w * self.cameraNode.presentationNode.rotation.y
@@ -597,10 +653,10 @@ class CubeRenderDelegate: RenderDelegate {
 //                  
 //                    
 //                }
-          delegate!.didEnterFrustrum("", inFrustrum: true)
+          delegate!.didEnterFrustrum(node, inFrustrum: true)
         }
             else{
-                delegate!.didEnterFrustrum("", inFrustrum: false)
+                delegate!.didEnterFrustrum(node, inFrustrum: false)
             }
         }
  

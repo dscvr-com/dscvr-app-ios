@@ -121,32 +121,32 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         logRetain()
     }
     
-    func receiveStory (){
-        ApiService<StoryObject>.getForGate("story/62f1c6cb-cb90-4ade-810d-c6c1bbeee85a", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
-            story in
-            
-            self.storyTellingData = story.children;
-            self.mapChild = self.storyTellingData!.children![0];
-            
-            //            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
-            //            self.setCubeImageCache(cubeImageCache)
-            
-            let nodeTranslation = SCNVector3Make(Float(self.mapChild!.story_object_position[0])!, Float(self.mapChild!.story_object_position[1])!, Float(self.mapChild!.story_object_position[2])!)
-            
-            let nodeRotation = SCNVector3Make(Float(self.mapChild!.story_object_rotation[0])!, Float(self.mapChild!.story_object_rotation[1])!, Float(self.mapChild!.story_object_rotation[2])!)
-            
-            print("node translation: \(nodeTranslation.x)");
-            print("node rotation: \(nodeRotation.x)");
-            
-            self.renderDelegate.addNodeFromServer(nodeTranslation, rotation: nodeRotation)
-            
-            //            for data in story.children!{
-            //                for child in data.children!{
-            //                    print("child id: \(child.story_object_story_id)");
-            //                }
-            //            }
-        }).start();
-    }
+//    func receiveStory (){
+//        ApiService<StoryObject>.getForGate("story/62f1c6cb-cb90-4ade-810d-c6c1bbeee85a", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
+//            story in
+//            
+//            self.storyTellingData = story.children;
+//            self.mapChild = self.storyTellingData!.children![0];
+//            
+//            //            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
+//            //            self.setCubeImageCache(cubeImageCache)
+//            
+//            let nodeTranslation = SCNVector3Make(Float(self.mapChild!.story_object_position[0])!, Float(self.mapChild!.story_object_position[1])!, Float(self.mapChild!.story_object_position[2])!)
+//            
+//            let nodeRotation = SCNVector3Make(Float(self.mapChild!.story_object_rotation[0])!, Float(self.mapChild!.story_object_rotation[1])!, Float(self.mapChild!.story_object_rotation[2])!)
+//
+//            print("node translation: \(nodeTranslation.x)");
+//            print("node rotation: \(nodeRotation.x)");
+//            
+//            self.renderDelegate.addNodeFromServer(nodeTranslation, rotation: nodeRotation)
+//            
+//            //            for data in story.children!{
+//            //                for child in data.children!{
+//            //                    print("child id: \(child.story_object_story_id)");
+//            //                }
+//            //            }
+//        }).start();
+//    }
     
     func sendOptographData(){
         
@@ -205,19 +205,17 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
     }
     
-    func didEnterFrustrum(markerName: String, inFrustrum:Bool) {
-        
-        
+    func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
         //        markerNameLabel.hidden = false
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)){
             dispatch_async(dispatch_get_main_queue()){
                 if inFrustrum {
-                    self.markerNameLabel.text = markerName
-                    self.markerNameLabel.sizeToFit()
-                    self.markerNameLabel.center = CGPoint(x: self.view.center.x, y: 70.0)
-                    
-                    self.markerNameLabel.hidden = false
-                    print("markerName: \(self.markerNameLabel.text!)")
+//                    self.markerNameLabel.text = markerName
+//                    self.markerNameLabel.sizeToFit()
+//                    self.markerNameLabel.center = CGPoint(x: self.view.center.x, y: 70.0)
+//                    
+//                    self.markerNameLabel.hidden = false
+//                    print("markerName: \(self.markerNameLabel.text!)")
                     
                     
                     //                    if (self.markerNameLabel.text! == "Text Item2") {
@@ -246,8 +244,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 }
             }
         }
-        
-        
     }
     
     override func viewDidLoad() {
