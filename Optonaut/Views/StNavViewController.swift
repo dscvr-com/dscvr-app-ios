@@ -15,14 +15,6 @@ class StNavViewController: NavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewController.navigationItem.title = "Story"
-        
-        navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont(name: "Avenir-Book", size: 20)!]
-        
-        navigationBarHidden = false
-        navigationBar.translucent = false
-        navigationBar.barTintColor = UIColor.whiteColor()
-        
         pushViewController(viewController, animated: true)
 
         // Do any additional setup after loading the view.
