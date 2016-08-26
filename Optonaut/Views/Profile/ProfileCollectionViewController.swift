@@ -470,7 +470,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 cell.backgroundColor = UIColor.blackColor()
             }
             
-            
             return cell
         }
     }
@@ -523,7 +522,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if indexPath.item % 3 == 1 && indexPath.item > optographIDs.count - 7 {
             collectionViewModel.loadMoreNotification.notify(())
         }
-        
     }
     
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
