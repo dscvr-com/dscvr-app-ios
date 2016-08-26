@@ -17,7 +17,7 @@ import SwiftyUserDefaults
 import MediaPlayer
 import AVKit
 
-class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate, FPOptographsCollectionViewControllerDelegate, MPMediaPickerControllerDelegate {
+class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate, FPOptographsCollectionViewControllerDelegate, MPMediaPickerControllerDelegate, UITextFieldDelegate {
 
     private let viewModel: DetailsViewModel!
     
@@ -100,6 +100,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     var player:AVPlayer?
     
     var isStorytelling:Bool = false
+    
+    let textFieldContainer = UIView()
+    let inputTextField = UITextField()
     
     required init(optographId:UUID) {
         
@@ -553,6 +556,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         dismissButton.backgroundColor = UIColor.whiteColor()
         dismissButton.addTarget(self, action: #selector(dismissStorytelling), forControlEvents: .TouchUpInside)
         
+        textFieldContainer.frame = CGRect(x: 0, y: self.view.frame.size.height, width: self.view.frame.size.width, height: 50.0)
+        textFieldContainer.backgroundColor = UIColor.blackColor().alpha(0.3)
+        inputTextField.frame = CGRect(x: 5.0, y: 5.0, width: self.view.frame.size.width - 10.0, height: 40.0)
+        inputTextField.delegate = self
+        textFieldContainer.addSubview(inputTextField)
+        
         let rightBarButton = UIBarButtonItem(customView: dismissButton)
         self.navigationItem.rightBarButtonItem = rightBarButton
         
@@ -562,7 +571,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         self.view.addSubview(optoPin)
         self.view.addSubview(textPin)
         self.view.addSubview(doneButton)
+        self.view.addSubview(textFieldContainer)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide), name: UIKeyboardWillHideNotification, object: nil)
     }
+
     
     func prepareStoryTellingHUD(){
         let targetOverlay = UIView(frame: CGRect(x: 0, y: self.view.frame.size.height - 225, width: self.view.frame.size.width, height: 125))
@@ -712,27 +726,66 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
     }
     
+    func keyboardWillHide(notification:NSNotification){
+        textFieldContainer.frame = CGRect(x: 0.0, y: self.view.frame.size.height, width: textFieldContainer.frame.size.width, height: textFieldContainer.frame.size.height)
+    }
+    
+    func keyboardWillShow(notification:NSNotification) {
+        print("func keyboardWillShow(notification:NSNotification)")
+        
+        let userInfo:NSDictionary = notification.userInfo!
+        let keyboardFrame:NSValue = userInfo.valueForKey(UIKeyboardFrameEndUserInfoKey) as! NSValue
+        let keyboardRectangle = keyboardFrame.CGRectValue()
+        let keyboardHeight = keyboardRectangle.height
+        
+        textFieldContainer.frame = CGRect(x: 0.0, y: self.view.frame.size.height - keyboardHeight - 50.0, width: textFieldContainer.frame.size.width, height: textFieldContainer.frame.size.height)
+    }
     
     //create a function with button tag switch for color changes
     func textButtonDown(){
         renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-        nodeItem.objectType = "Image"
+        nodeItem.objectType = "TXT"
         
-        let storyCollection = StorytellingCollectionViewController(personID: SessionService.personID)
+//        let storyCollection = StorytellingCollectionViewController(personID: SessionService.personID)
+//        
+//        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+//        optocollection.delegate = self;
+//        
+//        let naviCon = UINavigationController()
+//        //        naviCon.viewControllers = [optocollection]
+//        naviCon.viewControllers = [optocollection]
+//        
+//        self.presentViewController(naviCon, animated: true, completion: nil)
         
-        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
-        optocollection.delegate = self;
         
-        let naviCon = UINavigationController()
-        //        naviCon.viewControllers = [optocollection]
-        naviCon.viewControllers = [optocollection]
         
-        self.presentViewController(naviCon, animated: true, completion: nil)
+        inputTextField.becomeFirstResponder()
+    }
+    
+    //text field delegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        inputTextField.resignFirstResponder()
+        
+        let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
+        let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
+        
+        let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
+                                    "story_object_media_face": "pin",
+                                    "story_object_media_description": "description",
+                                    "story_object_media_additional_data": inputTextField.text!,
+                                    "story_object_position": translationArray,
+                                    "story_object_rotation": rotationArray]
+        
+        print("text child: \(child)")
+        
+        nodes.append(child);
+        
+        return true
     }
     
     func imageButtonDown(){
         renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-        nodeItem.objectType = "Image"
+        nodeItem.objectType = "OPT"
         
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optocollection.delegate = self;
@@ -746,6 +799,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func audioButtonDown(){
+        nodeItem.objectType = "MUS"
         //        renderDelegate.addMarker(UIColor.greenColor(), type:"Audio Item")
         //        nodeItem.objectType = "Audio Item"
         //
@@ -820,7 +874,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                  "story_object_media_filename":        "Thousand Minds Logo.png",
                  "story_object_media_base64":          "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABcc */
                 
-                let child : NSDictionary = ["story_object_media_type": "Music",
+                let child : NSDictionary = ["story_object_media_type": self.nodeItem.objectType,
                     "story_object_media_face": "pin",
                     "story_object_media_description": "description",
                     "story_object_media_additional_data": "audio data",

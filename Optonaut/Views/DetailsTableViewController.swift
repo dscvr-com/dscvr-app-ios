@@ -917,6 +917,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //condition sa
         //override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval)
         
+        
         if (last_optographID == nodeObject.optographID) {
             if inFrustrum{
 //                print("inFrustrum")
