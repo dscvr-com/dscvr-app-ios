@@ -157,8 +157,9 @@ class LoginOverlayViewController: UIViewController{
         forgotPasswordView.font = UIFont(name: "Avenir-Book", size: 15)
         forgotPasswordView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LoginOverlayViewController.showForgotPasswordViewController)))
         forgotPasswordView.userInteractionEnabled = true
-        forgotPasswordView.rac_hidden <~ loginViewModel.selectedTab.producer.equalsTo(.SignUp)
-            .combineLatestWith(loginViewModel.password.producer.map(isNotEmpty)).map(or)
+        forgotPasswordView.hidden = true
+//        forgotPasswordView.rac_hidden <~ loginViewModel.selectedTab.producer.equalsTo(.SignUp)
+//            .combineLatestWith(loginViewModel.password.producer.map(isNotEmpty)).map(or)
         view.addSubview(forgotPasswordView)
         
         lineLabel.backgroundColor = UIColor.grayColor()

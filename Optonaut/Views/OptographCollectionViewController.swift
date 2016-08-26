@@ -265,7 +265,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             self.presentViewController(imagePickVC, animated: true, completion: nil)
         } else{
-            //self.presentViewController(InvitationViewController(), animated: true, completion: nil)
             self.tapRightButton()
         }
     }

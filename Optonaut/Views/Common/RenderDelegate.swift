@@ -57,17 +57,9 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         cameraCrosshair.position = SCNVector3(x: 0, y: 0, z: 0)
         scene.rootNode.addChildNode(cameraCrosshair)
         
-    
-        
         // TODO(ej): Check if this is necassary for 3D vision. If so, add it to transform
         // in each render loop since pivot is broken.
         // cameraNode.pivot = SCNMatrix4MakeTranslation(0, cameraOffset, 0)
-        
-        
-        
-        
-        
-        
         
         
         super.init()
@@ -198,10 +190,11 @@ class CubeRenderDelegate: RenderDelegate {
         scnView?.showsStatistics = true
         
         let planeGeo = SCNPlane(width: 1.0, height: 1.0)
-        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        planeGeo.firstMaterial?.diffuse.contents = UIColor.clearColor()
+        
         
         let circleGeo = SCNSphere(radius: 0.01)
-        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        circleGeo.firstMaterial?.diffuse.contents = UIColor.clearColor()
         sphereGeoNode = SCNNode(geometry: circleGeo)
         sphereGeoNode.name = "test"
         
