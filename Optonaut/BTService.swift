@@ -22,6 +22,7 @@ let BLEServiceChangedStatusNotification = "kBLEServiceChangedStatusNotification"
 
 
 
+
 //BLE#0x44A6E503892F
 
 
@@ -61,6 +62,7 @@ class BTService: NSObject, CBPeripheralDelegate {
     
     func startDiscoveringServices() {
         self.peripheral?.discoverServices([BLEServiceUUID])
+        //self.peripheral?.discoverServices(nil)
     }
     
     func reset() {

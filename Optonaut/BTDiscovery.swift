@@ -10,6 +10,7 @@ import Foundation
 import CoreBluetooth
 
 let btDiscoverySharedInstance = BTDiscovery();
+var devicesName:[CBPeripheral] = []
 
 class BTDiscovery: NSObject, CBCentralManagerDelegate {
     
@@ -25,8 +26,14 @@ class BTDiscovery: NSObject, CBCentralManagerDelegate {
     
     func startScanning() {
         if let central = centralManager {
-            central.scanForPeripheralsWithServices([BLEServiceUUID], options: nil)
+            //central.scanForPeripheralsWithServices([BLEServiceUUID], options: nil)
+            central.scanForPeripheralsWithServices(nil, options: nil)
+
         }
+    }
+    
+    func devicesNameList() -> [CBPeripheral] {
+        return devicesName
     }
     
     var bleService: BTService? {
@@ -42,12 +49,18 @@ class BTDiscovery: NSObject, CBCentralManagerDelegate {
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         // Be sure to retain the peripheral or it will fail during connection.
         
+        print("peripheralname\(peripheral.name)")
+        
         // Validate peripheral information
         if ((peripheral.name == nil) || (peripheral.name == "")) {
             return
+        } else {
+            if !devicesName.contains(peripheral) {
+                devicesName.append(peripheral)
+            }
         }
         
-        // If not already connected to a peripheral, then connect to this one
+        /*// If not already connected to a peripheral, then connect to this one
         if ((self.peripheralBLE == nil) || (self.peripheralBLE?.state == CBPeripheralState.Disconnected)) {
             // Retain the peripheral before trying to connect
             self.peripheralBLE = peripheral
@@ -57,6 +70,14 @@ class BTDiscovery: NSObject, CBCentralManagerDelegate {
             
             // Connect to peripheral
             central.connectPeripheral(peripheral, options: nil)
+        }*/
+    }
+    
+    func connectToPeripheral(deviceName:CBPeripheral) {
+        if let central = centralManager {
+            self.peripheralBLE = deviceName
+            self.bleService = nil
+            central.connectPeripheral(deviceName, options: nil)
         }
     }
     

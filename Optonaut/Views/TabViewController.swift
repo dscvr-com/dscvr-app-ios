@@ -443,18 +443,18 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         if (Defaults[.SessionRotateCount] == nil) {
 //            Defaults[.SessionRotateCount] = 7200 // ours
-            Defaults[.SessionRotateCount] = 7200 // ours
+            Defaults[.SessionRotateCount] = 15331 // joseph
         }
         
         if (Defaults[.SessionTopCount] == nil) {
-//            Defaults[.SessionTopCount] = -1545
-            Defaults[.SessionTopCount] = -1999 // joseph
+//            Defaults[.SessionTopCount] = -1999 //ours
+            Defaults[.SessionTopCount] = 1999 // joseph
         }
         
         
         if (Defaults[.SessionBotCount] == nil) {
-//            Defaults[.SessionBotCount] = 3030
-            Defaults[.SessionBotCount] = 3998 // joseph
+//            Defaults[.SessionBotCount] = 3998
+            Defaults[.SessionBotCount] = -3998 // joseph
         }
         
         
@@ -573,6 +573,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         m5ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor5, padding: 10, width: 40, height: 30)
         m5ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m5ButtonDown, padding: 5, width: 40, height: 30)
+        
+        /*let hideLabel = UILabel()
+        hideLabel.backgroundColor = UIColor.whiteColor()
+        hideLabel.frame = CGRect(x: 0, y:threeRingButton.frame.origin.y, width: thisView.width,height: view.height -  threeRingButton.frame.origin.y)
+        thisView.addSubview(hideLabel)*/
+    
         
     }
     

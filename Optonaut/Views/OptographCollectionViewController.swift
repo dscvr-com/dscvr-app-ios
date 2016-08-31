@@ -262,7 +262,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         } else{
             //self.presentViewController(InvitationViewController(), animated: true, completion: nil)
             self.tapRightButton()
+            
         }
+        
+
     }
     
     func uploadTheta(thetaImage:UIImage) {
@@ -342,10 +345,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             self.presentViewController(alert, animated: true, completion: nil)
         }
-//self.presentViewController(InvitationViewController(), animated: true, completion: nil)
     }
     func tapRightButtonTab() {
-        tabController!.tapNavBarTitleForFeedClass()
+        //tabController!.tapNavBarTitleForFeedClass()
+        self.presentViewController(BTList(), animated: true, completion: nil)
     }
     
     func tapRightButton() {

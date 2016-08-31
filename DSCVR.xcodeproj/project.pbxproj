@@ -268,6 +268,8 @@
 		B12D8F4E1D3F42DD00DF0FBF /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12D8F4D1D3F42DD00DF0FBF /* BTService.swift */; };
 		B137BCF21D4231D8003017F6 /* BService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B137BCF11D4231D8003017F6 /* BService.swift */; };
 		B153E2141D06B22800CC4B72 /* Alingment.mm in Sources */ = {isa = PBXBuildFile; fileRef = B153E2131D06B22800CC4B72 /* Alingment.mm */; };
+		B16A806E1D757E4900B2B3BB /* flowBlender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B16A806C1D757E4900B2B3BB /* flowBlender.cpp */; };
+		B16A80701D76AFAF00B2B3BB /* BTList.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16A806F1D76AFAF00B2B3BB /* BTList.swift */; };
 		B1754D5C1D0E82CD005A3E85 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D591D0E82CD005A3E85 /* CommentTableViewCell.swift */; };
 		B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5A1D0E82CD005A3E85 /* CommentTableViewController.swift */; };
 		B1754D5E1D0E82CD005A3E85 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1754D5B1D0E82CD005A3E85 /* CommentViewModel.swift */; };
@@ -644,6 +646,9 @@
 		B137BCF11D4231D8003017F6 /* BService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BService.swift; sourceTree = "<group>"; };
 		B153E2121D06B1FB00CC4B72 /* Alignment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = Optonaut/Stitcher/Alignment.h; sourceTree = SOURCE_ROOT; };
 		B153E2131D06B22800CC4B72 /* Alingment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alingment.mm; path = Optonaut/Stitcher/Alingment.mm; sourceTree = SOURCE_ROOT; };
+		B16A806C1D757E4900B2B3BB /* flowBlender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flowBlender.cpp; sourceTree = "<group>"; };
+		B16A806D1D757E4900B2B3BB /* flowBlender.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = flowBlender.hpp; sourceTree = "<group>"; };
+		B16A806F1D76AFAF00B2B3BB /* BTList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTList.swift; sourceTree = "<group>"; };
 		B17042151CF6CF04004E2F26 /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
 		B17042161CF6CF6F004E2F26 /* imageSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSink.hpp; sourceTree = "<group>"; };
 		B17042171CF6CF7A004E2F26 /* recorderMotor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderMotor.hpp; sourceTree = "<group>"; };
@@ -740,6 +745,8 @@
 		5936B1761CAD34F500F808D8 /* stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				B16A806C1D757E4900B2B3BB /* flowBlender.cpp */,
+				B16A806D1D757E4900B2B3BB /* flowBlender.hpp */,
 				B17042151CF6CF04004E2F26 /* globalAlignment.hpp */,
 				5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */,
 				5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */,
@@ -954,6 +961,7 @@
 				8FCADEDE1BAB0AC40018674B /* Onboarding */,
 				8FAB9F1E1B8F01DF00B4C8CB /* Profile */,
 				A5DE71DF1BE28A7400316F82 /* Viewer */,
+				B16A806F1D76AFAF00B2B3BB /* BTList.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1728,11 +1736,13 @@
 				8F4185FB1C52DB08009E1E3F /* PersonApiModel.swift in Sources */,
 				8FC7E3731BD15B9D00E97CC3 /* HeadTracker.mm in Sources */,
 				8F4185F91C529C74009E1E3F /* OptographApiModel.swift in Sources */,
+				B16A806E1D757E4900B2B3BB /* flowBlender.cpp in Sources */,
 				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,
 				A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */,
 				8F23AA551BFF31B4008926A8 /* PersonTable.swift in Sources */,
+				B16A80701D76AFAF00B2B3BB /* BTList.swift in Sources */,
 				A5FD5D831BEA5A4E0031ED1E /* quat.cpp in Sources */,
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
