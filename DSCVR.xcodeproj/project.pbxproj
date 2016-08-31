@@ -43,6 +43,7 @@
 		599459B11D0926C0000F3A5B /* SearchTableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599459B01D0926C0000F3A5B /* SearchTableModel.swift */; };
 		59A07C5D1D6355E3006A6CCE /* IcomoonExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */; };
 		59CDB7C81D2250B70094C816 /* Migration0007.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDB7C71D2250B60094C816 /* Migration0007.swift */; };
+		59D828141D709C4200007B57 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D828131D709C4200007B57 /* Crashlytics.framework */; };
 		59DBBF941D1954CC0072AA3E /* ShareModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DBBF931D1954CC0072AA3E /* ShareModalViewController.swift */; };
 		59DBBF961D1A43880072AA3E /* ProfileFollowersViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DBBF951D1A43880072AA3E /* ProfileFollowersViewCell.swift */; };
 		59DBBF981D1A5A9E0072AA3E /* FollowersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DBBF971D1A5A9E0072AA3E /* FollowersTableViewCell.swift */; };
@@ -81,7 +82,6 @@
 		8F23AA551BFF31B4008926A8 /* PersonTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA4B1BFF31B4008926A8 /* PersonTable.swift */; };
 		8F23AA571BFF31EC008926A8 /* Migration0001.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA561BFF31EC008926A8 /* Migration0001.swift */; };
 		8F23AA591BFF3229008926A8 /* Migration0002.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA581BFF3229008926A8 /* Migration0002.swift */; };
-		8F23AA5F1C01F8A5008926A8 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */; };
 		8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */; };
 		8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */; };
 		8F23AA631C01F8A5008926A8 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5E1C01F8A5008926A8 /* opencv2.framework */; };
@@ -357,6 +357,7 @@
 		598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
 		599459B01D0926C0000F3A5B /* SearchTableModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableModel.swift; sourceTree = "<group>"; };
 		59CDB7C71D2250B60094C816 /* Migration0007.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0007.swift; sourceTree = "<group>"; };
+		59D828131D709C4200007B57 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Frameworks/Crashlytics.framework; sourceTree = "<group>"; };
 		59DBBF931D1954CC0072AA3E /* ShareModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareModalViewController.swift; sourceTree = "<group>"; };
 		59DBBF951D1A43880072AA3E /* ProfileFollowersViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileFollowersViewCell.swift; sourceTree = "<group>"; };
 		59DBBF971D1A5A9E0072AA3E /* FollowersTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FollowersTableViewCell.swift; sourceTree = "<group>"; };
@@ -395,7 +396,6 @@
 		8F23AA4B1BFF31B4008926A8 /* PersonTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersonTable.swift; sourceTree = "<group>"; };
 		8F23AA561BFF31EC008926A8 /* Migration0001.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0001.swift; sourceTree = "<group>"; };
 		8F23AA581BFF3229008926A8 /* Migration0002.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0002.swift; sourceTree = "<group>"; };
-		8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Frameworks/Crashlytics.framework; sourceTree = "<group>"; };
 		8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = Frameworks/FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = Frameworks/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		8F23AA5E1C01F8A5008926A8 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Frameworks/opencv2.framework; sourceTree = "<group>"; };
@@ -682,6 +682,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59D828141D709C4200007B57 /* Crashlytics.framework in Frameworks */,
 				598EB95C1D7068A200E00F9B /* Fabric.framework in Frameworks */,
 				59E9E3181D62277500D326F8 /* Icomoon.framework in Frameworks */,
 				8F4B6FA21BE0F2A5005D2D68 /* CardboardParams.framework in Frameworks */,
@@ -699,7 +700,6 @@
 				8F8E32D21BFE152C00E09392 /* SwiftyUserDefaults.framework in Frameworks */,
 				8FE4BA191C2B059A00CD0068 /* Kingfisher.framework in Frameworks */,
 				8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */,
-				8F23AA5F1C01F8A5008926A8 /* Crashlytics.framework in Frameworks */,
 				8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */,
 				8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */,
 				8F50DCC61C485F8700A706A9 /* FBSDKShareKit.framework in Frameworks */,
@@ -837,6 +837,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59D828131D709C4200007B57 /* Crashlytics.framework */,
 				598EB95B1D7068A200E00F9B /* Fabric.framework */,
 				59E9E3171D62277500D326F8 /* Icomoon.framework */,
 				5933E6801D3A803600D18982 /* FillableLoaders.framework */,
@@ -846,7 +847,6 @@
 				8F50DCC41C485F8700A706A9 /* FBSDKShareKit.framework */,
 				8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */,
 				8F23AA641C021CA4008926A8 /* Neon.framework */,
-				8F23AA5A1C01F8A5008926A8 /* Crashlytics.framework */,
 				8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */,
 				8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */,
 				8F23AA5E1C01F8A5008926A8 /* opencv2.framework */,
@@ -1593,7 +1593,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 675Y8HZ459;
+						DevelopmentTeam = 4Y4J5JD5NJ;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -2106,8 +2106,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2137,9 +2137,9 @@
 				);
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "431313f9-a8d4-4306-a314-818c26c310c3";
+				PROVISIONING_PROFILE = "d05b1ac8-2102-4d05-a026-abfd4362a6a0";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2153,8 +2153,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (8GRRNZJ246)";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2172,9 +2172,9 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/stitcher/vendor",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "431313f9-a8d4-4306-a314-818c26c310c3";
+				PROVISIONING_PROFILE = "d05b1ac8-2102-4d05-a026-abfd4362a6a0";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

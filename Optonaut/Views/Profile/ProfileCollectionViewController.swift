@@ -181,7 +181,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         collectionView!.delegate = self
         
         
-        //collectionView!.delaysContentTouches = false
+        collectionView!.delaysContentTouches = false
         
         collectionViewModel.results.producer
             .filter{$0.changed}
@@ -207,11 +207,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 })
             .startWithNext { _ in
                 self.collectionView?.reloadData()
-        }
-        
-        
-        if isProfileVisit {
-            tabController!.disableScrollView()
         }
         
         tabController?.pageStatus.producer.startWithNext { val in
@@ -364,6 +359,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         if isProfileVisit {
             tabController!.disableScrollView()
+            collectionViewModel.isActive.value = true
         }
         self.navigationController?.navigationBar.tintColor = UIColor(hex:0xFF5E00)
         

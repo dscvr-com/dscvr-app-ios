@@ -29,7 +29,7 @@ class ProfileOptographsViewModel {
         refreshNotification.signal
             .flatMap(.Latest) { _ in
                 DatabaseService.query(.Many, query: query)
-                    .observeOnUserInteractive()
+                    .observeOnUserInitiated()
                     .map { row -> Optograph in
                         let optograph = Optograph.fromSQL(row)
                         Models.optographs.touch(optograph)
@@ -58,7 +58,7 @@ class ProfileOptographsViewModel {
                     }
                     .ignoreError()
                     .collect()
-                    .startOnUserInteractive()
+                    .observeOnUserInitiated()
             }
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
@@ -86,7 +86,7 @@ class ProfileOptographsViewModel {
             }
             .observeOnMain()
             .map { self.results.value.merge($0, deleteOld: false) }
-            .observeNext { self.results.value = $0 }
+            .observeNext {  self.results.value = $0 }
         
         
         loadMoreNotification.signal
