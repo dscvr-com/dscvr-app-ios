@@ -861,8 +861,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                         nodeItem.objectRotation = nodeRotation
                         nodeItem.objectVector3 = nodeTranslation
                         nodeItem.optographID = nodes.story_object_media_additional_data
+                        nodeItem.objectType = nodes.story_object_media_type
                         
                         print("node id: \(nodeItem.optographID)")
+                        print("nodes: \(nodes.story_object_media_type)")
                         
                         renderDelegate.addNodeFromServer(nodeItem)
 
@@ -898,6 +900,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3) {
+        
+    }
+    
+    func showOptograph(nodeObject: StorytellingObject){
+        
+    }
+    
+    func showText(nodeObject: StorytellingObject){
         
     }
     
@@ -943,6 +953,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     if inFrustrum{
                         print("inFrustum: \(nodeObject.optographID)")
                         isInsideStory = true
+                        
+                        print("object Type: \(nodeObject.objectType)")
                         
                         //check if node object is equal to home optograph id
                         if nodeObject.optographID == optographID{

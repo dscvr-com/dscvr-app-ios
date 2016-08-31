@@ -785,7 +785,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func imageButtonDown(){
         renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-        nodeItem.objectType = "OPT"
+        nodeItem.objectType = "NAV"
         
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optocollection.delegate = self;
