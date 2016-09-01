@@ -132,6 +132,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         } else {
             scnView = SCNView(frame: self.view.frame)
         }
+        tabController!.delegate = self
         
         let hfov: Float = 40
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
@@ -160,7 +161,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         super.viewDidAppear(animated)
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
-        tabController!.delegate = self
+        
         
         self.view.addSubview(self.countdownLabel)
         

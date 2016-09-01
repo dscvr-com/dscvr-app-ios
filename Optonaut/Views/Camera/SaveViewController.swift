@@ -77,7 +77,7 @@ class SaveViewController: UIViewController, RedNavbar {
                 },
                 completed: { [weak self] in
                     print("stitching finished")
-                    ApiService<EmptyResponse>.get("completed").start()
+                    //ApiService<EmptyResponse>.get("completed").start()
                     self?.viewModel.stitcherFinished.value = true
                 }
             )
@@ -446,6 +446,14 @@ class SaveViewController: UIViewController, RedNavbar {
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { _ in
             PipelineService.stopStitching()
+            LoadingIndicatorView.show("Deleting..")
+            self.viewModel.isReadyForSubmit.producer.skipRepeats().startWithNext { val in
+                if val{
+                    LoadingIndicatorView.hide()
+                    self.viewModel.deleteOpto()
+                    self.navigationController!.popViewControllerAnimated(true)
+                }
+            }
         }))
         confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))
         navigationController!.presentViewController(confirmAlert, animated: true, completion: nil)

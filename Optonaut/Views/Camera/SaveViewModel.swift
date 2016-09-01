@@ -227,6 +227,23 @@ class SaveViewModel {
             .combineLatestWith(stitcherFinished.producer).map(and)
         
     }
+    
+    func deleteOpto() {
+        
+        
+        SignalProducer<Bool, ApiError>(value: true)
+            .flatMap(.Latest) { followedBefore in
+                ApiService<EmptyResponse>.delete("optographs/\(self.optographBox.model.ID)")
+            }
+            .start()
+        
+        optographBox.insertOrUpdate { box in
+            print("deleted on: \(NSDate())")
+            print(box.model.ID)
+            return box.model.deletedAt = NSDate()
+        }
+    }
+    
     func uploadForThetaOk() {
         
         let optograph = optographBox.model
@@ -264,24 +281,6 @@ class SaveViewModel {
             PipelineService.stitchingStatus.value = .StitchingFinished(optograph.ID)
             
         }
-    }
-    
-    func deleteOpto() {
-        
-        
-        SignalProducer<Bool, ApiError>(value: true)
-            .flatMap(.Latest) { followedBefore in
-                ApiService<EmptyResponse>.delete("optographs/\(self.optographBox.model.ID)")
-            }
-            .start()
-        
-        PipelineService.stopStitching()
-        optographBox.insertOrUpdate { box in
-            print("date today \(NSDate())")
-            print(box.model.ID)
-            return box.model.deletedAt = NSDate()
-        }
-        
     }
     
     func submit(shouldBePublished: Bool, directionPhi: Double, directionTheta: Double) -> SignalProducer<Void, NoError> {
