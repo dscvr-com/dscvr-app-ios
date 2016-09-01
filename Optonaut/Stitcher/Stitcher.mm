@@ -87,11 +87,10 @@ struct StitcherCancellation {
     cv::Mat blurred;
     optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
     panoBlur.Blur(sphere, blurred);
+    //panoBlur.Black(sphere, blackMat);
     
-    
-
     return CVMatToImageBuffer(sphere);
-    
+    //return CVMatToImageBuffer(blackMat);
 }
 
 - (NSArray<NSValue*>*)getRightResult {

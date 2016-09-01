@@ -442,7 +442,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         }
         
         if (Defaults[.SessionRotateCount] == nil) {
-//            Defaults[.SessionRotateCount] = 7200 // ours
+           //Defaults[.SessionRotateCount] = 7200 // ours
             Defaults[.SessionRotateCount] = 15331 // joseph
         }
         
