@@ -39,7 +39,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
-    var countDown:Int = 3
+    var countDown:Int = 2
     var last_optographID:UUID = ""
     private var lastElapsedTime = CACurrentMediaTime() ;
     
@@ -899,6 +899,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         renderDelegate.reset()
     }
     
+   
+    
     func showRotationAlert() {
         rotationAlert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
         rotationAlert!.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
@@ -911,11 +913,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func showOptograph(nodeObject: StorytellingObject){
         //check if node object is equal to home optograph id
-        if nodeObject.optographID == optographID{
+        let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+        if nameArray[0] == optographID{
             dispatch_async(dispatch_get_main_queue(), {
-                let cubeImageCache = self.imageCache.getStory(nodeObject.optographID, side: .Left)
+                let cubeImageCache = self.imageCache.getStory(self.optographID, side: .Left)
                 self.setCubeImageCache(cubeImageCache)
-                
+                self.renderDelegate.centerCameraPosition()
+                self.renderDelegate.removeAllNodes(self.optographID)
+                self.renderDelegate.removeMarkers()
                 for nodes in self.storyNodes{
                     if nodes.story_object_position.count >= 2{
                         let nodeItem = StorytellingObject()
@@ -935,7 +940,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     }
                 }
                 
-                self.renderDelegate.removeAllNodes(self.optographID)
+                
             })
         }
             
@@ -946,9 +951,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 
                 let cubeImageCache = self.imageCache.getStory(nameArray[0], side: .Left)
                 self.setCubeImageCache(cubeImageCache)
+                self.renderDelegate.removeMarkers()
+                self.renderDelegate.centerCameraPosition()
+
                 
                 self.renderDelegate.removeAllNodes(nodeObject.optographID)
                 self.renderDelegate.addBackPin(self.optographID)
+                
             })
         }
     }
@@ -971,8 +980,19 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
     }
     
+  
+ 
+    
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
 //        print("nodeObject: \(nodeObject.optographID)")
+        if !inFrustrum {
+            countDown = 2
+            dispatch_async(dispatch_get_main_queue(), {
+                self.countdownLabel.text = ""
+            })
+            return
+        }
+        
         
         let mediaTime = CACurrentMediaTime()
 //        print("mediaTime \(mediaTime)")
@@ -988,81 +1008,58 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         
         if (last_optographID == nodeObject.optographID) {
-            if inFrustrum{
-//                print("inFrustrum")
+            
             // reset if difference is above 3 seconds
-                if timeDiff > 3.0 {
-                    countDown = 3
-                    timeDiff = 0.0
-                    lastElapsedTime = mediaTime
-                }
-                
-                // per second countdown
-                if timeDiff > 1.0  {
-                    countDown -= 1
-                    print("countdown \(countDown)")
-                    lastElapsedTime = mediaTime
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        
-                        self.countdownLabel.text = String(self.countDown)
-                        self.countdownLabel.textColor = UIColor.whiteColor()
-                        self.countdownLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
-                        self.countdownLabel.sizeToFit()
-                        self.countdownLabel.backgroundColor = UIColor.clearColor()
-                        self.countdownLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
-                        
-                    })
-                    
-                    
-                }
-                
-                
-                if countDown == 0 {
-                    // reset countdown
-                    countDown = 3
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        self.countdownLabel.text = ""
-                        })
-                    
-                    let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
-                    
-//                    for names in nameArrayX {
-//                        print ("names: \(names)")
-//                    }
-                    
-                    if inFrustrum{
-                        print("inFrustum: \(nodeObject.optographID)")
-                        isInsideStory = true
-                        
-                        print("object Type: \(nodeObject.objectType)")
-                        
-                        if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                            self.showOptograph(nodeObject)
-                        }
-                        else if nameArray[1] == "TXT"{
-                            self.showText(nodeObject)
-                        }
-                        
-                        
-                    }
-                    else{
-//                        print("!inFrustum")
-                        dispatch_async(dispatch_get_main_queue(), {
-                            self.countdownLabel.text = ""
-                        })
-                    }
-                }
+            if timeDiff > 3.0 {
+                countDown = 2
+                timeDiff = 0.0
+                lastElapsedTime = mediaTime
             }
-            else{
-//                print("!inFrustrum")
-                countDown = 3
+                
+            // per second countdown
+            if timeDiff > 1.0  {
+                countDown -= 1
+                print("countdown \(countDown)")
+                lastElapsedTime = mediaTime
+                    
+                dispatch_async(dispatch_get_main_queue(), {
+                        
+                    self.countdownLabel.text = String(self.countDown)
+                    self.countdownLabel.textColor = UIColor.whiteColor()
+                    self.countdownLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
+                    self.countdownLabel.sizeToFit()
+                    self.countdownLabel.backgroundColor = UIColor.clearColor()
+                    self.countdownLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+                        
+                })
+                    
+                    
+            }
+                
+                
+            if countDown == 0 {
+                    // reset countdown
+                countDown = 2
+                    
                 dispatch_async(dispatch_get_main_queue(), {
                     self.countdownLabel.text = ""
                 })
+                    
+                let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+                    
+                 isInsideStory = true
+                        
+                print("object Type: \(nodeObject.objectType)")
+                        
+                if nameArray[1] == "NAV" || nameArray[1] == "Image"{
+                    self.showOptograph(nodeObject)
+                }
+                else if nameArray[1] == "TXT"{
+                    self.showText(nodeObject)
+                }
+                        
             }
-            
+                        
             
         }
         else{ // this is a new id
