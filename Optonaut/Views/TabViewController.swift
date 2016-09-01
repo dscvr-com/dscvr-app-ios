@@ -14,6 +14,7 @@ import SwiftyUserDefaults
 import Result
 import TwitterKit
 
+
 class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollViewDelegate{
     
     var scrollView: UIScrollView!
@@ -167,6 +168,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         postTwitter.producer.startWithNext { [weak self] toggled in
             Defaults[.SessionShareToggledTwitter] = toggled
         }
+
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -694,8 +696,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 ]
             ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
                 .on(
-                    failed: { _ in
-                        errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
+                    failed: { val in
+                        if (val.status! == 500) {
+                            errorBlock("The facebook account you want to sign in is already been used as a main account. Please switch your main account via facebook login or try another facebook account in order to use this features.")
+                        } else {
+                            errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
+                        }
                     },
                     completed: { [weak self] in
                         self?.postFacebook.value = true

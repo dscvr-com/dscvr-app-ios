@@ -172,7 +172,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
 //        #if !DEBUG
-            Twitter.sharedInstance().startWithConsumerKey("sKBlhsebljhzzejrOWdWVAYKD", consumerSecret: "jZE8ccXXGf869FZrmaeTV2Al0CZqSWLz6dBvBLOqEVBg0igaNi")
+            Twitter.sharedInstance().startWithConsumerKey("11b87c97c005ce8c5b5369b6eac7d4d41960bdff", consumerSecret: "f93f43a2338f4667b2655d08dfec2544f7b150ee7a10ba70fa6d708a6f5bc7f2")
             Fabric.with([Crashlytics.sharedInstance(), Twitter.sharedInstance()])
 //        #endif
         
