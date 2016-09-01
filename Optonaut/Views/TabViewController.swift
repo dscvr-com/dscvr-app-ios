@@ -9,9 +9,10 @@
 import UIKit
 import ReactiveCocoa
 import Async
-//import Icomoon
+import FBSDKLoginKit
 import SwiftyUserDefaults
 import Result
+import TwitterKit
 
 class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollViewDelegate{
     
@@ -19,7 +20,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     let centerViewController: NavigationController
     let rightViewController: NavigationController
     let leftViewController: NavigationController
-    let fourthViewController: NavigationController
+    //let fourthViewController: NavigationController
     
     var thisView = UIView()
     var isSettingsViewOpen = MutableProperty<Bool>(false)
@@ -35,6 +36,14 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     private var pullButton = SettingsButton()
     private var gyroButton = SettingsButton()
     private var littlePlanet = SettingsButton()
+    
+    //social buttons elements
+    private let facebookSocialButton = SocialButtonForSettings()
+    private let twitterSocialButton = SocialButtonForSettings()
+    let isLoggedIn = MutableProperty<Bool>(false)
+    var postFacebook: MutableProperty<Bool>
+    var postTwitter: MutableProperty<Bool>
+    var isOnline: MutableProperty<Bool>
     
     enum PageStatus { case Profile, Share, Feed }
     let pageStatus = MutableProperty<PageStatus>(.Feed)
@@ -80,8 +89,12 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         centerViewController = FeedNavViewController()
         rightViewController =  ProfileNavViewController()
         leftViewController = SharingNavViewController()
-        fourthViewController = StNavViewController()
+        //fourthViewController = StNavViewController()
     
+        
+        postFacebook = MutableProperty(Defaults[.SessionShareToggledFacebook])
+        postTwitter = MutableProperty(Defaults[.SessionShareToggledTwitter])
+        isOnline = MutableProperty(Reachability.connectedToNetwork())
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -95,7 +108,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         scrollView = UIScrollView(frame: view.bounds)
         scrollView.backgroundColor = UIColor.blackColor()
-        let scrollWidth: CGFloat  = 4 * self.view.frame.width
+        let scrollWidth: CGFloat  = 3 * self.view.frame.width
         let scrollHeight: CGFloat  = self.view.frame.size.height
         self.scrollView!.contentSize = CGSizeMake(scrollWidth, scrollHeight)
         self.scrollView!.pagingEnabled = true;
@@ -112,9 +125,9 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         self.scrollView!.addSubview(rightViewController.view)
         rightViewController.didMoveToParentViewController(self)
         
-        self.addChildViewController(fourthViewController)
-        self.scrollView!.addSubview(fourthViewController.view)
-        fourthViewController.didMoveToParentViewController(self)
+//        self.addChildViewController(fourthViewController)
+//        self.scrollView!.addSubview(fourthViewController.view)
+//        fourthViewController.didMoveToParentViewController(self)
         
         adminFrame = leftViewController.view.frame
         adminFrame.origin.x = adminFrame.width
@@ -124,9 +137,9 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         BFrame.origin.x = 2*BFrame.width
         rightViewController.view.frame = BFrame
         
-        fourthFrame = centerViewController.view.frame
-        fourthFrame.origin.x =  3 * BFrame.width
-        fourthViewController.view.frame = fourthFrame
+//        fourthFrame = centerViewController.view.frame
+//        fourthFrame.origin.x =  3 * BFrame.width
+//        fourthViewController.view.frame = fourthFrame
         
         view.addSubview(scrollView)
         
@@ -145,6 +158,14 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         if (!Defaults[.SessionUserDidFirstLogin]) {
             scrollView.contentOffset.x = self.view.frame.width * 2
+        }
+        
+        postFacebook.producer.startWithNext { [weak self] toggled in
+            Defaults[.SessionShareToggledFacebook] = toggled
+        }
+        
+        postTwitter.producer.startWithNext { [weak self] toggled in
+            Defaults[.SessionShareToggledTwitter] = toggled
         }
     }
     
@@ -363,7 +384,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         labelRing1.align(.ToTheRightCentered, relativeTo: oneRingButton, padding: 24, width: calcTextWidth("ONE RING", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         threeRingButton.align(.UnderCentered, relativeTo: oneRingButton, padding: 7, width: threeRingButton.icon.size.width, height: threeRingButton.icon.size.height)
-        threeRingButton.addTarget(self, action: #selector(TabViewController.threeRingButtonTouched), forControlEvents:.TouchUpInside)
+        //threeRingButton.addTarget(self, action: #selector(TabViewController.threeRingButtonTouched), forControlEvents:.TouchUpInside)
         thisView.addSubview(threeRingButton)
         
         labelRing3.textAlignment = NSTextAlignment.Center
@@ -413,6 +434,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 self.activeModeButtons(Defaults[.SessionMotor])
                 self.activeVrMode()
                 self.activeDisplayButtons(Defaults[.SessionGyro])
+                self.isOnline.value = Reachability.connectedToNetwork()
+                self.isLoggedIn.value = SessionService.isLoggedIn
+                self.postFacebook.value = Defaults[.SessionShareToggledFacebook]
+                self.postTwitter.value = Defaults[.SessionShareToggledTwitter]
             }
         }
 
@@ -448,7 +473,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         dividerThree.hidden = true
         
         let versionLabel = UILabel()
-        versionLabel.text = "v0.94"
+        versionLabel.text = "v0.95"
         versionLabel.textAlignment = .Center
         versionLabel.font = .fontDisplay(10, withType: .Semibold)
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
@@ -485,6 +510,52 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
 //        motor2.align(.UnderMatchingLeft, relativeTo: motor1, padding: 40, width: (view.frame.width * 0.5), height: 40)
 //        m2ButtonUp.align(.ToTheRightMatchingTop, relativeTo: motor2, padding: 2, width: 30, height: 19)
 //        m2ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor2, padding: 2, width: 30, height: 19)
+        
+        createSocialButtons()
+        
+    }
+    
+    func createSocialButtons() {
+        let hideLabel = UILabel()
+        hideLabel.backgroundColor = UIColor.whiteColor()
+        hideLabel.frame = CGRect(x: 0,y:threeRingButton.frame.origin.y ,width: thisView.width,height: threeRingButton.height + 2)
+        thisView.addSubview(hideLabel)
+        
+        facebookSocialButton.text = "Facebook"
+        facebookSocialButton.color = UIColor(0x3b5998)
+        facebookSocialButton.userInteractionEnabled = true
+        facebookSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapFacebookSocialButton)))
+        thisView.addSubview(facebookSocialButton)
+        
+        postFacebook.producer.startWithNext { [weak self] toggled in
+            self?.facebookSocialButton.state = toggled ? .Selected : .Unselected
+            self?.facebookSocialButton.icon2 = toggled ? UIImage(named:"facebook_save_active")! : UIImage(named:"facebook_save_inactive")!
+        }
+        
+        twitterSocialButton.text = "Twitter"
+        twitterSocialButton.color = UIColor(0x55acee)
+        twitterSocialButton.userInteractionEnabled = true
+        twitterSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapTwitterSocialButton)))
+        thisView.addSubview(twitterSocialButton)
+        
+        postTwitter.producer.startWithNext { [weak self] toggled in
+            self?.twitterSocialButton.state = toggled ? .Selected : .Unselected
+            self?.twitterSocialButton.icon2 = toggled ? UIImage(named:"twitter_save_active")! : UIImage(named:"twitter_save_inactive")!
+        }
+        
+        let fbButton = UIImage(named:"facebook_save_active")?.size
+        let twitterButton = UIImage(named:"twitter_save_active")?.size
+        
+        facebookSocialButton.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 60, width: (fbButton?.width)!, height: (fbButton?.height)!)
+        twitterSocialButton.align(.ToTheRightMatchingTop, relativeTo: facebookSocialButton, padding: 40 + 77, width: (twitterButton?.width)!, height: (twitterButton?.height)!)
+        
+        let titleLabelShare = UILabel()
+        titleLabelShare.text = "AUTO SHARE IMAGE ON: "
+        titleLabelShare.textAlignment = NSTextAlignment.Left
+        titleLabelShare.textColor = UIColor.blackColor()
+        titleLabelShare.font = .fontDisplay(12, withType: .Semibold)
+        thisView.addSubview(titleLabelShare)
+        titleLabelShare.align(.AboveMatchingLeft, relativeTo: facebookSocialButton, padding: 5, width: 200, height: 20)
     }
     
 //    func motorButtonUp() {
@@ -596,6 +667,142 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             
             labelManual.textColor = UIColor(hex:0xFF5E00)
             labelMotor.textColor = UIColor.grayColor()
+        }
+    }
+    
+    dynamic private func tapFacebookSocialButton() {
+        if !isLoggedIn.value {
+            signupAlert()
+            return
+        }
+        
+        let loginManager = FBSDKLoginManager()
+        let publishPermissions = ["publish_actions"]
+        
+        let errorBlock = { [weak self] (message: String) in
+            self?.postFacebook.value = false
+            
+            let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
+            self?.presentViewController(alert, animated: true, completion: nil)
+        }
+        
+        let successBlock = { [weak self] (token: FBSDKAccessToken!) in
+            let parameters  = [
+                "facebook_user_id": token.userID,
+                "facebook_token": token.tokenString,
+                ]
+            ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
+                .on(
+                    failed: { _ in
+                        errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
+                    },
+                    completed: { [weak self] in
+                        self?.postFacebook.value = true
+                    }
+                )
+                .start()
+        }
+        
+        if let token = FBSDKAccessToken.currentAccessToken() where publishPermissions.reduce(true, combine: { $0 && token.hasGranted($1) }) {
+            postFacebook.value = !postFacebook.value
+            return
+        }
+        
+        if !isOnline.value {
+            offlineAlert()
+            return
+        }
+        
+        facebookSocialButton.state = .Loading
+        
+        loginManager.logInWithPublishPermissions(publishPermissions, fromViewController: self) { [weak self] result, error in
+            if error != nil || result.isCancelled {
+                self?.postFacebook.value = false
+                loginManager.logOut()
+            } else {
+                let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
+                let allPermissionsGranted = publishPermissions.reduce(true) { $0 && grantedPermissions.contains($1) }
+                
+                if allPermissionsGranted {
+                    successBlock(result.token)
+                } else {
+                    errorBlock("Please allow access to all points in the list. Don't worry, your data will be kept safe.")
+                }
+            }
+        }
+    }
+    
+    private func signupAlert() {
+        let alert = UIAlertController(title: "Login Needed", message: "In order to share your moment you need to create an account.", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { _ in return }))
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    private func offlineAlert() {
+        let alert = UIAlertController(title: "No Network Connection", message: "In order to share your moment you need a network connection.", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { _ in return }))
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    dynamic private func tapTwitterSocialButton() {
+        if !isLoggedIn.value {
+            signupAlert()
+            return
+        }
+        
+        twitterSocialButton.state = .Loading
+        
+        if let session = Twitter.sharedInstance().sessionStore.session() {
+            let newValue = !postTwitter.value
+            
+            if !newValue {
+                postTwitter.value = newValue
+                return
+            }
+            
+            let parameters  = [
+                "twitter_token": session.authToken,
+                "twitter_secret": session.authTokenSecret,
+                ]
+            ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
+                .on(
+                    failed: { [weak self] _ in
+                        
+                        self?.postTwitter.value = !newValue
+                    },
+                    completed: { [weak self] in
+                        self?.postTwitter.value = newValue
+                    }
+                )
+                .start()
+            
+        } else {
+            if !isOnline.value {
+                offlineAlert()
+                return
+            }
+            
+            Twitter.sharedInstance().logInWithViewController(self) { [weak self] (session, error) in
+                if let session = session {
+                    let parameters  = [
+                        "twitter_token": session.authToken,
+                        "twitter_secret": session.authTokenSecret,
+                        ]
+                    ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
+                        .on(
+                            failed: { [weak self] _ in
+                                self?.postTwitter.value = false
+                            },
+                            completed: { [weak self] in
+                                self?.postTwitter.value = true
+                            }
+                        )
+                        .start()
+                } else {
+                    self?.postTwitter.value = false
+                }
+            }
         }
     }
     
@@ -933,52 +1140,6 @@ extension TabControllerDelegate {
     func swipeToShare(){}
 }
 
-//protocol DefaultTabControllerDelegate: TabControllerDelegate {}
-//
-//extension DefaultTabControllerDelegate {
-//    
-//    func onTapCameraButton() {
-//        switch PipelineService.stitchingStatus.value {
-//        case .Idle:
-//            self.tabController!.centerViewController.cleanup()
-//            self.tabController?.centerViewController.pushViewController(CameraViewController(), animated: false)
-//            
-//        case .Stitching(_):
-//            
-//            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
-//            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-//            tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
-//        case let .StitchingFinished(optographID):
-//            scrollToOptograph(optographID)
-//            PipelineService.stitchingStatus.value = .Idle
-//        case .Uninitialized: ()
-//        }
-//    }
-//    func swipeToShare(){
-//        print("swipe")
-//    }
-//    
-//    func onTapLeftButton() {
-////        if tabController?.activeViewController == tabController?.leftViewController {
-////            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
-////                jumpToTop()
-////            }
-////        } else {
-////            tabController?.updateActiveTab(.Left)
-////        }
-//    }
-//    
-//    func onTapRightButton() {
-////        if tabController?.activeViewController == tabController?.rightViewController {
-////            if tabController?.activeViewController.popToRootViewControllerAnimated(true) == nil {
-////                jumpToTop()
-////            }
-////        } else {
-////            tabController?.updateActiveTab(.Right)
-////        }
-//    }
-//}
-
 extension UIViewController {
     var tabController: TabViewController? {
         return navigationController?.parentViewController as? TabViewController
@@ -1005,5 +1166,111 @@ class PassThroughView: UIView {
             }
         }
         return false
+    }
+}
+private class SocialButtonForSettings: UIView {
+    
+    private let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+    private let textView = UILabel()
+    private var touched = false
+    private var iconView2 = UIImageView()
+    
+    var text = "" {
+        didSet {
+            textView.text = text
+        }
+    }
+    
+    var icon2:UIImage = UIImage(named:"facebook_save_active")! {
+        didSet {
+            iconView2.image = icon2
+        }
+    }
+    
+    var color = UIColor.Accent {
+        didSet {
+            updateColors()
+        }
+    }
+    
+    enum State { case Selected, Unselected, Loading }
+    
+    var state: State = .Unselected {
+        didSet {
+            updateColors()
+        }
+    }
+    
+    override init (frame: CGRect) {
+        super.init(frame: frame)
+        
+        loadingView.hidesWhenStopped = true
+        addSubview(loadingView)
+        
+        textView.font = UIFont.displayOfSize(16, withType: .Semibold)
+        addSubview(textView)
+        
+        addSubview(iconView2)
+        
+        updateColors()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let iconHeight = UIImage(named:"facebook_save_active")!.size.height
+        let iconWidth = UIImage(named:"facebook_save_active")!.size.width
+        
+        loadingView.frame = CGRect(x: 0, y: 0, width: iconHeight, height: iconHeight)
+        textView.frame = CGRect(x: 45, y: 10, width: 77, height: 17)
+        
+        iconView2.frame = CGRect(x: 0,y: 0,width: iconWidth,height: iconHeight)
+    }
+    
+    private override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesBegan(touches, withEvent: event)
+        touched = true
+        updateColors()
+    }
+    
+    private override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+        super.touchesCancelled(touches, withEvent: event)
+        touched = false
+        updateColors()
+    }
+    
+    private override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesEnded(touches, withEvent: event)
+        touched = false
+        updateColors()
+    }
+    
+    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+        let margin: CGFloat = 5
+        let area = CGRectInset(bounds, -margin, -margin)
+        return CGRectContainsPoint(area, point)
+    }
+    
+    private func updateColors() {
+        if state == .Loading {
+            loadingView.startAnimating()
+            iconView2.hidden = true
+        } else {
+            loadingView.stopAnimating()
+            iconView2.hidden = false
+        }
+        
+        var textColor = UIColor(0x919293)
+        if touched {
+            textColor = color.alpha(0.7)
+        } else if state == .Selected {
+            textColor = color
+        }
+        
+        textView.textColor = textColor
     }
 }

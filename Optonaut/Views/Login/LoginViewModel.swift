@@ -17,6 +17,8 @@ class LoginViewModel {
     let emailOrUserName = MutableProperty<String>("")
     let emailOrUserNameValid = MutableProperty<Bool>(false)
     let emailOrUserNameStatus = MutableProperty<LineTextField.Status>(.Normal)
+    
+    let emailStatus = MutableProperty<String>("")
     let password = MutableProperty<String>("")
     let passwordValid = MutableProperty<Bool>(false)
     let passwordStatus = MutableProperty<LineTextField.Status>(.Normal)

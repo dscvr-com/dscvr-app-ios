@@ -37,6 +37,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     var fromLoginPage:Bool = false
     var finishReloadingCollectionView = MutableProperty<Bool>(false)
     
+    var ids = OptographIds.sharedInstance
+    
     init(personID: UUID) {
         
         collectionViewModel = ProfileOptographsViewModel(personID: personID)
@@ -181,7 +183,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         collectionView!.delegate = self
         
         
-        //collectionView!.delaysContentTouches = false
+        collectionView!.delaysContentTouches = false
         
         collectionViewModel.results.producer
             .filter{$0.changed}
@@ -198,6 +200,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                         .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
                     
+                    strongSelf.ids.optographIDs = results.models
+                        .filter{ $0.isPublished && !$0.isUploading}
+                        .map{$0.ID}
+                    
                     //                    strongSelf.collectionView!.performBatchUpdates({
                     //                        strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
                     //                        strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
@@ -207,11 +213,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 })
             .startWithNext { _ in
                 self.collectionView?.reloadData()
-        }
-        
-        
-        if isProfileVisit {
-            tabController!.disableScrollView()
         }
         
         tabController?.pageStatus.producer.startWithNext { val in
@@ -364,6 +365,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         if isProfileVisit {
             tabController!.disableScrollView()
+            collectionViewModel.isActive.value = true
         }
         self.navigationController?.navigationBar.tintColor = UIColor(hex:0xFF5E00)
         
@@ -470,7 +472,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 cell.backgroundColor = UIColor.blackColor()
             }
             
-            
             return cell
         }
     }
@@ -523,7 +524,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if indexPath.item % 3 == 1 && indexPath.item > optographIDs.count - 7 {
             collectionViewModel.loadMoreNotification.notify(())
         }
-        
     }
     
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {

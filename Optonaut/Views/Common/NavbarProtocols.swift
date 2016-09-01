@@ -56,6 +56,26 @@ extension RedNavbar where Self: UIViewController {
     }
     
 }
+protocol WhiteNavBar {
+    func updateNavbarAppear()
+}
+extension WhiteNavBar where Self: UIViewController {
+    
+    func updateNavbarAppear() {
+        navigationController?.navigationBar.translucent = false
+        navigationController?.navigationBar.barTintColor = UIColor(hex:0xf7f7f7)
+        navigationController?.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
+        navigationController?.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
+            NSForegroundColorAttributeName: UIColor.whiteColor(),
+        ]
+        
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.interactivePopGestureRecognizer?.enabled = false
+    }
+    
+}
 
 extension UIColor {
     convenience init(hex: Int) {

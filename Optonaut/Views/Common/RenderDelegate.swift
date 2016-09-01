@@ -58,17 +58,9 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         cameraCrosshair.name = "cameraCrosshair"
         scene.rootNode.addChildNode(cameraCrosshair)
         
-    
-        
         // TODO(ej): Check if this is necassary for 3D vision. If so, add it to transform
         // in each render loop since pivot is broken.
         // cameraNode.pivot = SCNMatrix4MakeTranslation(0, cameraOffset, 0)
-        
-        
-        
-        
-        
-        
         
         
         super.init()
@@ -200,6 +192,7 @@ class CubeRenderDelegate: RenderDelegate {
         
         let planeGeo = SCNPlane(width: 1.0, height: 1.0)
         planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        
         
         let circleGeo = SCNSphere(radius: 0.01)
         circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
@@ -375,7 +368,7 @@ class CubeRenderDelegate: RenderDelegate {
         print("posi y: \(markNode.position.y)")
         print("posi z: \(markNode.position.z)")
         
-        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
+        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
         
         
         
@@ -401,9 +394,9 @@ class CubeRenderDelegate: RenderDelegate {
         markNode.position = nodeData.objectVector3
         markNode.eulerAngles = nodeData.objectRotation
         
-        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
+        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
         
-        markNode.name = nodeData.optographID
+        markNode.name = nodeData.optographID + "," + nodeData.objectType
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
@@ -429,7 +422,7 @@ class CubeRenderDelegate: RenderDelegate {
         markNode.position = SCNVector3Make(0.191026, 0.875804, -0.443256)
         markNode.eulerAngles = SCNVector3Make(1.11453, -0.0, -0.212028)
         
-        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
+        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "back_pin")
         
         markNode.name = homeID
         
@@ -611,7 +604,7 @@ class CubeRenderDelegate: RenderDelegate {
        //  smallCamera.camera = RenderDelegate.setupCamera(smallFov)
       //   smallCamera.transform = cameraNode.transform
         
-        
+//        print("override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval)")
         
         let visibleAndAdjacentPlanes = getVisibleAndAdjacentPlanes(self.cameraNode)
         
@@ -666,9 +659,13 @@ class CubeRenderDelegate: RenderDelegate {
 //                  
 //                    
 //                }
+                
+//                print("node name: \(marknode.name)")
+                
           delegate!.didEnterFrustrum(node, inFrustrum: true)
         }
             else{
+//                print("!node name: \(marknode.name)")
                 delegate!.didEnterFrustrum(node, inFrustrum: false)
             }
         }

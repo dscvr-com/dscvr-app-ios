@@ -9,11 +9,11 @@
 import UIKit
 import Kingfisher
 
-class StorytellingCollectionViewController: UICollectionViewController,TabControllerDelegate {
+class StorytellingCollectionViewController: UICollectionViewController,WhiteNavBar,TabControllerDelegate {
     
     private var profileViewModel: ProfileViewModel;
-    private var collectionViewModel: ProfileOptographsViewModel;
-    private var feedsModel = FeedOptographCollectionViewModel();
+    //private var collectionViewModel: ProfileOptographsViewModel;
+    //private var feedsModel = FeedOptographCollectionViewModel();
     private var optographIDs: [UUID] = [];
     private var feedIDs: [UUID] = [];
     
@@ -24,10 +24,13 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
     var startOpto = ""
     var delegate: FPOptographsCollectionViewControllerDelegate?
     
+    private var leftBarButton: UIBarButtonItem?
+    private var rightBarButton: UIBarButtonItem?
+    
     init(personID: UUID) {
         
         profileViewModel = ProfileViewModel(personID: personID);
-        collectionViewModel = ProfileOptographsViewModel(personID: personID);
+//        collectionViewModel = ProfileOptographsViewModel(personID: personID);
         
 //        let width = ((view.frame.size.width)/3) - 20;
         
@@ -50,6 +53,17 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
         super.viewDidLoad();
         
         self.title = "Stories";
+        
+        var leftBarImage = UIImage(named:"profile_page_icn")
+        leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        leftBarButton = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.dismissMe))
+        
+        var rightBarImage = UIImage(named:"create_story_icn")
+        rightBarImage = rightBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        rightBarButton = UIBarButtonItem(image: rightBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.showDetailsViewController))
+        
+        self.navigationItem.leftBarButtonItem = leftBarButton
+        self.navigationItem.rightBarButtonItem = rightBarButton
         
         tabController?.delegate = self
         
@@ -121,9 +135,9 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
             print("sessionID: \(SessionService.personID)")
             
             
-            for user in data.user{
-                Models.optographs.touch(user)
-            }
+//            for user in data.user{
+//                Models.optographs.touch(user)
+//            }
             
 //            Models.optographs.touch(data.feed)
             
@@ -141,12 +155,19 @@ class StorytellingCollectionViewController: UICollectionViewController,TabContro
             }).start()
     }
     
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
-        print("did appear");
         
+
 //        collectionViewModel.isActive.value = true;
 //        collectionViewModel.refresh();
+        
+        navigationController?.navigationBarHidden = false
+    }
+    
+    func dismissMe(){
+        self.navigationController?.popViewControllerAnimated(true)
     }
     
     func showDetailsViewController(){

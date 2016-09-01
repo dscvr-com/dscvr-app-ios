@@ -33,21 +33,21 @@ class ForgotPasswordViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.Accent
+        view.backgroundColor = UIColor(hex:0x343434)
         
         cancelButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
         cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
-        cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ForgotPasswordViewController.cancel)))
         view.addSubview(cancelButtonView)
         
         titleView.text = "Forgot your password?"
-        titleView.textColor = .whiteColor()
+        titleView.textColor = UIColor(hex:0xFF8B00)
         titleView.font = .displayOfSize(18, withType: .Regular)
         view.addSubview(titleView)
         
         descriptionView.text = "Don't worry. Please enter your email address and we will send you an email with a link to reset your password."
-        descriptionView.textColor = .whiteColor()
+        descriptionView.textColor = UIColor(hex:0xFF8B00)
         descriptionView.font = .displayOfSize(15, withType: .Thin)
         descriptionView.textAlignment = .Center
         descriptionView.numberOfLines = 0
@@ -70,29 +70,29 @@ class ForgotPasswordViewController: UIViewController {
         formView.addSubview(emailInputView)
         
         submitButtonView.setTitle(String.iconWithName(.Next), forState: .Normal)
-        submitButtonView.setTitleColor(.Accent, forState: .Normal)
+        submitButtonView.setTitleColor(UIColor(hex:0xFF8B00), forState: .Normal)
         submitButtonView.defaultBackgroundColor = .whiteColor()
         submitButtonView.titleLabel?.font = UIFont.iconOfSize(28)
         submitButtonView.layer.cornerRadius = 30
         submitButtonView.rac_userInteractionEnabled <~ viewModel.emailStatus.producer.equalsTo(.Normal)
         submitButtonView.rac_alpha <~ viewModel.emailStatus.producer.equalsTo(.Normal).map { $0 ? 1 : 0.2 }
-        submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "sendEmail"))
+        submitButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ForgotPasswordViewController.sendEmail)))
         submitButtonView.rac_loading <~ viewModel.pending
         submitButtonView.rac_hidden <~ viewModel.sent
         formView.addSubview(submitButtonView)
         
         backButtonView.setTitle("Back", forState: .Normal)
-        backButtonView.setTitleColor(.Accent, forState: .Normal)
+        backButtonView.setTitleColor(UIColor(hex:0xFF8B00), forState: .Normal)
         backButtonView.defaultBackgroundColor = .whiteColor()
         backButtonView.rac_hidden <~ viewModel.sent.producer.map(negate)
-        backButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
+        backButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ForgotPasswordViewController.cancel)))
         formView.addSubview(backButtonView)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
         loadingView.rac_hidden <~ viewModel.pending.producer.map(negate)
         view.addSubview(loadingView)
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "dismissKeyboard"))
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ForgotPasswordViewController.dismissKeyboard)))
         
         view.setNeedsUpdateConstraints()
     }
@@ -100,8 +100,8 @@ class ForgotPasswordViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShowNotification:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHideNotification:", name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ForgotPasswordViewController.keyboardWillShowNotification(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ForgotPasswordViewController.keyboardWillHideNotification(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {

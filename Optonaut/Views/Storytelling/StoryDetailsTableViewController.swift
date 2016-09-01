@@ -173,8 +173,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         if nodes.count > 0{
             print("pass data")
             ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
-                print("data story id: \(data.data)");
+                print("data story id: \(data)");
                 print("user: \(SessionService.personID)")
+                
+                self.dismissStorytelling()
             }).start();
         }
         else{
@@ -535,30 +537,37 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         //        let audioPin = UIButton(frame: CGRect(x: 0, y: 0, width: (audioPinImage?.size.width)!, height: (audioPinImage?.size.height)!))
         
         let audioPin = UIButton(frame: CGRect(x: 10.0, y: self.view.frame.size.height - 50.0, width: 40.0, height: 40.0))
-        audioPin.backgroundColor = UIColor.redColor()
+//        audioPin.backgroundColor = UIColor.redColor()
         audioPin.addTarget(self, action: #selector(audioButtonDown), forControlEvents: .TouchUpInside)
+        audioPin.setImage(UIImage(named: "add_music_icn"), forState: UIControlState.Normal)
         
         let optoPin = UIButton(frame: CGRect(x: self.view.frame.size.width - 50.0, y: audioPin.frame.origin.y, width: 40.0, height: 40.0))
-        optoPin.backgroundColor = UIColor.blueColor()
+//        optoPin.backgroundColor = UIColor.blueColor()
         optoPin.addTarget(self, action: #selector(imageButtonDown), forControlEvents: .TouchUpInside)
+        optoPin.setImage(UIImage(named: "add_scene_icn"), forState: UIControlState.Normal)
         
         let textPin = UIButton(frame: CGRect(x: optoPin.frame.origin.x - 50.0, y: audioPin.frame.origin.y, width: 40.0, height: 40.0))
-        textPin.backgroundColor = UIColor.greenColor()
+//        textPin.backgroundColor = UIColor.greenColor()
         textPin.addTarget(self, action: #selector(textButtonDown), forControlEvents: .TouchUpInside)
+        textPin.setImage(UIImage(named: "add_text_icn"), forState: UIControlState.Normal)
         
-        let doneButton = UIButton(frame: CGRect(x: 0, y: 0, width: 90.0, height: 90.0))
+        let doneButton = UIButton(frame: CGRect(x: 0, y: 0, width: 87.0, height: 87.0))
         doneButton.layer.cornerRadius = doneButton.bounds.size.width/2.0
         doneButton.center = CGPointMake(self.view.center.x, self.view.frame.height - doneButton.frame.size.height/2 - 10.0)
         doneButton.backgroundColor = UIColor.orangeColor()
         doneButton.addTarget(self, action: #selector(doneStorytelling), forControlEvents: .TouchUpInside)
+        doneButton.setImage(UIImage(named: "done_check_icn"), forState: UIControlState.Normal)
         
         let dismissButton = UIButton(frame: CGRect(x: 0, y: 0.0, width: 40.0, height: 40.0))
-        dismissButton.backgroundColor = UIColor.whiteColor()
+//        dismissButton.backgroundColor = UIColor.whiteColor()
         dismissButton.addTarget(self, action: #selector(dismissStorytelling), forControlEvents: .TouchUpInside)
+        dismissButton.setImage(UIImage(named: "close_icn-1"), forState: UIControlState.Normal)
         
         textFieldContainer.frame = CGRect(x: 0, y: self.view.frame.size.height, width: self.view.frame.size.width, height: 50.0)
         textFieldContainer.backgroundColor = UIColor.blackColor().alpha(0.3)
         inputTextField.frame = CGRect(x: 5.0, y: 5.0, width: self.view.frame.size.width - 10.0, height: 40.0)
+        inputTextField.returnKeyType = UIReturnKeyType.Done
+        inputTextField.textColor = UIColor.whiteColor()
         inputTextField.delegate = self
         textFieldContainer.addSubview(inputTextField)
         
@@ -743,7 +752,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     //create a function with button tag switch for color changes
     func textButtonDown(){
-        renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
+        renderDelegate.addMarker(UIColor.redColor(), type:"Text Item")
         nodeItem.objectType = "TXT"
         
 //        let storyCollection = StorytellingCollectionViewController(personID: SessionService.personID)

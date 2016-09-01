@@ -265,7 +265,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             self.presentViewController(imagePickVC, animated: true, completion: nil)
         } else{
-            //self.presentViewController(InvitationViewController(), animated: true, completion: nil)
             self.tapRightButton()
         }
     }
@@ -350,7 +349,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //self.presentViewController(InvitationViewController(), animated: true, completion: nil)
     }
     func tapRightButtonTab() {
-        tabController!.tapNavBarTitleForFeedClass()
+        //tabController!.tapNavBarTitleForFeedClass()
+        
+        self.navigationController?.pushViewController(StorytellingCollectionViewController(personID: SessionService.personID), animated: true)
     }
     
     func tapRightButton() {

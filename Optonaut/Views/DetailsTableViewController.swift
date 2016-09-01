@@ -91,6 +91,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var isStory: Bool = false
     var storyNodes: [StorytellingChildren] = []
+    
+    let storyPinLabel = UILabel()
+    let countdownLabel = UILabel()
     private var isInsideStory: Bool = false
     
     required init(optoList:[UUID]) {
@@ -158,6 +161,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         tabController!.delegate = self
+        
+        self.view.addSubview(self.countdownLabel)
         
         //viewModel.viewIsActive.value = true
         
@@ -904,16 +909,69 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func showOptograph(nodeObject: StorytellingObject){
-        
+        //check if node object is equal to home optograph id
+        if nodeObject.optographID == optographID{
+            dispatch_async(dispatch_get_main_queue(), {
+                let cubeImageCache = self.imageCache.getStory(nodeObject.optographID, side: .Left)
+                self.setCubeImageCache(cubeImageCache)
+                
+                for nodes in self.storyNodes{
+                    if nodes.story_object_position.count >= 2{
+                        let nodeItem = StorytellingObject()
+                        
+                        let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
+                        let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
+                        
+                        nodeItem.objectRotation = nodeRotation
+                        nodeItem.objectVector3 = nodeTranslation
+                        nodeItem.optographID = nodes.story_object_media_additional_data
+                        nodeItem.objectType = nodes.story_object_media_type
+                        
+                        print("node id: \(nodeItem.optographID)")
+                        
+                        self.renderDelegate.addNodeFromServer(nodeItem)
+                        
+                    }
+                }
+                
+                self.renderDelegate.removeAllNodes(self.optographID)
+            })
+        }
+            
+            //else move forward and place a back pin at designated vector3
+        else{
+            dispatch_async(dispatch_get_main_queue(), {
+                let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+                
+                let cubeImageCache = self.imageCache.getStory(nameArray[0], side: .Left)
+                self.setCubeImageCache(cubeImageCache)
+                
+                self.renderDelegate.removeAllNodes(nodeObject.optographID)
+                self.renderDelegate.addBackPin(self.optographID)
+            })
+        }
     }
     
     func showText(nodeObject: StorytellingObject){
+        let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+        print("TEXT: \(nameArray[0])")
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            self.storyPinLabel.text = nameArray[0]
+            self.storyPinLabel.textColor = UIColor.whiteColor()
+            self.storyPinLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
+            self.storyPinLabel.sizeToFit()
+            self.storyPinLabel.backgroundColor = UIColor.clearColor()
+            self.storyPinLabel.center = self.view.center
+            
+            self.view.addSubview(self.storyPinLabel)
+        })
+        
         
     }
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
 //        print("nodeObject: \(nodeObject.optographID)")
-        
         
         let mediaTime = CACurrentMediaTime()
 //        print("mediaTime \(mediaTime)")
@@ -923,7 +981,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         //thadzNote for marc: pagkatapos nya pumasok dun sa next optograph, di nya madetect yung backpin na nilagay ko
         //gamit yung
-        //if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) 
+        //if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair)
         //condition sa
         //override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval)
         
@@ -944,65 +1002,64 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     print("countdown \(countDown)")
                     lastElapsedTime = mediaTime
                     
+                    dispatch_async(dispatch_get_main_queue(), {
+                        
+                        self.countdownLabel.text = String(self.countDown)
+                        self.countdownLabel.textColor = UIColor.whiteColor()
+                        self.countdownLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
+                        self.countdownLabel.sizeToFit()
+                        self.countdownLabel.backgroundColor = UIColor.clearColor()
+                        self.countdownLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+                        
+                    })
+                    
+                    
                 }
                 
                 
                 if countDown == 0 {
                     // reset countdown
                     countDown = 3
+                    
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.countdownLabel.text = ""
+                        })
+                    
+                    let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+                    
+//                    for names in nameArrayX {
+//                        print ("names: \(names)")
+//                    }
+                    
                     if inFrustrum{
                         print("inFrustum: \(nodeObject.optographID)")
                         isInsideStory = true
                         
                         print("object Type: \(nodeObject.objectType)")
                         
-                        //check if node object is equal to home optograph id
-                        if nodeObject.optographID == optographID{
-                            dispatch_async(dispatch_get_main_queue(), {
-                                let cubeImageCache = self.imageCache.getStory(nodeObject.optographID, side: .Left)
-                                self.setCubeImageCache(cubeImageCache)
-                                
-                                for nodes in self.storyNodes{
-                                    if nodes.story_object_position.count >= 2{
-                                        let nodeItem = StorytellingObject()
-                                        
-                                        let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
-                                        let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
-                                        
-                                        nodeItem.objectRotation = nodeRotation
-                                        nodeItem.objectVector3 = nodeTranslation
-                                        nodeItem.optographID = nodes.story_object_media_additional_data
-                                        
-                                        print("node id: \(nodeItem.optographID)")
-                                        
-                                        self.renderDelegate.addNodeFromServer(nodeItem)
-                                        
-                                    }
-                                }
-                                
-                                self.renderDelegate.removeAllNodes(self.optographID)
-                            })
+                        if nameArray[1] == "NAV" || nameArray[1] == "Image"{
+                            self.showOptograph(nodeObject)
                         }
-                            
-                        //else move forward and place a back pin at designated vector3
-                        else{
-                            dispatch_async(dispatch_get_main_queue(), {
-                                let cubeImageCache = self.imageCache.getStory(nodeObject.optographID, side: .Left)
-                                self.setCubeImageCache(cubeImageCache)
-                                
-                                self.renderDelegate.removeAllNodes(nodeObject.optographID)
-                                self.renderDelegate.addBackPin(self.optographID)
-                            })
+                        else if nameArray[1] == "TXT"{
+                            self.showText(nodeObject)
                         }
+                        
+                        
                     }
                     else{
 //                        print("!inFrustum")
+                        dispatch_async(dispatch_get_main_queue(), {
+                            self.countdownLabel.text = ""
+                        })
                     }
                 }
             }
             else{
 //                print("!inFrustrum")
                 countDown = 3
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.countdownLabel.text = ""
+                })
             }
             
             
