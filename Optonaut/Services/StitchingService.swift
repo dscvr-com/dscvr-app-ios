@@ -128,16 +128,13 @@ class StitchingService {
                     let strModel = "RICOH THETA S" as String
                     let strMake = "RICOH" as String
                     
-                    
                     let metaData = NSMutableDictionary()
                     let tiffData = NSMutableDictionary()
-                    
+                   
                     tiffData.setObject(strModel, forKey: kCGImagePropertyTIFFModel as String)
                     tiffData.setObject(strMake, forKey: kCGImagePropertyTIFFMake as String)
                     
                     metaData.setObject(tiffData, forKey: kCGImagePropertyTIFFDictionary as String)
-                    
-                    
                     
                     asset.writeImageDataToSavedPhotosAlbum(imageData, metadata: metaData as [NSObject : AnyObject] , completionBlock: { (path:NSURL!, error:NSError!) -> Void in
                         print("meta path >>> \(path)")
