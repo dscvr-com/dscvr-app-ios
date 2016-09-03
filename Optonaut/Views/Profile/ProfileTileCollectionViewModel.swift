@@ -28,6 +28,7 @@ class ProfileTileCollectionViewModel {
     var leftCount = 0
     var rightCount = 0
     
+    
     func bind(optographID: UUID) {
         disposable?.dispose()
         
@@ -106,14 +107,6 @@ class ProfileTileCollectionViewModel {
             return box.model.deletedAt = NSDate()
         }
         
-    }
-    
-    func goUpload() {
-        if Reachability.connectedToNetwork() {
-            self.upload()
-        } else {
-            print("offline")
-        }
     }
     
     func upload() {

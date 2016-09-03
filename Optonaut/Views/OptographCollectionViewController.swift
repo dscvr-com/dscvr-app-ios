@@ -354,12 +354,15 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     func tapRightButton() {
         tabController!.rightButtonAction()
-        readAllNotification()
-            .on(
-                completed: { [weak self] in
-                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                    ActivitiesService.unreadCount.value = 0
-                }).start()
+        if SessionService.isLoggedIn {
+            readAllNotification()
+                .on(
+                    completed: { [weak self] in
+                        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                        ActivitiesService.unreadCount.value = 0
+                    }).start()
+        }
+        
     }
     
     func readAllNotification() -> SignalProducer<EmptyResponse, ApiError> {

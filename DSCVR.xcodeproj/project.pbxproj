@@ -33,8 +33,7 @@
 		595D876B1D083D9500866FF2 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D876A1D083D9500866FF2 /* UserTableViewCell.swift */; };
 		5965DC721D1382E10031059B /* UploadItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965DC711D1382E10031059B /* UploadItemCell.swift */; };
 		5965DC741D138BF70031059B /* ProfileUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */; };
-		59848B231CEA204B00829963 /* LoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B221CEA204B00829963 /* LoginVC.swift */; };
-		59848B251CEA222800829963 /* LoginNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B241CEA222800829963 /* LoginNavViewController.swift */; };
+		5967FADA1D783E8000C40280 /* flowBlender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5967FAD81D783E8000C40280 /* flowBlender.cpp */; };
 		59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B271CEAE13D00829963 /* SettingsNavViewController.swift */; };
 		59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B291CEAE2B000829963 /* SettingsViewController.swift */; };
 		598EB95C1D7068A200E00F9B /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598EB95B1D7068A200E00F9B /* Fabric.framework */; };
@@ -348,8 +347,8 @@
 		595D876A1D083D9500866FF2 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		5965DC711D1382E10031059B /* UploadItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadItemCell.swift; sourceTree = "<group>"; };
 		5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileUploadCollectionViewCell.swift; sourceTree = "<group>"; };
-		59848B221CEA204B00829963 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
-		59848B241CEA222800829963 /* LoginNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginNavViewController.swift; sourceTree = "<group>"; };
+		5967FAD81D783E8000C40280 /* flowBlender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flowBlender.cpp; sourceTree = "<group>"; };
+		5967FAD91D783E8000C40280 /* flowBlender.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = flowBlender.hpp; sourceTree = "<group>"; };
 		59848B271CEAE13D00829963 /* SettingsNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavViewController.swift; sourceTree = "<group>"; };
 		59848B291CEAE2B000829963 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		598EB95B1D7068A200E00F9B /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
@@ -756,6 +755,8 @@
 		5936B1761CAD34F500F808D8 /* stitcher */ = {
 			isa = PBXGroup;
 			children = (
+				5967FAD81D783E8000C40280 /* flowBlender.cpp */,
+				5967FAD91D783E8000C40280 /* flowBlender.hpp */,
 				B17042151CF6CF04004E2F26 /* globalAlignment.hpp */,
 				5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */,
 				5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */,
@@ -1064,12 +1065,10 @@
 		8FAB9F171B8F01DF00B4C8CB /* Login */ = {
 			isa = PBXGroup;
 			children = (
-				59848B221CEA204B00829963 /* LoginVC.swift */,
 				8FAB9F181B8F01DF00B4C8CB /* ForgotPasswordViewController.swift */,
 				8FAB9F191B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift */,
 				8FAB9F1A1B8F01DF00B4C8CB /* LoginViewController.swift */,
 				8FAB9F1B1B8F01DF00B4C8CB /* LoginViewModel.swift */,
-				59848B241CEA222800829963 /* LoginNavViewController.swift */,
 				594023CF1D2E73CE00393E1F /* AddUsernameViewController.swift */,
 				59ECBB971D38929000B57FB2 /* OnboardingViewModel.swift */,
 			);
@@ -1747,7 +1746,6 @@
 				8F5335B21BDBE0910058961A /* ActivityFollowTableViewCell.swift in Sources */,
 				8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */,
 				59DBBF981D1A5A9E0072AA3E /* FollowersTableViewCell.swift in Sources */,
-				59848B231CEA204B00829963 /* LoginVC.swift in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,
 				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
 				BB7634561D49E2F4002486BF /* StorytellingObject.swift in Sources */,
@@ -1839,6 +1837,7 @@
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
 				B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */,
+				5967FADA1D783E8000C40280 /* flowBlender.cpp in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
 				A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */,
 				594023D01D2E73CE00393E1F /* AddUsernameViewController.swift in Sources */,
@@ -1895,7 +1894,6 @@
 				8FAB9F7B1B8F02D500B4C8CB /* Utils.swift in Sources */,
 				5945F4061D46042C002B4CCD /* KDCircularProgress.swift in Sources */,
 				8FAB9F331B8F01DF00B4C8CB /* InsetLabel.swift in Sources */,
-				59848B251CEA222800829963 /* LoginNavViewController.swift in Sources */,
 				8F23AA4D1BFF31B4008926A8 /* ActivityResourceFollowTable.swift in Sources */,
 				5917C8231CE4436900CD5A6D /* SharingNavViewController.swift in Sources */,
 				8F5335A41BDBA7270058961A /* ActivityResourceStar.swift in Sources */,

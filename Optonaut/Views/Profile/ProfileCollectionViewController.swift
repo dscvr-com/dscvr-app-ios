@@ -88,10 +88,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         profileViewModel.isEditing.producer.startWithNext { [weak self] isEditing in
             
-            if isEditing {
-                self?.navigationItem.leftBarButtonItem = self!.barButtonItem
-            }
             self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
+            isEditing ? self?.tabController!.disableScrollView() : self?.tabController!.enableScrollView()
         }
         
         profileViewModel.followTabTouched.producer.startWithNext { [weak self] isFollowTabTap in
@@ -348,6 +346,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             Defaults[.SessionNeedRefresh] = false
         }
         
+        tabController?.delegate = self
+        
         CoreMotionRotationSource.Instance.start()
         
         profileViewModel.refreshData()
@@ -459,11 +459,12 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 cellCount += 1
             }
             if optographIDs.count != 0 {
-                let optographID = optographIDs[indexPath.item - cellCount]
-                cell.bind(optographID)
-                cell.refreshNotification = collectionViewModel.refreshNotification
-                cell.navigationController = navigationController as? NavigationController
-                cell.backgroundColor = UIColor.blackColor()
+                if let optographID:UUID = optographIDs[indexPath.item - cellCount] {
+                    cell.bind(optographID)
+                    cell.refreshNotification = collectionViewModel.refreshNotification
+                    cell.navigationController = navigationController as? NavigationController
+                    cell.backgroundColor = UIColor.blackColor()
+                }
             }
             
             return cell

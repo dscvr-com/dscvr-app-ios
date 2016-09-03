@@ -258,10 +258,6 @@ class LoginOverlayViewController: UIViewController{
             .start()
     }
     func forward() {
-//        dismissViewControllerAnimated(true, completion: {
-//            Defaults[.SessionNeedRefresh] = true
-//            self.successCallback()
-//        })
         Defaults[.SessionUserDidFirstLogin] = true
         self.checkElite()
     }

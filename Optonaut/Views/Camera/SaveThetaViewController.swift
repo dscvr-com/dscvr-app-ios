@@ -457,14 +457,14 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { _ in
-            PipelineService.stopStitching()
-            
-            if StitchingService.hasUnstitchedRecordings() {
-                StitchingService.removeUnstitchedRecordings()
+            LoadingIndicatorView.show("Deleting..")
+            self.viewModel.isReadyForSubmit.producer.skipRepeats().startWithNext { val in
+                if val{
+                    LoadingIndicatorView.hide()
+                    self.viewModel.deleteOpto()
+                    self.navigationController?.popViewControllerAnimated(true)
+                }
             }
-            
-            self.navigationController!.popViewControllerAnimated(true)
-            
         }))
         confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))
         navigationController!.presentViewController(confirmAlert, animated: true, completion: nil)

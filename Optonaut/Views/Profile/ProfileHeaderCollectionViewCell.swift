@@ -207,7 +207,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         
 //        let atSignSize = UIImage(named:"atSign")?.size
 //        atSign.align(.ToTheLeftCentered, relativeTo: displayNameView, padding: 0, width: (atSignSize?.width)!, height: atSignSize!.height)
-        displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 22)
+        displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 26)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)
         textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))

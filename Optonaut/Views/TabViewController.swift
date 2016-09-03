@@ -235,6 +235,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func leftButtonAction() {
+        print("23234234wrewrewrew")
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.adminFrame,animated: false)
             }, completion:{ _ in
@@ -475,7 +476,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         dividerThree.hidden = true
         
         let versionLabel = UILabel()
-        versionLabel.text = "v0.95"
+        versionLabel.text = "v0.97"
         versionLabel.textAlignment = .Center
         versionLabel.font = .fontDisplay(10, withType: .Semibold)
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
@@ -1121,7 +1122,6 @@ class RecButton: UIButton {
         loadingView.fillSuperview()
     }
 }
-
 
 protocol TabControllerDelegate {
     var tabController: TabViewController? { get }

@@ -49,6 +49,7 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
         
         cell.bind(optographIDsNotUploaded![indexPath.item])
         cell.selectionStyle = .None
+        cell.navigationController = navigationController
         cell.uploadFinish.producer.startWithNext{ val in
             if val {
                 print("upload finish")

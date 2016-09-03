@@ -29,6 +29,7 @@ class SaveViewModel {
     let isOnline: MutableProperty<Bool>
     let isLoggedIn = MutableProperty<Bool>(false)
     let placeID = MutableProperty<String?>(nil)
+    let isOptoInServer = MutableProperty<Bool>(false)
     
     let optographBox: ModelBox<Optograph>
     var locationBox: ModelBox<Location>?

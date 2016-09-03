@@ -18,6 +18,8 @@ class UploadItemCell: UITableViewCell {
     private let viewModel = ProfileTileCollectionViewModel()
     var uploadProgress:UIProgressView?
     var uploadLabel = UILabel()
+    
+    weak var navigationController: NavigationController?
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -85,8 +87,16 @@ class UploadItemCell: UITableViewCell {
     }
     
     func upload() {
-        viewModel.goUpload()
+        if Reachability.connectedToNetwork() {
+            viewModel.upload()
+        } else {
+            let alert = UIAlertController(title:"Network Error!", message: "Please Check your Internet Connection.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            
+            self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+        }
     }
+    
     func bind(optographID: UUID) {
         viewModel.bind(optographID)
         let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)

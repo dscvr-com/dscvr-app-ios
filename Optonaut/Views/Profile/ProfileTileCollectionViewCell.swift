@@ -143,10 +143,6 @@ class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControlle
         self.navigationController!.presentViewController(alert, animated: true, completion: nil)
     }
     
-    func upload() {
-        viewModel.goUpload()
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

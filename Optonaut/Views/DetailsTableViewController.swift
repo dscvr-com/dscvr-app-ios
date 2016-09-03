@@ -304,7 +304,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let exportBtn = UIBarButtonItem(image:UIImage(named:"export_icn") , style: UIBarButtonItemStyle.Plain, target: self, action: #selector(exportImage))
         exportBtn.tintColor = UIColor.whiteColor()
         
-        navigationItem.rightBarButtonItems = [vrButton,exportBtn]
+        navigationItem.rightBarButtonItems = [vrButton]
         
         backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeDetailsPage))

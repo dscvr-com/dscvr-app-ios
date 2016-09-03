@@ -186,6 +186,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     }
     
     func tapRightButton() {
+        print("weweww")
         tabController!.leftButtonAction()
     }
     override func didReceiveMemoryWarning() {
