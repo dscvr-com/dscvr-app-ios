@@ -178,12 +178,14 @@ class CubeRenderDelegate: RenderDelegate {
     
    
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool) {
+        
         let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
         
         self.init(rotationMatrixSource: rotationMatrixSource, fov: newFov, cameraOffset: Float(0), cubeFaceCount: cubeFaceCount, autoDispose: autoDispose)
     }
     
     init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float, cubeFaceCount: Int, autoDispose: Bool) {
+        markers.removeAll()
         self.cubeFaceCount = cubeFaceCount
         self.autoDispose = autoDispose
         self.willRequestAll = false
@@ -309,6 +311,7 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     func removeAllNodes(nodeName: String){
+        
         scene.rootNode.enumerateChildNodesUsingBlock{
             (node, stop) -> Void in
             if node.name == nodeName{
@@ -419,12 +422,12 @@ class CubeRenderDelegate: RenderDelegate {
         posi z: -0.443256
         */
         
-        markNode.position = SCNVector3Make(0.191026, 0.875804, -0.443256)
+        markNode.position = SCNVector3Make(0.191026, 0.975804, -0.1514112)
         markNode.eulerAngles = SCNVector3Make(1.11453, -0.0, -0.212028)
         
         markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "back_pin")
         
-        markNode.name = homeID
+        markNode.name = homeID + ",NAV"
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
@@ -595,6 +598,20 @@ class CubeRenderDelegate: RenderDelegate {
         }
     }
     
+    func removeMarkers () {
+        for marker in markers {
+            marker.removeFromParentNode()
+        }
+        markers.removeAll()
+    }
+    
+    func centerCameraPosition () {
+       
+        cameraNode.transform =  SCNMatrix4MakeRotation(0, 0, 0, 0)
+    
+        
+    }
+    
     override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         super.renderer(aRenderer, updateAtTime: time)
         
@@ -621,17 +638,12 @@ class CubeRenderDelegate: RenderDelegate {
      //   print("next point \(nextpoint)")
         
         
-        
+        var enteredFlag = false
         for marknode in markers {
-            let node = StorytellingObject()
             
-            node.objectRotation = marknode.eulerAngles
-            node.objectVector3 = marknode.position
-            node.optographID = marknode.name!
+        //    print("marknode.name!: \(marknode.name)")
             
-//            print("marknode.name!: \(marknode.name)")
-            
-            let backNode = SCNNode()
+           // let backNode = SCNNode()
             
             /*
             node x: 1.11453
@@ -645,30 +657,22 @@ class CubeRenderDelegate: RenderDelegate {
             
             
             if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) {
-          //      let angle = self.cameraNode.presentationNode.rotation.w * self.cameraNode.presentationNode.rotation.y
-           // let elevation = self.cameraNode.rotation.w
-          //  var direction = SCNVector3(x: -sin(angle), y: 0, z: -cos(angle))
-            //direction = SCNVector3(x: cos(elevation) * direction.x , y: sin(elevation), z: cos(elevation) * direction.z)
-           // let eulerangle = sphereGeoNode.position
-            let markername = marknode.name
-//            print ("marker name \(markername) ")
-               
-//                if (markername! == "Text Item2") {
-////                    print("resetToBlack")
-//                  
-//                  
-//                    
-//                }
+                let node = StorytellingObject()
                 
-//                print("node name: \(marknode.name)")
+                node.objectRotation = marknode.eulerAngles
+                node.objectVector3 = marknode.position
+                node.optographID = marknode.name!
                 
-          delegate!.didEnterFrustrum(node, inFrustrum: true)
+               // let markername = marknode.name
+               // print("markername \(markername)")
+                delegate!.didEnterFrustrum(node, inFrustrum: true)
+                enteredFlag = true
         }
-            else{
-//                print("!node name: \(marknode.name)")
-                delegate!.didEnterFrustrum(node, inFrustrum: false)
-            }
-        }
+    }
+    if !enteredFlag {
+        let node = StorytellingObject()
+        delegate!.didEnterFrustrum(node, inFrustrum: false)
+    }
  
  
       
