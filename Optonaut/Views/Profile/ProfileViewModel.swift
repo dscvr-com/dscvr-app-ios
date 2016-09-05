@@ -26,6 +26,8 @@ class ProfileViewModel {
     let notifTabTouched = MutableProperty<Bool>(true)
     let isMe: Bool
     let personID: UUID
+    let didClickedSave = MutableProperty<Bool>(false)
+    let didClickedCancel = MutableProperty<Bool>(false)
     
     //var _userName:String = ""
     
@@ -79,6 +81,8 @@ class ProfileViewModel {
     }
     
     func saveEdit() {
+        didClickedSave.value = true
+        
         let parameters = [
             "display_name": displayName.value.stringByReplacingOccurrencesOfString("@", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil),
             "user_name": userName.value.stringByReplacingOccurrencesOfString("@", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil),
@@ -103,10 +107,12 @@ class ProfileViewModel {
         userName.value = personBox.model.userName
         text.value = personBox.model.text
         isEditing.value = false
+        didClickedCancel.value = true
     }
     
     func updateAvatar(image: UIImage) -> SignalProducer<Void, ApiError> {
         let avatarAssetID = uuid()
+        print("persons/me/upload-profile-image",avatarAssetID)
         return ApiService<EmptyResponse>.upload("persons/me/upload-profile-image", multipartFormData: { form in
             form.appendBodyPart(data: avatarAssetID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "avatar_asset_id")
             form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "avatar_asset", fileName: "image.jpg", mimeType: "image/jpeg")

@@ -37,6 +37,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     //private let postCountView = UILabel()
     private let editSubView = UIImageView()
     private let atSign = UIImageView()
+    var previousImage = UIImage()
     
     private let dividerDescription = UILabel()
     
@@ -248,6 +249,8 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             self?.editSubView.hidden = val ? true : false
             if val == false{
                 self?.dismissKeyboard()
+            } else {
+                self?.previousImage = (self?.avatarImageView.image)!
             }
         }
         
@@ -273,6 +276,18 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         viewModel.isEditing.producer.filter(isTrue).startWithNext { [weak self] _ in
             self?.displayNameInputView.text = viewModel.userName.value
             self?.textInputView.text = viewModel.text.value
+        }
+        
+        viewModel.didClickedSave.producer.filter(isTrue).startWithNext{ [weak self] val in
+            self?.viewModel.updateAvatar((self?.avatarImageView.image)!)
+                .startWithCompleted {
+                    NotificationService.push("Profile image updated", level: .Success)
+                    self?.previousImage = (self?.avatarImageView.image)!
+            }
+        }
+        
+        viewModel.didClickedCancel.producer.filter(isTrue).producer.startWithNext { [weak self] val in
+            self?.avatarImageView.image = self?.previousImage
         }
         
         if isMe {
@@ -358,10 +373,10 @@ extension ProfileHeaderCollectionViewCell: UIImagePickerControllerDelegate, UINa
         
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
         let fixedImage = image.fixedOrientation().centeredCropWithSize(CGSize(width: 1024, height: 1024))
+        
+        previousImage = avatarImageView.image!
+        
         avatarImageView.image = fixedImage
-        viewModel.updateAvatar(fixedImage).startWithCompleted {
-            NotificationService.push("Profile image updated", level: .Success)
-        }
     }
     
 }
