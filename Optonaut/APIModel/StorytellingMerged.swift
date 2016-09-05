@@ -10,8 +10,8 @@ import Foundation
 import ObjectMapper
 
 struct StorytellingMerged: Mappable {
-    var feed: [OptographApiModel] = []
-    var user: [OptographApiModel] = []
+    var feed: [StorytellingFeed] = []
+    var user: [StorytellingFeed] = []
     
     
     init?(_ map: Map) {}

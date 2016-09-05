@@ -18,7 +18,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     private var feedIDs: [UUID] = [];
     
     private var storyIDs: [UUID] = []; //user stories
-    private var storyFeed: [OptographApiModel] = []; //feed available stories
+    private var storyFeed: [StorytellingFeed] = []; //feed available stories
     
     var startStory = false;
     var startOpto = ""
@@ -250,7 +250,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     //UICollectionView Delegate
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        let startOptograph = self.storyFeed[indexPath.row].ID
+        let startOptograph = self.storyFeed[indexPath.row].id
         print("startOpto: \(startOptograph)")
         
         let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
