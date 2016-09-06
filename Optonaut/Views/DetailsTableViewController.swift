@@ -95,6 +95,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     let storyPinLabel = UILabel()
     let countdownLabel = UILabel()
     private var isInsideStory: Bool = false
+    let fixedTextLabel = UILabel()
     
     required init(optoList:[UUID]) {
         
@@ -858,22 +859,36 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             if isStory{
                 for nodes in storyNodes{
                     
-                    if nodes.story_object_position.count >= 2{
-                        let nodeItem = StorytellingObject()
+                    if nodes.story_object_media_type != "FXTXT"{
+                        if nodes.story_object_position.count >= 2{
+                            let nodeItem = StorytellingObject()
+                            
+                            let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
+                            let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
+                            
+                            nodeItem.objectRotation = nodeRotation
+                            nodeItem.objectVector3 = nodeTranslation
+                            nodeItem.optographID = nodes.story_object_media_additional_data
+                            nodeItem.objectType = nodes.story_object_media_type
+                            
+                            print("node id: \(nodeItem.optographID)")
+                            print("nodes: \(nodes.story_object_media_type)")
+                            
+                            renderDelegate.addNodeFromServer(nodeItem)
+                        }
+                    }
+                    else{
+                        dispatch_async(dispatch_get_main_queue(), {
+                            self.fixedTextLabel.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                            self.fixedTextLabel.text = nodes.story_object_media_additional_data
+                            self.fixedTextLabel.textColor = UIColor.whiteColor()
+                            self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
+                            self.fixedTextLabel.sizeToFit()
+                            self.fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
+                            
+                            self.view.addSubview(self.fixedTextLabel)
+                            })
                         
-                        let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
-                        let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
-                        
-                        nodeItem.objectRotation = nodeRotation
-                        nodeItem.objectVector3 = nodeTranslation
-                        nodeItem.optographID = nodes.story_object_media_additional_data
-                        nodeItem.objectType = nodes.story_object_media_type
-                        
-                        print("node id: \(nodeItem.optographID)")
-                        print("nodes: \(nodes.story_object_media_type)")
-                        
-                        renderDelegate.addNodeFromServer(nodeItem)
-
                     }
                     
                     
@@ -964,7 +979,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func showText(nodeObject: StorytellingObject){
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
-        print("TEXT: \(nameArray[0])")
+//        print("TEXT: \(nameArray[0])")
         
         dispatch_async(dispatch_get_main_queue(), {
             self.storyPinLabel.text = nameArray[0]
@@ -972,7 +987,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.storyPinLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
             self.storyPinLabel.sizeToFit()
             self.storyPinLabel.backgroundColor = UIColor.clearColor()
-            self.storyPinLabel.center = self.view.center
+            self.storyPinLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
             
             self.view.addSubview(self.storyPinLabel)
         })
@@ -989,6 +1004,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             countDown = 2
             dispatch_async(dispatch_get_main_queue(), {
                 self.countdownLabel.text = ""
+                self.storyPinLabel.text = ""
             })
             return
         }
@@ -1015,7 +1031,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 timeDiff = 0.0
                 lastElapsedTime = mediaTime
             }
+            
+            
+            let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+            
+            if nameArray[1] == "TXT"{
+                self.showText(nodeObject)
                 
+                return
+            }
+            
             // per second countdown
             if timeDiff > 1.0  {
                 countDown -= 1
@@ -1030,6 +1055,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     self.countdownLabel.sizeToFit()
                     self.countdownLabel.backgroundColor = UIColor.clearColor()
                     self.countdownLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+                    self.storyPinLabel.text = ""
                         
                 })
                     
@@ -1043,20 +1069,19 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     
                 dispatch_async(dispatch_get_main_queue(), {
                     self.countdownLabel.text = ""
+                    self.storyPinLabel.text = ""
                 })
-                    
-                let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
-                    
-                 isInsideStory = true
-                        
+                
+                isInsideStory = true
+                
+                
+                
                 print("object Type: \(nodeObject.objectType)")
                         
                 if nameArray[1] == "NAV" || nameArray[1] == "Image"{
                     self.showOptograph(nodeObject)
                 }
-                else if nameArray[1] == "TXT"{
-                    self.showText(nodeObject)
-                }
+                
                         
             }
                         

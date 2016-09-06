@@ -112,6 +112,17 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
 //                })
 //            .start()
         
+        let dismissButton = UIButton(frame: CGRect(x: 0, y: 0.0, width: 40.0, height: 40.0))
+        //        dismissButton.backgroundColor = UIColor.whiteColor()
+        dismissButton.addTarget(self, action: #selector(dismissStorytelling), forControlEvents: .TouchUpInside)
+        dismissButton.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+        
+        let rightBarButton = UIBarButtonItem(customView: dismissButton)
+        self.navigationItem.rightBarButtonItem = rightBarButton
+    }
+    
+    func dismissStorytelling(){
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func viewWillAppear(animated: Bool) {
