@@ -19,7 +19,7 @@ import ImageIO
 
 let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
 
-class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate{
+class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate{
     
     private let viewModel: DetailsViewModel!
     
@@ -39,6 +39,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
+    var countDown:Int = 2
+    var last_optographID:UUID = ""
+    private var lastElapsedTime = CACurrentMediaTime() ;
+    
+    
     
     var optographTopPick:NSArray = []
     
@@ -84,6 +89,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var exportButton = UIButton()
     var descriptionOpen:Bool = false
     
+    var isStory: Bool = false
+    var storyNodes: [StorytellingChildren] = []
+    
+    let storyPinLabel = UILabel()
+    let countdownLabel = UILabel()
+    private var isInsideStory: Bool = false
+    let fixedTextLabel = UILabel()
+    
     required init(optoList:[UUID]) {
         
         optographID = optoList[0]
@@ -126,6 +139,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
         renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
         renderDelegate.scnView = scnView
+        renderDelegate.delegate = self
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
         scnView.backgroundColor = .clearColor()
@@ -149,6 +163,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
+        
+        self.view.addSubview(self.countdownLabel)
         
         //viewModel.viewIsActive.value = true
         
@@ -756,6 +772,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         super.viewDidDisappear(animated)
         
         //Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID, "optograph_description" : viewModel.optograph.text])
+        
         Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": "", "optograph_description" : ""])
     }
     
@@ -834,6 +851,52 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 cache.forget(index)
             }
         }
+        
+        if isInsideStory{
+            
+        }
+        else{
+            if isStory{
+                for nodes in storyNodes{
+                    
+                    if nodes.story_object_media_type != "FXTXT"{
+                        if nodes.story_object_position.count >= 2{
+                            let nodeItem = StorytellingObject()
+                            
+                            let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
+                            let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
+                            
+                            nodeItem.objectRotation = nodeRotation
+                            nodeItem.objectVector3 = nodeTranslation
+                            nodeItem.optographID = nodes.story_object_media_additional_data
+                            nodeItem.objectType = nodes.story_object_media_type
+                            
+                            print("node id: \(nodeItem.optographID)")
+                            print("nodes: \(nodes.story_object_media_type)")
+                            
+                            renderDelegate.addNodeFromServer(nodeItem)
+                        }
+                    }
+                    else{
+                        dispatch_async(dispatch_get_main_queue(), {
+                            self.fixedTextLabel.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                            self.fixedTextLabel.text = nodes.story_object_media_additional_data
+                            self.fixedTextLabel.textColor = UIColor.whiteColor()
+                            self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
+                            self.fixedTextLabel.sizeToFit()
+                            self.fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
+                            
+                            self.view.addSubview(self.fixedTextLabel)
+                            })
+                        
+                    }
+                    
+                    
+                    print("counts: \(nodes.story_object_position.count)")
+                    print("counts: \(nodes.story_object_rotation.count)")
+                }
+            }
+        }
     }
     
     func willDisplay() {
@@ -851,10 +914,182 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         renderDelegate.reset()
     }
     
+   
+    
     func showRotationAlert() {
         rotationAlert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
         rotationAlert!.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
         self.navigationController?.presentViewController(rotationAlert!, animated: true, completion: nil)
+    }
+    
+    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3) {
+        
+    }
+    
+    func showOptograph(nodeObject: StorytellingObject){
+        //check if node object is equal to home optograph id
+        let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+        if nameArray[0] == optographID{
+            dispatch_async(dispatch_get_main_queue(), {
+                let cubeImageCache = self.imageCache.getStory(self.optographID, side: .Left)
+                self.setCubeImageCache(cubeImageCache)
+                self.renderDelegate.centerCameraPosition()
+                self.renderDelegate.removeAllNodes(self.optographID)
+                self.renderDelegate.removeMarkers()
+                for nodes in self.storyNodes{
+                    if nodes.story_object_position.count >= 2{
+                        let nodeItem = StorytellingObject()
+                        
+                        let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
+                        let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
+                        
+                        nodeItem.objectRotation = nodeRotation
+                        nodeItem.objectVector3 = nodeTranslation
+                        nodeItem.optographID = nodes.story_object_media_additional_data
+                        nodeItem.objectType = nodes.story_object_media_type
+                        
+                        print("node id: \(nodeItem.optographID)")
+                        
+                        self.renderDelegate.addNodeFromServer(nodeItem)
+                        
+                    }
+                }
+                
+                
+            })
+        }
+            
+            //else move forward and place a back pin at designated vector3
+        else{
+            dispatch_async(dispatch_get_main_queue(), {
+                let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+                
+                let cubeImageCache = self.imageCache.getStory(nameArray[0], side: .Left)
+                self.setCubeImageCache(cubeImageCache)
+                self.renderDelegate.removeMarkers()
+                self.renderDelegate.centerCameraPosition()
+
+                
+                self.renderDelegate.removeAllNodes(nodeObject.optographID)
+                self.renderDelegate.addBackPin(self.optographID)
+                
+            })
+        }
+    }
+    
+    func showText(nodeObject: StorytellingObject){
+        let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+//        print("TEXT: \(nameArray[0])")
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            self.storyPinLabel.text = nameArray[0]
+            self.storyPinLabel.textColor = UIColor.whiteColor()
+            self.storyPinLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
+            self.storyPinLabel.sizeToFit()
+            self.storyPinLabel.backgroundColor = UIColor.clearColor()
+            self.storyPinLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+            
+            self.view.addSubview(self.storyPinLabel)
+        })
+        
+        
+    }
+    
+  
+ 
+    
+    func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
+//        print("nodeObject: \(nodeObject.optographID)")
+        if !inFrustrum {
+            countDown = 2
+            dispatch_async(dispatch_get_main_queue(), {
+                self.countdownLabel.text = ""
+                self.storyPinLabel.text = ""
+            })
+            return
+        }
+        
+        
+        let mediaTime = CACurrentMediaTime()
+//        print("mediaTime \(mediaTime)")
+        var timeDiff = mediaTime - lastElapsedTime
+//        print("timeDiff \(timeDiff)")
+        
+        
+        //thadzNote for marc: pagkatapos nya pumasok dun sa next optograph, di nya madetect yung backpin na nilagay ko
+        //gamit yung
+        //if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair)
+        //condition sa
+        //override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval)
+        
+        
+        if (last_optographID == nodeObject.optographID) {
+            
+            // reset if difference is above 3 seconds
+            if timeDiff > 3.0 {
+                countDown = 2
+                timeDiff = 0.0
+                lastElapsedTime = mediaTime
+            }
+            
+            
+            let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+            
+            if nameArray[1] == "TXT"{
+                self.showText(nodeObject)
+                
+                return
+            }
+            
+            // per second countdown
+            if timeDiff > 1.0  {
+                countDown -= 1
+                print("countdown \(countDown)")
+                lastElapsedTime = mediaTime
+                    
+                dispatch_async(dispatch_get_main_queue(), {
+                        
+                    self.countdownLabel.text = String(self.countDown)
+                    self.countdownLabel.textColor = UIColor.whiteColor()
+                    self.countdownLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
+                    self.countdownLabel.sizeToFit()
+                    self.countdownLabel.backgroundColor = UIColor.clearColor()
+                    self.countdownLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+                    self.storyPinLabel.text = ""
+                        
+                })
+                    
+                    
+            }
+                
+                
+            if countDown == 0 {
+                    // reset countdown
+                countDown = 2
+                    
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.countdownLabel.text = ""
+                    self.storyPinLabel.text = ""
+                })
+                
+                isInsideStory = true
+                
+                
+                
+                print("object Type: \(nodeObject.objectType)")
+                        
+                if nameArray[1] == "NAV" || nameArray[1] == "Image"{
+                    self.showOptograph(nodeObject)
+                }
+                
+                        
+            }
+                        
+            
+        }
+        else{ // this is a new id
+            last_optographID = nodeObject.optographID
+        }
     }
     
 }

@@ -55,6 +55,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         
     
         cameraCrosshair.position = SCNVector3(x: 0, y: 0, z: 0)
+        cameraCrosshair.name = "cameraCrosshair"
         scene.rootNode.addChildNode(cameraCrosshair)
         
         // TODO(ej): Check if this is necassary for 3D vision. If so, add it to transform
@@ -134,7 +135,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 }
 
 protocol CubeRenderDelegateDelegate {
-    func didEnterFrustrum(markerName: String, inFrustrum: Bool)
+    func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool)
     func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3)
 }
 
@@ -177,12 +178,14 @@ class CubeRenderDelegate: RenderDelegate {
     
    
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool) {
+        
         let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
         
         self.init(rotationMatrixSource: rotationMatrixSource, fov: newFov, cameraOffset: Float(0), cubeFaceCount: cubeFaceCount, autoDispose: autoDispose)
     }
     
     init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float, cubeFaceCount: Int, autoDispose: Bool) {
+        markers.removeAll()
         self.cubeFaceCount = cubeFaceCount
         self.autoDispose = autoDispose
         self.willRequestAll = false
@@ -190,11 +193,11 @@ class CubeRenderDelegate: RenderDelegate {
         scnView?.showsStatistics = true
         
         let planeGeo = SCNPlane(width: 1.0, height: 1.0)
-        planeGeo.firstMaterial?.diffuse.contents = UIColor.clearColor()
+        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         
         
         let circleGeo = SCNSphere(radius: 0.01)
-        circleGeo.firstMaterial?.diffuse.contents = UIColor.clearColor()
+        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         sphereGeoNode = SCNNode(geometry: circleGeo)
         sphereGeoNode.name = "test"
         
@@ -307,6 +310,23 @@ class CubeRenderDelegate: RenderDelegate {
         return [SCNNode](sorted.prefix(k))
     }
     
+    func removeAllNodes(nodeName: String){
+        
+        scene.rootNode.enumerateChildNodesUsingBlock{
+            (node, stop) -> Void in
+            if node.name == nodeName{
+                node.removeFromParentNode()
+            }
+        }
+    }
+    
+    func listAllNodes(){
+        scene.rootNode.enumerateChildNodesUsingBlock{
+            (node, stop) -> Void in
+            print("node named: \(node.name)")
+        }
+    }
+    
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
         if let item = planes[index] {
             //print("settex \(id) \(index)")
@@ -347,8 +367,11 @@ class CubeRenderDelegate: RenderDelegate {
         print("node x: \(markNode.eulerAngles.x)")
         print("node y: \(markNode.eulerAngles.y)")
         print("node z: \(markNode.eulerAngles.z)")
+        print("posi x: \(markNode.position.x)")
+        print("posi y: \(markNode.position.y)")
+        print("posi z: \(markNode.position.z)")
         
-        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
+        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
         
         
         
@@ -360,7 +383,7 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     
-    func addNodeFromServer(translation: SCNVector3, rotation: SCNVector3){
+    func addNodeFromServer(nodeData: StorytellingObject){
         
         print("addNodeFromServer(translation: SCNVector3, rotation: SCNVector3)")
         
@@ -371,16 +394,44 @@ class CubeRenderDelegate: RenderDelegate {
         circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         let markNode = SCNNode(geometry: planeGeo)
         
-        markNode.position = translation
-        markNode.eulerAngles = rotation
+        markNode.position = nodeData.objectVector3
+        markNode.eulerAngles = nodeData.objectRotation
         
-        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "story_pin")
+        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
+        
+        markNode.name = nodeData.optographID + "," + nodeData.objectType
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
     }
     
-    
+    func addBackPin(homeID: String){
+        let planeGeo = SCNPlane(width: 0.1, height: 0.1)
+        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        
+        let circleGeo = SCNSphere(radius: 0.01)
+        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        let markNode = SCNNode(geometry: planeGeo)
+        
+        /*
+        node x: 1.11453
+        node y: -0.0
+        node z: -0.212028
+        posi x: 0.191026
+        posi y: 0.875804
+        posi z: -0.443256
+        */
+        
+        markNode.position = SCNVector3Make(0.191026, 0.975804, -0.1514112)
+        markNode.eulerAngles = SCNVector3Make(1.11453, -0.0, -0.212028)
+        
+        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "back_pin")
+        
+        markNode.name = homeID + ",NAV"
+        
+        scene.rootNode.addChildNode(markNode)
+        markers.append(markNode)
+    }
     
     
     
@@ -547,6 +598,20 @@ class CubeRenderDelegate: RenderDelegate {
         }
     }
     
+    func removeMarkers () {
+        for marker in markers {
+            marker.removeFromParentNode()
+        }
+        markers.removeAll()
+    }
+    
+    func centerCameraPosition () {
+       
+        cameraNode.transform =  SCNMatrix4MakeRotation(0, 0, 0, 0)
+    
+        
+    }
+    
     override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         super.renderer(aRenderer, updateAtTime: time)
         
@@ -556,7 +621,7 @@ class CubeRenderDelegate: RenderDelegate {
        //  smallCamera.camera = RenderDelegate.setupCamera(smallFov)
       //   smallCamera.transform = cameraNode.transform
         
-        
+//        print("override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval)")
         
         let visibleAndAdjacentPlanes = getVisibleAndAdjacentPlanes(self.cameraNode)
         
@@ -573,29 +638,41 @@ class CubeRenderDelegate: RenderDelegate {
      //   print("next point \(nextpoint)")
         
         
+        var enteredFlag = false
         for marknode in markers {
             
+        //    print("marknode.name!: \(marknode.name)")
+            
+           // let backNode = SCNNode()
+            
+            /*
+            node x: 1.11453
+            node y: -0.0
+            node z: -0.212028
+            posi x: 0.191026
+            posi y: 0.875804
+            posi z: -0.443256
+            */
+            
+            
+            
             if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) {
-          //      let angle = self.cameraNode.presentationNode.rotation.w * self.cameraNode.presentationNode.rotation.y
-           // let elevation = self.cameraNode.rotation.w
-          //  var direction = SCNVector3(x: -sin(angle), y: 0, z: -cos(angle))
-            //direction = SCNVector3(x: cos(elevation) * direction.x , y: sin(elevation), z: cos(elevation) * direction.z)
-           // let eulerangle = sphereGeoNode.position
-            let markername = marknode.name
-//            print ("marker name \(markername) ")
-               
-//                if (markername! == "Text Item2") {
-////                    print("resetToBlack")
-//                  
-//                  
-//                    
-//                }
-          delegate!.didEnterFrustrum("", inFrustrum: true)
+                let node = StorytellingObject()
+                
+                node.objectRotation = marknode.eulerAngles
+                node.objectVector3 = marknode.position
+                node.optographID = marknode.name!
+                
+               // let markername = marknode.name
+               // print("markername \(markername)")
+                delegate!.didEnterFrustrum(node, inFrustrum: true)
+                enteredFlag = true
         }
-            else{
-                delegate!.didEnterFrustrum("", inFrustrum: false)
-            }
-        }
+    }
+    if !enteredFlag {
+        let node = StorytellingObject()
+        delegate!.didEnterFrustrum(node, inFrustrum: false)
+    }
  
  
       

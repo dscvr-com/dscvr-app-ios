@@ -12,8 +12,8 @@ import Kingfisher
 class StorytellingCollectionViewController: UICollectionViewController,WhiteNavBar,TabControllerDelegate {
     
     private var profileViewModel: ProfileViewModel;
-    private var collectionViewModel: ProfileOptographsViewModel;
-    private var feedsModel = FeedOptographCollectionViewModel();
+    //private var collectionViewModel: ProfileOptographsViewModel;
+    //private var feedsModel = FeedOptographCollectionViewModel();
     private var optographIDs: [UUID] = [];
     private var feedIDs: [UUID] = [];
     
@@ -30,7 +30,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     init(personID: UUID) {
         
         profileViewModel = ProfileViewModel(personID: personID);
-        collectionViewModel = ProfileOptographsViewModel(personID: personID);
+//        collectionViewModel = ProfileOptographsViewModel(personID: personID);
         
 //        let width = ((view.frame.size.width)/3) - 20;
         
@@ -56,7 +56,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         
         var leftBarImage = UIImage(named:"profile_page_icn")
         leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        leftBarButton = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.showDetailsViewController))
+        leftBarButton = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.dismissMe))
         
         var rightBarImage = UIImage(named:"create_story_icn")
         rightBarImage = rightBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
@@ -78,49 +78,49 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: "footerView")
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerView")
         
-        collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID);
-        
-        collectionViewModel.results.producer
-            .filter{$0.changed}
-            .delayAllUntil(collectionViewModel.isActive.producer)
-            .observeOnMain()
-            .on(next: { [weak self] results in
-                
-                if let strongSelf = self {
-                    
-                    strongSelf.optographIDs = results.models
-                        .filter{ $0.isPublished || $0.isUploading}
-                        .map{$0.ID}
-                    
-//                    print("over here");
-//                    print("id count: \(strongSelf.optographIDs.count)");
-                    strongSelf.feedsModel.isActive.value = true;
-                    strongSelf.feedsModel.refresh()
-                    strongSelf.collectionView?.reloadData();
-                    strongSelf.collectionViewModel.isActive.value = false;
-                }
-                })
-            .start();
-        
-        feedsModel.results.producer
-            .filter {return $0.changed }
-            //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
-            .delayAllUntil(feedsModel.isActive.producer)
-            .observeOnMain()
-            .on(next: { [weak self] results in
-                print("reload data =======")
-                
-                if let strongSelf = self {
-//                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-//                    strongSelf.feedIDs = results.models.map { $0.ID }
-//                    strongSelf.optographIDs = strongSelf.optographIDs + results.models.map { $0.ID }
-////                    print("feedIDs: \(strongSelf.optographIDs.count)");
+//        collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID);
+//        
+//        collectionViewModel.results.producer
+//            .filter{$0.changed}
+//            .delayAllUntil(collectionViewModel.isActive.producer)
+//            .observeOnMain()
+//            .on(next: { [weak self] results in
+//                
+//                if let strongSelf = self {
 //                    
-//                    strongSelf.collectionView!.reloadData()
-                    
-                }
-                })
-            .start()
+//                    strongSelf.optographIDs = results.models
+//                        .filter{ $0.isPublished || $0.isUploading}
+//                        .map{$0.ID}
+//                    
+////                    print("over here");
+////                    print("id count: \(strongSelf.optographIDs.count)");
+////                    strongSelf.feedsModel.isActive.value = true;
+////                    strongSelf.feedsModel.refresh()
+//                    strongSelf.collectionView?.reloadData();
+//                    strongSelf.collectionViewModel.isActive.value = false;
+//                }
+//                })
+//            .start();
+        
+//        feedsModel.results.producer
+//            .filter {return $0.changed }
+//            //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
+//            .delayAllUntil(feedsModel.isActive.producer)
+//            .observeOnMain()
+//            .on(next: { [weak self] results in
+//                print("reload data =======")
+//                
+//                if let strongSelf = self {
+////                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+////                    strongSelf.feedIDs = results.models.map { $0.ID }
+////                    strongSelf.optographIDs = strongSelf.optographIDs + results.models.map { $0.ID }
+//////                    print("feedIDs: \(strongSelf.optographIDs.count)");
+////                    
+////                    strongSelf.collectionView!.reloadData()
+//                    
+//                }
+//                })
+//            .start()
         
         /*
         ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
@@ -132,10 +132,24 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         ApiService<StorytellingMerged>.getForGate("story/merged/"+SessionService.personID).on(next: { data in
             print("feed count: \(data.feed.count)")
             print("user count: \(data.user.count)")
+            print("sessionID: \(SessionService.personID)")
             
-            self.storyFeed = data.feed
             
-            print("placeholder: \(data.feed[0].placeholder)")
+//            for user in data.user{
+//                Models.optographs.touch(user)
+//            }
+            
+//            Models.optographs.touch(data.feed)
+            
+            self.storyFeed = data.user
+//
+//            let dataToInsert:Optograph = data.feed[0]
+//            
+//            Models.optographs.touch(dataToInsert).insertOrUpdate()
+            
+//            print("placeholder: \(data.feed[0].placeholder)")
+//            print("indexValue: \(self.storyFeed[0].story?.children![0].story_object_media_additional_data)")
+//            print("locationValue: \(self.storyFeed[0].location)")
             self.collectionView?.reloadData()
             
             }).start()
@@ -145,10 +159,15 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
         
-        collectionViewModel.isActive.value = true;
-        collectionViewModel.refresh();
+
+//        collectionViewModel.isActive.value = true;
+//        collectionViewModel.refresh();
         
         navigationController?.navigationBarHidden = false
+    }
+    
+    func dismissMe(){
+        self.navigationController?.popViewControllerAnimated(true)
     }
     
     func showDetailsViewController(){
@@ -186,12 +205,12 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         if  indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! StorytellingCollectionViewCell;
             
-            cell.layer.shadowColor = UIColor.grayColor().CGColor;
-            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
-            cell.layer.shadowRadius = 2.0;
-            cell.layer.shadowOpacity = 1.0;
-            cell.layer.masksToBounds = false;
-            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
+//            cell.layer.shadowColor = UIColor.grayColor().CGColor;
+//            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
+//            cell.layer.shadowRadius = 2.0;
+//            cell.layer.shadowOpacity = 1.0;
+//            cell.layer.masksToBounds = false;
+//            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
             
             cell.imageView.kf_setImageWithURL(NSURL(string: self.storyFeed[indexPath.row].placeholder)!)
             print("placeholder image: \(self.storyFeed[indexPath.row].placeholder)")
@@ -201,12 +220,12 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         else{
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell-feed", forIndexPath: indexPath) as! ProfileTileCollectionViewCell;
             
-            cell.layer.shadowColor = UIColor.grayColor().CGColor;
-            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
-            cell.layer.shadowRadius = 2.0;
-            cell.layer.shadowOpacity = 1.0;
-            cell.layer.masksToBounds = false;
-            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
+//            cell.layer.shadowColor = UIColor.grayColor().CGColor;
+//            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
+//            cell.layer.shadowRadius = 2.0;
+//            cell.layer.shadowOpacity = 1.0;
+//            cell.layer.masksToBounds = false;
+//            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
             
             storyCell = cell
         }
@@ -231,6 +250,14 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     //UICollectionView Delegate
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
+        let startOptograph = self.storyFeed[indexPath.row].id
+        print("startOpto: \(startOptograph)")
+        
+        let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
+        detailsViewController.cellIndexpath = indexPath.item
+        detailsViewController.isStory = true
+        detailsViewController.storyNodes = self.storyFeed[indexPath.row].story!.children!
+        navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
     //UICollectionViewFlowLayout Delegate

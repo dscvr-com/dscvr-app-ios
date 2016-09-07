@@ -17,7 +17,7 @@ import SwiftyUserDefaults
 import MediaPlayer
 import AVKit
 
-class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate, FPOptographsCollectionViewControllerDelegate, MPMediaPickerControllerDelegate {
+class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerDelegate, CubeRenderDelegateDelegate, FPOptographsCollectionViewControllerDelegate, MPMediaPickerControllerDelegate, UITextFieldDelegate {
 
     private let viewModel: DetailsViewModel!
     
@@ -100,6 +100,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     var player:AVPlayer?
     
     var isStorytelling:Bool = false
+    var isTextPin:Bool = false
+    
+    let textFieldContainer = UIView()
+    let inputTextField = UITextField()
+    let fixedTextLabel = UILabel()
+    let clearTextLabel = UIButton()
     
     required init(optographId:UUID) {
         
@@ -121,56 +127,78 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         logRetain()
     }
     
-    func receiveStory (){
-        ApiService<StoryObject>.getForGate("story/62f1c6cb-cb90-4ade-810d-c6c1bbeee85a", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
-            story in
-            
-            self.storyTellingData = story.children;
-            self.mapChild = self.storyTellingData!.children![0];
-            
-            //            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
-            //            self.setCubeImageCache(cubeImageCache)
-            
-            let nodeTranslation = SCNVector3Make(Float(self.mapChild!.story_object_position[0])!, Float(self.mapChild!.story_object_position[1])!, Float(self.mapChild!.story_object_position[2])!)
-            
-            let nodeRotation = SCNVector3Make(Float(self.mapChild!.story_object_rotation[0])!, Float(self.mapChild!.story_object_rotation[1])!, Float(self.mapChild!.story_object_rotation[2])!)
-            
-            print("node translation: \(nodeTranslation.x)");
-            print("node rotation: \(nodeRotation.x)");
-            
-            self.renderDelegate.addNodeFromServer(nodeTranslation, rotation: nodeRotation)
-            
-            //            for data in story.children!{
-            //                for child in data.children!{
-            //                    print("child id: \(child.story_object_story_id)");
-            //                }
-            //            }
-        }).start();
-    }
+//    func receiveStory (){
+//        ApiService<StoryObject>.getForGate("story/62f1c6cb-cb90-4ade-810d-c6c1bbeee85a", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
+//            story in
+//            
+//            self.storyTellingData = story.children;
+//            self.mapChild = self.storyTellingData!.children![0];
+//            
+//            //            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
+//            //            self.setCubeImageCache(cubeImageCache)
+//            
+//            let nodeTranslation = SCNVector3Make(Float(self.mapChild!.story_object_position[0])!, Float(self.mapChild!.story_object_position[1])!, Float(self.mapChild!.story_object_position[2])!)
+//            
+//            let nodeRotation = SCNVector3Make(Float(self.mapChild!.story_object_rotation[0])!, Float(self.mapChild!.story_object_rotation[1])!, Float(self.mapChild!.story_object_rotation[2])!)
+//
+//            print("node translation: \(nodeTranslation.x)");
+//            print("node rotation: \(nodeRotation.x)");
+//            
+//            self.renderDelegate.addNodeFromServer(nodeTranslation, rotation: nodeRotation)
+//            
+//            //            for data in story.children!{
+//            //                for child in data.children!{
+//            //                    print("child id: \(child.story_object_story_id)");
+//            //                }
+//            //            }
+//        }).start();
+//    }
     
     func sendOptographData(){
         
-        let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
+//        let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
+//        
+//        let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
         
-        let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
+//        let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
+//                                    "story_object_media_face": "pin",
+//                                    "story_object_media_description": "description",
+//                                    "story_object_media_additional_data": nodeItem.optographID,
+//                                    "story_object_position": translationArray,
+//                                    "story_object_rotation": rotationArray]
         
-        let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
-                                    "story_object_media_face": "pin",
-                                    "story_object_media_description": "description",
-                                    "story_object_media_additional_data": nodeItem.optographID,
-                                    "story_object_position": translationArray,
-                                    "story_object_rotation": rotationArray]
+        if fixedTextLabel.text != ""{
+            let child : NSDictionary = ["story_object_media_type": "FXTXT",
+                                        "story_object_media_face": "no pin",
+                                        "story_object_media_description": "fixed text",
+                                        "story_object_media_additional_data": fixedTextLabel.text!,
+                                        "story_object_position": [0, 0, 0],
+                                        "story_object_rotation": [0, 0, 0]]
+            
+            print("text child: \(child)")
+            nodes.append(child);
+        }
         
         let parameters : NSDictionary =  ["story_optograph_id": optographID,
                                           "story_person_id": SessionService.personID,
                                           "children":nodes]
         
-        print("nodes: \(nodes.count)")
+        print("nodes: \(nodes)")
         
-        ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
-            print("data story id: \(data.data)");
-            print("user: \(SessionService.personID)")
-        }).start();
+        if nodes.count > 0{
+            print("pass data")
+            ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
+                print("data story id: \(data)");
+                print("user: \(SessionService.personID)")
+                
+                self.dismissStorytelling()
+            }).start();
+        }
+        else{
+            print("nodes count is zero")
+        }
+        
+        
     }
     
     func optographSelected(optographID: String) {
@@ -187,7 +215,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
                                     "story_object_media_face": "pin",
-                                    "story_object_media_description": "description",
+                                    "story_object_media_description": "next optograph",
                                     "story_object_media_additional_data": nodeItem.optographID,
                                     "story_object_position": translationArray,
                                     "story_object_rotation": rotationArray]
@@ -205,19 +233,17 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
     }
     
-    func didEnterFrustrum(markerName: String, inFrustrum:Bool) {
-        
-        
+    func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
         //        markerNameLabel.hidden = false
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)){
             dispatch_async(dispatch_get_main_queue()){
                 if inFrustrum {
-                    self.markerNameLabel.text = markerName
-                    self.markerNameLabel.sizeToFit()
-                    self.markerNameLabel.center = CGPoint(x: self.view.center.x, y: 70.0)
-                    
-                    self.markerNameLabel.hidden = false
-                    print("markerName: \(self.markerNameLabel.text!)")
+//                    self.markerNameLabel.text = markerName
+//                    self.markerNameLabel.sizeToFit()
+//                    self.markerNameLabel.center = CGPoint(x: self.view.center.x, y: 70.0)
+//                    
+//                    self.markerNameLabel.hidden = false
+//                    print("markerName: \(self.markerNameLabel.text!)")
                     
                     
                     //                    if (self.markerNameLabel.text! == "Text Item2") {
@@ -246,8 +272,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 }
             }
         }
-        
-        
     }
     
     override func viewDidLoad() {
@@ -528,37 +552,75 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         //        let audioPin = UIButton(frame: CGRect(x: 0, y: 0, width: (audioPinImage?.size.width)!, height: (audioPinImage?.size.height)!))
         
         let audioPin = UIButton(frame: CGRect(x: 10.0, y: self.view.frame.size.height - 50.0, width: 40.0, height: 40.0))
-        audioPin.backgroundColor = UIColor.redColor()
+//        audioPin.backgroundColor = UIColor.redColor()
         audioPin.addTarget(self, action: #selector(audioButtonDown), forControlEvents: .TouchUpInside)
+        audioPin.setImage(UIImage(named: "add_music_icn"), forState: UIControlState.Normal)
+        
+        let fixedText = UIButton(frame: CGRect(x: audioPin.frame.origin.x + audioPin.frame.size.width + 10.0, y: audioPin.frame.origin.y, width: 40.0, height: 40.0))
+        fixedText.setImage(UIImage(named: "add_text_round"), forState: UIControlState.Normal)
+        fixedText.addTarget(self, action: #selector(fixedTextDown), forControlEvents: .TouchUpInside)
         
         let optoPin = UIButton(frame: CGRect(x: self.view.frame.size.width - 50.0, y: audioPin.frame.origin.y, width: 40.0, height: 40.0))
-        optoPin.backgroundColor = UIColor.blueColor()
+//        optoPin.backgroundColor = UIColor.blueColor()
         optoPin.addTarget(self, action: #selector(imageButtonDown), forControlEvents: .TouchUpInside)
+        optoPin.setImage(UIImage(named: "add_scene_icn"), forState: UIControlState.Normal)
         
         let textPin = UIButton(frame: CGRect(x: optoPin.frame.origin.x - 50.0, y: audioPin.frame.origin.y, width: 40.0, height: 40.0))
-        textPin.backgroundColor = UIColor.greenColor()
+//        textPin.backgroundColor = UIColor.greenColor()
         textPin.addTarget(self, action: #selector(textButtonDown), forControlEvents: .TouchUpInside)
+        textPin.setImage(UIImage(named: "add_text_icn"), forState: UIControlState.Normal)
         
-        let doneButton = UIButton(frame: CGRect(x: 0, y: 0, width: 90.0, height: 90.0))
+        let doneButton = UIButton(frame: CGRect(x: 0, y: 0, width: 87.0, height: 87.0))
         doneButton.layer.cornerRadius = doneButton.bounds.size.width/2.0
         doneButton.center = CGPointMake(self.view.center.x, self.view.frame.height - doneButton.frame.size.height/2 - 10.0)
         doneButton.backgroundColor = UIColor.orangeColor()
         doneButton.addTarget(self, action: #selector(doneStorytelling), forControlEvents: .TouchUpInside)
+        doneButton.setImage(UIImage(named: "done_check_icn"), forState: UIControlState.Normal)
         
         let dismissButton = UIButton(frame: CGRect(x: 0, y: 0.0, width: 40.0, height: 40.0))
-        dismissButton.backgroundColor = UIColor.whiteColor()
+//        dismissButton.backgroundColor = UIColor.whiteColor()
         dismissButton.addTarget(self, action: #selector(dismissStorytelling), forControlEvents: .TouchUpInside)
+        dismissButton.setImage(UIImage(named: "close_icn-1"), forState: UIControlState.Normal)
+        
+        clearTextLabel.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+        clearTextLabel.addTarget(self, action: #selector(removeFixedText), forControlEvents: .TouchUpInside)
+        
+        textFieldContainer.frame = CGRect(x: 0, y: self.view.frame.size.height, width: self.view.frame.size.width, height: 50.0)
+        textFieldContainer.backgroundColor = UIColor.blackColor().alpha(0.3)
+        inputTextField.frame = CGRect(x: 5.0, y: 5.0, width: self.view.frame.size.width - 10.0, height: 40.0)
+        inputTextField.returnKeyType = UIReturnKeyType.Done
+        inputTextField.textColor = UIColor.whiteColor()
+        inputTextField.delegate = self
+        textFieldContainer.addSubview(inputTextField)
         
         let rightBarButton = UIBarButtonItem(customView: dismissButton)
         self.navigationItem.rightBarButtonItem = rightBarButton
         
         self.navigationItem.setHidesBackButton(true, animated: false)
         
+        //let fixedTextLabel = UILabel()
+//        let clearTextLabel = UIButton()
+        
+        fixedTextLabel.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+        fixedTextLabel.text = ""
+        fixedTextLabel.textColor = UIColor.whiteColor()
+        fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
+        fixedTextLabel.sizeToFit()
+        fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
+        
         self.view.addSubview(audioPin)
+        self.view.addSubview(fixedText)
         self.view.addSubview(optoPin)
         self.view.addSubview(textPin)
         self.view.addSubview(doneButton)
+        self.view.addSubview(textFieldContainer)
+        self.view.addSubview(fixedTextLabel)
+        self.view.addSubview(clearTextLabel)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide), name: UIKeyboardWillHideNotification, object: nil)
     }
+
     
     func prepareStoryTellingHUD(){
         let targetOverlay = UIView(frame: CGRect(x: 0, y: self.view.frame.size.height - 225, width: self.view.frame.size.width, height: 125))
@@ -708,27 +770,95 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
     }
     
+    func keyboardWillHide(notification:NSNotification){
+        textFieldContainer.frame = CGRect(x: 0.0, y: self.view.frame.size.height, width: textFieldContainer.frame.size.width, height: textFieldContainer.frame.size.height)
+    }
+    
+    func keyboardWillShow(notification:NSNotification) {
+        print("func keyboardWillShow(notification:NSNotification)")
+        
+        let userInfo:NSDictionary = notification.userInfo!
+        let keyboardFrame:NSValue = userInfo.valueForKey(UIKeyboardFrameEndUserInfoKey) as! NSValue
+        let keyboardRectangle = keyboardFrame.CGRectValue()
+        let keyboardHeight = keyboardRectangle.height
+        
+        textFieldContainer.frame = CGRect(x: 0.0, y: self.view.frame.size.height - keyboardHeight - 50.0, width: textFieldContainer.frame.size.width, height: textFieldContainer.frame.size.height)
+    }
+    
+    func fixedTextDown(){
+        isTextPin = false
+        
+        inputTextField.becomeFirstResponder()
+    }
+    
+    func removeFixedText(){
+        print("removeFixedText()")
+        fixedTextLabel.text = ""
+        clearTextLabel.hidden = true
+    }
     
     //create a function with button tag switch for color changes
     func textButtonDown(){
-        renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-        nodeItem.objectType = "Image"
+        renderDelegate.addMarker(UIColor.redColor(), type:"Text Item")
+        nodeItem.objectType = "TXT"
+        isTextPin = true
         
-        let storyCollection = StorytellingCollectionViewController(personID: SessionService.personID)
+//        let storyCollection = StorytellingCollectionViewController(personID: SessionService.personID)
+//        
+//        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+//        optocollection.delegate = self;
+//        
+//        let naviCon = UINavigationController()
+//        //        naviCon.viewControllers = [optocollection]
+//        naviCon.viewControllers = [optocollection]
+//        
+//        self.presentViewController(naviCon, animated: true, completion: nil)
         
-        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
-        optocollection.delegate = self;
         
-        let naviCon = UINavigationController()
-        //        naviCon.viewControllers = [optocollection]
-        naviCon.viewControllers = [optocollection]
         
-        self.presentViewController(naviCon, animated: true, completion: nil)
+        inputTextField.becomeFirstResponder()
+    }
+    
+    //text field delegate
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        inputTextField.resignFirstResponder()
+        
+        if isTextPin == true {
+            
+            let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
+            let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
+            
+            let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
+                                        "story_object_media_face": "pin",
+                                        "story_object_media_description": "text pin",
+                                        "story_object_media_additional_data": inputTextField.text!,
+                                        "story_object_position": translationArray,
+                                        "story_object_rotation": rotationArray]
+            
+            print("text child: \(child)")
+            
+            nodes.append(child);
+        }
+        else{
+            if inputTextField.text != ""{
+                fixedTextLabel.text = inputTextField.text
+                fixedTextLabel.sizeToFit()
+                fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
+                
+                clearTextLabel.frame = CGRect(x: fixedTextLabel.frame.origin.x + fixedTextLabel.frame.size.width + 15.0,
+                                              y: fixedTextLabel.frame.origin.y - 15.0,
+                                              width: 30.0, height: 30.0)
+                clearTextLabel.hidden = false
+            }
+        }
+        
+        
+        return true
     }
     
     func imageButtonDown(){
         renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-        nodeItem.objectType = "Image"
+        nodeItem.objectType = "NAV"
         
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optocollection.delegate = self;
@@ -742,6 +872,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func audioButtonDown(){
+        nodeItem.objectType = "MUS"
         //        renderDelegate.addMarker(UIColor.greenColor(), type:"Audio Item")
         //        nodeItem.objectType = "Audio Item"
         //
@@ -816,9 +947,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                  "story_object_media_filename":        "Thousand Minds Logo.png",
                  "story_object_media_base64":          "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABcc */
                 
-                let child : NSDictionary = ["story_object_media_type": "Music",
+                let child : NSDictionary = ["story_object_media_type": self.nodeItem.objectType,
                     "story_object_media_face": "pin",
-                    "story_object_media_description": "description",
+                    "story_object_media_description": "story bgm",
                     "story_object_media_additional_data": "audio data",
                     "story_object_position": translationArray,
                     "story_object_rotation": rotationArray,
