@@ -559,6 +559,9 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         titleLabelShare.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(titleLabelShare)
         titleLabelShare.align(.AboveMatchingLeft, relativeTo: facebookSocialButton, padding: 5, width: 200, height: 20)
+        
+        
+        //twitterSocialButton.hidden = true
     }
     
 //    func motorButtonUp() {
@@ -761,6 +764,8 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         twitterSocialButton.state = .Loading
         
         if let session = Twitter.sharedInstance().sessionStore.session() {
+            
+            
             let newValue = !postTwitter.value
             
             if !newValue {

@@ -339,7 +339,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.view.addSubview(deleteButton)
             
             let deleteImageSize = UIImage(named:"profile_delete_icn")?.size
-            deleteButton.align(.AboveMatchingRight, relativeTo: whiteBackground, padding: 10, width: (deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
+            deleteButton.align(.AboveMatchingRight, relativeTo: whiteBackground, padding: 10, width: (deleteImageSize?.width)! + 5, height: (deleteImageSize?.height)! + 5)
             
             deleteButton.anchorInCorner(.BottomRight, xPad: 15, yPad: 76, width: (deleteImageSize?.width)!, height: (deleteImageSize?.height)!)
             

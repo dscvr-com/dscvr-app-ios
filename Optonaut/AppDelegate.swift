@@ -172,7 +172,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
         
 //        #if !DEBUG
-            Twitter.sharedInstance().startWithConsumerKey("11b87c97c005ce8c5b5369b6eac7d4d41960bdff", consumerSecret: "f93f43a2338f4667b2655d08dfec2544f7b150ee7a10ba70fa6d708a6f5bc7f2")
+            Twitter.sharedInstance().startWithConsumerKey("QZJ8OamzEQ76FghX0EKWqmA7e", consumerSecret: "jhhzAwZGl386N4QxpIvwuIB5nwLeAMoCLYQaDpAm9pXb6IQAZB")
             Fabric.with([Crashlytics.sharedInstance(), Twitter.sharedInstance()])
 //        #endif
         
@@ -209,7 +209,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        }
         
         VersionService.onOutdatedApiVersion {
-            let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of IAM360. Please update to the newest version.", preferredStyle: .Alert)
+            let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of DSCVR. Please update to the newest version.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Update", style: .Default, handler: { _ in
                 let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
                 let url = NSURL(string: "itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=\(appId!)&mt=8")

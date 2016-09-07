@@ -42,6 +42,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
     private let dividerDescription = UILabel()
     
     let yellowLine = UILabel()
+    var didPickImageOnGallery = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -248,6 +249,7 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             val ? self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.updateImage))) : self?.avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
             self?.editSubView.hidden = val ? true : false
             if val == false{
+                self?.didPickImageOnGallery = false
                 self?.dismissKeyboard()
             } else {
                 self?.previousImage = (self?.avatarImageView.image)!
@@ -279,10 +281,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         }
         
         viewModel.didClickedSave.producer.filter(isTrue).startWithNext{ [weak self] val in
-            self?.viewModel.updateAvatar((self?.avatarImageView.image)!)
-                .startWithCompleted {
-                    NotificationService.push("Profile image updated", level: .Success)
-                    self?.previousImage = (self?.avatarImageView.image)!
+            if self?.didPickImageOnGallery == true {
+                self?.viewModel.updateAvatar((self?.avatarImageView.image)!)
+                    .startWithCompleted {
+                        NotificationService.push("Profile image updated", level: .Success)
+                        self?.previousImage = (self?.avatarImageView.image)!
+                }
             }
         }
         
@@ -374,9 +378,8 @@ extension ProfileHeaderCollectionViewCell: UIImagePickerControllerDelegate, UINa
         let image = info[UIImagePickerControllerOriginalImage] as! UIImage
         let fixedImage = image.fixedOrientation().centeredCropWithSize(CGSize(width: 1024, height: 1024))
         
-        previousImage = avatarImageView.image!
-        
         avatarImageView.image = fixedImage
+        didPickImageOnGallery = true
     }
     
 }

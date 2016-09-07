@@ -149,8 +149,14 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 if isEditing {
                     self?.rightBarButton.frame = CGRect(x: 0, y: -2, width: 40, height: 21)
                     let collectionViewSize = strongSelf.collectionView!.frame.size
-                    let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.fontDisplay(12, withType: .Regular))
-                    let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
+                    //let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.fontDisplay(12, withType: .Regular))
+                    
+                    let cellSize = strongSelf.collectionView(strongSelf.collectionView!, layout: strongSelf.collectionView!.collectionViewLayout, sizeForItemAtIndexPath: NSIndexPath(forItem: 0, inSection: 0))
+                    
+                    //let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
+                    
+                    let headerHeight = cellSize.height
+                    
                     strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight - 20, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight + 20)
                     
                     strongSelf.collectionView!.contentOffset = CGPoint(x: 0,y:-44)
