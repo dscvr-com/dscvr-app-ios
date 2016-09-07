@@ -457,8 +457,8 @@ class SaveThetaViewController: UIViewController, RedNavbar {
         
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { _ in
-            LoadingIndicatorView.show("Deleting..")
-            self.viewModel.isReadyForSubmit.producer.skipRepeats().startWithNext { val in
+            LoadingIndicatorView.show("Discarding..")
+            self.viewModel.stitcherFinished.producer.skipRepeats().startWithNext { val in
                 if val{
                     LoadingIndicatorView.hide()
                     self.viewModel.deleteOpto()

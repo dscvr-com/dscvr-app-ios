@@ -155,9 +155,9 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                     
                     //let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
                     
-                    let headerHeight = cellSize.height
+                    let headerHeight = cellSize.height + 20
                     
-                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight - 20, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight + 20)
+                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight)
                     
                     strongSelf.collectionView!.contentOffset = CGPoint(x: 0,y:-44)
                     strongSelf.title = "Edit My Profile"
@@ -269,6 +269,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
             
         }
+        
         profileViewModel.isEditing.producer.skip(1).startWithNext { [weak self] isEditing in
             if let strongSelf = self {
                 
@@ -276,14 +277,18 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 CATransaction.setDisableActions(true)
                 strongSelf.collectionView!.performBatchUpdates(nil, completion: { _ in CATransaction.commit() })
                 
-                let navBarHeight = self!.navigationController?.navigationBar.frame.height
-                
                 if isEditing {
                     self?.rightBarButton.frame = CGRect(x: 0, y: -2, width: 40, height: 21)
                     let collectionViewSize = strongSelf.collectionView!.frame.size
-                    let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.fontDisplay(12, withType: .Regular))
-                    let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
-                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight - 20, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight + 20)
+                    //let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.fontDisplay(12, withType: .Regular))
+                    
+                    let cellSize = strongSelf.collectionView(strongSelf.collectionView!, layout: strongSelf.collectionView!.collectionViewLayout, sizeForItemAtIndexPath: NSIndexPath(forItem: 0, inSection: 0))
+                    
+                    //let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
+                    
+                    let headerHeight = cellSize.height + 20
+                    
+                    strongSelf.editOverlayView.frame = CGRect(x: 0, y: headerHeight, width: collectionViewSize.width, height: collectionViewSize.height - headerHeight)
                     
                     strongSelf.collectionView!.contentOffset = CGPoint(x: 0,y:-44)
                     strongSelf.title = "Edit My Profile"
@@ -348,6 +353,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         if (Defaults[.SessionNeedRefresh]) {
+            print("needs to refresh")
             self.reloadView()
             Defaults[.SessionNeedRefresh] = false
         }

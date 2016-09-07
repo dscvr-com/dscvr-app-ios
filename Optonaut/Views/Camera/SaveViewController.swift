@@ -446,7 +446,7 @@ class SaveViewController: UIViewController, RedNavbar {
         let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
         confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { _ in
             PipelineService.stopStitching()
-            LoadingIndicatorView.show("Deleting..")
+            LoadingIndicatorView.show("Discarding..")
             self.viewModel.isReadyForSubmit.producer.skipRepeats().startWithNext { val in
                 if val{
                     LoadingIndicatorView.hide()
