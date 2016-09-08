@@ -35,8 +35,8 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     
     required init() {
         
-        //let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Defaults[.SessionPersonID]!)
-        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Person.guestID)
+        let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Defaults[.SessionPersonID]!)
+        //let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Person.guestID)
         personSQL = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
         
         super.init(nibName: nil, bundle: nil)
@@ -228,20 +228,17 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
             .on(
                 started: {
                     print("updating")
-                    //self.activityIndicator.startAnimating()
                     LoadingIndicatorView.show()
                 },
-                completed: {
+                completed: { val in
+                    print(val)
                     self.personSQL.displayName = self.viewModel.searchText.value
                     self.personSQL.userName = self.viewModel.searchText.value
                     Defaults[.SessionOnboardingVersion] = OnboardingVersion
                     self.saveModel()
-                    //self.activityIndicator.stopAnimating()
                     LoadingIndicatorView.hide()
                 },
                 failed: { error in
-                    print(error)
-                    //self.activityIndicator.stopAnimating()
                     LoadingIndicatorView.hide()
                 }
         )

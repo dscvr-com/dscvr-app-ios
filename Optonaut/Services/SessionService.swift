@@ -110,6 +110,7 @@ class SessionService {
                 next: { person in
                     
                     Models.persons.touch(person).insertOrUpdate()
+                    
                     Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
                     updateMixpanel()
                     loginNotifiaction.notify(())
