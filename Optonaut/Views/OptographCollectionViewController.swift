@@ -350,6 +350,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     func tapRightButtonTab() {
         tabController!.tapNavBarTitleForFeedClass()
+        
+        //self.navigationController?.pushViewController(StorytellingCollectionViewController(personID: SessionService.personID), animated: true)
     }
     
     func tapRightButton() {

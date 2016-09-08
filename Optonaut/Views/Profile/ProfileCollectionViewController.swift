@@ -37,6 +37,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     var fromLoginPage:Bool = false
     var finishReloadingCollectionView = MutableProperty<Bool>(false)
     
+    var ids = OptographIds.sharedInstance
+    
     init(personID: UUID) {
         
         collectionViewModel = ProfileOptographsViewModel(personID: personID)
@@ -137,7 +139,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         editOverlayView.backgroundColor = UIColor.blackColor().alpha(0.6)
         editOverlayView.rac_hidden <~ profileViewModel.isEditing.producer.map(negate)
         view.addSubview(editOverlayView)
-        _ = self.navigationController?.navigationBar.frame.height
         
         profileViewModel.isEditing.producer.skip(1).startWithNext { [weak self] isEditing in
             if let strongSelf = self {
@@ -199,6 +200,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                         .map{$0.ID}
                     
                     strongSelf.optographIDs = results.models
+                        .filter{ $0.isPublished && !$0.isUploading}
+                        .map{$0.ID}
+                    
+                    strongSelf.ids.optographIDs = results.models
                         .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
                     

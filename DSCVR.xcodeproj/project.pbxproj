@@ -278,6 +278,7 @@
 		BB7634561D49E2F4002486BF /* StorytellingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7634551D49E2F3002486BF /* StorytellingObject.swift */; };
 		BB8AC1931D597B8D00A18BFF /* StorytellingCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */; };
 		BB8AC1951D5B188F00A18BFF /* StorytellingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8AC1941D5B188F00A18BFF /* StorytellingCollectionViewCell.swift */; };
+		BB93F9241D78217D00478C93 /* StorytellingApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB93F9231D78217D00478C93 /* StorytellingApiModel.swift */; };
 		BBBDE6CC1D5202AC00144DB4 /* StorytellingResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBDE6CB1D5202AC00144DB4 /* StorytellingResponse.swift */; };
 /* End PBXBuildFile section */
 
@@ -666,6 +667,7 @@
 		BB7634551D49E2F3002486BF /* StorytellingObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingObject.swift; sourceTree = "<group>"; };
 		BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StorytellingCollectionViewController.swift; path = Storytelling/StorytellingCollectionViewController.swift; sourceTree = "<group>"; };
 		BB8AC1941D5B188F00A18BFF /* StorytellingCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StorytellingCollectionViewCell.swift; path = Storytelling/StorytellingCollectionViewCell.swift; sourceTree = "<group>"; };
+		BB93F9231D78217D00478C93 /* StorytellingApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingApiModel.swift; sourceTree = "<group>"; };
 		BBBDE6CB1D5202AC00144DB4 /* StorytellingResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -887,6 +889,7 @@
 				BB155A9B1D6E8CAB002678A6 /* StorytellingMerged.swift */,
 				BB155A9D1D6E8EC5002678A6 /* StorytellingLocation.swift */,
 				BB155AA11D6E8F06002678A6 /* StorytellingPerson.swift */,
+				BB93F9231D78217D00478C93 /* StorytellingApiModel.swift */,
 			);
 			name = ApiModel;
 			path = APIModel;
@@ -1592,7 +1595,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 675Y8HZ459;
+						DevelopmentTeam = 4Y4J5JD5NJ;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -1833,6 +1836,7 @@
 				8FAB9F4B1B8F01DF00B4C8CB /* HashtagTableViewController.swift in Sources */,
 				8FAB9F711B8F02D500B4C8CB /* Constants.swift in Sources */,
 				8FAB9F861B8F047700B4C8CB /* ApiService.swift in Sources */,
+				BB93F9241D78217D00478C93 /* StorytellingApiModel.swift in Sources */,
 				8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */,
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
@@ -2104,8 +2108,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2135,9 +2139,9 @@
 				);
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "268562c5-8d1d-40c0-9594-efbc750f098f";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2151,8 +2155,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2170,10 +2174,9 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/stitcher/vendor",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.iam360;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "268562c5-8d1d-40c0-9594-efbc750f098f";
-				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

@@ -9,15 +9,20 @@
 import UIKit
 
 class StNavViewController: NavigationController {
-    
-    let viewController = StorytellingCollectionViewController(personID: SessionService.personID)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        pushViewController(viewController, animated: true)
-
-        // Do any additional setup after loading the view.
+        if SessionService.isLoggedIn {
+            pushViewController(StorytellingCollectionViewController(personID: SessionService.personID), animated: false)
+            
+        } else {
+            SessionService.loginNotifiaction.signal.observeNext {
+                let storyPage = StorytellingCollectionViewController(personID: SessionService.personID)
+                self.pushViewController(storyPage, animated: false)
+             
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
