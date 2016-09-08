@@ -78,6 +78,31 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: "footerView")
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerView")
         
+        ApiService<StorytellingMerged>.getForGate("story/merged/"+SessionService.personID+"?feedpage=1&feedsize=1&youpage=1&yousize=20").on(next: { data in
+            print("feed count: \(data.feed.count)")
+            print("user count: \(data.user.count)")
+            print("sessionID: \(SessionService.personID)")
+            
+            
+            //            for user in data.user{
+            //                Models.optographs.touch(user)
+            //            }
+            
+            //            Models.optographs.touch(data.feed)
+            
+            self.storyFeed = data.user
+            //
+            //            let dataToInsert:Optograph = data.feed[0]
+            //
+            //            Models.optographs.touch(dataToInsert).insertOrUpdate()
+            
+            //            print("placeholder: \(data.feed[0].placeholder)")
+            //            print("indexValue: \(self.storyFeed[0].story?.children![0].story_object_media_additional_data)")
+            //            print("locationValue: \(self.storyFeed[0].location)")
+            self.collectionView?.reloadData()
+            
+        }).start()
+        
 //        collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID);
 //        
 //        collectionViewModel.results.producer
@@ -129,41 +154,18 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         }).start();
         */
         
-        ApiService<StorytellingMerged>.getForGate("story/merged/"+SessionService.personID).on(next: { data in
-            print("feed count: \(data.feed.count)")
-            print("user count: \(data.user.count)")
-            print("sessionID: \(SessionService.personID)")
-            
-            
-//            for user in data.user{
-//                Models.optographs.touch(user)
-//            }
-            
-//            Models.optographs.touch(data.feed)
-            
-            self.storyFeed = data.user
-//
-//            let dataToInsert:Optograph = data.feed[0]
-//            
-//            Models.optographs.touch(dataToInsert).insertOrUpdate()
-            
-//            print("placeholder: \(data.feed[0].placeholder)")
-//            print("indexValue: \(self.storyFeed[0].story?.children![0].story_object_media_additional_data)")
-//            print("locationValue: \(self.storyFeed[0].location)")
-            self.collectionView?.reloadData()
-            
-            }).start()
-    }
+}
     
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
         
-
 //        collectionViewModel.isActive.value = true;
 //        collectionViewModel.refresh();
         
         navigationController?.navigationBarHidden = false
+        
+        print("SCVC viewWillAppear")
     }
     
     func dismissMe(){

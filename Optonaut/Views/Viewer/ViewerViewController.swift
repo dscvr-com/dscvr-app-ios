@@ -15,7 +15,7 @@ import SpriteKit
 
 private let queue = dispatch_queue_create("viewer", DISPATCH_QUEUE_SERIAL)
 
-class ViewerViewController: UIViewController  {
+class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     
     private let orientation: UIInterfaceOrientation
     private var optograph: Optograph?
@@ -109,6 +109,14 @@ class ViewerViewController: UIViewController  {
             
             loadImage.value = true
         }
+    }
+    
+    func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool){
+        
+    }
+    
+    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3){
+        
     }
     
     func createField() {

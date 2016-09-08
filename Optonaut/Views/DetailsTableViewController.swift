@@ -16,6 +16,8 @@ import SpriteKit
 import SwiftyUserDefaults
 import AssetsLibrary
 import ImageIO
+import MediaPlayer
+import AVKit
 
 let queue1 = dispatch_queue_create("detail_view", DISPATCH_QUEUE_SERIAL)
 
@@ -96,6 +98,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     let countdownLabel = UILabel()
     private var isInsideStory: Bool = false
     let fixedTextLabel = UILabel()
+    
+    var playerItem:AVPlayerItem?
+    var player:AVPlayer?
     
     required init(optoList:[UUID]) {
         
@@ -859,7 +864,29 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             if isStory{
                 for nodes in storyNodes{
                     
-                    if nodes.story_object_media_type != "FXTXT"{
+                    if nodes.story_object_media_type == "FXTXT"{
+                        
+                        dispatch_async(dispatch_get_main_queue(), {
+                            self.fixedTextLabel.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                            self.fixedTextLabel.text = nodes.story_object_media_additional_data
+                            self.fixedTextLabel.textColor = UIColor.whiteColor()
+                            self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
+                            self.fixedTextLabel.sizeToFit()
+                            self.fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
+                            
+                            self.view.addSubview(self.fixedTextLabel)
+                        })
+                    }
+                    else if nodes.story_object_media_type == "MUS"{
+                        print("MEDIATYPE: MUS")
+                        let url = NSURL(string: "https://bucket.dscvr.com" + nodes.story_object_media_fileurl)
+                        playerItem = AVPlayerItem(URL: url!)
+                        player=AVPlayer(playerItem: playerItem!)
+                        player?.rate = 1.0
+                        player?.volume = 1.0
+                        player!.play()
+                    }
+                    else{
                         if nodes.story_object_position.count >= 2{
                             let nodeItem = StorytellingObject()
                             
@@ -876,18 +903,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                             
                             renderDelegate.addNodeFromServer(nodeItem)
                         }
-                    }
-                    else{
-                        dispatch_async(dispatch_get_main_queue(), {
-                            self.fixedTextLabel.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-                            self.fixedTextLabel.text = nodes.story_object_media_additional_data
-                            self.fixedTextLabel.textColor = UIColor.whiteColor()
-                            self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
-                            self.fixedTextLabel.sizeToFit()
-                            self.fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
-                            
-                            self.view.addSubview(self.fixedTextLabel)
-                            })
                         
                     }
                     
