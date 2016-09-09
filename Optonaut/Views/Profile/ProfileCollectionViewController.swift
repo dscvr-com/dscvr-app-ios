@@ -149,11 +149,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 if isEditing {
                     self?.rightBarButton.frame = CGRect(x: 0, y: -2, width: 40, height: 21)
                     let collectionViewSize = strongSelf.collectionView!.frame.size
-                    //let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.fontDisplay(12, withType: .Regular))
                     
                     let cellSize = strongSelf.collectionView(strongSelf.collectionView!, layout: strongSelf.collectionView!.collectionViewLayout, sizeForItemAtIndexPath: NSIndexPath(forItem: 0, inSection: 0))
-                    
-                    //let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
                     
                     let headerHeight = cellSize.height + 20
                     
@@ -262,12 +259,11 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         rightBarButton.rac_text <~ profileViewModel.isEditing.producer.mapToTuple("Save", String.iconWithName(.More))
         
+        
         profileViewModel.isEditing.producer.startWithNext { [weak self] isEditing in
-            if isEditing {
-                self?.navigationItem.leftBarButtonItem = self!.barButtonItem
-            }
-            self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
             
+            self?.navigationItem.leftBarButtonItem = isEditing ? self!.barButtonItem : self?.originalBackButton
+            isEditing ? self?.tabController!.disableScrollView() : self?.tabController!.enableScrollView()
         }
         
         profileViewModel.isEditing.producer.skip(1).startWithNext { [weak self] isEditing in
@@ -280,11 +276,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                 if isEditing {
                     self?.rightBarButton.frame = CGRect(x: 0, y: -2, width: 40, height: 21)
                     let collectionViewSize = strongSelf.collectionView!.frame.size
-                    //let textHeight = calcTextHeight(strongSelf.profileViewModel.text.value, withWidth: collectionViewSize.width - 28, andFont: UIFont.fontDisplay(12, withType: .Regular))
                     
                     let cellSize = strongSelf.collectionView(strongSelf.collectionView!, layout: strongSelf.collectionView!.collectionViewLayout, sizeForItemAtIndexPath: NSIndexPath(forItem: 0, inSection: 0))
-                    
-                    //let headerHeight = strongSelf.view.frame.height * 0.5 + textHeight
                     
                     let headerHeight = cellSize.height + 20
                     

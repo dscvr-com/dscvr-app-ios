@@ -203,7 +203,8 @@ class ViewerViewController: UIViewController  {
         settingsButtonView.setTitle(String.iconWithName(.Settings), forState: .Normal)
         settingsButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         settingsButtonView.titleLabel?.font = UIFont.iconOfSize(20)
-        settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ViewerViewController.showGlassesSelection)))
+        //settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ViewerViewController.showGlassesSelection)))
+        settingsButtonView.addTarget(self, action: #selector(ViewerViewController.showGlassesSelection), forControlEvents: [.TouchDown])
         view.addSubview(settingsButtonView)
         
         if case .LandscapeLeft = orientation {
@@ -215,7 +216,8 @@ class ViewerViewController: UIViewController  {
         }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(initiateViewer))
-        view.addGestureRecognizer(tapGesture)
+        leftScnView.addGestureRecognizer(tapGesture)
+        rightScnView.addGestureRecognizer(tapGesture)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -414,6 +416,7 @@ private class GlassesSelectionView: UIView {
         cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
         cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(GlassesSelectionView.cancel)))
+        //cancelButtonView.addTarget(self, action: #selector(GlassesSelectionView.cancel), forControlEvents: [.TouchDown])
         addSubview(cancelButtonView)
         
         titleTextView.text = "Choose your VR glasses"
