@@ -9,6 +9,7 @@
 import UIKit
 import ReactiveCocoa
 import SwiftyUserDefaults
+import Mixpanel
 
 class InvitationViewController: UIViewController,UITextFieldDelegate {
 
@@ -183,6 +184,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
                     self.label2.font = UIFont(name: "Avenir-Book", size: 13)
                     self.requestButton.enabled = false
                     self.sendAlert(data.prompt)
+                    Mixpanel.sharedInstance().track("Action.RequestGatePass")
                 }
             })
     }
@@ -200,6 +202,7 @@ class InvitationViewController: UIViewController,UITextFieldDelegate {
                 print(data.request_text)
                 if (data.status == "ok") {
                     Defaults[.SessionEliteUser] = true
+                    Mixpanel.sharedInstance().track("Action.EnterGatePass")
                 }
                 self.sendAlert(data.prompt)
                 

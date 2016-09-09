@@ -19,8 +19,6 @@ import Kingfisher
 import SwiftyUserDefaults
 import ReactiveCocoa
 
-//let Env = EnvType.Development
-//let Env = EnvType.localStaging
 let Env = EnvType.Staging
 //let Env = EnvType.Production
 
@@ -174,13 +172,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        #if !DEBUG
             Twitter.sharedInstance().startWithConsumerKey("QZJ8OamzEQ76FghX0EKWqmA7e", consumerSecret: "jhhzAwZGl386N4QxpIvwuIB5nwLeAMoCLYQaDpAm9pXb6IQAZB")
             Fabric.with([Crashlytics.sharedInstance(), Twitter.sharedInstance()])
-//        #endif
+//        #endif    
         
         if case .Production = Env {
-            Mixpanel.sharedInstanceWithToken("10ba57dae2871ca534c61f0f89bab97d")
+            print("production mixpanel")
+            Mixpanel.sharedInstanceWithToken("2cb0781fb2aaac9ef23bb1e92694caae")
         } else {
-            //Mixpanel.sharedInstanceWithToken("544f3d4afdb4836ed2e070e33a328249")
-            Mixpanel.sharedInstanceWithToken("4acea0241fb1192f8f598174acbc8759")
+            print("staging mixpanel")
+            Mixpanel.sharedInstanceWithToken("905eb49cf2c78af5ceb307939f02c092")
         }
         
         try! DatabaseService.prepare()

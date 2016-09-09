@@ -259,7 +259,7 @@ class LoginOverlayViewController: UIViewController{
     }
     func forward() {
         Defaults[.SessionUserDidFirstLogin] = true
-        self.checkElite()
+        //self.checkElite()
     }
     
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
@@ -313,7 +313,7 @@ class LoginOverlayViewController: UIViewController{
                     completed: {
                         Defaults[.SessionUserDidFirstLogin] = true
                         LoadingIndicatorView.hide()
-                        self?.checkElite()
+                        //self?.checkElite()
                     }
                 )
                 .start()

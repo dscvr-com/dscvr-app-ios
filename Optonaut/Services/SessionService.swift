@@ -110,7 +110,7 @@ class SessionService {
                 next: { person in
                     
                     Models.persons.touch(person).insertOrUpdate()
-                    
+                    Defaults[.SessionEliteUser] = person.eliteStatus == 1 ? true:false
                     Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
                     updateMixpanel()
                     loginNotifiaction.notify(())
@@ -183,6 +183,7 @@ class SessionService {
             "$created": person.createdAt,
             "Followers": person.followersCount,
             "Followed": person.followedCount,
+            "EliteStatus": person.eliteStatus
         ])
     }
     

@@ -10,6 +10,7 @@
 import Foundation
 import ReactiveCocoa
 import SQLite
+import SwiftyUserDefaults
 
 class ProfileViewModel {
     
@@ -44,7 +45,6 @@ class ProfileViewModel {
             .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
             .startWithNext { [weak self] apiModel in
                 self?.personBox.model.mergeApiModel(apiModel)
-                //self?._userName = apiModel.userName
                 self?.displayName.value = apiModel.displayName
                 self?.userName.value = apiModel.userName
                 self?.text.value = apiModel.text

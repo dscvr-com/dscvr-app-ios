@@ -13,6 +13,7 @@
 import UIKit
 import ReactiveCocoa
 import SwiftyUserDefaults
+import Mixpanel
 
 class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     
@@ -231,10 +232,6 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
                     LoadingIndicatorView.show()
                 },
                 completed: { val in
-                    print(val)
-                    self.personSQL.displayName = self.viewModel.searchText.value
-                    self.personSQL.userName = self.viewModel.searchText.value
-                    Defaults[.SessionOnboardingVersion] = OnboardingVersion
                     self.saveModel()
                     LoadingIndicatorView.hide()
                 },
@@ -245,6 +242,16 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func saveModel() {
+        
+        self.personSQL.displayName = self.viewModel.searchText.value
+        self.personSQL.userName = self.viewModel.searchText.value
+        Defaults[.SessionOnboardingVersion] = OnboardingVersion
+        Mixpanel.sharedInstance().identify(self.personSQL.ID)
+        Mixpanel.sharedInstance().people.set([
+            "$first": self.viewModel.searchText.value,
+            "$username": self.viewModel.searchText.value
+            ])
+        
         try! personSQL.insertOrUpdate()
         self.sendAlert("Username updated successfully!")
     }
