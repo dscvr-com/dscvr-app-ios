@@ -697,7 +697,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             
             let errorVec = recorder.getAngularDistanceToBall()
-            let r = recorder.getCurrentRotation()
+            // let r = recorder.getCurrentRotation()
             // let exposureHintC = recorder.getExposureHint()
             
             Async.main {
@@ -716,7 +716,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
                     // Helpers for bearing and distance. Relative to ball.
                     let unit = GLKVector3Make(0, 0, -1)
                     let ballHeading = GLKVector3Normalize(SCNVector3ToGLKVector3(self.ballNode.position))
-                    let currentHeading = GLKVector3Normalize(GLKMatrix4MultiplyVector3(r, unit))
+                    let currentHeading = GLKVector3Normalize(GLKMatrix4MultiplyVector3(cmRotation, unit))
                     //print("Diff: \(diff.x), \(diff.y), \(diff.z)")
                     
                     // Use 3D diff as dist
@@ -734,7 +734,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
                     
                     self.viewModel.headingToDot.value = atan2(angularDiff.x, angularDiff.y)
                 }
-                
                 // TODO: Re-enable this code as soon as apple fixes
                 // the memory leak in AVCaptureDevice.ISO and stuff.
                 
@@ -779,6 +778,9 @@ class CameraViewController: UIViewController,TabControllerDelegate {
 //                                }
             }
             
+            
+            cameraNode.transform = SCNMatrix4FromGLKMatrix4(cmRotation)
+            
             updateBallPosition()
             
             if recorder.hasStarted() {
@@ -796,8 +798,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
-            // Take transform from the stitcher.
-            cameraNode.transform = SCNMatrix4FromGLKMatrix4(recorder.getCurrentRotation())
             
             //print("New CM Transform {\(cameraNode.transform.m11), \(cameraNode.transform.m12), \(cameraNode.transform.m13), \(cameraNode.transform.m14)} \n {\(cameraNode.transform.m21), \(cameraNode.transform.m22), \(cameraNode.transform.m23), \(cameraNode.transform.m24)} \n {\(cameraNode.transform.m31), \(cameraNode.transform.m32), \(cameraNode.transform.m33), \(cameraNode.transform.m34)} \n {\(cameraNode.transform.m41), \(cameraNode.transform.m42), \(cameraNode.transform.m43), \(cameraNode.transform.m44)}");
             
@@ -843,7 +843,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         let recorderCleanup = SignalProducer<UIImage, NoError> { sink, disposable in
             
-            recorder_.finish()
             if recorder_.previewAvailable() {
                 let previewData = recorder_.getPreviewImage()
                 autoreleasepool {
@@ -851,6 +850,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
                 }
                 Recorder.freeImageBuffer(previewData)
             }
+            recorder_.finish()
             
             sink.sendCompleted()
             

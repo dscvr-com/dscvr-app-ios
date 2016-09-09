@@ -6,9 +6,7 @@
 #include <string>
 #define OPTONAUT_TARGET_PHONE
 
-#include "imageSink.hpp"
-#include "storageSink.hpp"
-#include "stitcherSink.hpp"
+#include "recorder2.hpp"
 #include "recorder.hpp"
 #include "intrinsics.hpp"
 #include "Recorder.h"
@@ -121,7 +119,7 @@ std::string debugPath;
 
 @implementation Recorder {
 @private
-    optonaut::Recorder* pipe;
+    optonaut::Recorder2* pipe;
     cv::Mat intrinsics;
     NSString* tempPath;
 }
@@ -150,7 +148,7 @@ std::string debugPath;
 // Promote to class variables instead (somehow). 
 //optonaut::StorageSink storageSink(Stores::left, Stores::right);
 //optonaut::StitcherSink stitcherSink;
-optonaut::ImageSink imageSink(Stores::post);
+//optonaut::ImageSink imageSink(Stores::post);
 
 
 -(id)init:(RecorderMode)recorderMode {
@@ -166,13 +164,13 @@ optonaut::ImageSink imageSink(Stores::post);
     
     Stores::left.Clear();
     Stores::right.Clear();
-    Stores::common.Clear();
-    Stores::post.Clear();
+    //Stores::common.Clear();
+    //Stores::post.Clear();
     
-    optonaut::CheckpointStore::DebugStore = &Stores::debug;
+ //   optonaut::CheckpointStore::DebugStore = &Stores::debug;
     
     //optonaut::StereoSink& sink = storageSink;
-    optonaut::ImageSink& sink = imageSink;
+ //   optonaut::ImageSink& sink = imageSink;
     
     int internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
     
@@ -192,14 +190,12 @@ optonaut::ImageSink imageSink(Stores::post);
         default: break; //Explicitely default to truncated. This removes the compiler warning.
     }
     
-    optonaut::Recorder::exposureEnabled = false;
-    optonaut::Recorder::alignmentEnabled = true;
+ //   optonaut::Recorder::exposureEnabled = false;
+ //   optonaut::Recorder::alignmentEnabled = true;
     
     
-    self->pipe = new optonaut::Recorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                        self->intrinsics, sink,
-                                        //debugPath, internalRecordingMode, true);
-                                         debugPath, internalRecordingMode);
+    self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+                                         self->intrinsics, optonaut::RecorderGraph::ModeCenter);
     
     counter = 0;
 
@@ -226,8 +222,8 @@ optonaut::ImageSink imageSink(Stores::post);
     pipe->Push(oImage);
 }
 - (GLKMatrix4)getCurrentRotation {
-    assert(pipe != NULL);
-    return CVMatToGLK4(pipe->GetCurrentRotation());
+    assert(false);
+   // return CVMatToGLK4(pipe->GetCurrentRotation());
 }
 - (SelectionPoint*)lastKeyframe {
     assert(pipe != NULL);
@@ -260,7 +256,7 @@ optonaut::ImageSink imageSink(Stores::post);
 
 - (bool)hasResults {
     assert(pipe != NULL);
-    return pipe->HasResults();
+    return true;
 }
 - (GLKMatrix4)getBallPosition {
     assert(pipe != NULL);
@@ -272,7 +268,7 @@ optonaut::ImageSink imageSink(Stores::post);
 }
 - (void)cancel {
     assert(pipe != NULL);
-    pipe->Cancel();
+    // Do nothing, no threading here.
 }
 - (double)getDistanceToBall {
     assert(pipe != NULL);
@@ -295,10 +291,12 @@ optonaut::ImageSink imageSink(Stores::post);
 - (void)finish {
     assert(pipe != NULL);
     pipe->Finish();
+    Stores::left.SaveOptograph(pipe->GetLeftResult());
+    Stores::right.SaveOptograph(pipe->GetRightResult());
 }
 - (void)dispose {
     assert(pipe != NULL);
-    pipe->Dispose();
+    // Do nothing, except deleting
     [[NSFileManager defaultManager] removeItemAtPath:self->tempPath error:nil];
     delete pipe;
     pipe = NULL;
@@ -308,25 +306,22 @@ optonaut::ImageSink imageSink(Stores::post);
     assert(pipe != NULL);
     
     cv::Mat extrinsics;
-    optonaut::ExposureInfo info = pipe->GetExposureHint();
+    //optonaut::ExposureInfo info = pipe->GetExposureHint();
     ExposureInfo converted;
-    converted.iso = info.iso;
+    /*converted.iso = info.iso;
     converted.gains.redGain = info.gains.red;
     converted.gains.greenGain = info.gains.green;
     converted.gains.blueGain = info.gains.blue;
-    converted.exposureTime = info.exposureTime;
+    converted.exposureTime = info.exposureTime;*/
     
     return converted;
 }
 - (bool)previewAvailable {
     assert(pipe != NULL);
     
-    return pipe->PreviewAvailable();
+    return true;
 }
 - (struct ImageBuffer)getPreviewImage {
-    ImageBuffer result;
-    
-    return CVMatToImageBuffer(pipe->FinishPreview()->image.data);
-    return result;
+    return CVMatToImageBuffer(pipe->GetPreviewImage()->image.data);
 }
 @end

@@ -61,13 +61,10 @@ struct StitcherCancellation {
     callback = new optonaut::ProgressCallbackAccumulator(*callbackWrapper, {0.5f, 0.5f});
 }
 - (NSArray<NSValue*>*)getLeftResult {
-    
-    optonaut::Stitcher stitcher(Stores::left);
-    
     NSArray<NSValue*>* result;
     
     try {
-        cv::Mat sphere = stitcher.Finish(callback->At(0))->image.data;
+        cv::Mat sphere = Stores::left.LoadOptograph()->image.data;
         cv::Mat blurred;
         optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
         panoBlur.Blur(sphere, blurred);
@@ -80,8 +77,7 @@ struct StitcherCancellation {
 
 - (struct ImageBuffer)getLeftEquirectangularResult {
     
-    optonaut::Stitcher stitcher(Stores::left);
-    cv::Mat sphere = stitcher.Finish(optonaut::ProgressCallback::Empty)->image.data;
+    cv::Mat sphere = Stores::left.LoadOptograph()->image.data;
     cv::Mat blackMat;
     optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
     panoBlur.Black(sphere, blackMat);
@@ -90,15 +86,11 @@ struct StitcherCancellation {
     
 }
 
-
-
 - (NSArray<NSValue*>*)getRightResult {
-    optonaut::Stitcher stitcher(Stores::right);
-    
     NSArray<NSValue*>* result;
     
     try {
-        cv::Mat sphere = stitcher.Finish(callback->At(1))->image.data;
+        cv::Mat sphere = Stores::right.LoadOptograph()->image.data;
         cv::Mat blurred;
         optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
         panoBlur.Blur(sphere, blurred);
@@ -108,6 +100,18 @@ struct StitcherCancellation {
     } catch (StitcherCancellation c) { }
     return result;
 }
+
+- (struct ImageBuffer)getRightEquirectangularResult {
+    
+    cv::Mat sphere = Stores::right.LoadOptograph()->image.data;
+    cv::Mat blackMat;
+    optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
+    panoBlur.Black(sphere, blackMat);
+    
+    return CVMatToImageBuffer(blackMat);
+    
+}
+
 - (bool)hasUnstitchedRecordings {
     return Stores::left.HasUnstitchedRecording() || Stores::right.HasUnstitchedRecording();
 }
