@@ -293,6 +293,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     func sendEmailButtonTapped() {
         let mailComposeViewController = configuredMailComposeViewController()
         if MFMailComposeViewController.canSendMail() {
+            mailComposeViewController.navigationBar.barTintColor = UIColor.blackColor()
             self.presentViewController(mailComposeViewController, animated: true, completion: nil)
         } else {
             self.showSendMailErrorAlert()
@@ -304,7 +305,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         mailComposerVC.mailComposeDelegate = self
         
         //mailComposerVC.setToRecipients(["robert.alkuino@gmail.com"])
-        mailComposerVC.setSubject("Sharing IAM360 image")
+        mailComposerVC.setSubject("Share 360")
         mailComposerVC.setMessageBody("\(self.textToShare) \n\n \(self.shareUrl)", isHTML: true)
         
         return mailComposerVC
