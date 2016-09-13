@@ -154,13 +154,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
-        
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
         
-        let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick as! [UUID] ,selfOptograph:optographID )
-        navigationController?.pushViewController(viewerViewController, animated: false)
+        if !isStory{
+            let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick as! [UUID] ,selfOptograph:optographID )
+            navigationController?.pushViewController(viewerViewController, animated: false)
+        }
+        
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -807,6 +809,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+        
+        player!.pause()
+        player = nil
     }
     
     override func viewDidLayoutSubviews() {
@@ -885,6 +890,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                         player?.rate = 1.0
                         player?.volume = 1.0
                         player!.play()
+                        
+                        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(playerItemDidReachEnd), name: AVPlayerItemDidPlayToEndTimeNotification, object: player!.currentItem)
+                        
+//                        NSNotificationCenter.defaultCenter().addObserver(self,
+//                                                                         selector: #selector(playerItemDidReachEnd()),
+//                                                                         name: AVPlayerItemDidPlayToEndTimeNotification,
+//                                                                         object: player!.currentItem)
                     }
                     else{
                         if nodes.story_object_position.count >= 2{
@@ -941,6 +953,22 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
     }
     
+    func playPinMusic(nodeObject: StorytellingObject){
+        let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+        
+        let url = NSURL(string: "https://bucket.dscvr.com" + nameArray[0])
+        playerItem = AVPlayerItem(URL: url!)
+        player=AVPlayer(playerItem: playerItem!)
+        player?.rate = 1.0
+        player?.volume = 1.0
+        player!.play()
+    }
+    
+    func playerItemDidReachEnd(notification: NSNotification){
+        player!.seekToTime(kCMTimeZero)
+        player!.play()
+    }
+    
     func showOptograph(nodeObject: StorytellingObject){
         //check if node object is equal to home optograph id
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
@@ -953,6 +981,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.renderDelegate.removeMarkers()
                 for nodes in self.storyNodes{
                     if nodes.story_object_position.count >= 2{
+                        
                         let nodeItem = StorytellingObject()
                         
                         let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
@@ -960,8 +989,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                         
                         nodeItem.objectRotation = nodeRotation
                         nodeItem.objectVector3 = nodeTranslation
-                        nodeItem.optographID = nodes.story_object_media_additional_data
+//                        nodeItem.optographID = nodes.story_object_media_additional_data
                         nodeItem.objectType = nodes.story_object_media_type
+                        
+                        if nodes.story_object_media_type == "MUS"{
+                            nodeItem.optographID = nodes.story_object_media_fileurl
+                        }
+                            
+                        else if nodes.story_object_media_type == "NAV"{
+                            nodeItem.optographID = nodes.story_object_media_additional_data
+                        }
                         
                         print("node id: \(nodeItem.optographID)")
                         
@@ -1097,6 +1134,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     self.showOptograph(nodeObject)
                 }
                 
+                if nameArray[1] == "MUS"{
+                    self.playPinMusic(nodeObject)
+                }
                         
             }
                         

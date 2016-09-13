@@ -10,6 +10,7 @@ import UIKit
 
 class StNavViewController: NavigationController {
     
+    //change view controller to something with a login
     let viewController = StorytellingCollectionViewController(personID: SessionService.personID)
 
     override func viewDidLoad() {
