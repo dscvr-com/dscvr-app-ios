@@ -8,3 +8,4 @@
 #import "HeadTracker.h"
 #import "UICollectionViewLeftAlignedLayout.h"
 #import <CommonCrypto/CommonCrypto.h>
+#import "NYAlertViewController.h"

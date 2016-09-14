@@ -192,6 +192,7 @@ class DetailsViewModel {
             
             self?.creatorDetails = Models.persons[optograph.personID]!
             self?.creatorDetails.producer.startWithNext{ person in
+                print(">>>> person",person)
                 self?.avatarImageUrl.value = "persons/\(person.ID)/\(person.avatarAssetID).jpg"
                 self?.creator_username.value = person.userName
                 self?.isFollowed.value = person.isFollowed

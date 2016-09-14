@@ -23,7 +23,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     private let viewModel: DetailsViewModel!
     
-    
     private var combinedMotionManager: CombinedMotionManager!
     // subviews
     //private let tableView = TableView()
@@ -413,9 +412,63 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func share() {
-        let share = DetailsShareViewController()
-        share.optographId = optographID
-        self.navigationController?.presentViewController(share, animated: true, completion: nil)
+        
+        if viewModel.optographBox.model.isPublished && !viewModel.optographBox.model.isUploading {
+//            let share = DetailsShareViewController()
+//            share.optographId = optographID
+//            self.navigationController?.presentViewController(share, animated: true, completion: nil)
+            
+            Async.main { [weak self] in
+                let textToShare = "Check out this awesome 360 images"
+                let baseURL = Env == .Staging ? "staging.opto.space:8005" : "opto.space"
+                let shareAlias = ""
+                let url = NSURL(string: "http://\(baseURL)/\(shareAlias)")!
+                let activityVC = UIActivityViewController(activityItems: [textToShare, url], applicationActivities:nil)
+                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop,UIActivityTypePrint, UIActivityTypePostToWeibo, UIActivityTypeAddToReadingList, UIActivityTypePostToVimeo]
+                
+                self?.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
+            }
+        } else {
+//            let alert = UIAlertController(title:"Oops! You haven't uploaded yet!", message: "Please go to your Profile > Images and upload your 360 photo!", preferredStyle: .Alert)
+//            
+//            let imageView = UIImageView(frame: CGRectMake(20, 40, 100, 100))
+//            alert.view.addSubview(imageView)
+//            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+//            
+//            let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+//            if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+//                dispatch_async(dispatch_get_main_queue()) {
+//                    imageView.image = originalImage.resized(.Width, value: 40)
+//                    self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+//                }
+//            }
+            
+            let customAlertView = NYAlertViewController()
+            let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+            let imageOpto = UIImageView()
+            if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+                dispatch_async(dispatch_get_main_queue()) {
+                    imageOpto.image = originalImage.resized(.Width, value: self.view.frame.width - 100)
+                }
+            }
+            
+            customAlertView.alertViewContentView = imageOpto
+            customAlertView.title = "Oops! You haven't uploaded yet!"
+            customAlertView.message = "Please go to your Profile > Images and upload your 360 photo!"
+            customAlertView.swipeDismissalGestureEnabled = true
+            customAlertView.backgroundTapDismissalGestureEnabled = true
+            
+            let cancelAction = NYAlertAction(
+                title: "Ok",
+                style: .Cancel,
+                handler: { (action: NYAlertAction!) -> Void in
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                }
+            )
+            customAlertView.addAction(cancelAction)
+            self.navigationController?.presentViewController(customAlertView, animated: true, completion: nil)
+        }
+        
     }
     
     func vrIconTouched() {
@@ -433,6 +486,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.closeDetailsPage()
                 self.imageCache.deleteMp4(self.optographID)
             }))
+            
             alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
             
             self.navigationController!.presentViewController(alert, animated: true, completion: nil)

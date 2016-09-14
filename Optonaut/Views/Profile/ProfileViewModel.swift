@@ -41,19 +41,19 @@ class ProfileViewModel {
         self.personID = personID
         isMe = SessionService.personID == personID
         
-        SignalProducer<Bool, ApiError>(value: isMe)
-            .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
-            .startWithNext { [weak self] apiModel in
-                self?.personBox.model.mergeApiModel(apiModel)
-                self?.displayName.value = apiModel.displayName
-                self?.userName.value = apiModel.userName
-                self?.text.value = apiModel.text
-                self?.postCount.value = apiModel.optographsCount
-                self?.followersCount.value = apiModel.followersCount
-                self?.followingCount.value = apiModel.followedCount
-                self?.isFollowed.value = apiModel.isFollowed
-                self?.avatarImageUrl.value = ImageURL("persons/\(apiModel.ID)/\(apiModel.avatarAssetID).jpg", width: 84, height: 84)
-            }
+//        SignalProducer<Bool, ApiError>(value: isMe)
+//            .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
+//            .startWithNext { [weak self] apiModel in
+//                self?.personBox.model.mergeApiModel(apiModel)
+//                self?.displayName.value = apiModel.displayName
+//                self?.userName.value = apiModel.userName
+//                self?.text.value = apiModel.text
+//                self?.postCount.value = apiModel.optographsCount
+//                self?.followersCount.value = apiModel.followersCount
+//                self?.followingCount.value = apiModel.followedCount
+//                self?.isFollowed.value = apiModel.isFollowed
+//                self?.avatarImageUrl.value = ImageURL("persons/\(apiModel.ID)/\(apiModel.avatarAssetID).jpg", width: 84, height: 84)
+//            }
         
         personBox.producer
             .skipRepeats()

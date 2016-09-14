@@ -286,7 +286,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         if UIApplication.sharedApplication().canOpenURL(NSURL(string:"fb-messenger://")!) {
             UIApplication.sharedApplication().openURL(NSURL(string:"fb-messenger://")!)
         } else {
-            print("can't send an fb messenger!")
+            print("can't send to fb messenger!")
         }
     }
     
@@ -305,7 +305,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         mailComposerVC.mailComposeDelegate = self
         
         //mailComposerVC.setToRecipients(["robert.alkuino@gmail.com"])
-        mailComposerVC.setSubject("Share 360")
+        mailComposerVC.setSubject("Share 360 image")
         mailComposerVC.setMessageBody("\(self.textToShare) \n\n \(self.shareUrl)", isHTML: true)
         
         return mailComposerVC

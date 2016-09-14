@@ -476,7 +476,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         dividerThree.hidden = true
         
         let versionLabel = UILabel()
-        versionLabel.text = "v0.97"
+        versionLabel.text = "v0.98"
         versionLabel.textAlignment = .Center
         versionLabel.font = .fontDisplay(10, withType: .Semibold)
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
