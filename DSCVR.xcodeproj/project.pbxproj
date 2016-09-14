@@ -664,6 +664,7 @@
 		BB49927B1D5452A1006A20D3 /* mapChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mapChildren.swift; sourceTree = "<group>"; };
 		BB49927C1D5452A1006A20D3 /* StoryObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryObject.swift; sourceTree = "<group>"; };
 		BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingChildren.swift; sourceTree = "<group>"; };
+		BB56683E1D8908AB00EB2375 /* bubblegum.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = bubblegum.caf; sourceTree = "<group>"; };
 		BB7634531D42103A002486BF /* FPOptographsCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPOptographsCollectionViewController.swift; path = Profile/FPOptographsCollectionViewController.swift; sourceTree = "<group>"; };
 		BB7634551D49E2F3002486BF /* StorytellingObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingObject.swift; sourceTree = "<group>"; };
 		BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StorytellingCollectionViewController.swift; path = Storytelling/StorytellingCollectionViewController.swift; sourceTree = "<group>"; };
@@ -897,6 +898,7 @@
 		8F488ED51B4416A100599B61 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BB56683E1D8908AB00EB2375 /* bubblegum.caf */,
 				8FAB9F5D1B8F02A900B4C8CB /* Assets.xcassets */,
 				8F4C6E301B4A70CD007508ED /* Fonts */,
 			);

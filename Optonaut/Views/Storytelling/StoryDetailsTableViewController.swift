@@ -311,12 +311,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         print("indexPath: \(cellIndexpath)")
         
         //// add flag in viewdidload/add to didenterfrustrum
-        //        let url = NSURL(string: "http://jumpserver.mine.nu/albatroz.mp3")
-        //        playerItem = AVPlayerItem(URL: url!)
-        //        player=AVPlayer(playerItem: playerItem!)
-        //        player?.rate = 1.0
-        //        player?.volume = 1.0
-        //        player!.play()
+//                let url = NSURL(string: "http://jumpserver.mine.nu/albatroz.mp3")
+//                playerItem = AVPlayerItem(URL: url!)
+//                player=AVPlayer(playerItem: playerItem!)
+//                player?.rate = 1.0
+//                player?.volume = 1.0
+//                player!.play()
         
         //// add flag in viewdidload/add to didenterfrustrum
         
@@ -751,6 +751,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
+    func bubblegumPop(){
+        
+    }
+    
     func toggleAttachmentButtons() {
         
         if attachmentToggled{
@@ -814,6 +818,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
 //        
 //        self.presentViewController(naviCon, animated: true, completion: nil)
         
+        //add sound to pin placement
         
         
         inputTextField.becomeFirstResponder()

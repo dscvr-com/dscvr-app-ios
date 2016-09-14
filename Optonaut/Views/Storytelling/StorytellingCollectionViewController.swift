@@ -27,6 +27,8 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     private var leftBarButton: UIBarButtonItem?
     private var rightBarButton: UIBarButtonItem?
     
+    var fromLoginPage:Bool = false
+    
     init(personID: UUID) {
         
         profileViewModel = ProfileViewModel(personID: personID);
@@ -166,6 +168,11 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         navigationController?.navigationBarHidden = false
         
         print("SCVC viewWillAppear")
+        
+        if fromLoginPage {
+//            goToFeeds()
+            fromLoginPage = false
+        }
     }
     
     func dismissMe(){

@@ -97,6 +97,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     let storyPinLabel = UILabel()
     let countdownLabel = UILabel()
     private var isInsideStory: Bool = false
+    private var isPlaying: Bool = false
     let fixedTextLabel = UILabel()
     
     var playerItem:AVPlayerItem?
@@ -810,8 +811,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
         
-        player!.pause()
-        player = nil
+        if player != nil{
+            player!.pause()
+            player = nil
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -958,7 +961,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         let url = NSURL(string: "https://bucket.dscvr.com" + nameArray[0])
         playerItem = AVPlayerItem(URL: url!)
-        player=AVPlayer(playerItem: playerItem!)
+        player = AVPlayer(playerItem: playerItem!)
         player?.rate = 1.0
         player?.volume = 1.0
         player!.play()
@@ -1041,6 +1044,17 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.storyPinLabel.backgroundColor = UIColor.clearColor()
             self.storyPinLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
             
+            if !self.isPlaying{
+                self.isPlaying = true
+                let url = NSURL(string: "http://jumpserver.mine.nu/albatroz.mp3")
+                self.playerItem = AVPlayerItem(URL: url!)
+                self.player=AVPlayer(playerItem: self.playerItem!)
+                self.player?.rate = 1.0
+                self.player?.volume = 1.0
+                self.player!.play()
+            }
+            
+            
             self.view.addSubview(self.storyPinLabel)
         })
         
@@ -1108,10 +1122,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     self.countdownLabel.backgroundColor = UIColor.clearColor()
                     self.countdownLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
                     self.storyPinLabel.text = ""
-                        
                 })
-                    
-                    
             }
                 
                 
@@ -1122,6 +1133,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 dispatch_async(dispatch_get_main_queue(), {
                     self.countdownLabel.text = ""
                     self.storyPinLabel.text = ""
+                    
+                    self.isPlaying = false
                 })
                 
                 isInsideStory = true

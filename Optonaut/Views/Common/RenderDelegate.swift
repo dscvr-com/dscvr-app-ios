@@ -176,6 +176,8 @@ class CubeRenderDelegate: RenderDelegate {
     private var willRequestAll: Bool
     let imageCache: CollectionImageCache
     
+    let spriteScen = SKScene()
+    
    
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool) {
         
@@ -374,7 +376,7 @@ class CubeRenderDelegate: RenderDelegate {
         markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
         
         
-        
+        spriteScen.runAction(SKAction.playSoundFileNamed("bubblegum.caf", waitForCompletion: false))
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
