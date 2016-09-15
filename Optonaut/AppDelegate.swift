@@ -176,7 +176,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if case .Production = Env {
             print("production mixpanel")
-            Mixpanel.sharedInstanceWithToken("2cb0781fb2aaac9ef23bb1e92694caae")
+            //Mixpanel.sharedInstanceWithToken("2cb0781fb2aaac9ef23bb1e92694caae")
         } else {
             print("staging mixpanel")
             Mixpanel.sharedInstanceWithToken("905eb49cf2c78af5ceb307939f02c092")

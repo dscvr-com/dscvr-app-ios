@@ -206,14 +206,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(likeButtonView)
         
         
-        //        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
-        //        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
-        //        whiteBackground.addSubview(commentButtonView)
-        //
-        //        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
-        //        commentCountView.textColor = .whiteColor()
-        //        commentCountView.textAlignment = .Right
-        //        whiteBackground.addSubview(commentCountView)
+        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
+        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
+        whiteBackground.addSubview(commentButtonView)
+        
+        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
+        commentCountView.textColor = .whiteColor()
+        commentCountView.textAlignment = .Right
+        whiteBackground.addSubview(commentCountView)
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
         locationTextView.textColor = UIColor.whiteColor()
