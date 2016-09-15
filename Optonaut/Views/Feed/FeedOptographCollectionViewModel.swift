@@ -62,7 +62,9 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             box.model.isSubmitted = true
                             box.model.starsCount = apiModel.starsCount
                         }
-                        Models.persons.touch(apiModel.person).insertOrUpdate()
+                        Models.persons.touch(apiModel.person).insertOrUpdate { ps in
+                            ps.model.isFollowed = apiModel.person.isFollowed
+                        }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
                     })
                     .map(Optograph.fromApiModel)
@@ -89,7 +91,9 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             box.model.isPublished = true
                             box.model.isSubmitted = true
                         }
-                        Models.persons.touch(apiModel.person).insertOrUpdate()
+                        Models.persons.touch(apiModel.person).insertOrUpdate { ps in
+                            ps.model.isFollowed = apiModel.person.isFollowed
+                        }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
                     })
                     .map(Optograph.fromApiModel)

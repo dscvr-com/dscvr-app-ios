@@ -274,6 +274,7 @@ private class OverlayViewModel {
                 self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47)
                 self?.isFollowed.value = person.isFollowed
                 self?.isElite.value = person.eliteStatus
+                print(self?.userName.value,self?.isFollowed.value,person.isFollowed)
         }
     }
     
