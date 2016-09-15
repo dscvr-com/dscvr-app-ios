@@ -83,14 +83,17 @@ class ProfileViewModel {
     func saveEdit() {
         didClickedSave.value = true
         
+        LoadingIndicatorView.show("Saving...")
+        
         let parameters = [
             "display_name": displayName.value.stringByReplacingOccurrencesOfString("@", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil),
             "user_name": userName.value.stringByReplacingOccurrencesOfString("@", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil),
             "text": text.value,
         ]
-        print("parameters",parameters)
+        
         ApiService<PersonApiModel>.put("persons/me", parameters: parameters)
             .startWithCompleted { [weak self] in
+                LoadingIndicatorView.hide()
                 if let strongSelf = self {
                     strongSelf.personBox.insertOrUpdate { box in
                         box.model.displayName = strongSelf.displayName.value
