@@ -420,10 +420,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             
             Async.main { [weak self] in
                 let textToShare = "Check out this awesome 360 images"
-                let baseURL = Env == .Staging ? "staging.opto.space:8005" : "opto.space"
-                let shareAlias = ""
-                let url = NSURL(string: "http://\(baseURL)/\(shareAlias)")!
-                let activityVC = UIActivityViewController(activityItems: [textToShare, url], applicationActivities:nil)
+                let baseURL = Env == .Staging ? "wow.dscvr.com" : "wow.dscvr.com"
+                let shareUrl = NSURL(string: "http://\(baseURL)/\(self!.viewModel.shareAlias)")!
+                let activityVC = UIActivityViewController(activityItems: [textToShare, shareUrl], applicationActivities:nil)
                 activityVC.excludedActivityTypes = [UIActivityTypeAirDrop,UIActivityTypePrint, UIActivityTypePostToWeibo, UIActivityTypeAddToReadingList, UIActivityTypePostToVimeo]
                 
                 self?.navigationController?.presentViewController(activityVC, animated: true, completion: nil)

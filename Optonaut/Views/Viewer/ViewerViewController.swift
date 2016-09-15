@@ -215,9 +215,11 @@ class ViewerViewController: UIViewController  {
             showGlassesSelection()
         }
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(initiateViewer))
-        leftScnView.addGestureRecognizer(tapGesture)
-        rightScnView.addGestureRecognizer(tapGesture)
+        let tapLeftGesture = UITapGestureRecognizer(target: self, action: #selector(initiateViewer))
+        leftScnView.addGestureRecognizer(tapLeftGesture)
+        
+        let tapRightGesture = UITapGestureRecognizer(target: self, action: #selector(initiateViewer))
+        rightScnView.addGestureRecognizer(tapRightGesture)
     }
     
     override func viewDidAppear(animated: Bool) {

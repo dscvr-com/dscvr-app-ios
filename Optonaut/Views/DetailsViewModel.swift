@@ -35,6 +35,7 @@ class DetailsViewModel {
     var isMe = false
     let isThreeRing = MutableProperty<Bool>(false)
     var commentText = ""
+    var shareAlias = ""
     
     let postingEnabled = MutableProperty<Bool>(false)
     let isPosting = MutableProperty<Bool>(false)
@@ -172,7 +173,6 @@ class DetailsViewModel {
     
     private func updatePropertiesDetails() {
         disposable = optographBox.producer.startWithNext{ [weak self] optograph in
-            print(optograph)
             self?.isStarred.value = optograph.isStarred
             self?.starsCount.value = optograph.starsCount
             self?.viewsCount.value = optograph.viewsCount
@@ -181,6 +181,7 @@ class DetailsViewModel {
             self?.text.value = optograph.isPrivate ? "[private] " + optograph.text : optograph.text
             self?.hashtags.value = optograph.hashtagString
             self?.isPublished.value = optograph.isPublished
+            self?.shareAlias = optograph.shareAlias
             
             if let locationID = optograph.locationID {
                 
