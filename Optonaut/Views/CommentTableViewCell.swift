@@ -19,6 +19,7 @@ class CommentTableViewCell: UITableViewCell {
     private let avatarImageView = PlaceholderImageView()
     private let usernameView = UILabel()
     private let dateView = UILabel()
+    //private var causingPersonId:UUID = ""
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -27,27 +28,26 @@ class CommentTableViewCell: UITableViewCell {
         
         textView.numberOfLines = 0
         textView.userInteractionEnabled = true
-        textView.font = UIFont.textOfSize(13, withType: .Regular)
+        textView.font = UIFont (name: "Avenir-Book", size: 15)
         textView.textColor =  UIColor.grayColor()
-        textView.text = "Lorem ipsum is simply dummy text of the printing"
         contentView.addSubview(textView)
         
-        usernameView.font = UIFont.textOfSize(15, withType: .Regular)
-        usernameView.textColor =  UIColor(hex:0xffbc00)
-        usernameView.text = "John Smith"
+        usernameView.font = UIFont (name: "Avenir-Heavy", size: 17)
+        usernameView.textColor =  UIColor(hex:0xFF5E00)
         contentView.addSubview(usernameView)
         
         avatarImageView.placeholderImage = UIImage(named: "avatar-placeholder")!
-        avatarImageView.layer.cornerRadius = 20
+        avatarImageView.layer.cornerRadius = 25
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
-        //avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "pushProfile"))
+        avatarImageView.layer.borderColor = UIColor(hex:0xFF5E00).CGColor
+        avatarImageView.layer.borderWidth = 2.0
+        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CommentTableViewCell.pushProfile)))
         contentView.addSubview(avatarImageView)
         
-        dateView.font = UIFont.robotoOfSize(12, withType: .Light)
+        dateView.font = UIFont (name: "Avenir-Book", size: 13)
         dateView.textColor = UIColor.grayColor()
         dateView.textAlignment = .Right
-        dateView.text = "2d"
         contentView.addSubview(dateView)
         
         contentView.setNeedsUpdateConstraints()
@@ -60,25 +60,22 @@ class CommentTableViewCell: UITableViewCell {
     override func updateConstraints() {
         avatarImageView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 5)
         avatarImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 19)
-        avatarImageView.autoSetDimensionsToSize(CGSize(width: 40, height: 40))
+        avatarImageView.autoSetDimensionsToSize(CGSize(width: 50, height: 50))
         
         dateView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
         dateView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
         dateView.autoSetDimension(.Width, toSize: 30)
         
-        if frame.height > 60 {
-            textView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 3)
-        } else {
-            textView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
-        }
-        
-        //textView.rac_text <~ viewModel.text
-        
-        usernameView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView, withOffset: 20)
+//        if frame.height > 60 {
+//            textView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 3)
+//        } else {
+//            textView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
+//        }
+        usernameView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
         usernameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 20)
         
+        textView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView, withOffset: -10)
         textView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 20)
-        textView.autoPinEdge(.Right, toEdge: .Left, ofView: dateView, withOffset: -20)
         
         super.updateConstraints()
     }
@@ -86,10 +83,19 @@ class CommentTableViewCell: UITableViewCell {
     func bindViewModel(comment: Comment) {
         viewModel = CommentViewModel(comment: comment)
         
-        avatarImageView.rac_url <~ viewModel.avatarImageUrl
+        viewModel.avatarImageUrl.producer.startWithNext {
+            self.avatarImageView.kf_setImageWithURL(NSURL(string:$0)!)
+        }
+        
         dateView.rac_text <~ viewModel.timeSinceCreated
         textView.rac_text <~ viewModel.text
         usernameView.rac_text <~ viewModel.userName
+    }
+    
+    func pushProfile() {
+        let profilepage = ProfileCollectionViewController(personID: viewModel.personID.value)
+        profilepage.isProfileVisit = true
+        self.navigationController?.pushViewController(profilepage, animated: true)
     }
     
     override func setSelected(selected: Bool, animated: Bool) {}

@@ -13,7 +13,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
     var viewModel: DetailsViewModel!
     private var tableView = UITableView()
     private let commentField = UIView()
-    private let commentTextField = UITextField()
+    private let commentTextField = TextField()
     private let postButton = UIButton()
     private let commentView = UIView()
     private let imageView = UIImageView()
@@ -51,7 +51,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         commentView.clipsToBounds = true
         view.addSubview(commentView)
         
-        self.tableView.frame = CGRect(x: 5,y: 80,width: view.frame.width - 10,height: commentView.frame.height - 80)
+        self.tableView.frame = CGRect(x: 5,y: 80,width: view.frame.width - 10,height: commentView.frame.height - 160)
         self.tableView.registerClass(CommentTableViewCell.self, forCellReuseIdentifier: "comment-cell")
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -64,7 +64,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         headerView.anchorToEdge(.Top, padding: 0, width: commentView.frame.width, height: 80)
         
         let label = UILabel()
-        label.text = "Comment"
+        label.text = "Comments"
         label.font = UIFont.fontDisplay(25, withType: .Regular)
         headerView.addSubview(label)
         label.anchorToEdge(.Top, padding: 25, width: 150, height: 30)
@@ -85,7 +85,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         
         commentView.addSubview(commentField)
         commentField.backgroundColor = UIColor.whiteColor()
-        commentField.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 80)
+        commentField.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 90)
         
         let labelLineComment = UILabel()
         labelLineComment.backgroundColor = UIColor.lightGrayColor()
@@ -96,6 +96,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         postButton.titleLabel!.font = UIFont(name: "HelveticaNeue-Bold",size: 16)
         postButton.titleLabel!.textAlignment = .Left
         postButton.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
+        postButton.userInteractionEnabled = false
         postButton.addTarget(self,action: #selector(CommentTableViewController.postComment),forControlEvents: .TouchUpInside)
         commentField.addSubview(postButton)
         postButton.anchorToEdge(.Right, padding: 15, width: 100, height: 30)
@@ -107,6 +108,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         commentTextField.clipsToBounds = true
         commentTextField.becomeFirstResponder()
         commentTextField.autocorrectionType = UITextAutocorrectionType.No
+        commentTextField.addTarget(self, action: #selector(CommentTableViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
         
         commentField.addSubview(commentTextField)
         commentTextField.align(.ToTheLeftMatchingBottom, relativeTo: postButton, padding: 5 , width: view.frame.width - 100-20-15, height: 40)
@@ -116,7 +118,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
             NSFontAttributeName : UIFont(name: "Helvetica", size: 14)!
         ]
         
-        commentTextField.attributedPlaceholder = NSAttributedString(string: "  Write a comment...", attributes:attributes)
+        commentTextField.attributedPlaceholder = NSAttributedString(string: "Write a comment...", attributes:attributes)
         
         viewModel.comments.producer.startWithNext { [weak self] _ in
             self?.tableView.reloadData()
@@ -128,6 +130,16 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         commentView.addGestureRecognizer(tapGestureRecognizer)
         
     }
+    func textFieldDidChange(textField: UITextField) {
+        if textField.text! == "" || (textField.text?.isEmpty)! {
+            postButton.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
+            postButton.userInteractionEnabled = false
+        } else {
+            postButton.setTitleColor(UIColor(hex:0xFF5E00), forState: .Normal)
+            postButton.userInteractionEnabled = true
+        }
+    }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -149,13 +161,14 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
         
         commentView.frame = CGRect(x: 5,y: 20,width: view.frame.width - 10,height: view.frame.height - keyboardHeight - 40)
-        //tableView.frame = CGRect(x: 5,y: 30,width: view.frame.width - 10,height: commentView.frame.height - 80)
+        tableView.frame = CGRect(x: 5,y: 80,width: view.frame.width - 10,height: view.frame.height - 160 - keyboardHeight)
         commentField.frame = CGRect(x: 0,y: view.frame.height - keyboardHeight - 80 - 40,width: view.frame.width,height: 80)
     }
     
     func keyboardWillHide(notification: NSNotification) {
         
         commentView.frame = CGRect(x: 5,y: 20,width: view.frame.width - 10,height: view.frame.height - 40)
+        tableView.frame = CGRect(x: 5,y: 80,width: view.frame.width - 10,height: commentView.frame.height - 160)
         commentField.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 80)
     }
     
@@ -185,11 +198,6 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
 
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-//
-//         Configure the cell...
-//
-//        return cell
         
         let cell = self.tableView.dequeueReusableCellWithIdentifier("comment-cell") as! CommentTableViewCell
         cell.navigationController = navigationController as? NavigationController
@@ -232,6 +240,9 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
                 next: self.newCommentAdded,
                 completed: {
                     self.view.endEditing(true)
+                    self.commentTextField.text = nil
+                    self.postButton.userInteractionEnabled = false
+                    self.postButton.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
                 }
             )
             .start()
@@ -239,3 +250,4 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
  
 
 }
+

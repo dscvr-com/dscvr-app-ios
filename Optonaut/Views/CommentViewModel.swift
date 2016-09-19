@@ -30,7 +30,7 @@ class CommentViewModel {
             .startWithNext { personInfo in
             print(personInfo)
                 
-            self.avatarImageUrl.value = ImageURL(personInfo.avatarAssetID, width: 40, height: 40)
+            self.avatarImageUrl.value = ImageURL("persons/\(personInfo.ID)/\(personInfo.avatarAssetID).jpg", width: 50, height: 50)
             self.displayName.value = personInfo.displayName
             self.userName.value = "@\(personInfo.userName)"
         }

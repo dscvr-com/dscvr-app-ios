@@ -82,10 +82,7 @@ class DetailsViewModel {
         ApiService<Comment>.get("optographs/\(optographID)/comments").startWithNext { comment in
             self.insertNewComment(comment)
             
-//            comment.optograph.ID = optographID
-            
             try! comment.insertOrUpdate()
-            //try! comment.person.insertOrUpdate()
             Models.persons.touch(comment.person)?.insertOrUpdate()
         }
         
@@ -227,7 +224,7 @@ class DetailsViewModel {
     }
     
     func insertNewComment(comment: Comment) {
-        comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
+        comments.value.orderedInsert(comment, withOrder: .OrderedDescending)
     }
     
 }
