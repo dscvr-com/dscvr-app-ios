@@ -508,9 +508,37 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func toggleComment() {
         
-        let commentPage = CommentTableViewController()
-        commentPage.viewModel = viewModel
-        self.navigationController?.presentViewController(commentPage, animated: true, completion: nil)
+        if viewModel.optographBox.model.isPublished && !viewModel.optographBox.model.isUploading {
+            let commentPage = CommentTableViewController()
+            commentPage.viewModel = viewModel
+            self.navigationController?.presentViewController(commentPage, animated: true, completion: nil)
+        } else {
+            
+            let customAlertView = NYAlertViewController()
+            let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+            let imageOpto = UIImageView()
+            if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+                dispatch_async(dispatch_get_main_queue()) {
+                    imageOpto.image = originalImage.resized(.Width, value: self.view.frame.width - 100)
+                }
+            }
+            
+            customAlertView.alertViewContentView = imageOpto
+            customAlertView.title = "Oops! You haven't uploaded yet!"
+            customAlertView.message = "Please go to your Profile > Images and upload your 360 photo!"
+            customAlertView.swipeDismissalGestureEnabled = true
+            customAlertView.backgroundTapDismissalGestureEnabled = true
+            
+            let cancelAction = NYAlertAction(
+                title: "Ok",
+                style: .Cancel,
+                handler: { (action: NYAlertAction!) -> Void in
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                }
+            )
+            customAlertView.addAction(cancelAction)
+            self.navigationController?.presentViewController(customAlertView, animated: true, completion: nil)
+        }
     }
     
     func pinchGesture(recognizer:UIPinchGestureRecognizer) {
