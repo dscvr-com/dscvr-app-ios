@@ -56,7 +56,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         
         self.title = "Stories";
         
-        var leftBarImage = UIImage(named:"profile_page_icn")
+        var leftBarImage = UIImage(named:"iam360_navTitle")
         leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         leftBarButton = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.dismissMe))
         
@@ -286,15 +286,16 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
 //            footerView.addSubview(footerLabel)
             
             let startStoryButton = UIButton()
-            startStoryButton.setTitle("Create a Story", forState: UIControlState.Normal)
+//            startStoryButton.setTitle("Create a Story", forState: UIControlState.Normal)
             startStoryButton.titleLabel?.font = UIFont(name: "Avenir-Heavy", size: 22.0)
             startStoryButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+            startStoryButton.setImage(UIImage(named:"create_a_story_btn" ), forState: UIControlState.Normal)
 //            startStoryButton.sizeToFit()
-            startStoryButton.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width - 40, height: 50.0)
+            startStoryButton.frame = CGRect(x: 0, y: 0, width: 330.0, height: 78.0)
             startStoryButton.center = CGPointMake(self.view.center.x, 200/2)
             startStoryButton.addTarget(self, action: #selector(showDetailsViewController), forControlEvents: UIControlEvents.TouchUpInside)
-            startStoryButton.backgroundColor = UIColor.orangeColor()
-            startStoryButton.layer.cornerRadius = 10.0
+//            startStoryButton.backgroundColor = UIColor.orangeColor()
+//            startStoryButton.layer.cornerRadius = 10.0
             footerView.addSubview(startStoryButton)
             
             let lineView = UIView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: 1))

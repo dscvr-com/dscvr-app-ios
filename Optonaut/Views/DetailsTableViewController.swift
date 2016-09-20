@@ -874,13 +874,18 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     
                     if nodes.story_object_media_type == "FXTXT"{
                         
+                        print("MEDIATYPE: FXTXT")
+                        
                         dispatch_async(dispatch_get_main_queue(), {
-                            self.fixedTextLabel.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                            self.fixedTextLabel.frame = CGRect(x: 10.0, y: self.view.frame.size.height - 130.0, width: 0, height: 0)
                             self.fixedTextLabel.text = nodes.story_object_media_additional_data
                             self.fixedTextLabel.textColor = UIColor.whiteColor()
                             self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
                             self.fixedTextLabel.sizeToFit()
-                            self.fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
+//                            self.fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
+//                            self.fixedTextLabel.frame = CGRect(x: self.descriptionLabel.frame
+//                                .origin.x, y: self.descriptionLabel.frame.origin.y - self.fixedTextLabel.frame.size.height, width: self.fixedTextLabel.frame.size.width, height: self.fixedTextLabel.frame.size.height)
+//                            print("label height: \(self.fixedTextLabel.frame.size.height)")
                             
                             self.view.addSubview(self.fixedTextLabel)
                         })
@@ -889,7 +894,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                         print("MEDIATYPE: MUS")
                         let url = NSURL(string: "https://bucket.dscvr.com" + nodes.story_object_media_fileurl)
                         playerItem = AVPlayerItem(URL: url!)
-                        player=AVPlayer(playerItem: playerItem!)
+                        player = AVPlayer(playerItem: playerItem!)
                         player?.rate = 1.0
                         player?.volume = 1.0
                         player!.play()
@@ -1044,6 +1049,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.storyPinLabel.backgroundColor = UIColor.clearColor()
             self.storyPinLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
             
+            self.view.addSubview(self.storyPinLabel)
+        })
+    }
+    
+    func playPinAudio(nodeObject: StorytellingObject){
+        dispatch_async(dispatch_get_main_queue(), {
             if !self.isPlaying{
                 self.isPlaying = true
                 let url = NSURL(string: "http://jumpserver.mine.nu/albatroz.mp3")
@@ -1053,12 +1064,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.player?.volume = 1.0
                 self.player!.play()
             }
-            
-            
-            self.view.addSubview(self.storyPinLabel)
         })
-        
-        
     }
     
   
@@ -1125,7 +1131,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 })
             }
                 
-                
             if countDown == 0 {
                     // reset countdown
                 countDown = 2
@@ -1139,8 +1144,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 
                 isInsideStory = true
                 
-                
-                
                 print("object Type: \(nodeObject.objectType)")
                         
                 if nameArray[1] == "NAV" || nameArray[1] == "Image"{
@@ -1150,10 +1153,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 if nameArray[1] == "MUS"{
                     self.playPinMusic(nodeObject)
                 }
-                        
             }
-                        
-            
         }
         else{ // this is a new id
             last_optographID = nodeObject.optographID

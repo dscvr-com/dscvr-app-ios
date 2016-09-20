@@ -376,7 +376,7 @@ class CubeRenderDelegate: RenderDelegate {
         markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
         
         
-        spriteScen.runAction(SKAction.playSoundFileNamed("bubblegum.caf", waitForCompletion: false))
+//        spriteScen.runAction(SKAction.playSoundFileNamed("bubblegum.caf", waitForCompletion: false))
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)

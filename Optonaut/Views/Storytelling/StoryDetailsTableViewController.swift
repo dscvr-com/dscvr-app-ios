@@ -106,6 +106,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     let inputTextField = UITextField()
     let fixedTextLabel = UILabel()
     let clearTextLabel = UIButton()
+    let bgmImage = UIButton()
+    let removeBgm = UIButton()
     
     required init(optographId:UUID) {
         
@@ -201,6 +203,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
     }
     
+    func sendMediaData(){
+        
+    }
+    
     func optographSelected(optographID: String) {
         nodeItem.optographID = optographID;
         
@@ -221,6 +227,13 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                                     "story_object_rotation": rotationArray]
         
         nodes.append(child);
+        
+        let audioFilePath = NSBundle.mainBundle().pathForResource("pop", ofType: "mp3")
+        
+        player = AVPlayer(URL: NSURL(fileURLWithPath: audioFilePath!))
+        player?.rate = 1.0
+        player?.volume = 1.0
+        player!.play()
         
         print("nodes count: \(nodes.count)")
     }
@@ -324,6 +337,17 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         //            story in
         //            print("story object id: \(story.data)");
         //        }).start();
+        
+        ///add flags to check if editing optograph
+        /**/
+        
+        if isStorytelling{
+            //            self.prepareStoryTellingHUD();
+            self.prepareNewHUD();
+        }
+        else{
+            self.prepareDetailsHUD();
+        }
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
@@ -363,16 +387,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         //            }
         //        }
         
-        ///add flags to check if editing optograph
-        /**/
         
-        if isStorytelling{
-            //            self.prepareStoryTellingHUD();
-            self.prepareNewHUD();
-        }
-        else{
-            self.prepareDetailsHUD();
-        }
     }
     
     func prepareDetailsHUD(){
@@ -608,6 +623,20 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         fixedTextLabel.sizeToFit()
         fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
         
+        let noteImage = UIImage(named: "note_icn")
+        bgmImage.setImage(noteImage, forState: UIControlState.Normal)
+        bgmImage.addTarget(self, action: #selector(removeBGM), forControlEvents: .TouchUpInside)
+        bgmImage.frame = CGRect(x: 0, y: 0, width: (noteImage?.size.width)!, height: (noteImage?.size.height)!)
+        bgmImage.center = CGPointMake(20.0 + (noteImage?.size.width)!/2, self.view.frame.height - 200)
+        bgmImage.hidden = true
+        
+        removeBgm.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+        removeBgm.addTarget(self, action: #selector(removeBGM), forControlEvents: .TouchUpInside)
+        removeBgm.frame = CGRect(x: bgmImage.frame.origin.x + bgmImage.frame.size.width + 5.0,
+                                      y: bgmImage.frame.origin.y - 10.0,
+                                      width: 30.0, height: 30.0)
+        removeBgm.hidden = true
+        
         self.view.addSubview(audioPin)
         self.view.addSubview(fixedText)
         self.view.addSubview(optoPin)
@@ -616,9 +645,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         self.view.addSubview(textFieldContainer)
         self.view.addSubview(fixedTextLabel)
         self.view.addSubview(clearTextLabel)
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide), name: UIKeyboardWillHideNotification, object: nil)
+        self.view.addSubview(bgmImage)
+//        self.view.addSubview(removeBgm)
     }
 
     
@@ -801,6 +829,30 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         clearTextLabel.hidden = true
     }
     
+    func removeBGM(){
+        //"story_object_media_description": "story bgm"
+        
+//        var nodeIndex = 0
+        
+//        for node in self.nodes {
+//            if node["story_object_media_description"] as! String == "story bgm"{
+//                self.nodes.removeAtIndex(nodeIndex)
+//            }
+//            nodeIndex += 1
+//            
+//            print("node count: \(self.nodes.count)")
+//        }
+        
+        let predicate = NSPredicate(format: "story_object_media_description != %@", "story bgm")
+        let filteredArray = self.nodes.filter { predicate.evaluateWithObject($0) }
+        print("filteredArray: \(filteredArray.count)")
+        
+        self.nodes = filteredArray
+        
+        bgmImage.hidden = true
+        removeBgm.hidden = true
+    }
+    
     //create a function with button tag switch for color changes
     func textButtonDown(){
         renderDelegate.addMarker(UIColor.redColor(), type:"Text Item")
@@ -820,6 +872,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         //add sound to pin placement
         
+//        let audioFilePath = NSBundle.mainBundle().pathForResource("pop", ofType: "mp3")
+//        
+//        player = AVPlayer(URL: NSURL(fileURLWithPath: audioFilePath!))
+//        player?.rate = 1.0
+//        player?.volume = 1.0
+//        player!.play()
         
         inputTextField.becomeFirstResponder()
     }
@@ -843,6 +901,13 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             print("text child: \(child)")
             
             nodes.append(child);
+            
+            let audioFilePath = NSBundle.mainBundle().pathForResource("pop", ofType: "mp3")
+            
+            player = AVPlayer(URL: NSURL(fileURLWithPath: audioFilePath!))
+            player?.rate = 1.0
+            player?.volume = 1.0
+            player!.play()
         }
         else{
             if inputTextField.text != ""{
@@ -872,6 +937,13 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         naviCon.viewControllers = [optocollection]
         
         self.presentViewController(naviCon, animated: true, completion: nil)
+        
+        //        playerItem = AVPlayerItem(URL: itemURL)
+        //        player=AVPlayer(playerItem: playerItem!)
+        //        player?.rate = 1.0
+        //        player?.volume = 1.0
+        //        player!.play()
+        
         
         //        self.receiveStory()
     }
@@ -963,6 +1035,11 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 
                 self.nodes.append(child)
                 print("nodes count: \(self.nodes.count)")
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.bgmImage.hidden = false
+                    self.removeBgm.hidden = false
+                })
                 
                 break
             default:
@@ -1276,6 +1353,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         //        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
         updateNavbarAppear()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide), name: UIKeyboardWillHideNotification, object: nil)
         
         //self.navigationController?.navigationBar.tintColor = UIColor(hex:0xffbc00)
     }
