@@ -20,6 +20,7 @@ class CommentTableViewCell: UITableViewCell {
     private let usernameView = UILabel()
     private let dateView = UILabel()
     //private var causingPersonId:UUID = ""
+    let eliteImageView = UIImageView()
     
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -45,6 +46,9 @@ class CommentTableViewCell: UITableViewCell {
         avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CommentTableViewCell.pushProfile)))
         contentView.addSubview(avatarImageView)
         
+        eliteImageView.image = UIImage(named: "elite_beta_icn")!
+        contentView.addSubview(eliteImageView)
+        
         dateView.font = UIFont (name: "Avenir-Book", size: 13)
         dateView.textColor = UIColor.grayColor()
         dateView.textAlignment = .Right
@@ -66,11 +70,11 @@ class CommentTableViewCell: UITableViewCell {
         dateView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -20)
         dateView.autoSetDimension(.Width, toSize: 30)
         
-//        if frame.height > 60 {
-//            textView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 3)
-//        } else {
-//            textView.autoAlignAxis(.Horizontal, toSameAxisOfView: avatarImageView)
-//        }
+        eliteImageView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 22)
+        eliteImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: avatarImageView, withOffset: -8)
+        let size = UIImage(named: "elite_beta_icn")!.size
+        eliteImageView.autoSetDimensionsToSize(CGSize(width: size.width, height: size.height))
+
         usernameView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
         usernameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 20)
         

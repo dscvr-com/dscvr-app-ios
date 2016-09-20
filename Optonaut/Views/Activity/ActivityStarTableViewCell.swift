@@ -50,12 +50,8 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
             
             nameView.text = activity.activityResourceStar!.causingPerson.userName
             
-            //Models.persons.touch(activity.activityResourceStar!.causingPerson).insertOrUpdate()
-            
             let url = TextureURL(activity.activityResourceStar!.optograph.ID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
             self.optographImageView.kf_setImageWithURL(NSURL(string: url)!)
-            
-            //eliteImageView.hidden = activity.activityResourceStar!.causingPerson.eliteUser == 1 ? false : true
         }
         
         super.update(activity)
