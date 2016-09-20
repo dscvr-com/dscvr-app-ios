@@ -19,31 +19,13 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
     private let imageView = UIImageView()
     
     let dismissButton = UIButton()
-
-//    required init(optographID: UUID) {
-//        //viewModel = DetailsViewModel(optographID: optographID)
-//        logInit()
-//        super.init(nibName: nil, bundle: nil)
-//    }
-    
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//    deinit {
-//        logRetain()
-//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //view.frame = CGRect(x: 0,y: 0,width: 0,height: 0)
         
         view.backgroundColor = UIColor(hex:0x595959).alpha(0.70)
         view.opaque = false
-//        
-//        view.addSubview(imageView)
-//        imageView.image
-//        imageView.fillSuperview()
         
         commentView.frame = CGRect(x: 5,y: 20,width: view.frame.width - 10,height: view.frame.height - 40)
         commentView.backgroundColor = UIColor.whiteColor()
@@ -80,8 +62,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         dismissButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
         dismissButton.addTarget(self,action: #selector(CommentTableViewController.commentPageDismiss),forControlEvents: .TouchUpInside)
         headerView.addSubview(dismissButton)
-        //dismissButton.anchorInCorner(.TopRight, xPad: 10, yPad: 30, width: 100, height: 25)
-        dismissButton.anchorToEdge(.Right, padding: 10, width: 100, height: 25)
+        dismissButton.anchorToEdge(.Right, padding: 15, width: 100, height: 25)
         
         commentView.addSubview(commentField)
         commentField.backgroundColor = UIColor.whiteColor()
@@ -191,7 +172,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         let textWidth = view.frame.width - 40 - 40 - 20 - 30 - 20
-        let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row].text, withWidth: textWidth, andFont: UIFont.textOfSize(13, withType: .Regular)) + 15
+        let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row].text, withWidth: textWidth, andFont:  UIFont (name: "Avenir-Heavy", size: 17)!) + 30
         return max(textHeight, 60)
     }
     

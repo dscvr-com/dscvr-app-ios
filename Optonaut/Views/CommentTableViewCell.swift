@@ -74,8 +74,10 @@ class CommentTableViewCell: UITableViewCell {
         usernameView.autoPinEdge(.Top, toEdge: .Top, ofView: contentView, withOffset: 10)
         usernameView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 20)
         
+        //textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: usernameView, withOffset: 10)
         textView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView, withOffset: -10)
         textView.autoPinEdge(.Left, toEdge: .Right, ofView: avatarImageView, withOffset: 20)
+        textView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -30)
         
         super.updateConstraints()
     }
