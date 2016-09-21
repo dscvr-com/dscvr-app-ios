@@ -273,6 +273,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     
     func settingsView() {
         
+//        let settingsScrollView = UIScrollView()
+//        settingsScrollView.contentSize = CGSizeMake(1000, 1000)
+//        settingsScrollView.addSubview(thisView)
+        
         thisView.frame = CGRectMake(0, -(view.frame.height), view.frame.width, view.frame.height)
         thisView.backgroundColor = UIColor.whiteColor()
         self.view.addSubview(thisView)

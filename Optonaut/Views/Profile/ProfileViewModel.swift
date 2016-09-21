@@ -41,27 +41,12 @@ class ProfileViewModel {
         self.personID = personID
         isMe = SessionService.personID == personID
         
-//        SignalProducer<Bool, ApiError>(value: isMe)
-//            .flatMap(.Latest) { $0 ? ApiService<PersonApiModel>.get("persons/me") : ApiService<PersonApiModel>.get("persons/\(personID)") }
-//            .startWithNext { [weak self] apiModel in
-//                self?.personBox.model.mergeApiModel(apiModel)
-//                self?.displayName.value = apiModel.displayName
-//                self?.userName.value = apiModel.userName
-//                self?.text.value = apiModel.text
-//                self?.postCount.value = apiModel.optographsCount
-//                self?.followersCount.value = apiModel.followersCount
-//                self?.followingCount.value = apiModel.followedCount
-//                self?.isFollowed.value = apiModel.isFollowed
-//                self?.avatarImageUrl.value = ImageURL("persons/\(apiModel.ID)/\(apiModel.avatarAssetID).jpg", width: 84, height: 84)
-//            }
-        
         personBox.producer
             .skipRepeats()
             .startWithNext { [weak self] person in
                 self?.displayName.value = person.displayName
                 self?.userName.value = person.userName
                 self?.text.value = person.text
-                //self?._userName = person.userName
                 self?.postCount.value = person.optographsCount
                 self?.followersCount.value = person.followersCount
                 self?.followingCount.value = person.followedCount
@@ -76,7 +61,6 @@ class ProfileViewModel {
             .startWithNext { [weak self] person in
                 self?.displayName.value = person.displayName
                 self?.userName.value = person.userName
-                //self?._userName = person.userName
         }
     }
     

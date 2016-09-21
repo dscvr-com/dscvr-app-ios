@@ -64,9 +64,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         if view.frame.height != 568.0 {
             scrollView?.scrollEnabled = false
             shareView.fillSuperview()
-            print("view height>>>>",view.frame.height)
         } else {
-            print("view height>>",view.frame.height)
             shareView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height + 50)
         }
         

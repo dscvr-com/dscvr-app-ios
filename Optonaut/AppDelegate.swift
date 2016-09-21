@@ -65,11 +65,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = tabBarViewController
             
             Defaults[.SessionGyro] = true
+            Defaults[.SessionEliteUser] = true
             
-            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
-                self.sendCheckElite().start()
-            
-            }
+//            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
+//                self.sendCheckElite().start()
+//            
+//            }
         }
         return true
     }

@@ -74,16 +74,16 @@ class DetailsViewModel {
                 let comment = Comment.fromSQL(row)
                 
                 Models.persons.touch(person)?.insertOrUpdate()
-                
+                print(">>>>>>>>>>>>>XXX",comment)
                 return comment
             }
             .forEach(insertNewComment)
         
         ApiService<Comment>.get("optographs/\(optographID)/comments").startWithNext { comment in
-            self.insertNewComment(comment)
             
             try! comment.insertOrUpdate()
             Models.persons.touch(comment.person)?.insertOrUpdate()
+            self.insertNewComment(comment)
         }
         
         commentsCount <~ comments.producer.map { $0.count }

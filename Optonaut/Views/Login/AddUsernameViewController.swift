@@ -2,20 +2,17 @@
 //  AddUsernameViewController.swift
 //  DSCVR
 //
-//  Created by Thadz on 7/7/16.
+//  Created by Robert John M. Alkuino on 7/7/16.
 //  Copyright © 2016 Optonaut. All rights reserved.
 //
 
-
-///july 08, 2016
-///temporarily commented Models.persons.touch(apiModel).insertOrUpdate() (line 34) in SearchTableModel
 
 import UIKit
 import ReactiveCocoa
 import SwiftyUserDefaults
 import Mixpanel
 
-class AddUsernameViewController: UIViewController, UITextFieldDelegate {
+class AddUsernameViewController: UIViewController, UITextFieldDelegate ,TabControllerDelegate{
     
     private let viewModel = OnboardingViewModel()
     private var person: [Person] = []
@@ -37,7 +34,6 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     required init() {
         
         let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Defaults[.SessionPersonID]!)
-        //let query = PersonTable.filter(PersonTable[PersonSchema.ID] ==- Person.guestID)
         personSQL = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
         
         super.init(nibName: nil, bundle: nil)
@@ -57,7 +53,6 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         
         contentView.frame = UIScreen.mainScreen().bounds
         contentView.image = UIImage(named:"gradient_bg")
-        //contentView.backgroundColor = UIColor.clearColor()
         view.addSubview(contentView)
         
         contentView.userInteractionEnabled = true
@@ -66,69 +61,57 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         logoImageView.image = UIImage(named: "logo_invite")
         contentView.addSubview(logoImageView)
         
-        logoImageView.anchorToEdge(.Top, padding: 125, width: imageSize!.size.width, height: imageSize!.size.height)
-        
-        username.delegate = self
-        
-        username.frame = CGRect(x: 0, y: 0, width: contentView.frame.size.width - 80.0, height: 44.0)
-        username.backgroundColor = UIColor.darkGrayColor()
-        username.center = contentView.center
-        username.borderStyle = UITextBorderStyle.RoundedRect
-        username.font = UIFont(name: "Avenir-Heavy", size: 15)
-        username.textColor = UIColor(hex:0xFF5E00)
-        username.autocorrectionType = UITextAutocorrectionType.No
-        username.autocapitalizationType = UITextAutocapitalizationType.None
-        
-        let placeholderText = NSLocalizedString("Username", comment: "Username")
-        let placeholderString = NSAttributedString(string: placeholderText, attributes: [NSForegroundColorAttributeName: UIColor(white: 0.66, alpha: 1.0),
-            NSFontAttributeName: UIFont(name: "Avenir-Book", size: 15)!])
-        
-        username.attributedPlaceholder = placeholderString
-        
-        username.layer.cornerRadius = 7.0
-        username.layer.borderWidth = 1.0
-        username.layer.borderColor = UIColor.lightGrayColor().CGColor
-        
-        contentView.addSubview(username)
-        
-        let buttonPadding = CGFloat(46.0)
-        
-        createButton.frame = CGRect(x: 0, y: 0, width: contentView.frame.size.width - buttonPadding, height: 44.0)
-        createButton.backgroundColor = UIColor.grayColor()
-        createButton.center = CGPoint(x: username.center.x, y: username.center.y + username.frame.size.height + buttonPadding)
-        createButton.setTitle("CREATE USERNAME", forState: UIControlState.Normal)
-        createButton.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Normal)
-        createButton.titleLabel!.font = UIFont(name: "Avenir-Heavy", size: 15)
-        createButton.enabled = false
-        createButton.addTarget(self, action: #selector(createUsername), forControlEvents: .TouchUpInside)
-        
-        createButton.layer.cornerRadius = 7.0
-        
-        contentView.addSubview(createButton)
+        logoImageView.anchorToEdge(.Top, padding: 100, width: imageSize!.size.width, height: imageSize!.size.height)
         
         let createLabel = UILabel()
+        createLabel.frame = CGRect(x: 20,y: logoImageView.frame.origin.y + imageSize!.size.height + 50,width: 100,height: 20)
         createLabel.text = "Create your username:"
         createLabel.font = UIFont(name: "Avenir-Heavy", size: 15)
         createLabel.textColor = UIColor.darkGrayColor()
         createLabel.sizeToFit()
-        
-        createLabel.frame = CGRect(x: 20.0, y: username.frame.origin.y - (createLabel.frame.size.height * 1.5), width: createLabel.frame.size.width, height: createLabel.frame.size.height)
         contentView.addSubview(createLabel)
         
         let atLabel = UILabel()
         atLabel.text = "@"
         atLabel.font = UIFont(name: "Avenir-Heavy", size: 32)
         atLabel.textColor = UIColor.blackColor()
-        atLabel.frame = CGRect(x: createLabel.frame.origin.x, y: username.frame.origin.y, width: username.frame.size.height, height: username.frame.size.height)
-        
         contentView.addSubview(atLabel)
         
-        availability.frame = CGRect(x: atLabel.frame.origin.x + atLabel.frame.size.width, y: username.frame.origin.y + username.frame.size.height + 10.0, width: 0, height: 0)
-        availability.font = UIFont(name: "Avenir-Book", size: 12.0)
+        atLabel.align(.UnderMatchingLeft, relativeTo: createLabel, padding: 25, width: 35, height: 35)
         
+        username.delegate = self
+        username.backgroundColor = UIColor.darkGrayColor()
+        username.borderStyle = UITextBorderStyle.RoundedRect
+        username.font = UIFont(name: "Avenir-Heavy", size: 15)
+        username.textColor = UIColor(hex:0xFF5E00)
+        username.autocorrectionType = UITextAutocorrectionType.No
+        username.autocapitalizationType = UITextAutocapitalizationType.None
+        let placeholderText = NSLocalizedString("Username", comment: "Username")
+        let placeholderString = NSAttributedString(string: placeholderText, attributes: [NSForegroundColorAttributeName: UIColor(white: 0.66, alpha: 1.0),
+            NSFontAttributeName: UIFont(name: "Avenir-Book", size: 15)!])
+        username.attributedPlaceholder = placeholderString
+        username.layer.cornerRadius = 7.0
+        username.layer.borderWidth = 1.0
+        username.layer.borderColor = UIColor.lightGrayColor().CGColor
+        contentView.addSubview(username)
+        
+        username.align(.ToTheRightCentered, relativeTo: atLabel, padding: 15, width: contentView.frame.size.width - (40.0 + atLabel.frame.size.width), height: 44.0)
+        
+        createButton.backgroundColor = UIColor.grayColor()
+        createButton.setTitle("CREATE USERNAME", forState: UIControlState.Normal)
+        createButton.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Normal)
+        createButton.titleLabel!.font = UIFont(name: "Avenir-Heavy", size: 15)
+        createButton.enabled = false
+        createButton.addTarget(self, action: #selector(createUsername), forControlEvents: .TouchUpInside)
+        createButton.layer.cornerRadius = 7.0
+        contentView.addSubview(createButton)
+        
+        createButton.align(.UnderMatchingLeft, relativeTo: atLabel, padding: 46, width: view.width - 40, height: 44)
+        
+        availability.font = UIFont(name: "Avenir-Book", size: 12.0)
         contentView.addSubview(availability)
         
-        username.frame = CGRect(x: atLabel.frame.origin.x + atLabel.frame.size.width, y: atLabel.frame.origin.y, width: contentView.frame.size.width - (40.0 + atLabel.frame.size.width), height: 44.0)
+        availability.align(.UnderMatchingLeft, relativeTo: username, padding: 10, width: view.width - 20, height: 16)
         
         viewModel.results.producer
             .on(
@@ -169,10 +152,6 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         activityIndicator.frame = CGRect(x: contentView.frame.origin.x - 60,y: username.frame.origin.y,width: 40,height: 40)
         activityIndicator.startAnimating()
         contentView.addSubview(activityIndicator)
-//        activityIndicator.hidesWhenStopped = true
-//        activityIndicator.center = view.center
-//        activityIndicator.stopAnimating()
-//        contentView.addSubview(activityIndicator)
     }
     
     func insertStatusText(str:String,valid:Bool) {
@@ -207,14 +186,21 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
         
         self.navigationItem.setHidesBackButton(true, animated:true)
         
+        tabController!.delegate = self
+        
         navigationController?.navigationBar.translucent = true
         navigationController?.navigationBar.shadowImage = UIImage()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AddUsernameViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AddUsernameViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
         self.navigationItem.setHidesBackButton(false, animated:true)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
     
     func updateData() -> SignalProducer<EmptyResponse, ApiError> {
@@ -243,8 +229,14 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
     
     private func saveModel() {
         
+        Models.persons[self.personSQL.ID]!.insertOrUpdate { personBox in
+            personBox.model.displayName = self.viewModel.searchText.value
+            personBox.model.userName = self.viewModel.searchText.value
+        }
+        
         self.personSQL.displayName = self.viewModel.searchText.value
         self.personSQL.userName = self.viewModel.searchText.value
+        
         Defaults[.SessionOnboardingVersion] = OnboardingVersion
         Mixpanel.sharedInstance().identify(self.personSQL.ID)
         Mixpanel.sharedInstance().people.set([
@@ -264,6 +256,17 @@ class AddUsernameViewController: UIViewController, UITextFieldDelegate {
             return
         }))
         self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        contentView.frame = CGRect(x: 0,y: -40,width: view.width,height: view.height)
+        tabController!.disableScrollView()
+        
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        contentView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height)
+        tabController!.enableScrollView()
     }
     
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
