@@ -126,7 +126,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             scnView = SCNView(frame: view.bounds)
         }
         
-        
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.frame = view.bounds

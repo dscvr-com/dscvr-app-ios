@@ -550,8 +550,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     transformBegin = CGAffineTransformScale(view.transform,recognizer.scale, recognizer.scale)
                 }
             } else if recognizer.state == UIGestureRecognizerState.Changed {
-                print(">>",view.transform.a)
-                print(recognizer.scale)
                 if view.transform.a >= 1.0  {
                     scnView.transform = CGAffineTransformScale(view.transform,recognizer.scale, recognizer.scale)
                     recognizer.scale = 1
@@ -665,7 +663,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func twoTap(recognizer:UITapGestureRecognizer) {
-        print("two tap")
         navigationController?.popViewControllerAnimated(true)
     }
     
@@ -751,9 +748,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 
                 
                 asset.writeImageDataToSavedPhotosAlbum(destData, metadata: meta as [NSObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
-                    print("meta path >>> \(path)")
-                    print("meta error >>> \(error)")
-                    
                     SwiftSpinner.hide()
                     
                     if error == nil {

@@ -525,7 +525,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     func createSocialButtons() {
         let hideLabel = UILabel()
         hideLabel.backgroundColor = UIColor.whiteColor()
-        hideLabel.frame = CGRect(x: 0,y:threeRingButton.frame.origin.y ,width: thisView.width,height: threeRingButton.height + 2)
+        hideLabel.frame = CGRect(x: 0,y:threeRingButton.frame.origin.y ,width: thisView.width,height: view.height - threeRingButton.frame.origin.y - 35)
         thisView.addSubview(hideLabel)
         
         facebookSocialButton.text = "Facebook"
@@ -550,11 +550,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             self?.twitterSocialButton.icon2 = toggled ? UIImage(named:"twitter_save_active")! : UIImage(named:"twitter_save_inactive")!
         }
         
-        let fbButton = UIImage(named:"facebook_save_active")?.size
-        let twitterButton = UIImage(named:"twitter_save_active")?.size
         
-        facebookSocialButton.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 60, width: (fbButton?.width)!, height: (fbButton?.height)!)
-        twitterSocialButton.align(.ToTheRightMatchingTop, relativeTo: facebookSocialButton, padding: 40 + 77, width: (twitterButton?.width)!, height: (twitterButton?.height)!)
         
         let titleLabelShare = UILabel()
         titleLabelShare.text = "AUTO SHARE IMAGE ON: "
@@ -562,10 +558,15 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         titleLabelShare.textColor = UIColor.blackColor()
         titleLabelShare.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(titleLabelShare)
-        titleLabelShare.align(.AboveMatchingLeft, relativeTo: facebookSocialButton, padding: 5, width: 200, height: 20)
+        //titleLabelShare.align(.AboveMatchingLeft, relativeTo: facebookSocialButton, padding: 5, width: 200, height: 20)
+        titleLabelShare.align(.UnderMatchingLeft, relativeTo: oneRingButton, padding: 10, width: 200, height: 20)
         
+        let fbButton = UIImage(named:"facebook_save_active")?.size
+        let twitterButton = UIImage(named:"twitter_save_active")?.size
         
-        //twitterSocialButton.hidden = true
+        facebookSocialButton.align(.UnderMatchingLeft, relativeTo: titleLabelShare, padding: 5, width: (fbButton?.width)!, height: (fbButton?.height)!)
+        twitterSocialButton.align(.UnderMatchingLeft, relativeTo: facebookSocialButton, padding: 5, width: (twitterButton?.width)!, height: (twitterButton?.height)!)
+        
     }
     
 //    func motorButtonUp() {

@@ -33,20 +33,22 @@ class ActivityTableViewCell: UITableViewCell {
 //        isReadView.hidden = true
 //        isReadView.layer.cornerRadius = 3
 //        contentView.addSubview(isReadView)
+        let screenHeight = UIScreen.mainScreen().bounds.height
         
         nameView.numberOfLines = 0
-        nameView.font = UIFont (name: "Avenir-Heavy", size: 17)
+        nameView.font = UIFont(name: "Avenir-Heavy", size: 17)
+        nameView.font = screenHeight == 568.0 ? UIFont(name: "Avenir-Heavy", size: 14) : UIFont(name: "Avenir-Heavy", size: 17)
+        
         nameView.textColor = UIColor(0xFF5E00)
         contentView.addSubview(nameView)
         
         textView.numberOfLines = 0
-        //textView.font = UIFont.displayOfSize(15, withType: .Regular)
         textView.textColor = .DarkGrey
-        textView.font = UIFont (name: "Avenir-Book", size: 15)
+        textView.font = screenHeight == 568.0 ? UIFont (name: "Avenir-Book", size: 12) : UIFont (name: "Avenir-Book", size: 15)
         contentView.addSubview(textView)
         
         dateView.numberOfLines = 0
-        dateView.font = UIFont.displayOfSize(12, withType: .Regular)
+        dateView.font = screenHeight == 568.0 ? UIFont.displayOfSize(10, withType: .Regular) : UIFont.displayOfSize(12, withType: .Regular)
         dateView.textColor = .DarkGrey
         contentView.addSubview(dateView)
         
@@ -93,7 +95,6 @@ class ActivityTableViewCell: UITableViewCell {
         textView.autoPinEdge(.Left, toEdge: .Right, ofView: nameView, withOffset: 5)
         textView.autoSetDimensionsToSize(CGSize(width: 200, height: 20))
         
-        //dateView.autoAlignAxisToSuperviewAxis(.Vertical)
         dateView.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 80)
         dateView.autoPinEdge(.Top, toEdge: .Bottom, ofView: nameView, withOffset: 5)
         dateView.autoSetDimensionsToSize(CGSize(width: 30, height: 20))

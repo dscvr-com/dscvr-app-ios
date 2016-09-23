@@ -14,7 +14,7 @@ struct Comment: Model {
     var createdAt: NSDate
     var updatedAt: NSDate
     var text: String
-    var person: PersonApiModel?
+    var person: Person
     var optograph: Optograph
     
     static func newInstance() -> Comment {
@@ -23,7 +23,7 @@ struct Comment: Model {
             createdAt: NSDate(),
             updatedAt: NSDate(),
             text: "",
-            person: PersonApiModel(),
+            person: Person.newInstance(),
             optograph: Optograph.newInstance()
         )
     }
@@ -63,7 +63,7 @@ extension Comment: SQLiteModel {
             createdAt: row[CommentSchema.createdAt],
             updatedAt: row[CommentSchema.updatedAt],
             text: row[CommentSchema.text],
-            person: PersonApiModel(),
+            person: Person.newInstance(),
             optograph: Optograph.newInstance()
         )
     }
@@ -74,7 +74,7 @@ extension Comment: SQLiteModel {
             CommentSchema.createdAt <-- createdAt,
             CommentSchema.updatedAt <-- updatedAt,
             CommentSchema.text <-- text,
-            CommentSchema.personID <-- person!.ID,
+            CommentSchema.personID <-- person.ID,
             CommentSchema.optographID <-- optograph.ID,
         ]
     }

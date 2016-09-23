@@ -68,18 +68,25 @@ class DetailsViewModel {
             .join(PersonTable, on: CommentTable[CommentSchema.personID] == PersonTable[PersonSchema.ID])
             .filter(CommentTable[CommentSchema.optographID] == optographID)
         
+        
         try! DatabaseService.defaultConnection.prepare(commentQuery)
             .map { row -> Comment in
+                
                 let person = Person.fromSQL(row)
-                let comment = Comment.fromSQL(row)
+                var comment = Comment.fromSQL(row)
+                
+                comment.person = person
                 
                 Models.persons.touch(person)?.insertOrUpdate()
-                print(">>>>>>>>>>>>>XXX",comment)
                 return comment
             }
             .forEach(insertNewComment)
         
         ApiService<Comment>.get("optographs/\(optographID)/comments").startWithNext { comment in
+            
+            var comm = comment
+            
+            comm.optograph.ID = optographID
             
             try! comment.insertOrUpdate()
             Models.persons.touch(comment.person)?.insertOrUpdate()
@@ -191,7 +198,6 @@ class DetailsViewModel {
             
             self?.creatorDetails = Models.persons[optograph.personID]!
             self?.creatorDetails.producer.startWithNext{ person in
-                print(">>>> person",person)
                 self?.avatarImageUrl.value = "persons/\(person.ID)/\(person.avatarAssetID).jpg"
                 self?.creator_username.value = person.userName
                 self?.isFollowed.value = person.isFollowed

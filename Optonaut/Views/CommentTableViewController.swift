@@ -108,7 +108,7 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CommentTableViewController.dismissKeyboard))
         tapGestureRecognizer.cancelsTouchesInView = false
-        commentView.addGestureRecognizer(tapGestureRecognizer)
+        tableView.addGestureRecognizer(tapGestureRecognizer)
         
     }
     func textFieldDidChange(textField: UITextField) {

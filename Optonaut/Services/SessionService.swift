@@ -110,7 +110,7 @@ class SessionService {
                 next: { person in
                     
                     Models.persons.touch(person).insertOrUpdate()
-                    Defaults[.SessionEliteUser] = person.eliteStatus == 1 ? true:false
+                    //Defaults[.SessionEliteUser] = person.eliteStatus == 1 ? true:false
                     Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
                     updateMixpanel()
                     loginNotifiaction.notify(())

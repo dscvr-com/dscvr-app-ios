@@ -161,17 +161,6 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         
         self.view.addSubview(activityIndicator)
         
-//        let result = FBSDKMessengerSharer.messengerPlatformCapabilities().rawValue & FBSDKMessengerPlatformCapability.Image.rawValue
-//        if result != 0 {
-//            // ok now share
-//            if let sharingImage = sharingImage {
-//                FBSDKMessengerSharer.shareImage(sharingImage, withOptions: nil)
-//            }
-//        } else {
-//            // not installed then open link. Note simulator doesn't open iTunes store.
-//            UIApplication.sharedApplication().openURL(NSURL(string: "itms://itunes.apple.com/us/app/facebook-messenger/id454638411?mt=8")!)
-//        }
-        
     }
     
 
@@ -291,7 +280,8 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
     func sendEmailButtonTapped() {
         let mailComposeViewController = configuredMailComposeViewController()
         if MFMailComposeViewController.canSendMail() {
-            mailComposeViewController.navigationBar.barTintColor = UIColor.blackColor()
+            mailComposeViewController.navigationBar.barTintColor = UIColor(hex:0xFF5E00)
+            mailComposeViewController.navigationBar.translucent = false;
             self.presentViewController(mailComposeViewController, animated: true, completion: nil)
         } else {
             self.showSendMailErrorAlert()
