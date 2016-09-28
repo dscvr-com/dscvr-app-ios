@@ -127,6 +127,7 @@ class SessionService {
             "facebook_user_id": userID,
             "facebook_token": token,
         ]
+        print(parameters)
         return ApiService<LoginApiModel>.post("persons/facebook/signin", parameters: parameters)
             .flatMap(.Latest) { SessionService.handleSignin($0) }
     }

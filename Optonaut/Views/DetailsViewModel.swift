@@ -75,7 +75,7 @@ class DetailsViewModel {
                 let person = Person.fromSQL(row)
                 var comment = Comment.fromSQL(row)
                 
-                comment.person = person
+                //comment.person = person
                 
                 Models.persons.touch(person)?.insertOrUpdate()
                 return comment

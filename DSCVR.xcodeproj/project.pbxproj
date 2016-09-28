@@ -33,7 +33,6 @@
 		595D876B1D083D9500866FF2 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D876A1D083D9500866FF2 /* UserTableViewCell.swift */; };
 		5965DC721D1382E10031059B /* UploadItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965DC711D1382E10031059B /* UploadItemCell.swift */; };
 		5965DC741D138BF70031059B /* ProfileUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */; };
-		5967FADA1D783E8000C40280 /* flowBlender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5967FAD81D783E8000C40280 /* flowBlender.cpp */; };
 		59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B271CEAE13D00829963 /* SettingsNavViewController.swift */; };
 		59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B291CEAE2B000829963 /* SettingsViewController.swift */; };
 		598EB95C1D7068A200E00F9B /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598EB95B1D7068A200E00F9B /* Fabric.framework */; };
@@ -321,7 +320,6 @@
 		5917C8251CE49C8600CD5A6D /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
 		59306C031D24E034009BF7BE /* InvitationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvitationViewController.swift; sourceTree = "<group>"; };
 		59306C051D24E268009BF7BE /* DetailsShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsShareViewController.swift; sourceTree = "<group>"; };
-		5933E6801D3A803600D18982 /* FillableLoaders.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FillableLoaders.framework; path = Carthage/Build/iOS/FillableLoaders.framework; sourceTree = "<group>"; };
 		5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicSeamer.cpp; sourceTree = "<group>"; };
 		5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dynamicSeamer.hpp; sourceTree = "<group>"; };
 		5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = multiringStitcher.cpp; sourceTree = "<group>"; };
@@ -350,8 +348,6 @@
 		595D876A1D083D9500866FF2 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		5965DC711D1382E10031059B /* UploadItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadItemCell.swift; sourceTree = "<group>"; };
 		5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileUploadCollectionViewCell.swift; sourceTree = "<group>"; };
-		5967FAD81D783E8000C40280 /* flowBlender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flowBlender.cpp; sourceTree = "<group>"; };
-		5967FAD91D783E8000C40280 /* flowBlender.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = flowBlender.hpp; sourceTree = "<group>"; };
 		59848B271CEAE13D00829963 /* SettingsNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavViewController.swift; sourceTree = "<group>"; };
 		59848B291CEAE2B000829963 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		598EB95B1D7068A200E00F9B /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
@@ -763,8 +759,6 @@
 		5936B1761CAD34F500F808D8 /* stitcher */ = {
 			isa = PBXGroup;
 			children = (
-				5967FAD81D783E8000C40280 /* flowBlender.cpp */,
-				5967FAD91D783E8000C40280 /* flowBlender.hpp */,
 				B17042151CF6CF04004E2F26 /* globalAlignment.hpp */,
 				5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */,
 				5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */,
@@ -860,7 +854,6 @@
 				59D828131D709C4200007B57 /* Crashlytics.framework */,
 				598EB95B1D7068A200E00F9B /* Fabric.framework */,
 				59E9E3171D62277500D326F8 /* Icomoon.framework */,
-				5933E6801D3A803600D18982 /* FillableLoaders.framework */,
 				8F4715111C49688700663684 /* TwitterKitResources.bundle */,
 				8F47150F1C4964AD00663684 /* TwitterCore.framework */,
 				8F47150D1C49648F00663684 /* TwitterKit.framework */,
@@ -1860,7 +1853,6 @@
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
 				B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */,
-				5967FADA1D783E8000C40280 /* flowBlender.cpp in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
 				A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */,
 				594023D01D2E73CE00393E1F /* AddUsernameViewController.swift in Sources */,

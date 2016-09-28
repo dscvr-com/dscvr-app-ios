@@ -111,6 +111,11 @@
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
+            <key>api-production-v9.dscvr.com</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+            </dict>
 			<key>api-staging.iam360.io</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>

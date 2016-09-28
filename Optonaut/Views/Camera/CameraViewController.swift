@@ -497,10 +497,11 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     private var time = Double(-1)
     
-    private func updateBallPosition() {
+    private func updateBallPosition(expTime:Double) {
         
         // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
-        let exposureDuration = max(self.exposureDuration, 0.006)
+//        let exposureDuration = max(self.exposureDuration, 0.006)
+        let exposureDuration = max(self.exposureDuration, expTime)
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
         let movementPerFrameInPixels = Double(1500)
@@ -670,7 +671,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         }
     }
     
-    private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
+    private func processSampleBuffer(sampleBuffer: CMSampleBufferRef ,exposureTime:Double) {
         
         if recorder.isFinished() {
             return; //Dirt return here. Recording is running on the main thread.
@@ -778,7 +779,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
 //                                }
             }
             
-            updateBallPosition()
+            updateBallPosition(exposureTime)
             
             if recorder.hasStarted() {
                 let currentKeyframe = recorder.lastKeyframe()
@@ -868,7 +869,15 @@ class CameraViewController: UIViewController,TabControllerDelegate {
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
-        processSampleBuffer(sampleBuffer)
+        
+        let metadataDict:NSDictionary = CMCopyDictionaryOfAttachments(nil, sampleBuffer, kCMAttachmentMode_ShouldPropagate)!
+        
+        var exifData = NSDictionary()
+        exifData = metadataDict.objectForKey(kCGImagePropertyExifDictionary) as! NSDictionary
+        
+        let exposureTimeValue = exifData.objectForKey(kCGImagePropertyExifExposureTime as String)!
+        
+        processSampleBuffer(sampleBuffer,exposureTime: exposureTimeValue.doubleValue)
         frameCount += 1
     }
 }

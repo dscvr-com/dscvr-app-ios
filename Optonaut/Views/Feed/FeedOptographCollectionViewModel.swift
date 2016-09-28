@@ -16,7 +16,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
     private var refreshTimer: NSTimer?
     
     let results = MutableProperty<TableViewResults<Optograph>>(.empty())
-//    let newResultsAvailable = MutableProperty<Bool>(false)
     let isActive = MutableProperty<Bool>(false)
     
     private let refreshNotification = NotificationSignal<Void>()

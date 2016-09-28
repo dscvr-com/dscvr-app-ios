@@ -21,14 +21,14 @@ class CommentViewModel {
     init(comment: Comment) {
         
         text = ConstantProperty(comment.text)
-        personID = ConstantProperty(comment.person.ID)
+        personID = ConstantProperty(comment.person!.ID)
         timeSinceCreated.value = comment.createdAt.shortDescription
         
-        let personModel = Models.persons[comment.person.ID]!
+        let personModel = Models.persons[comment.person!.ID]!
             
         personModel.producer
             .startWithNext { personInfo in
-                
+            print("personInfo>>",personInfo)
             self.avatarImageUrl.value = ImageURL("persons/\(personInfo.ID)/\(personInfo.avatarAssetID).jpg", width: 50, height: 50)
             self.displayName.value = personInfo.displayName
             self.userName.value = "@\(personInfo.userName)"
