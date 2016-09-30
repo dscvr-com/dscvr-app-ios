@@ -322,6 +322,7 @@ std::string debugPath;
     return true;
 }
 - (struct ImageBuffer)getPreviewImage {
+    assert(pipe != NULL);
     return CVMatToImageBuffer(pipe->GetPreviewImage()->image.data);
 }
 @end
