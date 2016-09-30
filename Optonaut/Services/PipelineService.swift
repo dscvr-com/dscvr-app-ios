@@ -175,7 +175,7 @@ class PipelineService {
             
             let result = ApiService<EmptyResponse>.upload("optographs/\(optographID)/upload-asset", multipartFormData: { form in
                 form.appendBodyPart(data: "\(sideLetter)\(face)".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
-                form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "image.jpg", mimeType: "image/jpeg")
+                form.appendBodyPart(data: UIImageJPEGRepresentation(image, 0.8)!, name: "asset", fileName: "image.jpg", mimeType: "image/jpeg")
             })
                 .transformToBool()
                 .first()

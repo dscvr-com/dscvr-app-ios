@@ -500,8 +500,9 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     private func updateBallPosition(expTime:Double) {
         
         // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
-//        let exposureDuration = max(self.exposureDuration, 0.006)
-        let exposureDuration = max(self.exposureDuration, expTime)
+        let exposureDuration = max(self.exposureDuration, 0.006)
+//        let exposureDuration = max(self.exposureDuration, expTime)
+        //let exposureDuration = expTime
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
         let movementPerFrameInPixels = Double(1500)

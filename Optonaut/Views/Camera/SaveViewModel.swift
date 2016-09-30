@@ -135,7 +135,7 @@ class SaveViewModel {
                         
                         return ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset\(uploadModeStr)", multipartFormData: { form in
                             form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
-                            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
+                            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 0.6)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
                         })
                     }
                     .on(
