@@ -89,7 +89,8 @@ class StitchingService {
             
             globalAligner.align()
             
-            assert(hasUnstitchedRecordings())
+            // There is no such thing any more. 
+            //assert(hasUnstitchedRecordings())
             
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in

@@ -64,7 +64,9 @@ struct StitcherCancellation {
     NSArray<NSValue*>* result;
     
     try {
-        cv::Mat sphere = Stores::left.LoadOptograph()->image.data;
+        optonaut::StitchingResultP result = Stores::left.LoadOptograph();
+        result->image.Load();
+        cv::Mat sphere = result->image.data;
         cv::Mat blurred;
         optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
         panoBlur.Blur(sphere, blurred);
@@ -77,7 +79,9 @@ struct StitcherCancellation {
 
 - (struct ImageBuffer)getLeftEquirectangularResult {
     
-    cv::Mat sphere = Stores::left.LoadOptograph()->image.data;
+    optonaut::StitchingResultP result = Stores::left.LoadOptograph();
+    result->image.Load();
+    cv::Mat sphere = result->image.data;
     cv::Mat blackMat;
     optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
     panoBlur.Black(sphere, blackMat);
@@ -90,7 +94,9 @@ struct StitcherCancellation {
     NSArray<NSValue*>* result;
     
     try {
-        cv::Mat sphere = Stores::right.LoadOptograph()->image.data;
+        optonaut::StitchingResultP result = Stores::right.LoadOptograph();
+        result->image.Load();
+        cv::Mat sphere = result->image.data;
         cv::Mat blurred;
         optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
         panoBlur.Blur(sphere, blurred);
@@ -102,8 +108,9 @@ struct StitcherCancellation {
 }
 
 - (struct ImageBuffer)getRightEquirectangularResult {
-    
-    cv::Mat sphere = Stores::right.LoadOptograph()->image.data;
+    optonaut::StitchingResultP result = Stores::right.LoadOptograph();
+    result->image.Load();
+    cv::Mat sphere = result->image.data;
     cv::Mat blackMat;
     optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
     panoBlur.Black(sphere, blackMat);
