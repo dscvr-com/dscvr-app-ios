@@ -28,6 +28,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     private let viewModel = CameraViewModel()
     private let motionManager = CoreMotionRotationSource()
+    //private let motionManager = SpinRotationSource()
     
     // camera
     private let session = AVCaptureSession()

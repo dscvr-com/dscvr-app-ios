@@ -1596,7 +1596,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 4Y4J5JD5NJ;
+						DevelopmentTeam = 675Y8HZ459;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -2108,8 +2108,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
 				CURRENT_PROJECT_VERSION = 84;
 				DEVELOPMENT_TEAM = 4Y4J5JD5NJ;
 				ENABLE_BITCODE = NO;
@@ -2140,9 +2140,9 @@
 				);
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "858cb55d-1ab3-41ff-8a40-3fec2f7ff534";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2156,8 +2156,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Robert John Alkuino (974MF7P34C)";
 				CURRENT_PROJECT_VERSION = 84;
 				DEVELOPMENT_TEAM = 4Y4J5JD5NJ;
 				ENABLE_BITCODE = NO;
@@ -2176,9 +2176,9 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/stitcher/vendor",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "858cb55d-1ab3-41ff-8a40-3fec2f7ff534";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;
