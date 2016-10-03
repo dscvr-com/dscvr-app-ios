@@ -27,7 +27,8 @@ struct staticVariables {
 class CameraViewController: UIViewController,TabControllerDelegate {
     
     private let viewModel = CameraViewModel()
-    private let motionManager = CMMotionManager()
+    //private let motionManager = CMMotionManager()
+    private let motionManager = CoreMotionRotationSource()
     
     // camera
     private let session = AVCaptureSession()
@@ -107,7 +108,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     }
     
     deinit {
-        motionManager.stopDeviceMotionUpdates()
+        //motionManager.stopDeviceMotionUpdates()
+        motionManager.stop()
         
         //We do that in our signal as soon as everything's finished
         //recorder.dispose()
@@ -175,7 +177,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         scnView.addSubview(tabView)
         
-        motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+        //motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         
         view.setNeedsUpdateConstraints()
         
@@ -394,7 +396,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         UIApplication.sharedApplication().idleTimerDisabled = true
         
-        motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
+        //motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
+        motionManager.start()
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -680,9 +683,10 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         
-        if let pixelBuffer = pixelBuffer, motion = self.motionManager.deviceMotion {
+        if let pixelBuffer = pixelBuffer { //, motion = self.motionManager.deviceMotion {
             
-            let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
+            let cmRotation = motionManager.getRotationMatrix()
+            //let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
             var buf = ImageBuffer()

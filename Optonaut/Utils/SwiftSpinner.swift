@@ -427,3 +427,4 @@ public class SwiftSpinner: UIView {
         tapHandler?()
     }
 }
+
