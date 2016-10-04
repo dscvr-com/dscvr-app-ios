@@ -110,7 +110,7 @@ class SessionService {
                 next: { person in
                     
                     Models.persons.touch(person).insertOrUpdate()
-                    Defaults[.SessionEliteUser] = person.eliteStatus == 1 ? true:false
+                    //Defaults[.SessionEliteUser] = person.eliteStatus == 1 ? true:false
                     Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
                     updateMixpanel()
                     loginNotifiaction.notify(())
@@ -127,6 +127,7 @@ class SessionService {
             "facebook_user_id": userID,
             "facebook_token": token,
         ]
+        print(parameters)
         return ApiService<LoginApiModel>.post("persons/facebook/signin", parameters: parameters)
             .flatMap(.Latest) { SessionService.handleSignin($0) }
     }
@@ -166,7 +167,7 @@ class SessionService {
         Defaults[.SessionShareToggledFacebook] = false
         Defaults[.SessionShareToggledTwitter] = false
         Defaults[.SessionShareToggledInstagram] = false
-        Defaults[.SessionEliteUser] = false
+        //Defaults[.SessionEliteUser] = false
         
         Mixpanel.sharedInstance().reset()
         UIApplication.sharedApplication().applicationIconBadgeNumber = 0

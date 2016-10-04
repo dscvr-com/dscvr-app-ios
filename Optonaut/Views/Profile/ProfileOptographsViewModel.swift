@@ -37,22 +37,7 @@ class ProfileOptographsViewModel {
                         if !Reachability.connectedToNetwork() {
                             Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
                         }
-                        
-//
-//                        if row[OptographSchema.locationID] != nil {
-//                            if Models.locations[row[OptographSchema.locationID]] == nil {
-//                                print("Walang location!")
-//                                Models.optographs.touch(optograph).insertOrUpdate { box in
-//                                    box.model.locationID = nil
-//                                }
-//                                Models.locations.touch(nil)
-//                            } else {
-//                                Models.locations.touch(Location.fromSQL(row))
-//                            }
-//                        } else {
-//                            Models.locations.touch(nil)
-//                        }
-                        
+                    
                         
                         return optograph
                     }
@@ -101,6 +86,7 @@ class ProfileOptographsViewModel {
                             box.model.isStitched = true
                             box.model.isPublished = true
                             box.model.isSubmitted = true
+                            box.model.starsCount = apiModel.starsCount
                         }
                         Models.persons.touch(apiModel.person).insertOrUpdate()
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()

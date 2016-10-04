@@ -25,14 +25,16 @@ struct Activity: DeletableModel {
     var isRead: Bool
     var type: ActivityType
     var activityResourceStar: ActivityResourceStarModel?
-    var activityResourceComment: ActivityResourceComment?
+    var activityResourceComment: ActivityResourceCommentModel?
     var activityResourceViews: ActivityResourceViews?
     var activityResourceFollow: ActivityResourceFollowModel?
     
     var text: String {
         switch type {
         case .Star: return "liked your photo."//return "\(activityResourceStar!.causingPerson.displayName) liked your Optograph."
-        case .Comment: return "\(activityResourceComment!.causingPerson.displayName) commented on your photo: \(activityResourceComment!.comment.text)"
+//        case .Comment: return "\(activityResourceComment!.causingPerson.displayName) commented on your photo: \(ActivityResourceCommentModel!.comment.text)"
+        case .Comment: return "commented on your photo."
+            
         case .Views: return "Congratulations! Your Optograph just hit \(activityResourceViews!.count) views."
         case .Follow:
             if activityResourceFollow!.causingPerson.isFollowed {

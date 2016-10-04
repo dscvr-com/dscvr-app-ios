@@ -39,11 +39,9 @@ class ApiService<T: Mappable> {
     private static var host: String {
         switch Env {
         case .Development: return "optonaut.ngrok.io"
-        //case .Staging: return "api-staging.iam360.io"
         case .Staging: return "api-staging.dscvr.com"
-        //case .Staging: return "mapi.dscvr.com"
         case .localStaging: return "192.168.1.69:3000"
-        case .Production: return "api-production-v9.iam360.io"
+        case .Production: return "api-production-v9.dscvr.com"
         }
     }
     
@@ -144,7 +142,7 @@ class ApiService<T: Mappable> {
         }
             .on(failed: { error in
                 if error.suspicious {
-//                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+                    //NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
                 }
             })
@@ -167,7 +165,6 @@ class ApiService<T: Mappable> {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             print ("Bearer ",token)
         }
-        print("mutableRequest>>>",mutableURLRequest)
         
         return mutableURLRequest
     }
@@ -230,6 +227,7 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                                    print(json)
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
                                     } else if let array = Mapper<T>().mapArray(json) {
@@ -258,7 +256,7 @@ class ApiService<T: Mappable> {
         }
             .on(failed: { error in
                 if error.suspicious {
-//                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+                    //NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
                 }
             })

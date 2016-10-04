@@ -35,6 +35,8 @@ class LoginOverlayViewController: UIViewController{
     var usernameStatus = UILabel()
     var passwordStatus = UILabel()
     let lineLabel = UILabel()
+    var scrollView: UIScrollView?
+    var loginView = UIView()
     
     init() {
         
@@ -48,17 +50,33 @@ class LoginOverlayViewController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = UIColor(hex:0x3E3D3D)
         
         navigationController?.navigationBarHidden = true
         
-        view.backgroundColor = UIColor(hex:0xf7f7f7)
+        scrollView = UIScrollView(frame: UIScreen.mainScreen().bounds)
+        view.addSubview(scrollView!)
+        
+        scrollView!.addSubview(loginView)
+        scrollView?.scrollEnabled = true
+        
+        if view.frame.height != 568.0 {
+            scrollView?.scrollEnabled = false
+            loginView.fillSuperview()
+        } else {
+            loginView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height + 60)
+        }
+        
+        scrollView!.contentSize = loginView.bounds.size
+        
+        loginView.backgroundColor = UIColor(hex:0xf7f7f7)
         
         facebookButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LoginOverlayViewController.facebook)))
         facebookButtonView.setBackgroundImage(UIImage(named:"facebook_btn"), forState: .Normal)
-        view.addSubview(facebookButtonView)
+        loginView.addSubview(facebookButtonView)
         
         headView.backgroundColor = UIColor(hex:0x3E3D3D)
-        view.addSubview(headView)
+        loginView.addSubview(headView)
         
         headerImageView = UIImageView(image: headerImage)
         headView.addSubview(headerImageView!)
@@ -106,12 +124,12 @@ class LoginOverlayViewController: UIViewController{
         }
         
         loginViewModel.emailOrUserName <~ emailOrUserNameInputView.rac_text
-        view.addSubview(emailOrUserNameInputView)
+        loginView.addSubview(emailOrUserNameInputView)
         
         usernameStatus.font = UIFont(name: "Avenir-Book", size: 8)
         usernameStatus.textColor = UIColor.grayColor()
         usernameStatus.textAlignment = .Right
-        view.addSubview(usernameStatus)
+        loginView.addSubview(usernameStatus)
         
         passwordInputView.rac_placeholder <~ loginViewModel.selectedTab.producer.equalsTo(.SignUp).mapToTuple("Choose a password", "Password")
         passwordInputView.layer.borderColor = UIColor(hex:0xFF8B00).CGColor
@@ -123,7 +141,7 @@ class LoginOverlayViewController: UIViewController{
         passwordInputView.delegate = self
         
         loginViewModel.password <~ passwordInputView.rac_text
-        view.addSubview(passwordInputView)
+        loginView.addSubview(passwordInputView)
         
         loginViewModel.passwordStatus.producer
             .observeOnMain()
@@ -141,7 +159,7 @@ class LoginOverlayViewController: UIViewController{
         passwordStatus.font = UIFont(name: "Avenir-Book", size: 8)
         passwordStatus.textColor = UIColor.grayColor()
         passwordStatus.textAlignment = .Right
-        view.addSubview(passwordStatus)
+        loginView.addSubview(passwordStatus)
         
         submitButtonView.addTarget(self, action: #selector(submit), forControlEvents: .TouchUpInside)
         submitButtonView.layer.cornerRadius = 7.0
@@ -149,7 +167,7 @@ class LoginOverlayViewController: UIViewController{
         submitButtonView.backgroundColor = UIColor(hex:0xFF8B00)
         submitButtonView.setTitleColor(UIColor(hex:0xf7f7f7), forState: UIControlState.Normal)
         submitButtonView.titleLabel!.font = UIFont(name: "Avenir-Heavy", size: 15)
-        view.addSubview(submitButtonView)
+        loginView.addSubview(submitButtonView)
         
         forgotPasswordView.textColor = UIColor(hex:0xFF8B00)
         forgotPasswordView.textAlignment = .Center
@@ -160,17 +178,17 @@ class LoginOverlayViewController: UIViewController{
         forgotPasswordView.hidden = true
         forgotPasswordView.rac_hidden <~ loginViewModel.selectedTab.producer.equalsTo(.SignUp)
             .combineLatestWith(loginViewModel.password.producer.map(isNotEmpty)).map(or)
-        view.addSubview(forgotPasswordView)
+        loginView.addSubview(forgotPasswordView)
         
         lineLabel.backgroundColor = UIColor.grayColor()
-        view.addSubview(lineLabel)
+        loginView.addSubview(lineLabel)
         
         loadingView.backgroundColor = UIColor.blackColor().alpha(0.3)
         loadingView.rac_hidden <~ loginViewModel.pending.producer.map(negate)
-        view.addSubview(loadingView)
+        loginView.addSubview(loadingView)
         
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LoginOverlayViewController.dismissKeyboard)))
+        loginView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LoginOverlayViewController.dismissKeyboard)))
         
         loginViewModel.selectedTab.producer.startWithNext { val in
             if val == .LogIn {
@@ -208,7 +226,7 @@ class LoginOverlayViewController: UIViewController{
         forgotPasswordView.align(.UnderCentered, relativeTo: submitButtonView, padding: 30, width: 200, height: 20)
         lineLabel.align(.UnderCentered, relativeTo: forgotPasswordView, padding: 10, width: size.width - 50, height: 2)
         
-        let r = (size.height - lineLabel.frame.origin.y)
+        let r = view.frame.height == 568.0 ? (loginView.height - lineLabel.frame.origin.y) : (size.height - lineLabel.frame.origin.y)
         
         facebookButtonView.align(.UnderCentered, relativeTo: forgotPasswordView, padding: (r/2) - 25, width: UIImage(named:"facebook_btn")!.size.width, height: 50)
         
@@ -313,7 +331,6 @@ class LoginOverlayViewController: UIViewController{
                     completed: {
                         Defaults[.SessionUserDidFirstLogin] = true
                         LoadingIndicatorView.hide()
-                        //self?.checkElite()
                     }
                 )
                 .start()

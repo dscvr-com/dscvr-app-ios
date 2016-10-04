@@ -65,11 +65,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = tabBarViewController
             
             Defaults[.SessionGyro] = true
+            Defaults[.SessionEliteUser] = true
             
-            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
-                self.sendCheckElite().start()
-            
-            }
+//            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
+//                self.sendCheckElite().start()
+//            
+//            }
         }
         return true
     }
@@ -142,10 +143,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        let mixPanel = Mixpanel.sharedInstance()
+        mixPanel.people.addPushDeviceToken(deviceToken)
+        
         let tokenChars = UnsafePointer<CChar>(deviceToken.bytes)
         var tokenString = ""
-        
-        print("DEVICE TOKEN = \(deviceToken)")
         
         for var i = 0; i < deviceToken.length; i++ {
             tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
@@ -159,7 +161,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject: AnyObject]) {
         ActivitiesService.unreadCount.value = 1
-        print()
 //        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {
 //            tabBarViewController.activityNavViewController.activityTableViewController.viewModel.refreshNotification.notify(())
 //        }
@@ -176,11 +177,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if case .Production = Env {
             print("production mixpanel")
-            Mixpanel.sharedInstanceWithToken("2cb0781fb2aaac9ef23bb1e92694caae")
+            //Mixpanel.sharedInstanceWithToken("2cb0781fb2aaac9ef23bb1e92694caae")
         } else {
             print("staging mixpanel")
             Mixpanel.sharedInstanceWithToken("905eb49cf2c78af5ceb307939f02c092")
         }
+//        let sysVer = UIDevice.currentDevice().systemVersion as NSString
+//        
+//        if sysVer.floatValue >= 8.0 {
+//            UIApplication.sharedApplication().registerForRemoteNotifications()
+//        }
+        
+        /*
+         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+         {
+         [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+         [[UIApplication sharedApplication] registerForRemoteNotifications];
+         }
+         // This code will work in iOS 7.0 and below:
+         else
+         {
+         [[UIApplication sharedApplication] registerForRemoteNotificationTypes: (UIRemoteNotificationTypeNewsstandContentAvailability| UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+         }
+         
+         // Call .identify to flush the People record to Mixpanel
+         [mixpanel identify:mixpanel.distinctId];
+         */
         
         try! DatabaseService.prepare()
         

@@ -254,7 +254,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         return SamplePaths.cameraPath()
     }
     func openGallary() {
-        if Defaults[.SessionEliteUser] {
+        //if Defaults[.SessionEliteUser] {
+        if SessionService.isLoggedIn {
             let imagePickVC = ViewController()
             
             imagePickVC.imagePicked.producer.startWithNext{ image in
@@ -305,7 +306,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             Defaults[.SessionUploadMode] = "opto"
             
-            if Defaults[.SessionEliteUser] {
+            //if Defaults[.SessionEliteUser] {
+            if SessionService.isLoggedIn{
                 navigationController?.pushViewController(CameraViewController(), animated: false)
             } else{
                 self.tapRightButton()
@@ -346,7 +348,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             self.presentViewController(alert, animated: true, completion: nil)
         }
-//self.presentViewController(InvitationViewController(), animated: true, completion: nil)
     }
     func tapRightButtonTab() {
         tabController!.tapNavBarTitleForFeedClass()

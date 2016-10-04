@@ -64,9 +64,6 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         displayNameView.textAlignment = .Center
         contentView.addSubview(displayNameView)
         
-//        atSign.image = UIImage(named:"atSign")
-//        contentView.addSubview(atSign)
-        
         displayNameInputView.placeholder = "Enter your name"
         displayNameInputView.font = UIFont.fontDisplay(20, withType: .Semibold)
         displayNameInputView.textAlignment = .Center
@@ -97,23 +94,9 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         textInputView.delegate = self
         contentView.addSubview(textInputView)
         
-        //        buttonIconView.image = UIImage(named: "")
-        //        buttonView.addSubview(buttonIconView)
-        
-        //        buttonView.backgroundColor = UIColor(0xffbc00)
-        //        buttonView.layer.cornerRadius = 5
-        //        buttonView.layer.masksToBounds = true
-        //        buttonView.setTitleColor(.whiteColor(), forState: .Normal)
-        //        buttonView.titleLabel?.font = .fontDisplay(11, withType: .Semibold)
-        //        buttonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileHeaderCollectionViewCell.tapButton)))
-        //        contentView.addSubview(buttonView)
-        
         buttonFollow.setBackgroundImage(UIImage(named:"unfollow_button"), forState: .Normal)
         buttonFollow.addTarget(self, action: #selector(self.followUser), forControlEvents:.TouchUpInside)
         contentView.addSubview(buttonFollow)
-        
-        //        dividerDescription.backgroundColor = UIColor(0xffbc00)
-        //        contentView.addSubview(dividerDescription)
         
         postHeadingView.text = "Images"
         postHeadingView.textColor = UIColor.whiteColor()
@@ -207,25 +190,14 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
         avatarImageView.frame = CGRect(x: size.width / 2 - 50, y: 20, width: 100, height: 100)
         displayNameView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 30)
         
-//        let atSignSize = UIImage(named:"atSign")?.size
-//        atSign.align(.ToTheLeftCentered, relativeTo: displayNameView, padding: 0, width: (atSignSize?.width)!, height: atSignSize!.height)
         displayNameInputView.align(.UnderCentered, relativeTo: avatarImageView, padding: 10, width: size.width - 28, height: 26)
         editSubView.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: editSubView.image!.size.width, height: editSubView.image!.size.width)
         editSubView.frame = CGRect(x: (avatarImageView.frame.origin.x+avatarImageView.frame.width)-editSubView.image!.size.width,y: (avatarImageView.frame.origin.y+avatarImageView.frame.height) - editSubView.image!.size.width,width: editSubView.image!.size.width,height: editSubView.image!.size.width)
         textView.align(.UnderCentered, relativeTo: displayNameInputView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font))
         textInputView.align(.UnderCentered, relativeTo: displayNameView, padding: 10, width: size.width - 28, height: calcTextHeight(textView.text!, withWidth: size.width - 28, andFont: textView.font) + 50)
         
-        //buttonIconView.anchorToEdge(.Right, padding: 12, width: 12, height: 12)
-        
-        //buttonView.align(.UnderCentered, relativeTo: displayNameView, padding: 15, width: 100, height: 27)
-        //dividerDescription.align(.UnderCentered, relativeTo: buttonView, padding: 15, width: size.width, height: 2)
-        
-        //let metricWidth = size.width / 3
-        //postCountView.anchorInCorner(.BottomLeft, xPad: 0, yPad: 33, width: metricWidth, height: 14)
         
         postHeadingView.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 55)
-//        postHeadingView1.anchorInCorner(.BottomLeft, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
-//        postHeadingView2.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: contentView.frame.width/2, height: 55)
         
        contentView.groupInCorner(group: .Horizontal, views: [postHeadingView1, postHeadingView2, postHeadingView3], inCorner: .BottomLeft, padding: 0, width: contentView.frame.width/3, height: 55)
         
@@ -298,11 +270,12 @@ class ProfileHeaderCollectionViewCell: UICollectionViewCell {
             print("ako")
             buttonFollow.hidden = true
             editSubView.hidden = false
-            postHeadingView.hidden = true
+            postHeadingView.hidden = false
             postHeadingView1.hidden = false
             postHeadingView2.hidden = false
             postHeadingView3.hidden = false
             yellowLine.hidden = false
+            postHeadingView.rac_hidden <~ viewModel.isEditing
             postHeadingView1.rac_hidden <~ viewModel.isEditing
             postHeadingView2.rac_hidden <~ viewModel.isEditing
             postHeadingView3.rac_hidden <~ viewModel.isEditing

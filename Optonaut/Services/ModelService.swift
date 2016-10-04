@@ -78,7 +78,7 @@ extension ModelBox where M: SQLiteModel {
     
     func insertOrIgnore() {
         objc_sync_enter(self)
-        try! model.insertOrIgnore()
+        model.insertOrIgnore()
         dispatch_async(dispatch_get_main_queue()) {
             self.property.value = self.model
         }

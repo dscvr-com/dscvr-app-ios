@@ -274,6 +274,7 @@ private class OverlayViewModel {
                 self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47)
                 self?.isFollowed.value = person.isFollowed
                 self?.isElite.value = person.eliteStatus
+                print(self?.userName.value,self?.isFollowed.value,person.isFollowed)
         }
     }
     
@@ -753,6 +754,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     func bindModel(optographId:UUID) {
         
+        print(">>>>opto",optographId)
         viewModel.bind(optographId)
         viewModel.avatarImageUrl.producer.startWithNext{
             self.avatarImageView.kf_setImageWithURL(NSURL(string:$0)!)
@@ -796,8 +798,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
             .startWithNext { [weak self] isUploaded in
                 
                 if isUploaded {
+//                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+//                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+                    
                     let stringUrl = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/frame1.jpg"
-                    //self?.previewImage.kf_setImageWithURL(NSURL(string: stringUrl)!)
                     self?.previewImage.setImageWithURLString(stringUrl)
                     
                 } else {

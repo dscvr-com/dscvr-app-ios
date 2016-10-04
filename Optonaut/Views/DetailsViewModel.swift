@@ -35,6 +35,7 @@ class DetailsViewModel {
     var isMe = false
     let isThreeRing = MutableProperty<Bool>(false)
     var commentText = ""
+    var shareAlias = ""
     
     let postingEnabled = MutableProperty<Bool>(false)
     let isPosting = MutableProperty<Bool>(false)
@@ -62,32 +63,37 @@ class DetailsViewModel {
         
         isMe = SessionService.personID == optographBox.model.personID
         
-//        let commentQuery = CommentTable
-//            .select(*)
-//            .join(PersonTable, on: CommentTable[CommentSchema.personID] == PersonTable[PersonSchema.ID])
-//            .filter(CommentTable[CommentSchema.optographID] == optographID)
-//        
-//        try! DatabaseService.defaultConnection.prepare(commentQuery)
-//            .map { row -> Comment in
-//                let person = Person.fromSQL(row)
-//                var comment = Comment.fromSQL(row)
-//                
-//                comment.person = person
-//                
-//                return comment
-//            }
-//            .forEach(insertNewComment)
-//        
-//        ApiService<Comment>.get("optographs/\(optographID)/comments").startWithNext { (var comment) in
-//            self.insertNewComment(comment)
-//            
-//            comment.optograph.ID = optographID
-//            
-//            try! comment.insertOrUpdate()
-//            try! comment.person.insertOrUpdate()
-//        }
-//        
-//        commentsCount <~ comments.producer.map { $0.count }
+        let commentQuery = CommentTable
+            .select(*)
+            .join(PersonTable, on: CommentTable[CommentSchema.personID] == PersonTable[PersonSchema.ID])
+            .filter(CommentTable[CommentSchema.optographID] == optographID)
+        
+        
+        try! DatabaseService.defaultConnection.prepare(commentQuery)
+            .map { row -> Comment in
+                
+                let person = Person.fromSQL(row)
+                var comment = Comment.fromSQL(row)
+                
+                //comment.person = person
+                
+                Models.persons.touch(person)?.insertOrUpdate()
+                return comment
+            }
+            .forEach(insertNewComment)
+        
+        ApiService<Comment>.get("optographs/\(optographID)/comments").startWithNext { comment in
+            
+            var comm = comment
+            
+            comm.optograph.ID = optographID
+            
+            try! comment.insertOrUpdate()
+            Models.persons.touch(comment.person)?.insertOrUpdate()
+            self.insertNewComment(comment)
+        }
+        
+        commentsCount <~ comments.producer.map { $0.count }
     }
     
     deinit {
@@ -172,7 +178,6 @@ class DetailsViewModel {
     
     private func updatePropertiesDetails() {
         disposable = optographBox.producer.startWithNext{ [weak self] optograph in
-            print(optograph)
             self?.isStarred.value = optograph.isStarred
             self?.starsCount.value = optograph.starsCount
             self?.viewsCount.value = optograph.viewsCount
@@ -181,6 +186,7 @@ class DetailsViewModel {
             self?.text.value = optograph.isPrivate ? "[private] " + optograph.text : optograph.text
             self?.hashtags.value = optograph.hashtagString
             self?.isPublished.value = optograph.isPublished
+            self?.shareAlias = optograph.shareAlias
             
             if let locationID = optograph.locationID {
                 
@@ -209,7 +215,8 @@ class DetailsViewModel {
                     self.commentsCount.value += 1
                 },
                 next: { comment in
-                    try! comment.person.insertOrUpdate()
+                    //try! comment.person.insertOrUpdate()
+                    Models.persons.touch(comment.person)?.insertOrUpdate()
                     try! comment.insertOrUpdate()
                 },
                 completed: {
@@ -223,7 +230,7 @@ class DetailsViewModel {
     }
     
     func insertNewComment(comment: Comment) {
-        comments.value.orderedInsert(comment, withOrder: .OrderedAscending)
+        comments.value.orderedInsert(comment, withOrder: .OrderedDescending)
     }
     
 }

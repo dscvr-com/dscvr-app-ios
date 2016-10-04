@@ -27,8 +27,8 @@ struct staticVariables {
 class CameraViewController: UIViewController,TabControllerDelegate {
     
     private let viewModel = CameraViewModel()
+    
     private let motionManager = CoreMotionRotationSource()
-    //private let motionManager = SpinRotationSource()
     
     // camera
     private let session = AVCaptureSession()
@@ -108,6 +108,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     }
     
     deinit {
+        
+        //motionManager.stopDeviceMotionUpdates()
         motionManager.stop()
         
         //We do that in our signal as soon as everything's finished
@@ -126,7 +128,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         } else {
             scnView = SCNView(frame: view.bounds)
         }
-        
         
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
@@ -395,9 +396,9 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         frameCount = 0
         
         UIApplication.sharedApplication().idleTimerDisabled = true
-        
+
+        //motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
         motionManager.start()
-        //(.XArbitraryCorrectedZVertical)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -504,6 +505,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
         let exposureDuration = max(self.exposureDuration, 0.006)
+//        let exposureDuration = max(self.exposureDuration, expTime)
+        //let exposureDuration = expTime
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
         let movementPerFrameInPixels = Double(1500)
@@ -673,6 +676,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         }
     }
     
+    //private func processSampleBuffer(sampleBuffer: CMSampleBufferRef ,exposureTime:Double) {
     private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
         
         if recorder.isFinished() {
@@ -680,7 +684,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         }
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
-        
+
         if let pixelBuffer = pixelBuffer {
             let cmRotation = self.motionManager.getRotationMatrix()
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
@@ -779,7 +783,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
 //                                }
             }
             
-            
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(cmRotation)
             
             updateBallPosition()
@@ -870,6 +873,15 @@ class CameraViewController: UIViewController,TabControllerDelegate {
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
+        
+//        let metadataDict:NSDictionary = CMCopyDictionaryOfAttachments(nil, sampleBuffer, kCMAttachmentMode_ShouldPropagate)!
+//        
+//        var exifData = NSDictionary()
+//        exifData = metadataDict.objectForKey(kCGImagePropertyExifDictionary) as! NSDictionary
+//        
+//        let exposureTimeValue = exifData.objectForKey(kCGImagePropertyExifExposureTime as String)!
+        
+//        processSampleBuffer(sampleBuffer,exposureTime: exposureTimeValue.doubleValue)
         processSampleBuffer(sampleBuffer)
         frameCount += 1
     }

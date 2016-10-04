@@ -23,7 +23,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     private let viewModel: DetailsViewModel!
     
-    
     private var combinedMotionManager: CombinedMotionManager!
     // subviews
     //private let tableView = TableView()
@@ -207,14 +206,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         whiteBackground.addSubview(likeButtonView)
         
         
-        //        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
-        //        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
-        //        whiteBackground.addSubview(commentButtonView)
-        //
-        //        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
-        //        commentCountView.textColor = .whiteColor()
-        //        commentCountView.textAlignment = .Right
-        //        whiteBackground.addSubview(commentCountView)
+        commentButtonView.setImage(UIImage(named:"comment_icn"), forState: .Normal)
+        commentButtonView.addTarget(self, action: #selector(self.toggleComment), forControlEvents: [.TouchDown])
+        whiteBackground.addSubview(commentButtonView)
+        
+        commentCountView.font = UIFont.displayOfSize(11, withType: .Semibold)
+        commentCountView.textColor = .whiteColor()
+        commentCountView.textAlignment = .Right
+        whiteBackground.addSubview(commentCountView)
         
         locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
         locationTextView.textColor = UIColor.whiteColor()
@@ -413,9 +412,62 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func share() {
-        let share = DetailsShareViewController()
-        share.optographId = optographID
-        self.navigationController?.presentViewController(share, animated: true, completion: nil)
+        
+        if viewModel.optographBox.model.isPublished && !viewModel.optographBox.model.isUploading {
+            let share = DetailsShareViewController()
+            share.optographId = optographID
+            self.navigationController?.presentViewController(share, animated: true, completion: nil)
+            
+//            Async.main { [weak self] in
+//                let textToShare = "Check out this awesome 360 images"
+//                let baseURL = Env == .Staging ? "wow.dscvr.com" : "wow.dscvr.com"
+//                let shareUrl = NSURL(string: "http://\(baseURL)/\(self!.viewModel.shareAlias)")!
+//                let activityVC = UIActivityViewController(activityItems: [textToShare, shareUrl], applicationActivities:nil)
+//                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop,UIActivityTypePrint, UIActivityTypePostToWeibo, UIActivityTypeAddToReadingList, UIActivityTypePostToVimeo]
+//                
+//                self?.navigationController?.presentViewController(activityVC, animated: true, completion: nil)
+//            }
+        } else {
+//            let alert = UIAlertController(title:"Oops! You haven't uploaded yet!", message: "Please go to your Profile > Images and upload your 360 photo!", preferredStyle: .Alert)
+//            
+//            let imageView = UIImageView(frame: CGRectMake(20, 40, 100, 100))
+//            alert.view.addSubview(imageView)
+//            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+//            
+//            let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+//            if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+//                dispatch_async(dispatch_get_main_queue()) {
+//                    imageView.image = originalImage.resized(.Width, value: 40)
+//                    self.navigationController?.presentViewController(alert, animated: true, completion: nil)
+//                }
+//            }
+            
+            let customAlertView = NYAlertViewController()
+            let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+            let imageOpto = UIImageView()
+            if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+                dispatch_async(dispatch_get_main_queue()) {
+                    imageOpto.image = originalImage.resized(.Width, value: self.view.frame.width - 100)
+                }
+            }
+            
+            customAlertView.alertViewContentView = imageOpto
+            customAlertView.title = "Oops! You haven't uploaded yet!"
+            customAlertView.message = "Please go to your Profile > Images and upload your 360 photo!"
+            customAlertView.swipeDismissalGestureEnabled = true
+            customAlertView.backgroundTapDismissalGestureEnabled = true
+            
+            let cancelAction = NYAlertAction(
+                title: "Ok",
+                style: .Cancel,
+                handler: { (action: NYAlertAction!) -> Void in
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                }
+            )
+            customAlertView.addAction(cancelAction)
+            self.navigationController?.presentViewController(customAlertView, animated: true, completion: nil)
+        }
+        
     }
     
     func vrIconTouched() {
@@ -433,6 +485,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.closeDetailsPage()
                 self.imageCache.deleteMp4(self.optographID)
             }))
+            
             alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
             
             self.navigationController!.presentViewController(alert, animated: true, completion: nil)
@@ -455,9 +508,37 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func toggleComment() {
         
-        let commentPage = CommentTableViewController()
-        commentPage.viewModel = viewModel
-        self.navigationController?.presentViewController(commentPage, animated: true, completion: nil)
+        if viewModel.optographBox.model.isPublished && !viewModel.optographBox.model.isUploading {
+            let commentPage = CommentTableViewController()
+            commentPage.viewModel = viewModel
+            self.navigationController?.presentViewController(commentPage, animated: true, completion: nil)
+        } else {
+            
+            let customAlertView = NYAlertViewController()
+            let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+            let imageOpto = UIImageView()
+            if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
+                dispatch_async(dispatch_get_main_queue()) {
+                    imageOpto.image = originalImage.resized(.Width, value: self.view.frame.width - 100)
+                }
+            }
+            
+            customAlertView.alertViewContentView = imageOpto
+            customAlertView.title = "Oops! You haven't uploaded yet!"
+            customAlertView.message = "Please go to your Profile > Images and upload your 360 photo!"
+            customAlertView.swipeDismissalGestureEnabled = true
+            customAlertView.backgroundTapDismissalGestureEnabled = true
+            
+            let cancelAction = NYAlertAction(
+                title: "Ok",
+                style: .Cancel,
+                handler: { (action: NYAlertAction!) -> Void in
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                }
+            )
+            customAlertView.addAction(cancelAction)
+            self.navigationController?.presentViewController(customAlertView, animated: true, completion: nil)
+        }
     }
     
     func pinchGesture(recognizer:UIPinchGestureRecognizer) {
@@ -469,8 +550,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     transformBegin = CGAffineTransformScale(view.transform,recognizer.scale, recognizer.scale)
                 }
             } else if recognizer.state == UIGestureRecognizerState.Changed {
-                print(">>",view.transform.a)
-                print(recognizer.scale)
                 if view.transform.a >= 1.0  {
                     scnView.transform = CGAffineTransformScale(view.transform,recognizer.scale, recognizer.scale)
                     recognizer.scale = 1
@@ -584,7 +663,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func twoTap(recognizer:UITapGestureRecognizer) {
-        print("two tap")
         navigationController?.popViewControllerAnimated(true)
     }
     
@@ -670,9 +748,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 
                 
                 asset.writeImageDataToSavedPhotosAlbum(destData, metadata: meta as [NSObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
-                    print("meta path >>> \(path)")
-                    print("meta error >>> \(error)")
-                    
                     SwiftSpinner.hide()
                     
                     if error == nil {
@@ -858,87 +933,3 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
 }
-
-//// MARK: - UITableViewDelegate
-//extension DetailsTableViewController: UITableViewDelegate {
-//
-//    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-////        let superView = tableView!.superview!
-//        if indexPath.row == 0 {
-//            let yOffset = max(0, tableView.frame.height - tableView.contentSize.height)
-//            UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
-//                animations: {
-//                    self.tableView.contentOffset = CGPoint(x: 0, y: -yOffset)
-//                },
-//                completion: nil)
-//        }
-//    }
-//
-//    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-//        if indexPath.row == 0 {
-//            let infoHeight = CGFloat(78)
-//            let textWidth = view.frame.width - 40
-//            let textHeight = calcTextHeight(viewModel.text.value, withWidth: textWidth, andFont: UIFont.textOfSize(14, withType: .Regular)) + 20
-//            let hashtagsHeight = calcTextHeight(viewModel.hashtags.value, withWidth: textWidth, andFont: UIFont.textOfSize(14, withType: .Semibold)) + 25
-//            return textHeight + hashtagsHeight + infoHeight
-//        } else if indexPath.row == 1 {
-//            return 60
-//        } else {
-//            let textWidth = view.frame.width - 40 - 40 - 20 - 30 - 20
-//            let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row - 2].text, withWidth: textWidth, andFont: UIFont.textOfSize(13, withType: .Regular)) + 15
-//            return max(textHeight, 60)
-//        }
-//    }
-//
-//}
-//
-//// MARK: - UITableViewDataSource
-//extension DetailsTableViewController: UITableViewDataSource {
-//
-//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-//        if indexPath.row == 0 {
-//            let cell = self.tableView.dequeueReusableCellWithIdentifier("details-cell") as! DetailsTableViewCell
-//            cell.viewModel = viewModel
-//            cell.navigationController = navigationController as? NavigationController
-//            cell.bindViewModel()
-//            return cell
-//        }
-//    }
-//
-//    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return viewModel.comments.value.count + 2
-//    }
-//
-//}
-//
-//
-//// MARK: - NewCommentTableViewDelegate
-//extension DetailsTableViewController: NewCommentTableViewDelegate {
-//    func newCommentAdded(comment: Comment) {
-//        self.viewModel.insertNewComment(comment)
-//    }
-//}
-
-//private class TableView: UITableView {
-//
-//    var horizontalScrollDistanceCallback: ((Float) -> ())?
-//
-//    private override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        super.touchesMoved(touches, withEvent: event)
-//
-//        if let touch = touches.first {
-//            let oldPoint = touch.previousLocationInView(self)
-//            let newPoint = touch.locationInView(self)
-//            self.horizontalScrollDistanceCallback?(Float(newPoint.x - oldPoint.x))
-//        }
-//    }
-//
-//    private override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
-//        // this took a lot of time. don't bother to understand this
-//        if frame.height + contentOffset.y - 78 < 80 && point.y < 0 && frame.width - point.x < 100 {
-//            return false
-//        }
-//        return true
-//    }
-//    
-//}

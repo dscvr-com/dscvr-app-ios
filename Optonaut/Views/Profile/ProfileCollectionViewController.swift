@@ -103,10 +103,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             self!.collectionView?.reloadData()
             self!.collectionViewModel.refreshNotification.notify(())
             
-//            if self?.optographIDsNotUploaded.count != 0 {
-//                let indexPath = NSIndexPath(forRow: 1, inSection: 0)
-//                self?.collectionView?.reloadItemsAtIndexPaths([indexPath])
-//            }
         }
         
         profileViewModel.notifTabTouched.producer.startWithNext { [weak self] isNotifTabTap in

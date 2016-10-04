@@ -16,7 +16,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
     private var refreshTimer: NSTimer?
     
     let results = MutableProperty<TableViewResults<Optograph>>(.empty())
-//    let newResultsAvailable = MutableProperty<Bool>(false)
     let isActive = MutableProperty<Bool>(false)
     
     private let refreshNotification = NotificationSignal<Void>()
@@ -62,7 +61,9 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             box.model.isSubmitted = true
                             box.model.starsCount = apiModel.starsCount
                         }
-                        Models.persons.touch(apiModel.person).insertOrUpdate()
+                        Models.persons.touch(apiModel.person).insertOrUpdate { ps in
+                            ps.model.isFollowed = apiModel.person.isFollowed
+                        }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
                     })
                     .map(Optograph.fromApiModel)
@@ -89,7 +90,9 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             box.model.isPublished = true
                             box.model.isSubmitted = true
                         }
-                        Models.persons.touch(apiModel.person).insertOrUpdate()
+                        Models.persons.touch(apiModel.person).insertOrUpdate { ps in
+                            ps.model.isFollowed = apiModel.person.isFollowed
+                        }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
                     })
                     .map(Optograph.fromApiModel)
