@@ -77,7 +77,6 @@ class SaveViewController: UIViewController, RedNavbar {
                 },
                 completed: { [weak self] in
                     print("stitching finished")
-                    //ApiService<EmptyResponse>.get("completed").start()
                     self?.viewModel.stitcherFinished.value = true
                 }
             )
