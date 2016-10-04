@@ -119,6 +119,10 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         
     }
     
+    func isInButtonCamera(inFrustrum: Bool){
+//        print("indBUtton")
+    }
+    
     func createField() {
         createRenderDelegates()
         applyDistortionShader()

@@ -95,6 +95,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     var nodeItem = StorytellingObject()
     var nodes = [NSDictionary]()
+    var mediaArray = [NSDictionary]()
     
     var playerItem:AVPlayerItem?
     var player:AVPlayer?
@@ -157,18 +158,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
 //    }
     
     func sendOptographData(){
-        
-//        let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
-//        
-//        let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
-        
-//        let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
-//                                    "story_object_media_face": "pin",
-//                                    "story_object_media_description": "description",
-//                                    "story_object_media_additional_data": nodeItem.optographID,
-//                                    "story_object_position": translationArray,
-//                                    "story_object_rotation": rotationArray]
-        
         if fixedTextLabel.text != ""{
             let child : NSDictionary = ["story_object_media_type": "FXTXT",
                                         "story_object_media_face": "no pin",
@@ -203,8 +192,94 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
     }
     
-    func sendMediaData(){
+    func sendToNewPath(){
+        let parameters : NSDictionary =  ["story_optograph_id": optographID,
+                                          "story_person_id": SessionService.personID,
+                                          "children":nodes]
         
+        if nodes.count > 0{
+            print("pass data")
+            ApiService<ChildResponse>.postForGate("story/v2/part1", parameters: parameters as? [String : AnyObject]).on(next: { data in
+                print("data story id: \(data)")
+                print("user: \(SessionService.personID)")
+                
+                let response = StoryMediaObject()
+                response.mediaArray = (data.data?.children)!
+                response.story_id = (data.data?.story_id)!
+                
+                print("mediaArray: \(response.mediaArray)")
+                print("story_id: \(response.story_id)")
+                
+                self.sendMultiformData(response)
+                
+//                self.dismissStorytelling()
+            }).start();
+        }
+        else{
+            print("nodes count is zero")
+        }
+    }
+    
+    func sendMultiformData(mediaData: StoryMediaObject){
+        
+        var multiformDictionary = [String : AnyObject]()
+        multiformDictionary["story_id"] = mediaData.story_id
+        multiformDictionary["story_person_id"] = SessionService.personID
+//        multiformDictionary.setValue(mediaData.story_id, forKey: "story_id")
+//        multiformDictionary.setValue(SessionService.personID, forKey: "story_person_id")
+        
+        for media in mediaData.mediaArray{
+            for fileInfo in mediaArray{
+                if media.story_object_media_filename == fileInfo["mediaFilename"] as! String{
+                    multiformDictionary[media.story_object_id] = fileInfo["mediaData"]
+//                    multiformDictionary.setValue(fileInfo["mediaData"], forKey: media.story_object_id)
+                }
+            }
+        }
+        
+        var counter = 0
+        var mediaIDcsv = String()
+        for media in mediaData.mediaArray {
+            counter += 1
+            
+            if counter < mediaData.mediaArray.count{
+                mediaIDcsv = mediaIDcsv + media.story_object_id + ","
+            }
+            else{
+                mediaIDcsv = mediaIDcsv + media.story_object_id
+            }
+            
+        }
+        
+        multiformDictionary["story_object_ids"] = mediaIDcsv
+//        print("multiformDictionary: \(multiformDictionary)")
+        
+        ApiService<ChildResponse>.postForGate("story/v2/part2", parameters: multiformDictionary).on(next: { data in
+            print("data story id: \(data)")
+//            print("user: \(SessionService.personID)")
+//            
+//            let response = StoryMediaObject()
+//            response.mediaArray = (data.data?.children)!
+//            response.story_id = (data.data?.story_id)!
+//            
+//            print("mediaArray: \(response.mediaArray)")
+//            print("story_id: \(response.story_id)")
+//            
+//            self.sendMultiformData(response)
+            
+            self.dismissStorytelling()
+        }).start();
+        
+        ApiService<EmptyResponse>.uploadForGate("story/v2/part2", multipartFormData: { form in
+//            form.append
+            
+        })
+        
+        
+//        ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset\(uploadModeStr)", multipartFormData: { form in
+//            form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
+//            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
+//        })
     }
     
     func optographSelected(optographID: String) {
@@ -243,6 +318,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         nodeItem.objectVector3 = vector;
         nodeItem.objectRotation = rotation;
+        
+    }
+    
+    func isInButtonCamera(inFrustrum: Bool){
         
     }
     
@@ -289,6 +368,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//        let mediaData = StoryMediaObject()
+//        self.sendMultiformData(mediaData)
         
         view.backgroundColor = .blackColor()
         
@@ -770,7 +852,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func doneStorytelling(){
-        self.sendOptographData();
+//        self.sendOptographData();
+        self.sendToNewPath();
         //        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -1030,10 +1113,14 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     "story_object_media_additional_data": "audio data",
                     "story_object_position": translationArray,
                     "story_object_rotation": rotationArray,
-                    "story_object_media_filename": filename,
-                    "story_object_media_base64": base64]
+                    "story_object_media_filename": filename]
+//                    ,"story_object_media_base64": base64]
                 
                 self.nodes.append(child)
+                
+                let mediaInfo : NSDictionary = ["mediaData": data!, "mediaFilename": filename]
+                
+                self.mediaArray.append(mediaInfo)
                 print("nodes count: \(self.nodes.count)")
                 
                 dispatch_async(dispatch_get_main_queue(), {

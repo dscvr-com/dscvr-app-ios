@@ -278,6 +278,16 @@
 		BB5668401D8ACDAE00EB2375 /* pop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BB56683F1D8ACDAD00EB2375 /* pop.mp3 */; };
 		BB7634541D42103A002486BF /* FPOptographsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7634531D42103A002486BF /* FPOptographsCollectionViewController.swift */; };
 		BB7634561D49E2F4002486BF /* StorytellingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7634551D49E2F3002486BF /* StorytellingObject.swift */; };
+		BB88A2631D9A121300EB09B0 /* StoryMediaObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB88A2621D9A121300EB09B0 /* StoryMediaObject.swift */; };
+		BB88A2651D9A2AAA00EB09B0 /* Roadgeek 2005 Series 1B.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A2641D9A284E00EB09B0 /* Roadgeek 2005 Series 1B.ttf */; };
+		BB88A2661D9A2AB100EB09B0 /* bubblegum.caf in Resources */ = {isa = PBXBuildFile; fileRef = BB56683E1D8908AB00EB2375 /* bubblegum.caf */; };
+		BB88A2681D9A30CD00EB09B0 /* big_noodle_titling.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A2671D9A2E2D00EB09B0 /* big_noodle_titling.ttf */; };
+		BB88A26B1D9A64FB00EB09B0 /* Nexa Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A2691D9A64E300EB09B0 /* Nexa Bold.otf */; };
+		BB88A26C1D9A64FB00EB09B0 /* Nexa Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A26A1D9A64E300EB09B0 /* Nexa Light.otf */; };
+		BB88A26E1D9A8AF600EB09B0 /* Merriweather Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */; };
+		BB88A2701D9D2EBE00EB09B0 /* ChildResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB88A26F1D9D2EBE00EB09B0 /* ChildResponse.swift */; };
+		BB88A2721D9D2F4600EB09B0 /* ChildNameResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB88A2711D9D2F4600EB09B0 /* ChildNameResponse.swift */; };
+		BB88A2741D9D301B00EB09B0 /* MultiformDataInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB88A2731D9D301B00EB09B0 /* MultiformDataInfo.swift */; };
 		BB8AC1931D597B8D00A18BFF /* StorytellingCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */; };
 		BB8AC1951D5B188F00A18BFF /* StorytellingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8AC1941D5B188F00A18BFF /* StorytellingCollectionViewCell.swift */; };
 		BB93F9241D78217D00478C93 /* StorytellingApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB93F9231D78217D00478C93 /* StorytellingApiModel.swift */; };
@@ -669,6 +679,15 @@
 		BB56683F1D8ACDAD00EB2375 /* pop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = pop.mp3; sourceTree = "<group>"; };
 		BB7634531D42103A002486BF /* FPOptographsCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPOptographsCollectionViewController.swift; path = Profile/FPOptographsCollectionViewController.swift; sourceTree = "<group>"; };
 		BB7634551D49E2F3002486BF /* StorytellingObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingObject.swift; sourceTree = "<group>"; };
+		BB88A2621D9A121300EB09B0 /* StoryMediaObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryMediaObject.swift; sourceTree = "<group>"; };
+		BB88A2641D9A284E00EB09B0 /* Roadgeek 2005 Series 1B.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roadgeek 2005 Series 1B.ttf"; sourceTree = "<group>"; };
+		BB88A2671D9A2E2D00EB09B0 /* big_noodle_titling.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = big_noodle_titling.ttf; sourceTree = "<group>"; };
+		BB88A2691D9A64E300EB09B0 /* Nexa Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nexa Bold.otf"; sourceTree = "<group>"; };
+		BB88A26A1D9A64E300EB09B0 /* Nexa Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nexa Light.otf"; sourceTree = "<group>"; };
+		BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Merriweather Light.ttf"; sourceTree = "<group>"; };
+		BB88A26F1D9D2EBE00EB09B0 /* ChildResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChildResponse.swift; sourceTree = "<group>"; };
+		BB88A2711D9D2F4600EB09B0 /* ChildNameResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChildNameResponse.swift; sourceTree = "<group>"; };
+		BB88A2731D9D301B00EB09B0 /* MultiformDataInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiformDataInfo.swift; sourceTree = "<group>"; };
 		BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StorytellingCollectionViewController.swift; path = Storytelling/StorytellingCollectionViewController.swift; sourceTree = "<group>"; };
 		BB8AC1941D5B188F00A18BFF /* StorytellingCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StorytellingCollectionViewCell.swift; path = Storytelling/StorytellingCollectionViewCell.swift; sourceTree = "<group>"; };
 		BB93F9231D78217D00478C93 /* StorytellingApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingApiModel.swift; sourceTree = "<group>"; };
@@ -884,6 +903,9 @@
 				59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */,
 				59405BF41D3D3D3200D1BA45 /* ActivityResourceFollowModel.swift */,
 				BBBDE6CB1D5202AC00144DB4 /* StorytellingResponse.swift */,
+				BB88A26F1D9D2EBE00EB09B0 /* ChildResponse.swift */,
+				BB88A2731D9D301B00EB09B0 /* MultiformDataInfo.swift */,
+				BB88A2711D9D2F4600EB09B0 /* ChildNameResponse.swift */,
 				BB49927B1D5452A1006A20D3 /* mapChildren.swift */,
 				BB49927C1D5452A1006A20D3 /* StoryObject.swift */,
 				BB49927D1D5452A1006A20D3 /* StorytellingChildren.swift */,
@@ -914,6 +936,7 @@
 				598F571C1CEDA771002229AF /* Avenir-Book_0.otf */,
 				598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */,
 				8F4C6E311B4A70CD007508ED /* icomoon.ttf */,
+				BB88A2641D9A284E00EB09B0 /* Roadgeek 2005 Series 1B.ttf */,
 				8FBC869B1BB72A2600539D4E /* SF-UI-Display-Light.otf */,
 				8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */,
 				8FBC86921BB723DA00539D4E /* SF-UI-Display-Semibold.otf */,
@@ -921,6 +944,10 @@
 				8FBC86931BB723DA00539D4E /* SF-UI-Display-Ultralight.otf */,
 				8FBC86941BB723DA00539D4E /* SF-UI-Text-Regular.otf */,
 				8FBC86951BB723DA00539D4E /* SF-UI-Text-Semibold.otf */,
+				BB88A2691D9A64E300EB09B0 /* Nexa Bold.otf */,
+				BB88A26A1D9A64E300EB09B0 /* Nexa Light.otf */,
+				BB88A2671D9A2E2D00EB09B0 /* big_noodle_titling.ttf */,
+				BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -1034,6 +1061,7 @@
 				8FD845C21BCA5AFA0064048D /* RenderDelegate.swift */,
 				8F707C151C5A2A17000AF7BF /* TableViewResults.swift */,
 				BB7634551D49E2F3002486BF /* StorytellingObject.swift */,
+				BB88A2621D9A121300EB09B0 /* StoryMediaObject.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1646,6 +1674,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB88A26E1D9A8AF600EB09B0 /* Merriweather Light.ttf in Resources */,
+				BB88A26B1D9A64FB00EB09B0 /* Nexa Bold.otf in Resources */,
+				BB88A26C1D9A64FB00EB09B0 /* Nexa Light.otf in Resources */,
+				BB88A2681D9A30CD00EB09B0 /* big_noodle_titling.ttf in Resources */,
+				BB88A2661D9A2AB100EB09B0 /* bubblegum.caf in Resources */,
+				BB88A2651D9A2AAA00EB09B0 /* Roadgeek 2005 Series 1B.ttf in Resources */,
 				8F4715131C49698B00663684 /* TwitterKitResources.bundle in Resources */,
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */,
@@ -1779,6 +1813,7 @@
 				A5FD5D831BEA5A4E0031ED1E /* quat.cpp in Sources */,
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
+				BB88A2721D9D2F4600EB09B0 /* ChildNameResponse.swift in Sources */,
 				8F23AA511BFF31B4008926A8 /* CommentTable.swift in Sources */,
 				59FB1D601CF5AFC100C5C333 /* ViewController.swift in Sources */,
 				59ECBB9A1D390E5F00B57FB2 /* NotificationTableViewCell.swift in Sources */,
@@ -1822,6 +1857,7 @@
 				8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */,
 				5965DC741D138BF70031059B /* ProfileUploadCollectionViewCell.swift in Sources */,
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
+				BB88A2741D9D301B00EB09B0 /* MultiformDataInfo.swift in Sources */,
 				8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */,
 				A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */,
 				8FC456C81C59108E0019107E /* UICollectionViewLeftAlignedLayout.m in Sources */,
@@ -1847,6 +1883,7 @@
 				BB93F9241D78217D00478C93 /* StorytellingApiModel.swift in Sources */,
 				8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */,
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
+				BB88A2701D9D2EBE00EB09B0 /* ChildResponse.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
 				B1754D5D1D0E82CD005A3E85 /* CommentTableViewController.swift in Sources */,
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
@@ -1861,6 +1898,7 @@
 				8FDBEE7B1C5D2FF500696D3F /* LoginOverlayViewModel.swift in Sources */,
 				59ECBB981D38929000B57FB2 /* OnboardingViewModel.swift in Sources */,
 				8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */,
+				BB88A2631D9A121300EB09B0 /* StoryMediaObject.swift in Sources */,
 				5917C8211CE441F200CD5A6D /* SharingViewController.swift in Sources */,
 				8FC7E3771BD15B9D00E97CC3 /* Vector3d.mm in Sources */,
 				8F5335AA1BDBC09A0058961A /* ActivityResourceFollow.swift in Sources */,

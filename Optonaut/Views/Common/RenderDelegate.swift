@@ -20,6 +20,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
     private let cameraNode = SCNNode()
     private let cameraCrosshair =  SCNNode()
+    private let buttonCamera = SCNNode()
     
     private let rotationMatrixSource: RotationMatrixSource
     private let cameraOffset: Float
@@ -38,6 +39,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
             cameraNode.camera = RenderDelegate.setupCamera(fov)
             
             cameraCrosshair.camera = RenderDelegate.setupCrosshairCamera(fov)
+            buttonCamera.camera = RenderDelegate.setupButtonCamera(fov)
         }
     }
 
@@ -49,6 +51,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         _fov = fov
      
         cameraCrosshair.camera = RenderDelegate.setupCrosshairCamera(fov)
+        buttonCamera.camera = RenderDelegate.setupButtonCamera(fov)
         
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         scene.rootNode.addChildNode(cameraNode)
@@ -57,6 +60,10 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         cameraCrosshair.position = SCNVector3(x: 0, y: 0, z: 0)
         cameraCrosshair.name = "cameraCrosshair"
         scene.rootNode.addChildNode(cameraCrosshair)
+        
+        buttonCamera.position = SCNVector3(x: 0, y: 0, z: 0)
+        buttonCamera.name = "buttonCamera"
+        scene.rootNode.addChildNode(buttonCamera)
         
         // TODO(ej): Check if this is necassary for 3D vision. If so, add it to transform
         // in each render loop since pivot is broken.
@@ -102,6 +109,23 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         return camera
     }
     
+    internal static func setupButtonCamera(fov: FieldOfView) -> SCNCamera{
+        let zNear = Float(0.01)
+        let zFar = Float(10000)
+        
+        let fovLeft = tan(toRadians(fov.left)) * zNear
+        let fovRight = tan(toRadians(fov.right)) * zNear
+        let fovTop = tan(toRadians(fov.top)) * zNear
+        let fovBottom = tan(toRadians(fov.bottom)) * zNear
+        
+        let projection = GLKMatrix4MakeFrustum(-fovLeft/2, fovRight/2, -fovBottom/2, fovTop/2, zNear, zFar)
+        
+        let camera = SCNCamera()
+        camera.setProjectionTransform(SCNMatrix4FromGLKMatrix4(projection))
+        
+        return camera
+    }
+    
     internal static func setupCrosshairCamera(fov: FieldOfView) -> SCNCamera {
         let zNear = Float(0.01)
         let zFar = Float(10000)
@@ -124,6 +148,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         
         
         cameraCrosshair.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
+        buttonCamera.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
     }
     
     func dispose() {
@@ -137,6 +162,7 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 protocol CubeRenderDelegateDelegate {
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool)
     func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3)
+    func isInButtonCamera(inFrustrum: Bool)
 }
 
 class CubeRenderDelegate: RenderDelegate {
@@ -312,14 +338,30 @@ class CubeRenderDelegate: RenderDelegate {
         return [SCNNode](sorted.prefix(k))
     }
     
+//    func removeSelectedNode(nodeName: String){
+//        scene.rootNode.enumerateChildNodesUsingBlock{
+//            (node, stop) -> Void in
+//            if node.name == nodeName{
+//                node.removeFromParentNode()
+//            }
+//        }
+//    }
+    
     func removeAllNodes(nodeName: String){
         
         scene.rootNode.enumerateChildNodesUsingBlock{
             (node, stop) -> Void in
+            print("node.name: \(node.name)")
+            
             if node.name == nodeName{
+                print("deleted")
+                
                 node.removeFromParentNode()
             }
         }
+        
+        let filteredMarkers = markers.filter { $0.name != nodeName }
+        markers = filteredMarkers
     }
     
     func listAllNodes(){
@@ -656,7 +698,18 @@ class CubeRenderDelegate: RenderDelegate {
             posi z: -0.443256
             */
             
-            
+            if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.buttonCamera){
+                let node = StorytellingObject()
+                
+                node.objectRotation = marknode.eulerAngles
+                node.objectVector3 = marknode.position
+                node.optographID = marknode.name!
+                
+                //different delegate method
+//                delegate!.didEnterFrustrum(node, inFrustrum: true)
+                delegate!.isInButtonCamera(true)
+                enteredFlag = true
+            }
             
             if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) {
                 let node = StorytellingObject()
@@ -674,6 +727,7 @@ class CubeRenderDelegate: RenderDelegate {
     if !enteredFlag {
         let node = StorytellingObject()
         delegate!.didEnterFrustrum(node, inFrustrum: false)
+        delegate!.isInButtonCamera(false)
     }
  
  
