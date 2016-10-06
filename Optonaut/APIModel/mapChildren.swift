@@ -9,14 +9,22 @@
 import Foundation
 import ObjectMapper
 
-struct mapChildren: Mappable {
+struct mapChildren: ApiModel, Mappable {
+//    var children:[StorytellingChildren]?
+//    var story_id: String = ""
+//    var story_optograph_id: String = ""
+//    var story_person_id: String = ""
+//    var story_created_at: NSDate = NSDate()
+//    var story_updated_at: NSDate = NSDate()
+//    var story_deleted_at: NSDate = NSDate()
+    
+    var ID:UUID = ""
+    var createdAt:NSDate = NSDate()
+    var updatedAt:NSDate = NSDate()
+    var deletedAt:NSDate = NSDate()
+    var optographID = ""
+    var personID = ""
     var children:[StorytellingChildren]?
-    var story_id: String = ""
-    var story_optograph_id: String = ""
-    var story_person_id: String = ""
-    var story_created_at: String = ""
-    var story_updated_at: String = ""
-    var story_deleted_at: String = ""
     
     init?(_ map: Map) {
     }

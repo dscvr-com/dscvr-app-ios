@@ -13,6 +13,7 @@
 		5917C8271CE49C8600CD5A6D /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8251CE49C8600CD5A6D /* DetailsTableViewController.swift */; };
 		59306C041D24E035009BF7BE /* InvitationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59306C031D24E034009BF7BE /* InvitationViewController.swift */; };
 		59306C061D24E268009BF7BE /* DetailsShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59306C051D24E268009BF7BE /* DetailsShareViewController.swift */; };
+		5930CF711DA655A300582ACB /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5930CF701DA655A300582ACB /* Story.swift */; };
 		5936B1841CAD34F500F808D8 /* dynamicSeamer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */; };
 		5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */; };
 		5936B1861CAD34F500F808D8 /* ringStitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5936B17B1CAD34F500F808D8 /* ringStitcher.cpp */; };
@@ -325,6 +326,7 @@
 		5917C8251CE49C8600CD5A6D /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
 		59306C031D24E034009BF7BE /* InvitationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvitationViewController.swift; sourceTree = "<group>"; };
 		59306C051D24E268009BF7BE /* DetailsShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsShareViewController.swift; sourceTree = "<group>"; };
+		5930CF701DA655A300582ACB /* Story.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicSeamer.cpp; sourceTree = "<group>"; };
 		5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dynamicSeamer.hpp; sourceTree = "<group>"; };
 		5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = multiringStitcher.cpp; sourceTree = "<group>"; };
@@ -973,6 +975,7 @@
 				8F7738131B380F5D001F642B /* Optograph.swift */,
 				8F900B461B839E690085566C /* Location.swift */,
 				8F7738141B380F5D001F642B /* Person.swift */,
+				5930CF701DA655A300582ACB /* Story.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1962,6 +1965,7 @@
 				BB49927E1D5452A1006A20D3 /* mapChildren.swift in Sources */,
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				BB155A9C1D6E8CAB002678A6 /* StorytellingMerged.swift in Sources */,
+				5930CF711DA655A300582ACB /* Story.swift in Sources */,
 				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
 				593D07EB1DA549260083AEC5 /* StoryChildrenTable.swift in Sources */,
 				59D8FBD81D9D08CC00846BC4 /* flowBlender.cpp in Sources */,
