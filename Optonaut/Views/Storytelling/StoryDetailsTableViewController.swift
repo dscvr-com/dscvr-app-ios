@@ -228,15 +228,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
 //        multiformDictionary.setValue(mediaData.story_id, forKey: "story_id")
 //        multiformDictionary.setValue(SessionService.personID, forKey: "story_person_id")
         
-        for media in mediaData.mediaArray{
-            for fileInfo in mediaArray{
-                if media.story_object_media_filename == fileInfo["mediaFilename"] as! String{
-                    multiformDictionary[media.story_object_id] = fileInfo["mediaData"]
-//                    multiformDictionary.setValue(fileInfo["mediaData"], forKey: media.story_object_id)
-                }
-            }
-        }
-        
         var counter = 0
         var mediaIDcsv = String()
         for media in mediaData.mediaArray {
@@ -250,6 +241,24 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             }
             
         }
+        
+        for media in mediaData.mediaArray{
+            for fileInfo in mediaArray{
+                if media.story_object_media_filename == fileInfo["mediaFilename"] as! String{
+                    multiformDictionary[media.story_object_id] = fileInfo["mediaData"]
+//                    multiformDictionary.setValue(fileInfo["mediaData"], forKey: media.story_object_id)
+                    ApiService<EmptyResponse>.uploadForGate("story/v2/part2", multipartFormData: { form in
+                        form.appendBodyPart(data: mediaData.story_id.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_id")
+                        form.appendBodyPart(data: SessionService.personID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_person_id")
+                        form.appendBodyPart(data: media.story_object_id.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_object_ids")
+                        form.appendBodyPart(data: fileInfo["mediaData"] as! NSData, name: "asset", fileName: fileInfo["mediaFilename"] as! String, mimeType: "audio/mp4")
+                        
+                    })
+                }
+            }
+        }
+        
+        
         
         multiformDictionary["story_object_ids"] = mediaIDcsv
 //        print("multiformDictionary: \(multiformDictionary)")
@@ -269,11 +278,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             
             self.dismissStorytelling()
         }).start();
-        
-        ApiService<EmptyResponse>.uploadForGate("story/v2/part2", multipartFormData: { form in
-//            form.append
-            
-        })
         
         
 //        ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset\(uploadModeStr)", multipartFormData: { form in

@@ -2,7 +2,7 @@
 //  StoryMediaObject.swift
 //  DSCVR
 //
-//  Created by Dongie on 27/09/2016.
+//  Created by Thadz on 27/09/2016.
 //  Copyright © 2016 Optonaut. All rights reserved.
 //
 

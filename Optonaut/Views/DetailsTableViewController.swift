@@ -102,6 +102,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     let fixedTextLabel = UILabel()
     let removeNode = UIButton()
     let cloudQuote = UIImageView()
+    let diagonal = ViewWithDiagonalLine()
     
     var playerItem:AVPlayerItem?
     var player:AVPlayer?
@@ -442,7 +443,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         cloudQuote.image = cloudQuoteImage
         cloudQuote.hidden = true
         
-        self.view.addSubview(cloudQuote)
+        diagonal.frame = CGRectMake(0, 0, 0, 0)
+        diagonal.backgroundColor = UIColor.clearColor()
+        
+        self.view.addSubview(diagonal)
+//        self.view.addSubview(cloudQuote)
         
     }
     func adjustDescriptionLabel(recognizer:UITapGestureRecognizer) {
@@ -1098,17 +1103,22 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         dispatch_async(dispatch_get_main_queue(), {
             self.storyPinLabel.text = nameArray[0]
             self.storyPinLabel.textColor = UIColor.blackColor()
-            self.storyPinLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
+            self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 30.0)
             self.storyPinLabel.sizeToFit()
-            self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 5, height: self.storyPinLabel.frame.size.height + 5)
+            self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 40)
             self.storyPinLabel.backgroundColor = UIColor.clearColor()
-            self.storyPinLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+            self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
             self.storyPinLabel.backgroundColor = UIColor.whiteColor()
-            self.storyPinLabel.layer.cornerRadius = 10.0
-            self.storyPinLabel.clipsToBounds = true
+            self.storyPinLabel.layer.borderColor = UIColor.blackColor().CGColor
+            self.storyPinLabel.layer.borderWidth = 1.0
+//            self.storyPinLabel.layer.cornerRadius = 10.0
+//            self.storyPinLabel.clipsToBounds = true
             self.storyPinLabel.textAlignment = NSTextAlignment.Center
-            self.cloudQuote.center = CGPoint(x: self.storyPinLabel.frame.origin.x + self.cloudQuote.frame.size.width/2, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height)
-            self.cloudQuote.hidden = false
+            self.diagonal.frame = CGRectMake(0, 0, self.storyPinLabel.frame.size.width/2, 30.0)
+            self.diagonal.center = CGPoint(x: self.storyPinLabel.center.x, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height + 10.0)
+            self.diagonal.hidden = false
+//            self.cloudQuote.center = CGPoint(x: self.storyPinLabel.frame.origin.x + self.cloudQuote.frame.size.width/2, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height)
+//            self.cloudQuote.hidden = false
             
             self.view.addSubview(self.storyPinLabel)
         })
@@ -1179,10 +1189,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //add flag to check if story is being edited
         //move contents to another function [editing and viewing]
         
-        
-        
-        
-        
 //        print("nodeObject: \(nodeObject.optographID)")
         if !inFrustrum {
             countDown = 2
@@ -1191,6 +1197,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.storyPinLabel.text = ""
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.cloudQuote.hidden = true
+                self.diagonal.hidden = true
                 
 //                self.removeNode.hidden = true
             })
