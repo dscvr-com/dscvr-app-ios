@@ -286,6 +286,16 @@ class CollectionImageCache {
             return item.innerCache
         }
     }
+    
+    func getStory( optographID: UUID, side: TextureSide) -> CubeImageCache {
+        assertMainThread()
+        
+        
+        let item = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))
+        return item.innerCache
+        
+    }
+    
     func insertMp4IntoCache(url:String,optographId:String) -> String{
         
         let priority = DISPATCH_QUEUE_PRIORITY_BACKGROUND

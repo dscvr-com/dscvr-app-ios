@@ -7,15 +7,58 @@
 //
 
 import UIKit
+import SwiftyUserDefaults
 
 class StNavViewController: NavigationController {
     
-    let viewController = StorytellingCollectionViewController(personID: SessionService.personID)
+    //change view controller to something with a login
+//    let viewController = StorytellingCollectionViewController(personID: SessionService.personID)
+    
+    required init(){
+        super.init(nibName: nil, bundle: nil)
+        
+        let loginOverlayViewController = LoginOverlayViewController()
+        navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont(name: "Avenir-Book", size: 20)!]
+        
+        if SessionService.isLoggedIn {
+            viewControllers.insert(loginOverlayViewController, atIndex: 0)
+            pushViewController(StorytellingCollectionViewController(personID: SessionService.personID), animated: false)
+//            if SessionService.needsOnboarding {
+//                let username = AddUsernameViewController()
+//                pushViewController(username, animated: false)
+//            }
+            
+//            if !Defaults[.SessionEliteUser] {
+//                let gate = InvitationViewController()
+//                gate.fromProfilePage = true
+//                pushViewController(gate, animated: false)
+//            }
+            
+        } else {
+            pushViewController(loginOverlayViewController, animated: false)
+            SessionService.loginNotifiaction.signal.observeNext {
+                let profilePage = StorytellingCollectionViewController(personID: SessionService.personID)
+                profilePage.fromLoginPage = true
+                self.pushViewController(profilePage, animated: false)
+                
+//                if SessionService.needsOnboarding {
+//                    let username = AddUsernameViewController()
+//                    self.pushViewController(username, animated: false)
+//                }
+//                
+//                if !Defaults[.SessionEliteUser] {
+//                    let gate = InvitationViewController()
+//                    gate.fromProfilePage = true
+//                    self.pushViewController(gate, animated: false)
+//                }
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        pushViewController(viewController, animated: true)
+//        pushViewController(viewController, animated: true)
 
         // Do any additional setup after loading the view.
     }
@@ -23,6 +66,14 @@ class StNavViewController: NavigationController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        logRetain()
     }
     
 

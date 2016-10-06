@@ -280,7 +280,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            if pickedImage.size.height == 2688 && pickedImage.size.width == 5376 {
+            if pickedImage.size.height == 2048 && pickedImage.size.width == 4096 {
                 uploadTheta(pickedImage)
             } else {
                 //isThetaImage.value = false
@@ -348,6 +348,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     func tapRightButtonTab() {
         tabController!.tapNavBarTitleForFeedClass()
+        
+        //self.navigationController?.pushViewController(StorytellingCollectionViewController(personID: SessionService.personID), animated: true)
     }
     
     func tapRightButton() {

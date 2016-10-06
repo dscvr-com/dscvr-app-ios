@@ -9,7 +9,7 @@
 import Foundation
 import ObjectMapper
 
-struct OptographApiModel: ApiModel, Mappable {
+struct StorytellingApiModel: ApiModel, Mappable {
     
     var placeholder: String = ""
     var ID: UUID = ""
@@ -23,7 +23,7 @@ struct OptographApiModel: ApiModel, Mappable {
     var starsCount: Int = 0
     var commentsCount: Int = 0
     var viewsCount: Int = 0
-    var location: LocationApiModel?
+    //var location: LocationApiModel?
     var stitcherVersion: String = ""
     var shareAlias: String = ""
     var isStaffPick: Bool = false
@@ -51,7 +51,7 @@ struct OptographApiModel: ApiModel, Mappable {
         starsCount                  <- map["stars_count"]
         commentsCount               <- map["comments_count"]
         viewsCount                  <- map["views_count"]
-        location                    <- map["location"]
+ //       location                    <- map["location"]
         isStaffPick                 <- map["is_staff_pick"]
         directionPhi                <- map["direction_phi"]
         directionTheta              <- map["direction_theta"]

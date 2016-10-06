@@ -37,6 +37,8 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     var fromLoginPage:Bool = false
     var finishReloadingCollectionView = MutableProperty<Bool>(false)
     
+    var ids = OptographIds.sharedInstance
+    
     init(personID: UUID) {
         
         collectionViewModel = ProfileOptographsViewModel(personID: personID)
@@ -192,6 +194,10 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                         .map{$0.ID}
                     
                     strongSelf.optographIDs = results.models
+                        .filter{ $0.isPublished && !$0.isUploading}
+                        .map{$0.ID}
+                    
+                    strongSelf.ids.optographIDs = results.models
                         .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
                     

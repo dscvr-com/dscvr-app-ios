@@ -297,6 +297,10 @@ class ApiService<T: Mappable> {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
                                     
+//                                    print("json response: \(json)")
+                                    
+                                    print("gateURL: \(endpoint)")
+                                    
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
                                     } else if let array = Mapper<T>().mapArray(json) {
