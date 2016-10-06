@@ -210,7 +210,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     }
                     print("Idle")
                 case let .Stitching(progress):
-                    //self?.tabView.cameraButton.progress = CGFloat(progress)
                     if self?.progress.hidden == true {
                         self?.progress.hidden = false
                     }
@@ -409,6 +408,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        
         if tabController?.pageStatus.value == .Feed {
             viewModel.isActive.value = true
         }
@@ -455,7 +455,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
         
         isVisible = true
         updateNavbarAppear()

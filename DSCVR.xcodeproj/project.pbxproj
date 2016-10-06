@@ -21,6 +21,8 @@
 		5937D1C41D5479980040BD6B /* SwiftSpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937D1C31D5479980040BD6B /* SwiftSpinner.swift */; };
 		5937E0A51D262B3D00584F97 /* RequestCodeApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */; };
 		593C06FC1D6DC851000A019C /* StNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593C06F91D6DC851000A019C /* StNavViewController.swift */; };
+		593D07E91DA545F20083AEC5 /* StoryTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593D07E81DA545F20083AEC5 /* StoryTable.swift */; };
+		593D07EB1DA549260083AEC5 /* StoryChildrenTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593D07EA1DA549260083AEC5 /* StoryChildrenTable.swift */; };
 		594023D01D2E73CE00393E1F /* AddUsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594023CF1D2E73CE00393E1F /* AddUsernameViewController.swift */; };
 		59405BEF1D3CDBC100D1BA45 /* Migration0008.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59405BEE1D3CDBC100D1BA45 /* Migration0008.swift */; };
 		59405BF31D3D36EB00D1BA45 /* ActivityResourceStarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */; };
@@ -337,6 +339,8 @@
 		5937D1C31D5479980040BD6B /* SwiftSpinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftSpinner.swift; sourceTree = "<group>"; };
 		5937E0A41D262B3D00584F97 /* RequestCodeApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestCodeApiModel.swift; sourceTree = "<group>"; };
 		593C06F91D6DC851000A019C /* StNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StNavViewController.swift; sourceTree = "<group>"; };
+		593D07E81DA545F20083AEC5 /* StoryTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryTable.swift; sourceTree = "<group>"; };
+		593D07EA1DA549260083AEC5 /* StoryChildrenTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryChildrenTable.swift; sourceTree = "<group>"; };
 		594023CF1D2E73CE00393E1F /* AddUsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddUsernameViewController.swift; sourceTree = "<group>"; };
 		59405BEE1D3CDBC100D1BA45 /* Migration0008.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0008.swift; sourceTree = "<group>"; };
 		59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceStarModel.swift; sourceTree = "<group>"; };
@@ -849,6 +853,8 @@
 				8F23AA491BFF31B4008926A8 /* LocationTable.swift */,
 				8F23AA4A1BFF31B4008926A8 /* OptographTable.swift */,
 				8F23AA4B1BFF31B4008926A8 /* PersonTable.swift */,
+				593D07E81DA545F20083AEC5 /* StoryTable.swift */,
+				593D07EA1DA549260083AEC5 /* StoryChildrenTable.swift */,
 			);
 			path = Tables;
 			sourceTree = "<group>";
@@ -1815,6 +1821,7 @@
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,
 				8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */,
 				599459B11D0926C0000F3A5B /* SearchTableModel.swift in Sources */,
+				593D07E91DA545F20083AEC5 /* StoryTable.swift in Sources */,
 				590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */,
 				8F23AA531BFF31B4008926A8 /* LocationTable.swift in Sources */,
@@ -1946,6 +1953,7 @@
 				8FAB9F2C1B8F01DF00B4C8CB /* ActivityTableViewController.swift in Sources */,
 				BB155A9C1D6E8CAB002678A6 /* StorytellingMerged.swift in Sources */,
 				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
+				593D07EB1DA549260083AEC5 /* StoryChildrenTable.swift in Sources */,
 				59D8FBD81D9D08CC00846BC4 /* flowBlender.cpp in Sources */,
 				BB155A9E1D6E8EC5002678A6 /* StorytellingLocation.swift in Sources */,
 				8F707C161C5A2A17000AF7BF /* TableViewResults.swift in Sources */,

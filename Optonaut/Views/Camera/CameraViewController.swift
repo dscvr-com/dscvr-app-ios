@@ -108,8 +108,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     }
     
     deinit {
+        print("de init cameraviewcontroller")
         //motionManager.stopDeviceMotionUpdates()
-        motionManager.stop()
         
         //We do that in our signal as soon as everything's finished
         //recorder.dispose()
@@ -192,23 +192,27 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     }
     
     func tapCameraButton() {
-        //tapCameraButtonCallback?()
-        print("ewe")
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true
     }
     
     func touchEndCameraButton() {
-        //viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
     }
     
     
     func cancelRecording() {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
-        
         viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
+        
+        Async.main {
+            self.cancelRecordCleanup()
+        }
+        
+    }
+    
+    func cancelRecordCleanup() {
         
         stopSession()
         
@@ -218,25 +222,10 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         if StitchingService.hasUnstitchedRecordings() {
             StitchingService.removeUnstitchedRecordings()
         }
+        motionManager.stop()
         
-        timer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(CameraViewController.update), userInfo: nil, repeats: true)
-    }
-
-    func update() {
-        
-        timer.invalidate()
-        
-        self.navigationController?.popViewControllerAnimated(false)
-        
-//        let seconds = 5.0
-//        let delay = seconds * Double(NSEC_PER_SEC)
-//        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-//        
-//        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
-//            
-//            self.navigationController?.popViewControllerAnimated(true)
-//            
-//        })
+        self.navigationController?.popViewControllerAnimated(true)
+    
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -244,16 +233,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         try! videoDevice!.lockForConfiguration()
         videoDevice!.focusMode = mode
         videoDevice!.unlockForConfiguration()
-        
-//        do {
-//            try videoDevice!.lockForConfiguration()
-//            videoDevice!.focusMode = mode
-//            videoDevice!.unlockForConfiguration()
-//        } catch  {
-//            print("error on setfocusmode")
-//        }
-        
-        
     }
     
     private func setExposureMode(mode: AVCaptureExposureMode) {
@@ -831,8 +810,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         session.stopRunning()
         videoDevice = nil
         
-        for child in scene.rootNode.childNodes {
-            child.removeFromParentNode()
+//        for child in scene.rootNode.childNodes {
+//            child.removeFromParentNode()
+//        }
+        
+        scene.rootNode.childNodes.forEach {
+            $0.removeFromParentNode()
         }
         
         scnView.removeFromSuperview()

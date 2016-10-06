@@ -71,6 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //                self.sendCheckElite().start()
 //            
 //            }
+            
         }
         return true
     }
