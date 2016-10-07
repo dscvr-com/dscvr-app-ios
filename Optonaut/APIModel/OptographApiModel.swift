@@ -29,7 +29,7 @@ struct OptographApiModel: ApiModel, Mappable {
     var isStaffPick: Bool = false
     var directionPhi: Double = 0
     var directionTheta: Double = 0
-    var story: StoryObject?
+    var story: mapChildren?
     
     init() {}
     

@@ -84,13 +84,14 @@ private func createStory() -> String {
         t.column(StorySchema.ID, primaryKey: true)
         t.column(StorySchema.createdAt)
         t.column(StorySchema.deletedAt)
+        t.column(StorySchema.updatedAt)
         t.column(StorySchema.optographID)
         t.column(StorySchema.personID)
-        t.column(StorySchema.storyChildrenId)
+       // t.column(StorySchema.storyChildrenId)
         
         t.foreignKey(StorySchema.optographID, references: OptographTable, OptographSchema.ID)
         t.foreignKey(StorySchema.personID, references: PersonTable, PersonSchema.ID)
-        t.foreignKey(StorySchema.storyChildrenId, references: StoryChildrenTable, StoryChildrenSchema.ID)
+        //t.foreignKey(StorySchema.storyChildrenId, references: StoryChildrenTable, StoryChildrenSchema.ID)
     }
 }
 private func createStoryChildren() -> String {

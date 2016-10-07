@@ -24,12 +24,18 @@ struct mapChildren: ApiModel, Mappable {
     var deletedAt:NSDate = NSDate()
     var optographID = ""
     var personID = ""
-    var children:[StorytellingChildren]?
+   // var children:[StorytellingChildren]?
     
     init?(_ map: Map) {
     }
     
     mutating func mapping(map: Map) {
-        children              <- map["children"]
+  //      children              <- map["children"]
+        ID              <- map["id"]
+        createdAt       <- (map["created_at"], NSDateTransform())
+        updatedAt       <- (map["updated_at"], NSDateTransform())
+        updatedAt       <- (map["deleted_at"], NSDateTransform())
+        personID        <- map["person_id"]
+        optographID     <- map["optograph_id"]
     }
 }

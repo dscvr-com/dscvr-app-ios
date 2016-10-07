@@ -45,14 +45,15 @@ struct TableViewResults<T: DeletableModel> {
         var update: [Int] = []
         var exclusiveNewModels: [T] = []
         for newModel in newModels.filter({ $0.deletedAt == nil }) {
-            if let index = models.indexOf({ $0.ID == newModel.ID }) {
-                if models[index] != newModel {
-                    update.append(index)
-                    models[index] = newModel
-                }
-            } else {
-                exclusiveNewModels.append(newModel)
-            }
+//            if let index = models.indexOf({ $0.ID == newModel.ID && $0.storyId == newModel.storyId}) {
+//                if models[index] != newModel {
+//                    update.append(index)
+//                    models[index] = newModel
+//                }
+//            } else {
+//                exclusiveNewModels.append(newModel)
+//            }
+            //exclusiveNewModels.append(newModel)
         }
         
         var insert: [Int] = []
