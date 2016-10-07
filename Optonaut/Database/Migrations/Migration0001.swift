@@ -59,6 +59,7 @@ private func createOptograph() -> String {
         t.column(OptographSchema.viewsCount)
         t.column(OptographSchema.isStitched)
         t.column(OptographSchema.isPublished)
+        t.column(OptographSchema.storyID)
 //        t.column(OptographSchema.previewAssetID) // removed
 //        t.column(OptographSchema.leftTextureAssetID) // removed
 //        t.column(OptographSchema.rightTextureAssetID) // removed
@@ -66,6 +67,7 @@ private func createOptograph() -> String {
         t.column(OptographSchema.hashtagString)
         
         t.foreignKey(OptographSchema.personID, references: PersonTable, PersonSchema.ID)
+        t.foreignKey(OptographSchema.storyID, references: StoryTable, StorySchema.ID)
         t.foreignKey(OptographSchema.locationID, references: LocationTable, LocationSchema.ID)
     }
 }
