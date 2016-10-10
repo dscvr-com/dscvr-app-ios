@@ -11,7 +11,7 @@ import ObjectMapper
 
 struct ActivityResourceCommentModel: Mappable {
     var ID: UUID = ""
-    var optograph:OptographApiModel = OptographApiModel()
+    var optograph:OptographApiModel?
     var causingPerson:PersonApiModel = PersonApiModel()
     //var comment: Comment
     

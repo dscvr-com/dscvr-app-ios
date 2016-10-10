@@ -227,7 +227,7 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-                                    print(json)
+                                    
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
                                     } else if let array = Mapper<T>().mapArray(json) {
@@ -297,11 +297,12 @@ class ApiService<T: Mappable> {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
                                     
-//                                    print("json response: \(json)")
+                                    let jsonData = json["feed"]!
+                                    print(">>>>>",jsonData)
                                     
-                                    if let object = Mapper<T>().map(json) {
+                                    if let object = Mapper<T>().map(jsonData) {
                                         sink.sendNext(object)
-                                    } else if let array = Mapper<T>().mapArray(json) {
+                                    } else if let array = Mapper<T>().mapArray(jsonData) {
                                         for object in array {
                                             sink.sendNext(object)
                                         }

@@ -47,7 +47,7 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
             
             nameView.text = activity.activityResourceComment!.causingPerson.userName
             
-            let url = TextureURL(activity.activityResourceComment!.optograph.ID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
+            let url = TextureURL(activity.activityResourceComment!.optograph!.ID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
             self.optographImageView.kf_setImageWithURL(NSURL(string: url)!)
         }
         super.update(activity)
@@ -62,9 +62,9 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
     }
     
     func pushDetails() {
-        if Models.optographs[self.activity.activityResourceComment!.optograph.ID] != nil {
+        if Models.optographs[self.activity.activityResourceComment!.optograph!.ID] != nil {
             self.read()
-            let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceComment!.optograph.ID])
+            let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceComment!.optograph!.ID])
             detailsViewController.cellIndexpath = 0
             navigationController?.pushViewController(detailsViewController, animated: true)
         }

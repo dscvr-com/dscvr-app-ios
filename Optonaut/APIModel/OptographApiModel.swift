@@ -29,14 +29,13 @@ struct OptographApiModel: ApiModel, Mappable {
     var isStaffPick: Bool = false
     var directionPhi: Double = 0
     var directionTheta: Double = 0
-    var story: mapChildren?
-    
-    init() {}
+    var story: mapChildren = mapChildren()
     
     init?(_ map: Map){
     }
     
     mutating func mapping(map: Map) {
+        
         placeholder                 <- map["placeholder"]
         ID                          <- map["id"]
         createdAt                   <- (map["created_at"], NSDateTransform())

@@ -191,7 +191,7 @@ extension Optograph: MergeApiModel {
         isStaffPick = apiModel.isStaffPick
         directionPhi = apiModel.directionPhi
         directionTheta = apiModel.directionTheta
-        storyID = apiModel.story!.ID
+        storyID = apiModel.story.ID
     }
 }
 

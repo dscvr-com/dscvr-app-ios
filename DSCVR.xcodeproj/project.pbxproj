@@ -24,6 +24,7 @@
 		593C06FC1D6DC851000A019C /* StNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593C06F91D6DC851000A019C /* StNavViewController.swift */; };
 		593D07E91DA545F20083AEC5 /* StoryTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593D07E81DA545F20083AEC5 /* StoryTable.swift */; };
 		593D07EB1DA549260083AEC5 /* StoryChildrenTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593D07EA1DA549260083AEC5 /* StoryChildrenTable.swift */; };
+		593EE8541DABA31900094045 /* StoryChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593EE8531DABA31900094045 /* StoryChildren.swift */; };
 		594023D01D2E73CE00393E1F /* AddUsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594023CF1D2E73CE00393E1F /* AddUsernameViewController.swift */; };
 		59405BEF1D3CDBC100D1BA45 /* Migration0008.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59405BEE1D3CDBC100D1BA45 /* Migration0008.swift */; };
 		59405BF31D3D36EB00D1BA45 /* ActivityResourceStarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */; };
@@ -345,6 +346,7 @@
 		593C06F91D6DC851000A019C /* StNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StNavViewController.swift; sourceTree = "<group>"; };
 		593D07E81DA545F20083AEC5 /* StoryTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryTable.swift; sourceTree = "<group>"; };
 		593D07EA1DA549260083AEC5 /* StoryChildrenTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryChildrenTable.swift; sourceTree = "<group>"; };
+		593EE8531DABA31900094045 /* StoryChildren.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryChildren.swift; sourceTree = "<group>"; };
 		594023CF1D2E73CE00393E1F /* AddUsernameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddUsernameViewController.swift; sourceTree = "<group>"; };
 		59405BEE1D3CDBC100D1BA45 /* Migration0008.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0008.swift; sourceTree = "<group>"; };
 		59405BF21D3D36EB00D1BA45 /* ActivityResourceStarModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityResourceStarModel.swift; sourceTree = "<group>"; };
@@ -976,6 +978,7 @@
 				8F900B461B839E690085566C /* Location.swift */,
 				8F7738141B380F5D001F642B /* Person.swift */,
 				5930CF701DA655A300582ACB /* Story.swift */,
+				593EE8531DABA31900094045 /* StoryChildren.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1801,6 +1804,7 @@
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
 				8FAB9F571B8F01DF00B4C8CB /* ProfileNavViewController.swift in Sources */,
 				A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */,
+				593EE8541DABA31900094045 /* StoryChildren.swift in Sources */,
 				8F23AA551BFF31B4008926A8 /* PersonTable.swift in Sources */,
 				A5FD5D831BEA5A4E0031ED1E /* quat.cpp in Sources */,
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
