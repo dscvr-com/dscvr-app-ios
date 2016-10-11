@@ -97,6 +97,13 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                         }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
                         Models.story.touch(apiModel.story).insertOrUpdate()
+                        
+                        if apiModel.story.children!.count != 0 {
+                            for child in apiModel.story.children! {
+                                Models.storyChildren.touch(child).insertOrUpdate()
+                            }
+                        }
+                        
                     })
                     .map(Optograph.fromApiModel)
                     .ignoreError()

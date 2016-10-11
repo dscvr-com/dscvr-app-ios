@@ -20,8 +20,8 @@ struct StoryChildren: Model {
     var mediaFace: String = ""
     var mediaDescription: String = ""
     var mediaAdditionalData: String = ""
-    var objectPosition: [String] = []
-    var objectRotation: [String] = []
+    var objectPosition: String = ""
+    var objectRotation: String = ""
     var objectMediaFilename: String = ""
     var objectMediaFileUrl: String = ""
     
@@ -36,8 +36,8 @@ struct StoryChildren: Model {
             mediaFace: "" ,
             mediaDescription: "",
             mediaAdditionalData: "",
-            objectPosition: [],
-            objectRotation: [],
+            objectPosition: "",
+            objectRotation: "",
             objectMediaFilename: "",
             objectMediaFileUrl: ""
         )
@@ -113,10 +113,19 @@ extension StoryChildren: SQLiteModel {
     
     func toSQL() -> [SQLiteSetter] {
         return [
-            StorySchema.ID <-- ID,
-            StorySchema.createdAt <-- createdAt,
-            StorySchema.updatedAt <-- updatedAt,
-            StorySchema.deletedAt <-- updatedAt,
+            StoryChildrenSchema.ID                          <-- ID,
+            StoryChildrenSchema.storyCreatedAt              <-- createdAt,
+            StoryChildrenSchema.storyUpdatedAt              <-- updatedAt,
+            StoryChildrenSchema.storyDeletedAt              <-- updatedAt,
+            StoryChildrenSchema.storyID                     <-- storyID,
+            StoryChildrenSchema.storyMediaType              <-- mediaType,
+            StoryChildrenSchema.storyMediaFace              <-- mediaFace,
+            StoryChildrenSchema.storyMediaDescription       <-- mediaDescription,
+            StoryChildrenSchema.storyMediaAdditionalData    <-- mediaAdditionalData,
+            StoryChildrenSchema.storyPosition               <-- objectPosition,
+            StoryChildrenSchema.storyRotation               <-- objectRotation,
+            StoryChildrenSchema.storyMediaFilename          <-- objectMediaFilename,
+            StoryChildrenSchema.storyMediaFileurl           <-- objectMediaFileUrl,
         ]
     }
     

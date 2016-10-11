@@ -87,17 +87,18 @@ private func createStory() -> String {
         t.column(StorySchema.updatedAt)
         t.column(StorySchema.optographID)
         t.column(StorySchema.personID)
-       // t.column(StorySchema.storyChildrenId)
+        t.column(StorySchema.storyChildrenId)
         
         t.foreignKey(StorySchema.optographID, references: OptographTable, OptographSchema.ID)
         t.foreignKey(StorySchema.personID, references: PersonTable, PersonSchema.ID)
-        //t.foreignKey(StorySchema.storyChildrenId, references: StoryChildrenTable, StoryChildrenSchema.ID)
+        t.foreignKey(StorySchema.storyChildrenId, references: StoryChildrenTable, StoryChildrenSchema.ID)
     }
 }
 private func createStoryChildren() -> String {
     return StoryChildrenTable.create { t in
         t.column(StoryChildrenSchema.ID, primaryKey: true)
         t.column(StoryChildrenSchema.storyMediaType)
+        t.column(StoryChildrenSchema.storyID)
         t.column(StoryChildrenSchema.storyMediaFace)
         t.column(StoryChildrenSchema.storyMediaDescription)
         t.column(StoryChildrenSchema.storyMediaAdditionalData)

@@ -947,13 +947,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             if isStory{
                 for nodes in storyNodes{
                     
-                    if nodes.story_object_media_type == "FXTXT"{
+                    let objectPosition = nodes.objectPosition.characters.split{$0 == ","}.map(String.init)
+                    let objectRotation = nodes.objectRotation.characters.split{$0 == ","}.map(String.init)
+                    
+                    if nodes.mediaType == "FXTXT"{
                         
                         print("MEDIATYPE: FXTXT")
                         
                         dispatch_async(dispatch_get_main_queue(), {
                             self.fixedTextLabel.frame = CGRect(x: 10.0, y: self.view.frame.size.height - 130.0, width: 0, height: 0)
-                            self.fixedTextLabel.text = nodes.story_object_media_additional_data
+                            self.fixedTextLabel.text = nodes.mediaAdditionalData
                             self.fixedTextLabel.textColor = UIColor.whiteColor()
                             self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
                             self.fixedTextLabel.sizeToFit()
@@ -965,9 +968,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                             self.view.addSubview(self.fixedTextLabel)
                         })
                     }
-                    else if nodes.story_object_media_type == "MUS"{
+                    else if nodes.mediaType == "MUS"{
                         print("MEDIATYPE: MUS")
-                        let url = NSURL(string: "https://bucket.dscvr.com" + nodes.story_object_media_fileurl)
+                        let url = NSURL(string: "https://bucket.dscvr.com" + nodes.objectMediaFileUrl)
                         playerItem = AVPlayerItem(URL: url!)
                         player = AVPlayer(playerItem: playerItem!)
                         player?.rate = 1.0
@@ -980,21 +983,20 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //                                                                         selector: #selector(playerItemDidReachEnd()),
 //                                                                         name: AVPlayerItemDidPlayToEndTimeNotification,
 //                                                                         object: player!.currentItem)
-                    }
-                    else{
-                        if nodes.story_object_position.count >= 2{
+                    }else{
+                        if objectPosition.count >= 2{
                             let nodeItem = StorytellingObject()
                             
-                            let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
-                            let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
+                            let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
+                            let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
                             
                             nodeItem.objectRotation = nodeRotation
                             nodeItem.objectVector3 = nodeTranslation
-                            nodeItem.optographID = nodes.story_object_media_additional_data
-                            nodeItem.objectType = nodes.story_object_media_type
+                            nodeItem.optographID = nodes.mediaAdditionalData
+                            nodeItem.objectType = nodes.mediaType
                             
                             print("node id: \(nodeItem.optographID)")
-                            print("nodes: \(nodes.story_object_media_type)")
+                            print("nodes: \(nodes.mediaType)")
                             
                             renderDelegate.addNodeFromServer(nodeItem)
                         }
@@ -1002,8 +1004,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     }
                     
                     
-                    print("counts: \(nodes.story_object_position.count)")
-                    print("counts: \(nodes.story_object_rotation.count)")
+                    print("counts: \(objectPosition.count)")
+                    print("counts: \(objectRotation.count)")
                 }
             }
         }
@@ -1062,24 +1064,28 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.renderDelegate.removeAllNodes(self.optographID)
                 self.renderDelegate.removeMarkers()
                 for nodes in self.storyNodes{
-                    if nodes.story_object_position.count >= 2{
+                    
+                    let objectPosition = nodes.objectPosition.characters.split{$0 == ","}.map(String.init)
+                    let objectRotation = nodes.objectRotation.characters.split{$0 == ","}.map(String.init)
+                    
+                    if objectPosition.count >= 2{
                         
                         let nodeItem = StorytellingObject()
                         
-                        let nodeTranslation = SCNVector3Make(Float(nodes.story_object_position[0])!, Float(nodes.story_object_position[1])!, Float(nodes.story_object_position[2])!)
-                        let nodeRotation = SCNVector3Make(Float(nodes.story_object_rotation[0])!, Float(nodes.story_object_rotation[1])!, Float(nodes.story_object_rotation[2])!)
+                        let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
+                        let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
                         
                         nodeItem.objectRotation = nodeRotation
                         nodeItem.objectVector3 = nodeTranslation
 //                        nodeItem.optographID = nodes.story_object_media_additional_data
-                        nodeItem.objectType = nodes.story_object_media_type
+                        nodeItem.objectType = nodes.mediaType
                         
-                        if nodes.story_object_media_type == "MUS"{
-                            nodeItem.optographID = nodes.story_object_media_fileurl
+                        if nodes.mediaType == "MUS"{
+                            nodeItem.optographID = nodes.objectMediaFileUrl
                         }
                             
-                        else if nodes.story_object_media_type == "NAV"{
-                            nodeItem.optographID = nodes.story_object_media_additional_data
+                        else if nodes.mediaType == "NAV"{
+                            nodeItem.optographID = nodes.mediaAdditionalData
                         }
                         
                         print("node id: \(nodeItem.optographID)")
@@ -1235,87 +1241,3 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
 }
-
-//// MARK: - UITableViewDelegate
-//extension DetailsTableViewController: UITableViewDelegate {
-//
-//    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-////        let superView = tableView!.superview!
-//        if indexPath.row == 0 {
-//            let yOffset = max(0, tableView.frame.height - tableView.contentSize.height)
-//            UIView.animateWithDuration(0.2, delay: 0, options: [.BeginFromCurrentState],
-//                animations: {
-//                    self.tableView.contentOffset = CGPoint(x: 0, y: -yOffset)
-//                },
-//                completion: nil)
-//        }
-//    }
-//
-//    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-//        if indexPath.row == 0 {
-//            let infoHeight = CGFloat(78)
-//            let textWidth = view.frame.width - 40
-//            let textHeight = calcTextHeight(viewModel.text.value, withWidth: textWidth, andFont: UIFont.textOfSize(14, withType: .Regular)) + 20
-//            let hashtagsHeight = calcTextHeight(viewModel.hashtags.value, withWidth: textWidth, andFont: UIFont.textOfSize(14, withType: .Semibold)) + 25
-//            return textHeight + hashtagsHeight + infoHeight
-//        } else if indexPath.row == 1 {
-//            return 60
-//        } else {
-//            let textWidth = view.frame.width - 40 - 40 - 20 - 30 - 20
-//            let textHeight = calcTextHeight(viewModel.comments.value[indexPath.row - 2].text, withWidth: textWidth, andFont: UIFont.textOfSize(13, withType: .Regular)) + 15
-//            return max(textHeight, 60)
-//        }
-//    }
-//
-//}
-//
-//// MARK: - UITableViewDataSource
-//extension DetailsTableViewController: UITableViewDataSource {
-//
-//    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-//        if indexPath.row == 0 {
-//            let cell = self.tableView.dequeueReusableCellWithIdentifier("details-cell") as! DetailsTableViewCell
-//            cell.viewModel = viewModel
-//            cell.navigationController = navigationController as? NavigationController
-//            cell.bindViewModel()
-//            return cell
-//        }
-//    }
-//
-//    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return viewModel.comments.value.count + 2
-//    }
-//
-//}
-//
-//
-//// MARK: - NewCommentTableViewDelegate
-//extension DetailsTableViewController: NewCommentTableViewDelegate {
-//    func newCommentAdded(comment: Comment) {
-//        self.viewModel.insertNewComment(comment)
-//    }
-//}
-
-//private class TableView: UITableView {
-//
-//    var horizontalScrollDistanceCallback: ((Float) -> ())?
-//
-//    private override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        super.touchesMoved(touches, withEvent: event)
-//
-//        if let touch = touches.first {
-//            let oldPoint = touch.previousLocationInView(self)
-//            let newPoint = touch.locationInView(self)
-//            self.horizontalScrollDistanceCallback?(Float(newPoint.x - oldPoint.x))
-//        }
-//    }
-//
-//    private override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
-//        // this took a lot of time. don't bother to understand this
-//        if frame.height + contentOffset.y - 78 < 80 && point.y < 0 && frame.width - point.x < 100 {
-//            return false
-//        }
-//        return true
-//    }
-//    
-//}

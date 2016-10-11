@@ -20,8 +20,8 @@ struct StorytellingChildren: ApiModel,Mappable {
     var mediaFace: String = ""
     var mediaDescription: String = ""
     var mediaAdditionalData: String = ""
-    var objectPosition: [String] = []
-    var objectRotation: [String] = []
+    var objectPosition: String = ""
+    var objectRotation: String = ""
     var objectMediaFilename: String = ""
     var objectMediaFileUrl: String = ""
     
@@ -29,18 +29,29 @@ struct StorytellingChildren: ApiModel,Mappable {
     
     mutating func mapping(map: Map) {
         
+        var opArray: [String] = []
+        var orArray: [String] = []
+        
         ID                    <- map["story_object_id"]
         storyID               <- map["story_object_story_id"]
         mediaType             <- map["story_object_media_type"]
         mediaFace             <- map["story_object_media_face"]
         mediaDescription      <- map["story_object_media_description"]
         mediaAdditionalData   <- map["story_object_media_additional_data"]
-        objectPosition        <- map["story_object_position"]
-        objectRotation        <- map["story_object_rotation"]
+        opArray               <- map["story_object_position"]
+        orArray               <- map["story_object_rotation"]
         createdAt             <- map["story_object_created_at"]
         deletedAt             <- map["story_object_deleted_at"]
         updatedAt             <- map["story_object_updated_at"]
         objectMediaFilename   <- map["story_object_media_filename"]
         objectMediaFileUrl    <- map["story_object_media_fileurl"]
+        
+        if opArray.count != 0 {
+            objectPosition = opArray.joinWithSeparator(",")
+        }
+        
+        if orArray.count != 0 {
+            objectRotation = orArray.joinWithSeparator(",")
+        }
     }
 }

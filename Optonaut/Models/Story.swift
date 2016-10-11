@@ -16,7 +16,7 @@ struct Story: Model {
     var deletedAt: NSDate
     var optographID: UUID
     var personID: UUID
-    //var childrenID: UUID
+    var childrenID: UUID
     
     static func newInstance() -> Story {
         return Story(
@@ -25,8 +25,8 @@ struct Story: Model {
             updatedAt: NSDate(),
             deletedAt: NSDate(),
             optographID: "",
-            personID: ""
-            //childrenID: ""
+            personID: "",
+            childrenID: ""
         )
     }
 }
@@ -53,7 +53,7 @@ func ==(lhs: Story, rhs: Story) -> Bool {
         && lhs.deletedAt == rhs.deletedAt
         && lhs.optographID == rhs.optographID
         && lhs.personID == rhs.personID
-        //&& lhs.childrenID == rhs.childrenID
+        && lhs.childrenID == rhs.childrenID
 }
 
 extension Story: SQLiteModel {
@@ -73,8 +73,8 @@ extension Story: SQLiteModel {
             updatedAt: row[StorySchema.updatedAt],
             deletedAt: row[StorySchema.deletedAt],
             optographID: row[StorySchema.optographID],
-            personID: row[StorySchema.personID]
-           // childrenID: row[StorySchema.storyChildrenId]
+            personID: row[StorySchema.personID],
+            childrenID: row[StorySchema.storyChildrenId]
         )
     }
     
@@ -85,8 +85,8 @@ extension Story: SQLiteModel {
             StorySchema.updatedAt <-- updatedAt,
             StorySchema.deletedAt <-- updatedAt,
             StorySchema.optographID <-- optographID,
-            StorySchema.personID <-- personID
-           // StorySchema.storyChildrenId <-- childrenID,
+            StorySchema.personID <-- personID,
+            StorySchema.storyChildrenId <-- childrenID,
         ]
     }
     
