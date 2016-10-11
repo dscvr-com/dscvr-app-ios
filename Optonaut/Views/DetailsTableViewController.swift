@@ -91,6 +91,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var descriptionOpen:Bool = false
     
     var isStory: Bool = false
+    var isEditingStory: Bool = false
     var storyNodes: [StorytellingChildren] = []
     
     let storyPinLabel = UILabel()
@@ -98,9 +99,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     private var isInsideStory: Bool = false
     private var isPlaying: Bool = false
     let fixedTextLabel = UILabel()
+    let removeNode = UIButton()
+    let cloudQuote = UIImageView()
+    let diagonal = ViewWithDiagonalLine()
     
     var playerItem:AVPlayerItem?
     var player:AVPlayer?
+    
+    var deletablePin: StorytellingObject = StorytellingObject()
     
     required init(optoList:[UUID]) {
         
@@ -154,6 +160,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
+        
+        let fontFamilyNames = UIFont.familyNames()
+        
+        for familyName in fontFamilyNames {
+            
+            print("Font Family Name = [\(familyName)]")
+            let names = UIFont.fontNamesForFamilyName(familyName)
+            print("Font Names = [\(names)]")
+        }
     }
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
@@ -194,9 +209,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.view.addSubview(whiteBackground)
         
         descriptionLabel.numberOfLines = 0
-        descriptionLabel.textColor = .whiteColor()
-        descriptionLabel.backgroundColor = UIColor.clearColor()
-        descriptionLabel.font = UIFont(name: "HelveticaNeue-ThinItalic",size: 15)
+        descriptionLabel.textColor = .blackColor()
+        descriptionLabel.backgroundColor = UIColor.whiteColor()
+        descriptionLabel.font = UIFont(name: "MerriweatherLight",size: 12)
+//        descriptionLabel.text = "they like working in minimum light."
+        descriptionLabel.textAlignment = NSTextAlignment.Center
         self.view.addSubview(descriptionLabel)
         descriptionLabel.userInteractionEnabled = true
         descriptionLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.adjustDescriptionLabel(_:))))
@@ -250,7 +267,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         whiteBackground.anchorAndFillEdge(.Bottom, xPad: 0, yPad: 0, otherSize: 66)
         let deleteImageSize1 = UIImage(named:"profile_delete_icn")?.size
-        descriptionLabel.frame = CGRect(x: whiteBackground.frame.origin.x + 10,y: view.frame.height - whiteBackground.frame.height - 30,width: view.frame.width - 30 - (deleteImageSize1?.width)!,height: 20)
+        
+        descriptionLabel.frame = CGRect(x: whiteBackground.frame.origin.x + 10,y: view.frame.height - whiteBackground.frame.height - 40,width: view.frame.width - 30 - (deleteImageSize1?.width)!,height: 20)
+        
         
         avatarImageView.anchorToEdge(.Left, padding: 20, width: 47, height: 47)
         personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
@@ -268,7 +287,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         personNameView.rac_text <~ viewModel.creator_username
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
-        descriptionLabel.rac_text <~ viewModel.text
+        //descriptionLabel.rac_text <~ viewModel.text
+        viewModel.text.producer.startWithNext{ val in
+            self.descriptionLabel.text = val
+            self.descriptionLabel.sizeToFit()
+            self.descriptionLabel.frame = CGRect(origin: self.descriptionLabel.frame.origin, size: CGSize(width: self.descriptionLabel.frame.size.width + 10.0, height: self.descriptionLabel.frame.size.height + 2))
+        
+        }
+//        let maximumLabelSize = CGSizeMake(view.width, 9999);
+//        let expectedSize = self.descriptionLabel.sizeThatFits(maximumLabelSize)
+//        descriptionLabel.frame = CGRect(origin: descriptionLabel.frame.origin, size: <#T##CGSize#>)
         
         commentCountView.rac_text <~ viewModel.commentsCount.producer.map{ "\($0)" }
         
@@ -408,6 +436,17 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //                }
         //            }
         //        }
+        
+        let cloudQuoteImage = UIImage(named: "cloud_quote")
+        cloudQuote.frame = CGRect(origin: self.view.center, size: (cloudQuoteImage?.size)!)
+        cloudQuote.image = cloudQuoteImage
+        cloudQuote.hidden = true
+        
+        diagonal.frame = CGRectMake(0, 0, 0, 0)
+        diagonal.backgroundColor = UIColor.clearColor()
+        
+        self.view.addSubview(diagonal)
+//        self.view.addSubview(cloudQuote)
         
     }
     func adjustDescriptionLabel(recognizer:UITapGestureRecognizer) {
@@ -955,17 +994,38 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                         print("MEDIATYPE: FXTXT")
                         
                         dispatch_async(dispatch_get_main_queue(), {
-                            self.fixedTextLabel.frame = CGRect(x: 10.0, y: self.view.frame.size.height - 130.0, width: 0, height: 0)
+
+                            
                             self.fixedTextLabel.text = nodes.mediaAdditionalData
-                            self.fixedTextLabel.textColor = UIColor.whiteColor()
-                            self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
+                            self.fixedTextLabel.textColor = UIColor.blackColor()
+                            //self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
+                            //self.fixedTextLabel.font = UIFont(name: "Roadgeek2005Series1B", size: 22.0)
+                            self.fixedTextLabel.font = UIFont(name: "BigNoodleTitling", size: 22.0)
                             self.fixedTextLabel.sizeToFit()
+                            self.fixedTextLabel.frame = CGRect(x: 10.0, y: self.view.frame.size.height - 135.0, width: self.fixedTextLabel.frame.size.width + 5.0, height: self.fixedTextLabel.frame.size.height + 5.0)
+                            self.fixedTextLabel.backgroundColor = UIColor(0xffbc00)
+//                            self.fixedTextLabel.layer.borderWidth = 2.0
+//                            self.fixedTextLabel.layer.borderColor = UIColor(0xFF5E00).CGColor
+                            self.fixedTextLabel.textAlignment = NSTextAlignment.Center
+//                            self.descriptionLabel.frame = CGRect(x: self.fixedTextLabel.frame.origin.x, y: self.fixedTextLabel.frame.origin.y + self.fixedTextLabel.frame.size.height, width: 0, height: 0)
+//                            self.descriptionLabel.sizeToFit()
 //                            self.fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
 //                            self.fixedTextLabel.frame = CGRect(x: self.descriptionLabel.frame
 //                                .origin.x, y: self.descriptionLabel.frame.origin.y - self.fixedTextLabel.frame.size.height, width: self.fixedTextLabel.frame.size.width, height: self.fixedTextLabel.frame.size.height)
 //                            print("label height: \(self.fixedTextLabel.frame.size.height)")
                             
                             self.view.addSubview(self.fixedTextLabel)
+                            
+                            self.removeNode.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+//                            self.removeNode.center = self.view.center
+                            self.removeNode.backgroundColor = UIColor.blackColor()
+                            
+                            self.removeNode.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y - 10)
+//                            self.removeNode.backgroundColor = UIColor.blackColor()
+                            self.removeNode.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+                            self.removeNode.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
+                            self.removeNode.hidden = true
+                            self.view.addSubview(self.removeNode)
                         })
                     }
                     else if nodes.mediaType == "MUS"{
@@ -1123,11 +1183,23 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         dispatch_async(dispatch_get_main_queue(), {
             self.storyPinLabel.text = nameArray[0]
-            self.storyPinLabel.textColor = UIColor.whiteColor()
-            self.storyPinLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
+            self.storyPinLabel.textColor = UIColor.blackColor()
+            self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 30.0)
             self.storyPinLabel.sizeToFit()
+            self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 40)
             self.storyPinLabel.backgroundColor = UIColor.clearColor()
-            self.storyPinLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
+            self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
+            self.storyPinLabel.backgroundColor = UIColor.whiteColor()
+            self.storyPinLabel.layer.borderColor = UIColor.blackColor().CGColor
+            self.storyPinLabel.layer.borderWidth = 1.0
+//            self.storyPinLabel.layer.cornerRadius = 10.0
+//            self.storyPinLabel.clipsToBounds = true
+            self.storyPinLabel.textAlignment = NSTextAlignment.Center
+            self.diagonal.frame = CGRectMake(0, 0, self.storyPinLabel.frame.size.width/2, 30.0)
+            self.diagonal.center = CGPoint(x: self.storyPinLabel.center.x, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height + 10.0)
+            self.diagonal.hidden = false
+//            self.cloudQuote.center = CGPoint(x: self.storyPinLabel.frame.origin.x + self.cloudQuote.frame.size.width/2, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height)
+//            self.cloudQuote.hidden = false
             
             self.view.addSubview(self.storyPinLabel)
         })
@@ -1147,16 +1219,68 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         })
     }
     
+    func showRemovePinButton(nodeObject: StorytellingObject){
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            
+            
+            self.removeNode.hidden = false
+        })
+        
+//        let removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
+//        removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
+//        removePinButton.backgroundColor = UIColor.blackColor()
+//        removePinButton.addTarget(self, action: #selector(removePin), forControlEvents: UIControlEvents.TouchUpInside)
+        
+//        self.view.addSubview(removePinButton)
+        
+        deletablePin = nodeObject
+        isEditingStory = true
+    }
   
- 
+    func removePin(){
+        
+//        nodeData.optographID + "," + nodeData.objectType
+//        let predicate = NSPredicate(format: "story_object_media_description != %@", "story bgm")
+        
+        let nameArray = deletablePin.optographID.componentsSeparatedByString(",")
+        
+        let filteredArray = self.storyNodes.filter { $0.mediaAdditionalData != nameArray[0] }
+        print("filteredArray: \(filteredArray.count)")
+        print("deletable ID: \(nameArray[0])")
+        
+        self.renderDelegate.removeAllNodes(deletablePin.optographID)
+        self.storyNodes = filteredArray
+        
+//        self.nodes = filteredArray
+    }
+    
+    func isInButtonCamera(inFrustrum: Bool){
+//        print("indBUtton")
+        
+        if !inFrustrum{
+            dispatch_async(dispatch_get_main_queue(), {
+                
+                self.removeNode.hidden = true
+            })
+        }
+    }
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
+        //add flag to check if story is being edited
+        //move contents to another function [editing and viewing]
+        
 //        print("nodeObject: \(nodeObject.optographID)")
         if !inFrustrum {
             countDown = 2
             dispatch_async(dispatch_get_main_queue(), {
                 self.countdownLabel.text = ""
                 self.storyPinLabel.text = ""
+                self.storyPinLabel.backgroundColor = UIColor.clearColor()
+                self.cloudQuote.hidden = true
+                self.diagonal.hidden = true
+                
+//                self.removeNode.hidden = true
             })
             return
         }
@@ -1165,15 +1289,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let mediaTime = CACurrentMediaTime()
 //        print("mediaTime \(mediaTime)")
         var timeDiff = mediaTime - lastElapsedTime
-//        print("timeDiff \(timeDiff)")
-        
-        
-        //thadzNote for marc: pagkatapos nya pumasok dun sa next optograph, di nya madetect yung backpin na nilagay ko
-        //gamit yung
-        //if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair)
-        //condition sa
-        //override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval)
-        
         
         if (last_optographID == nodeObject.optographID) {
             
@@ -1189,6 +1304,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             
             if nameArray[1] == "TXT"{
                 self.showText(nodeObject)
+                
+                return
+            }
+            
+            if isEditingStory {
+                self.showRemovePinButton(nodeObject)
                 
                 return
             }
@@ -1227,11 +1348,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 print("object Type: \(nodeObject.objectType)")
                         
                 if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                    self.showOptograph(nodeObject)
+                    if !isEditingStory{
+                        self.showOptograph(nodeObject)
+                    }
+                    
                 }
                 
                 if nameArray[1] == "MUS"{
-                    self.playPinMusic(nodeObject)
+                    if !isEditingStory{
+                        self.playPinMusic(nodeObject)
+                    }
                 }
             }
         }

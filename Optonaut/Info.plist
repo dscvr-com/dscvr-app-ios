@@ -158,7 +158,12 @@
 	<string>Please enable location detection.</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Merriweather Light.ttf</string>
+		<string>Nexa Light.otf</string>
+		<string>Nexa Bold.otf</string>
+		<string>big_noodle_titling.ttf</string>
 		<string>Avenir-Book_0.otf</string>
+		<string>Roadgeek 2005 Series 1B.ttf</string>
 	</array>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>

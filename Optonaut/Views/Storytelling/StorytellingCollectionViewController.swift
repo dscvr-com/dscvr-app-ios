@@ -93,68 +93,10 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
             //            Models.optographs.touch(data.feed)
             
             self.storyFeed = data.user
-            //
-            //            let dataToInsert:Optograph = data.feed[0]
-            //
-            //            Models.optographs.touch(dataToInsert).insertOrUpdate()
             
-            //            print("placeholder: \(data.feed[0].placeholder)")
-            //            print("indexValue: \(self.storyFeed[0].story?.children![0].story_object_media_additional_data)")
-            //            print("locationValue: \(self.storyFeed[0].location)")
             self.collectionView?.reloadData()
             
         }).start()
-        
-//        collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID);
-//        
-//        collectionViewModel.results.producer
-//            .filter{$0.changed}
-//            .delayAllUntil(collectionViewModel.isActive.producer)
-//            .observeOnMain()
-//            .on(next: { [weak self] results in
-//                
-//                if let strongSelf = self {
-//                    
-//                    strongSelf.optographIDs = results.models
-//                        .filter{ $0.isPublished || $0.isUploading}
-//                        .map{$0.ID}
-//                    
-////                    print("over here");
-////                    print("id count: \(strongSelf.optographIDs.count)");
-////                    strongSelf.feedsModel.isActive.value = true;
-////                    strongSelf.feedsModel.refresh()
-//                    strongSelf.collectionView?.reloadData();
-//                    strongSelf.collectionViewModel.isActive.value = false;
-//                }
-//                })
-//            .start();
-        
-//        feedsModel.results.producer
-//            .filter {return $0.changed }
-//            //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
-//            .delayAllUntil(feedsModel.isActive.producer)
-//            .observeOnMain()
-//            .on(next: { [weak self] results in
-//                print("reload data =======")
-//                
-//                if let strongSelf = self {
-////                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-////                    strongSelf.feedIDs = results.models.map { $0.ID }
-////                    strongSelf.optographIDs = strongSelf.optographIDs + results.models.map { $0.ID }
-//////                    print("feedIDs: \(strongSelf.optographIDs.count)");
-////                    
-////                    strongSelf.collectionView!.reloadData()
-//                    
-//                }
-//                })
-//            .start()
-        
-        /*
-        ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
-            print("data story id: \(data.data)");
-            print("user: \(SessionService.personID)")
-        }).start();
-        */
         
 }
     
@@ -213,13 +155,6 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         
         if  indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! StorytellingCollectionViewCell;
-            
-//            cell.layer.shadowColor = UIColor.grayColor().CGColor;
-//            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
-//            cell.layer.shadowRadius = 2.0;
-//            cell.layer.shadowOpacity = 1.0;
-//            cell.layer.masksToBounds = false;
-//            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
             
             cell.imageView.kf_setImageWithURL(NSURL(string: self.storyFeed[indexPath.row].placeholder)!)
             print("placeholder image: \(self.storyFeed[indexPath.row].placeholder)")

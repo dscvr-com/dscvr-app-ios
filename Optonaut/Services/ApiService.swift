@@ -112,6 +112,46 @@ class ApiService<T: Mappable> {
 //    
 //    }
     
+    static func uploadForGate(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
+        return SignalProducer { sink, disposable in
+            let mutableURLRequest = buildURLRequestForGate(endpoint, method: .POST, queries: nil)
+            
+            var request: Alamofire.Request?
+            Alamofire.upload(mutableURLRequest, multipartFormData: multipartFormData) { result in
+                
+                switch result {
+                case .Success(let upload, _, _):
+                    request = upload
+                        .validate(statusCode: 200..<300)
+                        .response { _, _, _, error in
+                            if let error = error {
+                                let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "Upload failed", error: error)
+                                sink.sendFailed(apiError)
+                            } else {
+                                sink.sendCompleted()
+                            }
+                            
+                            print("response: \(upload.response)")
+                    }
+                case .Failure(let error):
+                    let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "Upload failed", error: error as NSError)
+                    print("error: \(error)")
+                    sink.sendFailed(apiError)
+                }
+            }
+            
+            disposable.addDisposable {
+                request?.cancel()
+            }
+            }
+            .on(failed: { error in
+                if error.suspicious {
+                    //                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+                    Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
+                }
+            })
+    }
+    
     static func upload(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
         return SignalProducer { sink, disposable in
             let mutableURLRequest = buildURLRequest(endpoint, method: .POST, queries: nil)
