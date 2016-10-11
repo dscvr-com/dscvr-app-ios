@@ -1,0 +1,4 @@
+{"identity":{"generator":"Crashlytics iOS SDK/3.7.0","build_version":"102","display_version":"3.7.0","api_key":"11b87c97c005ce8c5b5369b6eac7d4d41960bdff","started_at":1475751876,"session_id":"68301d715a2443f0b2540466f8069ddb","install_id":"D2954C35-890B-48BE-AF72-D79B9C6DE6BD","beta_token":null}}
+{"host":{"model":"iPhone5,1","machine":"N41AP","os_build_version":"14A456","os_display_version":"10.0.2","platform":"ios","locale":"en_PH"}}
+{"application":{"bundle_id":"com.iam360.dscvr","custom_bundle_id":null,"build_version":"1","display_version":"0.982","extension_id":null}}
+{"executable":{"architecture":"armv7","uuid":"c9cf8c6867da391f8b8f641fed42b7ec","base":1028096,"size":10567680,"encrypted":false,"minimum_sdk_version":"8.4.0","built_sdk_version":"9.3.0"}}

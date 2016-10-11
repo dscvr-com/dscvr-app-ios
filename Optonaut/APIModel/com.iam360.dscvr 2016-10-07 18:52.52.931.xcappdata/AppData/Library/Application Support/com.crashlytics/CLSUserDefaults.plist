@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.crashlytics.insights.enableviewcontrollertracking</key>
+	<false/>
+	<key>com.crashlytics.insights.lastmaintenancedate</key>
+	<date>2016-10-07T10:52:25Z</date>
+	<key>com.crashlytics.insights.lastsessionidentifier</key>
+	<string>7dc77b8de69c42a9832488ba892f979b</string>
+	<key>com.crashlytics.insights.lastsessionmetadata</key>
+	<data>
+	eyJidW5kbGVfaWQiOiJjb20uaWFtMzYwLmRzY3ZyIiwic2Vzc2lvbl9pZCI6IjdkYzc3
+	YjhkZTY5YzQyYTk4MzI0ODhiYTg5MmY5NzliIiwiYWR2ZXJ0aXNpbmdfdHJhY2tpbmdf
+	ZW5hYmxlZCI6ZmFsc2UsInZlbmRvcl9pZCI6IjQzMzg2Njk0LTQyNjQtNDFFQi05M0Q1
+	LTAyNTBEOERGNEM4NiIsImxvY2FsZSI6ImVuX1VTIiwib3NfYnVpbGQiOiIxM0czNiIs
+	ImxpbmtzX2FkX3N1cHBvcnQiOmZhbHNlLCJwbGF0Zm9ybSI6ImlPUyIsImluc3RhbGxf
+	aWQiOiI4NDBDNUIwMy01RTdBLTRGQjUtQTg0NC0zODNCRkY4Njg3NzYiLCJwbGF0Zm9y
+	bV9jb2RlIjoxLCJjb3JlcyI6MiwiZ2VuZXJhdG9yIjoiQW5zd2VycyBpT1MgU0RLXC8x
+	LjIuMCIsImluc3RhbmNlX2lkIjoiOGU2NDg3OTFhZTM0ZGU3OTFlMTRjMmM2MzhiMTE5
+	MTM3YTZkODZmNyIsIm9zX3ZlcnNpb24iOiI5LjMuNSIsImphaWxicm9rZW4iOmZhbHNl
+	LCJtb2RlbCI6ImlQaG9uZTcsMiIsInN0YXJ0ZWRfYXQiOjE0NzU4Mzc1NDIsImJ1bmRs
+	ZV92ZXJzaW9uIjoiMSIsImFwaV9rZXkiOiIxMWI4N2M5N2MwMDVjZThjNWI1MzY5YjZl
+	YWM3ZDRkNDE5NjBiZGZmIiwibWFjaGluZSI6ImlQaG9uZTcsMiIsImJ1bmRsZV9zaG9y
+	dF92ZXJzaW9uIjoiMC45ODIifQ==
+	</data>
+	<key>com.crashlytics.insights.lastsessiontimestamp</key>
+	<integer>1475837542106</integer>
+	<key>com.crashlytics.iuuid</key>
+	<string>840C5B03-5E7A-4FB5-A844-383BFF868776</string>
+</dict>
+</plist>
