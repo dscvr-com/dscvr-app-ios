@@ -242,42 +242,52 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             
         }
         
+        var mediaCounter = 0
+        
         for media in mediaData.mediaArray{
+            mediaCounter += 1
             for fileInfo in mediaArray{
                 if media.story_object_media_filename == fileInfo["mediaFilename"] as! String{
                     multiformDictionary[media.story_object_id] = fileInfo["mediaData"]
 //                    multiformDictionary.setValue(fileInfo["mediaData"], forKey: media.story_object_id)
+                    
+                    print("mediaFilename: \(fileInfo["mediaFilename"] as! String)")
+                    
                     ApiService<EmptyResponse>.uploadForGate("story/v2/part2", multipartFormData: { form in
                         form.appendBodyPart(data: mediaData.story_id.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_id")
                         form.appendBodyPart(data: SessionService.personID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_person_id")
                         form.appendBodyPart(data: media.story_object_id.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_object_ids")
-                        form.appendBodyPart(data: fileInfo["mediaData"] as! NSData, name: "asset", fileName: fileInfo["mediaFilename"] as! String, mimeType: "audio/mp4")
+                        form.appendBodyPart(data: fileInfo["mediaData"] as! NSData, name: media.story_object_id, fileName: fileInfo["mediaFilename"] as! String, mimeType: "audio/mp4")
                         
-                    })
+                        if mediaCounter == mediaData.mediaArray.count{
+                            self.dismissStorytelling()
+                        }
+                        
+                    }).start()
                 }
             }
         }
         
         
         
-        multiformDictionary["story_object_ids"] = mediaIDcsv
-//        print("multiformDictionary: \(multiformDictionary)")
-        
-        ApiService<ChildResponse>.postForGate("story/v2/part2", parameters: multiformDictionary).on(next: { data in
-            print("data story id: \(data)")
-//            print("user: \(SessionService.personID)")
+//        multiformDictionary["story_object_ids"] = mediaIDcsv
+////        print("multiformDictionary: \(multiformDictionary)")
+//        
+//        ApiService<ChildResponse>.postForGate("story/v2/part2", parameters: multiformDictionary).on(next: { data in
+//            print("data story id: \(data)")
+////            print("user: \(SessionService.personID)")
+////            
+////            let response = StoryMediaObject()
+////            response.mediaArray = (data.data?.children)!
+////            response.story_id = (data.data?.story_id)!
+////            
+////            print("mediaArray: \(response.mediaArray)")
+////            print("story_id: \(response.story_id)")
+////            
+////            self.sendMultiformData(response)
 //            
-//            let response = StoryMediaObject()
-//            response.mediaArray = (data.data?.children)!
-//            response.story_id = (data.data?.story_id)!
-//            
-//            print("mediaArray: \(response.mediaArray)")
-//            print("story_id: \(response.story_id)")
-//            
-//            self.sendMultiformData(response)
-            
-            self.dismissStorytelling()
-        }).start();
+////            self.dismissStorytelling()
+//        }).start();
         
         
 //        ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset\(uploadModeStr)", multipartFormData: { form in
@@ -1097,9 +1107,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 
                 //                print("base64string: \(base64)")
                 
-                let translationArray = ["", "", ""]
+                let translationArray = ["0", "0", "0"]
                 
-                let rotationArray = ["", "", ""]
+                let rotationArray = ["0", "0", "0"]
                 
                 /*
                  "story_object_media_type":            "Image",

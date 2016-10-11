@@ -116,10 +116,11 @@ class ApiService<T: Mappable> {
     
     static func uploadForGate(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
         return SignalProducer { sink, disposable in
-            let mutableURLRequest = buildURLRequest(endpoint, method: .POST, queries: nil)
+            let mutableURLRequest = buildURLRequestForGate(endpoint, method: .POST, queries: nil)
             
             var request: Alamofire.Request?
             Alamofire.upload(mutableURLRequest, multipartFormData: multipartFormData) { result in
+                
                 switch result {
                 case .Success(let upload, _, _):
                     request = upload
@@ -131,9 +132,12 @@ class ApiService<T: Mappable> {
                             } else {
                                 sink.sendCompleted()
                             }
+                            
+                            print("response: \(upload.response)")
                     }
                 case .Failure(let error):
                     let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "Upload failed", error: error as NSError)
+                    print("error: \(error)")
                     sink.sendFailed(apiError)
                 }
             }
