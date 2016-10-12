@@ -82,7 +82,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         refreshNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .flatMap(.Latest) { _ in
-                ApiService<OptographApiModel>.getForGate("story/merged/7753e6e9-23c6-46ec-9942-35a5ea744ece")
+                ApiService<OptographApiModel>.getForGate("story/merged/\(SessionService.isLoggedIn ? SessionService.personID: "7753e6e9-23c6-46ec-9942-35a5ea744ece" )")
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
@@ -96,6 +96,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             ps.model.isFollowed = apiModel.person.isFollowed
                         }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
+                        
                         Models.story.touch(apiModel.story).insertOrUpdate()
                         
                         if apiModel.story.children!.count != 0 {

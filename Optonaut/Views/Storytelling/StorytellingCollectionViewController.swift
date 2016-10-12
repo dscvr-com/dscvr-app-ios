@@ -200,7 +200,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
         detailsViewController.cellIndexpath = indexPath.item
         detailsViewController.isStory = true
-        detailsViewController.storyNodes = self.storyFeed[indexPath.row].story!.children!
+        //detailsViewController.storyNodes = self.storyFeed[indexPath.row].story!.children!
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
     

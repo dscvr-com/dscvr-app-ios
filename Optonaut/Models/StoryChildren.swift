@@ -125,7 +125,7 @@ extension StoryChildren: SQLiteModel {
             StoryChildrenSchema.storyPosition               <-- objectPosition,
             StoryChildrenSchema.storyRotation               <-- objectRotation,
             StoryChildrenSchema.storyMediaFilename          <-- objectMediaFilename,
-            StoryChildrenSchema.storyMediaFileurl           <-- objectMediaFileUrl,
+            StoryChildrenSchema.storyMediaFileurl           <-- objectMediaFileUrl
         ]
     }
     

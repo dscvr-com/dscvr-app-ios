@@ -556,10 +556,22 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             }
         }
         
-        let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
+//        let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
+//        
+//        detailsViewController.cellIndexpath = indexPath.item
+//        
+//        navigationController?.pushViewController(detailsViewController, animated: true)
         
+        
+        let startOptograph = optographIDs[indexPath.row]
+        
+        let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
         detailsViewController.cellIndexpath = indexPath.item
+        detailsViewController.isStory = true
         
+        let optoModel = Models.optographs[startOptograph]!
+        
+        detailsViewController.storyID = optoModel.model.storyID
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
     

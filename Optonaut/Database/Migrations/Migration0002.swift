@@ -91,7 +91,7 @@ private func createStory() -> String {
         
         t.foreignKey(StorySchema.optographID, references: OptographTable, OptographSchema.ID)
         t.foreignKey(StorySchema.personID, references: PersonTable, PersonSchema.ID)
-        t.foreignKey(StorySchema.storyChildrenId, references: StoryChildrenTable, StoryChildrenSchema.ID)
+        t.foreignKey(StorySchema.storyChildrenId, references: StoryChildrenTable, StoryChildrenSchema.storyID)
     }
 }
 private func createStoryChildren() -> String {

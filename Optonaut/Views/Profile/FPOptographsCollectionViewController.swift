@@ -170,7 +170,6 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
             delegate?.optographSelected(optographIDs[indexPath.item]);
             self.dismissViewControllerAnimated(true, completion: nil)
         }
-        
     }
     
     //UICollectionViewFlowLayout Delegate

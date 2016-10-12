@@ -241,6 +241,7 @@ private class OverlayViewModel {
     var isMe = false
     var isElite = MutableProperty<Int>(0)
     private var disposable: Disposable?
+    var hasStory = MutableProperty<Bool>(false)
     
     func bind(optographID: UUID) {
         disposable?.dispose()
@@ -253,6 +254,7 @@ private class OverlayViewModel {
         textToggled.value = false
         
         disposable = optographBox.producer.startWithNext { [weak self] optograph in
+            
             self?.likeCount.value = optograph.starsCount
             self?.liked.value = optograph.isStarred
             
@@ -263,6 +265,7 @@ private class OverlayViewModel {
             } else {
                 self?.uploadStatus.value = .Offline
             }
+            self?.hasStory.value = optograph.storyID.isEmpty ? false:true
         }
         
         isMe = SessionService.personID == optographBox.model.personID
@@ -472,6 +475,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
     let playerLayer = AVPlayerLayer()
     let eliteImageView = UIImageView()
     
+    let storyIcn = UIImageView()
+    
 //    var video:AVPlayer? {
 //        didSet {
 //            self.playerLayer.player = video
@@ -607,6 +612,9 @@ class OptographCollectionViewCell: UICollectionViewCell{
         hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
         hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.bouncingCell)))
         
+        storyIcn.image = UIImage(named: "create_story_icn")
+        yellowView.addSubview(storyIcn)
+        storyIcn.hidden = false
         
     }
     
@@ -638,6 +646,9 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         let icnWidth = UIImage(named: "elite_beta_icn")!
         eliteImageView.anchorInCorner(.BottomLeft, xPad: optionsButtonView.frame.origin.x + (optionsButtonView.frame.width/2), yPad: 6, width: icnWidth.size.width, height: icnWidth.size.height)
+        
+        let storyIcnWidth = UIImage(named: "create_story_icn")!
+        storyIcn.anchorToEdge(.Right, padding: 10, width: storyIcnWidth.size.width, height: storyIcnWidth.size.height)
     }
     
     
@@ -832,6 +843,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
 //        } else {
 //            self.video = nil
 //        }
+        
+        viewModel.hasStory.producer.startWithNext { val in
+            self.storyIcn.hidden = !val
+        }
 
     }
     
