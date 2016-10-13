@@ -95,7 +95,7 @@ extension StoryChildren: SQLiteModel {
     
     static func fromSQL(row: SQLiteRow) -> StoryChildren {
         return StoryChildren(
-            ID: row[StorySchema.ID],
+            ID: row[StoryChildrenSchema.ID],
             createdAt: row[StoryChildrenSchema.storyCreatedAt],
             updatedAt: row[StoryChildrenSchema.storyUpdatedAt],
             deletedAt: row[StoryChildrenSchema.storyDeletedAt],

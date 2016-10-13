@@ -337,7 +337,7 @@ class ApiService<T: Mappable> {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
                                     
-                                    let jsonData = json["feed"]!
+                                    let jsonData = json["you"]!
                                     print(">>>>>",jsonData)
                                     
                                     if let object = Mapper<T>().map(jsonData) {

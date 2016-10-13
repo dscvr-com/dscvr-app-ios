@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Mixpanel
+//import Mixpanel
 import Async
 import SceneKit
 import ReactiveCocoa
@@ -174,7 +174,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //        }
         
         if isStory {
-            let query = StoryChildrenTable.select(*)
+            
+            let query = StoryChildrenTable
+                .select(*)
                 .filter(StoryChildrenTable[StoryChildrenSchema.storyID] == storyID!)
             
             try! DatabaseService.defaultConnection.prepare(query)
@@ -205,7 +207,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
+        //Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
         
         self.view.addSubview(self.countdownLabel)
@@ -917,7 +919,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         //Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID, "optograph_description" : viewModel.optograph.text])
         
-        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": "", "optograph_description" : ""])
+        //Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": "", "optograph_description" : ""])
     }
     
     override func viewWillAppear(animated: Bool) {
