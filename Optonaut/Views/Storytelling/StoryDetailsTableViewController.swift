@@ -110,9 +110,13 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     let bgmImage = UIButton()
     let removeBgm = UIButton()
     
+    var optographBox: ModelBox<Optograph>
+    
     required init(optographId:UUID) {
         
         optographID = optographId
+        
+        optographBox = Models.optographs[optographId]!
         
         viewModel = DetailsViewModel(optographID: optographId)
         let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
@@ -193,6 +197,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func sendToNewPath(){
+        
         let parameters : NSDictionary =  ["story_optograph_id": optographID,
                                           "story_person_id": SessionService.personID,
                                           "children":nodes]
@@ -212,13 +217,36 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 
                 self.sendMultiformData(response)
                 
-//                self.dismissStorytelling()
+                self.optographBox.insertOrUpdate { box in
+                    box.model.storyID = response.story_id
+                }
+                
+                self.saveStory(response.story_id)
+                
+                
             }).start();
         }
         else{
             print("nodes count is zero")
         }
     }
+    
+    func saveStory(storyID:UUID) {
+        
+        //create new row in story table
+        var story = Story.newInstance()
+        story.personID = SessionService.personID
+        story.optographID = optographID
+        
+        
+        //create model cache in story
+        let storyBox: ModelBox<Story>
+        storyBox = Models.story.create(story)
+        storyBox.insertOrUpdate { st in
+            st.model.ID = storyID
+        }
+    }
+    
     
     func sendMultiformData(mediaData: StoryMediaObject){
         
