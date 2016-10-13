@@ -48,43 +48,13 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .map {self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
     
-//        refreshNotification.signal
-//            .takeWhile { _ in Reachability.connectedToNetwork() }
-//            .flatMap(.Latest) { _ in
-//                ApiService<OptographApiModel>.get("optographs/feed")
-//                    .observeOnUserInitiated()
-//                    .on(next: { apiModel in
-//                        print(">>apiModel",apiModel)
-//                        Models.optographs.touch(apiModel).insertOrUpdate { box in
-//                            box.model.isInFeed = true
-//                            box.model.isStitched = true
-//                            box.model.isPublished = true
-//                            box.model.isSubmitted = true
-//                            box.model.starsCount = apiModel.starsCount
-//                        }
-//                        Models.persons.touch(apiModel.person).insertOrUpdate { ps in
-//                            ps.model.isFollowed = apiModel.person.isFollowed
-//                        }
-//                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
-//                        Models.story.touch(apiModel).insertOrUpdate()
-//                    })
-//                    .map(Optograph.fromApiModel)
-//                    .ignoreError()
-//                    .collect()
-//                    .startOnUserInitiated()
-//            }
-//            .observeOnMain()
-//            .map { self.results.value.merge($0, deleteOld: false) }
-//            .observeNext { results in
-//                self.results.value = results
-//            }
-        
         refreshNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .flatMap(.Latest) { _ in
-                ApiService<OptographApiModel>.getForGate("story/merged/\(SessionService.isLoggedIn ? SessionService.personID: "7753e6e9-23c6-46ec-9942-35a5ea744ece" )")
+                ApiService<OptographApiModel>.get("optographs/feed")
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
+                        print(">>apiModel",apiModel)
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             box.model.isInFeed = true
                             box.model.isStitched = true
@@ -96,15 +66,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             ps.model.isFollowed = apiModel.person.isFollowed
                         }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
-                        
                         Models.story.touch(apiModel.story).insertOrUpdate()
-                        
-                        if apiModel.story.children!.count != 0 {
-                            for child in apiModel.story.children! {
-                                Models.storyChildren.touch(child).insertOrUpdate()
-                            }
-                        }
-                        
                     })
                     .map(Optograph.fromApiModel)
                     .ignoreError()
@@ -115,7 +77,45 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { results in
                 self.results.value = results
-        }
+            }
+        
+//        refreshNotification.signal
+//            .takeWhile { _ in Reachability.connectedToNetwork() }
+//            .flatMap(.Latest) { _ in
+//                ApiService<OptographApiModel>.getForGate("story/merged/\(SessionService.isLoggedIn ? SessionService.personID: "")")
+//                    .observeOnUserInitiated()
+//                    .on(next: { apiModel in
+//                        Models.optographs.touch(apiModel).insertOrUpdate { box in
+//                            box.model.isInFeed = true
+//                            box.model.isStitched = true
+//                            box.model.isPublished = true
+//                            box.model.isSubmitted = true
+//                            box.model.starsCount = apiModel.starsCount
+//                        }
+//                        Models.persons.touch(apiModel.person).insertOrUpdate { ps in
+//                            ps.model.isFollowed = apiModel.person.isFollowed
+//                        }
+//                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
+//                        
+//                        Models.story.touch(apiModel.story).insertOrUpdate()
+//                        
+//                        if apiModel.story.children!.count != 0 {
+//                            for child in apiModel.story.children! {
+//                                Models.storyChildren.touch(child).insertOrUpdate()
+//                            }
+//                        }
+//                        
+//                    })
+//                    .map(Optograph.fromApiModel)
+//                    .ignoreError()
+//                    .collect()
+//                    .startOnUserInitiated()
+//            }
+//            .observeOnMain()
+//            .map { self.results.value.merge($0, deleteOld: false) }
+//            .observeNext { results in
+//                self.results.value = results
+//        }
 
         loadMoreNotification.signal
             .map { _ in self.results.value.models.last }

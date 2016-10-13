@@ -23,16 +23,6 @@ class StNavViewController: NavigationController {
         if SessionService.isLoggedIn {
             viewControllers.insert(loginOverlayViewController, atIndex: 0)
             pushViewController(StorytellingCollectionViewController(personID: SessionService.personID), animated: false)
-//            if SessionService.needsOnboarding {
-//                let username = AddUsernameViewController()
-//                pushViewController(username, animated: false)
-//            }
-            
-//            if !Defaults[.SessionEliteUser] {
-//                let gate = InvitationViewController()
-//                gate.fromProfilePage = true
-//                pushViewController(gate, animated: false)
-//            }
             
         } else {
             pushViewController(loginOverlayViewController, animated: false)
@@ -40,17 +30,6 @@ class StNavViewController: NavigationController {
                 let profilePage = StorytellingCollectionViewController(personID: SessionService.personID)
                 profilePage.fromLoginPage = true
                 self.pushViewController(profilePage, animated: false)
-                
-//                if SessionService.needsOnboarding {
-//                    let username = AddUsernameViewController()
-//                    self.pushViewController(username, animated: false)
-//                }
-//                
-//                if !Defaults[.SessionEliteUser] {
-//                    let gate = InvitationViewController()
-//                    gate.fromProfilePage = true
-//                    self.pushViewController(gate, animated: false)
-//                }
             }
         }
     }

@@ -613,7 +613,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
         hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.bouncingCell)))
         
         storyIcn.image = UIImage(named: "create_story_icn")
-        yellowView.addSubview(storyIcn)
+        whiteBackground.addSubview(storyIcn)
         storyIcn.hidden = false
         
     }
@@ -648,7 +648,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
         eliteImageView.anchorInCorner(.BottomLeft, xPad: optionsButtonView.frame.origin.x + (optionsButtonView.frame.width/2), yPad: 6, width: icnWidth.size.width, height: icnWidth.size.height)
         
         let storyIcnWidth = UIImage(named: "create_story_icn")!
-        storyIcn.anchorToEdge(.Right, padding: 10, width: storyIcnWidth.size.width, height: storyIcnWidth.size.height)
+        //storyIcn.anchorToEdge(.Right, padding: 10, width: storyIcnWidth.size.width, height: storyIcnWidth.size.height)
+        storyIcn.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 20, width:storyIcnWidth.size.width, height: storyIcnWidth.size.height)
     }
     
     

@@ -46,8 +46,8 @@ private func createLocation() -> String {
 
 private func createOptograph() -> String {
     return OptographTable.create { t in
-        //t.column(OptographSchema.ID, primaryKey: true)
-        t.column(OptographSchema.ID)
+        t.column(OptographSchema.ID, primaryKey: true)
+        //t.column(OptographSchema.ID)
         t.column(OptographSchema.text)
         t.column(OptographSchema.personID)
         t.column(OptographSchema.locationID)

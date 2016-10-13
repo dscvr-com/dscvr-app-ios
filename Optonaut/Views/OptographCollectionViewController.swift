@@ -23,7 +23,6 @@ protocol OptographCollectionViewModel {
     func loadMore()
 }
 
-
 class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout ,TransparentNavbarWithStatusBar,TabControllerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     
     private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)

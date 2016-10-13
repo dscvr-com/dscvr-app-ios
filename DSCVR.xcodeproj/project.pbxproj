@@ -44,6 +44,7 @@
 		598F571F1CEDA771002229AF /* Avenir-Heavy_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */; };
 		599459B11D0926C0000F3A5B /* SearchTableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599459B01D0926C0000F3A5B /* SearchTableModel.swift */; };
 		59A07C5D1D6355E3006A6CCE /* IcomoonExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */; };
+		59A35D4A1DAF27B900D207BF /* StorytellingVCModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A35D491DAF27B900D207BF /* StorytellingVCModel.swift */; };
 		59CDB7C81D2250B70094C816 /* Migration0007.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDB7C71D2250B60094C816 /* Migration0007.swift */; };
 		59D828141D709C4200007B57 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D828131D709C4200007B57 /* Crashlytics.framework */; };
 		59D8FBD81D9D08CC00846BC4 /* flowBlender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D8FBD61D9D08CC00846BC4 /* flowBlender.cpp */; };
@@ -376,6 +377,7 @@
 		598F571C1CEDA771002229AF /* Avenir-Book_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Book_0.otf"; sourceTree = "<group>"; };
 		598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
 		599459B01D0926C0000F3A5B /* SearchTableModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableModel.swift; sourceTree = "<group>"; };
+		59A35D491DAF27B900D207BF /* StorytellingVCModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingVCModel.swift; sourceTree = "<group>"; };
 		59CDB7C71D2250B60094C816 /* Migration0007.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0007.swift; sourceTree = "<group>"; };
 		59D828131D709C4200007B57 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Frameworks/Crashlytics.framework; sourceTree = "<group>"; };
 		59D8FBD61D9D08CC00846BC4 /* flowBlender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flowBlender.cpp; sourceTree = "<group>"; };
@@ -1583,6 +1585,7 @@
 				BB8AC1921D597B8D00A18BFF /* StorytellingCollectionViewController.swift */,
 				BB8AC1941D5B188F00A18BFF /* StorytellingCollectionViewCell.swift */,
 				BB155A951D6DB31A002678A6 /* StoryDetailsTableViewController.swift */,
+				59A35D491DAF27B900D207BF /* StorytellingVCModel.swift */,
 			);
 			name = Storytelling;
 			sourceTree = "<group>";
@@ -1821,6 +1824,7 @@
 				59306C041D24E035009BF7BE /* InvitationViewController.swift in Sources */,
 				8F23AA591BFF3229008926A8 /* Migration0002.swift in Sources */,
 				8F5335B21BDBE0910058961A /* ActivityFollowTableViewCell.swift in Sources */,
+				59A35D4A1DAF27B900D207BF /* StorytellingVCModel.swift in Sources */,
 				8F5335AE1BDBDE890058961A /* ActivityCommentTableViewCell.swift in Sources */,
 				59DBBF981D1A5A9E0072AA3E /* FollowersTableViewCell.swift in Sources */,
 				8F3D2D651BAC66F80022587C /* OnboardingHashtagSelectViewController.swift in Sources */,

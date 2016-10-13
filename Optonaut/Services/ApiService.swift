@@ -337,12 +337,12 @@ class ApiService<T: Mappable> {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
                                     
-                                    let jsonData = json["you"]!
-                                    print(">>>>>",jsonData)
+//                                    let jsonData = json["you"]!
+//                                    print(">>>>>",jsonData)
                                     
-                                    if let object = Mapper<T>().map(jsonData) {
+                                    if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
-                                    } else if let array = Mapper<T>().mapArray(jsonData) {
+                                    } else if let array = Mapper<T>().mapArray(json) {
                                         for object in array {
                                             sink.sendNext(object)
                                         }

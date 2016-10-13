@@ -244,6 +244,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         var mediaCounter = 0
         
+        if mediaData.mediaArray.count == 0{
+            self.dismissStorytelling()
+        }
+        
         for media in mediaData.mediaArray{
             mediaCounter += 1
             for fileInfo in mediaArray{

@@ -9,16 +9,19 @@
 import UIKit
 import Kingfisher
 
+
+
+
 class StorytellingCollectionViewController: UICollectionViewController,WhiteNavBar,TabControllerDelegate {
     
     private var profileViewModel: ProfileViewModel;
-    //private var collectionViewModel: ProfileOptographsViewModel;
-    //private var feedsModel = FeedOptographCollectionViewModel();
+    
+    private var feedsModel:StorytellingVCModel
     private var optographIDs: [UUID] = [];
     private var feedIDs: [UUID] = [];
     
     private var storyIDs: [UUID] = []; //user stories
-    private var storyFeed: [StorytellingFeed] = []; //feed available stories
+    //private var storyFeed: [StorytellingFeed] = []; //feed available stories
     
     var startStory = false;
     var startOpto = ""
@@ -32,10 +35,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     init(personID: UUID) {
         
         profileViewModel = ProfileViewModel(personID: personID);
-//        collectionViewModel = ProfileOptographsViewModel(personID: personID);
-        
-//        let width = ((view.frame.size.width)/3) - 20;
-        
+        feedsModel = StorytellingVCModel(personID: personID)
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
@@ -80,23 +80,34 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: "footerView")
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerView")
         
-        ApiService<StorytellingMerged>.getForGate("story/merged/"+SessionService.personID+"?feedpage=1&feedsize=1&youpage=1&yousize=20").on(next: { data in
-            print("feed count: \(data.feed.count)")
-            print("user count: \(data.user.count)")
-            print("sessionID: \(SessionService.personID)")
-            
-            
-            //            for user in data.user{
-            //                Models.optographs.touch(user)
-            //            }
-            
-            //            Models.optographs.touch(data.feed)
-            
-            self.storyFeed = data.user
-            
-            self.collectionView?.reloadData()
-            
-        }).start()
+//        ApiService<StorytellingMerged>.getForGate("story/merged/"+SessionService.personID+"?feedpage=1&feedsize=1&youpage=1&yousize=20").on(next: { data in
+//            print("feed count: \(data.feed.count)")
+//            print("user count: \(data.user.count)")
+//            print("sessionID: \(SessionService.personID)")
+//            
+//            
+//            self.storyFeed = data.user
+//            
+//            self.collectionView?.reloadData()
+//            
+//        }).start()
+        
+        feedsModel.results.producer
+            .delayAllUntil(feedsModel.isActive.producer)
+            .observeOnMain()
+            .on(next: { [weak self] results in
+                
+                
+                print(results)
+                
+                if let strongSelf = self {
+                    strongSelf.storyIDs = results
+                        .map{$0.optographID}
+                }
+                })
+            .startWithNext { _ in
+                self.collectionView?.reloadData()
+        }
         
 }
     
@@ -104,15 +115,14 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
         
-//        collectionViewModel.isActive.value = true;
-//        collectionViewModel.refresh();
+        feedsModel.isActive.value = true;
         
         navigationController?.navigationBarHidden = false
         
         print("SCVC viewWillAppear")
         
         if fromLoginPage {
-//            goToFeeds()
+            //goToFeeds()
             fromLoginPage = false
         }
     }
@@ -146,7 +156,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
 //        return optographIDs.count;
         
         
-        return storyFeed.count;
+        return storyIDs.count;
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -156,8 +166,8 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         if  indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! StorytellingCollectionViewCell;
             
-            cell.imageView.kf_setImageWithURL(NSURL(string: self.storyFeed[indexPath.row].placeholder)!)
-            print("placeholder image: \(self.storyFeed[indexPath.row].placeholder)")
+            //cell.imageView.kf_setImageWithURL(NSURL(string: self.storyFeed[indexPath.row].placeholder)!)
+            cell.bind(storyIDs[indexPath.row])
             
             storyCell = cell
         }
@@ -194,7 +204,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     //UICollectionView Delegate
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        let startOptograph = self.storyFeed[indexPath.row].id
+        let startOptograph = storyIDs[indexPath.row]
         print("startOpto: \(startOptograph)")
         
         let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
