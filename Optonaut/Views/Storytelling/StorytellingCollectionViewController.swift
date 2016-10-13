@@ -92,6 +92,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
 //            
 //        }).start()
         
+        //get all optographid with stories
         feedsModel.results.producer
             .delayAllUntil(feedsModel.isActive.producer)
             .observeOnMain()
@@ -210,7 +211,10 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
         detailsViewController.cellIndexpath = indexPath.item
         detailsViewController.isStory = true
-        //detailsViewController.storyNodes = self.storyFeed[indexPath.row].story!.children!
+        
+        let optoModel = Models.optographs[startOptograph]!
+        detailsViewController.storyID = optoModel.model.storyID
+        
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
