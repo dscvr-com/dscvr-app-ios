@@ -17,7 +17,6 @@ class StorytellingVCModel {
     let refreshNotification = NotificationSignal<Void>()
     let results = MutableProperty<[Story]>([])
     let isActive = MutableProperty<Bool>(false)
-    private var refreshTimer: NSTimer?
     
     init(personID: UUID) {
         
@@ -87,18 +86,6 @@ class StorytellingVCModel {
 //            .observeNext { results in
 //                self.results.value = results
 //        }
-        
-        isActive.producer.skipRepeats().startWithNext { [weak self] isActive in
-            if isActive {
-                self?.refresh()
-            } else {
-                self?.refreshTimer?.invalidate()
-            }
-        }
-    }
-    
-    func refresh() {
-        refreshNotification.notify(())
     }
 }
 

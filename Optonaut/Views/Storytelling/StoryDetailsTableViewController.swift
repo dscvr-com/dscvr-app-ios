@@ -204,27 +204,30 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         if nodes.count > 0{
             print("pass data")
-            ApiService<ChildResponse>.postForGate("story/v2/part1", parameters: parameters as? [String : AnyObject]).on(next: { data in
-                print("data story id: \(data)")
-                print("user: \(SessionService.personID)")
+            LoadingIndicatorView.show()
+            ApiService<ChildResponse>.postForGate("story/v2/part1", parameters: parameters as? [String : AnyObject]).on(failed: { _ in
+                    LoadingIndicatorView.hide()
+                },next: { data in
+                    print("data story id: \(data)")
+                    print("user: \(SessionService.personID)")
+                    
+                    let response = StoryMediaObject()
+                    response.mediaArray = (data.data?.children)!
+                    response.story_id = (data.data?.story_id)!
                 
-                let response = StoryMediaObject()
-                response.mediaArray = (data.data?.children)!
-                response.story_id = (data.data?.story_id)!
+                    print("mediaArray: \(response.mediaArray)")
+                    print("story_id: \(response.story_id)")
                 
-                print("mediaArray: \(response.mediaArray)")
-                print("story_id: \(response.story_id)")
+                    self.sendMultiformData(response)
                 
-                self.sendMultiformData(response)
+                    self.optographBox.insertOrUpdate { box in
+                        box.model.storyID = response.story_id
+                    }
                 
-                self.optographBox.insertOrUpdate { box in
-                    box.model.storyID = response.story_id
-                }
+                    self.saveStory(response.story_id,childIds: response.mediaArray)
+                    LoadingIndicatorView.hide()
                 
-                self.saveStory(response.story_id,childIds: response.mediaArray)
-                
-                
-            }).start();
+                }).start();
         }
         else{
             print("nodes count is zero")

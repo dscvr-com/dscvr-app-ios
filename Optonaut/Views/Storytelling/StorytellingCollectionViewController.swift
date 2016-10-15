@@ -98,13 +98,27 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
                 self.collectionView?.reloadData()
         }
         
+        feedsModel.isActive.producer.startWithNext{print(">>");$0}
+        
+        tabController?.pageStatus.producer.startWithNext { val in
+            if val == .Story {
+                self.feedsModel.refreshNotification.notify(())
+                self.feedsModel.isActive.value = true
+            } else {
+                self.feedsModel.isActive.value = false
+            }
+        }
 }
     
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
         
-        feedsModel.isActive.value = true;
+        tabController?.delegate = self
+        
+        feedsModel.isActive.value = true
+        
+        feedsModel.refreshNotification.notify()
         
         navigationController?.navigationBarHidden = false
         
