@@ -221,7 +221,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     box.model.storyID = response.story_id
                 }
                 
-                self.saveStory(response.story_id)
+                self.saveStory(response.story_id,childIds: response.mediaArray)
                 
                 
             }).start();
@@ -231,7 +231,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         }
     }
     
-    func saveStory(storyID:UUID) {
+    func saveStory(storyID:UUID,childIds:[ChildNameResponse]) {
         
         //create new row in story table
         var story = Story.newInstance()
@@ -245,8 +245,54 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         storyBox.insertOrUpdate { st in
             st.model.ID = storyID
         }
+        
+        var storyChildrenBox: ModelBox<StoryChildren>
+        
+        var modelCount = 0
+        
+        for data in nodes {
+            print(data)
+            print((data["story_object_media_additional_data"] as? String)!)
+            print((data["story_object_media_description"] as? String)!)
+            print((data["story_object_media_face"] as? String)!)
+            print(data["story_object_position"])
+            print(data["story_object_rotation"])
+            
+            let storyChildren = StoryChildren.newInstance()
+            storyChildrenBox = Models.storyChildren.create(storyChildren)
+            storyChildrenBox.insertOrUpdate { st in
+                
+                st.model.ID = childIds[modelCount].story_object_id
+                if let mda = (data["story_object_media_additional_data"] as? String) {
+                    st.model.mediaAdditionalData = mda
+                }
+                if let md = (data["story_object_media_description"] as? String) {
+                    st.model.mediaDescription = md
+                }
+                if let mf = (data["story_object_media_face"] as? String){
+                    st.model.mediaFace = mf
+                }
+                if let mt = (data["story_object_media_type"] as? String) {
+                    st.model.mediaType = mt
+                }
+                if let position = data["story_object_position"] as? [CGFloat] {
+                    st.model.objectPosition = position.map{String($0)}.joinWithSeparator(",")
+                }
+                if let rotation = data["story_object_rotation"] as? [CGFloat] {
+                    st.model.objectRotation = rotation.map{String($0)}.joinWithSeparator(",")
+                }
+                
+//                if let rotation = data["story_object_rotation"] as? [CGFloat] {
+//                    st.model.objectRotation = rotation.map{String($0)}.joinWithSeparator(",")
+//                }
+                
+                st.model.storyID = storyID
+            }
+            modelCount += 1
+        }
+        
+        
     }
-    
     
     func sendMultiformData(mediaData: StoryMediaObject){
         
@@ -272,10 +318,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         var mediaCounter = 0
         
-        if mediaData.mediaArray.count == 0{
-            self.dismissStorytelling()
-        }
-        
         for media in mediaData.mediaArray{
             mediaCounter += 1
             for fileInfo in mediaArray{
@@ -299,6 +341,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 }
             }
         }
+        
+        self.dismissStorytelling()
+        
+        
         
         
         

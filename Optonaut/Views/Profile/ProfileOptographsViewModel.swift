@@ -25,7 +25,6 @@ class ProfileOptographsViewModel {
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(PersonTable[PersonSchema.ID] == personID)
-            .filter(OptographTable[OptographSchema.storyID] == "")
         
         refreshNotification.signal
             .flatMap(.Latest) { _ in
@@ -38,8 +37,6 @@ class ProfileOptographsViewModel {
                         if !Reachability.connectedToNetwork() {
                             Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
                         }
-                    
-                        
                         return optograph
                     }
                     .ignoreError()

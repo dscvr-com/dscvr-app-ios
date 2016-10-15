@@ -80,18 +80,6 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: "footerView")
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerView")
         
-//        ApiService<StorytellingMerged>.getForGate("story/merged/"+SessionService.personID+"?feedpage=1&feedsize=1&youpage=1&yousize=20").on(next: { data in
-//            print("feed count: \(data.feed.count)")
-//            print("user count: \(data.user.count)")
-//            print("sessionID: \(SessionService.personID)")
-//            
-//            
-//            self.storyFeed = data.user
-//            
-//            self.collectionView?.reloadData()
-//            
-//        }).start()
-        
         //get all optographid with stories
         feedsModel.results.producer
             .delayAllUntil(feedsModel.isActive.producer)
@@ -121,15 +109,10 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         navigationController?.navigationBarHidden = false
         
         print("SCVC viewWillAppear")
-        
-        if fromLoginPage {
-            //goToFeeds()
-            fromLoginPage = false
-        }
     }
     
     func dismissMe(){
-        self.navigationController?.popViewControllerAnimated(true)
+        tabController?.goToProfileFromStory()
     }
     
     func showDetailsViewController(){

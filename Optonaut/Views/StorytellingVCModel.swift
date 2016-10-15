@@ -28,6 +28,7 @@ class StorytellingVCModel {
             .filter(StoryTable[StorySchema.personID] == personID)
         
         refreshNotification.signal
+            .takeWhile { _ in SessionService.isLoggedIn }
             .flatMap(.Latest) { _ in
                 DatabaseService.query(.Many, query: query)
                     .observeOnUserInteractive()
@@ -48,6 +49,44 @@ class StorytellingVCModel {
             }
             .observeOnMain()
             .observeNext {self.results.value = $0 }
+        
+//        refreshNotification.signal
+//            .takeWhile { _ in Reachability.connectedToNetwork() }
+//            .flatMap(.Latest) { _ in
+//                ApiService<OptographApiModel>.getForGate("story/merged/\(SessionService.personID)")
+//                    .observeOnUserInitiated()
+//                    .on(next: { apiModel in
+//                        Models.optographs.touch(apiModel).insertOrUpdate { box in
+//                            box.model.isInFeed = true
+//                            box.model.isStitched = true
+//                            box.model.isPublished = true
+//                            box.model.isSubmitted = true
+//                            box.model.starsCount = apiModel.starsCount
+//                        }
+//                        Models.persons.touch(apiModel.person).insertOrUpdate { ps in
+//                            ps.model.isFollowed = apiModel.person.isFollowed
+//                        }
+//                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
+//                        
+//                        Models.story.touch(apiModel.story).insertOrUpdate()
+//                        
+//                        if apiModel.story.children!.count != 0 {
+//                            for child in apiModel.story.children! {
+//                                Models.storyChildren.touch(child).insertOrUpdate()
+//                            }
+//                        }
+//                        
+//                    })
+//                    .map(Optograph.fromApiModel)
+//                    .ignoreError()
+//                    .collect()
+//                    .startOnUserInitiated()
+//            }
+//            .observeOnMain()
+//            .map { self.results.value.merge($0, deleteOld: false) }
+//            .observeNext { results in
+//                self.results.value = results
+//        }
         
         isActive.producer.skipRepeats().startWithNext { [weak self] isActive in
             if isActive {

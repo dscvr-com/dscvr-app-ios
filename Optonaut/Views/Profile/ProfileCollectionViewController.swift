@@ -37,8 +37,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     var fromLoginPage:Bool = false
     var finishReloadingCollectionView = MutableProperty<Bool>(false)
     
-    var ids = OptographIds.sharedInstance
-    
     init(personID: UUID) {
         
         collectionViewModel = ProfileOptographsViewModel(personID: personID)
@@ -196,16 +194,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                     strongSelf.optographIDs = results.models
                         .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
-                    
-                    strongSelf.ids.optographIDs = results.models
-                        .filter{ $0.isPublished && !$0.isUploading}
-                        .map{$0.ID}
-                    
-                    //                    strongSelf.collectionView!.performBatchUpdates({
-                    //                        strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                    //                        strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                    //                        strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                    //                        }, completion: nil)
                 }
                 })
             .startWithNext { _ in

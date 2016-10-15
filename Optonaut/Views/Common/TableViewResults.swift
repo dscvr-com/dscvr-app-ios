@@ -53,7 +53,6 @@ struct TableViewResults<T: DeletableModel> {
             } else {
                 exclusiveNewModels.append(newModel)
             }
-            exclusiveNewModels.append(newModel)
         }
         
         var insert: [Int] = []
@@ -71,6 +70,7 @@ struct TableViewResults<T: DeletableModel> {
         
         return TableViewResults(insert: insert, update: update, delete: delete, models: models, changed: changed)
     }
+    
     func mergeForNotification(newModels: [T], deleteOld: Bool) -> TableViewResults<T> {
         
         var models = self.models

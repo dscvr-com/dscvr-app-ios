@@ -17,29 +17,23 @@ class StNavViewController: NavigationController {
     required init(){
         super.init(nibName: nil, bundle: nil)
         
-        let loginOverlayViewController = LoginOverlayViewController()
+        let stVC = UIViewController()
+        stVC.view.backgroundColor = UIColor.blackColor()
+        
         navigationBar.titleTextAttributes = [ NSFontAttributeName: UIFont(name: "Avenir-Book", size: 20)!]
         
         if SessionService.isLoggedIn {
-            viewControllers.insert(loginOverlayViewController, atIndex: 0)
+            viewControllers.insert(stVC, atIndex: 0)
             pushViewController(StorytellingCollectionViewController(personID: SessionService.personID), animated: false)
             
         } else {
-            pushViewController(loginOverlayViewController, animated: false)
+            pushViewController(stVC, animated: false)
             SessionService.loginNotifiaction.signal.observeNext {
                 let profilePage = StorytellingCollectionViewController(personID: SessionService.personID)
                 profilePage.fromLoginPage = true
                 self.pushViewController(profilePage, animated: false)
             }
         }
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-//        pushViewController(viewController, animated: true)
-
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
@@ -54,16 +48,5 @@ class StNavViewController: NavigationController {
     deinit {
         logRetain()
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

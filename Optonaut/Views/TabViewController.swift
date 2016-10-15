@@ -46,7 +46,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     var postTwitter: MutableProperty<Bool>
     var isOnline: MutableProperty<Bool>
     
-    enum PageStatus { case Profile, Share, Feed }
+    enum PageStatus { case Profile, Share, Feed ,Story}
     let pageStatus = MutableProperty<PageStatus>(.Feed)
     
     var delegate: TabControllerDelegate?
@@ -196,7 +196,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     func scrollViewDidScroll(scrollView:UIScrollView) {
         
         if (!Defaults[.SessionUserDidFirstLogin]) {
-            
+            //if first login
             if (scrollView.contentOffset.x <= (self.view.frame.width * 2)) {
                 scrollView.contentOffset.x = self.view.frame.width * 2
             }
@@ -207,9 +207,20 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 shareData.isSharePageOpen.value = false
             }
         }
+        
+        //else if !SessionService.isLoggedIn &&  scrollView.contentOffset.x >= (self.view.frame.width * 3){
+        //scrollView.contentOffset.x = self.view.frame.width * 2
     }
+    
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
+        
+        if !SessionService.isLoggedIn {
+            if scrollView.contentOffset.x >= (self.view.frame.width * 3) || (scrollView.contentOffset.x > (self.view.frame.width * 2) + 40){
+                scrollView.contentOffset.x = self.view.frame.width * 2
+            } else if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
+                scrollView.contentOffset.x = self.view.frame.width
+            }
+        } else if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
             scrollView.contentOffset.x = self.view.frame.width
         }
         
@@ -219,6 +230,9 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         } else if scrollView.contentOffset.x == 0 {
             print("nasa share ka")
             pageStatus.value = .Share
+        } else if scrollView.contentOffset.x == self.view.frame.width * 3 {
+            print("nasa story ka")
+            pageStatus.value = .Story
         } else {
             print("nasa profile ka")
             pageStatus.value = .Profile
@@ -235,12 +249,20 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func leftButtonAction() {
-        print("23234234wrewrewrew")
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.adminFrame,animated: false)
             }, completion:{ _ in
                 print("nasa feed ka")
                 self.pageStatus.value = .Feed
+        })
+    }
+    
+    func goToProfileFromStory() {
+        UIView.animateWithDuration(0.5, animations: {
+            self.scrollView.scrollRectToVisible(self.BFrame,animated: false)
+            }, completion:{ _ in
+                print("nasa profile ka")
+                self.pageStatus.value = .Profile
         })
     }
     
