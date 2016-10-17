@@ -278,6 +278,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 if let mt = (data["story_object_media_type"] as? String) {
                     st.model.mediaType = mt
                 }
+                if let mFN = (data["story_object_media_filename"] as? String) {
+                    st.model.objectMediaFilename = mFN
+                }
                 if let position = data["story_object_position"] as? [CGFloat] {
                     st.model.objectPosition = position.map{String($0)}.joinWithSeparator(",")
                 }
@@ -1166,7 +1169,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         let intervalSeconds = NSString(format: "%0.0f", seconds)
         
         let filename = (intervalSeconds as String) + ".m4a"
-        let exportFile = documentsDirectory.stringByAppendingPathComponent(filename)
+        
+        let exportFile = documentsDirectory.stringByAppendingPathComponent("StoryFiles/\(filename)")
         
         let exportURL = NSURL(fileURLWithPath: exportFile)
         exporter?.outputURL = exportURL
@@ -1184,7 +1188,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 print("completed")
                 let data = NSData(contentsOfFile: exportFile)
                 
-                let base64: String = (data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength))!
+                //let base64: String = (data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength))!
                 
                 //                print("base64string: \(base64)")
                 

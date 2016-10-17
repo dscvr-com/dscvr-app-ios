@@ -1054,22 +1054,27 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                                 self?.removeNode.hidden = true
                                 self?.view.addSubview((self?.removeNode)!)
                             })
-                        }
-                        else if node.mediaType == "MUS"{
+                        } else if node.mediaType == "MUS"{
                             print("MEDIATYPE: MUS")
+                            
                             let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
-                            self?.playerItem = AVPlayerItem(URL: url!)
-                            self?.player = AVPlayer(playerItem: self!.playerItem!)
-                            self?.player?.rate = 1.0
-                            self?.player?.volume = 1.0
-                            self?.player!.play()
                             
-                            NSNotificationCenter.defaultCenter().addObserver(self!, selector: #selector(self?.playerItemDidReachEnd), name: AVPlayerItemDidPlayToEndTimeNotification, object: self?.player!.currentItem)
-                            
-                            //                        NSNotificationCenter.defaultCenter().addObserver(self,
-                            //                                                                         selector: #selector(playerItemDidReachEnd()),
-                            //                                                                         name: AVPlayerItemDidPlayToEndTimeNotification,
-                            //                                                                         object: player!.currentItem)
+                            if let returnPath:String = self?.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
+                                if returnPath != "" {
+                                    self?.playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
+                                    self?.player = AVPlayer(playerItem: self!.playerItem!)
+                                    self?.player?.rate = 1.0
+                                    self?.player?.volume = 1.0
+                                    self?.player!.play()
+                                    
+                                    NSNotificationCenter.defaultCenter().addObserver(self!, selector: #selector(self?.playerItemDidReachEnd), name: AVPlayerItemDidPlayToEndTimeNotification, object: self?.player!.currentItem)
+                                    
+                                    //                        NSNotificationCenter.defaultCenter().addObserver(self,
+                                    //                                                                         selector: #selector(playerItemDidReachEnd()),
+                                    //                                                                         name: AVPlayerItemDidPlayToEndTimeNotification,
+                                    //                                                                         object: player!.currentItem)
+                                }
+                            }
                         }else{
                             if objectPosition.count >= 2{
                                 let nodeItem = StorytellingObject()

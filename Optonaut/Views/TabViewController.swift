@@ -215,7 +215,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         
         if !SessionService.isLoggedIn {
-            if scrollView.contentOffset.x >= (self.view.frame.width * 3) || (scrollView.contentOffset.x > (self.view.frame.width * 2) + 40){
+            if scrollView.contentOffset.x >= (self.view.frame.width * 3) || (scrollView.contentOffset.x > (self.view.frame.width * 2) + 20){
                 scrollView.contentOffset.x = self.view.frame.width * 2
             } else if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
                 scrollView.contentOffset.x = self.view.frame.width
