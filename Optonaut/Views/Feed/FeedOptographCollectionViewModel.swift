@@ -120,7 +120,8 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .map { _ in self.results.value.models.last }
             .ignoreNil()
             .flatMap(.Latest) { oldestResult in
-                ApiService<OptographApiModel>.get("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                //ApiService<OptographApiModel>.getForGate("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                ApiService<OptographApiModel>.getForGate("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in

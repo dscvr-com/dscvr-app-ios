@@ -1316,6 +1316,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.cloudQuote.hidden = true
                 self.diagonal.hidden = true
+                self.storyPinLabel.removeFromSuperview()
                 
 //                self.removeNode.hidden = true
             })
