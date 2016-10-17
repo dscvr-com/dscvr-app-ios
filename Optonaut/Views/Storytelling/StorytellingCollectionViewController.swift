@@ -98,8 +98,6 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
                 self.collectionView?.reloadData()
         }
         
-        feedsModel.isActive.producer.startWithNext{print(">>");$0}
-        
         tabController?.pageStatus.producer.startWithNext { val in
             if val == .Story {
                 self.feedsModel.refreshNotification.notify(())
