@@ -78,7 +78,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                     .startOnUserInitiated()
             }
             .observeOnMain()
-            .map { self.results.value.merge($0, deleteOld: false) }
+            .map { self.results.value.merge($0, deleteOld: true) }
             .observeNext { results in
                 self.results.value = results
             }
@@ -151,7 +151,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                     .startOnUserInitiated()
             }
             .observeOnMain()
-            .map { self.results.value.merge($0, deleteOld: false) }
+            .map { self.results.value.merge($0, deleteOld: true) }
             .observeNext { self.results.value = $0 }
         
         isActive.producer.skipRepeats().startWithNext { [weak self] isActive in

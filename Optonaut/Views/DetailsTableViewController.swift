@@ -45,7 +45,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var last_optographID:UUID = ""
     private var lastElapsedTime = CACurrentMediaTime() ;
     
-    
+    var mp3Timer: NSTimer?
     
     var optographTopPick:NSArray = []
     
@@ -562,7 +562,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this story? You cannot undo this.", preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
                     self.viewModel.deleteStories()
-                    self.closeDetailsPage()
+                        .on(failed : { [weak self] _ in
+                            
+                            let alert = UIAlertController(title:"Error!", message: "Deleting failed! Please try again.", preferredStyle: .Alert)
+                            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+                            self?.navigationController!.presentViewController(alert, animated: true, completion: nil)
+                            },completed: { [weak self] _ in
+                                self?.closeDetailsPage()
+                    }).start()
+                    
                 }))
                 
                 alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
@@ -584,6 +592,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.navigationController!.presentViewController(alert, animated: true, completion: nil)
         }
     }
+    
+    
     func closeDetailsPage() {
         
         renderDelegate.dispose()
@@ -1046,8 +1056,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                             print("url:",url)
                             
                             if let returnPath:String = self?.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
-                                print(returnPath)
+                                
                                 if returnPath != "" {
+                                    print(returnPath)
                                     self?.playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
                                     self?.player = AVPlayer(playerItem: self!.playerItem!)
                                     self?.player?.rate = 1.0
@@ -1055,14 +1066,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                                     self?.player!.play()
                                     
                                     NSNotificationCenter.defaultCenter().addObserver(self!, selector: #selector(self?.playerItemDidReachEnd), name: AVPlayerItemDidPlayToEndTimeNotification, object: self?.player!.currentItem)
-                                    
-                                    //                        NSNotificationCenter.defaultCenter().addObserver(self,
-                                    //                                                                         selector: #selector(playerItemDidReachEnd()),
-                                    //                                                                         name: AVPlayerItemDidPlayToEndTimeNotification,
-                                    //                                                                         object: player!.currentItem)
+                                } else {
+                                    self?.mp3Timer = NSTimer.scheduledTimerWithTimeInterval(5, target: self!, selector: #selector(self?.checkMp3), userInfo: ["FileUrl":"https://bucket.dscvr.com" + node.objectMediaFileUrl,"FileName":node.objectMediaFilename], repeats: true)
                                 }
                             }
-                        }else{
+                        } else {
                             if objectPosition.count >= 2{
                                 let nodeItem = StorytellingObject()
                                 
@@ -1105,7 +1113,31 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         renderDelegate.reset()
     }
     
-   
+    func checkMp3(timer:NSTimer) {
+        
+        let userInfo = timer.userInfo as! Dictionary<String, AnyObject>
+        
+        let fileUrl:String = (userInfo["FileUrl"] as! String)
+        let fileName:String = (userInfo["FileName"] as! String)
+        
+        let url = NSURL(string: "https://bucket.dscvr.com" + fileUrl)
+        print("url:",url)
+        
+        if let returnPath:String = imageCache.insertStoryFile(url, file: nil, fileName: fileName) {
+            
+            if returnPath != "" {
+                print(returnPath)
+                playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
+                self.player = AVPlayer(playerItem: self.playerItem!)
+                self.player?.rate = 1.0
+                self.player?.volume = 1.0
+                self.player!.play()
+                
+                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.playerItemDidReachEnd), name: AVPlayerItemDidPlayToEndTimeNotification, object: self.player!.currentItem)
+                mp3Timer?.invalidate()
+            }
+        }
+    }
     
     func showRotationAlert() {
         rotationAlert = UIAlertController(title: "Rotate counter clockwise", message: "Please rotate your phone counter clockwise by 90 degree.", preferredStyle: .Alert)
@@ -1299,7 +1331,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             countDown = 2
             dispatch_async(dispatch_get_main_queue(), {
                 self.countdownLabel.text = ""
-                self.storyPinLabel.text = ""
+                //self.storyPinLabel.text = ""
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.cloudQuote.hidden = true
                 self.diagonal.hidden = true
@@ -1328,6 +1360,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
             
             if nameArray[1] == "TXT"{
+                print(">>>>>>",nodeObject.optographID)
                 self.showText(nodeObject)
                 
                 return
@@ -1353,7 +1386,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     self.countdownLabel.sizeToFit()
                     self.countdownLabel.backgroundColor = UIColor.clearColor()
                     self.countdownLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
-                    self.storyPinLabel.text = ""
+                    //self.storyPinLabel.text = ""
                 })
             }
                 
@@ -1385,8 +1418,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     }
                 }
             }
-        }
-        else{ // this is a new id
+        } else{ // this is a new id
             last_optographID = nodeObject.optographID
         }
     }

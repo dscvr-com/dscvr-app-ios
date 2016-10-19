@@ -1202,23 +1202,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 print("completed")
                 let data = NSData(contentsOfFile: exportFile)
                 
-                //let base64: String = (data?.base64EncodedStringWithOptions(.Encoding64CharacterLineLength))!
-                
-                //                print("base64string: \(base64)")
-                
                 let translationArray = ["0", "0", "0"]
                 
                 let rotationArray = ["0", "0", "0"]
-                
-                /*
-                 "story_object_media_type":            "Image",
-                 "story_object_media_face":            "Yo",
-                 "story_object_media_description":     "Desc 1",
-                 "story_object_media_additional_data": "Data 1",
-                 "story_object_position":              [123, 456, 789],
-                 "story_object_rotation":              [987, 654, 321],
-                 "story_object_media_filename":        "Thousand Minds Logo.png",
-                 "story_object_media_base64":          "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABcc */
                 
                 let child : NSDictionary = ["story_object_media_type": self.nodeItem.objectType,
                     "story_object_media_face": "pin",
@@ -1227,7 +1213,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     "story_object_position": translationArray,
                     "story_object_rotation": rotationArray,
                     "story_object_media_filename": filename]
-//                    ,"story_object_media_base64": base64]
                 
                 self.nodes.append(child)
                 
@@ -1267,6 +1252,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         mediaPicker.dismissViewControllerAnimated(true, completion: nil)
         print("you picked: \(mediaItemCollection)")
         print("URL: \(itemURL.absoluteString)")
+    }
+    
+    func mediaPickerDidCancel(mediaPicker: MPMediaPickerController) {
+        mediaPicker.dismissViewControllerAnimated(true, completion: nil)
     }
     
     func deleteOpto() {
