@@ -13,7 +13,7 @@ struct Story: Model {
     var ID: UUID
     var createdAt: NSDate
     var updatedAt: NSDate
-    var deletedAt: NSDate
+    var deletedAt: NSDate?
     var optographID: UUID
     var personID: UUID
     var childrenID: UUID
@@ -23,7 +23,7 @@ struct Story: Model {
             ID: uuid(),
             createdAt: NSDate(),
             updatedAt: NSDate(),
-            deletedAt: NSDate(),
+            deletedAt: nil,
             optographID: "",
             personID: "",
             childrenID: ""
@@ -83,7 +83,7 @@ extension Story: SQLiteModel {
             StorySchema.ID <-- ID,
             StorySchema.createdAt <-- createdAt,
             StorySchema.updatedAt <-- updatedAt,
-            StorySchema.deletedAt <-- updatedAt,
+            StorySchema.deletedAt <-- deletedAt,
             StorySchema.optographID <-- optographID,
             StorySchema.personID <-- personID,
             StorySchema.storyChildrenId <-- childrenID,

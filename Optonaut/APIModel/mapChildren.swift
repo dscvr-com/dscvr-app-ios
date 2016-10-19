@@ -14,7 +14,7 @@ struct mapChildren: ApiModel, Mappable {
     var ID:UUID = ""
     var createdAt:NSDate = NSDate()
     var updatedAt:NSDate = NSDate()
-    var deletedAt:NSDate = NSDate()
+    var deletedAt:NSDate? = nil
     var optographID = ""
     var personID = ""
     var children:[StorytellingChildren]?

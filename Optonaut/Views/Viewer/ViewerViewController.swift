@@ -145,9 +145,9 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     private func createRenderDelegates() {
         InvertableHeadTrackerRotationSource.InvertableInstance.inverted = orientation == .LandscapeLeft
         
-        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false)
+        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false,isStory:false)
         leftRenderDelegate.scnView = leftScnView
-        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 2, autoDispose: false)
+        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 2, autoDispose: false,isStory:false)
         rightRenderDelegate.scnView = rightScnView
         
         leftScnView.scene = leftRenderDelegate.scene

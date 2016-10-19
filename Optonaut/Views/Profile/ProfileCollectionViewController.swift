@@ -522,13 +522,18 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if indexPath.item != 0 && !isFollowClicked && !(indexPath.item == 1 && optographIDsNotUploaded.count != 0){
+            
             var cellCount:Int = 1
             
             if optographIDsNotUploaded.count != 0 {
                 cellCount += 1
             }
-            let detailsViewController = DetailsTableViewController(optoList: [optographIDs[indexPath.item - cellCount]])
-            detailsViewController.cellIndexpath = cellCount
+            
+            var optographsToPick: [UUID] = []
+            optographsToPick.append(optographIDs[indexPath.row - cellCount])
+            
+            let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
+            detailsViewController.cellIndexpath = indexPath.item
             navigationController?.pushViewController(detailsViewController, animated: true)
         }
     }

@@ -114,7 +114,7 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
     //UICollectionView Delegate
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        if startStory{
+        if startStory {
             let detailsViewController = StoryDetailsTableViewController(optographId: optographIDs[indexPath.item])
             detailsViewController.cellIndexpath = indexPath.item
             detailsViewController.isStorytelling = true
@@ -122,8 +122,7 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
             print("id: \(optographIDs[indexPath.item])");
             
             navigationController?.pushViewController(detailsViewController, animated: true)
-        }
-        else{
+        } else {
             delegate?.optographSelected(optographIDs[indexPath.item]);
             self.dismissViewControllerAnimated(true, completion: nil)
         }

@@ -542,36 +542,37 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        var optographsToPick: [UUID] = []
-        optographsToPick.append(optographIDs[indexPath.row])
+        let startOptograph = optographIDs[indexPath.row]
+        let optoModel = Models.optographs[startOptograph]!
+        let storyId = optoModel.model.storyID
         
-        if (indexPath.row + 5 ) >= optographIDs.count {
-            for a in 1...5 {
-                optographsToPick.append(optographIDs[(indexPath.row + a) % optographIDs.count])
-            }
+        if storyId != "" {
+            let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
+            detailsViewController.cellIndexpath = indexPath.item
+            detailsViewController.isStory = true
+            detailsViewController.storyID = storyId
+            navigationController?.pushViewController(detailsViewController, animated: true)
         } else {
-            for a in 1...5 {
-                optographsToPick.append(optographIDs[indexPath.row + a])
+            var optographsToPick: [UUID] = []
+            optographsToPick.append(optographIDs[indexPath.row])
+            
+            if (indexPath.row + 5 ) >= optographIDs.count {
+                for a in 1...5 {
+                    optographsToPick.append(optographIDs[(indexPath.row + a) % optographIDs.count])
+                }
+            } else {
+                for a in 1...5 {
+                    optographsToPick.append(optographIDs[indexPath.row + a])
+                }
             }
+            
+            let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
+            detailsViewController.cellIndexpath = indexPath.item
+            navigationController?.pushViewController(detailsViewController, animated: true)
+        
         }
         
-//        let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
-//        
-//        detailsViewController.cellIndexpath = indexPath.item
-//        
-//        navigationController?.pushViewController(detailsViewController, animated: true)
         
-        
-        let startOptograph = optographIDs[indexPath.row]
-        
-        let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
-        detailsViewController.cellIndexpath = indexPath.item
-        detailsViewController.isStory = true
-        
-        let optoModel = Models.optographs[startOptograph]!
-        
-        detailsViewController.storyID = optoModel.model.storyID
-        navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
     

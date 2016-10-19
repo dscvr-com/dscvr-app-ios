@@ -12,7 +12,7 @@ struct StorySchemaType: ModelSchema {
     let ID = Expression<UUID>("story_id")
     let createdAt = Expression<NSDate>("story_created_at")
     let updatedAt = Expression<NSDate>("story_updated_at")
-    let deletedAt = Expression<NSDate>("story_deleted_at")
+    let deletedAt = Expression<NSDate?>("story_deleted_at")
     let optographID = Expression<UUID>("story_optographd_id")
     let personID = Expression<UUID>("story_person_id")
     let storyChildrenId = Expression<UUID>("story_children_id")

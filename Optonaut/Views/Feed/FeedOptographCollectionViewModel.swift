@@ -51,7 +51,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         refreshNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .flatMap(.Latest) { _ in
-                ApiService<OptographApiModel>.get("optographs/feed")
+                ApiService<OptographApiModel>.getForGate("optographs/feed")
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
@@ -66,6 +66,11 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                         }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
                         Models.story.touch(apiModel.story).insertOrUpdate()
+                        if apiModel.story.children!.count != 0 {
+                            for child in apiModel.story.children! {
+                                Models.storyChildren.touch(child).insertOrUpdate()
+                            }
+                        }
                     })
                     .map(Optograph.fromApiModel)
                     .ignoreError()
@@ -120,7 +125,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .map { _ in self.results.value.models.last }
             .ignoreNil()
             .flatMap(.Latest) { oldestResult in
-                //ApiService<OptographApiModel>.getForGate("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                 ApiService<OptographApiModel>.getForGate("optographs/feed", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
@@ -134,6 +138,12 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             ps.model.isFollowed = apiModel.person.isFollowed
                         }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
+                        Models.story.touch(apiModel.story).insertOrUpdate()
+                        if apiModel.story.children!.count != 0 {
+                            for child in apiModel.story.children! {
+                                Models.storyChildren.touch(child).insertOrUpdate()
+                            }
+                        }
                     })
                     .map(Optograph.fromApiModel)
                     .ignoreError()

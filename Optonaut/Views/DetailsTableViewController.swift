@@ -151,8 +151,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         let hfov: Float = 40
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
-        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
+        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true,isStory: isStory)
         renderDelegate.scnView = scnView
+        
         renderDelegate.delegate = self
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
@@ -163,15 +164,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
-        
-//        let fontFamilyNames = UIFont.familyNames()
-//        
-//        for familyName in fontFamilyNames {
-//            
-//            print("Font Family Name = [\(familyName)]")
-//            let names = UIFont.fontNamesForFamilyName(familyName)
-//            print("Font Names = [\(names)]")
-//        }
         
         if isStory {
             
@@ -566,16 +558,26 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func deleteOpto() {
         
         if SessionService.isLoggedIn {
-            let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this 360 image? You cannot undo this.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
-                self.viewModel.deleteOpto()
-                self.closeDetailsPage()
-                self.imageCache.deleteMp4(self.optographID)
-            }))
+            if isStory {
+                let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this story? You cannot undo this.", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
+                    self.viewModel.deleteStories()
+                    self.closeDetailsPage()
+                }))
+                
+                alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+                self.navigationController!.presentViewController(alert, animated: true, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
-            
-            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+            } else {
+                let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this 360 image? You cannot undo this.", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
+                    self.viewModel.deleteOpto()
+                    self.closeDetailsPage()
+                }))
+                
+                alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+                self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+            }
         } else {
             let alert = UIAlertController(title:"", message: "Please login to delete this 360 image.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
@@ -654,23 +656,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func toggleStar() {
-        //        if SessionService.isLoggedIn {
-        //            viewModel.toggleLike()
-        //        } else {
-        //
-        //            let loginOverlayViewController = LoginOverlayViewController(
-        //                title: "Login to like this moment",
-        //                successCallback: {
-        //                    self.viewModel.toggleLike()
-        //                },
-        //                cancelCallback: { true },
-        //                alwaysCallback: {
-        //                    self.parentViewController!.tabController!.unlockUI()
-        //                    self.parentViewController!.tabController!.showUI()
-        //                }
-        //            )
-        //            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
-        //        }
         
         if SessionService.isLoggedIn {
             viewModel.toggleLike()
@@ -1058,8 +1043,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                             print("MEDIATYPE: MUS")
                             
                             let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
+                            print("url:",url)
                             
                             if let returnPath:String = self?.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
+                                print(returnPath)
                                 if returnPath != "" {
                                     self?.playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
                                     self?.player = AVPlayer(playerItem: self!.playerItem!)
@@ -1218,14 +1205,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         dispatch_async(dispatch_get_main_queue(), {
             self.storyPinLabel.text = nameArray[0]
             self.storyPinLabel.textColor = UIColor.blackColor()
-            self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 30.0)
+            self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 18.0)
             self.storyPinLabel.sizeToFit()
-            self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 40)
+            self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 30)
             self.storyPinLabel.backgroundColor = UIColor.clearColor()
             self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
             self.storyPinLabel.backgroundColor = UIColor.whiteColor()
-            self.storyPinLabel.layer.borderColor = UIColor.blackColor().CGColor
-            self.storyPinLabel.layer.borderWidth = 1.0
+//            self.storyPinLabel.layer.borderColor = UIColor.blackColor().CGColor
+//            self.storyPinLabel.layer.borderWidth = 1.0
 //            self.storyPinLabel.layer.cornerRadius = 10.0
 //            self.storyPinLabel.clipsToBounds = true
             self.storyPinLabel.textAlignment = NSTextAlignment.Center
@@ -1360,7 +1347,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     
                 dispatch_async(dispatch_get_main_queue(), {
                         
-                    self.countdownLabel.text = String(self.countDown)
+                    //self.countdownLabel.text = String(self.countDown)
                     self.countdownLabel.textColor = UIColor.whiteColor()
                     self.countdownLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
                     self.countdownLabel.sizeToFit()
@@ -1375,7 +1362,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 countDown = 2
                     
                 dispatch_async(dispatch_get_main_queue(), {
-                    self.countdownLabel.text = ""
+                    //self.countdownLabel.text = ""
                     self.storyPinLabel.text = ""
                     
                     self.isPlaying = false

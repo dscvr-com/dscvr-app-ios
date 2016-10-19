@@ -203,17 +203,19 @@ class CubeRenderDelegate: RenderDelegate {
     let imageCache: CollectionImageCache
     
     let spriteScen = SKScene()
+    private var isStory:Bool
     
    
-    convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool) {
+    convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool,isStory:Bool) {
         
         let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
         
-        self.init(rotationMatrixSource: rotationMatrixSource, fov: newFov, cameraOffset: Float(0), cubeFaceCount: cubeFaceCount, autoDispose: autoDispose)
+        self.init(rotationMatrixSource: rotationMatrixSource, fov: newFov, cameraOffset: Float(0), cubeFaceCount: cubeFaceCount, autoDispose: autoDispose,isStory: isStory)
     }
     
-    init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float, cubeFaceCount: Int, autoDispose: Bool) {
+    init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float, cubeFaceCount: Int, autoDispose: Bool,isStory:Bool) {
         markers.removeAll()
+        self.isStory = isStory
         self.cubeFaceCount = cubeFaceCount
         self.autoDispose = autoDispose
         self.willRequestAll = false
@@ -225,7 +227,9 @@ class CubeRenderDelegate: RenderDelegate {
         
         
         let circleGeo = SCNSphere(radius: 0.01)
-        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        
+        circleGeo.firstMaterial?.diffuse.contents = self.isStory ? UIColor.redColor():UIColor.clearColor()
+        
         sphereGeoNode = SCNNode(geometry: circleGeo)
         sphereGeoNode.name = "test"
         
@@ -303,24 +307,10 @@ class CubeRenderDelegate: RenderDelegate {
         
         
         cameraText.position = SCNVector3Make(1.0, 1.0, 0)
-     //   sphereGeoNode.eulerAngles = SCNVector3Make(0, 0, 0)
-        
-        
-        
-     //   let pivot = SCNMatrix4MakeTranslation(-(0.0 + 0.1 / 2) * 2 + 1, (0.0 + 0.1 / 2) * 2 - 1, 0)
-        
-        
-     //   var transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
-     //  transform = SCNMatrix4Mult(sphereGeoNode.transform, transform)
-     //   sphereGeoNode.transform = SCNMatrix4Mult(SCNMatrix4Invert(pivot), transform)
 
         
         scene.rootNode.addChildNode(sphereGeoNode)
         scene.rootNode.addChildNode(cameraText)
-        
-        
-        
-        
         
     }
     
@@ -337,15 +327,6 @@ class CubeRenderDelegate: RenderDelegate {
         let sorted = allNodes.sort { (n1: SCNNode, n2: SCNNode) in getDist(center, b: n1) < getDist(center, b: n2) }
         return [SCNNode](sorted.prefix(k))
     }
-    
-//    func removeSelectedNode(nodeName: String){
-//        scene.rootNode.enumerateChildNodesUsingBlock{
-//            (node, stop) -> Void in
-//            if node.name == nodeName{
-//                node.removeFromParentNode()
-//            }
-//        }
-//    }
     
     func removeAllNodes(nodeName: String){
         
@@ -685,28 +666,12 @@ class CubeRenderDelegate: RenderDelegate {
         var enteredFlag = false
         for marknode in markers {
             
-        //    print("marknode.name!: \(marknode.name)")
-            
-           // let backNode = SCNNode()
-            
-            /*
-            node x: 1.11453
-            node y: -0.0
-            node z: -0.212028
-            posi x: 0.191026
-            posi y: 0.875804
-            posi z: -0.443256
-            */
-            
             if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.buttonCamera){
                 let node = StorytellingObject()
                 
                 node.objectRotation = marknode.eulerAngles
                 node.objectVector3 = marknode.position
                 node.optographID = marknode.name!
-                
-                //different delegate method
-//                delegate!.didEnterFrustrum(node, inFrustrum: true)
                 delegate!.isInButtonCamera(true)
                 enteredFlag = true
             }
@@ -722,22 +687,15 @@ class CubeRenderDelegate: RenderDelegate {
                // print("markername \(markername)")
                 delegate!.didEnterFrustrum(node, inFrustrum: true)
                 enteredFlag = true
+            }
         }
-    }
-    if !enteredFlag {
-        let node = StorytellingObject()
-        delegate!.didEnterFrustrum(node, inFrustrum: false)
-        delegate!.isInButtonCamera(false)
-    }
- 
- 
-      
-        // Use verbose colors for debugging.
-      //   planes.values.forEach { $0.node.geometry!.firstMaterial!.diffuse.contents = UIColor.redColor() }
-     //    visibleAndAdjacentPlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.blueColor() }
-     //    visiblePlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.greenColor() }
-        
-        // TODO - Syncing here is not really fast. It's more like really slow. 
+        if self.isStory {
+            if !enteredFlag {
+                let node = StorytellingObject()
+                delegate!.didEnterFrustrum(node, inFrustrum: false)
+                delegate!.isInButtonCamera(false)
+            }
+        }
         
         for (index, item) in planes {
             let nowVisible = visibleAndAdjacentPlanes.contains(item.node)
@@ -746,13 +704,8 @@ class CubeRenderDelegate: RenderDelegate {
             } else if autoDispose && !nowVisible {
                 forget(item, index: index)
             }
-            
-            
-            
         }
         
-        // Forced initialisation of ALL views. We do that past the 
-        // above code so faces we look at get priority.
         if willRequestAll {
             for (index, plane) in self.planes {
                request(plane, index: index)

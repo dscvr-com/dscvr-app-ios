@@ -47,56 +47,56 @@ class ProfileOptographsViewModel {
             .map { self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
 
-        refreshNotification.signal
-            .takeWhile { _ in Reachability.connectedToNetwork() }
-            .flatMap(.Latest) { _ in
-                ApiService<OptographApiModel>.get("persons/\(personID)/optographs")
-                    .observeOnUserInitiated()
-                    .on(next: { apiModel in
-                        Models.optographs.touch(apiModel).insertOrUpdate { box in
-                            box.model.isStitched = true
-                            box.model.isPublished = true
-                            box.model.isSubmitted = true
-                            box.model.starsCount = apiModel.starsCount
-                        }
-                        Models.persons.touch(apiModel.person).insertOrUpdate()
-                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
-                    })
-                    .map(Optograph.fromApiModel)
-                    .ignoreError()
-                    .collect()
-                    .startOnUserInitiated()
-            }
-            .observeOnMain()
-            .map { self.results.value.merge($0, deleteOld: false) }
-            .observeNext {  self.results.value = $0 }
-        
-        
-        loadMoreNotification.signal
-            .takeWhile { _ in Reachability.connectedToNetwork() }
-            .map { _ in self.results.value.models.last }
-            .ignoreNil()
-            .flatMap(.Latest) { oldestResult in
-                ApiService<OptographApiModel>.get("persons/\(personID)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
-                    .observeOnUserInitiated()
-                    .on(next: { apiModel in
-                        Models.optographs.touch(apiModel).insertOrUpdate { box in
-                            box.model.isStitched = true
-                            box.model.isPublished = true
-                            box.model.isSubmitted = true
-                            box.model.starsCount = apiModel.starsCount
-                        }
-                        Models.persons.touch(apiModel.person).insertOrUpdate()
-                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
-                    })
-                    .map(Optograph.fromApiModel)
-                    .ignoreError()
-                    .collect()
-                    .startOnUserInitiated()
-            }
-            .observeOnMain()
-            .map { self.results.value.merge($0, deleteOld: false) }
-            .observeNext { self.results.value = $0 }
+//        refreshNotification.signal
+//            .takeWhile { _ in Reachability.connectedToNetwork() }
+//            .flatMap(.Latest) { _ in
+//                ApiService<OptographApiModel>.get("persons/\(personID)/optographs")
+//                    .observeOnUserInitiated()
+//                    .on(next: { apiModel in
+//                        Models.optographs.touch(apiModel).insertOrUpdate { box in
+//                            box.model.isStitched = true
+//                            box.model.isPublished = true
+//                            box.model.isSubmitted = true
+//                            box.model.starsCount = apiModel.starsCount
+//                        }
+//                        Models.persons.touch(apiModel.person).insertOrUpdate()
+//                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
+//                    })
+//                    .map(Optograph.fromApiModel)
+//                    .ignoreError()
+//                    .collect()
+//                    .startOnUserInitiated()
+//            }
+//            .observeOnMain()
+//            .map { self.results.value.merge($0, deleteOld: false) }
+//            .observeNext {  self.results.value = $0 }
+//        
+//        
+//        loadMoreNotification.signal
+//            .takeWhile { _ in Reachability.connectedToNetwork() }
+//            .map { _ in self.results.value.models.last }
+//            .ignoreNil()
+//            .flatMap(.Latest) { oldestResult in
+//                ApiService<OptographApiModel>.get("persons/\(personID)/optographs", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+//                    .observeOnUserInitiated()
+//                    .on(next: { apiModel in
+//                        Models.optographs.touch(apiModel).insertOrUpdate { box in
+//                            box.model.isStitched = true
+//                            box.model.isPublished = true
+//                            box.model.isSubmitted = true
+//                            box.model.starsCount = apiModel.starsCount
+//                        }
+//                        Models.persons.touch(apiModel.person).insertOrUpdate()
+//                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
+//                    })
+//                    .map(Optograph.fromApiModel)
+//                    .ignoreError()
+//                    .collect()
+//                    .startOnUserInitiated()
+//            }
+//            .observeOnMain()
+//            .map { self.results.value.merge($0, deleteOld: false) }
+//            .observeNext { self.results.value = $0 }
     }
     
     func refresh() {

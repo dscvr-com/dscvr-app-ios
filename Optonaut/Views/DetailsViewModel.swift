@@ -173,6 +173,25 @@ class DetailsViewModel {
         }
         
     }
+    func deleteStories() {
+        
+        var currentStoryId = ""
+        
+        Models.optographs[optographId]!.insertOrUpdate { box in
+            currentStoryId = box.model.storyID
+            return box.model.storyID = ""
+        }
+        
+        Models.story[currentStoryId]?.insertOrUpdate{ box in
+            box.model.deletedAt = NSDate()
+        }
+        
+        SignalProducer<Bool, ApiError>(value: true)
+            .flatMap(.Latest) { _ in
+                ApiService<EmptyResponse>.deleteNewEndpoint("story/\(currentStoryId)")
+            }
+            .start()
+    }
     
     private func updatePropertiesDetails() {
         disposable = optographBox.producer.startWithNext{ [weak self] optograph in

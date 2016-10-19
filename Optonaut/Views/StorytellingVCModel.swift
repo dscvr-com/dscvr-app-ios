@@ -24,7 +24,7 @@ class StorytellingVCModel {
             .select(*)
             .join(OptographTable, on: StoryTable[StorySchema.optographID] == OptographTable[OptographSchema.ID])
             .join(PersonTable, on: StoryTable[StorySchema.personID] == PersonTable[PersonSchema.ID])
-            .filter(StoryTable[StorySchema.personID] == personID)
+            .filter(StoryTable[StorySchema.personID] == personID && StoryTable[StorySchema.deletedAt] == nil)
         
         refreshNotification.signal
             .takeWhile { _ in SessionService.isLoggedIn }

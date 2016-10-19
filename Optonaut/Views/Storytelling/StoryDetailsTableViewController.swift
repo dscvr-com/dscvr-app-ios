@@ -484,7 +484,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         let hfov: Float = 40
         combinedMotionManager = CombinedMotionManager(sceneSize: scnView.frame.size, hfov: hfov)
-        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true)
+        renderDelegate = CubeRenderDelegate(rotationMatrixSource: combinedMotionManager, width: scnView.frame.width, height: scnView.frame.height, fov: Double(hfov), cubeFaceCount: 2, autoDispose: true,isStory: true)
         renderDelegate.scnView = scnView
         renderDelegate.delegate = self
         scnView.scene = renderDelegate.scene

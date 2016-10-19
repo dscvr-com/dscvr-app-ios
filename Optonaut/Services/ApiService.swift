@@ -70,6 +70,9 @@ class ApiService<T: Mappable> {
     static func delete(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .DELETE, queries: queries, parameters: nil)
     }
+    static func deleteNewEndpoint(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
+        return requestForGate(endpoint, method: .DELETE, queries: queries, parameters: nil)
+    }
     
     static func upload(endpoint: String, uploadData: [String: String]) -> SignalProducer<Float, NSError> {
         return SignalProducer<Float, NSError> { sink, disposable in
@@ -218,7 +221,6 @@ class ApiService<T: Mappable> {
         }
         
         let URL = NSURL(string: "https://mapi.dscvr.com/\(endpoint)\(queryStr)")!
-        print("https://mapi.dscvr.com/\(endpoint)\(queryStr)")
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
@@ -337,9 +339,7 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-                                    
-//                                    let jsonData = json["you"]!
-//                                    print(">>>>>",jsonData)
+                                    print(endpoint,json)
                                     
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
