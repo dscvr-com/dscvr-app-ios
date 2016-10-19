@@ -1665,7 +1665,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 4Y4J5JD5NJ;
+						DevelopmentTeam = 675Y8HZ459;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;

@@ -1069,11 +1069,14 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         if isTextPin == true {
             
+            
+            print("pinText")
+            
             let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
             let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
             
-            let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
-                                        "story_object_media_face": "pin",
+            let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,//FXTXT,MUS,NAV,TXT
+                                        "story_object_media_face": "pin",//no pin
                                         "story_object_media_description": "text pin",
                                         "story_object_media_additional_data": inputTextField.text!,
                                         "story_object_position": translationArray,
@@ -1089,9 +1092,20 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             player?.rate = 1.0
             player?.volume = 1.0
             player!.play()
-        }
-        else{
+        } else {
+            
+            print("fixedText")
             if inputTextField.text != ""{
+                let child : NSDictionary = ["story_object_media_type": "FXTXT",
+                                            "story_object_media_face": "no pin",
+                                            "story_object_media_description": "fixed text",
+                                            "story_object_media_additional_data": inputTextField.text!,
+                                            "story_object_position": [0, 0, 0],
+                                            "story_object_rotation": [0, 0, 0]]
+                
+                print("text child: \(child)")
+                nodes.append(child);
+                
                 fixedTextLabel.text = inputTextField.text
                 fixedTextLabel.sizeToFit()
                 fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
