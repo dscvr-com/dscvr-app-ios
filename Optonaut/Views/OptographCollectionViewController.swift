@@ -551,6 +551,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             detailsViewController.cellIndexpath = indexPath.item
             detailsViewController.isStory = true
             detailsViewController.storyID = storyId
+            detailsViewController.isEditingStory = true
             navigationController?.pushViewController(detailsViewController, animated: true)
         } else {
             var optographsToPick: [UUID] = []

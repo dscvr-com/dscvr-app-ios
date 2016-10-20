@@ -1275,20 +1275,19 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func showRemovePinButton(nodeObject: StorytellingObject){
         
         dispatch_async(dispatch_get_main_queue(), {
+            let removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
+            removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
+            removePinButton.backgroundColor = UIColor.blackColor()
+            removePinButton.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
+            self.view.addSubview(removePinButton)
             
+            self.deletablePin = nodeObject
+            self.isEditingStory = true
             
             self.removeNode.hidden = false
         })
         
-//        let removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
-//        removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
-//        removePinButton.backgroundColor = UIColor.blackColor()
-//        removePinButton.addTarget(self, action: #selector(removePin), forControlEvents: UIControlEvents.TouchUpInside)
         
-//        self.view.addSubview(removePinButton)
-        
-        deletablePin = nodeObject
-        isEditingStory = true
     }
   
     func removePin(){
@@ -1303,6 +1302,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             let filteredArray = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
             print("filteredArray: \(filteredArray.count)")
             print("deletable ID: \(nameArray[0])")
+            print(">>>>>",(self?.deletablePin.optographID)!)
             
             self?.renderDelegate.removeAllNodes((self?.deletablePin.optographID)!)
             //self?.storyNodes = filteredArray
@@ -1326,7 +1326,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         //add flag to check if story is being edited
         //move contents to another function [editing and viewing]
         
-//        print("nodeObject: \(nodeObject.optographID)")
         if !inFrustrum {
             countDown = 2
             dispatch_async(dispatch_get_main_queue(), {
@@ -1359,14 +1358,15 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             
             let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
             
-            if nameArray[1] == "TXT"{
+            if nameArray[1] == "TXT" && !isEditingStory {
                 print(">>>>>>",nodeObject.optographID)
                 self.showText(nodeObject)
-                
                 return
             }
             
             if isEditingStory {
+                
+                print("nodeobject>>>>",nodeObject.optographID)
                 self.showRemovePinButton(nodeObject)
                 
                 return

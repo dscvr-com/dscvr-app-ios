@@ -424,41 +424,13 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
-        //        markerNameLabel.hidden = false
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)){
             dispatch_async(dispatch_get_main_queue()){
                 if inFrustrum {
-//                    self.markerNameLabel.text = markerName
-//                    self.markerNameLabel.sizeToFit()
-//                    self.markerNameLabel.center = CGPoint(x: self.view.center.x, y: 70.0)
-//                    
-//                    self.markerNameLabel.hidden = false
-//                    print("markerName: \(self.markerNameLabel.text!)")
-                    
-                    
-                    //                    if (self.markerNameLabel.text! == "Text Item2") {
-                    //                        print("resetToBlack")
-                    //
-                    //                        let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: "8e8fcab1-761e-4ef8-a969-0c1346b39bf3", side: .Left)
-                    //                        self.setCubeImageCache(cubeImageCache)
-                    //                    }
-                    
-                    //                    let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: (self.mapChild?.story_object_media_additional_data)!, side: .Left)
-                    //                    self.setCubeImageCache(cubeImageCache)
-                    
-                    //if type is audio
-                    /*
-                     let url = NSURL(string: "http://jumpserver.mine.nu/albatroz.mp3")
-                     playerItem = AVPlayerItem(URL: url!)
-                     player=AVPlayer(playerItem: playerItem!)
-                     player?.rate = 1.0
-                     player?.volume = 1.0
-                     player!.play()
-                     */
                     
                 }
                 else{
-                    self.markerNameLabel.hidden = true
+                    //self.markerNameLabel.hidden = true
                 }
             }
         }
@@ -466,9 +438,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        let mediaData = StoryMediaObject()
-//        self.sendMultiformData(mediaData)
         
         view.backgroundColor = .blackColor()
         
