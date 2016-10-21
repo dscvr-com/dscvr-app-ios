@@ -105,7 +105,7 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
         let detailsViewController = StoryDetailsTableViewController(optographId: viewModel.optographID.value)
         detailsViewController.cellIndexpath = indexPath
         detailsViewController.isStorytelling = true
-        detailsViewController.storyID = storyId
+        detailsViewController.storyID = viewModel.storyId.value
         detailsViewController.isEditingStory = true
         self.navigationController!.presentViewController(detailsViewController, animated: true, completion: nil)
     }

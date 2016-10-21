@@ -942,6 +942,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
+        mp3Timer?.invalidate()
+        
         
         if player != nil{
             player!.pause()
@@ -1052,9 +1055,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                             print("MEDIATYPE: MUS")
                             
                             let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
+                            //let url = NSURL(string: node.objectMediaFileUrl)
                             print("url:",url)
                             
                             if let returnPath:String = self?.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
+                                print(">>>>>>",returnPath)
                                 
                                 if returnPath != "" {
                                     print(returnPath)

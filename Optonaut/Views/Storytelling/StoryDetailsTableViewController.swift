@@ -434,7 +434,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     
                     print("mediaFilename: \(fileInfo["mediaFilename"] as! String)")
                     
-                    ApiService<EmptyResponse>.uploadForGate("story/v2/part2", multipartFormData: { form in
+                    ApiService<EmptyResponse>.uploadForGate("story/upload", multipartFormData: { form in
                         form.appendBodyPart(data: mediaData.story_id.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_id")
                         form.appendBodyPart(data: SessionService.personID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_person_id")
                         form.appendBodyPart(data: media.story_object_id.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_object_ids")
@@ -450,35 +450,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         }
         
         self.dismissStorytelling()
-        
-        
-        
-        
-        
-//        multiformDictionary["story_object_ids"] = mediaIDcsv
-////        print("multiformDictionary: \(multiformDictionary)")
-//        
-//        ApiService<ChildResponse>.postForGate("story/v2/part2", parameters: multiformDictionary).on(next: { data in
-//            print("data story id: \(data)")
-////            print("user: \(SessionService.personID)")
-////            
-////            let response = StoryMediaObject()
-////            response.mediaArray = (data.data?.children)!
-////            response.story_id = (data.data?.story_id)!
-////            
-////            print("mediaArray: \(response.mediaArray)")
-////            print("story_id: \(response.story_id)")
-////            
-////            self.sendMultiformData(response)
-//            
-////            self.dismissStorytelling()
-//        }).start();
-        
-        
-//        ApiService<EmptyResponse>.upload("optographs/\(optograph.ID)/upload-asset\(uploadModeStr)", multipartFormData: { form in
-//            form.appendBodyPart(data: "placeholder".dataUsingEncoding(NSUTF8StringEncoding)!, name: "key")
-//            form.appendBodyPart(data: UIImageJPEGRepresentation(image, 1)!, name: "asset", fileName: "placeholder.jpg", mimeType: "image/jpeg")
-//        })
     }
     
     func optographSelected(optographID: String) {
@@ -1867,9 +1838,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             tabController!.enableScrollView()
         }
         
-        
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
+        mp3Timer?.invalidate()
     }
     
     override func viewDidLayoutSubviews() {
