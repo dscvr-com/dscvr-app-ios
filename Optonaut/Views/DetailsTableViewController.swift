@@ -560,7 +560,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             if isStory {
                 let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this story? You cannot undo this.", preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
-                    self.viewModel.deleteStories()
+                    self.viewModel.deleteStories(self.storyID!)
                         .on(failed : { [weak self] _ in
                             
                             let alert = UIAlertController(title:"Error!", message: "Deleting failed! Please try again.", preferredStyle: .Alert)
@@ -1274,14 +1274,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func showRemovePinButton(nodeObject: StorytellingObject){
         
         dispatch_async(dispatch_get_main_queue(), {
-            let removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
-            removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
-            removePinButton.backgroundColor = UIColor.blackColor()
-            removePinButton.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
-            self.view.addSubview(removePinButton)
+//            let removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
+//            removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
+//            removePinButton.backgroundColor = UIColor.blackColor()
+//            removePinButton.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
+//            self.view.addSubview(removePinButton)
             
             self.deletablePin = nodeObject
-            self.isEditingStory = true
             
             self.removeNode.hidden = false
         })
@@ -1357,17 +1356,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             
             let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
             
-            if nameArray[1] == "TXT" && !isEditingStory {
+            if nameArray[1] == "TXT" {
                 print(">>>>>>",nodeObject.optographID)
                 self.showText(nodeObject)
-                return
-            }
-            
-            if isEditingStory {
-                
-                print("nodeobject>>>>",nodeObject.optographID)
-                self.showRemovePinButton(nodeObject)
-                
                 return
             }
             
@@ -1405,16 +1396,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 print("object Type: \(nodeObject.objectType)")
                         
                 if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                    if !isEditingStory{
-                        self.showOptograph(nodeObject)
-                    }
-                    
+                    self.showOptograph(nodeObject)
                 }
                 
                 if nameArray[1] == "MUS"{
-                    if !isEditingStory{
-                        self.playPinMusic(nodeObject)
-                    }
+                    self.playPinMusic(nodeObject)
                 }
             }
         } else{ // this is a new id

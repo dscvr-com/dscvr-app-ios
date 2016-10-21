@@ -189,22 +189,24 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func sendToNewPath(){
         
-        if finalRetainData.count == 0 {
-            allData = nodes + finalRetainDataFromStart
+        if isEditingStory {
+            if finalRetainData.count == 0 {
+                allData = nodes + finalRetainDataFromStart
+            } else {
+                allData = nodes + finalRetainData
+            }
         } else {
-            allData = nodes + finalRetainData
+            allData = nodes
         }
         
         let parameters : NSDictionary =  ["story_optograph_id": optographID,
                                           "story_person_id": SessionService.personID,
                                           "children":allData]
         
+        
         print("nodes",nodes)
         print("final",finalRetainData)
-        
         print("deletedPIn",self.deletableData)
-        
-        
         if allData.count > 0 || self.deletableData.count > 0{
             print("pass data")
             LoadingIndicatorView.show()

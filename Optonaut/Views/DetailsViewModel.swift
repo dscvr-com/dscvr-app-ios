@@ -173,19 +173,17 @@ class DetailsViewModel {
         }
         
     }
-    func deleteStories() -> SignalProducer<EmptyResponse, ApiError> {
+    func deleteStories(storyID:String) -> SignalProducer<EmptyResponse, ApiError> {
         
-        var currentStoryId = ""
         
-        return ApiService<EmptyResponse>.deleteNewEndpoint("story/\(currentStoryId)")
+        return ApiService<EmptyResponse>.deleteNewEndpoint("story/\(storyID)")
             .on(
                 completed: { [weak self] in
                     Models.optographs[self?.optographId]!.insertOrUpdate { box in
-                        currentStoryId = box.model.storyID
                         return box.model.storyID = ""
                     }
                     
-                    Models.story[currentStoryId]?.insertOrUpdate{ box in
+                    Models.story[storyID]?.insertOrUpdate{ box in
                         box.model.deletedAt = NSDate()
                     }
                 }
