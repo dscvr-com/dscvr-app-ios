@@ -62,6 +62,9 @@ class ApiService<T: Mappable> {
     static func getForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return requestForGate(endpoint, method: .GET, queries: queries, parameters: parameters)
     }
+    static func putForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+        return requestForGate(endpoint, method: .PUT, queries: queries, parameters: parameters)
+    }
     
     static func put(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .PUT, queries: queries, parameters: parameters)
@@ -107,13 +110,6 @@ class ApiService<T: Mappable> {
             }
         }
     }
-//    func downloadImage() {
-//        Alamofire.request(.GET, "https://robohash.org/123.png")
-//            .response { (request, response, data, error) in
-//            self.myImageView.image = UIImage(data: data, scale:1)
-//        }
-//    
-//    }
     
     static func uploadForGate(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
         return SignalProducer { sink, disposable in
@@ -220,13 +216,15 @@ class ApiService<T: Mappable> {
             }
         }
         
-        let URL = NSURL(string: "https://mapi.dscvr.com/\(endpoint)\(queryStr)")!
+        //let URL = NSURL(string: "https://mapi.dscvr.com/\(endpoint)\(queryStr)")!
+        print("http://noel.dscvr.com/\(endpoint)\(queryStr)")
+        let URL = NSURL(string: "http://noel.dscvr.com/\(endpoint)\(queryStr)")!
+        
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
         if let token = Defaults[.SessionToken] {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            //print ("token",token)
         }
         
         return mutableURLRequest
@@ -313,6 +311,7 @@ class ApiService<T: Mappable> {
             }
             
             let mutableURLRequest = buildURLRequestForGate(endpoint, method: method, queries: queries)
+            print(mutableURLRequest)
             
             if let parameters = parameters {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters, options: [])
@@ -331,6 +330,8 @@ class ApiService<T: Mappable> {
                         do {
                             let data = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
                         } catch {}
+                        
+                        print(error)
                         
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode ?? -1, message: error.description, error: error)
                         sink.sendFailed(apiError)

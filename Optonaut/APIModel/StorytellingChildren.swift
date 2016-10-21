@@ -14,7 +14,7 @@ struct StorytellingChildren: ApiModel,Mappable {
     var ID:UUID = ""
     var createdAt:NSDate = NSDate()
     var updatedAt:NSDate = NSDate()
-    var deletedAt:NSDate = NSDate()
+    var deletedAt:NSDate? = nil
     var storyID: String = ""
     var mediaType: String = ""
     var mediaFace: String = ""

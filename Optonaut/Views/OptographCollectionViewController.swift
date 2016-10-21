@@ -547,11 +547,22 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         let storyId = optoModel.model.storyID
         
         if storyId != "" {
-            let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
+//            let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
+//            detailsViewController.cellIndexpath = indexPath.item
+//            detailsViewController.isStory = true
+//            detailsViewController.storyID = storyId
+//            detailsViewController.isEditingStory = true
+//            navigationController?.pushViewController(detailsViewController, animated: true)
+            
+            
+            let detailsViewController = StoryDetailsTableViewController(optographId: optographIDs[indexPath.item])
             detailsViewController.cellIndexpath = indexPath.item
-            detailsViewController.isStory = true
+            detailsViewController.isStorytelling = true
             detailsViewController.storyID = storyId
             detailsViewController.isEditingStory = true
+            
+            print("id: \(optographIDs[indexPath.item])");
+            
             navigationController?.pushViewController(detailsViewController, animated: true)
         } else {
             var optographsToPick: [UUID] = []

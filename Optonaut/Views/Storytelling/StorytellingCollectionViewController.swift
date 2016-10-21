@@ -128,18 +128,12 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     }
     
     func showDetailsViewController(){
-        //88a257df-2008-4d7b-ae44-7ea603011867
-        //let detailsViewController = StoryDetailsTableViewController(optographId: startOpto)
+        
         let optoCollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optoCollection.startStory = true
         
-        //detailsViewController.cellIndexpath = 1
-        //detailsViewController.isStorytelling = true
-        
         let navCon = UINavigationController()
         navCon.viewControllers = [optoCollection]
-        
-       // navigationController?.pushViewController(optoCollection, animated: true)
         navigationController?.presentViewController(navCon, animated: true, completion: nil)
     }
 

@@ -19,7 +19,7 @@ struct StoryChildrenSchemaType: ModelSchema {
     let storyRotation = Expression<String>("story_children_object_rotation")
     let storyCreatedAt = Expression<NSDate>("story_children_object_created_at")
     let storyUpdatedAt = Expression<NSDate>("story_children_object_updated_at")
-    let storyDeletedAt = Expression<NSDate>("story_children_object_deleted_at")
+    let storyDeletedAt = Expression<NSDate?>("story_children_object_deleted_at")
     let storyMediaFilename = Expression<String>("story_children_object_media_filename")
     let storyMediaFileurl = Expression<String>("story_children_object_media_fileurl")
 }

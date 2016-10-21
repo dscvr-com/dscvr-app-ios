@@ -462,7 +462,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         diagonal.backgroundColor = UIColor.clearColor()
         
         self.view.addSubview(diagonal)
-//        self.view.addSubview(cloudQuote)
         
     }
     func adjustDescriptionLabel(recognizer:UITapGestureRecognizer) {

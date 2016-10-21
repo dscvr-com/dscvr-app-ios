@@ -13,8 +13,7 @@ struct StoryChildren: Model {
     var ID: UUID
     var createdAt: NSDate
     var updatedAt: NSDate
-    var deletedAt: NSDate
-    
+    var deletedAt: NSDate?
     var storyID: String = ""
     var mediaType: String = ""
     var mediaFace: String = ""
@@ -30,7 +29,7 @@ struct StoryChildren: Model {
             ID: uuid(),
             createdAt: NSDate(),
             updatedAt: NSDate(),
-            deletedAt: NSDate(),
+            deletedAt: nil,
             storyID: "",
             mediaType: "",
             mediaFace: "" ,
@@ -116,7 +115,7 @@ extension StoryChildren: SQLiteModel {
             StoryChildrenSchema.ID                          <-- ID,
             StoryChildrenSchema.storyCreatedAt              <-- createdAt,
             StoryChildrenSchema.storyUpdatedAt              <-- updatedAt,
-            StoryChildrenSchema.storyDeletedAt              <-- updatedAt,
+            StoryChildrenSchema.storyDeletedAt              <-- deletedAt,
             StoryChildrenSchema.storyID                     <-- storyID,
             StoryChildrenSchema.storyMediaType              <-- mediaType,
             StoryChildrenSchema.storyMediaFace              <-- mediaFace,
