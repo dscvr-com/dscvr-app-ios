@@ -121,7 +121,8 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
             
             print("id: \(optographIDs[indexPath.item])");
             
-            navigationController?.pushViewController(detailsViewController, animated: true)
+            //navigationController?.pushViewController(detailsViewController, animated: true)
+            navigationController?.presentViewController(detailsViewController, animated: true, completion: nil)
         } else {
             delegate?.optographSelected(optographIDs[indexPath.item]);
             self.dismissViewControllerAnimated(true, completion: nil)

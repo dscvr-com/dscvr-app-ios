@@ -76,7 +76,6 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         collectionView?.backgroundColor = UIColor.whiteColor()
         
         collectionView!.registerClass(StorytellingCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell");
-        collectionView!.registerClass(ProfileTileCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell-feed");
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: "footerView")
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerView")
         
@@ -106,6 +105,9 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
                 self.feedsModel.isActive.value = false
             }
         }
+        
+        
+        
 }
     
     
@@ -155,38 +157,16 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         
         if  indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! StorytellingCollectionViewCell;
-            
-            //cell.imageView.kf_setImageWithURL(NSURL(string: self.storyFeed[indexPath.row].placeholder)!)
+            cell.indexPath = indexPath.item
             cell.bind(storyIDs[indexPath.row])
-            
+            cell.navigationController = navigationController as? NavigationController
             storyCell = cell
         }
-        else{
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell-feed", forIndexPath: indexPath) as! ProfileTileCollectionViewCell;
-            
-//            cell.layer.shadowColor = UIColor.grayColor().CGColor;
-//            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
-//            cell.layer.shadowRadius = 2.0;
-//            cell.layer.shadowOpacity = 1.0;
-//            cell.layer.masksToBounds = false;
-//            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
-            
-            storyCell = cell
-        }
-        
-        
-        
-//        let optographID = optographIDs[indexPath.item];
-//        cell.bind(optographID);
-//        cell.refreshNotification = collectionViewModel.refreshNotification;
-//        cell.navigationController = navigationController as? NavigationController;
         
         storyCell.contentView.layer.cornerRadius = 10.0;
         storyCell.contentView.layer.borderWidth = 1.0;
         storyCell.contentView.layer.borderColor = UIColor.clearColor().CGColor
         storyCell.contentView.layer.masksToBounds = true;
-//
-//        cell.backgroundColor = UIColor.blackColor();
         
         return storyCell
     }

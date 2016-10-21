@@ -1,10 +1,11 @@
 //
-//  StorytellingCollectionViewCell.swift
+//  YourStoriesViewCell.swift
 //  DSCVR
 //
-//  Created by Thadz on 10/08/2016.
+//  Created by robert john alkuino on 10/21/16.
 //  Copyright © 2016 Optonaut. All rights reserved.
 //
+
 
 import Foundation
 import SpriteKit
@@ -12,12 +13,11 @@ import ReactiveCocoa
 import SceneKit
 import Kingfisher
 
-class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControllerDelegate {
-
-    private let iconView = UILabel()
+class YourStoriesViewCell: UICollectionViewCell ,UINavigationControllerDelegate{
     
+    private let iconView = UILabel()
     private let loadingView = UIActivityIndicatorView()
-    private var imageView = PlaceholderImageView()
+    private let imageView = PlaceholderImageView()
     
     private let viewModel = ProfileTileCollectionViewModel()
     
@@ -27,61 +27,15 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
     private let deleteButton = UIButton()
     weak var navigationController: NavigationController?
     weak var imageURL = NSURL()
-    var indexPath:Int = 0
     
     var refreshNotification = NotificationSignal<Void>()
-    
-    var editButton = UIButton()
-    
-    var storyId:UUID = ""
     
     override init(frame: CGRect) {
         
         super.init(frame: frame)
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
-        
-        imageView.layer.masksToBounds = true;
-
-        contentView.addSubview(imageView)
-        
-        iconView.frame = CGRect(x: frame.width - 32, y: 14, width: 18, height: 18)
-        iconView.textColor = .whiteColor()
-        iconView.font = UIFont.iconOfSize(18)
-        iconView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
-        
-        contentView.addSubview(iconView)
-        
-        loadingView.frame = CGRect(origin: CGPointZero, size: frame.size)
-        loadingView.backgroundColor = UIColor.blackColor().alpha(0.7)
-        loadingView.hidesWhenStopped = true
-        loadingView.rac_animating <~ viewModel.isStitched.producer.map(negate)
-        
-        contentView.backgroundColor = UIColor(0xcacaca)
-        
-        
-        editButton.setBackgroundImage(UIImage(named: "editSubview_btn"), forState: .Normal)
-        editButton.addTarget(self, action: #selector(editStories), forControlEvents: .TouchUpInside)
-        contentView.addSubview(editButton)
-        
-        //let editSize = UIImage(named: "editSubview_btn").size
-        editButton.anchorInCorner(.BottomRight, xPad: 0, yPad: 0, width: 30, height: 30)
-        
-        viewModel.isPrivate.producer
-            .skipRepeats()
-            .combineLatestWith(viewModel.uploadStatus.producer.skipRepeats())
-            .startWithNext{ isPrivate, uploadStatus in
-                if isPrivate {
-                    return self.iconView.text = String.iconWithName(.Safe)
-                } else if uploadStatus == .Uploading {
-                    return self.iconView.text = String.iconWithName(.Loading)
-                } else if uploadStatus == .Offline {
-                } else if uploadStatus == .Uploaded {
-                } else {
-                    return
-                }
-        }
-        
+        imageView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
         viewModel.uploadStatus.producer.equalsTo(.Uploaded)
             .combineLatestWith(viewModel.optographID.producer)
             .delayLatestUntil(viewModel.isStitched.producer)
@@ -99,17 +53,40 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
                     }
                 }
         }
+        contentView.addSubview(imageView)
+        
+        iconView.frame = CGRect(x: frame.width - 32, y: 14, width: 18, height: 18)
+        iconView.textColor = .whiteColor()
+        iconView.font = UIFont.iconOfSize(18)
+        iconView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
+        contentView.addSubview(iconView)
+        
+        loadingView.frame = CGRect(origin: CGPointZero, size: frame.size)
+        loadingView.backgroundColor = UIColor.blackColor().alpha(0.7)
+        loadingView.hidesWhenStopped = true
+        loadingView.rac_animating <~ viewModel.isStitched.producer.map(negate)
+        contentView.addSubview(loadingView)
+        
+        contentView.backgroundColor = UIColor(0xcacaca)
+        
+        viewModel.isPrivate.producer
+            .skipRepeats()
+            .combineLatestWith(viewModel.uploadStatus.producer.skipRepeats())
+            .startWithNext{ isPrivate, uploadStatus in
+                if isPrivate {
+                    return self.iconView.text = String.iconWithName(.Safe)
+                } else if uploadStatus == .Uploading {
+                    //self.uploadButton.hidden = true
+                    return self.iconView.text = String.iconWithName(.Loading)
+                } else if uploadStatus == .Offline {
+                    //return self.uploadButton.hidden = false
+                } else if uploadStatus == .Uploaded {
+                    //return self.uploadButton.hidden = true
+                } else {
+                    return
+                }
+        }
     }
-    
-    func editStories() {
-        let detailsViewController = StoryDetailsTableViewController(optographId: viewModel.optographID.value)
-        detailsViewController.cellIndexpath = indexPath
-        detailsViewController.isStorytelling = true
-        detailsViewController.storyID = storyId
-        detailsViewController.isEditingStory = true
-        self.navigationController!.presentViewController(detailsViewController, animated: true, completion: nil)
-    }
-    
     func deleteOpto() {
         
         let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this Optograph? You cannot undo this.", preferredStyle: .Alert)

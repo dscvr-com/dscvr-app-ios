@@ -237,7 +237,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 }).start();
             
             } else {
-                ApiService<ChildResponse>.postForGate("story/v2/part1", parameters: parameters as? [String : AnyObject]).on(failed: { _ in
+                ApiService<ChildResponse>.postForGate("story/create", parameters: parameters as? [String : AnyObject]).on(failed: { _ in
                     LoadingIndicatorView.hide()
                     },next: { data in
                         print("data story id: \(data)")
@@ -526,7 +526,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func showText(nodeObject: StorytellingObject){
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
-        //        print("TEXT: \(nameArray[0])")
         
         dispatch_async(dispatch_get_main_queue(), {
             self.storyPinLabel.text = nameArray[0]
@@ -551,12 +550,14 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             self.view.addSubview(self.storyPinLabel)
         })
     }
+    
     func showRemovePinButton(nodeObject: StorytellingObject){
         
         dispatch_async(dispatch_get_main_queue(), {
             let removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
             removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
-            removePinButton.backgroundColor = UIColor.blackColor()
+            removePinButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
+            removePinButton.backgroundColor = UIColor.whiteColor()
             removePinButton.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
             self.view.addSubview(removePinButton)
             
@@ -565,9 +566,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             
             self.removeNode.hidden = false
         })
-        
-        
     }
+    
     func removePin(){
         
         let nameArray = deletablePin.optographID.componentsSeparatedByString(",")
@@ -592,8 +592,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 self?.lastRetainableData = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
                 self?.didInitialize = true
             }
-            
-            
             
             print("deletable ID: \(nameArray[0])")
             print(">>>>>",(self?.deletablePin.optographID)!)
@@ -1069,10 +1067,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         doneButton.addTarget(self, action: #selector(doneStorytelling), forControlEvents: .TouchUpInside)
         doneButton.setImage(UIImage(named: "done_check_icn"), forState: UIControlState.Normal)
         
-        let dismissButton = UIButton(frame: CGRect(x: 0, y: 0.0, width: 40.0, height: 40.0))
-//        dismissButton.backgroundColor = UIColor.whiteColor()
+        let dismissButton = UIButton()
         dismissButton.addTarget(self, action: #selector(dismissStorytelling), forControlEvents: .TouchUpInside)
         dismissButton.setImage(UIImage(named: "close_icn-1"), forState: UIControlState.Normal)
+        self.view.addSubview(dismissButton)
         
         clearTextLabel.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
         clearTextLabel.addTarget(self, action: #selector(removeFixedText), forControlEvents: .TouchUpInside)
@@ -1085,10 +1083,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         inputTextField.delegate = self
         textFieldContainer.addSubview(inputTextField)
         
-        let rightBarButton = UIBarButtonItem(customView: dismissButton)
-        self.navigationItem.rightBarButtonItem = rightBarButton
-        
+//        let rightBarButton = UIBarButtonItem(customView: dismissButton)
+//        self.navigationItem.rightBarButtonItem = rightBarButton
+//        
         self.navigationItem.setHidesBackButton(true, animated: false)
+        
+        dismissButton.anchorInCorner(.TopLeft, xPad: 10, yPad: 20, width: 40 , height: 40)
         
         //let fixedTextLabel = UILabel()
 //        let clearTextLabel = UIButton()
@@ -1836,9 +1836,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        if isEditingStory{
-            tabController!.disableScrollView()
-        }
+//        if isEditingStory{
+//            tabController!.disableScrollView()
+//        }
         
         
         CoreMotionRotationSource.Instance.start()
@@ -1860,7 +1860,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         imageDownloadDisposable?.dispose()
         imageDownloadDisposable = nil
-        //        CoreMotionRotationSource.Instance.stop()
+        CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
         
         if !isStorytelling{
