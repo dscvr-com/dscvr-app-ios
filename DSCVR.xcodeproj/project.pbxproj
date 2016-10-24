@@ -318,7 +318,6 @@
 		5917C8251CE49C8600CD5A6D /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
 		59306C031D24E034009BF7BE /* InvitationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvitationViewController.swift; sourceTree = "<group>"; };
 		59306C051D24E268009BF7BE /* DetailsShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsShareViewController.swift; sourceTree = "<group>"; };
-		5933E6801D3A803600D18982 /* FillableLoaders.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FillableLoaders.framework; path = Carthage/Build/iOS/FillableLoaders.framework; sourceTree = "<group>"; };
 		5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynamicSeamer.cpp; sourceTree = "<group>"; };
 		5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dynamicSeamer.hpp; sourceTree = "<group>"; };
 		5936B1791CAD34F500F808D8 /* multiringStitcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = multiringStitcher.cpp; sourceTree = "<group>"; };
@@ -843,7 +842,6 @@
 				59D828131D709C4200007B57 /* Crashlytics.framework */,
 				598EB95B1D7068A200E00F9B /* Fabric.framework */,
 				59E9E3171D62277500D326F8 /* Icomoon.framework */,
-				5933E6801D3A803600D18982 /* FillableLoaders.framework */,
 				8F4715111C49688700663684 /* TwitterKitResources.bundle */,
 				8F47150F1C4964AD00663684 /* TwitterCore.framework */,
 				8F47150D1C49648F00663684 /* TwitterKit.framework */,

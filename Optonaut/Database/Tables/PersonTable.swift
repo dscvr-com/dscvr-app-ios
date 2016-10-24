@@ -23,6 +23,5 @@ struct PersonSchemaType: ModelSchema {
     let avatarAssetID = Expression<UUID>("person_avatar_asset_id")
     let eliteStatus = Expression<Int>("person_elite_status")
 }
-
 let PersonSchema = PersonSchemaType()
 let PersonTable = Table("person")
