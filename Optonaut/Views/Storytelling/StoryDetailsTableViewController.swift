@@ -207,6 +207,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         print("nodes",nodes)
         print("final",finalRetainData)
         print("deletedPIn",self.deletableData)
+        print("params>>",parameters)
+        
         if allData.count > 0 || self.deletableData.count > 0{
             print("pass data")
             LoadingIndicatorView.show()
@@ -545,45 +547,81 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         print("wowah",nameArray)
         
-        storyNodes.producer.startWithNext { [weak self] nodes in
-            if self?.didInitialize == true {
-                for n in (self?.lastRetainableData)! {
-                    if n.mediaAdditionalData == nameArray[0] {
-                        self?.deletableData.append(n.ID)
-                    }
+//        storyNodes.producer.startWithNext { [weak self] nodes in
+//            if self?.didInitialize == true {
+//                for n in (self?.lastRetainableData)! {
+//                    if n.mediaAdditionalData == nameArray[0] {
+//                        self?.deletableData.append(n.ID)
+//                    }
+//                }
+//                self?.lastRetainableData = (self?.lastRetainableData.filter { $0.mediaAdditionalData != nameArray[0] })!
+//            } else {
+//                print("wow pasok dito")
+//                for n in nodes{
+//                    if n.mediaAdditionalData == nameArray[0] {
+//                        self?.deletableData.append(n.ID)
+//                    }
+//                }
+//                self?.lastRetainableData = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
+//                self?.didInitialize = true
+//            }
+//            
+//            print("deletable ID: \(nameArray[0])")
+//            print(">>>>>",(self?.deletablePin.optographID)!)
+//            
+//            var nodeData = [NSDictionary]()
+//            for data in (self?.lastRetainableData)! {
+//                let child : NSDictionary = ["story_object_media_type": data.mediaType,
+//                    "story_object_media_face": data.mediaFace,
+//                    "story_object_id": data.ID,
+//                    "story_object_media_description": data.mediaDescription,
+//                    "story_object_media_additional_data": data.mediaAdditionalData,
+//                    "story_object_position": data.objectPosition.characters.split{$0 == ","}.map(String.init),
+//                    "story_object_rotation": data.objectRotation.characters.split{$0 == ","}.map(String.init)]
+//                nodeData.append(child)
+//            }
+//            
+//            self?.finalRetainData = nodeData
+//            
+//            self?.renderDelegate.removeAllNodes((self?.deletablePin.optographID)!)
+//        }
+        let nodes = storyNodes.value
+        
+        if self.didInitialize == true {
+            for n in self.lastRetainableData {
+                if n.mediaAdditionalData == nameArray[0] {
+                    self.deletableData.append(n.ID)
                 }
-                self?.lastRetainableData = (self?.lastRetainableData.filter { $0.mediaAdditionalData != nameArray[0] })!
-            } else {
-                print("wow pasok dito")
-                for n in nodes{
-                    if n.mediaAdditionalData == nameArray[0] {
-                        self?.deletableData.append(n.ID)
-                    }
+            }
+            self.lastRetainableData = self.lastRetainableData.filter { $0.mediaAdditionalData != nameArray[0] }
+        } else {
+            print("wow pasok dito")
+            for n in nodes{
+                if n.mediaAdditionalData == nameArray[0] {
+                    self.deletableData.append(n.ID)
                 }
-                self?.lastRetainableData = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
-                self?.didInitialize = true
             }
-            
-            print("deletable ID: \(nameArray[0])")
-            print(">>>>>",(self?.deletablePin.optographID)!)
-            
-            var nodeData = [NSDictionary]()
-            for data in (self?.lastRetainableData)! {
-                let child : NSDictionary = ["story_object_media_type": data.mediaType,
-                    "story_object_media_face": data.mediaFace,
-                    "story_object_id": data.ID,
-                    "story_object_media_description": data.mediaDescription,
-                    "story_object_media_additional_data": data.mediaAdditionalData,
-                    "story_object_position": data.objectPosition.characters.split{$0 == ","}.map(String.init),
-                    "story_object_rotation": data.objectRotation.characters.split{$0 == ","}.map(String.init)]
-                nodeData.append(child)
-            }
-            
-            self?.finalRetainData = nodeData
-            
-            self?.renderDelegate.removeAllNodes((self?.deletablePin.optographID)!)
+            self.lastRetainableData = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
+            self.didInitialize = true
         }
+        
+        var nodeData = [NSDictionary]()
+        for data in (self.lastRetainableData) {
+            let child : NSDictionary = ["story_object_media_type": data.mediaType,
+                                        "story_object_media_face": data.mediaFace,
+                                        "story_object_id": data.ID,
+                                        "story_object_media_description": data.mediaDescription,
+                                        "story_object_media_additional_data": data.mediaAdditionalData,
+                                        "story_object_position": data.objectPosition.characters.split{$0 == ","}.map(String.init),
+                                        "story_object_rotation": data.objectRotation.characters.split{$0 == ","}.map(String.init)]
+            nodeData.append(child)
+        }
+        
+        self.finalRetainData = nodeData
+        
+        self.renderDelegate.removeAllNodes(self.deletablePin.optographID)
     }
+    
     func showOptograph(nodeObject: StorytellingObject){
         //check if node object is equal to home optograph id
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
@@ -595,40 +633,69 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 self.renderDelegate.removeAllNodes(self.optographID)
                 self.renderDelegate.removeMarkers()
                 
-                
-                self.storyNodes.producer.startWithNext { [weak self] nodes in
+                for node in self.storyNodes.value {
+                    let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
+                    let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
                     
-                    for node in nodes {
-                        let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
-                        let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
+                    if objectPosition.count >= 2{
                         
-                        if objectPosition.count >= 2{
-                            
-                            let nodeItem = StorytellingObject()
-                            
-                            let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
-                            let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
-                            
-                            nodeItem.objectRotation = nodeRotation
-                            nodeItem.objectVector3 = nodeTranslation
-                            //                        nodeItem.optographID = nodes.story_object_media_additional_data
-                            nodeItem.objectType = node.mediaType
-                            
-                            if node.mediaType == "MUS"{
-                                nodeItem.optographID = node.objectMediaFileUrl
-                            }
-                                
-                            else if node.mediaType == "NAV"{
-                                nodeItem.optographID = node.mediaAdditionalData
-                            }
-                            
-                            print("node id: \(nodeItem.optographID)")
-                            
-                            self?.renderDelegate.addNodeFromServer(nodeItem)
-                            
+                        let nodeItem = StorytellingObject()
+                        
+                        let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
+                        let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
+                        
+                        nodeItem.objectRotation = nodeRotation
+                        nodeItem.objectVector3 = nodeTranslation
+                        //                        nodeItem.optographID = nodes.story_object_media_additional_data
+                        nodeItem.objectType = node.mediaType
+                        
+                        if node.mediaType == "MUS"{
+                            nodeItem.optographID = node.objectMediaFileUrl
                         }
+                            
+                        else if node.mediaType == "NAV"{
+                            nodeItem.optographID = node.mediaAdditionalData
+                        }
+                        
+                        print("node id: \(nodeItem.optographID)")
+                        
+                        self.renderDelegate.addNodeFromServer(nodeItem)
                     }
                 }
+                
+//                self.storyNodes.producer.startWithNext { [weak self] nodes in
+//                    
+//                    for node in nodes {
+//                        let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
+//                        let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
+//                        
+//                        if objectPosition.count >= 2{
+//                            
+//                            let nodeItem = StorytellingObject()
+//                            
+//                            let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
+//                            let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
+//                            
+//                            nodeItem.objectRotation = nodeRotation
+//                            nodeItem.objectVector3 = nodeTranslation
+//                            //                        nodeItem.optographID = nodes.story_object_media_additional_data
+//                            nodeItem.objectType = node.mediaType
+//                            
+//                            if node.mediaType == "MUS"{
+//                                nodeItem.optographID = node.objectMediaFileUrl
+//                            }
+//                                
+//                            else if node.mediaType == "NAV"{
+//                                nodeItem.optographID = node.mediaAdditionalData
+//                            }
+//                            
+//                            print("node id: \(nodeItem.optographID)")
+//                            
+//                            self?.renderDelegate.addNodeFromServer(nodeItem)
+//                            
+//                        }
+//                    }
+//                }
             })
         }
             
@@ -784,6 +851,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func insertNewNodes(node: StoryChildren) {
         storyNodes.value.orderedInsert(node, withOrder: .OrderedAscending)
+        
+        print(">>>.",node)
         let child : NSDictionary = ["story_object_media_type": node.mediaType,
                                     "story_object_media_face": node.mediaFace,
                                     "story_object_id": node.ID,
@@ -1292,11 +1361,24 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
 //            print("node count: \(self.nodes.count)")
 //        }
         
-        let predicate = NSPredicate(format: "story_object_media_description != %@", "story bgm")
-        let filteredArray = self.nodes.filter { predicate.evaluateWithObject($0) }
-        print("filteredArray: \(filteredArray.count)")
+        var nodeData = [NSDictionary]()
         
-        self.nodes = filteredArray
+        for data in storyNodes.value {
+            if data.mediaDescription == "story bgm" {
+                self.deletableData.append(data.ID)
+            } else {
+                let child : NSDictionary = ["story_object_media_type": data.mediaType,
+                                            "story_object_media_face": data.mediaFace,
+                                            "story_object_id": data.ID,
+                                            "story_object_media_description": data.mediaDescription,
+                                            "story_object_media_additional_data": data.mediaAdditionalData,
+                                            "story_object_position": data.objectPosition.characters.split{$0 == ","}.map(String.init),
+                                            "story_object_rotation": data.objectRotation.characters.split{$0 == ","}.map(String.init)]
+                nodeData.append(child)
+            }
+        }
+        
+        self.finalRetainData = nodeData
         
         bgmImage.hidden = true
         removeBgm.hidden = true
@@ -1829,6 +1911,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
+        
+        print(">>>>>viewWillDisappear")
+        
         imageDownloadDisposable?.dispose()
         imageDownloadDisposable = nil
         CoreMotionRotationSource.Instance.stop()
@@ -1842,23 +1927,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
         mp3Timer?.invalidate()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
         
-        //        tableView.contentOffset = CGPoint(x: 0, y: -(tableView.frame.height - 78))
-        //        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
+        if player != nil{
+            player!.pause()
+            player = nil
+        }
     }
-    
-    //    func keyboardWillShow(notification: NSNotification) {
-    //        let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
-    //        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
-    //    }
-    //
-    //    func keyboardWillHide(notification: NSNotification) {
-    //        tableView.contentInset = UIEdgeInsets(top: tableView.frame.height - 78, left: 0, bottom: 10, right: 0)
-    //    }
     
     func dismissKeyboard() {
         view.endEditing(true)
@@ -1945,6 +2019,11 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         
                         let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
                         print("url:",url)
+                        
+                        dispatch_async(dispatch_get_main_queue(), {
+                            self?.bgmImage.hidden = false
+                            self?.removeBgm.hidden = false
+                        })
                         
                         if let returnPath:String = self?.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
                             
