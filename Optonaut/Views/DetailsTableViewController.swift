@@ -189,10 +189,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
         
-        if !isStory{
-            let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick as! [UUID] ,selfOptograph:optographID )
-            navigationController?.pushViewController(viewerViewController, animated: false)
-        }
+//        if !isStory{
+//            let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick as! [UUID] ,selfOptograph:optographID )
+//            navigationController?.pushViewController(viewerViewController, animated: false)
+//        }
+        
+        let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick as! [UUID] ,selfOptograph:optographID ,nodesData: storyNodes.value)
+        navigationController?.pushViewController(viewerViewController, animated: false)
         
     }
     

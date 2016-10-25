@@ -228,7 +228,9 @@ class CubeRenderDelegate: RenderDelegate {
         
         let circleGeo = SCNSphere(radius: 0.01)
         
-        circleGeo.firstMaterial?.diffuse.contents = self.isStory ? UIColor.redColor():UIColor.clearColor()
+        //circleGeo.firstMaterial?.diffuse.contents = self.isStory ? UIColor.redColor():UIColor.clearColor()
+        
+        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         
         sphereGeoNode = SCNNode(geometry: circleGeo)
         sphereGeoNode.name = "test"
@@ -682,9 +684,6 @@ class CubeRenderDelegate: RenderDelegate {
                 node.objectRotation = marknode.eulerAngles
                 node.objectVector3 = marknode.position
                 node.optographID = marknode.name!
-                
-               // let markername = marknode.name
-               // print("markername \(markername)")
                 delegate!.didEnterFrustrum(node, inFrustrum: true)
                 enteredFlag = true
             }
