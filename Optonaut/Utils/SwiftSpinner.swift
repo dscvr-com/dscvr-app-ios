@@ -39,7 +39,7 @@ public class SwiftSpinner: UIView {
         vibrancyView = UIVisualEffectView(effect: UIVibrancyEffect(forBlurEffect: blurEffect))
         addSubview(vibrancyView)
         
-        let titleScale: CGFloat = 0.10
+        let titleScale: CGFloat = 0.85
         titleLabel.frame.size = CGSize(width: frameSize.width * titleScale, height: frameSize.height * titleScale)
         titleLabel.font = defaultTitleFont
         titleLabel.numberOfLines = 0

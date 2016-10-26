@@ -227,13 +227,14 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         print("mediaArray: \(response.mediaArray)")
                         print("story_id: \(response.story_id)")
                         
-                        self.sendMultiformData(response)
-                        
                         self.optographBox.insertOrUpdate { box in
                             box.model.storyID = response.story_id
                         }
                         
                         self.updateStory(response.story_id,childIds: response.mediaArray)
+                        
+                        self.sendMultiformData(response)
+                        
                         LoadingIndicatorView.hide()
                         
                 }).start();
@@ -252,13 +253,15 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         print("mediaArray: \(response.mediaArray)")
                         print("story_id: \(response.story_id)")
                         
-                        self.sendMultiformData(response)
                         
                         self.optographBox.insertOrUpdate { box in
                             box.model.storyID = response.story_id
                         }
                         
                         self.saveStory(response.story_id,childIds: response.mediaArray)
+                        
+                        self.sendMultiformData(response)
+                        
                         LoadingIndicatorView.hide()
                         
                 }).start();
@@ -303,38 +306,14 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     st.model.storyID = storyID
                 }
             }
-            
-//            Models.storyChildren[childIds[modelCount].story_object_id]!.insertOrUpdate { st in
-//                
-//                st.model.ID = childIds[modelCount].story_object_id
-//                if let mda = (data["story_object_media_additional_data"] as? String) {
-//                    st.model.mediaAdditionalData = mda
-//                }
-//                if let md = (data["story_object_media_description"] as? String) {
-//                    st.model.mediaDescription = md
-//                }
-//                if let mf = (data["story_object_media_face"] as? String){
-//                    st.model.mediaFace = mf
-//                }
-//                if let mt = (data["story_object_media_type"] as? String) {
-//                    st.model.mediaType = mt
-//                }
-//                if let mFN = (data["story_object_media_filename"] as? String) {
-//                    st.model.objectMediaFilename = mFN
-//                }
-//                if let position = data["story_object_position"] as? [CGFloat] {
-//                    st.model.objectPosition = position.map{String($0)}.joinWithSeparator(",")
-//                }
-//                if let rotation = data["story_object_rotation"] as? [CGFloat] {
-//                    st.model.objectRotation = rotation.map{String($0)}.joinWithSeparator(",")
-//                }
-//                
-//                st.model.storyID = storyID
-//            }
             modelCount += 1
         }
         
         for data in deletableData {
+            
+            print("data>>",data)
+            print("Model>>",Models.storyChildren[data])
+            
             if let childDeleteModel:ModelBox<StoryChildren> = Models.storyChildren[data] {
                 childDeleteModel.insertOrUpdate { st in
                     st.model.deletedAt = NSDate()
@@ -1450,8 +1429,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                                             "story_object_media_face": "no pin",
                                             "story_object_media_description": "fixed text",
                                             "story_object_media_additional_data": inputTextField.text!,
-                                            "story_object_position": [0, 0, 0],
-                                            "story_object_rotation": [0, 0, 0]]
+                                            "story_object_position": [0.0, 0.0, 0.0],
+                                            "story_object_rotation": [0.0, 0.0, 0.0]]
                 /*
                  let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
                  "story_object_media_face": "pin",
@@ -1561,9 +1540,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 print("completed")
                 let data = NSData(contentsOfFile: exportFile)
                 
-                let translationArray = ["0", "0", "0"]
+                let translationArray = [0.0, 0.0, 0.0]
                 
-                let rotationArray = ["0", "0", "0"]
+                let rotationArray = [0.0, 0.0, 0.0]
                 
                 let child : NSDictionary = ["story_object_media_type": self.nodeItem.objectType,
                     "story_object_media_face": "pin",
