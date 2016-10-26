@@ -13,7 +13,7 @@ import Icomoon
 import SwiftyUserDefaults
 import Result
 
-class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollViewDelegate{
+class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollViewDelegate,UITextFieldDelegate{
     
     var scrollView: UIScrollView!
     let centerViewController: NavigationController
@@ -79,7 +79,11 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     let m5ButtonUp = UIButton()
     let m5ButtonDown = UIButton()
     
-
+    let textField1 = UITextField()
+    let textField2 = UITextField()
+    let textField3 = UITextField()
+    let textField4 = UITextField()
+    let textField5 = UITextField()
     
     
     let shareData = ShareData.sharedInstance
@@ -463,124 +467,203 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             Defaults[.SessionBuffCount] = 0 // joseph
         }
 
-        
+        let ws = calcTextWidth("RotateCount:", withFont: .fontDisplay(25, withType: .Light)) - 30
         
         motorPPSVal = Defaults[.SessionPPS]!
-        motor1.text = "Pulse/Sec: \(motorPPSVal)"
+        //motor1.text = "Pulse/Sec: \(motorPPSVal)"
+        motor1.text = "Pulse/Sec:"
         motor1.backgroundColor = UIColor.lightGrayColor()
         thisView.addSubview(motor1)
         
-    
+//        mButtonDown.backgroundColor = UIColor.redColor()
+//        mButtonDown.addTarget(self, action: #selector(TabViewController.motorButtonDown), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(mButtonDown)
+//        
+//        mButtonUp.backgroundColor = UIColor.yellowColor()
+//        mButtonUp.addTarget(self, action: #selector(TabViewController.motorButtonUp), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(mButtonUp)
         
-        mButtonDown.backgroundColor = UIColor.redColor()
-        mButtonDown.addTarget(self, action: #selector(TabViewController.motorButtonDown), forControlEvents:.TouchUpInside)
-        thisView.addSubview(mButtonDown)
-        
-        mButtonUp.backgroundColor = UIColor.yellowColor()
-        mButtonUp.addTarget(self, action: #selector(TabViewController.motorButtonUp), forControlEvents:.TouchUpInside)
-        thisView.addSubview(mButtonUp)
-        
-        motor1.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 10, width: (view.frame.width * 0.5), height: 30)
-        mButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor1, padding: 10, width: 40, height: 30)
-        
-
-        mButtonUp.align(.ToTheRightMatchingTop, relativeTo: mButtonDown, padding: 5, width: 40, height: 30)
-        
-        
+        motor1.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 10, width: ws, height: 30)
+//        mButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor1, padding: 10, width: 40, height: 30)
+//        mButtonUp.align(.ToTheRightMatchingTop, relativeTo: mButtonDown, padding: 5, width: 40, height: 30)
         
         motorRotateVal = Defaults[.SessionRotateCount]!
-        motor2.text = "RotateCount: \(motorRotateVal)"
+        //motor2.text = "RotateCount: \(motorRotateVal)"
+        motor2.text = "RotateCount:"
         motor2.backgroundColor = UIColor.lightGrayColor()
         thisView.addSubview(motor2)
         
+//        m2ButtonDown.backgroundColor = UIColor.redColor()
+//        m2ButtonDown.addTarget(self, action: #selector(TabViewController.motorRotateButtonDown), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m2ButtonDown)
+//        
+//        m2ButtonUp.backgroundColor = UIColor.yellowColor()
+//        m2ButtonUp.addTarget(self, action: #selector(TabViewController.motorRotateButtonUp), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m2ButtonUp)
+        
+        motor2.align(.UnderMatchingLeft, relativeTo: motor1, padding: 10, width: ws, height: 30)
        
-        
-        m2ButtonDown.backgroundColor = UIColor.redColor()
-        m2ButtonDown.addTarget(self, action: #selector(TabViewController.motorRotateButtonDown), forControlEvents:.TouchUpInside)
-        thisView.addSubview(m2ButtonDown)
-        
-        m2ButtonUp.backgroundColor = UIColor.yellowColor()
-        m2ButtonUp.addTarget(self, action: #selector(TabViewController.motorRotateButtonUp), forControlEvents:.TouchUpInside)
-        thisView.addSubview(m2ButtonUp)
-        
-        motor2.align(.UnderMatchingLeft, relativeTo: motor1, padding: 10, width: (view.frame.width * 0.5), height: 30)
-       
-        m2ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor2, padding: 10, width: 40, height: 30)
-        m2ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m2ButtonDown, padding: 5, width: 40, height: 30)
-        
+//        m2ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor2, padding: 10, width: 40, height: 30)
+//        m2ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m2ButtonDown, padding: 5, width: 40, height: 30)
         
         motorTopVal = Defaults[.SessionTopCount]!
-        motor3.text = "TopCount: \(motorTopVal)"
+        //motor3.text = "TopCount: \(motorTopVal)"
+        motor3.text = "TopCount:"
         motor3.backgroundColor = UIColor.lightGrayColor()
         thisView.addSubview(motor3)
       
+//        m3ButtonDown.backgroundColor = UIColor.redColor()
+//        m3ButtonDown.addTarget(self, action: #selector(TabViewController.motorTopButtonDown), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m3ButtonDown)
+//        
+//        
+//        m3ButtonUp.backgroundColor = UIColor.yellowColor()
+//        m3ButtonUp.addTarget(self, action: #selector(TabViewController.motorTopButtonUp), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m3ButtonUp)
         
-        m3ButtonDown.backgroundColor = UIColor.redColor()
-        m3ButtonDown.addTarget(self, action: #selector(TabViewController.motorTopButtonDown), forControlEvents:.TouchUpInside)
-        thisView.addSubview(m3ButtonDown)
-        
-        
-        m3ButtonUp.backgroundColor = UIColor.yellowColor()
-        m3ButtonUp.addTarget(self, action: #selector(TabViewController.motorTopButtonUp), forControlEvents:.TouchUpInside)
-        thisView.addSubview(m3ButtonUp)
-        
-        motor3.align(.UnderMatchingLeft, relativeTo: motor2, padding: 10, width: (view.frame.width * 0.5), height: 30)
-        
-        m3ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor3, padding: 10, width: 40, height: 30)
-        m3ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m3ButtonDown, padding: 5, width: 40, height: 30)
-        
-        
+        motor3.align(.UnderMatchingLeft, relativeTo: motor2, padding: 10, width: ws, height: 30)
+//        m3ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor3, padding: 10, width: 40, height: 30)
+//        m3ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m3ButtonDown, padding: 5, width: 40, height: 30)
         
         motorBotVal = Defaults[.SessionBotCount]!
-        motor4.text = "BotCount: \(motorBotVal)"
+        //motor4.text = "BotCount: \(motorBotVal)"
+        motor4.text = "BotCount:"
         motor4.backgroundColor = UIColor.lightGrayColor()
         thisView.addSubview(motor4)
         
       
         
-        m4ButtonDown.backgroundColor = UIColor.redColor()
-        m4ButtonDown.addTarget(self, action: #selector(TabViewController.motorBotButtonDown), forControlEvents:.TouchUpInside)
-        thisView.addSubview(m4ButtonDown)
+//        m4ButtonDown.backgroundColor = UIColor.redColor()
+//        m4ButtonDown.addTarget(self, action: #selector(TabViewController.motorBotButtonDown), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m4ButtonDown)
+//        
+//        m4ButtonUp.backgroundColor = UIColor.yellowColor()
+//        m4ButtonUp.addTarget(self, action: #selector(TabViewController.motorBotButtonUp), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m4ButtonUp)
         
-        m4ButtonUp.backgroundColor = UIColor.yellowColor()
-        m4ButtonUp.addTarget(self, action: #selector(TabViewController.motorBotButtonUp), forControlEvents:.TouchUpInside)
-        thisView.addSubview(m4ButtonUp)
+        motor4.align(.UnderMatchingLeft, relativeTo: motor3, padding: 10, width: ws, height: 30)
         
-        motor4.align(.UnderMatchingLeft, relativeTo: motor3, padding: 10, width: (view.frame.width * 0.5), height: 30)
-        
-        m4ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor4, padding: 10, width: 40, height: 30)
-        m4ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m4ButtonDown, padding: 5, width: 40, height: 30)
+//        m4ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor4, padding: 10, width: 40, height: 30)
+//        m4ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m4ButtonDown, padding: 5, width: 40, height: 30)
 
         
-        
-        
         motorBuffVal = Defaults[.SessionBuffCount]!
-        motor5.text = "BufferCount: \(motorBuffVal)"
+        //motor5.text = "BufferCount: \(motorBuffVal)"
+        motor5.text = "BufferCount:"
         motor5.backgroundColor = UIColor.lightGrayColor()
         thisView.addSubview(motor5)
+
+//        m5ButtonDown.backgroundColor = UIColor.redColor()
+//        m5ButtonDown.addTarget(self, action: #selector(TabViewController.motorBuffButtonDown), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m5ButtonDown)
+//        
+//        m5ButtonUp.backgroundColor = UIColor.yellowColor()
+//        m5ButtonUp.addTarget(self, action: #selector(TabViewController.motorBuffButtonUp), forControlEvents:.TouchUpInside)
+//        thisView.addSubview(m5ButtonUp)
+        
+        motor5.align(.UnderMatchingLeft, relativeTo: motor4, padding: 10, width: ws, height: 30)
+        
+//        m5ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor5, padding: 10, width: 40, height: 30)
+//        m5ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m5ButtonDown, padding: 5, width: 40, height: 30)
+        
+        textField1.keyboardType = .NumbersAndPunctuation
+        textField2.keyboardType = .NumbersAndPunctuation
+        textField3.keyboardType = .NumbersAndPunctuation
+        textField4.keyboardType = .NumbersAndPunctuation
+        textField5.keyboardType = .NumbersAndPunctuation
+        
+        textField1.returnKeyType = .Done
+        textField2.returnKeyType = .Done
+        textField3.returnKeyType = .Done
+        textField4.returnKeyType = .Done
+        textField5.returnKeyType = .Done
+        
+        textField1.backgroundColor = UIColor(hex:0xFF5E00)
+        textField2.backgroundColor = UIColor(hex:0xFF5E00)
+        textField3.backgroundColor = UIColor(hex:0xFF5E00)
+        textField4.backgroundColor = UIColor(hex:0xFF5E00)
+        textField5.backgroundColor = UIColor(hex:0xFF5E00)
+        
+        thisView.addSubview(textField1)
+        thisView.addSubview(textField2)
+        thisView.addSubview(textField3)
+        thisView.addSubview(textField4)
+        thisView.addSubview(textField5)
+        
+        textField1.delegate = self
+        textField2.delegate = self
+        textField3.delegate = self
+        textField4.delegate = self
+        textField5.delegate = self
+        
+        textField1.align(.ToTheRightMatchingBottom, relativeTo: motor1, padding: 3, width: 100, height: 30)
+        textField2.align(.ToTheRightMatchingBottom, relativeTo: motor2, padding: 3, width: 100, height: 30)
+        textField3.align(.ToTheRightMatchingBottom, relativeTo: motor3, padding: 3, width: 100, height: 30)
+        textField4.align(.ToTheRightMatchingBottom, relativeTo: motor4, padding: 3, width: 100, height: 30)
+        textField5.align(.ToTheRightMatchingBottom, relativeTo: motor5, padding: 3, width: 100, height: 30)
         
         
-        
-        m5ButtonDown.backgroundColor = UIColor.redColor()
-        m5ButtonDown.addTarget(self, action: #selector(TabViewController.motorBuffButtonDown), forControlEvents:.TouchUpInside)
-        thisView.addSubview(m5ButtonDown)
-        
-        m5ButtonUp.backgroundColor = UIColor.yellowColor()
-        m5ButtonUp.addTarget(self, action: #selector(TabViewController.motorBuffButtonUp), forControlEvents:.TouchUpInside)
-        thisView.addSubview(m5ButtonUp)
-        
-        motor5.align(.UnderMatchingLeft, relativeTo: motor4, padding: 10, width: (view.frame.width * 0.5), height: 30)
-        
-        m5ButtonDown.align(.ToTheRightMatchingBottom, relativeTo: motor5, padding: 10, width: 40, height: 30)
-        m5ButtonUp.align(.ToTheRightMatchingTop, relativeTo: m5ButtonDown, padding: 5, width: 40, height: 30)
-        
-        /*let hideLabel = UILabel()
-        hideLabel.backgroundColor = UIColor.whiteColor()
-        hideLabel.frame = CGRect(x: 0, y:threeRingButton.frame.origin.y, width: thisView.width,height: view.height -  threeRingButton.frame.origin.y)
-        thisView.addSubview(hideLabel)*/
-    
-        
+        textField1.text = "\(Defaults[.SessionPPS]!)"
+        textField2.text = "\(Defaults[.SessionRotateCount]!)"
+        textField3.text = "\(Defaults[.SessionTopCount]!)"
+        textField4.text = "\( Defaults[.SessionBotCount]!)"
+        textField5.text = "\(Defaults[.SessionBuffCount]!)"
     }
+    
+//    func addDoneButtonOnKeyboard(textfield:UITextField)
+//    {
+//        let doneToolbar: UIToolbar = UIToolbar(frame: CGRectMake(0, 0, 320, 50))
+//        doneToolbar.barStyle = UIBarStyle.BlackTranslucent
+//        
+//        let flexSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
+//        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Done, target: self, action: #selector(TabViewController.doneButtonAction))
+//        
+//        let items = NSMutableArray()
+//        items.addObject(flexSpace)
+//        items.addObject(done)
+//        
+//        doneToolbar.items = items
+//        doneToolbar.sizeToFit()
+//        
+//        textfield.inputAccessoryView = doneToolbar
+//        
+//    }
+//    
+//    func doneButtonAction(textfield:UITextField){
+//        textfield.resignFirstResponder()
+//    }
+    
+    func textFieldDidBeginEditing(textField: UITextField) {
+        textField.text = ""
+    }
+    
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        
+        if let data:Int = Int(textField.text!) {
+            if textField == textField1 {
+                motorPPSVal = data
+                Defaults[.SessionPPS] = data
+            } else if textField == textField2 {
+                motorRotateVal = data
+                Defaults[.SessionRotateCount]! = data
+            } else if textField == textField3 {
+                motorTopVal = data
+                Defaults[.SessionTopCount]! = data
+            } else if textField == textField4 {
+                motorBotVal = data
+                Defaults[.SessionBotCount]! = data
+            } else if textField == textField5 {
+                motorBuffVal = data
+                Defaults[.SessionBuffCount]! = data
+            }
+        }
+        
+        textField.resignFirstResponder()
+        
+        return true
+    }
+    
     
     func motorButtonUp() {
         motorPPSVal += 1

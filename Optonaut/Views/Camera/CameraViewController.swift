@@ -915,11 +915,6 @@ class CameraViewController: UIViewController,TabControllerDelegate,CBPeripheralD
             print("currentTheta \(currentTheta)")
             
             
-            
-            
-            
-            
-            
             recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             //recorder.push(currentRotation, buf, lastExposureInfo, lastAwbGains)
             
