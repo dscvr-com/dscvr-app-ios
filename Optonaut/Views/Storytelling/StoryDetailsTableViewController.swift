@@ -314,6 +314,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             print("data>>",data)
             print("Model>>",Models.storyChildren[data])
             
+            print(Models.storyChildren)
+            
             if let childDeleteModel:ModelBox<StoryChildren> = Models.storyChildren[data] {
                 childDeleteModel.insertOrUpdate { st in
                     st.model.deletedAt = NSDate()
@@ -821,6 +823,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 .map { row -> StoryChildren in
                     
                     let nodes = StoryChildren.fromSQL(row)
+                    
+                    Models.storyChildren.touch(nodes)
                     
                     return nodes
                 }

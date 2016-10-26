@@ -24,6 +24,7 @@ class StorytellingVCModel {
             .select(*)
             .join(OptographTable, on: StoryTable[StorySchema.optographID] == OptographTable[OptographSchema.ID])
             .join(PersonTable, on: StoryTable[StorySchema.personID] == PersonTable[PersonSchema.ID])
+            //.join(.LeftOuter,StoryChildrenTable, on: StoryChildrenTable[StoryChildrenSchema.storyID] == StoryTable[StorySchema.ID])
             .filter(StoryTable[StorySchema.personID] == personID && StoryTable[StorySchema.deletedAt] == nil)
         
         refreshNotification.signal
@@ -35,11 +36,7 @@ class StorytellingVCModel {
                         Models.optographs.touch(Optograph.fromSQL(row))
                         Models.persons.touch(Person.fromSQL(row))
                         Models.story.touch(Story.fromSQL(row))
-//                        if apiModel.story.children!.count != 0 {
-//                            for child in apiModel.story.children! {
-//                                Models.storyChildren.touch(child).insertOrUpdate()
-//                            }
-//                        }
+                       // Models.storyChildren.touch(StoryChildren.fromSQL(row))
                     })
                     .map(Story.fromSQL)
                     .ignoreError()

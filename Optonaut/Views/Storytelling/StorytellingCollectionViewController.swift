@@ -106,9 +106,9 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
             }
         }
         
+        print("naka naman",Models.storyChildren)
         
-        
-}
+    }
     
     
     override func viewWillAppear(animated: Bool) {

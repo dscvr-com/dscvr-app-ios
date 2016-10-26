@@ -169,12 +169,13 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             
             let query = StoryChildrenTable
                 .select(*)
-                .filter(StoryChildrenTable[StoryChildrenSchema.storyID] == storyID!)
+                .filter(StoryChildrenTable[StoryChildrenSchema.storyID] == storyID! && StoryChildrenTable[StoryChildrenSchema.storyDeletedAt] == nil)
             
             try! DatabaseService.defaultConnection.prepare(query)
                 .map { row -> StoryChildren in
                     
                     let nodes = StoryChildren.fromSQL(row)
+                    Models.storyChildren.touch(nodes)
                     
                     return nodes
                 }
