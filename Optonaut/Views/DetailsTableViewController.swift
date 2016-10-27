@@ -1015,7 +1015,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 storyNodes.producer.startWithNext { [weak self] nodes in
                     
                     
-                    for node in nodes {
+                    for node in nodes{
                         let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
                         let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
                         
@@ -1094,6 +1094,85 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                         
                     }
                 }
+                
+//                for node in storyNodes.value {
+//                    let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
+//                    let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
+//                    
+//                    if node.mediaType == "FXTXT"{
+//                        
+//                        print("MEDIATYPE: FXTXT")
+//                        
+//                        dispatch_async(dispatch_get_main_queue(), {
+//                            
+//                            
+//                            self.fixedTextLabel.text = node.mediaAdditionalData
+//                            self.fixedTextLabel.textColor = UIColor.blackColor()
+//                            self.fixedTextLabel.font = UIFont(name: "BigNoodleTitling", size: 22.0)
+//                            self.fixedTextLabel.sizeToFit()
+//                            self.fixedTextLabel.frame = CGRect(x: 10.0, y: self.view.frame.size.height - 135.0, width: self.fixedTextLabel.frame.size.width + 5.0, height: self.fixedTextLabel.frame.size.height + 5.0)
+//                            self.fixedTextLabel.backgroundColor = UIColor(0xffbc00)
+//                            self.fixedTextLabel.textAlignment = NSTextAlignment.Center
+//                            
+//                            self.view.addSubview(self.fixedTextLabel)
+//                            
+//                            self.removeNode.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+//                            //                            self.removeNode.center = self.view.center
+//                            self.removeNode.backgroundColor = UIColor.blackColor()
+//                            
+//                            self.removeNode.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y - 10)
+//                            //                            self.removeNode.backgroundColor = UIColor.blackColor()
+//                            self.removeNode.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+//                            self.removeNode.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
+//                            self.removeNode.hidden = true
+//                            self.view.addSubview(self.removeNode)
+//                        })
+//                    } else if node.mediaType == "MUS"{
+//                        print("MEDIATYPE: MUS")
+//                        
+//                        let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
+//                        //let url = NSURL(string: node.objectMediaFileUrl)
+//                        print("url:",url)
+//                        
+//                        if let returnPath:String = self.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
+//                            print(">>>>>>",returnPath)
+//                            
+//                            if returnPath != "" {
+//                                print(returnPath)
+//                                self.playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
+//                                self.player = AVPlayer(playerItem: self.playerItem!)
+//                                self.player?.rate = 1.0
+//                                self.player?.volume = 1.0
+//                                self.player!.play()
+//                                
+//                                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.playerItemDidReachEnd), name: AVPlayerItemDidPlayToEndTimeNotification, object: self.player!.currentItem)
+//                            } else {
+//                                self.mp3Timer = NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(self.checkMp3), userInfo: ["FileUrl":"https://bucket.dscvr.com" + node.objectMediaFileUrl,"FileName":node.objectMediaFilename], repeats: true)
+//                            }
+//                        }
+//                    } else {
+//                        if objectPosition.count >= 2{
+//                            let nodeItem = StorytellingObject()
+//                            
+//                            let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
+//                            let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
+//                            
+//                            nodeItem.objectRotation = nodeRotation
+//                            nodeItem.objectVector3 = nodeTranslation
+//                            nodeItem.optographID = node.mediaAdditionalData
+//                            nodeItem.objectType = node.mediaType
+//                            
+//                            print("node id: \(nodeItem.optographID)")
+//                            print("nodes: \(node.mediaType)")
+//                            
+//                            self.renderDelegate.addNodeFromServer(nodeItem)
+//                        }
+//                        
+//                    }
+//                    print("counts: \(objectPosition.count)")
+//                    print("counts: \(objectRotation.count)")
+//                    
+//                }
             }
         }
     }
@@ -1165,6 +1244,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func showOptograph(nodeObject: StorytellingObject){
+        print("NODE NAME: \(nodeObject.optographID)")
         //check if node object is equal to home optograph id
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
         if nameArray[0] == optographID{
@@ -1176,37 +1256,72 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.renderDelegate.removeMarkers()
                     
                 
-                self.storyNodes.producer.startWithNext { [weak self] nodes in
+//                self.storyNodes.producer.startWithNext { [weak self] nodes in
+//                    
+//                    for node in nodes {
+//                        let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
+//                        let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
+//                        
+//                        if objectPosition.count >= 2{
+//                            
+//                            let nodeItem = StorytellingObject()
+//                            
+//                            let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
+//                            let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
+//                            
+//                            nodeItem.objectRotation = nodeRotation
+//                            nodeItem.objectVector3 = nodeTranslation
+//                            //                        nodeItem.optographID = nodes.story_object_media_additional_data
+//                            nodeItem.objectType = node.mediaType
+//                            
+//                            if node.mediaType == "TXT" {
+//                                print("node.media ADDITIONAL",node.mediaAdditionalData)
+//                            
+//                            }
+//                            
+//                            if node.mediaType == "MUS"{
+//                                nodeItem.optographID = node.objectMediaFileUrl
+//                            }
+//                                
+//                            else if node.mediaType == "NAV" && node.mediaType == "TXT"{
+//                                nodeItem.optographID = node.mediaAdditionalData
+//                            }
+//                            
+//                            print("node id: \(nodeItem.optographID)")
+//                            
+//                            self?.renderDelegate.addNodeFromServer(nodeItem)
+//                            
+//                        }
+//                    }
+//                }
+                for node in self.storyNodes.value {
+                    let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
+                    let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
                     
-                    for node in nodes {
-                        let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
-                        let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
+                    if objectPosition.count >= 2{
                         
-                        if objectPosition.count >= 2{
-                            
-                            let nodeItem = StorytellingObject()
-                            
-                            let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
-                            let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
-                            
-                            nodeItem.objectRotation = nodeRotation
-                            nodeItem.objectVector3 = nodeTranslation
-                            //                        nodeItem.optographID = nodes.story_object_media_additional_data
-                            nodeItem.objectType = node.mediaType
-                            
-                            if node.mediaType == "MUS"{
-                                nodeItem.optographID = node.objectMediaFileUrl
-                            }
-                                
-                            else if node.mediaType == "NAV"{
-                                nodeItem.optographID = node.mediaAdditionalData
-                            }
-                            
-                            print("node id: \(nodeItem.optographID)")
-                            
-                            self?.renderDelegate.addNodeFromServer(nodeItem)
-                            
+                        let nodeItem = StorytellingObject()
+                        
+                        let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
+                        let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
+                        
+                        nodeItem.objectRotation = nodeRotation
+                        nodeItem.objectVector3 = nodeTranslation
+                        //                        nodeItem.optographID = nodes.story_object_media_additional_data
+                        nodeItem.objectType = node.mediaType
+                        
+                        if node.mediaType == "MUS"{
+                            nodeItem.optographID = node.objectMediaFileUrl
                         }
+                            
+                        else if node.mediaType == "NAV" && node.mediaType == "TXT"{
+                            nodeItem.optographID = node.mediaAdditionalData
+                        }
+                        
+                        print("node id: \(nodeItem.optographID)")
+                        
+                        self.renderDelegate.addNodeFromServer(nodeItem)
+                        
                     }
                 }
             })
@@ -1232,7 +1347,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func showText(nodeObject: StorytellingObject){
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
-//        print("TEXT: \(nameArray[0])")
+        print("TEXT: \(nameArray[0])")
         
         dispatch_async(dispatch_get_main_queue(), {
             self.storyPinLabel.text = nameArray[0]
@@ -1251,8 +1366,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             self.diagonal.frame = CGRectMake(0, 0, self.storyPinLabel.frame.size.width/2, 30.0)
             self.diagonal.center = CGPoint(x: self.storyPinLabel.center.x, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height + 10.0)
             self.diagonal.hidden = false
-//            self.cloudQuote.center = CGPoint(x: self.storyPinLabel.frame.origin.x + self.cloudQuote.frame.size.width/2, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height)
-//            self.cloudQuote.hidden = false
             
             self.view.addSubview(self.storyPinLabel)
         })
@@ -1297,16 +1410,23 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let nameArray = deletablePin.optographID.componentsSeparatedByString(",")
         
         
-        storyNodes.producer.startWithNext { [weak self] nodes in
-            let filteredArray = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
-            print("filteredArray: \(filteredArray.count)")
-            print("deletable ID: \(nameArray[0])")
-            print(">>>>>",(self?.deletablePin.optographID)!)
-            
-            self?.renderDelegate.removeAllNodes((self?.deletablePin.optographID)!)
-            //self?.storyNodes = filteredArray
-        }
+//        storyNodes.producer.startWithNext { [weak self] nodes in
+//            let filteredArray = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
+//            print("filteredArray: \(filteredArray.count)")
+//            print("deletable ID: \(nameArray[0])")
+//            print(">>>>>",(self?.deletablePin.optographID)!)
+//            
+//            self?.renderDelegate.removeAllNodes((self?.deletablePin.optographID)!)
+//            //self?.storyNodes = filteredArray
+//        }
         
+        let nodes = storyNodes.value
+        
+        let filteredArray = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
+        print("filteredArray: \(filteredArray.count)")
+        print("deletable ID: \(nameArray[0])")
+        
+        self.renderDelegate.removeAllNodes(self.deletablePin.optographID)
         
     }
     

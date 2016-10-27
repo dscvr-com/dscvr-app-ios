@@ -136,6 +136,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     var finalRetainDataFromStart  = [NSDictionary]()
     var allData = [NSDictionary]()
     var removePinButton = UIButton()
+    var timer = NSTimer()
     //
     
     
@@ -191,26 +192,20 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     func sendToNewPath(){
         
         if isEditingStory {
-            if finalRetainData.count == 0 {
-                allData = nodes + finalRetainDataFromStart
-            } else {
-                allData = nodes + finalRetainData
-            }
-        } else {
-            allData = nodes
+            
+            self.removeOrUpdateInObjects(self.deletableData)
+            print("retain data>>> ",nodes)
         }
+        
         
         let parameters : NSDictionary =  ["story_optograph_id": optographID,
                                           "story_person_id": SessionService.personID,
-                                          "children":allData]
+                                          "children":nodes]
         
-        
-        print("nodes",nodes)
-        print("final",finalRetainData)
         print("deletedPIn",self.deletableData)
         print("params>>",parameters)
         
-        if allData.count > 0 || self.deletableData.count > 0{
+        if nodes.count > 0 || self.deletableData.count > 0{
             print("pass data")
             LoadingIndicatorView.show()
             
@@ -221,20 +216,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         print("data story id: \(data)")
                         print("user: \(SessionService.personID)")
                         
-                        let response = StoryMediaObject()
-                        response.mediaArray = (data.data?.children)!
-                        response.story_id = (data.data?.story_id)!
-                        
-                        print("mediaArray: \(response.mediaArray)")
-                        print("story_id: \(response.story_id)")
-                        
                         self.optographBox.insertOrUpdate { box in
-                            box.model.storyID = response.story_id
+                            box.model.storyID = (data.data?.story_id)!
                         }
                         
-                        self.updateStory(response.story_id,childIds: response.mediaArray)
-                        
-                        self.sendMultiformData(response)
+                        self.updateStory((data.data?.children)!,storyId: (data.data?.story_id)!)
+                        self.sendMultiformData(data.data!)
                         
                         LoadingIndicatorView.hide()
                         
@@ -247,21 +234,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         print("data story id: \(data)")
                         print("user: \(SessionService.personID)")
                         
-                        let response = StoryMediaObject()
-                        response.mediaArray = (data.data?.children)!
-                        response.story_id = (data.data?.story_id)!
-                        
-                        print("mediaArray: \(response.mediaArray)")
-                        print("story_id: \(response.story_id)")
-                        
-                        
                         self.optographBox.insertOrUpdate { box in
-                            box.model.storyID = response.story_id
+                            box.model.storyID = (data.data?.story_id)!
                         }
                         
-                        self.saveStory(response.story_id,childIds: response.mediaArray)
-                        
-                        self.sendMultiformData(response)
+                        self.updateStory((data.data?.children)!,storyId: (data.data?.story_id)!)
+                        self.sendMultiformData(data.data!)
                         
                         LoadingIndicatorView.hide()
                         
@@ -272,50 +250,29 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             print("nodes count is zero")
         }
     }
-    func updateStory(storyID:UUID,childIds:[ChildNameResponse]) {
+    func updateStory(story:[StorytellingChildren],storyId:UUID) {
         
-        var modelCount = 0
+        for data in story {
+            Models.storyChildren.touch(data).insertOrUpdate()
+        }
         
-        for data in allData {
+        if !isEditingStory {
+            //create new row in story table
+            var story = Story.newInstance()
+            story.personID = SessionService.personID
+            story.optographID = optographID
             
-            if let childModel:ModelBox<StoryChildren> = Models.storyChildren[childIds[modelCount].story_object_id] {
-                childModel.insertOrUpdate{ st in
-                    
-                    st.model.ID = childIds[modelCount].story_object_id
-                    if let mda = (data["story_object_media_additional_data"] as? String) {
-                        st.model.mediaAdditionalData = mda
-                    }
-                    if let md = (data["story_object_media_description"] as? String) {
-                        st.model.mediaDescription = md
-                    }
-                    if let mf = (data["story_object_media_face"] as? String){
-                        st.model.mediaFace = mf
-                    }
-                    if let mt = (data["story_object_media_type"] as? String) {
-                        st.model.mediaType = mt
-                    }
-                    if let mFN = (data["story_object_media_filename"] as? String) {
-                        st.model.objectMediaFilename = mFN
-                    }
-                    if let position = data["story_object_position"] as? [CGFloat] {
-                        st.model.objectPosition = position.map{String($0)}.joinWithSeparator(",")
-                    }
-                    if let rotation = data["story_object_rotation"] as? [CGFloat] {
-                        st.model.objectRotation = rotation.map{String($0)}.joinWithSeparator(",")
-                    }
-                    
-                    st.model.storyID = storyID
-                }
+            //create model cache in story
+            let storyBox: ModelBox<Story>
+            storyBox = Models.story.create(story)
+            storyBox.insertOrUpdate { st in
+                st.model.ID = storyId
             }
-            modelCount += 1
         }
         
         for data in deletableData {
             
             print("data>>",data)
-            print("Model>>",Models.storyChildren[data])
-            
-            print(Models.storyChildren)
             
             if let childDeleteModel:ModelBox<StoryChildren> = Models.storyChildren[data] {
                 childDeleteModel.insertOrUpdate { st in
@@ -385,46 +342,42 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         }
     }
     
-    func sendMultiformData(mediaData: StoryMediaObject){
+    func sendMultiformData(mediaData: MultiformDataInfo){
         
         var multiformDictionary = [String : AnyObject]()
         multiformDictionary["story_id"] = mediaData.story_id
         multiformDictionary["story_person_id"] = SessionService.personID
-//        multiformDictionary.setValue(mediaData.story_id, forKey: "story_id")
-//        multiformDictionary.setValue(SessionService.personID, forKey: "story_person_id")
         
         var counter = 0
         var mediaIDcsv = String()
-        for media in mediaData.mediaArray {
+        for media in mediaData.children! {
             counter += 1
             
-            if counter < mediaData.mediaArray.count{
-                mediaIDcsv = mediaIDcsv + media.story_object_id + ","
+            if counter < mediaData.children!.count{
+                mediaIDcsv = mediaIDcsv + media.storyID + ","
             }
             else{
-                mediaIDcsv = mediaIDcsv + media.story_object_id
+                mediaIDcsv = mediaIDcsv + media.storyID
             }
-            
         }
         
         var mediaCounter = 0
         
-        for media in mediaData.mediaArray{
+        for media in mediaData.children! {
             mediaCounter += 1
             for fileInfo in mediaArray{
-                if media.story_object_media_filename == fileInfo["mediaFilename"] as! String{
-                    multiformDictionary[media.story_object_id] = fileInfo["mediaData"]
-//                    multiformDictionary.setValue(fileInfo["mediaData"], forKey: media.story_object_id)
+                if media.objectMediaFilename == fileInfo["mediaFilename"] as! String{
+                    multiformDictionary[media.storyID] = fileInfo["mediaData"]
                     
                     print("mediaFilename: \(fileInfo["mediaFilename"] as! String)")
                     
                     ApiService<EmptyResponse>.uploadForGate("story/upload", multipartFormData: { form in
                         form.appendBodyPart(data: mediaData.story_id.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_id")
                         form.appendBodyPart(data: SessionService.personID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_person_id")
-                        form.appendBodyPart(data: media.story_object_id.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_object_ids")
-                        form.appendBodyPart(data: fileInfo["mediaData"] as! NSData, name: media.story_object_id, fileName: fileInfo["mediaFilename"] as! String, mimeType: "audio/mp4")
+                        form.appendBodyPart(data: media.storyID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_object_ids")
+                        form.appendBodyPart(data: fileInfo["mediaData"] as! NSData, name: media.storyID, fileName: fileInfo["mediaFilename"] as! String, mimeType: "audio/mp4")
                         
-                        if mediaCounter == mediaData.mediaArray.count{
+                        if mediaCounter == mediaData.children!.count {
                             self.dismissStorytelling()
                         }
                         
@@ -433,7 +386,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             }
         }
         
-        self.dismissStorytelling()
+        timer = NSTimer.scheduledTimerWithTimeInterval(0.3, target: self, selector: #selector(self.dismissStorytelling), userInfo: nil, repeats: true)
     }
     
     func optographSelected(optographID: String) {
@@ -506,15 +459,51 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         })
     }
     
+    func removeOrUpdateInObjects(idToDelete:[UUID]) -> Bool {
+    
+        for object in storyNodes.value {
+            for id in idToDelete {
+                if object.ID == id {
+                    self.removeNodeFromObject(object)
+                }
+            }
+        }
+        return self.convertToDictionary()
+    }
+    
+    func convertToDictionary() -> Bool{
+        for data in storyNodes.value {
+            let child : NSDictionary = ["story_object_media_type": data.mediaType,
+                                        "story_object_media_face": data.mediaFace,
+                                        "story_object_id": data.ID,
+                                        "story_object_media_description": data.mediaDescription,
+                                        "story_object_media_additional_data": data.mediaAdditionalData,
+                                        "story_object_position": data.objectPosition.characters.split{$0 == ","}.map(String.init),
+                                        "story_object_rotation": data.objectRotation.characters.split{$0 == ","}.map(String.init)]
+            nodes.append(child)
+        }
+        
+        return true
+        
+    }
+    
+    func removeNodeFromObject(nodeToDelete:StoryChildren) {
+        if let index = storyNodes.value.indexOf(nodeToDelete) {
+            storyNodes.value.removeAtIndex(index)
+        }
+    }
+    
     func showRemovePinButton(nodeObject: StorytellingObject){
         
         dispatch_async(dispatch_get_main_queue(), {
-            self.removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
-            self.removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
-            self.removePinButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
-            self.removePinButton.backgroundColor = UIColor.whiteColor()
-            self.removePinButton.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
-            self.view.addSubview(self.removePinButton)
+            if !self.removePinButton.isDescendantOfView(self.view) {
+                self.removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
+                self.removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
+                self.removePinButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
+                self.removePinButton.backgroundColor = UIColor.whiteColor()
+                self.removePinButton.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
+                self.view.addSubview(self.removePinButton)
+            }
             
             self.deletablePin = nodeObject
             self.isEditingStory = true
@@ -524,7 +513,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func removePin(){
         
-        removePinButton.removeFromSuperview()
+        dispatch_async(dispatch_get_main_queue(), {
+            self.removePinButton.removeFromSuperview()
+        })
         
         let nameArray = deletablePin.optographID.componentsSeparatedByString(",")
         
@@ -722,7 +713,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     self.cloudQuote.hidden = true
                     self.diagonal.hidden = true
                     self.storyPinLabel.removeFromSuperview()
+                    self.removePinButton.removeFromSuperview()
                 })
+                
                 return
             }
             
@@ -820,7 +813,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     
                     let nodes = StoryChildren.fromSQL(row)
                     
-                    Models.storyChildren.touch(nodes)
+                    //Models.storyChildren.touch(nodes)
                     
                     return nodes
                 }
@@ -1266,13 +1259,11 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func doneStorytelling(){
-//        self.sendOptographData();
         self.sendToNewPath();
-        //        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     func dismissStorytelling(){
-        print("func dismissStorytelling()")
+        timer.invalidate()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -1361,6 +1352,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         bgmImage.hidden = true
         removeBgm.hidden = true
+        
+        if player != nil{
+            player!.pause()
+        }
     }
     
     //create a function with button tag switch for color changes
@@ -1470,15 +1465,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         naviCon.viewControllers = [optocollection]
         
         self.presentViewController(naviCon, animated: true, completion: nil)
-        
-        //        playerItem = AVPlayerItem(URL: itemURL)
-        //        player=AVPlayer(playerItem: playerItem!)
-        //        player?.rate = 1.0
-        //        player?.volume = 1.0
-        //        player!.play()
-        
-        
-        //        self.receiveStory()
     }
     
     func audioButtonDown(){

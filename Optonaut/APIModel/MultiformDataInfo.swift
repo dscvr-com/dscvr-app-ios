@@ -11,12 +11,12 @@ import ObjectMapper
 
 struct MultiformDataInfo: Mappable {
     var story_id: String = ""
-    var children: [ChildNameResponse]?
+    var children: [StorytellingChildren]?
     
     init?(_ map: Map) {}
     
     mutating func mapping(map: Map) {
         story_id              <- map["story_id"]
-        children                 <- map["children"]
+        children              <- map["children"]
     }
 }

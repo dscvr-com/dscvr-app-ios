@@ -29,8 +29,8 @@ struct StorytellingChildren: ApiModel,Mappable {
     
     mutating func mapping(map: Map) {
         
-        var opArray: [String] = []
-        var orArray: [String] = []
+        var opArray: [AnyObject] = []
+        var orArray: [AnyObject] = []
         
         ID                    <- map["story_object_id"]
         storyID               <- map["story_object_story_id"]
@@ -47,11 +47,11 @@ struct StorytellingChildren: ApiModel,Mappable {
         objectMediaFileUrl    <- map["story_object_media_fileurl"]
         
         if opArray.count != 0 {
-            objectPosition = opArray.joinWithSeparator(",")
+            objectPosition = opArray.map{String($0)}.joinWithSeparator(",")
         }
         
         if orArray.count != 0 {
-            objectRotation = orArray.joinWithSeparator(",")
+            objectRotation = orArray.map{String($0)}.joinWithSeparator(",")
         }
     }
 }

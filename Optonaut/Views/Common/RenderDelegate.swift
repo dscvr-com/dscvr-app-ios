@@ -428,6 +428,8 @@ class CubeRenderDelegate: RenderDelegate {
         
         markNode.name = nodeData.optographID + "," + nodeData.objectType
         
+        print(">>>>>>>>>>>>>node name",markNode.name)
+        
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
     }

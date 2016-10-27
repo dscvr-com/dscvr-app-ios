@@ -85,9 +85,6 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
             .observeOnMain()
             .on(next: { [weak self] results in
                 
-                
-                print(results)
-                
                 if let strongSelf = self {
                     strongSelf.storyIDs = results
                         .map{$0.optographID}
@@ -106,7 +103,6 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
             }
         }
         
-        print("naka naman",Models.storyChildren)
         
     }
     
@@ -123,6 +119,11 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         navigationController?.navigationBarHidden = false
         
         print("SCVC viewWillAppear")
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
     }
     
     func dismissMe(){
