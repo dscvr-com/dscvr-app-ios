@@ -230,9 +230,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textColor = .blackColor()
-        descriptionLabel.backgroundColor = UIColor.whiteColor()
+        //descriptionLabel.backgroundColor = UIColor.whiteColor()
         descriptionLabel.font = UIFont(name: "MerriweatherLight",size: 12)
-//        descriptionLabel.text = "they like working in minimum light."
         descriptionLabel.textAlignment = NSTextAlignment.Center
         self.view.addSubview(descriptionLabel)
         descriptionLabel.userInteractionEnabled = true
@@ -309,6 +308,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         likeCountView.rac_text <~ viewModel.starsCount.producer.map { "\($0)" }
         //descriptionLabel.rac_text <~ viewModel.text
         viewModel.text.producer.startWithNext{ val in
+            if val != "" {
+                self.descriptionLabel.backgroundColor = UIColor.whiteColor()
+            }
             self.descriptionLabel.text = val
             self.descriptionLabel.sizeToFit()
             self.descriptionLabel.frame = CGRect(origin: self.descriptionLabel.frame.origin, size: CGSize(width: self.descriptionLabel.frame.size.width + 10.0, height: self.descriptionLabel.frame.size.height + 2))
@@ -1026,21 +1028,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                                 
                                 self!.fixedTextLabel.text = node.mediaAdditionalData
                                 self!.fixedTextLabel.textColor = UIColor.blackColor()
-                                //self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
-                                //self.fixedTextLabel.font = UIFont(name: "Roadgeek2005Series1B", size: 22.0)
                                 self!.fixedTextLabel.font = UIFont(name: "BigNoodleTitling", size: 22.0)
                                 self!.fixedTextLabel.sizeToFit()
                                 self!.fixedTextLabel.frame = CGRect(x: 10.0, y: self!.view.frame.size.height - 135.0, width: self!.fixedTextLabel.frame.size.width + 5.0, height: self!.fixedTextLabel.frame.size.height + 5.0)
                                 self!.fixedTextLabel.backgroundColor = UIColor(0xffbc00)
-                                //                            self.fixedTextLabel.layer.borderWidth = 2.0
-                                //                            self.fixedTextLabel.layer.borderColor = UIColor(0xFF5E00).CGColor
                                 self!.fixedTextLabel.textAlignment = NSTextAlignment.Center
-                                //                            self.descriptionLabel.frame = CGRect(x: self.fixedTextLabel.frame.origin.x, y: self.fixedTextLabel.frame.origin.y + self.fixedTextLabel.frame.size.height, width: 0, height: 0)
-                                //                            self.descriptionLabel.sizeToFit()
-                                //                            self.fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
-                                //                            self.fixedTextLabel.frame = CGRect(x: self.descriptionLabel.frame
-                                //                                .origin.x, y: self.descriptionLabel.frame.origin.y - self.fixedTextLabel.frame.size.height, width: self.fixedTextLabel.frame.size.width, height: self.fixedTextLabel.frame.size.height)
-                                //                            print("label height: \(self.fixedTextLabel.frame.size.height)")
                                 
                                 self?.view.addSubview((self?.fixedTextLabel)!)
                                 

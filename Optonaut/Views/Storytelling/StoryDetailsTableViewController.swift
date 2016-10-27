@@ -135,6 +135,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     var finalRetainData  = [NSDictionary]()
     var finalRetainDataFromStart  = [NSDictionary]()
     var allData = [NSDictionary]()
+    var removePinButton = UIButton()
     //
     
     
@@ -508,21 +509,22 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     func showRemovePinButton(nodeObject: StorytellingObject){
         
         dispatch_async(dispatch_get_main_queue(), {
-            let removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
-            removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
-            removePinButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
-            removePinButton.backgroundColor = UIColor.whiteColor()
-            removePinButton.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
-            self.view.addSubview(removePinButton)
+            self.removePinButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20.0, height: 20.0))
+            self.removePinButton.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y + 10)
+            self.removePinButton.setBackgroundImage(UIImage(named:"close_icn"), forState: .Normal)
+            self.removePinButton.backgroundColor = UIColor.whiteColor()
+            self.removePinButton.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
+            self.view.addSubview(self.removePinButton)
             
             self.deletablePin = nodeObject
             self.isEditingStory = true
-            
-            self.removeNode.hidden = false
         })
     }
     
+    
     func removePin(){
+        
+        removePinButton.removeFromSuperview()
         
         let nameArray = deletablePin.optographID.componentsSeparatedByString(",")
         
@@ -740,12 +742,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 
                 let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
                 print(nameArray)
-//                if nameArray.count > 0 {
-//                    if nameArray[1] == "TXT" && !isEditingStory {
-//                        self.showText(nodeObject)
-//                        return
-//                    }
-//                }
                 
                 self.showRemovePinButton(nodeObject)
                 return
