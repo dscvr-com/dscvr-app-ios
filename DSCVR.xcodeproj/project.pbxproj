@@ -2108,7 +2108,7 @@
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.storytelling;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "f8637417-62f0-43b5-891e-7a31476982f6";
+				PROVISIONING_PROFILE = "dc9e2690-2860-4113-ac31-c1e27506d544";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2143,7 +2143,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.thousandminds.storytelling;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "f8637417-62f0-43b5-891e-7a31476982f6";
+				PROVISIONING_PROFILE = "dc9e2690-2860-4113-ac31-c1e27506d544";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
