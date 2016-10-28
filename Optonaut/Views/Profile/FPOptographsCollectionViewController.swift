@@ -121,7 +121,6 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
         
         let optographID = optographIDs[indexPath.item];
         cell.bind(optographID);
-        //cell.refreshNotification = collectionViewModel.refreshNotification;
         cell.navigationController = navigationController as? NavigationController;
         cell.backgroundColor = UIColor.blackColor();
         

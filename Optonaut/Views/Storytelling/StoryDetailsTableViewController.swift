@@ -137,6 +137,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     var allData = [NSDictionary]()
     var removePinButton = UIButton()
     var timer = NSTimer()
+    var audioPin = UIButton()
     //
     
     
@@ -1053,7 +1054,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         //        let audioPinImage = UIImage(named: "")
         //        let audioPin = UIButton(frame: CGRect(x: 0, y: 0, width: (audioPinImage?.size.width)!, height: (audioPinImage?.size.height)!))
         
-        let audioPin = UIButton(frame: CGRect(x: 10.0, y: self.view.frame.size.height - 50.0, width: 40.0, height: 40.0))
+        audioPin = UIButton(frame: CGRect(x: 10.0, y: self.view.frame.size.height - 50.0, width: 40.0, height: 40.0))
 //        audioPin.backgroundColor = UIColor.redColor()
         audioPin.addTarget(self, action: #selector(audioButtonDown), forControlEvents: .TouchUpInside)
         audioPin.setImage(UIImage(named: "add_music_icn"), forState: UIControlState.Normal)
@@ -1314,43 +1315,54 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func removeBGM(){
-        //"story_object_media_description": "story bgm"
-        
-//        var nodeIndex = 0
-        
-//        for node in self.nodes {
-//            if node["story_object_media_description"] as! String == "story bgm"{
-//                self.nodes.removeAtIndex(nodeIndex)
-//            }
-//            nodeIndex += 1
-//            
-//            print("node count: \(self.nodes.count)")
-//        }
-        
-        var nodeData = [NSDictionary]()
         
         for data in storyNodes.value {
             if data.mediaDescription == "story bgm" {
                 self.deletableData.append(data.ID)
-            } else {
-                let child : NSDictionary = ["story_object_media_type": data.mediaType,
-                                            "story_object_media_face": data.mediaFace,
-                                            "story_object_id": data.ID,
-                                            "story_object_media_description": data.mediaDescription,
-                                            "story_object_media_additional_data": data.mediaAdditionalData,
-                                            "story_object_position": data.objectPosition.characters.split{$0 == ","}.map(String.init),
-                                            "story_object_rotation": data.objectRotation.characters.split{$0 == ","}.map(String.init)]
-                nodeData.append(child)
+                self.stopAudio()
             }
         }
         
-        self.finalRetainData = nodeData
+        for data in nodes {
+            if data["story_object_media_description"] as? String == "story bgm" {
+                if let index = nodes.indexOf(data) {
+                    nodes.removeAtIndex(index)
+                    self.removeFileInCache((data["story_object_media_filename"] as? String)!)
+                    self.audioPin.userInteractionEnabled = false
+                    self.stopAudio()
+                }
+            }
+        }
+    }
+    
+    func stopAudio() {
+        self.audioPin.userInteractionEnabled = true
         
         bgmImage.hidden = true
         removeBgm.hidden = true
         
         if player != nil{
             player!.pause()
+        }
+    }
+    
+    
+    func removeFileInCache(filename:String) {
+        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        var documentsDirectory = ""
+        
+        if paths.count > 0{
+            documentsDirectory = paths[0]
+        }
+        
+        let path = documentsDirectory.stringByAppendingPathComponent("StoryFiles/\(filename)")
+        
+        let fileManager = NSFileManager.defaultManager()
+        
+        do {
+            try fileManager.removeItemAtPath(path)
+        } catch {
+            print("removing failed.")
         }
     }
     
@@ -1540,6 +1552,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 
                 self.mediaArray.append(mediaInfo)
                 print("nodes count: \(self.nodes.count)")
+                
+                self.audioPin.userInteractionEnabled = false
                 
                 dispatch_async(dispatch_get_main_queue(), {
                     self.bgmImage.hidden = false
