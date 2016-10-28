@@ -65,13 +65,29 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
                 self.collectionView?.reloadData()
         }
         
-        let dismissButton = UIButton(frame: CGRect(x: 0, y: 0.0, width: 40.0, height: 40.0))
-        //        dismissButton.backgroundColor = UIColor.whiteColor()
-        dismissButton.addTarget(self, action: #selector(dismissStorytelling), forControlEvents: .TouchUpInside)
-        dismissButton.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+        if !startStory {
+            let dismissButton = UIButton(frame: CGRect(x: 0, y: 0.0, width: 40.0, height: 40.0))
+            dismissButton.addTarget(self, action: #selector(dismissStorytelling), forControlEvents: .TouchUpInside)
+            dismissButton.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+            
+            let rightBarButton = UIBarButtonItem(customView: dismissButton)
+            self.navigationItem.rightBarButtonItem = rightBarButton
+        } else {
+            var backButton = UIImage(named: "back_yellow_icn")
+            backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeStorytelling))
         
-        let rightBarButton = UIBarButtonItem(customView: dismissButton)
-        self.navigationItem.rightBarButtonItem = rightBarButton
+        }
+    }
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        if startStory  {
+            closeStorytelling()
+        }
+    }
+    
+    func closeStorytelling(){
+        navigationController?.popViewControllerAnimated(true)
     }
     
     func dismissStorytelling(){
@@ -86,6 +102,7 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
         pfModel.isActive.value = false
     }
     
@@ -121,6 +138,7 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
             detailsViewController.isStorytelling = true
             
             print("id: \(optographIDs[indexPath.item])");
+            
             navigationController?.presentViewController(detailsViewController, animated: true, completion: nil)
         } else {
             delegate?.optographSelected(optographIDs[indexPath.item]);

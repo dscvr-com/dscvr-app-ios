@@ -102,8 +102,6 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
                 self.feedsModel.isActive.value = false
             }
         }
-        
-        
     }
     
     
@@ -135,9 +133,10 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         let optoCollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optoCollection.startStory = true
         
-        let navCon = UINavigationController()
-        navCon.viewControllers = [optoCollection]
-        navigationController?.presentViewController(navCon, animated: true, completion: nil)
+//        let navCon = UINavigationController()
+//        navCon.viewControllers = [optoCollection]
+//        navigationController?.presentViewController(navCon, animated: true, completion: nil)
+        navigationController?.pushViewController(optoCollection, animated: false)
     }
 
     //UICollectionView Data Source

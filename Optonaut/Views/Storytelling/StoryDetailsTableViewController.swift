@@ -1267,10 +1267,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    func bubblegumPop(){
-        
-    }
-    
     func toggleAttachmentButtons() {
         
         if attachmentToggled{

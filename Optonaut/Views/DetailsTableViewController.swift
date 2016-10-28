@@ -7,7 +7,7 @@
 //
 
 import Foundation
-//import Mixpanel
+import Mixpanel
 import Async
 import SceneKit
 import ReactiveCocoa
@@ -917,9 +917,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        //Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID, "optograph_description" : viewModel.optograph.text])
+        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optographId, "optograph_description" : viewModel.text.value])
         
-        //Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": "", "optograph_description" : ""])
+        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": "", "optograph_description" : ""])
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -929,9 +929,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         CoreMotionRotationSource.Instance.start()
         RotationService.sharedInstance.rotationEnable()
-        
-        //        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-        //        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailsTableViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
         
         updateNavbarAppear()
         
