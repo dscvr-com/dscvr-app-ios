@@ -212,10 +212,6 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 if nameArray[1] == "NAV" || nameArray[1] == "Image"{
                     //self.showOptograph(nodeObject)
                 }
-                
-                if nameArray[1] == "MUS"{
-                    //self.playPinMusic(nodeObject)
-                }
             }
         } else{ // this is a new id
             last_optographID = nodeObject.optographID
@@ -318,9 +314,11 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     private func createRenderDelegates() {
         InvertableHeadTrackerRotationSource.InvertableInstance.inverted = orientation == .LandscapeLeft
         
-        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false,isStory:false)
+        let isStory = nodes.count > 0 ? true : false
+        
+        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false,isStory:isStory)
         leftRenderDelegate.scnView = leftScnView
-        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 2, autoDispose: false,isStory:false)
+        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 2, autoDispose: false,isStory:isStory)
         rightRenderDelegate.scnView = rightScnView
         
         leftScnView.scene = leftRenderDelegate.scene
