@@ -518,7 +518,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     dynamic private func pushDetails() {
         
-        let detailsViewController = DetailsTableViewController(optoList:[optoId])
+        let detailsViewController = DetailsTableViewController(optoList:[optoId],storyid: nil)
         detailsViewController.cellIndexpath = id
         navigationController?.pushViewController(detailsViewController, animated: true)
     }

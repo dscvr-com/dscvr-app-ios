@@ -102,6 +102,8 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         commentTextField.attributedPlaceholder = NSAttributedString(string: "Write a comment...", attributes:attributes)
         
         viewModel.comments.producer.startWithNext { [weak self] _ in
+            
+            print("comment")
             self?.tableView.reloadData()
             
         }

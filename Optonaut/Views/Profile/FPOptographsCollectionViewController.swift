@@ -132,9 +132,11 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
         
         if startStory {
             
-            let detailsViewController = StoryDetailsTableViewController(optographId: optographIDs[indexPath.item])
+            let detailsViewController = StoryDetailsTableViewController(optographId: optographIDs[indexPath.item],storyid: nil)
             detailsViewController.cellIndexpath = indexPath.item
             detailsViewController.isStorytelling = true
+            
+            Defaults[.SessionStoryOptoID] = optographIDs[indexPath.item]
             
             print("id: \(optographIDs[indexPath.item])");
             
@@ -169,30 +171,64 @@ class FPModel {
     
     init(personID: UUID) {
         
-        let query = OptographTable
-            .select(*)
-            .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
-            .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .join(.LeftOuter, StoryTable, on: StoryTable[StorySchema.ID] == OptographTable[OptographSchema.storyID])
-            .filter(PersonTable[PersonSchema.ID] == personID && OptographTable[OptographSchema.storyID] == "")
+        if let msoid = Defaults[.SessionStoryOptoID] {
+            
+            let query = OptographTable
+                .select(*)
+                .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
+                .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+                .join(.LeftOuter, StoryTable, on: StoryTable[StorySchema.ID] == OptographTable[OptographSchema.storyID])
+                .filter(PersonTable[PersonSchema.ID] == personID && OptographTable[OptographSchema.storyID] == "" && OptographTable[OptographSchema.ID] != msoid)
+            
+            refreshNotification.signal
+                .takeWhile { _ in SessionService.isLoggedIn }
+                .flatMap(.Latest) { _ in
+                    DatabaseService.query(.Many, query: query)
+                        .observeOnUserInteractive()
+                        .on(next: { row in
+                            Models.optographs.touch(Optograph.fromSQL(row))
+                            Models.persons.touch(Person.fromSQL(row))
+                            Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
+                        })
+                        .map(Optograph.fromSQL)
+                        .ignoreError()
+                        .collect()
+                        .startOnUserInteractive()
+                }
+                .observeOnMain()
+                .observeNext {self.results.value = $0 }
+            
+        } else {
+            
+            let query = OptographTable
+                .select(*)
+                .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
+                .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+                .join(.LeftOuter, StoryTable, on: StoryTable[StorySchema.ID] == OptographTable[OptographSchema.storyID])
+                .filter(PersonTable[PersonSchema.ID] == personID && OptographTable[OptographSchema.storyID] == "")
+            
+            refreshNotification.signal
+                .takeWhile { _ in SessionService.isLoggedIn }
+                .flatMap(.Latest) { _ in
+                    DatabaseService.query(.Many, query: query)
+                        .observeOnUserInteractive()
+                        .on(next: { row in
+                            Models.optographs.touch(Optograph.fromSQL(row))
+                            Models.persons.touch(Person.fromSQL(row))
+                            Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
+                        })
+                        .map(Optograph.fromSQL)
+                        .ignoreError()
+                        .collect()
+                        .startOnUserInteractive()
+                }
+                .observeOnMain()
+                .observeNext {self.results.value = $0 }
+        }
         
-        refreshNotification.signal
-            .takeWhile { _ in SessionService.isLoggedIn }
-            .flatMap(.Latest) { _ in
-                DatabaseService.query(.Many, query: query)
-                    .observeOnUserInteractive()
-                    .on(next: { row in
-                        Models.optographs.touch(Optograph.fromSQL(row))
-                        Models.persons.touch(Person.fromSQL(row))
-                        Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
-                    })
-                    .map(Optograph.fromSQL)
-                    .ignoreError()
-                    .collect()
-                    .startOnUserInteractive()
-            }
-            .observeOnMain()
-            .observeNext {self.results.value = $0 }
+        
+        
+        
         
         isActive.producer.skipRepeats().startWithNext { [weak self] isActive in
             if isActive {

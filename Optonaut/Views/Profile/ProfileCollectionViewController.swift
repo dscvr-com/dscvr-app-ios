@@ -532,7 +532,7 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             var optographsToPick: [UUID] = []
             optographsToPick.append(optographIDs[indexPath.row - cellCount])
             
-            let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
+            let detailsViewController = DetailsTableViewController(optoList:optographsToPick,storyid: nil)
             detailsViewController.cellIndexpath = indexPath.item
             navigationController?.pushViewController(detailsViewController, animated: true)
         }

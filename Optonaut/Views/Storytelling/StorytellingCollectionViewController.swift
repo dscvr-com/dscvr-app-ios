@@ -177,11 +177,11 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         let startOptograph = storyIDs[indexPath.row]
         print("startOpto: \(startOptograph)")
         
-        let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
+        let optoModel = Models.optographs[startOptograph]!
+        
+        let detailsViewController = DetailsTableViewController(optoList:[startOptograph],storyid: optoModel.model.storyID)
         detailsViewController.cellIndexpath = indexPath.item
         detailsViewController.isStory = true
-        
-        let optoModel = Models.optographs[startOptograph]!
         detailsViewController.storyID = optoModel.model.storyID
         
         navigationController?.pushViewController(detailsViewController, animated: true)

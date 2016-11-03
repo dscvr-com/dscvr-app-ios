@@ -36,7 +36,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     private enum LoadingStatus { case Nothing, Preview, Loaded }
     private let loadingStatus = MutableProperty<LoadingStatus>(.Nothing)
     let imageCache: CollectionImageCache
-    
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
     
@@ -122,7 +121,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     private var lastElapsedTime = CACurrentMediaTime()
     var last_optographID:UUID = ""
     var isEditingStory: Bool = false
-    let storyNodes = MutableProperty<[StoryChildren]>([])
+    //let storyNodes = MutableProperty<[StoryChildren]>([])
     var storyID:UUID?
     var deletablePin: StorytellingObject = StorytellingObject()
     let removeNode = UIButton()
@@ -141,13 +140,18 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     //
     
     
-    required init(optographId:UUID) {
+    required init(optographId:UUID,storyid:UUID?) {
         
         optographID = optographId
         
         optographBox = Models.optographs[optographId]!
         
-        viewModel = DetailsViewModel(optographID: optographId)
+        if let sid = storyid {
+            storyID = sid
+        }
+        
+        viewModel = DetailsViewModel(optographID: optographId,storyID: storyID)
+        
         let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
         imageCache = CollectionImageCache(textureSize: textureSize)
         
@@ -462,7 +466,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func removeOrUpdateInObjects(idToDelete:[UUID]) -> Bool {
     
-        for object in storyNodes.value {
+        for object in viewModel.storyNodes.value {
             for id in idToDelete {
                 if object.ID == id {
                     self.removeNodeFromObject(object)
@@ -473,7 +477,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func convertToDictionary() -> Bool{
-        for data in storyNodes.value {
+        for data in viewModel.storyNodes.value {
             let child : NSDictionary = ["story_object_media_type": data.mediaType,
                                         "story_object_media_face": data.mediaFace,
                                         "story_object_id": data.ID,
@@ -489,8 +493,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func removeNodeFromObject(nodeToDelete:StoryChildren) {
-        if let index = storyNodes.value.indexOf(nodeToDelete) {
-            storyNodes.value.removeAtIndex(index)
+        if let index = viewModel.storyNodes.value.indexOf(nodeToDelete) {
+            viewModel.storyNodes.value.removeAtIndex(index)
         }
     }
     
@@ -560,7 +564,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
 //            
 //            self?.renderDelegate.removeAllNodes((self?.deletablePin.optographID)!)
 //        }
-        let nodes = storyNodes.value
+        let nodes = viewModel.storyNodes.value
         
         if self.didInitialize == true {
             for n in self.lastRetainableData {
@@ -608,7 +612,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 self.renderDelegate.removeAllNodes(self.optographID)
                 self.renderDelegate.removeMarkers()
                 
-                for node in self.storyNodes.value {
+                for node in self.viewModel.storyNodes.value {
                     let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
                     let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
                     
@@ -803,27 +807,27 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         }
         
         
-        if isEditingStory {
-            
-            let query = StoryChildrenTable
-                .select(*)
-                .filter(StoryChildrenTable[StoryChildrenSchema.storyID] == storyID! && StoryChildrenTable[StoryChildrenSchema.storyDeletedAt] == nil)
-            
-            try! DatabaseService.defaultConnection.prepare(query)
-                .map { row -> StoryChildren in
-                    
-                    let nodes = StoryChildren.fromSQL(row)
-                    
-                    //Models.storyChildren.touch(nodes)
-                    
-                    return nodes
-                }
-                .forEach(self.insertNewNodes)
-        }
+//        if isEditingStory {
+//            
+//            let query = StoryChildrenTable
+//                .select(*)
+//                .filter(StoryChildrenTable[StoryChildrenSchema.storyID] == storyID! && StoryChildrenTable[StoryChildrenSchema.storyDeletedAt] == nil)
+//            
+//            try! DatabaseService.defaultConnection.prepare(query)
+//                .map { row -> StoryChildren in
+//                    
+//                    let nodes = StoryChildren.fromSQL(row)
+//                    
+//                    //Models.storyChildren.touch(nodes)
+//                    
+//                    return nodes
+//                }
+//                .forEach(self.insertNewNodes)
+//        }
     }
     
     func insertNewNodes(node: StoryChildren) {
-        storyNodes.value.orderedInsert(node, withOrder: .OrderedAscending)
+        viewModel.storyNodes.value.orderedInsert(node, withOrder: .OrderedAscending)
         
         print(">>>.",node)
         let child : NSDictionary = ["story_object_media_type": node.mediaType,
@@ -1266,6 +1270,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     func dismissStorytelling(){
         timer.invalidate()
         self.dismissViewControllerAnimated(true, completion: nil)
+        Defaults[.SessionStoryOptoID] = nil
     }
     
     func toggleAttachmentButtons() {
@@ -1316,7 +1321,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func removeBGM(){
         
-        for data in storyNodes.value {
+        for data in viewModel.storyNodes.value {
             if data.mediaDescription == "story bgm" {
                 self.deletableData.append(data.ID)
                 self.stopAudio()
@@ -1463,8 +1468,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func imageButtonDown(){
-        renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-        nodeItem.objectType = "NAV"
         
         let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optocollection.delegate = self;
@@ -1472,7 +1475,29 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         let naviCon = UINavigationController()
         naviCon.viewControllers = [optocollection]
         
-        self.presentViewController(naviCon, animated: true, completion: nil)
+        self.presentViewController(naviCon, animated: true, completion: { completed in
+            self.renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
+            self.nodeItem.objectType = "NAV"
+        })
+        
+//        if renderDelegate.addMarker(UIColor.redColor(), type:"Image Item") {
+//            nodeItem.objectType = "NAV"
+//            
+//            let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+//            optocollection.delegate = self;
+//            
+//            let naviCon = UINavigationController()
+//            naviCon.viewControllers = [optocollection]
+//            
+//            self.presentViewController(naviCon, animated: true, completion: { completed in
+//                
+//            
+//            })
+//        } else {
+//            let alert = UIAlertController(title:"Error", message: "There's already pin at near this point!", preferredStyle: .Alert)
+//            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+//            self.presentViewController(alert, animated: true, completion: nil)
+//        }
     }
     
     func audioButtonDown(){
@@ -1944,100 +1969,84 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         }
         if isEditingStory{
             
-            storyNodes.producer.startWithNext { [weak self] nodes in
+            for node in viewModel.storyNodes.value {
+                let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
+                let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
                 
-                
-                for node in nodes {
-                    let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
-                    let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
+                if node.mediaType == "FXTXT"{
                     
-                    if node.mediaType == "FXTXT"{
+                    print("MEDIATYPE: FXTXT")
+                    
+                    dispatch_async(dispatch_get_main_queue(), {
                         
-                        print("MEDIATYPE: FXTXT")
                         
-                        dispatch_async(dispatch_get_main_queue(), {
-                            
-                            
-                            self!.fixedTextLabel.text = node.mediaAdditionalData
-                            self!.fixedTextLabel.textColor = UIColor.blackColor()
-                            //self.fixedTextLabel.font = UIFont(name: "Avenir-Heavy", size: 22.0)
-                            //self.fixedTextLabel.font = UIFont(name: "Roadgeek2005Series1B", size: 22.0)
-                            self!.fixedTextLabel.font = UIFont(name: "BigNoodleTitling", size: 22.0)
-                            self!.fixedTextLabel.sizeToFit()
-                            self!.fixedTextLabel.frame = CGRect(x: 10.0, y: self!.view.frame.size.height - 135.0, width: self!.fixedTextLabel.frame.size.width + 5.0, height: self!.fixedTextLabel.frame.size.height + 5.0)
-                            self!.fixedTextLabel.backgroundColor = UIColor(0xffbc00)
-                            //                            self.fixedTextLabel.layer.borderWidth = 2.0
-                            //                            self.fixedTextLabel.layer.borderColor = UIColor(0xFF5E00).CGColor
-                            self!.fixedTextLabel.textAlignment = NSTextAlignment.Center
-                            //                            self.descriptionLabel.frame = CGRect(x: self.fixedTextLabel.frame.origin.x, y: self.fixedTextLabel.frame.origin.y + self.fixedTextLabel.frame.size.height, width: 0, height: 0)
-                            //                            self.descriptionLabel.sizeToFit()
-                            //                            self.fixedTextLabel.center = CGPoint(x: self.view.center.x, y: self.view.frame.height - 200)
-                            //                            self.fixedTextLabel.frame = CGRect(x: self.descriptionLabel.frame
-                            //                                .origin.x, y: self.descriptionLabel.frame.origin.y - self.fixedTextLabel.frame.size.height, width: self.fixedTextLabel.frame.size.width, height: self.fixedTextLabel.frame.size.height)
-                            //                            print("label height: \(self.fixedTextLabel.frame.size.height)")
-                            
-                            self?.view.addSubview((self?.fixedTextLabel)!)
-                            
-                            self?.removeNode.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-                            //                            self.removeNode.center = self.view.center
-                            self?.removeNode.backgroundColor = UIColor.blackColor()
-                            
-                            self?.removeNode.center = CGPoint(x: (self?.view.center.x)! - 10, y: (self?.view.center.y)! - 10)
-                            //                            self.removeNode.backgroundColor = UIColor.blackColor()
-                            self?.removeNode.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
-                            self?.removeNode.addTarget(self, action: #selector(self?.removePin), forControlEvents: UIControlEvents.TouchUpInside)
-                            self?.removeNode.hidden = true
-                            self?.view.addSubview((self?.removeNode)!)
-                        })
-                    } else if node.mediaType == "MUS"{
-                        print("MEDIATYPE: MUS")
+                        self.fixedTextLabel.text = node.mediaAdditionalData
+                        self.fixedTextLabel.textColor = UIColor.blackColor()
+                        self.fixedTextLabel.font = UIFont(name: "BigNoodleTitling", size: 22.0)
+                        self.fixedTextLabel.sizeToFit()
+                        self.fixedTextLabel.frame = CGRect(x: 10.0, y: self.view.frame.size.height - 135.0, width: self.fixedTextLabel.frame.size.width + 5.0, height: self.fixedTextLabel.frame.size.height + 5.0)
+                        self.fixedTextLabel.backgroundColor = UIColor(0xffbc00)
+                        self.fixedTextLabel.textAlignment = NSTextAlignment.Center
                         
-                        let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
-                        print("url:",url)
+                        self.view.addSubview((self.fixedTextLabel))
                         
-                        dispatch_async(dispatch_get_main_queue(), {
-                            self?.bgmImage.hidden = false
-                            self?.removeBgm.hidden = false
-                        })
+                        self.removeNode.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+                        self.removeNode.backgroundColor = UIColor.blackColor()
                         
-                        if let returnPath:String = self?.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
+                        self.removeNode.center = CGPoint(x: (self.view.center.x) - 10, y: self.view.center.y - 10)
+                        self.removeNode.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+                        self.removeNode.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
+                        self.removeNode.hidden = true
+                        self.view.addSubview(self.removeNode)
+                    })
+                } else if node.mediaType == "MUS"{
+                    print("MEDIATYPE: MUS")
+                    
+                    let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
+                    print("url:",url)
+                    
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.bgmImage.hidden = false
+                        self.removeBgm.hidden = false
+                    })
+                    
+                    if let returnPath:String = self.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
+                        
+                        if returnPath != "" {
+                            print(returnPath)
+                            self.playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
+                            self.player = AVPlayer(playerItem: self.playerItem!)
+                            self.player?.rate = 1.0
+                            self.player?.volume = 1.0
+                            self.player!.play()
                             
-                            if returnPath != "" {
-                                print(returnPath)
-                                self?.playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
-                                self?.player = AVPlayer(playerItem: self!.playerItem!)
-                                self?.player?.rate = 1.0
-                                self?.player?.volume = 1.0
-                                self?.player!.play()
-                                
-                                NSNotificationCenter.defaultCenter().addObserver(self!, selector: #selector(self?.playerItemDidReachEnd), name: AVPlayerItemDidPlayToEndTimeNotification, object: self?.player!.currentItem)
-                            } else {
-                                self?.mp3Timer = NSTimer.scheduledTimerWithTimeInterval(5, target: self!, selector: #selector(self?.checkMp3), userInfo: ["FileUrl":"https://bucket.dscvr.com" + node.objectMediaFileUrl,"FileName":node.objectMediaFilename], repeats: true)
-                            }
+                            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.playerItemDidReachEnd), name: AVPlayerItemDidPlayToEndTimeNotification, object: self.player!.currentItem)
+                        } else {
+                            self.mp3Timer = NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(self.checkMp3), userInfo: ["FileUrl":"https://bucket.dscvr.com" + node.objectMediaFileUrl,"FileName":node.objectMediaFilename], repeats: true)
                         }
-                    } else {
-                        if objectPosition.count >= 2{
-                            let nodeItem = StorytellingObject()
-                            
-                            let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
-                            let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
-                            
-                            nodeItem.objectRotation = nodeRotation
-                            nodeItem.objectVector3 = nodeTranslation
-                            nodeItem.optographID = node.mediaAdditionalData
-                            nodeItem.objectType = node.mediaType
-                            
-                            print("node id: \(nodeItem.optographID)")
-                            print("nodes: \(node.mediaType)")
-                            
-                            self?.renderDelegate.addNodeFromServer(nodeItem)
-                        }
-                        
                     }
-                    print("counts: \(objectPosition.count)")
-                    print("counts: \(objectRotation.count)")
+                } else {
+                    if objectPosition.count >= 2{
+                        let nodeItem = StorytellingObject()
+                        
+                        let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
+                        let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
+                        
+                        nodeItem.objectRotation = nodeRotation
+                        nodeItem.objectVector3 = nodeTranslation
+                        nodeItem.optographID = node.mediaAdditionalData
+                        nodeItem.objectType = node.mediaType
+                        
+                        print("node id: \(nodeItem.optographID)")
+                        print("nodes: \(node.mediaType)")
+                        
+                        self.renderDelegate.addNodeFromServer(nodeItem)
+                    }
                     
                 }
+                print("counts: \(objectPosition.count)")
+                print("counts: \(objectRotation.count)")
+                
             }
         }
         

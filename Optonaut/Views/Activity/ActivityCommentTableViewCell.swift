@@ -64,7 +64,7 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
     func pushDetails() {
         if Models.optographs[self.activity.activityResourceComment!.optograph!.ID] != nil {
             self.read()
-            let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceComment!.optograph!.ID])
+            let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceComment!.optograph!.ID],storyid: nil)
             detailsViewController.cellIndexpath = 0
             navigationController?.pushViewController(detailsViewController, animated: true)
         }

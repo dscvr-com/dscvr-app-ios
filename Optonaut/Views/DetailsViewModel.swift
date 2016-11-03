@@ -48,7 +48,11 @@ class DetailsViewModel {
     
     var disposable: Disposable?
     
-    init(optographID: UUID) {
+    let refreshNotification = NotificationSignal<Void>()
+    
+    let storyNodes = MutableProperty<[StoryChildren]>([])
+    
+    init(optographID: UUID,storyID:UUID?) {
         
         disposable?.dispose()
         
@@ -92,6 +96,39 @@ class DetailsViewModel {
         }
         
         commentsCount <~ comments.producer.map { $0.count }
+        
+        
+        print("sid",storyID)
+        
+        if let sid = storyID {
+            
+            let query = StoryChildrenTable
+                .select(*)
+                .filter(StoryChildrenTable[StoryChildrenSchema.storyID] == sid && StoryChildrenTable[StoryChildrenSchema.storyDeletedAt] == nil)
+            
+            print(query,sid)
+            
+            //            try! DatabaseService.defaultConnection.prepare(query)
+            //                .map { row -> StoryChildren in
+            //
+            //                    let nodes = StoryChildren.fromSQL(row)
+            //                    //Models.storyChildren.touch(nodes)
+            //
+            //                    return nodes
+            //                }
+            //                .forEach(self.insertNewNodes)
+            
+            DatabaseService.query(.Many, query: query)
+                .on(next: { row in
+                    let nodes = StoryChildren.fromSQL(row)
+                    Models.storyChildren.touch(nodes)
+                    print(nodes)
+                })
+                .map(StoryChildren.fromSQL)
+                .ignoreError()
+                .collect()
+                .startWithNext {self.storyNodes.value = $0}
+        }
     }
     
     deinit {

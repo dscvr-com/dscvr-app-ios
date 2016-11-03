@@ -547,10 +547,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         let storyId = optoModel.model.storyID
         
         if storyId != "" {
-            let detailsViewController = DetailsTableViewController(optoList:[startOptograph])
+            let detailsViewController = DetailsTableViewController(optoList:[startOptograph],storyid:storyId)
             detailsViewController.cellIndexpath = indexPath.item
             detailsViewController.isStory = true
-            detailsViewController.storyID = storyId
             navigationController?.pushViewController(detailsViewController, animated: true)
 
         } else {
@@ -567,12 +566,11 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 }
             }
             
-            let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
+            let detailsViewController = DetailsTableViewController(optoList:optographsToPick,storyid: nil)
             detailsViewController.cellIndexpath = indexPath.item
             navigationController?.pushViewController(detailsViewController, animated: true)
         
         }
-        
         
     }
     

@@ -102,7 +102,7 @@ class StorytellingCollectionViewCell: UICollectionViewCell, UINavigationControll
     }
     
     func editStories() {
-        let detailsViewController = StoryDetailsTableViewController(optographId: viewModel.optographID.value)
+        let detailsViewController = StoryDetailsTableViewController(optographId: viewModel.optographID.value,storyid: viewModel.storyId.value)
         detailsViewController.cellIndexpath = indexPath
         detailsViewController.isStorytelling = true
         detailsViewController.storyID = viewModel.storyId.value

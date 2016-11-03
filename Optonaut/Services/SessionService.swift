@@ -37,6 +37,7 @@ extension DefaultsKeys {
     static let SessionUserDidFirstLogin = DefaultsKey<Bool>("session_did_first_login")
     static let SessionBPS = DefaultsKey<String?>("session_ball_per_second")
     static let SessionStepCount = DefaultsKey<String?>("session_step_count")
+    static let SessionStoryOptoID = DefaultsKey<UUID?>("session_story_opto_id")
 }
 
 let DefaultVRGlasses = "CgZHb29nbGUSEkNhcmRib2FyZCBJL08gMjAxNR2ZuxY9JbbzfT0qEAAASEIAAEhCAABIQgAASEJYADUpXA89OgiCc4Y-MCqJPlAAYAM"

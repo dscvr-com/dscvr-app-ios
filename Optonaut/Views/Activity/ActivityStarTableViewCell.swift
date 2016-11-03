@@ -69,7 +69,7 @@ class ActivityStarTableViewCell: ActivityTableViewCell {
         if Models.optographs[self.activity.activityResourceStar!.optograph!.ID] != nil {
             print("wew")
             self.read()
-            let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceStar!.optograph!.ID])
+            let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceStar!.optograph!.ID],storyid: nil)
             detailsViewController.cellIndexpath = 0
             navigationController?.pushViewController(detailsViewController, animated: true)
         }

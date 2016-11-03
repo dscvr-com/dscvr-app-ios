@@ -12,10 +12,6 @@ import CardboardParams
 import SpriteKit
 import ReactiveCocoa
 
-//protocol RenderDelegateDelegate {
-//    func didEnterFrustrum(markerName: String)
-//}
-
 class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
     private let cameraNode = SCNNode()
@@ -228,9 +224,9 @@ class CubeRenderDelegate: RenderDelegate {
         
         let circleGeo = SCNSphere(radius: 0.01)
         
-        //circleGeo.firstMaterial?.diffuse.contents = self.isStory ? UIColor.redColor():UIColor.clearColor()
+        circleGeo.firstMaterial?.diffuse.contents = self.isStory ? UIColor.redColor():UIColor.clearColor()
         
-        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
+        //circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         
         sphereGeoNode = SCNNode(geometry: circleGeo)
         sphereGeoNode.name = "test"
@@ -301,9 +297,6 @@ class CubeRenderDelegate: RenderDelegate {
         for o in planes.values {
             adj[o.node] = getKNNGeometric(o.node, k: 9)
         }
-
-        
-        
         
         sphereGeoNode.position = SCNVector3Make(1.0, 1.0, 0)
         
@@ -370,14 +363,33 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     
-    func addMarker(color: UIColor, type: String) {
+    func addMarker(color: UIColor, type: String) -> Bool {
         
         let planeGeo = SCNPlane(width: 0.1, height: 0.1)
         planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
         
         let circleGeo = SCNSphere(radius: 0.01)
         circleGeo.firstMaterial?.diffuse.contents = color
+        
         let markNode = SCNNode(geometry: planeGeo)
+        
+//        for marker in markers {
+//            
+//            print("posi x: \(markNode.position.x)")
+//            print("posi y: \(markNode.position.y)")
+//            print("posi z: \(markNode.position.z)")
+//            
+//            print("marker posi x: \(marker.position.x)")
+//            print("marker posi y: \(marker.position.y)")
+//            print("marker posi z: \(marker.position.z)")
+//            
+//            if (sphereGeoNode.position.x ... sphereGeoNode.position.x + 10 ~= marker.position.x) && (sphereGeoNode.position.y ... sphereGeoNode.position.y + 10 ~= marker.position.y) && (sphereGeoNode.position.z ... sphereGeoNode.position.z + 10 ~= marker.position.z){
+//                return false
+//            } else if (sphereGeoNode.position.x - 10 ... sphereGeoNode.position.x ~= marker.position.x) && (sphereGeoNode.position.y - 10 ... sphereGeoNode.position.y ~= marker.position.y) && (sphereGeoNode.position.z - 10 ... sphereGeoNode.position.z ~= marker.position.z){
+//                return false
+//            }
+//        }
+        
         let n = markers.count
         
         markNode.name = type + String(n)
@@ -387,9 +399,8 @@ class CubeRenderDelegate: RenderDelegate {
         print("camera z: \(self.cameraNode.eulerAngles.z)")
         
         markNode.position = sphereGeoNode.position
-//        markNode.rotation = self.cameraNode.rotation
-        
         markNode.eulerAngles = self.cameraNode.eulerAngles;
+        
         
         print("node x: \(markNode.eulerAngles.x)")
         print("node y: \(markNode.eulerAngles.y)")
@@ -401,12 +412,15 @@ class CubeRenderDelegate: RenderDelegate {
         markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
         
         
-//        spriteScen.runAction(SKAction.playSoundFileNamed("bubblegum.caf", waitForCompletion: false))
+        //        spriteScen.runAction(SKAction.playSoundFileNamed("bubblegum.caf", waitForCompletion: false))
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
         
         delegate!.addVectorAndRotation(markNode.position, rotation: markNode.eulerAngles)
+        
+        return true
+        
     }
     
     
@@ -658,18 +672,16 @@ class CubeRenderDelegate: RenderDelegate {
         
         let cameraDirection = calculateCameraDirection(self.cameraNode)
         let camdir = SCNVector3Make(cameraDirection.x, cameraDirection.y, cameraDirection.z)
-     //   print("camera direction \(camdir)")
         let nextpoint = findNextPoint(cameraNode.position, direction: SCNVector3Make(cameraDirection.x, cameraDirection.y, cameraDirection.z))
         sphereGeoNode.position = nextpoint
         
         
         cameraText.position = nextpoint
-     //   print("next point \(nextpoint)")
         
         
         var enteredFlag = false
+        
         for marknode in markers {
-            
             if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.buttonCamera){
                 let node = StorytellingObject()
                 
@@ -690,12 +702,17 @@ class CubeRenderDelegate: RenderDelegate {
                 enteredFlag = true
             }
         }
-        if self.isStory {
-            if !enteredFlag {
-                let node = StorytellingObject()
-                delegate!.didEnterFrustrum(node, inFrustrum: false)
-                delegate!.isInButtonCamera(false)
-            }
+//        if self.isStory {
+//            if !enteredFlag {
+//                let node = StorytellingObject()
+//                delegate!.didEnterFrustrum(node, inFrustrum: false)
+//                delegate!.isInButtonCamera(false)
+//            }
+//        }
+        if !enteredFlag {
+            let node = StorytellingObject()
+            delegate!.didEnterFrustrum(node, inFrustrum: false)
+            delegate!.isInButtonCamera(false)
         }
         
         for (index, item) in planes {
