@@ -1319,23 +1319,28 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.progress.angle = 180 * time
         
         if time >= 2 {
-            time = 0.0001
-            self.progress.angle = 0
+            stopProgress()
             showOpto.value = true
-            self.progress.hidden = true
-            progressTimer?.invalidate()
         }
+    }
+    
+    func stopProgress() {
+        progressTimer?.invalidate()
+        time = 0.0001
+        self.progress.angle = 0
+        self.progress.hidden = true
     }
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
         
         if !inFrustrum {
             countDown = 3
+            
             dispatch_async(dispatch_get_main_queue(), {
                 self.storyPinLabel.text = ""
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.cloudQuote.hidden = true
-                //self.diagonal.hidden = true
+                self.stopProgress()
                 self.storyPinLabel.removeFromSuperview()
             })
             return
