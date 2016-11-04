@@ -50,7 +50,7 @@ class ProfileOptographsViewModel {
         refreshNotification.signal
             .takeWhile { _ in Reachability.connectedToNetwork() }
             .flatMap(.Latest) { _ in
-                ApiService<OptographApiModel>.getForGate("story/profile")
+                ApiService<OptographApiModel>.getForGate("story/person/\(personID)")
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
@@ -83,7 +83,7 @@ class ProfileOptographsViewModel {
             .map { _ in self.results.value.models.last }
             .ignoreNil()
             .flatMap(.Latest) { oldestResult in
-                ApiService<OptographApiModel>.getForGate("story/profile", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
+                ApiService<OptographApiModel>.getForGate("story/person/\(personID)", queries: ["older_than": oldestResult.createdAt.toRFC3339String()])
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
                         Models.optographs.touch(apiModel).insertOrUpdate { box in

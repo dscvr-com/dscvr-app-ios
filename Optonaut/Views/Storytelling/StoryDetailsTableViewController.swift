@@ -1373,31 +1373,18 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     //create a function with button tag switch for color changes
     func textButtonDown(){
-        renderDelegate.addMarker(UIColor.redColor(), type:"Text Item")
-        nodeItem.objectType = "TXT"
-        isTextPin = true
         
-//        let storyCollection = StorytellingCollectionViewController(personID: SessionService.personID)
-//        
-//        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
-//        optocollection.delegate = self;
-//        
-//        let naviCon = UINavigationController()
-//        //        naviCon.viewControllers = [optocollection]
-//        naviCon.viewControllers = [optocollection]
-//        
-//        self.presentViewController(naviCon, animated: true, completion: nil)
-        
-        //add sound to pin placement
-        
-//        let audioFilePath = NSBundle.mainBundle().pathForResource("pop", ofType: "mp3")
-//        
-//        player = AVPlayer(URL: NSURL(fileURLWithPath: audioFilePath!))
-//        player?.rate = 1.0
-//        player?.volume = 1.0
-//        player!.play()
-        
-        inputTextField.becomeFirstResponder()
+        if renderDelegate.checkIfAlreadyNode() {
+            let alert = UIAlertController(title:"Error", message: "There's already pin at near this point!", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.presentViewController(alert, animated: true, completion: nil)
+        } else {
+            renderDelegate.addMarker(UIColor.redColor(), type:"Text Item")
+            nodeItem.objectType = "TXT"
+            isTextPin = true
+            
+            inputTextField.becomeFirstResponder()
+        }
     }
     
     //text field delegate
@@ -1469,35 +1456,22 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func imageButtonDown(){
         
-        let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
-        optocollection.delegate = self;
-        
-        let naviCon = UINavigationController()
-        naviCon.viewControllers = [optocollection]
-        
-        self.presentViewController(naviCon, animated: true, completion: { completed in
-            self.renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-            self.nodeItem.objectType = "NAV"
-        })
-        
-//        if renderDelegate.addMarker(UIColor.redColor(), type:"Image Item") {
-//            nodeItem.objectType = "NAV"
-//            
-//            let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
-//            optocollection.delegate = self;
-//            
-//            let naviCon = UINavigationController()
-//            naviCon.viewControllers = [optocollection]
-//            
-//            self.presentViewController(naviCon, animated: true, completion: { completed in
-//                
-//            
-//            })
-//        } else {
-//            let alert = UIAlertController(title:"Error", message: "There's already pin at near this point!", preferredStyle: .Alert)
-//            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-//            self.presentViewController(alert, animated: true, completion: nil)
-//        }
+        if renderDelegate.checkIfAlreadyNode() {
+            let alert = UIAlertController(title:"Error", message: "There's already pin at near this point!", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.presentViewController(alert, animated: true, completion: nil)
+        } else {
+            let optocollection = FPOptographsCollectionViewController(personID: SessionService.personID)
+            optocollection.delegate = self;
+            
+            let naviCon = UINavigationController()
+            naviCon.viewControllers = [optocollection]
+            
+            self.presentViewController(naviCon, animated: true, completion: { completed in
+                self.renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
+                self.nodeItem.objectType = "NAV"
+            })
+        }
     }
     
     func audioButtonDown(){

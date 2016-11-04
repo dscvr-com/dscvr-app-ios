@@ -361,9 +361,21 @@ class CubeRenderDelegate: RenderDelegate {
             }
         }
     }
+    func checkIfAlreadyNode() -> Bool {
+//        if markers.count == 0 {
+//            return false
+//        }
+        
+        for marker in markers {
+            if self.scnView!.isNodeInsideFrustum(marker, withPointOfView: self.cameraCrosshair){
+                return true
+            }
+        }
+        return false
+    }
     
     
-    func addMarker(color: UIColor, type: String) -> Bool {
+    func addMarker(color: UIColor, type: String){
         
         let planeGeo = SCNPlane(width: 0.1, height: 0.1)
         planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
@@ -372,23 +384,6 @@ class CubeRenderDelegate: RenderDelegate {
         circleGeo.firstMaterial?.diffuse.contents = color
         
         let markNode = SCNNode(geometry: planeGeo)
-        
-//        for marker in markers {
-//            
-//            print("posi x: \(markNode.position.x)")
-//            print("posi y: \(markNode.position.y)")
-//            print("posi z: \(markNode.position.z)")
-//            
-//            print("marker posi x: \(marker.position.x)")
-//            print("marker posi y: \(marker.position.y)")
-//            print("marker posi z: \(marker.position.z)")
-//            
-//            if (sphereGeoNode.position.x ... sphereGeoNode.position.x + 10 ~= marker.position.x) && (sphereGeoNode.position.y ... sphereGeoNode.position.y + 10 ~= marker.position.y) && (sphereGeoNode.position.z ... sphereGeoNode.position.z + 10 ~= marker.position.z){
-//                return false
-//            } else if (sphereGeoNode.position.x - 10 ... sphereGeoNode.position.x ~= marker.position.x) && (sphereGeoNode.position.y - 10 ... sphereGeoNode.position.y ~= marker.position.y) && (sphereGeoNode.position.z - 10 ... sphereGeoNode.position.z ~= marker.position.z){
-//                return false
-//            }
-//        }
         
         let n = markers.count
         
@@ -418,9 +413,6 @@ class CubeRenderDelegate: RenderDelegate {
         markers.append(markNode)
         
         delegate!.addVectorAndRotation(markNode.position, rotation: markNode.eulerAngles)
-        
-        return true
-        
     }
     
     

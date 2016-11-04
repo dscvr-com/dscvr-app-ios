@@ -65,6 +65,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             ps.model.isFollowed = apiModel.person.isFollowed
                         }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
+                        
                         Models.story.touch(apiModel.story).insertOrUpdate()
                         if apiModel.story.children!.count != 0 {
                             for child in apiModel.story.children! {

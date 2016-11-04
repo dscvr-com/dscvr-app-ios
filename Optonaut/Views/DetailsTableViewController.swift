@@ -109,6 +109,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var deletablePin: StorytellingObject = StorytellingObject()
     
+    var progress = KDCircularProgress()
+    
     required init(optoList:[UUID],storyid:UUID?) {
         
         optographID = optoList[0]
@@ -168,6 +170,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         self.willDisplay()
         let cubeImageCache = imageCache.get(cellIndexpath, optographID: optographID, side: .Left)
         self.setCubeImageCache(cubeImageCache)
+        
+        self.createStitchingProgressBar()
         
     }
     
@@ -545,6 +549,21 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let alert = UIAlertController(title:"", message: "Please tilt your phone by 90\u{00B0} to enter VR mode!", preferredStyle: .Alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
         self.navigationController!.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func createStitchingProgressBar() {
+        
+        self.progress = KDCircularProgress(frame: CGRect(x: (self.view.width/2) - 10, y: (self.view.height/2) - 10, width: 20, height: 20))
+        self.progress.progressThickness = 0.2
+        self.progress.trackThickness = 0.4
+        self.progress.clockwise = true
+        self.progress.startAngle = 270
+        self.progress.gradientRotateSpeed = 2
+        self.progress.roundedCorners = true
+        self.progress.glowMode = .Forward
+        self.progress.setColors(UIColor(hex:0xFF5E00) ,UIColor(hex:0xFF7300), UIColor(hex:0xffbc00))
+        self.progress.hidden = true
+        self.view.addSubview(self.progress)
     }
     
     func deleteOpto() {
@@ -1289,6 +1308,16 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             })
         }
     }
+    func putProgress(val:Int) {
+        if val != 0 {
+            self.progress.hidden = false
+            self.progress.angle = 360 / Double(val)
+        }
+    }
+    func closeProgress() {
+        self.progress.hidden = true
+        self.progress.angle = 0
+    }
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
         
@@ -1329,11 +1358,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             // per second countdown
             if timeDiff > 1.0  {
                 countDown -= 1
-                print("countdown \(countDown)")
                 lastElapsedTime = mediaTime
                     
                 dispatch_async(dispatch_get_main_queue(), {
-                        
+                    
+                    self.putProgress(self.countDown)
+                    print("countdown",self.countDown)
                     //self.countdownLabel.text = String(self.countDown)
                     self.countdownLabel.textColor = UIColor.whiteColor()
                     self.countdownLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
@@ -1345,11 +1375,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             }
                 
             if countDown == 0 {
-                    // reset countdown
                 countDown = 2
                     
                 dispatch_async(dispatch_get_main_queue(), {
-                    //self.countdownLabel.text = ""
                     self.storyPinLabel.text = ""
                     
                     self.isPlaying = false
@@ -1360,6 +1388,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 print("object Type: \(nodeObject.objectType)")
                         
                 if nameArray[1] == "NAV" || nameArray[1] == "Image"{
+                    self.closeProgress()
                     self.showOptograph(nodeObject)
                 }
                 
