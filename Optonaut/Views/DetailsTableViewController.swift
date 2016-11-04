@@ -41,11 +41,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
-    var countDown:Int = 2
+    var countDown:Int = 3
     var last_optographID:UUID = ""
     private var lastElapsedTime = CACurrentMediaTime() ;
     
     var mp3Timer: NSTimer?
+    var progressTimer: NSTimer?
     
     var optographTopPick:NSArray = []
     
@@ -110,6 +111,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var deletablePin: StorytellingObject = StorytellingObject()
     
     var progress = KDCircularProgress()
+    var time:Double = 0.001
+    
+    var showOpto = MutableProperty<Bool>(false)
     
     required init(optoList:[UUID],storyid:UUID?) {
         
@@ -455,10 +459,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         cloudQuote.image = cloudQuoteImage
         cloudQuote.hidden = true
         
-        diagonal.frame = CGRectMake(0, 0, 0, 0)
-        diagonal.backgroundColor = UIColor.clearColor()
+//        diagonal.frame = CGRectMake(0, 0, 0, 0)
+//        diagonal.backgroundColor = UIColor.clearColor()
         
-        self.view.addSubview(diagonal)
+//        self.view.addSubview(diagonal)
         
     }
     func adjustDescriptionLabel(recognizer:UITapGestureRecognizer) {
@@ -1230,11 +1234,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
                 self.storyPinLabel.backgroundColor = UIColor.whiteColor()
                 self.storyPinLabel.textAlignment = NSTextAlignment.Center
-                self.diagonal.frame = CGRectMake(0, 0, self.storyPinLabel.frame.size.width/2, 30.0)
-                self.diagonal.center = CGPoint(x: self.storyPinLabel.center.x, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height + 10.0)
-                self.diagonal.hidden = false
-                
-                self.view.addSubview(self.storyPinLabel)
+//                self.diagonal.frame = CGRectMake(0, 0, self.storyPinLabel.frame.size.width/2, 30.0)
+//                self.diagonal.center = CGPoint(x: self.storyPinLabel.center.x, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height + 10.0)
+//                self.diagonal.hidden = false
+//                
+//                self.view.addSubview(self.storyPinLabel)
             }
         })
     }
@@ -1308,26 +1312,30 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             })
         }
     }
-    func putProgress(val:Int) {
-        if val != 0 {
-            self.progress.hidden = false
-            self.progress.angle = 360 / Double(val)
+    func putProgress() {
+        time += 0.001
+        
+        self.progress.hidden = false
+        self.progress.angle = 180 * time
+        
+        if time >= 2 {
+            time = 0.0001
+            self.progress.angle = 0
+            showOpto.value = true
+            self.progress.hidden = true
+            progressTimer?.invalidate()
         }
-    }
-    func closeProgress() {
-        self.progress.hidden = true
-        self.progress.angle = 0
     }
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
         
         if !inFrustrum {
-            countDown = 2
+            countDown = 3
             dispatch_async(dispatch_get_main_queue(), {
                 self.storyPinLabel.text = ""
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.cloudQuote.hidden = true
-                self.diagonal.hidden = true
+                //self.diagonal.hidden = true
                 self.storyPinLabel.removeFromSuperview()
             })
             return
@@ -1342,7 +1350,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             // reset if difference is above 3 seconds
             
             if timeDiff > 3.0 {
-                countDown = 2
+                countDown = 3
                 timeDiff = 0.0
                 lastElapsedTime = mediaTime
             }
@@ -1359,42 +1367,41 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             if timeDiff > 1.0  {
                 countDown -= 1
                 lastElapsedTime = mediaTime
+                
+                print("countdown>>>>" ,countDown)
+                
+                
                     
                 dispatch_async(dispatch_get_main_queue(), {
-                    
-                    self.putProgress(self.countDown)
-                    print("countdown",self.countDown)
-                    //self.countdownLabel.text = String(self.countDown)
-                    self.countdownLabel.textColor = UIColor.whiteColor()
-                    self.countdownLabel.font = UIFont(name: "Avenir-Heavy", size: 36.0)
-                    self.countdownLabel.sizeToFit()
-                    self.countdownLabel.backgroundColor = UIColor.clearColor()
-                    self.countdownLabel.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 50)
                     self.storyPinLabel.text = ""
+                    if self.countDown == 2 {
+                        print("pumasok dito")
+                        self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
+                    }
                 })
             }
                 
             if countDown == 0 {
-                countDown = 2
+                countDown = 3
                     
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""
-                    
                     self.isPlaying = false
                 })
                 
                 isInsideStory = true
                 
                 print("object Type: \(nodeObject.objectType)")
-                        
-                if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                    self.closeProgress()
-                    self.showOptograph(nodeObject)
-                }
                 
-//                if nameArray[1] == "MUS"{
-//                    self.playPinMusic(nodeObject)
-//                }
+                showOpto.producer.skip(1).startWithNext{ val in
+                    if val {
+                        if nameArray[1] == "NAV" || nameArray[1] == "Image"{
+                            self.showOptograph(nodeObject)
+                        }
+                    }
+                }
+                        
+                
             }
         } else{ // this is a new id
             last_optographID = nodeObject.optographID
