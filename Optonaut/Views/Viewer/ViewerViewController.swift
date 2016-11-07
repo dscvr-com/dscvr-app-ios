@@ -49,6 +49,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     
     //storytelling
     let storyPinLabel = UILabel()
+    let storyPinLabel2 = UILabel()
     var countDown:Int = 2
     let cloudQuote = UIImageView()
     let diagonal = ViewWithDiagonalLine()
@@ -134,19 +135,35 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         
         dispatch_async(dispatch_get_main_queue(), {
             if !self.storyPinLabel.isDescendantOfView(self.view) {
+                
+                //for left
                 self.storyPinLabel.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
                 self.storyPinLabel.text = nameArray[0]
                 self.storyPinLabel.textColor = UIColor.blackColor()
                 self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 18.0)
                 self.storyPinLabel.sizeToFit()
-                self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 30)
+ 
+                self.storyPinLabel.center.y = (self.view.height / 4)
+                self.storyPinLabel.center.x = self.view.width / 2
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
-                self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
                 self.storyPinLabel.backgroundColor = UIColor.whiteColor()
                 self.storyPinLabel.textAlignment = NSTextAlignment.Center
-                
                 self.view.addSubview(self.storyPinLabel)
-            
+                
+                
+                //for right
+                self.storyPinLabel2.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+                self.storyPinLabel2.text = nameArray[0]
+                self.storyPinLabel2.textColor = UIColor.blackColor()
+                self.storyPinLabel2.font = UIFont(name: "MerriweatherLight", size: 18.0)
+                self.storyPinLabel2.sizeToFit()
+                
+                self.storyPinLabel2.center.y = self.view.height * (3 / 4)
+                self.storyPinLabel2.center.x = self.view.width / 2
+                self.storyPinLabel2.backgroundColor = UIColor.clearColor()
+                self.storyPinLabel2.backgroundColor = UIColor.whiteColor()
+                self.storyPinLabel2.textAlignment = NSTextAlignment.Center
+                self.view.addSubview(self.storyPinLabel2)
             }
         })
     }
@@ -167,6 +184,9 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 self.cloudQuote.hidden = true
                 self.diagonal.hidden = true
                 self.storyPinLabel.removeFromSuperview()
+                
+                self.storyPinLabel2.backgroundColor = UIColor.clearColor()
+                self.storyPinLabel2.removeFromSuperview()
             })
             return
         }
@@ -204,6 +224,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""
+                    self.storyPinLabel2.text = ""
                     
                     self.isPlaying = false
                 })
