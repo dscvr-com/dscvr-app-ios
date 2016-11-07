@@ -226,8 +226,6 @@ class CubeRenderDelegate: RenderDelegate {
         
         circleGeo.firstMaterial?.diffuse.contents = self.isStory ? UIColor.redColor():UIColor.clearColor()
         
-        //circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
-        
         sphereGeoNode = SCNNode(geometry: circleGeo)
         sphereGeoNode.name = "test"
         

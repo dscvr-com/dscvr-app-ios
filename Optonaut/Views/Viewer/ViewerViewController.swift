@@ -133,20 +133,21 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
         
         dispatch_async(dispatch_get_main_queue(), {
-            self.storyPinLabel.text = nameArray[0]
-            self.storyPinLabel.textColor = UIColor.blackColor()
-            self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 18.0)
-            self.storyPinLabel.sizeToFit()
-            self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 30)
-            self.storyPinLabel.backgroundColor = UIColor.clearColor()
-            self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
-            self.storyPinLabel.backgroundColor = UIColor.whiteColor()
-            self.storyPinLabel.textAlignment = NSTextAlignment.Center
-            self.diagonal.frame = CGRectMake(0, 0, self.storyPinLabel.frame.size.width/2, 30.0)
-            self.diagonal.center = CGPoint(x: self.storyPinLabel.center.x, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height + 10.0)
-            self.diagonal.hidden = false
+            if !self.storyPinLabel.isDescendantOfView(self.view) {
+                self.storyPinLabel.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+                self.storyPinLabel.text = nameArray[0]
+                self.storyPinLabel.textColor = UIColor.blackColor()
+                self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 18.0)
+                self.storyPinLabel.sizeToFit()
+                self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 30)
+                self.storyPinLabel.backgroundColor = UIColor.clearColor()
+                self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
+                self.storyPinLabel.backgroundColor = UIColor.whiteColor()
+                self.storyPinLabel.textAlignment = NSTextAlignment.Center
+                
+                self.view.addSubview(self.storyPinLabel)
             
-            self.view.addSubview(self.storyPinLabel)
+            }
         })
     }
     
@@ -217,6 +218,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
             last_optographID = nodeObject.optographID
         }
     }
+    
     func showOptograph(nodeObject: StorytellingObject){
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
         
@@ -270,6 +272,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                     }
                 }
             })
+            
         } else {
             dispatch_async(dispatch_get_main_queue(), {
                 
