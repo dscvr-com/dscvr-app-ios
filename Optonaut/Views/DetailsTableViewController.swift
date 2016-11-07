@@ -1238,7 +1238,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
 //                self.diagonal.center = CGPoint(x: self.storyPinLabel.center.x, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height + 10.0)
 //                self.diagonal.hidden = false
 //                
-//                self.view.addSubview(self.storyPinLabel)
+                self.view.addSubview(self.storyPinLabel)
             }
         })
     }
@@ -1374,8 +1374,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 lastElapsedTime = mediaTime
                 
                 print("countdown>>>>" ,countDown)
-                
-                
                     
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""

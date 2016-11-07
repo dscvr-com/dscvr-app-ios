@@ -210,83 +210,88 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 isInsideStory = true
                 
                 if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                    //self.showOptograph(nodeObject)
+                    self.showOptograph(nodeObject)
                 }
             }
         } else{ // this is a new id
             last_optographID = nodeObject.optographID
         }
     }
-//    func showOptograph(nodeObject: StorytellingObject){
-//        let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
-//        if nameArray[0] == self.optograph?.ID{
-//            dispatch_async(dispatch_get_main_queue(), {
-//                let cubeImageCache = self.imageCache.getStory(self.optographID, side: .Left)
-//                self.setCubeImageCache(cubeImageCache)
-//                
-//                self.leftRenderDelegate.centerCameraPosition()
-//                self.leftRenderDelegate.removeAllNodes(nameArray[0])
-//                self.leftRenderDelegate.removeMarkers()
-//                
-//                self.rightRenderDelegate.centerCameraPosition()
-//                self.rightRenderDelegate.removeAllNodes(nameArray[0])
-//                self.rightRenderDelegate.removeMarkers()
-//                
-//                
-//                for node in self.nodes {
-//                    let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
-//                    let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
-//                    
-//                    if objectPosition.count >= 2{
-//                        
-//                        let nodeItem = StorytellingObject()
-//                        
-//                        let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
-//                        let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
-//                        
-//                        nodeItem.objectRotation = nodeRotation
-//                        nodeItem.objectVector3 = nodeTranslation
-//                        nodeItem.objectType = node.mediaType
-//                        
-//                        if node.mediaType == "MUS"{
-//                            nodeItem.optographID = node.objectMediaFileUrl
-//                        }
-//                            
-//                        else if node.mediaType == "NAV"{
-//                            nodeItem.optographID = node.mediaAdditionalData
-//                        }
-//                        
-//                        print("node id: \(nodeItem.optographID)")
-//                        
-//                        self.leftRenderDelegate.addNodeFromServer(nodeItem)
-//                        self.rightRenderDelegate.addNodeFromServer(nodeItem)
-//                        
-//                    }
-//                }
-//            })
-//        } else {
-//            dispatch_async(dispatch_get_main_queue(), {
-//                let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
-//                
-//                let cubeImageCache = self.imageCache.getStory(nameArray[0], side: .Left)
-//                self.setCubeImageCache(cubeImageCache)
-//                
-//                self.leftRenderDelegate.removeMarkers()
-//                self.leftRenderDelegate.centerCameraPosition()
-//                
-//                self.rightRenderDelegate.removeMarkers()
-//                self.rightRenderDelegate.centerCameraPosition()
-//                
-//                
-//                self.rightRenderDelegate.removeAllNodes(nodeObject.optographID)
-//                self.rightRenderDelegate.addBackPin((self.optograph?.ID)!)
-//                
-//                self.leftRenderDelegate.removeAllNodes(nodeObject.optographID)
-//                self.leftRenderDelegate.addBackPin((self.optograph?.ID)!)
-//                
-//            })
-//        }
-//    }
+    func showOptograph(nodeObject: StorytellingObject){
+        let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+        
+        if nameArray[0] == self.optograph?.ID{
+            dispatch_async(dispatch_get_main_queue(), {
+                
+                self.clearImages()
+                self.createField()
+                
+                self.leftCache = CubeImageCache(optographID: self.optograph!.ID, side: .Left, textureSize: self.textureSize)
+                self.rightCache = CubeImageCache(optographID: self.optograph!.ID, side: .Right, textureSize: self.textureSize)
+                self.loadImage.value = true
+    
+                self.leftRenderDelegate.centerCameraPosition()
+                self.leftRenderDelegate.removeAllNodes(nameArray[0])
+                self.leftRenderDelegate.removeMarkers()
+    
+                self.rightRenderDelegate.centerCameraPosition()
+                self.rightRenderDelegate.removeAllNodes(nameArray[0])
+                self.rightRenderDelegate.removeMarkers()
+    
+    
+                for node in self.nodes {
+                    let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
+                    let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
+    
+                    if objectPosition.count >= 2{
+    
+                        let nodeItem = StorytellingObject()
+    
+                        let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
+                        let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
+    
+                        nodeItem.objectRotation = nodeRotation
+                        nodeItem.objectVector3 = nodeTranslation
+                        nodeItem.objectType = node.mediaType
+    
+                        if node.mediaType == "MUS"{
+                            nodeItem.optographID = node.objectMediaFileUrl
+                        }
+    
+                        else if node.mediaType == "NAV"{
+                            nodeItem.optographID = node.mediaAdditionalData
+                        }
+    
+                        print("node id: \(nodeItem.optographID)")
+    
+                        self.leftRenderDelegate.addNodeFromServer(nodeItem)
+                        self.rightRenderDelegate.addNodeFromServer(nodeItem)
+    
+                    }
+                }
+            })
+        } else {
+            dispatch_async(dispatch_get_main_queue(), {
+                
+                self.clearImages()
+                self.createField()
+    
+                self.leftCache = CubeImageCache(optographID: nameArray[0], side: .Left, textureSize: self.textureSize)
+                self.rightCache = CubeImageCache(optographID: nameArray[0], side: .Right, textureSize: self.textureSize)
+                self.loadImage.value = true
+    
+                self.leftRenderDelegate.removeMarkers()
+                self.leftRenderDelegate.centerCameraPosition()
+                self.leftRenderDelegate.removeAllNodes(nodeObject.optographID)
+                self.leftRenderDelegate.addBackPin((self.optograph?.ID)!)
+                
+                self.rightRenderDelegate.removeMarkers()
+                self.rightRenderDelegate.centerCameraPosition()
+                self.rightRenderDelegate.removeAllNodes(nodeObject.optographID)
+                self.rightRenderDelegate.addBackPin((self.optograph?.ID)!)
+            })
+        }
+    }
     
     func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3){
         
@@ -443,6 +448,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 
                 let leftImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
                     dispatch_async(dispatch_get_main_queue()) {
+
                         self?.leftRenderDelegate.setTexture(image, forIndex: index)
                         self?.leftLoadingView.stopAnimating()
                     }
