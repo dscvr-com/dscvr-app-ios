@@ -286,11 +286,6 @@ class CubeRenderDelegate: RenderDelegate {
         
         scene.rootNode.addChildNode(sphereGeoNode)
         scene.rootNode.addChildNode(cameraText)
-        
-        
-        
-        
-        
     }
     
     private func getDist(a: SCNNode, b: SCNNode) -> Float {
