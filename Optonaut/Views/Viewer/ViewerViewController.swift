@@ -140,26 +140,26 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 self.storyPinLabel.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
                 self.storyPinLabel.text = nameArray[0]
                 self.storyPinLabel.textColor = UIColor.blackColor()
-                self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 18.0)
+                self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 12.0)
                 self.storyPinLabel.sizeToFit()
- 
-                self.storyPinLabel.center.y = (self.view.height / 4)
+                self.storyPinLabel.center.y = (self.view.height / 4) - 25
                 self.storyPinLabel.center.x = self.view.width / 2
+                
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.storyPinLabel.backgroundColor = UIColor.whiteColor()
                 self.storyPinLabel.textAlignment = NSTextAlignment.Center
                 self.view.addSubview(self.storyPinLabel)
                 
-                
                 //for right
                 self.storyPinLabel2.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
                 self.storyPinLabel2.text = nameArray[0]
                 self.storyPinLabel2.textColor = UIColor.blackColor()
-                self.storyPinLabel2.font = UIFont(name: "MerriweatherLight", size: 18.0)
+                self.storyPinLabel2.font = UIFont(name: "MerriweatherLight", size: 12.0)
                 self.storyPinLabel2.sizeToFit()
                 
-                self.storyPinLabel2.center.y = self.view.height * (3 / 4)
+                self.storyPinLabel2.center.y = (self.view.height * (3 / 4)) + 25
                 self.storyPinLabel2.center.x = self.view.width / 2
+                
                 self.storyPinLabel2.backgroundColor = UIColor.clearColor()
                 self.storyPinLabel2.backgroundColor = UIColor.whiteColor()
                 self.storyPinLabel2.textAlignment = NSTextAlignment.Center
