@@ -46,6 +46,10 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     var loadImage = MutableProperty<Bool>(false)
     var textureSize:CGFloat = 0.0
     
+    var progressTimer: NSTimer?
+    var progress = KDCircularProgress()
+    var time:Double = 0.001
+    var showOpto = MutableProperty<Bool>(false)
     
     //storytelling
     let storyPinLabel = UILabel()
@@ -184,7 +188,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 self.cloudQuote.hidden = true
                 self.diagonal.hidden = true
                 self.storyPinLabel.removeFromSuperview()
-                
+                self.stopProgress()
                 self.storyPinLabel2.backgroundColor = UIColor.clearColor()
                 self.storyPinLabel2.removeFromSuperview()
             })
@@ -212,14 +216,20 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 return
             }
             
-            // per second countdown
             if timeDiff > 1.0  {
                 countDown -= 1
                 lastElapsedTime = mediaTime
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.storyPinLabel.text = ""
+                    if self.countDown == 2 {
+                        print("pumasok dito")
+                        self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
+                    }
+                })
             }
             
             if countDown == 0 {
-                // reset countdown
                 countDown = 2
                 
                 dispatch_async(dispatch_get_main_queue(), {
@@ -232,12 +242,37 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 isInsideStory = true
                 
                 if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                    self.showOptograph(nodeObject)
+                    showOpto.producer.skip(1).startWithNext{ val in
+                        if val {
+                            if nameArray[1] == "NAV" || nameArray[1] == "Image"{
+                                self.showOptograph(nodeObject)
+                            }
+                        }
+                    }
                 }
             }
         } else{ // this is a new id
             last_optographID = nodeObject.optographID
         }
+    }
+    
+    func putProgress() {
+        time += 0.001
+        
+        self.progress.hidden = false
+        self.progress.angle = 180 * time
+        
+        if time >= 2 {
+            stopProgress()
+            showOpto.value = true
+        }
+    }
+    
+    func stopProgress() {
+        progressTimer?.invalidate()
+        time = 0.0001
+        self.progress.angle = 0
+        self.progress.hidden = true
     }
     
     func showOptograph(nodeObject: StorytellingObject){
@@ -280,16 +315,12 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                         if node.mediaType == "MUS"{
                             nodeItem.optographID = node.objectMediaFileUrl
                         }
-    
-                        else if node.mediaType == "NAV"{
+                        
+                        else if node.mediaType == "NAV" || node.mediaType == "TXT"{
                             nodeItem.optographID = node.mediaAdditionalData
+                            self.leftRenderDelegate.addNodeFromServer(nodeItem)
+                            self.rightRenderDelegate.addNodeFromServer(nodeItem)
                         }
-    
-                        print("node id: \(nodeItem.optographID)")
-    
-                        self.leftRenderDelegate.addNodeFromServer(nodeItem)
-                        self.rightRenderDelegate.addNodeFromServer(nodeItem)
-    
                     }
                 }
             })
@@ -436,6 +467,8 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         
         let tapRightGesture = UITapGestureRecognizer(target: self, action: #selector(initiateViewer))
         rightScnView.addGestureRecognizer(tapRightGesture)
+        
+        createStitchingProgressBar()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -600,6 +633,22 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         rotationDisposable?.dispose()
         RotationService.sharedInstance.rotationDisable()
         InvertableHeadTrackerRotationSource.InvertableInstance.stop()
+        self.progressTimer?.invalidate()
+    }
+    
+    func createStitchingProgressBar() {
+        
+        self.progress = KDCircularProgress(frame: CGRect(x: (self.view.width/2) - 10, y: (self.view.height/2) - 10, width: 20, height: 20))
+        self.progress.progressThickness = 0.2
+        self.progress.trackThickness = 0.4
+        self.progress.clockwise = true
+        self.progress.startAngle = 270
+        self.progress.gradientRotateSpeed = 2
+        self.progress.roundedCorners = true
+        self.progress.glowMode = .Forward
+        self.progress.setColors(UIColor(hex:0xFF5E00) ,UIColor(hex:0xFF7300), UIColor(hex:0xffbc00))
+        self.progress.hidden = true
+        self.view.addSubview(self.progress)
     }
     
     override func viewWillAppear(animated: Bool) {

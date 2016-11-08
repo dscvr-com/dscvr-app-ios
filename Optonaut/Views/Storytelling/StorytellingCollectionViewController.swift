@@ -9,9 +9,6 @@
 import UIKit
 import Kingfisher
 
-
-
-
 class StorytellingCollectionViewController: UICollectionViewController,WhiteNavBar,TabControllerDelegate {
     
     private var profileViewModel: ProfileViewModel;

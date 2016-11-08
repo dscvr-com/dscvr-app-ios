@@ -97,6 +97,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var storyID:UUID?
     
     let storyPinLabel = UILabel()
+    
     let countdownLabel = UILabel()
     private var isInsideStory: Bool = false
     private var isPlaying: Bool = false
@@ -114,6 +115,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var time:Double = 0.001
     
     var showOpto = MutableProperty<Bool>(false)
+    
+    var blurView = UIVisualEffectView()
     
     required init(optoList:[UUID],storyid:UUID?) {
         
@@ -954,7 +957,9 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
+        
         mp3Timer?.invalidate()
+        self.progressTimer?.invalidate()
         
         
         if player != nil{
@@ -1224,21 +1229,26 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         print("TEXT: \(nameArray[0])")
         
         dispatch_async(dispatch_get_main_queue(), {
-            if !self.storyPinLabel.isDescendantOfView(self.view) {
+            if !self.self.blurView.isDescendantOfView(self.view) {
+                
                 self.storyPinLabel.text = nameArray[0]
-                self.storyPinLabel.textColor = UIColor.blackColor()
+                self.storyPinLabel.textColor = UIColor.init(white: 0.4, alpha: 1.0)
                 self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 18.0)
                 self.storyPinLabel.sizeToFit()
                 self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 30)
-                self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
                 self.storyPinLabel.backgroundColor = UIColor.whiteColor()
                 self.storyPinLabel.textAlignment = NSTextAlignment.Center
-//                self.diagonal.frame = CGRectMake(0, 0, self.storyPinLabel.frame.size.width/2, 30.0)
-//                self.diagonal.center = CGPoint(x: self.storyPinLabel.center.x, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height + 10.0)
-//                self.diagonal.hidden = false
-//                
-                self.view.addSubview(self.storyPinLabel)
+                
+                let blurEffect = UIBlurEffect(style: .Light)
+                self.blurView = UIVisualEffectView(effect: blurEffect)
+                self.blurView.clipsToBounds = true
+                self.blurView.layer.borderColor = UIColor.blackColor().colorWithAlphaComponent(0.4).CGColor
+                self.blurView.layer.borderWidth = 1.0
+                self.blurView.layer.cornerRadius = 6.0
+                self.blurView.contentView.addSubview(self.storyPinLabel)
+                
+                self.view.addSubview(self.blurView)
             }
         })
     }
@@ -1341,7 +1351,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.cloudQuote.hidden = true
                 self.stopProgress()
-                self.storyPinLabel.removeFromSuperview()
+                self.blurView.removeFromSuperview()
             })
             return
         }
@@ -1372,8 +1382,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             if timeDiff > 1.0  {
                 countDown -= 1
                 lastElapsedTime = mediaTime
-                
-                print("countdown>>>>" ,countDown)
                     
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""
@@ -1411,4 +1419,72 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         }
     }
     
+}
+
+class SpeechBubble: UIView {
+    
+    var color:UIColor = UIColor.grayColor()
+    var text: String = ""
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    required convenience init(withColor frame: CGRect, color:UIColor? = .None) {
+        self.init(frame: frame)
+        
+        let label = UILabel(frame: frame)
+        label.text = text
+        label.textAlignment = .Center
+        label.textColor = UIColor.whiteColor()
+        addSubview(label)
+        
+        if let color = color {
+            self.color = color
+        }
+    }
+    
+    override func drawRect(rect: CGRect) {
+        
+        let rounding:CGFloat = rect.width * 0.02
+        
+        //Draw the main frame
+        
+        let bubbleFrame = CGRect(x: 0, y: 0, width: rect.width, height: rect.height * 2 / 3)
+        let bubblePath = UIBezierPath(roundedRect: bubbleFrame, byRoundingCorners: UIRectCorner.AllCorners, cornerRadii: CGSize(width: rounding, height: rounding))
+        
+        //Color the bubbleFrame
+        
+        color.setStroke()
+        color.setFill()
+        bubblePath.stroke()
+        bubblePath.fill()
+        
+        //Add the point
+        
+        let context = UIGraphicsGetCurrentContext()
+        
+        //Start the line
+        
+        CGContextBeginPath(context)
+        CGContextMoveToPoint(context, CGRectGetMinX(bubbleFrame) + bubbleFrame.width * 1/3, CGRectGetMaxY(bubbleFrame))
+        
+        //Draw a rounded point
+        
+        CGContextAddArcToPoint(context, CGRectGetMaxX(rect) * 1/3, CGRectGetMaxY(rect), CGRectGetMaxX(bubbleFrame), CGRectGetMinY(bubbleFrame), rounding)
+        
+        //Close the line
+        
+        CGContextAddLineToPoint(context, CGRectGetMinX(bubbleFrame) + bubbleFrame.width * 2/3, CGRectGetMaxY(bubbleFrame))
+        CGContextClosePath(context)
+        
+        //fill the color
+        
+        CGContextSetFillColorWithColor(context, color.CGColor)
+        CGContextFillPath(context);
+    }
 }

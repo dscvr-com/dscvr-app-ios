@@ -11,6 +11,7 @@
 		5917C8211CE441F200CD5A6D /* SharingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8201CE441F200CD5A6D /* SharingViewController.swift */; };
 		5917C8231CE4436900CD5A6D /* SharingNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */; };
 		5917C8271CE49C8600CD5A6D /* DetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8251CE49C8600CD5A6D /* DetailsTableViewController.swift */; };
+		592EEE381DD196F0005FBB49 /* LTMorphingLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592EEE371DD196F0005FBB49 /* LTMorphingLabel.framework */; };
 		59306C041D24E035009BF7BE /* InvitationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59306C031D24E034009BF7BE /* InvitationViewController.swift */; };
 		59306C061D24E268009BF7BE /* DetailsShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59306C051D24E268009BF7BE /* DetailsShareViewController.swift */; };
 		5930CF711DA655A300582ACB /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5930CF701DA655A300582ACB /* Story.swift */; };
@@ -337,6 +338,7 @@
 		5917C8201CE441F200CD5A6D /* SharingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
 		5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingNavViewController.swift; sourceTree = "<group>"; };
 		5917C8251CE49C8600CD5A6D /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
+		592EEE371DD196F0005FBB49 /* LTMorphingLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LTMorphingLabel.framework; path = Carthage/Build/iOS/LTMorphingLabel.framework; sourceTree = "<group>"; };
 		59306C031D24E034009BF7BE /* InvitationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvitationViewController.swift; sourceTree = "<group>"; };
 		59306C051D24E268009BF7BE /* DetailsShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsShareViewController.swift; sourceTree = "<group>"; };
 		5930CF701DA655A300582ACB /* Story.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
@@ -724,6 +726,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				592EEE381DD196F0005FBB49 /* LTMorphingLabel.framework in Frameworks */,
 				59D828141D709C4200007B57 /* Crashlytics.framework in Frameworks */,
 				598EB95C1D7068A200E00F9B /* Fabric.framework in Frameworks */,
 				59E9E3181D62277500D326F8 /* Icomoon.framework in Frameworks */,
@@ -894,6 +897,7 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				592EEE371DD196F0005FBB49 /* LTMorphingLabel.framework */,
 				59D828131D709C4200007B57 /* Crashlytics.framework */,
 				598EB95B1D7068A200E00F9B /* Fabric.framework */,
 				59E9E3171D62277500D326F8 /* Icomoon.framework */,
@@ -1780,6 +1784,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyUserDefaults.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Neon.framework",
 				"$(SRCROOT)/Icomoon.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/LTMorphingLabel.framework",
 			);
 			name = Carthage;
 			outputPaths = (
