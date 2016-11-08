@@ -1406,8 +1406,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 
                 isInsideStory = true
                 
-                print("object Type: \(nodeObject.objectType)")
-                
                 showOpto.producer.skip(1).startWithNext{ val in
                     if val {
                         if nameArray[1] == "NAV" || nameArray[1] == "Image"{

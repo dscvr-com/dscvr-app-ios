@@ -48,13 +48,14 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     
     var progressTimer: NSTimer?
     var progress = KDCircularProgress()
+    var progress2 = KDCircularProgress()
     var time:Double = 0.001
     var showOpto = MutableProperty<Bool>(false)
     
     //storytelling
     let storyPinLabel = UILabel()
     let storyPinLabel2 = UILabel()
-    var countDown:Int = 2
+    var countDown:Int = 3
     let cloudQuote = UIImageView()
     let diagonal = ViewWithDiagonalLine()
     private var lastElapsedTime = CACurrentMediaTime()
@@ -206,11 +207,10 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool){
         if !inFrustrum {
-            countDown = 2
+            countDown = 3
             dispatch_async(dispatch_get_main_queue(), {
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.cloudQuote.hidden = true
-                self.diagonal.hidden = true
                 self.blurView.removeFromSuperview()
                 self.stopProgress()
                 self.storyPinLabel2.backgroundColor = UIColor.clearColor()
@@ -227,7 +227,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
             
             // reset if difference is above 3 seconds
             if timeDiff > 3.0 {
-                countDown = 2
+                countDown = 3
                 timeDiff = 0.0
                 lastElapsedTime = mediaTime
             }
@@ -247,14 +247,13 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""
                     if self.countDown == 2 {
-                        print("pumasok dito")
                         self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
                     }
                 })
             }
             
             if countDown == 0 {
-                countDown = 2
+                countDown = 3
                 
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""
@@ -265,15 +264,15 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 
                 isInsideStory = true
                 
-                if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                    showOpto.producer.skip(1).startWithNext{ val in
-                        if val {
-                            if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                                self.showOptograph(nodeObject)
-                            }
+                showOpto.producer.skip(1).startWithNext{ val in
+                    if val {
+                        if nameArray[1] == "NAV" || nameArray[1] == "Image"{
+                            self.showOptograph(nodeObject)
                         }
                     }
                 }
+                
+                
             }
         } else{ // this is a new id
             last_optographID = nodeObject.optographID
@@ -286,6 +285,9 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         self.progress.hidden = false
         self.progress.angle = 180 * time
         
+        self.progress2.hidden = false
+        self.progress2.angle = 180 * time
+        
         if time >= 2 {
             stopProgress()
             showOpto.value = true
@@ -295,6 +297,9 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     func stopProgress() {
         progressTimer?.invalidate()
         time = 0.0001
+        
+        self.progress2.angle = 0
+        self.progress2.hidden = true
         self.progress.angle = 0
         self.progress.hidden = true
     }
@@ -662,7 +667,9 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     
     func createStitchingProgressBar() {
         
-        self.progress = KDCircularProgress(frame: CGRect(x: (self.view.width/2) - 10, y: (self.view.height/2) - 10, width: 20, height: 20))
+        self.progress = KDCircularProgress(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        self.progress.center.y = (self.view.height / 4) - 27.5
+        self.progress.center.x = (self.view.width / 2) + 15.5
         self.progress.progressThickness = 0.2
         self.progress.trackThickness = 0.4
         self.progress.clockwise = true
@@ -673,6 +680,20 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         self.progress.setColors(UIColor(hex:0xFF5E00) ,UIColor(hex:0xFF7300), UIColor(hex:0xffbc00))
         self.progress.hidden = true
         self.view.addSubview(self.progress)
+        
+        self.progress2 = KDCircularProgress(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        self.progress2.center.y = (self.view.height * (3 / 4)) + 27.5
+        self.progress2.center.x = (self.view.width / 2) + 15.5
+        self.progress2.progressThickness = 0.2
+        self.progress2.trackThickness = 0.4
+        self.progress2.clockwise = true
+        self.progress2.startAngle = 270
+        self.progress2.gradientRotateSpeed = 2
+        self.progress2.roundedCorners = true
+        self.progress2.glowMode = .Forward
+        self.progress2  .setColors(UIColor(hex:0xFF5E00) ,UIColor(hex:0xFF7300), UIColor(hex:0xffbc00))
+        self.progress2.hidden = true
+        self.view.addSubview(self.progress2)
     }
     
     override func viewWillAppear(animated: Bool) {
