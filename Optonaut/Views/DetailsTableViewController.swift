@@ -1232,20 +1232,24 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             if !self.self.blurView.isDescendantOfView(self.view) {
                 
                 self.storyPinLabel.text = nameArray[0]
-                self.storyPinLabel.textColor = UIColor.init(white: 0.4, alpha: 1.0)
+                self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 30)
+                self.storyPinLabel.textColor = UIColor.blackColor().colorWithAlphaComponent(0.7)
                 self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 18.0)
                 self.storyPinLabel.sizeToFit()
-                self.storyPinLabel.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 40, height: self.storyPinLabel.frame.size.height + 30)
-                self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
-                self.storyPinLabel.backgroundColor = UIColor.whiteColor()
                 self.storyPinLabel.textAlignment = NSTextAlignment.Center
                 
                 let blurEffect = UIBlurEffect(style: .Light)
                 self.blurView = UIVisualEffectView(effect: blurEffect)
                 self.blurView.clipsToBounds = true
+                self.blurView.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.60)
                 self.blurView.layer.borderColor = UIColor.blackColor().colorWithAlphaComponent(0.4).CGColor
                 self.blurView.layer.borderWidth = 1.0
                 self.blurView.layer.cornerRadius = 6.0
+                self.blurView.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 20, height: self.storyPinLabel.frame.size.height + 20)
+                self.storyPinLabel.center.x = self.blurView.center.x
+                self.storyPinLabel.center.y = self.blurView.center.y
+                
+                self.blurView.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
                 self.blurView.contentView.addSubview(self.storyPinLabel)
                 
                 self.view.addSubview(self.blurView)

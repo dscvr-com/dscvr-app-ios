@@ -64,6 +64,8 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     var nodes:[StoryChildren] = []
     let fixedTextLabel = UILabel()
     let removeNode = UIButton()
+    var blurView = UIVisualEffectView()
+    var blurView2 = UIVisualEffectView()
     //
     
     required init(orientation: UIInterfaceOrientation, arrayOfoptograph:[UUID],selfOptograph:UUID,nodesData:[StoryChildren]) {
@@ -138,36 +140,58 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
         
         dispatch_async(dispatch_get_main_queue(), {
-            if !self.storyPinLabel.isDescendantOfView(self.view) {
+            if !self.blurView.isDescendantOfView(self.view) {
                 
                 //for left
                 self.storyPinLabel.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
                 self.storyPinLabel.text = nameArray[0]
-                self.storyPinLabel.textColor = UIColor.blackColor()
-                self.storyPinLabel.font = UIFont(name: "MerriweatherLight", size: 12.0)
+                self.storyPinLabel.textColor = UIColor.blackColor().colorWithAlphaComponent(0.7)
+                self.storyPinLabel.font = UIFont(name: "Avenir-Book", size: 12.0)
                 self.storyPinLabel.sizeToFit()
-                self.storyPinLabel.center.y = (self.view.height / 4) - 25
-                self.storyPinLabel.center.x = self.view.width / 2
-                
-                self.storyPinLabel.backgroundColor = UIColor.clearColor()
-                self.storyPinLabel.backgroundColor = UIColor.whiteColor()
                 self.storyPinLabel.textAlignment = NSTextAlignment.Center
-                self.view.addSubview(self.storyPinLabel)
+                self.blurView.addSubview(self.storyPinLabel)
+                
+                let blurEffect = UIBlurEffect(style: .Light)
+                self.blurView = UIVisualEffectView(effect: blurEffect)
+                self.blurView.clipsToBounds = true
+                self.blurView.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.60)
+                self.blurView.layer.borderColor = UIColor.blackColor().colorWithAlphaComponent(0.4).CGColor
+                self.blurView.layer.borderWidth = 1.0
+                self.blurView.layer.cornerRadius = 6.0
+                self.blurView.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel.frame.size.width + 20, height: self.storyPinLabel.frame.size.height + 20)
+                
+                self.storyPinLabel.center.x = self.blurView.center.x
+                self.storyPinLabel.center.y = self.blurView.center.y
+                
+                self.blurView.center.y = (self.view.height / 4) - 25
+                self.blurView.center.x = self.view.width / 2
+                
+                self.blurView.contentView.addSubview(self.storyPinLabel)
+                self.view.addSubview(self.blurView)
                 
                 //for right
                 self.storyPinLabel2.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
                 self.storyPinLabel2.text = nameArray[0]
-                self.storyPinLabel2.textColor = UIColor.blackColor()
-                self.storyPinLabel2.font = UIFont(name: "MerriweatherLight", size: 12.0)
+                self.storyPinLabel2.textColor = UIColor.blackColor().colorWithAlphaComponent(0.7)
+                self.storyPinLabel2.font = UIFont(name: "Avenir-Book", size: 12.0)
                 self.storyPinLabel2.sizeToFit()
-                
-                self.storyPinLabel2.center.y = (self.view.height * (3 / 4)) + 25
-                self.storyPinLabel2.center.x = self.view.width / 2
-                
-                self.storyPinLabel2.backgroundColor = UIColor.clearColor()
-                self.storyPinLabel2.backgroundColor = UIColor.whiteColor()
                 self.storyPinLabel2.textAlignment = NSTextAlignment.Center
-                self.view.addSubview(self.storyPinLabel2)
+                self.blurView2.addSubview(self.storyPinLabel2)
+                
+                self.blurView2 = UIVisualEffectView(effect: blurEffect)
+                self.blurView2.clipsToBounds = true
+                self.blurView2.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.60)
+                self.blurView2.layer.borderColor = UIColor.blackColor().colorWithAlphaComponent(0.4).CGColor
+                self.blurView2.layer.borderWidth = 1.0
+                self.blurView2.layer.cornerRadius = 6.0
+                self.blurView2.frame = CGRect(x : 0, y: 0, width: self.storyPinLabel2.frame.size.width + 20, height: self.storyPinLabel2.frame.size.height + 20)
+                self.storyPinLabel2.center.x = self.blurView2.center.x
+                self.storyPinLabel2.center.y = self.blurView2.center.y
+                
+                self.blurView2.center.y = (self.view.height * (3 / 4)) + 25
+                self.blurView2.center.x = self.view.width / 2
+                self.blurView2.contentView.addSubview(self.storyPinLabel2)
+                self.view.addSubview(self.blurView2)
             }
         })
     }
@@ -187,10 +211,10 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.cloudQuote.hidden = true
                 self.diagonal.hidden = true
-                self.storyPinLabel.removeFromSuperview()
+                self.blurView.removeFromSuperview()
                 self.stopProgress()
                 self.storyPinLabel2.backgroundColor = UIColor.clearColor()
-                self.storyPinLabel2.removeFromSuperview()
+                self.blurView2.removeFromSuperview()
             })
             return
         }
