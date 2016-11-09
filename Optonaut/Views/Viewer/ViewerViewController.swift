@@ -209,10 +209,12 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         if !inFrustrum {
             countDown = 3
             dispatch_async(dispatch_get_main_queue(), {
+                self.storyPinLabel.text = ""
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
                 self.cloudQuote.hidden = true
                 self.blurView.removeFromSuperview()
                 self.stopProgress()
+                self.storyPinLabel2.text = ""
                 self.storyPinLabel2.backgroundColor = UIColor.clearColor()
                 self.blurView2.removeFromSuperview()
             })

@@ -131,7 +131,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     var lastRetainableData  = [StoryChildren]()
     var deletableData  = [UUID]()
     var didInitialize: Bool = false
-    var finalRetainData  = [NSDictionary]()
     var finalRetainDataFromStart  = [NSDictionary]()
     var allData = [NSDictionary]()
     var removePinButton = UIButton()
@@ -199,7 +198,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         if isEditingStory {
             
             self.removeOrUpdateInObjects(self.deletableData)
-            print("retain data>>> ",nodes)
         }
         
         
@@ -526,44 +524,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         print("wowah",nameArray)
         
-//        storyNodes.producer.startWithNext { [weak self] nodes in
-//            if self?.didInitialize == true {
-//                for n in (self?.lastRetainableData)! {
-//                    if n.mediaAdditionalData == nameArray[0] {
-//                        self?.deletableData.append(n.ID)
-//                    }
-//                }
-//                self?.lastRetainableData = (self?.lastRetainableData.filter { $0.mediaAdditionalData != nameArray[0] })!
-//            } else {
-//                print("wow pasok dito")
-//                for n in nodes{
-//                    if n.mediaAdditionalData == nameArray[0] {
-//                        self?.deletableData.append(n.ID)
-//                    }
-//                }
-//                self?.lastRetainableData = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
-//                self?.didInitialize = true
-//            }
-//            
-//            print("deletable ID: \(nameArray[0])")
-//            print(">>>>>",(self?.deletablePin.optographID)!)
-//            
-//            var nodeData = [NSDictionary]()
-//            for data in (self?.lastRetainableData)! {
-//                let child : NSDictionary = ["story_object_media_type": data.mediaType,
-//                    "story_object_media_face": data.mediaFace,
-//                    "story_object_id": data.ID,
-//                    "story_object_media_description": data.mediaDescription,
-//                    "story_object_media_additional_data": data.mediaAdditionalData,
-//                    "story_object_position": data.objectPosition.characters.split{$0 == ","}.map(String.init),
-//                    "story_object_rotation": data.objectRotation.characters.split{$0 == ","}.map(String.init)]
-//                nodeData.append(child)
-//            }
-//            
-//            self?.finalRetainData = nodeData
-//            
-//            self?.renderDelegate.removeAllNodes((self?.deletablePin.optographID)!)
-//        }
         let nodes = viewModel.storyNodes.value
         
         if self.didInitialize == true {
@@ -583,20 +543,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             self.lastRetainableData = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
             self.didInitialize = true
         }
-        
-        var nodeData = [NSDictionary]()
-        for data in (self.lastRetainableData) {
-            let child : NSDictionary = ["story_object_media_type": data.mediaType,
-                                        "story_object_media_face": data.mediaFace,
-                                        "story_object_id": data.ID,
-                                        "story_object_media_description": data.mediaDescription,
-                                        "story_object_media_additional_data": data.mediaAdditionalData,
-                                        "story_object_position": data.objectPosition.characters.split{$0 == ","}.map(String.init),
-                                        "story_object_rotation": data.objectRotation.characters.split{$0 == ","}.map(String.init)]
-            nodeData.append(child)
-        }
-        
-        self.finalRetainData = nodeData
         
         self.renderDelegate.removeAllNodes(self.deletablePin.optographID)
     }
@@ -641,40 +587,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         self.renderDelegate.addNodeFromServer(nodeItem)
                     }
                 }
-                
-//                self.storyNodes.producer.startWithNext { [weak self] nodes in
-//                    
-//                    for node in nodes {
-//                        let objectPosition = node.objectPosition.characters.split{$0 == ","}.map(String.init)
-//                        let objectRotation = node.objectRotation.characters.split{$0 == ","}.map(String.init)
-//                        
-//                        if objectPosition.count >= 2{
-//                            
-//                            let nodeItem = StorytellingObject()
-//                            
-//                            let nodeTranslation = SCNVector3Make(Float(objectPosition[0])!, Float(objectPosition[1])!, Float(objectPosition[2])!)
-//                            let nodeRotation = SCNVector3Make(Float(objectRotation[0])!, Float(objectRotation[1])!, Float(objectRotation[2])!)
-//                            
-//                            nodeItem.objectRotation = nodeRotation
-//                            nodeItem.objectVector3 = nodeTranslation
-//                            //                        nodeItem.optographID = nodes.story_object_media_additional_data
-//                            nodeItem.objectType = node.mediaType
-//                            
-//                            if node.mediaType == "MUS"{
-//                                nodeItem.optographID = node.objectMediaFileUrl
-//                            }
-//                                
-//                            else if node.mediaType == "NAV"{
-//                                nodeItem.optographID = node.mediaAdditionalData
-//                            }
-//                            
-//                            print("node id: \(nodeItem.optographID)")
-//                            
-//                            self?.renderDelegate.addNodeFromServer(nodeItem)
-//                            
-//                        }
-//                    }
-//                }
             })
         }
             
@@ -697,23 +609,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)){
-//            dispatch_async(dispatch_get_main_queue()){
-//                if inFrustrum {
-//                    
-//                }
-//                else{
-//                    //self.markerNameLabel.hidden = true
-//                }
-//            }
-//        }
-        //add flag to check if story is being edited
-        //move contents to another function [editing and viewing]
         
         if isEditingStory {
             if !inFrustrum {
                 countDown = 2
                 dispatch_async(dispatch_get_main_queue(), {
+                    self.storyPinLabel.text = ""
                     self.storyPinLabel.backgroundColor = UIColor.clearColor()
                     self.cloudQuote.hidden = true
                     self.diagonal.hidden = true

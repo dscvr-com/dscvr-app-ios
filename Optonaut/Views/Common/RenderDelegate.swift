@@ -672,15 +672,14 @@ class CubeRenderDelegate: RenderDelegate {
         var enteredFlag = false
         
         for marknode in markers {
-            if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.buttonCamera){
-                let node = StorytellingObject()
-                
-                node.objectRotation = marknode.eulerAngles
-                node.objectVector3 = marknode.position
-                node.optographID = marknode.name!
-                delegate!.isInButtonCamera(true)
-                enteredFlag = true
-            }
+//            if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.buttonCamera){
+//                let node = StorytellingObject()
+//                node.objectRotation = marknode.eulerAngles
+//                node.objectVector3 = marknode.position
+//                node.optographID = marknode.name!
+//                delegate!.isInButtonCamera(false)
+//                enteredFlag = false
+//            }
             
             if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) {
                 let node = StorytellingObject()
@@ -692,13 +691,7 @@ class CubeRenderDelegate: RenderDelegate {
                 enteredFlag = true
             }
         }
-//        if self.isStory {
-//            if !enteredFlag {
-//                let node = StorytellingObject()
-//                delegate!.didEnterFrustrum(node, inFrustrum: false)
-//                delegate!.isInButtonCamera(false)
-//            }
-//        }
+
         if !enteredFlag {
             let node = StorytellingObject()
             delegate!.didEnterFrustrum(node, inFrustrum: false)

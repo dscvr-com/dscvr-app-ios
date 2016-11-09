@@ -1317,15 +1317,14 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func isInButtonCamera(inFrustrum: Bool){
-//        print("indBUtton")
         
         if !inFrustrum{
             dispatch_async(dispatch_get_main_queue(), {
-                
                 self.removeNode.hidden = true
             })
         }
     }
+    
     func putProgress() {
         time += 0.001
         
@@ -1349,7 +1348,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         if !inFrustrum {
             countDown = 3
-            
+            print("not in frustrum")
             dispatch_async(dispatch_get_main_queue(), {
                 self.storyPinLabel.text = ""
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
@@ -1358,7 +1357,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 self.blurView.removeFromSuperview()
             })
             return
+            
         }
+        
+        print("nodeObject >>",nodeObject.optographID.componentsSeparatedByString(","))
         
         
         let mediaTime = CACurrentMediaTime()
@@ -1413,8 +1415,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                         }
                     }
                 }
-                        
-                
             }
         } else{ // this is a new id
             last_optographID = nodeObject.optographID
