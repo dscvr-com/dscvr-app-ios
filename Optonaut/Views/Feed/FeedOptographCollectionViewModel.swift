@@ -87,44 +87,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .observeNext { results in
                 self.results.value = results
             }
-        
-//        refreshNotification.signal
-//            .takeWhile { _ in Reachability.connectedToNetwork() }
-//            .flatMap(.Latest) { _ in
-//                ApiService<OptographApiModel>.getForGate("story/merged/\(SessionService.isLoggedIn ? SessionService.personID: "")")
-//                    .observeOnUserInitiated()
-//                    .on(next: { apiModel in
-//                        Models.optographs.touch(apiModel).insertOrUpdate { box in
-//                            box.model.isInFeed = true
-//                            box.model.isStitched = true
-//                            box.model.isPublished = true
-//                            box.model.isSubmitted = true
-//                            box.model.starsCount = apiModel.starsCount
-//                        }
-//                        Models.persons.touch(apiModel.person).insertOrUpdate { ps in
-//                            ps.model.isFollowed = apiModel.person.isFollowed
-//                        }
-//                        Models.locations.touch(apiModel.location)?.insertOrUpdate()
-//                        
-//                        Models.story.touch(apiModel.story).insertOrUpdate()
-//                        
-//                        if apiModel.story.children!.count != 0 {
-//                            for child in apiModel.story.children! {
-//                                Models.storyChildren.touch(child).insertOrUpdate()
-//                            }
-//                        }
-//                        
-//                    })
-//                    .map(Optograph.fromApiModel)
-//                    .ignoreError()
-//                    .collect()
-//                    .startOnUserInitiated()
-//            }
-//            .observeOnMain()
-//            .map { self.results.value.merge($0, deleteOld: false) }
-//            .observeNext { results in
-//                self.results.value = results
-//        }
 
         loadMoreNotification.signal
             .map { _ in self.results.value.models.last }
@@ -184,8 +146,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
     func refresh() {
         print("refresh function called!")
         refreshNotification.notify(())
-//        refreshTimer?.invalidate()
-//        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: #selector(FeedOptographCollectionViewModel.refresh), userInfo: nil, repeats: true)
     }
     
     func loadMore() {

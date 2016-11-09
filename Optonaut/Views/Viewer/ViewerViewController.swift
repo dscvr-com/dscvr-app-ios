@@ -249,7 +249,12 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""
                     if self.countDown == 2 {
-                        self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
+                        
+                        if self.progressTimer == nil {
+                            self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
+                        } else if !(self.progressTimer?.valid)! {
+                            self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
+                        }
                         
                         self.showOpto.producer.skip(1).startWithNext{ val in
                             if val {
