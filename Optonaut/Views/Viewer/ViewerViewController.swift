@@ -206,7 +206,9 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     }
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool){
+        
         if !inFrustrum {
+            
             countDown = 3
             dispatch_async(dispatch_get_main_queue(), {
                 self.storyPinLabel.text = ""
@@ -221,13 +223,11 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
             return
         }
         
-        
         let mediaTime = CACurrentMediaTime()
         var timeDiff = mediaTime - lastElapsedTime
         
         if (last_optographID == nodeObject.optographID) {
             
-            // reset if difference is above 3 seconds
             if timeDiff > 3.0 {
                 countDown = 3
                 timeDiff = 0.0
@@ -250,6 +250,14 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                     self.storyPinLabel.text = ""
                     if self.countDown == 2 {
                         self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
+                        
+                        self.showOpto.producer.skip(1).startWithNext{ val in
+                            if val {
+                                if nameArray[1] == "NAV" || nameArray[1] == "Image"{
+                                    self.showOptograph(nodeObject)
+                                }
+                            }
+                        }
                     }
                 })
             }
@@ -265,18 +273,8 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 })
                 
                 isInsideStory = true
-                
-                showOpto.producer.skip(1).startWithNext{ val in
-                    if val {
-                        if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                            self.showOptograph(nodeObject)
-                        }
-                    }
-                }
-                
-                
             }
-        } else{ // this is a new id
+        } else {
             last_optographID = nodeObject.optographID
         }
     }
@@ -297,7 +295,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     }
     
     func stopProgress() {
-        progressTimer?.invalidate()
+        self.progressTimer?.invalidate()
         time = 0.0001
         
         self.progress2.angle = 0
@@ -308,6 +306,8 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     
     func showOptograph(nodeObject: StorytellingObject){
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
+        
+        print("dito>>>")
         
         if nameArray[0] == self.optograph?.ID{
             dispatch_async(dispatch_get_main_queue(), {
