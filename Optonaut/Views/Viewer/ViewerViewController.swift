@@ -55,7 +55,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     //storytelling
     let storyPinLabel = UILabel()
     let storyPinLabel2 = UILabel()
-    var countDown:Int = 3
+    var countDown:Int = 2
     let cloudQuote = UIImageView()
     let diagonal = ViewWithDiagonalLine()
     private var lastElapsedTime = CACurrentMediaTime()
@@ -209,7 +209,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         
         if !inFrustrum {
             
-            countDown = 3
+            countDown = 2
             dispatch_async(dispatch_get_main_queue(), {
                 self.storyPinLabel.text = ""
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
@@ -229,7 +229,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         if (last_optographID == nodeObject.optographID) {
             
             if timeDiff > 3.0 {
-                countDown = 3
+                countDown = 2
                 timeDiff = 0.0
                 lastElapsedTime = mediaTime
             }
@@ -268,7 +268,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
             }
             
             if countDown == 0 {
-                countDown = 3
+                countDown = 2
                 
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""

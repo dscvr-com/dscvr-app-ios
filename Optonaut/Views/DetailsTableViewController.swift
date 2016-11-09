@@ -41,7 +41,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     var optographID:UUID = ""
     var cellIndexpath:Int = 0
-    var countDown:Int = 3
+    var countDown:Int = 2
     var last_optographID:UUID = ""
     private var lastElapsedTime = CACurrentMediaTime() ;
     
@@ -98,7 +98,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     let storyPinLabel = UILabel()
     
-    let countdownLabel = UILabel()
     private var isInsideStory: Bool = false
     private var isPlaying: Bool = false
     let fixedTextLabel = UILabel()
@@ -202,9 +201,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         super.viewDidAppear(animated)
         
         //Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
-        
-        
-        self.view.addSubview(self.countdownLabel)
         
         //viewModel.viewIsActive.value = true
         
@@ -560,11 +556,11 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func createStitchingProgressBar() {
         
-        self.progress = KDCircularProgress(frame: CGRect(x: (self.view.width/2) - 10, y: (self.view.height/2) - 10, width: 20, height: 20))
-        self.progress.progressThickness = 0.2
-        self.progress.trackThickness = 0.4
+        self.progress = KDCircularProgress(frame: CGRect(x: (self.view.width/2) - 15, y: (self.view.height/2) - 15, width: 30, height: 30))
+        self.progress.progressThickness = 0.3
+        self.progress.trackThickness = 0.5
         self.progress.clockwise = true
-        self.progress.startAngle = 270
+        self.progress.startAngle = 360
         self.progress.gradientRotateSpeed = 2
         self.progress.roundedCorners = true
         self.progress.glowMode = .Forward
@@ -1326,8 +1322,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func putProgress() {
-        time += 0.001
         
+        time += 0.001
         self.progress.hidden = false
         self.progress.angle = 180 * time
         
@@ -1338,16 +1334,18 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func stopProgress() {
+        
         progressTimer?.invalidate()
         time = 0.0001
         self.progress.angle = 0
         self.progress.hidden = true
+        
     }
     
     func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool) {
         
         if !inFrustrum {
-            countDown = 3
+            countDown = 2
             print("not in frustrum")
             dispatch_async(dispatch_get_main_queue(), {
                 self.storyPinLabel.text = ""
@@ -1371,7 +1369,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             // reset if difference is above 3 seconds
             
             if timeDiff > 3.0 {
-                countDown = 3
+                countDown = 2
                 timeDiff = 0.0
                 lastElapsedTime = mediaTime
             }
@@ -1392,14 +1390,25 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""
                     if self.countDown == 2 {
-                        print("pumasok dito")
-                        self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
+                        if self.progressTimer == nil {
+                            self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
+                        } else if !(self.progressTimer?.valid)! {
+                            self.progressTimer = NSTimer.scheduledTimerWithTimeInterval(0.001, target: self, selector:#selector(self.putProgress), userInfo: nil, repeats: true)
+                        }
+                        
+                        self.showOpto.producer.skip(1).startWithNext{ val in
+                            if val {
+                                if nameArray[1] == "NAV" || nameArray[1] == "Image"{
+                                    self.showOptograph(nodeObject)
+                                }
+                            }
+                        }
                     }
                 })
             }
                 
             if countDown == 0 {
-                countDown = 3
+                countDown = 2
                     
                 dispatch_async(dispatch_get_main_queue(), {
                     self.storyPinLabel.text = ""
@@ -1407,16 +1416,8 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 })
                 
                 isInsideStory = true
-                
-                showOpto.producer.skip(1).startWithNext{ val in
-                    if val {
-                        if nameArray[1] == "NAV" || nameArray[1] == "Image"{
-                            self.showOptograph(nodeObject)
-                        }
-                    }
-                }
             }
-        } else{ // this is a new id
+        } else{
             last_optographID = nodeObject.optographID
         }
     }
