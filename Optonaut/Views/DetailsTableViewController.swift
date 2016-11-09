@@ -1336,7 +1336,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func stopProgress() {
         
         progressTimer?.invalidate()
-        time = 0.0001
+        time = 0.001
         self.progress.angle = 0
         self.progress.hidden = true
         
