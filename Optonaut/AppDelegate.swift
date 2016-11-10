@@ -53,7 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("First launch, setting NSUserDefault.")
                 NSUserDefaults.standardUserDefaults().setBool(true, forKey: "launchedBefore")
                 Defaults[.SessionVRMode] = true
-                Defaults[.SessionUseMultiRing] = true
+                Defaults[.SessionUseMultiRing] = false
             }
             
             Mixpanel.sharedInstance().track("Launch.Notification")

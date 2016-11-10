@@ -101,7 +101,7 @@ class SessionService {
                 //Defaults[.SessionShareToggledFacebook] = safeOptional(FBSDKAccessToken.currentAccessToken())?.hasGranted("publish_actions") ?? false
                 Defaults[.SessionShareToggledTwitter] = false
                 Defaults[.SessionShareToggledInstagram] = false
-                Defaults[.SessionUseMultiRing] = true
+                Defaults[.SessionUseMultiRing] = false
                 Defaults[.SessionNeedRefresh] = true
             })
             .flatMap(.Latest) { _ in

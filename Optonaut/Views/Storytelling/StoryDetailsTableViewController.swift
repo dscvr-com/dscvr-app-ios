@@ -136,6 +136,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     var removePinButton = UIButton()
     var timer = NSTimer()
     var audioPin = UIButton()
+    var optoDidSelect = MutableProperty<Bool>(false)
+    var pinDidSelect = MutableProperty<Bool>(false)
     //
     
     
@@ -393,6 +395,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func optographSelected(optographID: String) {
+        
+        optoDidSelect.value = true
+        
         nodeItem.optographID = optographID;
         
         print("node x: \(nodeItem.objectVector3.x)");
@@ -588,10 +593,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     }
                 }
             })
-        }
-            
-            //else move forward and place a back pin at designated vector3
-        else{
+        } else{
             dispatch_async(dispatch_get_main_queue(), {
                 let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
                 
@@ -1280,10 +1282,14 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
             self.presentViewController(alert, animated: true, completion: nil)
         } else {
-            renderDelegate.addMarker(UIColor.redColor(), type:"Text Item")
-            nodeItem.objectType = "TXT"
-            isTextPin = true
+            self.isTextPin = true
             
+            pinDidSelect.producer.skip(1).startWithNext{ val in
+                if val {
+                    self.renderDelegate.addMarker(UIColor.redColor(), type:"Text Item")
+                    self.nodeItem.objectType = "TXT"
+                }
+            }
             inputTextField.becomeFirstResponder()
         }
     }
@@ -1296,6 +1302,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             
             
             print("pinText")
+            
+            pinDidSelect.value = true
             
             let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
             let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
@@ -1327,15 +1335,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                                             "story_object_media_additional_data": inputTextField.text!,
                                             "story_object_position": [0.0, 0.0, 0.0],
                                             "story_object_rotation": [0.0, 0.0, 0.0]]
-                /*
-                 let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
-                 "story_object_media_face": "pin",
-                 "story_object_media_description": "next optograph",
-                 "story_object_media_additional_data": nodeItem.optographID,
-                 "story_object_position": translationArray,
-                 "story_object_rotation": rotationArray]
-                 */
-                
                 
                 print("text child: \(child)")
                 nodes.append(child);
@@ -1368,10 +1367,13 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             let naviCon = UINavigationController()
             naviCon.viewControllers = [optocollection]
             
-            self.presentViewController(naviCon, animated: true, completion: { completed in
-                self.renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
-                self.nodeItem.objectType = "NAV"
-            })
+            optoDidSelect.producer.skip(1).startWithNext{ val in
+                if val {
+                    self.renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
+                    self.nodeItem.objectType = "NAV"
+                }
+            }
+            self.presentViewController(naviCon, animated: true, completion:nil)
         }
     }
     
