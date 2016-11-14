@@ -202,13 +202,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     
     func cancelRecording() {
-        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
-        viewModel.isRecording.value = false
-        tapCameraButtonCallback = nil
         
-        Async.main {
-            self.cancelRecordCleanup()
-        }
+        self.navigationController?.popViewControllerAnimated(true)
         
     }
     
@@ -223,9 +218,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             StitchingService.removeUnstitchedRecordings()
         }
         motionManager.stop()
-        
-        self.navigationController?.popViewControllerAnimated(true)
-    
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -395,6 +387,14 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
         UIApplication.sharedApplication().idleTimerDisabled = false
+        
+        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
+        viewModel.isRecording.value = false
+        tapCameraButtonCallback = nil
+        
+        Async.main {
+            self.cancelRecordCleanup()
+        }
     }
     
     override func updateViewConstraints() {
@@ -595,8 +595,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         for format in videoDevice!.formats.map({ $0 as! AVCaptureDeviceFormat }) {
             var ranges = format.videoSupportedFrameRateRanges as! [AVFrameRateRange]
             let frameRates = ranges[0]
-            if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= 30
-            {
+            if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= 30 {
                 maxFps = frameRates.maxFrameRate
                 bestFormat = format
                 
@@ -610,7 +609,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         videoDevice!.exposureMode = .ContinuousAutoExposure
         videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
-        //videoDevice!.
         
         AVCaptureVideoStabilizationMode.Standard
         

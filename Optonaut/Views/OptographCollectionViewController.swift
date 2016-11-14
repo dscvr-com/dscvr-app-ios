@@ -138,7 +138,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     
                     if results.models.count == 1 {
                         print("nagreload lahat")
-                        strongSelf.collectionView!.reloadData()
+                        //strongSelf.collectionView!.reloadData()
                     } else {
                         print("nagreload paisa isa")
                         CATransaction.begin()
@@ -153,11 +153,11 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                                 strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
                             }, completion: { _ in
                                 
-                                if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
-                                    if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
-                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
-                                    }
-                                }
+//                                if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
+//                                    if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
+//                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
+//                                    }
+//                                }
                                 
                                 strongSelf.refreshControl.endRefreshing()
                                 
@@ -171,10 +171,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         uiHidden.producer.startWithNext { [weak self] hidden in
             self?.navigationController?.setNavigationBarHidden(hidden, animated: false)
-            
             self?.collectionView!.scrollEnabled = !hidden
-          
         }
+        
         tabController!.delegate = self
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         view.addSubview(tabView)
@@ -215,10 +214,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     self?.progress.angle = 360
                     self?.progress.hidden = true
                     self?.tabView.cameraButton.progress = nil
-                    self?.viewModel.refresh()
                     print("StitchingFinished")
                 }
         }
+        
         updateTabs()
         initNotificationIndicator()
         imagePicker.delegate = self
@@ -301,7 +300,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             Defaults[.SessionUploadMode] = "opto"
             
             if Defaults[.SessionEliteUser] {
-                navigationController?.pushViewController(CameraViewController(), animated: false)
+                //navigationController?.pushViewController(CameraViewController(), animated: false)
+                navigationController?.pushViewController(CameraOverlayVC(), animated: false)
+                
             } else{
                 self.tapRightButton()
             }
@@ -490,6 +491,29 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             return
         }
         
+//        let optographID = optographIDs[indexPath.row]
+//        
+//        cell.navigationController = navigationController as? NavigationController
+//        cell.bindModel(optographID)
+//        cell.swipeView = tabController!.scrollView
+//        cell.collectionView = collectionView
+//        cell.isShareOpen.producer
+//            .startWithNext{ val in
+//                if val{
+//                    self.shareData.optographId.value = optographID
+//                    self.shareData.isSharePageOpen.value = true
+//                }
+//        }
+//        
+//        if indexPath.row > optographIDs.count - 3 {
+//            viewModel.loadMore()
+//        }
+    }
+
+    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
+        
         let optographID = optographIDs[indexPath.row]
         
         cell.navigationController = navigationController as? NavigationController
@@ -507,32 +531,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if indexPath.row > optographIDs.count - 3 {
             viewModel.loadMore()
         }
-//        if collectionView.indexPathsForVisibleItems().last?.row == indexPath.row {
-//            SwiftSpinner.hide()
-//        }
-    }
-
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
-        //let optographID = optographIDs[indexPath.row]
-        
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
-        
-//        cell.navigationController = navigationController as? NavigationController
-//        cell.bindModel(optographID)
-//        cell.swipeView = tabController!.scrollView
-//        cell.collectionView = collectionView
-//        cell.isShareOpen.producer
-//            .startWithNext{ val in
-//                if val{
-//                    self.shareData.optographId.value = optographID
-//                    self.shareData.isSharePageOpen.value = true
-//                }
-//        }
-//        
-//        if indexPath.row > optographIDs.count - 3 {
-//            viewModel.loadMore()
-//        }
         
         return cell
     }

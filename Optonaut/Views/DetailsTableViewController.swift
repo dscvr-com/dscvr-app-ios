@@ -111,7 +111,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     var deletablePin: StorytellingObject = StorytellingObject()
     
     var progress = KDCircularProgress()
-    var time:Double = 0.001
+    var time:Double = 0.01
     
     var showOpto = MutableProperty<Bool>(false)
     
@@ -1323,7 +1323,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func putProgress() {
         
-        time += 0.001
+        time += 0.01
         self.progress.hidden = false
         self.progress.angle = 180 * time
         
@@ -1336,7 +1336,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     func stopProgress() {
         
         progressTimer?.invalidate()
-        time = 0.001
+        time = 0.01
         self.progress.angle = 0
         self.progress.hidden = true
         

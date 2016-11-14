@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5903A99F1DD9B387000DB58B /* CameraOverlayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903A99E1DD9B387000DB58B /* CameraOverlayVC.swift */; };
 		590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590E05B21CBD3119000331CB /* SaveThetaViewController.swift */; };
 		5917C8211CE441F200CD5A6D /* SharingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8201CE441F200CD5A6D /* SharingViewController.swift */; };
 		5917C8231CE4436900CD5A6D /* SharingNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */; };
@@ -333,6 +334,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5903A99E1DD9B387000DB58B /* CameraOverlayVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraOverlayVC.swift; sourceTree = "<group>"; };
 		590E05B21CBD3119000331CB /* SaveThetaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveThetaViewController.swift; sourceTree = "<group>"; };
 		5917C8201CE441F200CD5A6D /* SharingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
 		5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingNavViewController.swift; sourceTree = "<group>"; };
@@ -1075,6 +1077,7 @@
 				8FAB9EF61B8F01DF00B4C8CB /* SaveViewController.swift */,
 				8FAB9EF71B8F01DF00B4C8CB /* SaveViewModel.swift */,
 				590E05B21CBD3119000331CB /* SaveThetaViewController.swift */,
+				5903A99E1DD9B387000DB58B /* CameraOverlayVC.swift */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -1898,6 +1901,7 @@
 				8FAB9F291B8F01DF00B4C8CB /* ActivitiesViewModel.swift in Sources */,
 				8FAB9F4F1B8F01DF00B4C8CB /* LoginViewModel.swift in Sources */,
 				5965DC741D138BF70031059B /* ProfileUploadCollectionViewCell.swift in Sources */,
+				5903A99F1DD9B387000DB58B /* CameraOverlayVC.swift in Sources */,
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
 				BB88A2741D9D301B00EB09B0 /* MultiformDataInfo.swift in Sources */,
 				8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */,

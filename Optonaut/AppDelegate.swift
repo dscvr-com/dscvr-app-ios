@@ -67,15 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Defaults[.SessionGyro] = true
             Defaults[.SessionEliteUser] = true
             
-//            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
-//                self.sendCheckElite().start()
-//            
-//            }
-//            ApiService<mapChildren>.getForGate("story/merged/c0d5cb2b-7f8a-4de9-a5de-6f7c6cf1cf1a", queries: ["feedpage": "1","feedsize":"5","youpage":"1","yousize":"5"]).startWithNext{children in
-//                
-//                Models.story.touch(children).insertOrUpdate()
-//            }
-            
         }
         return true
     }

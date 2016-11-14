@@ -49,7 +49,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     var progressTimer: NSTimer?
     var progress = KDCircularProgress()
     var progress2 = KDCircularProgress()
-    var time:Double = 0.001
+    var time:Double = 0.01
     var showOpto = MutableProperty<Bool>(false)
     
     //storytelling
@@ -285,7 +285,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     }
     
     func putProgress() {
-        time += 0.001
+        time += 0.01
         
         self.progress.hidden = false
         self.progress.angle = 180 * time
@@ -301,7 +301,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     
     func stopProgress() {
         self.progressTimer?.invalidate()
-        time = 0.001
+        time = 0.01
         
         self.progress2.angle = 0
         self.progress2.hidden = true
@@ -675,8 +675,23 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     func createStitchingProgressBar() {
         
         self.progress = KDCircularProgress(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        self.progress.center.y = (self.view.height / 4) - 27.5
-        self.progress.center.x = (self.view.width / 2) + 15.5
+        
+        /*
+         return "iPhone 5s"
+         case "iPhone7,2":                               return "iPhone 6"
+         case "iPhone7,1":                               return "iPhone 6 Plus"
+         case "iPhone8,1":                               return "iPhone 6s"
+         case "iPhone8,2":                               return "iPhone 6s Plus"
+         
+         */
+        if let unitName:String = UIDevice.currentDevice().modelName where unitName == "iPhone 6 Plus" || unitName == "iPhone 6s Plus"{
+            self.progress.center.y = (self.view.height / 4)
+            self.progress.center.x = (self.view.width / 2)
+        } else {
+            self.progress.center.y = (self.view.height / 4) - 27.5
+            self.progress.center.x = (self.view.width / 2) + 15.5
+        }
+        
         self.progress.progressThickness = 0.2
         self.progress.trackThickness = 0.4
         self.progress.clockwise = true
@@ -689,8 +704,14 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         self.view.addSubview(self.progress)
         
         self.progress2 = KDCircularProgress(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        self.progress2.center.y = (self.view.height * (3 / 4)) + 27.5
-        self.progress2.center.x = (self.view.width / 2) + 15.5
+        if let unitName2:String = UIDevice.currentDevice().modelName where unitName2 == "iPhone 6 Plus" || unitName2 == "iPhone 6s Plus"{
+            self.progress2.center.y = (self.view.height * (3 / 4))
+            self.progress2.center.x = (self.view.width / 2)
+        } else {
+            self.progress2.center.y = (self.view.height * (3 / 4)) + 27.5
+            self.progress2.center.x = (self.view.width / 2) + 15.5
+        }
+        
         self.progress2.progressThickness = 0.2
         self.progress2.trackThickness = 0.4
         self.progress2.clockwise = true
