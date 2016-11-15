@@ -25,11 +25,11 @@ struct AlignmentCancellation {
 };
 
 -(void)align {
-    //optonaut::GlobalAlignment globalaligner(Stores::post, Stores::left, Stores::right);
+    optonaut::GlobalAlignment globalaligner(Stores::post, Stores::left, Stores::right);
     
-    //try {
-    //    globalaligner.Finish();
-    //
-    //} catch (AlignmentCancellation c) { }
+    try {
+        globalaligner.Finish();
+    
+    } catch (AlignmentCancellation c) { }
 };
 @end

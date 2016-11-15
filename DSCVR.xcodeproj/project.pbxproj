@@ -312,6 +312,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4960F4291DD5D7DA003ADEFB /* imageStoreSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = imageStoreSink.hpp; path = "../../../../online-stitcher-SF/src/recorder/imageStoreSink.hpp"; sourceTree = "<group>"; };
+		49DB62E91DD1F0E2007529F6 /* motorControlRecorder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = motorControlRecorder.hpp; path = "../../../../online-stitcher-SF/src/recorder/motorControlRecorder.hpp"; sourceTree = "<group>"; };
 		590E05B21CBD3119000331CB /* SaveThetaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveThetaViewController.swift; sourceTree = "<group>"; };
 		5917C8201CE441F200CD5A6D /* SharingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
 		5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingNavViewController.swift; sourceTree = "<group>"; };
@@ -1473,6 +1475,8 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
+				4960F4291DD5D7DA003ADEFB /* imageStoreSink.hpp */,
+				49DB62E91DD1F0E2007529F6 /* motorControlRecorder.hpp */,
 				A5172B7F1D834B3B008C41D0 /* coordinateConverter.hpp */,
 				A5172B801D834B3B008C41D0 /* imageCorrespondenceFinder.hpp */,
 				A5172B811D834B3B008C41D0 /* imageLoader.hpp */,

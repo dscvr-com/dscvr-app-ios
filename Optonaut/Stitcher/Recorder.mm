@@ -6,8 +6,10 @@
 #include <string>
 #define OPTONAUT_TARGET_PHONE
 
+#include "motorControlRecorder.hpp"
 #include "recorder2.hpp"
 #include "recorder.hpp"
+#include "storageImageSink.hpp"
 #include "intrinsics.hpp"
 #include "Recorder.h"
 #include "Stores.h"
@@ -119,7 +121,8 @@ std::string debugPath;
 
 @implementation Recorder {
 @private
-    optonaut::Recorder2* pipe;
+    //optonaut::Recorder2* pipe;
+    optonaut::MotorControlRecorder* pipe;
     cv::Mat intrinsics;
     NSString* tempPath;
 }
@@ -148,7 +151,7 @@ std::string debugPath;
 // Promote to class variables instead (somehow). 
 //optonaut::StorageSink storageSink(Stores::left, Stores::right);
 //optonaut::StitcherSink stitcherSink;
-//optonaut::ImageSink imageSink(Stores::post);
+optonaut::StorageImageSink imageSink(Stores::post);
 
 
 -(id)init:(RecorderMode)recorderMode {
@@ -165,12 +168,12 @@ std::string debugPath;
     Stores::left.Clear();
     Stores::right.Clear();
     //Stores::common.Clear();
-    //Stores::post.Clear();
+    Stores::post.Clear();
     
  //   optonaut::CheckpointStore::DebugStore = &Stores::debug;
     
     //optonaut::StereoSink& sink = storageSink;
- //   optonaut::ImageSink& sink = imageSink;
+    optonaut::StorageImageSink& sink = imageSink;
     
     int internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
     
@@ -194,8 +197,13 @@ std::string debugPath;
  //   optonaut::Recorder::alignmentEnabled = true;
     
     
-    self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                         self->intrinsics, optonaut::RecorderGraph::ModeCenter);
+  //  self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+  //                                       self->intrinsics, optonaut::RecorderGraph::ModeTruncated); 
+    
+    
+    self->pipe = new optonaut::MotorControlRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+                                         self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated);
+
     
     counter = 0;
 
@@ -291,8 +299,8 @@ std::string debugPath;
 - (void)finish {
     assert(pipe != NULL);
     pipe->Finish();
-    Stores::left.SaveOptograph(pipe->GetLeftResult());
-    Stores::right.SaveOptograph(pipe->GetRightResult());
+    //Stores::left.SaveOptograph(pipe->GetLeftResult());
+    //Stores::right.SaveOptograph(pipe->GetRightResult());
 }
 - (void)dispose {
     assert(pipe != NULL);
