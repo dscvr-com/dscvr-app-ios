@@ -12,6 +12,8 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     lazy var searchBar:UISearchBar = UISearchBar(frame: CGRectZero);
     
+    var indicator = UIActivityIndicatorView()
+    
     var tableView: UITableView!
     
     var searchActive : Bool = false
@@ -26,6 +28,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         searchBar.placeholder = "Search Username";
         searchBar.delegate = self;
         searchBar.showsCancelButton = true;
+        searchBar.autocapitalizationType = .None
         searchBar.tintColor = UIColor.blackColor();
         self.navigationItem.titleView = searchBar;
     
@@ -33,9 +36,15 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         tableView.dataSource = self;
         tableView.delegate = self;
         
-        tableView.registerClass(UserTableViewCell.self, forCellReuseIdentifier: "userCellIdentifier");
+        tableView.registerClass(UserTableViewCell.self, forCellReuseIdentifier: "userCellIdentifier")
+        self.view.addSubview(tableView)
         
-        self.view.addSubview(tableView);
+        indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 40, 40))
+        indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        indicator.center.x = self.view.center.x
+        indicator.center.y = self.view.center.y - 40
+        indicator.stopAnimating()
+        self.view.addSubview(indicator)
         
         viewModel.results.producer
                 .on(
@@ -43,12 +52,18 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
                         if people.count > 0 {
                             if people[0].userName != "" && people[0].ID != "" {
                                 self.person = people
+                                self.progressLoaderStopAnimate()
                                 self.tableView.reloadData()
                             }
                         }
                     }
                 )
                 .start()
+    }
+    
+    func progressLoaderStopAnimate() {
+        indicator.stopAnimating()
+        indicator.hidesWhenStopped = true
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -70,17 +85,13 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-//        filtered = data.filter({ (text) -> Bool in
-//            let tmp: NSString = text
-//            let range = tmp.rangeOfString(searchText, options: NSStringCompareOptions.CaseInsensitiveSearch)
-//            return range.location != NSNotFound
-//        })
-//        if(filtered.count == 0){
-//            searchActive = false;
-//        } else {
-//            searchActive = true;
-//        }
-//        self.tableView.reloadData()
+        
+        if searchText.characters.count > 2 {
+            if !indicator.isAnimating() {
+                indicator.startAnimating()
+                indicator.backgroundColor = UIColor.whiteColor()
+            }
+        }
         
         if viewModel.searchText.value.isEmpty {
             tableView.reloadData()

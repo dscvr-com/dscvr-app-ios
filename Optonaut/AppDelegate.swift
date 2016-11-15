@@ -67,8 +67,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Defaults[.SessionGyro] = true
             Defaults[.SessionEliteUser] = true
             
+            //Bluetooth Notif
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.connectionChanged(_:)), name: BLEServiceChangedStatusNotification, object: nil)
+            // Start the Bluetooth discovery process
+            btDiscoverySharedInstance
+            
         }
         return true
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: BLEServiceChangedStatusNotification, object: nil)
+    }
+    
+    func connectionChanged(notification: NSNotification) {
+        print("pumasok dsa functino")
+        // Connection status changed. Indicate on GUI.
+        let userInfo = notification.userInfo as! [String: Bool]
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            // Set image based on connection status
+            if let isConnected: Bool = userInfo["isConnected"] {
+                if isConnected {
+                    print("Bluetooth_Connected")
+                } else {
+                    print("Bluetooth_Disconnected")                }
+            }
+        });
     }
     
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {

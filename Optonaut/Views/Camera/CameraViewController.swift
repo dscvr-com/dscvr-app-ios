@@ -18,7 +18,7 @@ import Async
 import Mixpanel
 import SwiftyUserDefaults
 import Photos
-
+import CoreBluetooth
 
 struct staticVariables {
     static var isCenter:Bool!
@@ -67,21 +67,36 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     private let cameraNode = SCNNode()
     private var scnView : SCNView!
     private let scene = SCNScene()
+    //for motor
+    private var currentDegree : Float
+    private var DegreeIncrPerMicro : Double
+    var ringFlag = 0
     
     // ball
     private let ballNode = SCNNode()
     private var ballSpeed = GLKVector3Make(0, 0, 0)
+    private let baseMatrix = GLKMatrix4Make(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1 , 0.0, 0.0, -1.0, 0.00, 0.0, 0.0, 0.0, 0.0, 1.0)
     
     private var tapCameraButtonCallback: (() -> ())?
+    private var lastElapsedTime = CACurrentMediaTime()
+    private var currentTheta = Float(0.0)
+    private var currentPhi = Float(0.0)
     
     private let cancelButton = UIButton()
     
     private let tabView = TabView()
+    private let bData = BService.sharedInstance
+    private var RotateData = String("")
     
     var timer = NSTimer()
     
+    let sessionMotor = Defaults[.SessionMotor]
+    
         
     required init() {
+        
+        currentDegree = 0.0
+        DegreeIncrPerMicro = 0.0
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
@@ -89,11 +104,14 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         screenScale = Float(UIScreen.mainScreen().scale)
         
         if Defaults[.SessionDebuggingEnabled] {
-            //Explicitely instantiate, so old data is removed.
             Recorder.enableDebug(CameraDebugService().path)
         }
         
         super.init(nibName: nil, bundle: nil)
+        
+        if sessionMotor {
+            RotateData = self.computeRotationX()
+        }
         
         tapCameraButtonCallback = { [weak self] in
             let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
@@ -103,12 +121,81 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         }
     }
     
+    func computeRotationX ( ) -> String {
+        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]
+        
+        // get number of rotation
+        let xnumberSteps = Defaults[.SessionRotateCount]
+        rotateByteData.append(UInt8(xnumberSteps! >> 24))
+        rotateByteData.append(UInt8(xnumberSteps! >> 16))
+        rotateByteData.append(UInt8(xnumberSteps! >> 8))
+        rotateByteData.append(UInt8(xnumberSteps! & 0xff))
+        print("rotateByteData1 \(rotateByteData)")
+        // get pps
+        let pps = Defaults[.SessionPPS]
+        rotateByteData.append(UInt8(pps! >> 8))
+        rotateByteData.append(UInt8(pps! & 0xff))
+        // add full step
+        rotateByteData.append(UInt8(0x00))
+        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
+        // compute for checksum
+        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
+        print("rotateByteData \(rotateByteData)")
+        // append padding
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        // convert to hex string
+        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
+        
+    }
+    
+    func checkSum(data: NSData) -> Int {
+        let b = UnsafeBufferPointer<UInt8>(start:
+            UnsafePointer(data.bytes), count: data.length)
+        
+        var sum = 0
+        for i in 0..<data.length {
+            sum += Int(b[i])
+        }
+        return sum & 0xff
+    }
+    func hexString(data:NSData)->String{
+        if data.length > 0 {
+            let  hexChars = Array("0123456789abcdef".utf8) as [UInt8];
+            let buf = UnsafeBufferPointer<UInt8>(start: UnsafePointer(data.bytes), count: data.length);
+            var output = [UInt8](count: data.length*2 + 1, repeatedValue: 0);
+            var ix:Int = 0;
+            for b in buf {
+                let hi  = Int((b & 0xf0) >> 4);
+                let low = Int(b & 0x0f);
+                output[ix++] = hexChars[ hi];
+                output[ix++] = hexChars[low];
+            }
+            let result = String.fromCString(UnsafePointer(output))!;
+            return result;
+        }
+        return "";
+    }
+    func peripheral( peripheral: CBPeripheral,
+                     didUpdateValueForCharacteristic characteristic: CBCharacteristic,
+                                                     error: NSError?) {
+        
+        let responseData = characteristic.value
+        print("reponsse data processed \(responseData)")
+        
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     deinit {
         print("de init cameraviewcontroller")
+        //rotationSource.stop()
         //motionManager.stopDeviceMotionUpdates()
         
         //We do that in our signal as soon as everything's finished
@@ -194,6 +281,17 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     func tapCameraButton() {
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true
+        
+        if sessionMotor {
+            let rotatePlusBuff = (Defaults[.SessionRotateCount]! + Defaults[.SessionBuffCount]!)
+            
+            let missingSecs = 0.0
+            DegreeIncrPerMicro = (0.036 / ( (Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ) - missingSecs ))
+            
+            if let bleService = btDiscoverySharedInstance.bleService {
+                bleService.sendCommand(self.computeRotationX())
+            }
+        }
     }
     
     func touchEndCameraButton() {
@@ -202,6 +300,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     
     func cancelRecording() {
+        
+        if sessionMotor {
+            if let bleService = btDiscoverySharedInstance.bleService {
+                bleService.sendCommand("fe000402ffffffffffffffffffffffffff");
+            }
+        }
         
         self.navigationController?.popViewControllerAnimated(true)
         

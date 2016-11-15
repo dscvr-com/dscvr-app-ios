@@ -1,4 +1,0 @@
-{"identity":{"generator":"Crashlytics iOS SDK/3.7.0","build_version":"102","display_version":"3.7.0","api_key":"859cb44d7e171dfdd9394a993cae92a1ed0d869b","started_at":1469155771,"session_id":"b3a340af5ec340e4bfdd57bbc515b596","install_id":"52E91D5E-BFA3-469B-BD3F-1773B87CE7E6","beta_token":null}}
-{"host":{"model":"iPhone7,2","machine":"N61AP","os_build_version":"13F69","os_display_version":"9.3.2","platform":"ios","locale":"en_US"}}
-{"application":{"bundle_id":"com.thousandminds.iam360","custom_bundle_id":null,"build_version":"1","display_version":"0.88","extension_id":null}}
-{"executable":{"architecture":"arm64","uuid":"1ffdf01542aa3af6a848443e0b4ee9f2","base":4295573504,"size":8290304,"encrypted":false,"minimum_sdk_version":"8.4.0","built_sdk_version":"9.3.0"}}

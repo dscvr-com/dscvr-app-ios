@@ -10,6 +10,7 @@ import UIKit
 import AVFoundation
 import Async
 import Photos
+import SwiftyUserDefaults
 
 class CameraOverlayVC: UIViewController {
     
@@ -46,10 +47,7 @@ class CameraOverlayVC: UIViewController {
         progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -80)
         progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         
-        manualButton.setBackgroundImage(UIImage(named: "manualButton_on"), forState: .Normal)
         manualButton.addTarget(self, action: #selector(manualClicked), forControlEvents: .TouchUpInside)
-        
-        motorButton.setBackgroundImage(UIImage(named: "motorButton_off"), forState: .Normal)
         motorButton.addTarget(self, action: #selector(motorClicked), forControlEvents: .TouchUpInside)
         
         view.addSubview(manualButton)
@@ -64,14 +62,13 @@ class CameraOverlayVC: UIViewController {
         
         manualLabel.text = "MANUAL MODE"
         manualLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
-        manualLabel.textColor = UIColor(0xFF5E00)
         view.addSubview(manualLabel)
         
         motorLabel.text = "MOTOR MODE"
         motorLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
-        motorLabel.textColor = UIColor(0x979797)
         view.addSubview(motorLabel)
         
+        Defaults[.SessionMotor] ? isMotorMode(true) : isMotorMode(false)
         
         manualLabel.align(.UnderCentered, relativeTo: manualButton, padding: 10, width: calcTextWidth(manualLabel.text!, withFont: manualLabel.font), height: 23)
         motorLabel.align(.UnderCentered, relativeTo: motorButton, padding: 10, width: calcTextWidth(motorLabel.text!, withFont: motorLabel.font), height: 23)
@@ -92,20 +89,30 @@ class CameraOverlayVC: UIViewController {
         navigationController!.viewControllers.removeAtIndex(1)
     }
     
+    func isMotorMode(state:Bool) {
+        if state {
+            manualButton.setBackgroundImage(UIImage(named: "manualButton_off"), forState: .Normal)
+            motorButton.setBackgroundImage(UIImage(named: "motorButton_on"), forState: .Normal)
+            
+            manualLabel.textColor = UIColor(0x979797)
+            motorLabel.textColor = UIColor(0xFF5E00)
+        } else {
+            manualButton.setBackgroundImage(UIImage(named: "manualButton_on"), forState: .Normal)
+            motorButton.setBackgroundImage(UIImage(named: "motorButton_off"), forState: .Normal)
+            
+            manualLabel.textColor = UIColor(0xFF5E00)
+            motorLabel.textColor = UIColor(0x979797)
+        }
+    }
+    
     func manualClicked() {
-        manualButton.setBackgroundImage(UIImage(named: "manualButton_on"), forState: .Normal)
-        motorButton.setBackgroundImage(UIImage(named: "motorButton_off"), forState: .Normal)
-        
-        manualLabel.textColor = UIColor(0xFF5E00)
-        motorLabel.textColor = UIColor(0x979797)
+        isMotorMode(false)
+        Defaults[.SessionMotor] = false
     }
     
     func motorClicked() {
-        manualButton.setBackgroundImage(UIImage(named: "manualButton_off"), forState: .Normal)
-        motorButton.setBackgroundImage(UIImage(named: "motorButton_on"), forState: .Normal)
-        
-        manualLabel.textColor = UIColor(0x979797)
-        motorLabel.textColor = UIColor(0xFF5E00)
+        isMotorMode(true)
+        Defaults[.SessionMotor] = true
     }
     
     private func setupCamera() {

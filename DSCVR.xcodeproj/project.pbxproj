@@ -38,6 +38,10 @@
 		595D876B1D083D9500866FF2 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D876A1D083D9500866FF2 /* UserTableViewCell.swift */; };
 		5965DC721D1382E10031059B /* UploadItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965DC711D1382E10031059B /* UploadItemCell.swift */; };
 		5965DC741D138BF70031059B /* ProfileUploadCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */; };
+		596DE8B61DDAD67A002BF57D /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DE8B51DDAD67A002BF57D /* BTService.swift */; };
+		596DE8B81DDAD6ED002BF57D /* BTDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DE8B71DDAD6ED002BF57D /* BTDiscovery.swift */; };
+		596DE8BA1DDAD796002BF57D /* BTList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DE8B91DDAD796002BF57D /* BTList.swift */; };
+		596DE8BC1DDAD898002BF57D /* BService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DE8BB1DDAD898002BF57D /* BService.swift */; };
 		59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B271CEAE13D00829963 /* SettingsNavViewController.swift */; };
 		59848B2A1CEAE2B000829963 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59848B291CEAE2B000829963 /* SettingsViewController.swift */; };
 		598EB95C1D7068A200E00F9B /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598EB95B1D7068A200E00F9B /* Fabric.framework */; };
@@ -374,6 +378,10 @@
 		595D876A1D083D9500866FF2 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
 		5965DC711D1382E10031059B /* UploadItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadItemCell.swift; sourceTree = "<group>"; };
 		5965DC731D138BF70031059B /* ProfileUploadCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileUploadCollectionViewCell.swift; sourceTree = "<group>"; };
+		596DE8B51DDAD67A002BF57D /* BTService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTService.swift; sourceTree = "<group>"; };
+		596DE8B71DDAD6ED002BF57D /* BTDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTDiscovery.swift; sourceTree = "<group>"; };
+		596DE8B91DDAD796002BF57D /* BTList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTList.swift; sourceTree = "<group>"; };
+		596DE8BB1DDAD898002BF57D /* BService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BService.swift; sourceTree = "<group>"; };
 		59848B271CEAE13D00829963 /* SettingsNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsNavViewController.swift; sourceTree = "<group>"; };
 		59848B291CEAE2B000829963 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		598EB95B1D7068A200E00F9B /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
@@ -829,6 +837,17 @@
 				599459B01D0926C0000F3A5B /* SearchTableModel.swift */,
 			);
 			name = Search;
+			sourceTree = "<group>";
+		};
+		596DE8B41DDAD62E002BF57D /* MotorServices */ = {
+			isa = PBXGroup;
+			children = (
+				596DE8B51DDAD67A002BF57D /* BTService.swift */,
+				596DE8B71DDAD6ED002BF57D /* BTDiscovery.swift */,
+				596DE8B91DDAD796002BF57D /* BTList.swift */,
+				596DE8BB1DDAD898002BF57D /* BService.swift */,
+			);
+			name = MotorServices;
 			sourceTree = "<group>";
 		};
 		59848B261CEAE10F00829963 /* Settings */ = {
@@ -1330,6 +1349,7 @@
 		8FCCA02D1B3806040091F1B1 /* Optonaut */ = {
 			isa = PBXGroup;
 			children = (
+				596DE8B41DDAD62E002BF57D /* MotorServices */,
 				8FCCA0511B3806680091F1B1 /* AppDelegate.swift */,
 				8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */,
 				8F740CF81B80DC6200FED1D0 /* Database */,
@@ -1855,6 +1875,7 @@
 				A5FD5D831BEA5A4E0031ED1E /* quat.cpp in Sources */,
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
+				596DE8BC1DDAD898002BF57D /* BService.swift in Sources */,
 				BB88A2721D9D2F4600EB09B0 /* ChildNameResponse.swift in Sources */,
 				8F23AA511BFF31B4008926A8 /* CommentTable.swift in Sources */,
 				59FB1D601CF5AFC100C5C333 /* ViewController.swift in Sources */,
@@ -1880,6 +1901,7 @@
 				8F0B17861BAC193000FAF649 /* LineTextField.swift in Sources */,
 				8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */,
 				5917C8271CE49C8600CD5A6D /* DetailsTableViewController.swift in Sources */,
+				596DE8BA1DDAD796002BF57D /* BTList.swift in Sources */,
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				8FAB9F4D1B8F01DF00B4C8CB /* ForgotPasswordViewModel.swift in Sources */,
 				8FAB9F431B8F01DF00B4C8CB /* ExploreNavViewController.swift in Sources */,
@@ -1910,6 +1932,7 @@
 				A5DE71EA1BE28A7400316F82 /* DistortionMesh.swift in Sources */,
 				8F004A9C1BAD801800E6F017 /* OnboardingHashtagSelectViewModel.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
+				596DE8B61DDAD67A002BF57D /* BTService.swift in Sources */,
 				B1754D5C1D0E82CD005A3E85 /* CommentTableViewCell.swift in Sources */,
 				B1754D5E1D0E82CD005A3E85 /* CommentViewModel.swift in Sources */,
 				8F0B17841BAC084F00FAF649 /* OnboardingProfileViewModel.swift in Sources */,
@@ -1979,6 +2002,7 @@
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
 				59848B281CEAE13D00829963 /* SettingsNavViewController.swift in Sources */,
 				59E9068B1D23CED30030FC65 /* FacebookShareViewController.swift in Sources */,
+				596DE8B81DDAD6ED002BF57D /* BTDiscovery.swift in Sources */,
 				BB155A981D6E8C31002678A6 /* StorytellingFeed.swift in Sources */,
 				595D87691D083D5E00866FF2 /* SearchViewController.swift in Sources */,
 				8F4186091C552D02009E1E3F /* ProfileTileCollectionViewModel.swift in Sources */,
