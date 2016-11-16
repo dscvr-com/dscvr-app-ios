@@ -26,8 +26,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         let query = OptographTable.select(*)
             .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
             .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
-            .join(.LeftOuter, StoryTable, on: StoryTable[StorySchema.ID] == OptographTable[OptographSchema.storyID])
-            .join(.LeftOuter, StoryChildrenTable, on: StoryChildrenTable[StoryChildrenSchema.storyID] == OptographTable[OptographSchema.storyID])
             .filter(OptographTable[OptographSchema.isInFeed] && OptographTable[OptographSchema.isOnServer] && OptographTable[OptographSchema.isPublished])
             .filter(OptographTable[OptographSchema.isStaffPick] || PersonTable[PersonSchema.isFollowed] || PersonTable[PersonSchema.ID] == (Defaults[.SessionPersonID] ?? Person.guestID) || PersonTable[PersonSchema.ID] == Person.guestID)
             .order(OptographTable[OptographSchema.createdAt].asc)
@@ -40,8 +38,8 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                         Models.optographs.touch(Optograph.fromSQL(row))
                         Models.persons.touch(Person.fromSQL(row))
                         Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
-                        Models.story.touch(Story.fromSQL(row))
-                        Models.storyChildren.touch(row[OptographSchema.storyID] != "" ? StoryChildren.fromSQL(row) : nil)
+//                        Models.story.touch(Story.fromSQL(row))
+//                        Models.storyChildren.touch(row[OptographSchema.storyID] != "" ? StoryChildren.fromSQL(row) : nil)
                     })
                     .map(Optograph.fromSQL)
                     .ignoreError()
@@ -69,7 +67,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                             ps.model.isFollowed = apiModel.person.isFollowed
                         }
                         Models.locations.touch(apiModel.location)?.insertOrUpdate()
-                        
                         Models.story.touch(apiModel.story).insertOrUpdate()
                         if apiModel.story.children!.count != 0 {
                             for child in apiModel.story.children! {

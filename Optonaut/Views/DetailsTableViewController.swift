@@ -188,11 +188,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     private func pushViewer(orientation: UIInterfaceOrientation) {
         
-//        if !isStory{
-//            let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick as! [UUID] ,selfOptograph:optographID )
-//            navigationController?.pushViewController(viewerViewController, animated: false)
-//        }
-        
         let viewerViewController = ViewerViewController(orientation: orientation, arrayOfoptograph: optographTopPick as! [UUID] ,selfOptograph:optographID ,nodesData: viewModel.storyNodes.value)
         navigationController?.pushViewController(viewerViewController, animated: false)
     }
@@ -200,25 +195,17 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        //Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
-        
-        //viewModel.viewIsActive.value = true
+        Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
         
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
             rotationSignal
                 .skipRepeats()
                 .filter([.LandscapeLeft, .LandscapeRight])
-                //               .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
                 .take(1)
                 .observeOn(UIScheduler())
                 .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
         }
         
-        //        viewModel.optographReloaded.producer.startWithNext { [weak self] in
-        //            if self?.viewModel.optograph.deletedAt != nil {
-        //                self?.navigationController?.popViewControllerAnimated(false)
-        //            }
-        //        }
         whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.60)
         self.view.addSubview(whiteBackground)
         

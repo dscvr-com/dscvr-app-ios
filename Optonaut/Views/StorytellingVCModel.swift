@@ -36,6 +36,7 @@ class StorytellingVCModel {
                         Models.optographs.touch(Optograph.fromSQL(row))
                         Models.persons.touch(Person.fromSQL(row))
                         Models.story.touch(Story.fromSQL(row))
+                        
                     })
                     .map(Story.fromSQL)
                     .ignoreError()

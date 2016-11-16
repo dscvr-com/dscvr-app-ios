@@ -106,23 +106,10 @@ class DetailsViewModel {
                 .select(*)
                 .filter(StoryChildrenTable[StoryChildrenSchema.storyID] == sid && StoryChildrenTable[StoryChildrenSchema.storyDeletedAt] == nil)
             
-            print(query,sid)
-            
-            //            try! DatabaseService.defaultConnection.prepare(query)
-            //                .map { row -> StoryChildren in
-            //
-            //                    let nodes = StoryChildren.fromSQL(row)
-            //                    //Models.storyChildren.touch(nodes)
-            //
-            //                    return nodes
-            //                }
-            //                .forEach(self.insertNewNodes)
-            
             DatabaseService.query(.Many, query: query)
                 .on(next: { row in
                     let nodes = StoryChildren.fromSQL(row)
                     Models.storyChildren.touch(nodes)
-                    print(nodes)
                 })
                 .map(StoryChildren.fromSQL)
                 .ignoreError()

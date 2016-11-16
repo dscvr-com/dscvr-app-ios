@@ -593,27 +593,27 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 
                 print("MEDIATYPE: FXTXT")
                 
-                dispatch_async(dispatch_get_main_queue(), {
-                    
-                    
-                    self.fixedTextLabel.text = node.mediaAdditionalData
-                    self.fixedTextLabel.textColor = UIColor.blackColor()
-                    self.fixedTextLabel.font = UIFont(name: "BigNoodleTitling", size: 22.0)
-                    self.fixedTextLabel.sizeToFit()
-                    self.fixedTextLabel.frame = CGRect(x: 10.0, y: self.view.frame.size.height - 135.0, width: self.fixedTextLabel.frame.size.width + 5.0, height: self.fixedTextLabel.frame.size.height + 5.0)
-                    self.fixedTextLabel.backgroundColor = UIColor(0xffbc00)
-                    self.fixedTextLabel.textAlignment = NSTextAlignment.Center
-                    
-                    self.view.addSubview(self.fixedTextLabel)
-                    
-                    self.removeNode.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-                    self.removeNode.backgroundColor = UIColor.blackColor()
-                    self.removeNode.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y - 10)
-                    self.removeNode.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
-                    //self.removeNode.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
-                    self.removeNode.hidden = true
-                    self.view.addSubview(self.removeNode)
-                })
+//                dispatch_async(dispatch_get_main_queue(), {
+//                    
+//                    
+//                    self.fixedTextLabel.text = node.mediaAdditionalData
+//                    self.fixedTextLabel.textColor = UIColor.blackColor()
+//                    self.fixedTextLabel.font = UIFont(name: "BigNoodleTitling", size: 22.0)
+//                    self.fixedTextLabel.sizeToFit()
+//                    self.fixedTextLabel.frame = CGRect(x: 10.0, y: self.view.frame.size.height - 135.0, width: self.fixedTextLabel.frame.size.width + 5.0, height: self.fixedTextLabel.frame.size.height + 5.0)
+//                    self.fixedTextLabel.backgroundColor = UIColor(0xffbc00)
+//                    self.fixedTextLabel.textAlignment = NSTextAlignment.Center
+//                    
+//                    self.view.addSubview(self.fixedTextLabel)
+//                    
+//                    self.removeNode.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+//                    self.removeNode.backgroundColor = UIColor.blackColor()
+//                    self.removeNode.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y - 10)
+//                    self.removeNode.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+//                    //self.removeNode.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
+//                    self.removeNode.hidden = true
+//                    self.view.addSubview(self.removeNode)
+//                })
             } else if node.mediaType == "MUS"{
                 
                 let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
@@ -676,18 +676,16 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         
         self.progress = KDCircularProgress(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         
-        /*
-         return "iPhone 5s"
-         case "iPhone7,2":                               return "iPhone 6"
-         case "iPhone7,1":                               return "iPhone 6 Plus"
-         case "iPhone8,1":                               return "iPhone 6s"
-         case "iPhone8,2":                               return "iPhone 6s Plus"
-         
-         */
-        if let unitName:String = UIDevice.currentDevice().modelName where unitName == "iPhone 6 Plus" || unitName == "iPhone 6s Plus"{
+        if ["iPhone 6 Plus","iPhone 6s Plus"].contains(UIDevice.currentDevice().modelName) {
+            print("6 plust family phone")
             self.progress.center.y = (self.view.height / 4)
             self.progress.center.x = (self.view.width / 2)
+        } else if ["iPhone 5","iPhone 5c","iPhone 5s"].contains(UIDevice.currentDevice().modelName) {
+            print("5 family phone")
+            self.progress.center.y = (self.view.height / 4) - 48
+            self.progress.center.x = (self.view.width / 2) + 40
         } else {
+            print("6 family phone")
             self.progress.center.y = (self.view.height / 4) - 27.5
             self.progress.center.x = (self.view.width / 2) + 15.5
         }
@@ -704,9 +702,13 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         self.view.addSubview(self.progress)
         
         self.progress2 = KDCircularProgress(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        if let unitName2:String = UIDevice.currentDevice().modelName where unitName2 == "iPhone 6 Plus" || unitName2 == "iPhone 6s Plus"{
+        
+        if ["iPhone 6 Plus","iPhone 6s Plus"].contains(UIDevice.currentDevice().modelName) {
             self.progress2.center.y = (self.view.height * (3 / 4))
             self.progress2.center.x = (self.view.width / 2)
+        } else if ["iPhone 5","iPhone 5c","iPhone 5s"].contains(UIDevice.currentDevice().modelName) {
+            self.progress2.center.y = (self.view.height * (3 / 4)) + 48
+            self.progress2.center.x = (self.view.width / 2) + 40
         } else {
             self.progress2.center.y = (self.view.height * (3 / 4)) + 27.5
             self.progress2.center.x = (self.view.width / 2) + 15.5
