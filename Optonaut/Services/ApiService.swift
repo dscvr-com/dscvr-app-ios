@@ -335,6 +335,7 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                                    
                                     print(endpoint,json)
                                     
                                     if let object = Mapper<T>().map(json) {

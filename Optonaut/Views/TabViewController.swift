@@ -149,10 +149,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         self.settingsView()
         
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(TabViewController.handlePan(_:)))
-        //self.centerViewController.navigationBar.addGestureRecognizer(panGestureRecognizer)
+        self.centerViewController.navigationBar.addGestureRecognizer(panGestureRecognizer)
         
         navBarTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapNavBarTitle(_:)))
-        //self.centerViewController.navigationBar.addGestureRecognizer(navBarTapGestureRecognizer)
+        self.centerViewController.navigationBar.addGestureRecognizer(navBarTapGestureRecognizer)
         
         scrollView.delegate = self
         scrollView.showsHorizontalScrollIndicator = false

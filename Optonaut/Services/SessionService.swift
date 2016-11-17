@@ -73,7 +73,7 @@ class SessionService {
             let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
             Models.persons.create(person)
             
-            //updateMixpanel()
+            updateMixpanel()
         }
         
         if Defaults[.SessionVRGlasses].isEmpty {
@@ -119,7 +119,7 @@ class SessionService {
                     Models.persons.touch(person).insertOrUpdate()
                     //Defaults[.SessionEliteUser] = person.eliteStatus == 1 ? true:false
                     Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
-                    //updateMixpanel()
+                    updateMixpanel()
                     loginNotifiaction.notify(())
                 },
                 failed: { _ in
@@ -176,7 +176,7 @@ class SessionService {
         Defaults[.SessionShareToggledInstagram] = false
         //Defaults[.SessionEliteUser] = false
         
-        //Mixpanel.sharedInstance().reset()
+        Mixpanel.sharedInstance().reset()
         UIApplication.sharedApplication().applicationIconBadgeNumber = 0
     }
     

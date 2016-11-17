@@ -298,20 +298,17 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         tapCameraButtonCallback = nil
     }
     
-    
     func cancelRecording() {
+        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
+        
+        viewModel.isRecording.value = false
+        tapCameraButtonCallback = nil
         
         if sessionMotor {
             if let bleService = btDiscoverySharedInstance.bleService {
                 bleService.sendCommand("fe000402ffffffffffffffffffffffffff");
             }
         }
-        
-        self.navigationController?.popViewControllerAnimated(true)
-        
-    }
-    
-    func cancelRecordCleanup() {
         
         stopSession()
         
@@ -321,7 +318,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         if StitchingService.hasUnstitchedRecordings() {
             StitchingService.removeUnstitchedRecordings()
         }
-        motionManager.stop()
+        
+        self.navigationController?.popViewControllerAnimated(true)
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -491,14 +489,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
         UIApplication.sharedApplication().idleTimerDisabled = false
-        
-        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
-        viewModel.isRecording.value = false
-        tapCameraButtonCallback = nil
-        
-        Async.main {
-            self.cancelRecordCleanup()
-        }
     }
     
     override func updateViewConstraints() {

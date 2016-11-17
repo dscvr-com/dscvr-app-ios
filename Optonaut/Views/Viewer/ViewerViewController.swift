@@ -678,7 +678,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
         
         if ["iPhone 6 Plus","iPhone 6s Plus"].contains(UIDevice.currentDevice().modelName) {
             print("6 plust family phone")
-            self.progress.center.y = (self.view.height / 4)
+            self.progress.center.y = (self.view.height / 4) - 4
             self.progress.center.x = (self.view.width / 2)
         } else if ["iPhone 5","iPhone 5c","iPhone 5s"].contains(UIDevice.currentDevice().modelName) {
             print("5 family phone")

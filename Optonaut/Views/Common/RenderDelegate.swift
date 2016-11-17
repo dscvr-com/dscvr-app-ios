@@ -373,7 +373,7 @@ class CubeRenderDelegate: RenderDelegate {
     }
     
     
-    func addMarker(color: UIColor, type: String){
+    func addMarker(color: UIColor, type: String) -> String{
         
         let planeGeo = SCNPlane(width: 0.1, height: 0.1)
         planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
@@ -404,13 +404,12 @@ class CubeRenderDelegate: RenderDelegate {
         
         markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
         
-        
-        //        spriteScen.runAction(SKAction.playSoundFileNamed("bubblegum.caf", waitForCompletion: false))
-        
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
         
         delegate!.addVectorAndRotation(markNode.position, rotation: markNode.eulerAngles)
+        
+        return type + String(n)
     }
     
     

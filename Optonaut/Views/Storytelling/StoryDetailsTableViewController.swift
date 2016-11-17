@@ -94,7 +94,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     var attachmentToggled:Bool = false
     
     var nodeItem = StorytellingObject()
-    var nodes = [NSDictionary]()
+    var nodes = [NSMutableDictionary]()
     var mediaArray = [NSDictionary]()
     
     var playerItem:AVPlayerItem?
@@ -168,32 +168,13 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         logRetain()
     }
     
-//    func receiveStory (){
-//        ApiService<StoryObject>.getForGate("story/62f1c6cb-cb90-4ade-810d-c6c1bbeee85a", queries: ["story_person_id": "7753e6e9-23c6-46ec-9942-35a5ea744ece"]).on(next: {
-//            story in
-//            
-//            self.storyTellingData = story.children;
-//            self.mapChild = self.storyTellingData!.children![0];
-//            
-//            //            let cubeImageCache = self.imageCache.getOptocache(self.cellIndexpath, optographID: self.mapChild!.story_object_media_additional_data, side: .Left)
-//            //            self.setCubeImageCache(cubeImageCache)
-//            
-//            let nodeTranslation = SCNVector3Make(Float(self.mapChild!.story_object_position[0])!, Float(self.mapChild!.story_object_position[1])!, Float(self.mapChild!.story_object_position[2])!)
-//            
-//            let nodeRotation = SCNVector3Make(Float(self.mapChild!.story_object_rotation[0])!, Float(self.mapChild!.story_object_rotation[1])!, Float(self.mapChild!.story_object_rotation[2])!)
-//
-//            print("node translation: \(nodeTranslation.x)");
-//            print("node rotation: \(nodeRotation.x)");
-//            
-//            self.renderDelegate.addNodeFromServer(nodeTranslation, rotation: nodeRotation)
-//            
-//            //            for data in story.children!{
-//            //                for child in data.children!{
-//            //                    print("child id: \(child.story_object_story_id)");
-//            //                }
-//            //            }
-//        }).start();
-//    }
+    func removeUnnecessaryKey(keyToRemove:String,dict:[NSMutableDictionary]) {
+        for data in nodes {
+            data.removeObjectForKey(keyToRemove)
+        }
+        
+        
+    }
     
     func sendToNewPath(){
         
@@ -202,6 +183,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             self.removeOrUpdateInObjects(self.deletableData)
         }
         
+        removeUnnecessaryKey("nodename", dict: nodes)
         
         let parameters : NSDictionary =  ["story_optograph_id": optographID,
                                           "story_person_id": SessionService.personID,
@@ -225,6 +207,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                             box.model.storyID = (data.data?.story_id)!
                         }
                         
+                        Mixpanel.sharedInstance().track("Action.CreateStory.Update")
+                        
                         self.updateStory((data.data?.children)!,storyId: (data.data?.story_id)!)
                         self.sendMultiformData(data.data!)
                         
@@ -242,6 +226,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         self.optographBox.insertOrUpdate { box in
                             box.model.storyID = (data.data?.story_id)!
                         }
+                        Mixpanel.sharedInstance().track("Action.CreateStory.Post")
                         
                         self.updateStory((data.data?.children)!,storyId: (data.data?.story_id)!)
                         self.sendMultiformData(data.data!)
@@ -395,37 +380,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func optographSelected(optographID: String) {
-        
+        self.nodeItem.optographID = optographID
         optoDidSelect.value = true
-        
-        nodeItem.optographID = optographID;
-        
-        print("node x: \(nodeItem.objectVector3.x)");
-        print("node z: \(nodeItem.objectRotation.z)");
-        print("node id: \(nodeItem.optographID)");
-        print("node type: \(nodeItem.objectType)");
-        
-        let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
-        
-        let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
-        
-        let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,
-                                    "story_object_media_face": "pin",
-                                    "story_object_media_description": "next optograph",
-                                    "story_object_media_additional_data": nodeItem.optographID,
-                                    "story_object_position": translationArray,
-                                    "story_object_rotation": rotationArray]
-        
-        nodes.append(child);
-        
-        let audioFilePath = NSBundle.mainBundle().pathForResource("pop", ofType: "mp3")
-        
-        player = AVPlayer(URL: NSURL(fileURLWithPath: audioFilePath!))
-        player?.rate = 1.0
-        player?.volume = 1.0
-        player!.play()
-        
-        print("nodes count: \(nodes.count)")
     }
     
     func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3){
@@ -452,16 +408,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             self.storyPinLabel.backgroundColor = UIColor.clearColor()
             self.storyPinLabel.center = CGPoint(x: self.view.center.x + 50, y: self.view.center.y - 50)
             self.storyPinLabel.backgroundColor = UIColor.whiteColor()
-            //            self.storyPinLabel.layer.borderColor = UIColor.blackColor().CGColor
-            //            self.storyPinLabel.layer.borderWidth = 1.0
-            //            self.storyPinLabel.layer.cornerRadius = 10.0
-            //            self.storyPinLabel.clipsToBounds = true
             self.storyPinLabel.textAlignment = NSTextAlignment.Center
             self.diagonal.frame = CGRectMake(0, 0, self.storyPinLabel.frame.size.width/2, 30.0)
             self.diagonal.center = CGPoint(x: self.storyPinLabel.center.x, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height + 10.0)
             self.diagonal.hidden = false
-            //            self.cloudQuote.center = CGPoint(x: self.storyPinLabel.frame.origin.x + self.cloudQuote.frame.size.width/2, y: self.storyPinLabel.frame.origin.y + self.storyPinLabel.frame.size.height)
-            //            self.cloudQuote.hidden = false
             
             self.view.addSubview(self.storyPinLabel)
         })
@@ -476,12 +426,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 }
             }
         }
-        return self.convertToDictionary()
+        return self.convertToDictionary(viewModel.storyNodes.value)
     }
     
-    func convertToDictionary() -> Bool{
-        for data in viewModel.storyNodes.value {
-            let child : NSDictionary = ["story_object_media_type": data.mediaType,
+    func convertToDictionary(dataArr:[StoryChildren]) -> Bool{
+        for data in dataArr{
+            let child : NSMutableDictionary = ["story_object_media_type": data.mediaType,
                                         "story_object_media_face": data.mediaFace,
                                         "story_object_id": data.ID,
                                         "story_object_media_description": data.mediaDescription,
@@ -496,8 +446,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func removeNodeFromObject(nodeToDelete:StoryChildren) {
-        if let index = viewModel.storyNodes.value.indexOf(nodeToDelete) {
-            viewModel.storyNodes.value.removeAtIndex(index)
+        if let index = self.viewModel.storyNodes.value.indexOf(nodeToDelete) {
+            self.viewModel.storyNodes.value.removeAtIndex(index)
         }
     }
     
@@ -527,7 +477,13 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         let nameArray = deletablePin.optographID.componentsSeparatedByString(",")
         
-        print("wowah",nameArray)
+        for a in self.nodes {
+            if a["nodename"] as! String == nameArray[0] {
+                if let index = self.nodes.indexOf(a) {
+                    self.nodes.removeAtIndex(index)
+                }
+            }
+        }
         
         let nodes = viewModel.storyNodes.value
         
@@ -548,7 +504,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             self.lastRetainableData = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
             self.didInitialize = true
         }
-        
         self.renderDelegate.removeAllNodes(self.deletablePin.optographID)
     }
     
@@ -755,7 +710,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         print("STORY DETAILS VIEW CONTROLLER")
         
-        Mixpanel.sharedInstance().timeEvent("View.OptographDetails")
+        Mixpanel.sharedInstance().timeEvent("View.CreateStory")
         
         if !isStorytelling{
             tabController!.delegate = self
@@ -1308,7 +1263,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
             let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
             
-            let child : NSDictionary = ["story_object_media_type": nodeItem.objectType,//FXTXT,MUS,NAV,TXT
+            let child : NSMutableDictionary = ["story_object_media_type": nodeItem.objectType,//FXTXT,MUS,NAV,TXT
                                         "story_object_media_face": "pin",//no pin
                                         "story_object_media_description": "text pin",
                                         "story_object_media_additional_data": inputTextField.text!,
@@ -1329,7 +1284,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             
             print("fixedText")
             if inputTextField.text != ""{
-                let child : NSDictionary = ["story_object_media_type": "FXTXT",
+                let child : NSMutableDictionary = ["story_object_media_type": "FXTXT",
                                             "story_object_media_face": "no pin",
                                             "story_object_media_description": "fixed text",
                                             "story_object_media_additional_data": inputTextField.text!,
@@ -1369,8 +1324,29 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             
             optoDidSelect.producer.skip(1).startWithNext{ val in
                 if val {
-                    self.renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
+                    let nodeName = self.renderDelegate.addMarker(UIColor.redColor(), type:"Image Item")
                     self.nodeItem.objectType = "NAV"
+                    
+                    let translationArray = [self.nodeItem.objectVector3.x, self.nodeItem.objectVector3.y, self.nodeItem.objectVector3.z]
+                    
+                    let rotationArray = [self.nodeItem.objectRotation.x, self.nodeItem.objectRotation.y, self.nodeItem.objectRotation.z]
+                    
+                    let child : NSMutableDictionary = ["story_object_media_type": self.nodeItem.objectType,
+                        "story_object_media_face": "pin",
+                        "story_object_media_description": "next optograph",
+                        "story_object_media_additional_data": self.nodeItem.optographID,
+                        "story_object_position": translationArray,
+                        "nodename":nodeName,
+                        "story_object_rotation": rotationArray]
+                    
+                    self.nodes.append(child);
+                    
+                    let audioFilePath = NSBundle.mainBundle().pathForResource("pop", ofType: "mp3")
+                    
+                    self.player = AVPlayer(URL: NSURL(fileURLWithPath: audioFilePath!))
+                    self.player?.rate = 1.0
+                    self.player?.volume = 1.0
+                    self.player!.play()
                 }
             }
             self.presentViewController(naviCon, animated: true, completion:nil)
@@ -1440,7 +1416,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 
                 let rotationArray = [0.0, 0.0, 0.0]
                 
-                let child : NSDictionary = ["story_object_media_type": self.nodeItem.objectType,
+                let child : NSMutableDictionary = ["story_object_media_type": self.nodeItem.objectType,
                     "story_object_media_face": "pin",
                     "story_object_media_description": "story bgm",
                     "story_object_media_additional_data": "audio data",
@@ -1756,19 +1732,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         }
     }
     
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        //Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": viewModel.optograph.ID, "optograph_description" : viewModel.optograph.text])
-        Mixpanel.sharedInstance().track("View.OptographDetails", properties: ["optograph_id": "", "optograph_description" : ""])
-    }
-    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-//        if isEditingStory{
-//            tabController!.disableScrollView()
-//        }
+        Mixpanel.sharedInstance().timeEvent("View.CreateStory")
         
         
         CoreMotionRotationSource.Instance.start()
@@ -1787,9 +1754,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        
-        print(">>>>>viewWillDisappear")
         
         imageDownloadDisposable?.dispose()
         imageDownloadDisposable = nil

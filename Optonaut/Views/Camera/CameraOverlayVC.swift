@@ -12,7 +12,7 @@ import Async
 import Photos
 import SwiftyUserDefaults
 
-class CameraOverlayVC: UIViewController {
+class CameraOverlayVC: UIViewController,TabControllerDelegate {
     
     private let session = AVCaptureSession()
     private var videoDevice : AVCaptureDevice?
@@ -32,9 +32,18 @@ class CameraOverlayVC: UIViewController {
         previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         view.layer.addSublayer(previewLayer)
         
+        tabController?.delegate = self
+        
         setupCamera()
         setupScene()
     }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        tabController!.disableScrollView()
+    }
+    
     private func setupScene() {
         
         backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
@@ -86,7 +95,7 @@ class CameraOverlayVC: UIViewController {
     
     func record() {
         navigationController?.pushViewController(CameraViewController(), animated: false)
-        navigationController!.viewControllers.removeAtIndex(1)
+        navigationController?.viewControllers.removeAtIndex(1)
     }
     
     func isMotorMode(state:Bool) {
