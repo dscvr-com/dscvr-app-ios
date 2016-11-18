@@ -478,7 +478,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         let nameArray = deletablePin.optographID.componentsSeparatedByString(",")
         
         for a in self.nodes {
-            if a["nodename"] as! String == nameArray[0] {
+            if let nn:String = a["nodename"] as? String where nn == nameArray[0] {
                 if let index = self.nodes.indexOf(a) {
                     self.nodes.removeAtIndex(index)
                 }
@@ -1241,8 +1241,27 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             
             pinDidSelect.producer.skip(1).startWithNext{ val in
                 if val {
-                    self.renderDelegate.addMarker(UIColor.redColor(), type:"Text Item")
+                    let nn = self.renderDelegate.addMarker(UIColor.redColor(), type:"Text Item")
                     self.nodeItem.objectType = "TXT"
+                    
+                    let translationArray = [self.nodeItem.objectVector3.x, self.nodeItem.objectVector3.y, self.nodeItem.objectVector3.z]
+                    let rotationArray = [self.nodeItem.objectRotation.x, self.nodeItem.objectRotation.y, self.nodeItem.objectRotation.z]
+                    
+                    let child : NSMutableDictionary = ["story_object_media_type": self.nodeItem.objectType,
+                        "story_object_media_face": "pin",
+                        "story_object_media_description": "text pin",
+                        "story_object_media_additional_data": self.inputTextField.text!,
+                        "story_object_position": translationArray,
+                        "nodename":nn,
+                        "story_object_rotation": rotationArray]
+                    self.nodes.append(child);
+                    
+                    let audioFilePath = NSBundle.mainBundle().pathForResource("pop", ofType: "mp3")
+                    
+                    self.player = AVPlayer(URL: NSURL(fileURLWithPath: audioFilePath!))
+                    self.player?.rate = 1.0
+                    self.player?.volume = 1.0
+                    self.player!.play()
                 }
             }
             inputTextField.becomeFirstResponder()
@@ -1255,31 +1274,9 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         if isTextPin == true {
             
-            
-            print("pinText")
-            
             pinDidSelect.value = true
             
-            let translationArray = [nodeItem.objectVector3.x, nodeItem.objectVector3.y, nodeItem.objectVector3.z]
-            let rotationArray = [nodeItem.objectRotation.x, nodeItem.objectRotation.y, nodeItem.objectRotation.z]
             
-            let child : NSMutableDictionary = ["story_object_media_type": nodeItem.objectType,//FXTXT,MUS,NAV,TXT
-                                        "story_object_media_face": "pin",//no pin
-                                        "story_object_media_description": "text pin",
-                                        "story_object_media_additional_data": inputTextField.text!,
-                                        "story_object_position": translationArray,
-                                        "story_object_rotation": rotationArray]
-            
-            print("text child: \(child)")
-            
-            nodes.append(child);
-            
-            let audioFilePath = NSBundle.mainBundle().pathForResource("pop", ofType: "mp3")
-            
-            player = AVPlayer(URL: NSURL(fileURLWithPath: audioFilePath!))
-            player?.rate = 1.0
-            player?.volume = 1.0
-            player!.play()
         } else {
             
             print("fixedText")

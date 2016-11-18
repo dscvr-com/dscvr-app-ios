@@ -120,8 +120,12 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
     }
     
     func motorClicked() {
-        isMotorMode(true)
-        Defaults[.SessionMotor] = true
+        let confirmAlert = UIAlertController(title: "Sorry!", message: "Motor mode is still not available on this version.", preferredStyle: .Alert)
+        confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+        self.presentViewController(confirmAlert, animated: true, completion: nil)
+        
+        //isMotorMode(true)
+        //Defaults[.SessionMotor] = true
     }
     
     private func setupCamera() {
