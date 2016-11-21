@@ -557,7 +557,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 self.renderDelegate.removeMarkers()
                 self.renderDelegate.centerCameraPosition()
                 
-                
                 self.renderDelegate.removeAllNodes(nodeObject.optographID)
                 self.renderDelegate.addBackPin(self.optographID)
                 

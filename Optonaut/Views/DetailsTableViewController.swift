@@ -1333,7 +1333,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         if !inFrustrum {
             countDown = 2
-            print("not in frustrum")
             dispatch_async(dispatch_get_main_queue(), {
                 self.storyPinLabel.text = ""
                 self.storyPinLabel.backgroundColor = UIColor.clearColor()
