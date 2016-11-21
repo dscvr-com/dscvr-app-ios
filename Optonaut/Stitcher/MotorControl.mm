@@ -11,7 +11,7 @@
 #include "recorder.hpp"
 #include "storageImageSink.hpp"
 #include "intrinsics.hpp"
-#include "Recorder.h"
+#include "MotorControl.h"
 #include "Stores.h"
 #include "CommonInternal.h"
 #import "mach/mach.h"
@@ -119,10 +119,9 @@ void ConvertSelectionPoint(SelectionPoint* point, optonaut::SelectionPoint *newP
 
 std::string debugPath;
 
-@implementation Recorder {
+@implementation MotorControl {
 @private
-    optonaut::Recorder2* pipe;
-   // optonaut::MotorControlRecorder* pipe;
+    optonaut::MotorControlRecorder* pipe;
     cv::Mat intrinsics;
     NSString* tempPath;
 }
@@ -151,7 +150,7 @@ std::string debugPath;
 // Promote to class variables instead (somehow). 
 //optonaut::StorageSink storageSink(Stores::left, Stores::right);
 //optonaut::StitcherSink stitcherSink;
-//optonaut::StorageImageSink imageSink(Stores::post);
+optonaut::StorageImageSink imageSink(Stores::post);
 
 
 -(id)init:(RecorderMode)recorderMode {
@@ -162,18 +161,18 @@ std::string debugPath;
     // But you sould never even think of starting a new recording
     // while an old one is in the stores.
     
- //   assert(!Stores::left.HasUnstitchedRecording());
- //   assert(!Stores::right.HasUnstitchedRecording());
+    assert(!Stores::left.HasUnstitchedRecording());
+    assert(!Stores::right.HasUnstitchedRecording());
     
- //   Stores::left.Clear();
-  //  Stores::right.Clear();
+    Stores::left.Clear();
+    Stores::right.Clear();
     //Stores::common.Clear();
-  //  Stores::post.Clear();
+    Stores::post.Clear();
     
  //   optonaut::CheckpointStore::DebugStore = &Stores::debug;
     
     //optonaut::StereoSink& sink = storageSink;
-   // optonaut::StorageImageSink& sink = imageSink;
+    optonaut::StorageImageSink& sink = imageSink;
     
     int internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
     
@@ -197,12 +196,12 @@ std::string debugPath;
  //   optonaut::Recorder::alignmentEnabled = true;
     
     
-    self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                        self->intrinsics, optonaut::RecorderGraph::ModeTruncated);
+  //  self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+  //                                       self->intrinsics, optonaut::RecorderGraph::ModeTruncated); 
     
     
-  //  self->pipe = new optonaut::MotorControlRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-  //                                       self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated);
+    self->pipe = new optonaut::MotorControlRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+                                         self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated);
 
     
     counter = 0;
