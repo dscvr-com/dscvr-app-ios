@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		49EE20AD1DDEE98C00441C98 /* ConvertToStero.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49EE20AB1DDEE98C00441C98 /* ConvertToStero.mm */; };
-		49EE20B11DDEF3AF00441C98 /* MotorControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49EE20AF1DDEF3AF00441C98 /* MotorControl.mm */; };
+		49EE20AD1DDEE98C00441C98 /* ConvertToStereo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49EE20AB1DDEE98C00441C98 /* ConvertToStereo.mm */; };
 		590E05B31CBD3119000331CB /* SaveThetaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590E05B21CBD3119000331CB /* SaveThetaViewController.swift */; };
 		5917C8211CE441F200CD5A6D /* SharingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8201CE441F200CD5A6D /* SharingViewController.swift */; };
 		5917C8231CE4436900CD5A6D /* SharingNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */; };
@@ -314,10 +313,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		49EE20AB1DDEE98C00441C98 /* ConvertToStero.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConvertToStero.mm; path = Optonaut/Stitcher/ConvertToStero.mm; sourceTree = SOURCE_ROOT; };
+		49EE20AB1DDEE98C00441C98 /* ConvertToStereo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConvertToStereo.mm; path = Optonaut/Stitcher/ConvertToStereo.mm; sourceTree = SOURCE_ROOT; };
 		49EE20AC1DDEE98C00441C98 /* ConvertToStereo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConvertToStereo.h; path = Optonaut/Stitcher/ConvertToStereo.h; sourceTree = SOURCE_ROOT; };
-		49EE20AF1DDEF3AF00441C98 /* MotorControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MotorControl.mm; path = Optonaut/Stitcher/MotorControl.mm; sourceTree = SOURCE_ROOT; };
-		49EE20B01DDEF3AF00441C98 /* MotorControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MotorControl.h; path = Optonaut/Stitcher/MotorControl.h; sourceTree = SOURCE_ROOT; };
 		590E05B21CBD3119000331CB /* SaveThetaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveThetaViewController.swift; sourceTree = "<group>"; };
 		5917C8201CE441F200CD5A6D /* SharingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
 		5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingNavViewController.swift; sourceTree = "<group>"; };
@@ -1130,9 +1127,7 @@
 		8FAB9F691B8F02D500B4C8CB /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
-				49EE20AF1DDEF3AF00441C98 /* MotorControl.mm */,
-				49EE20B01DDEF3AF00441C98 /* MotorControl.h */,
-				49EE20AB1DDEE98C00441C98 /* ConvertToStero.mm */,
+				49EE20AB1DDEE98C00441C98 /* ConvertToStereo.mm */,
 				49EE20AC1DDEE98C00441C98 /* ConvertToStereo.h */,
 				A5233E281BC87F7500C9EFE5 /* CommonExternal.h */,
 				A5233E291BC87F7500C9EFE5 /* CommonInternal.h */,
@@ -1757,7 +1752,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				59A07C5D1D6355E3006A6CCE /* IcomoonExtension.swift in Sources */,
-				49EE20B11DDEF3AF00441C98 /* MotorControl.mm in Sources */,
 				5937D1C41D5479980040BD6B /* SwiftSpinner.swift in Sources */,
 				8FCA92E21BC7180B004913E5 /* OptographOptions.swift in Sources */,
 				59306C041D24E035009BF7BE /* InvitationViewController.swift in Sources */,
@@ -1860,7 +1854,7 @@
 				8FAB9F4E1B8F01DF00B4C8CB /* LoginViewController.swift in Sources */,
 				A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */,
 				594023D01D2E73CE00393E1F /* AddUsernameViewController.swift in Sources */,
-				49EE20AD1DDEE98C00441C98 /* ConvertToStero.mm in Sources */,
+				49EE20AD1DDEE98C00441C98 /* ConvertToStereo.mm in Sources */,
 				8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */,
 				59306C061D24E268009BF7BE /* DetailsShareViewController.swift in Sources */,
 				8F4185FF1C53C464009E1E3F /* LoginApiModel.swift in Sources */,

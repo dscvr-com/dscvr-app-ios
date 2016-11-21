@@ -25,10 +25,10 @@ struct ConversionCancellation {
 };
 
 -(void)convert {
-    optonaut::ConvertToStereo convertToStero(Stores::post, Stores::left, Stores::right);
+    optonaut::ConvertToStereo convertToStereo(Stores::post, Stores::left, Stores::right);
     
     try {
-        convertToStero.Finish();
+        convertToStereo.Finish();
     
     } catch (ConversionCancellation c) { }
 };

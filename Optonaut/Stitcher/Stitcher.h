@@ -9,4 +9,6 @@
 - (void)setProgressCallback:(bool(^)(float))progressHandler;
 - (struct ImageBuffer)getLeftEquirectangularResult;
 - (struct ImageBuffer)getRightEquirectangularResult;
+- (NSArray<NSValue*>*)getLeftResultThreeRing;
+- (NSArray<NSValue*>*)getRightResultThreeRing;
 @end

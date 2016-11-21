@@ -84,10 +84,9 @@ class StitchingService {
             
             Mixpanel.sharedInstance().track("Action.Stitching.Start")
             Mixpanel.sharedInstance().timeEvent("Action.Stitching.Finish")
-            
-            let globalAligner = Alignment ()
-            
-            globalAligner.align()
+            //if motor
+            let convertToStereo = ConvertToStereo()
+            convertToStereo.convert()
             
             // There is no such thing any more. 
             //assert(hasUnstitchedRecordings())
@@ -99,6 +98,21 @@ class StitchingService {
                 }
                 return !shallCancel
             }
+            //if motor
+//            if !shallCancel {
+//                for (face, cubeFace) in stitcher.getLeftResultThreeRing().enumerate() {
+//                    var leftFace = ImageBuffer()
+//                    cubeFace.getValue(&leftFace)
+//                    
+//                    if !shallCancel {
+//                        autoreleasepool {
+//                            let image = ImageBufferToCompressedUIImage(leftFace)
+//                            sink.sendNext(.Result(side: .Left, face: face, image: image))
+//                        }
+//                    }
+//                    Recorder.freeImageBuffer(leftFace)
+//                }
+//            }
             
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getLeftResult().enumerate() {
@@ -114,46 +128,13 @@ class StitchingService {
                     Recorder.freeImageBuffer(leftFace)
                 }
             }
+            //if motor
             
             //get the ER result
             if !shallCancel {
                 
                 let erImage = stitcher.getLeftEquirectangularResult()
                 autoreleasepool {
-                    
-//                    UIImageWriteToSavedPhotosAlbum(UIImage(CGImage: ImageBufferToCGImage(erImage)), self
-//                        , nil, nil)
-                    
-                    
- 
-                    
-//                    let image = UIImage(CGImage: ImageBufferToCGImage(erImage))
-//                    let imageData = UIImageJPEGRepresentation(image, 1.0)
-//                    
-//                    let asset = ALAssetsLibrary()
-//                    
-//                    let strModel = "RICOH THETA S" as String
-//                    let strMake = "RICOH" as String
-//                    
-//                    let meta:NSDictionary = [kCGImagePropertyTIFFModel as String :strModel,kCGImagePropertyTIFFMake as String:strMake]
-//                    
-//                    let source:CGImageSourceRef = CGImageSourceCreateWithData(imageData!, nil)!
-//                    let UTI:CFStringRef = CGImageSourceGetType(source)!
-//                    
-//                    let destData = NSMutableData()
-//                    let destination:CGImageDestinationRef = CGImageDestinationCreateWithData(destData, UTI, 1, nil)!
-//                    
-//                    CGImageDestinationAddImageFromSource(destination, source, 0, meta)
-//                    
-//                    CGImageDestinationFinalize(destination)
-//                    
-//                    
-//                    asset.writeImageDataToSavedPhotosAlbum(destData, metadata: meta as [NSObject : AnyObject], completionBlock: { (path:NSURL!, error:NSError!) -> Void in
-//                        print("meta path >>> \(path)")
-//                        print("meta error >>> \(error)")
-//                    })
-                    
-                    
                     
                     let image = UIImage(CGImage: ImageBufferToCGImage(erImage))
                     let imageData = UIImageJPEGRepresentation(image, 1.0)
@@ -184,6 +165,22 @@ class StitchingService {
                 
                 
             }
+            
+            //if motor
+//            if !shallCancel {
+//                for (face, cubeFace) in stitcher.getRightResultThreeRing().enumerate() {
+//                    var rightFace = ImageBuffer()
+//                    cubeFace.getValue(&rightFace)
+//                    
+//                    autoreleasepool {
+//                        if !shallCancel {
+//                            let image = ImageBufferToCompressedUIImage(rightFace)
+//                            sink.sendNext(.Result(side: .Right, face: face, image: image))
+//                        }
+//                    }
+//                    Recorder.freeImageBuffer(rightFace)
+//                }
+//            }
             
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getRightResult().enumerate() {
