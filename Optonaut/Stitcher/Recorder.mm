@@ -122,9 +122,10 @@ std::string debugPath;
 @implementation Recorder {
 @private
     optonaut::Recorder2* pipe;
-   // optonaut::MotorControlRecorder* pipe;
+    optonaut::MotorControlRecorder* motorPipe;
     cv::Mat intrinsics;
     NSString* tempPath;
+    int internalRecordingMode;
 }
 
 + (void)enableDebug:(NSString*)path {
@@ -151,31 +152,16 @@ std::string debugPath;
 // Promote to class variables instead (somehow). 
 //optonaut::StorageSink storageSink(Stores::left, Stores::right);
 //optonaut::StitcherSink stitcherSink;
-//optonaut::StorageImageSink imageSink(Stores::post);
+optonaut::StorageImageSink imageSink(Stores::post);
 
 
 -(id)init:(RecorderMode)recorderMode {
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
     
-    // Yes, asserting in init is evil.
-    // But you sould never even think of starting a new recording
-    // while an old one is in the stores.
+  
     
- //   assert(!Stores::left.HasUnstitchedRecording());
- //   assert(!Stores::right.HasUnstitchedRecording());
-    
- //   Stores::left.Clear();
-  //  Stores::right.Clear();
-    //Stores::common.Clear();
-  //  Stores::post.Clear();
-    
- //   optonaut::CheckpointStore::DebugStore = &Stores::debug;
-    
-    //optonaut::StereoSink& sink = storageSink;
-   // optonaut::StorageImageSink& sink = imageSink;
-    
-    int internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
+    internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
     
     switch(recorderMode) {
         case TinyDebug:
@@ -193,17 +179,41 @@ std::string debugPath;
         default: break; //Explicitely default to truncated. This removes the compiler warning.
     }
     
- //   optonaut::Recorder::exposureEnabled = false;
- //   optonaut::Recorder::alignmentEnabled = true;
     
     
-    self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+    // Yes, asserting in init is evil.
+    // But you sould never even think of starting a new recording
+    // while an old one is in the stores.
+    
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(!Stores::left.HasUnstitchedRecording());
+        assert(!Stores::right.HasUnstitchedRecording());
+        
+        
+    
+        Stores::left.Clear();
+        Stores::right.Clear();
+    //Stores::common.Clear();
+        Stores::post.Clear();
+    
+    //   optonaut::CheckpointStore::DebugStore = &Stores::debug;
+    
+    //optonaut::StereoSink& sink = storageSink;
+        //   optonaut::Recorder::exposureEnabled = false;
+        //   optonaut::Recorder::alignmentEnabled = true;
+        optonaut::StorageImageSink& sink = imageSink;
+          self->motorPipe = new optonaut::MotorControlRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+                                               self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated);
+
+    } else {
+      
+    
+    
+        self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
                                         self->intrinsics, optonaut::RecorderGraph::ModeTruncated);
     
-    
-  //  self->pipe = new optonaut::MotorControlRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-  //                                       self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated);
-
+    }
+  
     
     counter = 0;
 
@@ -211,10 +221,22 @@ std::string debugPath;
 }
 
 - (bool)isDisposed {
-    return pipe == NULL;
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        return motorPipe == NULL;
+    } else {
+        return pipe == NULL;
+    }
 }
+
 - (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure  :(AVCaptureWhiteBalanceGains)gains{
-    assert(pipe != NULL);
+    
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        
+    } else {
+        assert(pipe != NULL);
+        
+    }
     optonaut::InputImageP oImage(new optonaut::InputImage());
 
     oImage->dataRef = ImageBufferToImageRef(image);
@@ -227,91 +249,204 @@ std::string debugPath;
     oImage->exposureInfo.gains.green = gains.greenGain;
     GLK4ToCVMat(extrinsics, oImage->originalExtrinsics);
 
-    pipe->Push(oImage);
+      if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+          motorPipe->Push(oImage);
+      } else {
+          pipe->Push(oImage);
+          
+      }
 }
 - (GLKMatrix4)getCurrentRotation {
     assert(false);
    // return CVMatToGLK4(pipe->GetCurrentRotation());
 }
 - (SelectionPoint*)lastKeyframe {
-    assert(pipe != NULL);
-   return ConvertSelectionPoint(pipe->GetCurrentKeyframe().closestPoint);
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        
+        assert(motorPipe != NULL);
+        return ConvertSelectionPoint(motorPipe->GetCurrentKeyframe().closestPoint);
+    } else {
+        assert(pipe != NULL);
+        return ConvertSelectionPoint(pipe->GetCurrentKeyframe().closestPoint);
+    }
 }
 - (bool)areAdjacent:(SelectionPoint*)a and:(SelectionPoint*)b {
-    assert(pipe != NULL);
+    
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(pipe != NULL);
+    } else {
+        assert(pipe != NULL);
+    }
     optonaut::SelectionPoint convA;
     optonaut::SelectionPoint convB;
     ConvertSelectionPoint(a, &convA);
     ConvertSelectionPoint(b, &convB);
-    return pipe->AreAdjacent(convA, convB);
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        return motorPipe->AreAdjacent(convA, convB);
+    } else {
+        return pipe->AreAdjacent(convA, convB);
+    }
 }
 - (SelectionPointIterator*)getSelectionPoints {
-    assert(pipe != NULL);
-    return [[SelectionPointIterator alloc] init: pipe->GetSelectionPoints()];
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        return [[SelectionPointIterator alloc] init: motorPipe->GetSelectionPoints()];
+    } else {
+        assert(pipe != NULL);
+        return [[SelectionPointIterator alloc] init: pipe->GetSelectionPoints()];
+    }
 }
 - (void)setIdle:(bool)isIdle {
-    assert(pipe != NULL);
-    pipe->SetIdle(isIdle);
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        motorPipe->SetIdle(isIdle);
+    } else {
+        assert(pipe != NULL);
+        pipe->SetIdle(isIdle);
+    }
 }
 - (bool)isIdle {
-    assert(pipe != NULL);
-    return pipe->IsIdle();
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        return motorPipe->IsIdle();
+    } else {
+        assert(pipe != NULL);
+        return pipe->IsIdle();
+    }
 }
 - (bool)hasStarted {
-    assert(pipe != NULL);
-    return pipe->HasStarted();
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        return motorPipe->HasStarted();
+    } else {
+        assert(pipe != NULL);
+        return pipe->HasStarted();
+    }
 }
 
 - (bool)hasResults {
-    assert(pipe != NULL);
-    return true;
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        return true;
+    } else {
+        assert(pipe != NULL);
+        return true;
+    }
 }
 - (GLKMatrix4)getBallPosition {
-    assert(pipe != NULL);
-    return CVMatToGLK4(pipe->GetBallPosition());
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        return CVMatToGLK4(motorPipe->GetBallPosition());
+    } else {
+        assert(pipe != NULL);
+        return CVMatToGLK4(pipe->GetBallPosition());
+    }
 }
+
+
+
 - (bool)isFinished {
-    assert(pipe != NULL);
-    return pipe->IsFinished();
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        return motorPipe->IsFinished();
+    } else {
+        assert(pipe != NULL);
+        return pipe->IsFinished();
+    }
 }
 - (void)cancel {
-    assert(pipe != NULL);
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+         assert(motorPipe != NULL);
+    } else {
+        assert(pipe != NULL);
+    }
     // Do nothing, no threading here.
 }
 - (double)getDistanceToBall {
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        
+        assert(motorPipe != NULL);
+        return motorPipe->GetDistanceToBall();
+    } else {
     assert(pipe != NULL);
     return pipe->GetDistanceToBall();
+    }
 }
 - (GLKVector3)getAngularDistanceToBall {
-    assert(pipe != NULL);
-    //Special coord remapping, so we respect the screen coord system.
-    const Mat &m = pipe->GetAngularDistanceToBall();
-    return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        //Special coord remapping, so we respect the screen coord system.
+        const Mat &m = motorPipe->GetAngularDistanceToBall();
+        return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
+        
+    } else {
+        
+        assert(pipe != NULL);
+        //Special coord remapping, so we respect the screen coord system.
+        const Mat &m = pipe->GetAngularDistanceToBall();
+        return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
+    }
+    
 }
 - (uint32_t)getRecordedImagesCount {
-    assert(pipe != NULL);
-    return pipe->GetRecordedImagesCount();
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        return motorPipe->GetRecordedImagesCount();
+    } else {
+        assert(pipe != NULL);
+        return pipe->GetRecordedImagesCount();
+    }
 }
 - (uint32_t)getImagesToRecordCount {
-    assert(pipe != NULL);
-    return pipe->GetImagesToRecordCount();
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        return motorPipe->GetImagesToRecordCount();
+    } else {
+        assert(pipe != NULL);
+        return pipe->GetImagesToRecordCount();
+    }
 }
 - (void)finish {
+    
+     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+         assert(motorPipe != NULL);
+         motorPipe->Finish();
+     } else {
+         
+     
     assert(pipe != NULL);
     pipe->Finish();
+     }
     //Stores::left.SaveOptograph(pipe->GetLeftResult());
     //Stores::right.SaveOptograph(pipe->GetRightResult());
 }
 - (void)dispose {
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+        // Do nothing, except deleting
+        [[NSFileManager defaultManager] removeItemAtPath:self->tempPath error:nil];
+        delete motorPipe;
+        motorPipe = NULL;
+        
+    } else {
+        
+    
     assert(pipe != NULL);
     // Do nothing, except deleting
     [[NSFileManager defaultManager] removeItemAtPath:self->tempPath error:nil];
     delete pipe;
     pipe = NULL;
+    }
 }
 
 - (struct ExposureInfo)getExposureHint {
-    assert(pipe != NULL);
+    
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        
+        assert(motorPipe != NULL);
+    } else {
+        assert(pipe != NULL);
+    }
     
     cv::Mat extrinsics;
     //optonaut::ExposureInfo info = pipe->GetExposureHint();
@@ -325,12 +460,21 @@ std::string debugPath;
     return converted;
 }
 - (bool)previewAvailable {
-    assert(pipe != NULL);
-    
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        assert(motorPipe != NULL);
+    } else {
+        assert(pipe != NULL);
+    }
     return true;
 }
 - (struct ImageBuffer)getPreviewImage {
-    assert(pipe != NULL);
-    return CVMatToImageBuffer(pipe->GetPreviewImage()->image.data);
+     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+         assert(motorPipe != NULL);
+         return CVMatToImageBuffer(motorPipe->GetPreviewImage()->image.data);
+
+     } else {
+         assert(pipe != NULL);
+         return CVMatToImageBuffer(pipe->GetPreviewImage()->image.data);
+     }
 }
 @end
