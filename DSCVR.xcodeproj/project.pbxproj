@@ -314,17 +314,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4960F4291DD5D7DA003ADEFB /* imageStoreSink.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = imageStoreSink.hpp; path = "../../../../online-stitcher-SF/src/recorder/imageStoreSink.hpp"; sourceTree = "<group>"; };
-		49DB62E91DD1F0E2007529F6 /* motorControlRecorder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = motorControlRecorder.hpp; path = "../../../../online-stitcher-SF/src/recorder/motorControlRecorder.hpp"; sourceTree = "<group>"; };
 		49EE20AB1DDEE98C00441C98 /* ConvertToStero.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConvertToStero.mm; path = Optonaut/Stitcher/ConvertToStero.mm; sourceTree = SOURCE_ROOT; };
 		49EE20AC1DDEE98C00441C98 /* ConvertToStereo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConvertToStereo.h; path = Optonaut/Stitcher/ConvertToStereo.h; sourceTree = SOURCE_ROOT; };
-		49EE20AE1DDEEA2600441C98 /* convertToStereo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = convertToStereo.hpp; path = "../../../../online-stitcher-SF/src/stitcher/convertToStereo.hpp"; sourceTree = "<group>"; };
 		49EE20AF1DDEF3AF00441C98 /* MotorControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MotorControl.mm; path = Optonaut/Stitcher/MotorControl.mm; sourceTree = SOURCE_ROOT; };
 		49EE20B01DDEF3AF00441C98 /* MotorControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MotorControl.h; path = Optonaut/Stitcher/MotorControl.h; sourceTree = SOURCE_ROOT; };
 		590E05B21CBD3119000331CB /* SaveThetaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveThetaViewController.swift; sourceTree = "<group>"; };
 		5917C8201CE441F200CD5A6D /* SharingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
 		5917C8221CE4436900CD5A6D /* SharingNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingNavViewController.swift; sourceTree = "<group>"; };
 		5917C8251CE49C8600CD5A6D /* DetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsTableViewController.swift; sourceTree = "<group>"; };
+		5929D3261DE316AA00BED9AB /* motorControlRecorder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = motorControlRecorder.hpp; sourceTree = "<group>"; };
+		5929D3271DE316D300BED9AB /* convertToStereo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = convertToStereo.hpp; sourceTree = "<group>"; };
 		59306C031D24E034009BF7BE /* InvitationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InvitationViewController.swift; sourceTree = "<group>"; };
 		59306C051D24E268009BF7BE /* DetailsShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsShareViewController.swift; sourceTree = "<group>"; };
 		5933E6801D3A803600D18982 /* FillableLoaders.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FillableLoaders.framework; path = Carthage/Build/iOS/FillableLoaders.framework; sourceTree = "<group>"; };
@@ -766,7 +765,7 @@
 		5936B1761CAD34F500F808D8 /* stitcher */ = {
 			isa = PBXGroup;
 			children = (
-				49EE20AE1DDEEA2600441C98 /* convertToStereo.hpp */,
+				5929D3271DE316D300BED9AB /* convertToStereo.hpp */,
 				5967FAD81D783E8000C40280 /* flowBlender.cpp */,
 				5967FAD91D783E8000C40280 /* flowBlender.hpp */,
 				B17042151CF6CF04004E2F26 /* globalAlignment.hpp */,
@@ -1487,8 +1486,7 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
-				4960F4291DD5D7DA003ADEFB /* imageStoreSink.hpp */,
-				49DB62E91DD1F0E2007529F6 /* motorControlRecorder.hpp */,
+				5929D3261DE316AA00BED9AB /* motorControlRecorder.hpp */,
 				A5172B7F1D834B3B008C41D0 /* coordinateConverter.hpp */,
 				A5172B801D834B3B008C41D0 /* imageCorrespondenceFinder.hpp */,
 				A5172B811D834B3B008C41D0 /* imageLoader.hpp */,
@@ -1612,7 +1610,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 4Y4J5JD5NJ;
+						DevelopmentTeam = 675Y8HZ459;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -2158,7 +2156,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
 				PRODUCT_NAME = DSCVR;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
@@ -2194,7 +2192,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/stitcher/vendor",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
 				PRODUCT_NAME = DSCVR;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
