@@ -24,10 +24,11 @@ struct staticVariables {
     static var isCenter:Bool!
 }
 
-class CameraViewController: UIViewController,TabControllerDelegate {
+class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheralDelegate{
     
     private let viewModel = CameraViewModel()
     private let motionManager = CoreMotionRotationSource()
+    private let rotationSource = CustomRotationMatrixSource.Instance
     
     // camera
     private let session = AVCaptureSession()
@@ -193,7 +194,13 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     }
     
     deinit {
-        motionManager.stop()
+        if Defaults[.SessionMotor] {
+            rotationSource.stop()
+        } else {
+            motionManager.stop()
+            
+        }
+        
         print("de init cameraviewcontroller")
         //rotationSource.stop()
         //motionManager.stopDeviceMotionUpdates()
@@ -287,6 +294,8 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             
             let missingSecs = 0.0
             DegreeIncrPerMicro = (0.036 / ( (Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ) - missingSecs ))
+            //tabView.cameraButton.hidden = true
+            //viewModel.isRecording.value = true
             
             if let bleService = btDiscoverySharedInstance.bleService {
                 bleService.sendCommand(self.computeRotationX())
@@ -469,7 +478,11 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         UIApplication.sharedApplication().idleTimerDisabled = true
         
-        motionManager.start()
+        if Defaults[.SessionMotor] {
+            motionManager.start()
+        } else {
+           rotationSource.start()
+        }
         //(.XArbitraryCorrectedZVertical)
         //motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
     }
@@ -758,7 +771,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
 
         if let pixelBuffer = pixelBuffer { //, motion = self.motionManager.deviceMotion {
             
-            let cmRotation = motionManager.getRotationMatrix()
             //let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
@@ -770,13 +782,108 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             captureWidth = Int(buf.width)
             
             recorder.setIdle(!self.viewModel.isRecording.value)
+            var cmRotation : GLKMatrix4
             
-     
-            recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
+            if Defaults[.SessionMotor] {
+                
+                //Motor Fixed 1ring
+                let mediaTime = CACurrentMediaTime()
+                print("mediaTime \(mediaTime)")
+                let timeDiff = mediaTime - lastElapsedTime
+                print("timeDiff \(timeDiff)")
+                
+                print("lastElapsedTime \(lastElapsedTime)")
+                
+                // static degree per 0.0001ms = 0.000475 for 75.789 s
+                // static degree per 0.0001ms = 0.002 for 18.0 s
+                // static degree per 0.0001ms = 0.00175 for 20.571 s
+                
+                
+                //let degreeIncr = (timeDiff / 0.0001 ) * 0.00175
+                //let degreeIncr = (timeDiff / 0.0001 ) * 0.000475
+                //var degreeIncr = (timeDiff / 0.0001 ) * 0.000850013
+                let degreeIncr = ((timeDiff / 0.0001) * DegreeIncrPerMicro )//<- our version
+                //var degreeIncr = (timeDiff / 0.0001) * 0.001650846
+                //var degreeIncr = (timeDiff / 0.0001) * 0.001479411
+                
+                print("degreeIncr \(degreeIncr) M_PI \(-M_PI_2)")
+                
+                if viewModel.isRecording.value {
+                    currentDegree -= Float(degreeIncr)
+                    //currentDegree += Float(degreeIncr)
+                }
+                print("currentDegree \(currentDegree)")
+                
+                
+                lastElapsedTime = mediaTime
+                
+                let rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
+                
+                print("rotation \(rotation)")
+                
+                // var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
+                
+                let currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
+                print("currentRotation \(currentRotation)")
+                // currentRotation = GLKMatrix4Multiply(currentRotation, rotation)
+                
+                //var currentRad = currentDegree  * Float(M_PI / 180.0)
+                //print("currentRad  \(currentRad)" )
+                //var currentRotation = GLKMatrix4Rotate(baseMatrix, 1.0, 0.0, currentRad, 0.0)
+                
+                print("currentDegree \(currentDegree) CACurrentMediaTime \(mediaTime) ")
+                
+                currentPhi = GLKMathDegreesToRadians(Float(currentDegree))
+                print("currentPhi \(currentPhi)")
+                
+                cmRotation = self.rotationSource.getRotationMatrixMotor(currentPhi, thetaValue: currentTheta)
+                print("Matrix: [\(cmRotation.m00), \(cmRotation.m01), \(cmRotation.m02), \(cmRotation.m03)")
+                print("______: [\(cmRotation.m10), \(cmRotation.m11), \(cmRotation.m12), \(cmRotation.m13)")
+                print("______: [\(cmRotation.m20), \(cmRotation.m21), \(cmRotation.m22), \(cmRotation.m23)")
+                print("______: [\(cmRotation.m30), \(cmRotation.m31), \(cmRotation.m32), \(cmRotation.m33)")
+                
+                if bData.dataHasCome.value  {
+                    viewModel.isRecording.value = true
+                    
+                }
+                
+                print("currentPhi <  \(Float((-2.0 * M_PI) - 0.01))")
+                if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
+                    viewModel.isRecording.value = false //<-
+                    
+                    /*print("ito?>>>>>",bData.ydirection)
+                     if self.bData.ydirection == "fffffe0b"{
+                     print(">>>>why?")
+                     viewModel.isRecording.value = true
+                     
+                     }*/
+                    
+                    if(currentTheta == 0) {
+                        currentTheta = Float(-0.718)
+                    } else if(currentTheta < 0) {
+                        currentTheta = Float(0.718)
+                    } else if(currentTheta > 0) {
+                        currentTheta = Float(0)
+                    }
+                    currentDegree = 0
+                }
+                print("currentTheta \(currentTheta)")
+
+                
+                
+            } else {
             
+            
+                cmRotation = motionManager.getRotationMatrix()
+              
+        
+                
+            }
+              recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             let errorVec = recorder.getAngularDistanceToBall()
             // let r = recorder.getCurrentRotation()
             // let exposureHintC = recorder.getExposureHint()
+            
             
             Async.main {
                 if self.isViewLoaded() {
