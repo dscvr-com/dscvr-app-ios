@@ -67,6 +67,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Defaults[.SessionGyro] = true
             Defaults[.SessionEliteUser] = true
             
+            //motor configurations
+            
+            Defaults[.SessionPPS] = 250
+            Defaults[.SessionRotateCount] = 5222
+            Defaults[.SessionTopCount] = 1888
+            Defaults[.SessionBotCount] = -3998
+            Defaults[.SessionBuffCount] = 20
+            
             //Bluetooth Notif
             NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.connectionChanged(_:)), name: BLEServiceChangedStatusNotification, object: nil)
             // Start the Bluetooth discovery process

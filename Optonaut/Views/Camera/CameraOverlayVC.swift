@@ -11,6 +11,7 @@ import AVFoundation
 import Async
 import Photos
 import SwiftyUserDefaults
+import CoreBluetooth
 
 class CameraOverlayVC: UIViewController,TabControllerDelegate {
     
@@ -23,6 +24,7 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
     private let cameraButton = UIButton()
     private var backButton = UIImage(named: "camera_back_button")
     private let progressView = CameraOverlayProgressView()
+    private var blList:[CBPeripheral] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,12 +38,17 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
         
         setupCamera()
         setupScene()
+        getBluetoothList()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
         tabController!.disableScrollView()
+    }
+    
+    func getBluetoothList() {
+        blList = btDiscoverySharedInstance.devicesNameList()
     }
     
     private func setupScene() {
@@ -90,14 +97,19 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
     }
     
     func getBluetoothDevicesToPair() {
-        let settingsSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        let blSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         
-        settingsSheet.addAction(UIAlertAction(title: "Sign out", style: .Destructive, handler: { _ in
+        for dev in blList {
             
-            let confirmAlert = UIAlertController(title: "Are you sure want to logout?", message: "Some optographs are still not uploaded and will be deleted if you logout.", preferredStyle: .Alert)
-            confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
-            
-        }))
+            blSheet.addAction(UIAlertAction(title: dev.name, style: .Default, handler: { _ in
+                btDiscoverySharedInstance.connectToPeripheral(dev)
+            }))
+        }
+        
+        blSheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        
+        self.presentViewController(blSheet, animated: true, completion: nil)
+        
     }
     
     func closeCamera() {
@@ -131,12 +143,15 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
     }
     
     func motorClicked() {
-        let confirmAlert = UIAlertController(title: "Sorry!", message: "Motor mode is still not available on this version.", preferredStyle: .Alert)
-        confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-        self.presentViewController(confirmAlert, animated: true, completion: nil)
+//        let confirmAlert = UIAlertController(title: "Sorry!", message: "Motor mode is still not available on this version.", preferredStyle: .Alert)
+//        confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+//        self.presentViewController(confirmAlert, animated: true, completion: nil)
         
-        //isMotorMode(true)
-        //Defaults[.SessionMotor] = true
+        isMotorMode(true)
+        Defaults[.SessionMotor] = true
+        Defaults[.SessionUseMultiRing] = true
+        
+        getBluetoothDevicesToPair()
     }
     
     private func setupCamera() {
