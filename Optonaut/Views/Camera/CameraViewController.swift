@@ -479,9 +479,10 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
         UIApplication.sharedApplication().idleTimerDisabled = true
         
         if Defaults[.SessionMotor] {
-            motionManager.start()
+             rotationSource.start()
+           
         } else {
-           rotationSource.start()
+           motionManager.start()
         }
         //(.XArbitraryCorrectedZVertical)
         //motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
@@ -875,6 +876,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
             
             
                 cmRotation = motionManager.getRotationMatrix()
+                print("cmRotation \(cmRotation)")
               
         
                 
