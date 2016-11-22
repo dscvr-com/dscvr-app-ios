@@ -344,8 +344,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         }
     }
     func tapRightButtonTab() {
-        //tabController!.tapNavBarTitleForFeedClass()
-        self.presentViewController(BTList(), animated: true, completion: nil)
+        tabController!.tapNavBarTitleForFeedClass()
+        //self.presentViewController(BTList(), animated: true, completion: nil)
     }
     
     func tapRightButton() {
