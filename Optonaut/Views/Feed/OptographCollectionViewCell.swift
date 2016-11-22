@@ -241,6 +241,7 @@ private class OverlayViewModel {
     var isMe = false
     var isElite = MutableProperty<Int>(0)
     private var disposable: Disposable?
+    var hasStory = MutableProperty<Bool>(false)
     
     func bind(optographID: UUID) {
         disposable?.dispose()
@@ -253,6 +254,7 @@ private class OverlayViewModel {
         textToggled.value = false
         
         disposable = optographBox.producer.startWithNext { [weak self] optograph in
+            
             self?.likeCount.value = optograph.starsCount
             self?.liked.value = optograph.isStarred
             
@@ -263,6 +265,7 @@ private class OverlayViewModel {
             } else {
                 self?.uploadStatus.value = .Offline
             }
+            self?.hasStory.value = optograph.storyID.isEmpty ? false:true
         }
         
         isMe = SessionService.personID == optographBox.model.personID
@@ -274,6 +277,7 @@ private class OverlayViewModel {
                 self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47)
                 self?.isFollowed.value = person.isFollowed
                 self?.isElite.value = person.eliteStatus
+                print(self?.userName.value,self?.isFollowed.value,person.isFollowed)
         }
     }
     
@@ -471,6 +475,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
     let playerLayer = AVPlayerLayer()
     let eliteImageView = UIImageView()
     
+    let storyIcn = UIImageView()
+    
 //    var video:AVPlayer? {
 //        didSet {
 //            self.playerLayer.player = video
@@ -512,7 +518,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     dynamic private func pushDetails() {
         
-        let detailsViewController = DetailsTableViewController(optoList:[optoId])
+        let detailsViewController = DetailsTableViewController(optoList:[optoId],storyid: nil)
         detailsViewController.cellIndexpath = id
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
@@ -606,6 +612,9 @@ class OptographCollectionViewCell: UICollectionViewCell{
         hiddenViewToBounce.addGestureRecognizer(hiddenGestureRecognizer)
         hiddenViewToBounce.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.bouncingCell)))
         
+        storyIcn.image = UIImage(named: "create_story_icn2")
+        whiteBackground.addSubview(storyIcn)
+        storyIcn.hidden = false
         
     }
     
@@ -637,6 +646,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         let icnWidth = UIImage(named: "elite_beta_icn")!
         eliteImageView.anchorInCorner(.BottomLeft, xPad: optionsButtonView.frame.origin.x + (optionsButtonView.frame.width/2), yPad: 6, width: icnWidth.size.width, height: icnWidth.size.height)
+        
+        let storyIcnWidth = UIImage(named: "create_story_icn2")!
+        //storyIcn.anchorToEdge(.Right, padding: 10, width: storyIcnWidth.size.width, height: storyIcnWidth.size.height)
+        storyIcn.align(.ToTheLeftCentered, relativeTo: likeButtonView, padding: 20, width:storyIcnWidth.size.width, height: storyIcnWidth.size.height)
     }
     
     
@@ -753,6 +766,7 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     func bindModel(optographId:UUID) {
         
+        print(">>>>opto",optographId)
         viewModel.bind(optographId)
         viewModel.avatarImageUrl.producer.startWithNext{
             self.avatarImageView.kf_setImageWithURL(NSURL(string:$0)!)
@@ -796,8 +810,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
             .startWithNext { [weak self] isUploaded in
                 
                 if isUploaded {
+//                    let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
+//                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
+                    
                     let stringUrl = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/frame1.jpg"
-                    //self?.previewImage.kf_setImageWithURL(NSURL(string: stringUrl)!)
                     self?.previewImage.setImageWithURLString(stringUrl)
                     
                 } else {
@@ -828,6 +844,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
 //        } else {
 //            self.video = nil
 //        }
+        
+        viewModel.hasStory.producer.startWithNext { val in
+            self.storyIcn.hidden = !val
+        }
 
     }
     

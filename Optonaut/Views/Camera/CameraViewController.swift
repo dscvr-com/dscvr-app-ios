@@ -18,7 +18,7 @@ import Async
 import Mixpanel
 import SwiftyUserDefaults
 import Photos
-
+import CoreBluetooth
 
 struct staticVariables {
     static var isCenter:Bool!
@@ -66,21 +66,36 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     private let cameraNode = SCNNode()
     private var scnView : SCNView!
     private let scene = SCNScene()
+    //for motor
+    private var currentDegree : Float
+    private var DegreeIncrPerMicro : Double
+    var ringFlag = 0
     
     // ball
     private let ballNode = SCNNode()
     private var ballSpeed = GLKVector3Make(0, 0, 0)
+    private let baseMatrix = GLKMatrix4Make(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1 , 0.0, 0.0, -1.0, 0.00, 0.0, 0.0, 0.0, 0.0, 1.0)
     
     private var tapCameraButtonCallback: (() -> ())?
+    private var lastElapsedTime = CACurrentMediaTime()
+    private var currentTheta = Float(0.0)
+    private var currentPhi = Float(0.0)
     
     private let cancelButton = UIButton()
     
     private let tabView = TabView()
+    private let bData = BService.sharedInstance
+    private var RotateData = String("")
     
     var timer = NSTimer()
     
+    let sessionMotor = Defaults[.SessionMotor]
+    
         
     required init() {
+        
+        currentDegree = 0.0
+        DegreeIncrPerMicro = 0.0
         
         let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
         sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
@@ -88,11 +103,14 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         screenScale = Float(UIScreen.mainScreen().scale)
         
         if Defaults[.SessionDebuggingEnabled] {
-            //Explicitely instantiate, so old data is removed.
             Recorder.enableDebug(CameraDebugService().path)
         }
         
         super.init(nibName: nil, bundle: nil)
+        
+        if sessionMotor {
+            RotateData = self.computeRotationX()
+        }
         
         tapCameraButtonCallback = { [weak self] in
             let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
@@ -102,12 +120,83 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         }
     }
     
+    func computeRotationX ( ) -> String {
+        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]
+        
+        // get number of rotation
+        let xnumberSteps = Defaults[.SessionRotateCount]
+        rotateByteData.append(UInt8(xnumberSteps! >> 24))
+        rotateByteData.append(UInt8(xnumberSteps! >> 16))
+        rotateByteData.append(UInt8(xnumberSteps! >> 8))
+        rotateByteData.append(UInt8(xnumberSteps! & 0xff))
+        print("rotateByteData1 \(rotateByteData)")
+        // get pps
+        let pps = Defaults[.SessionPPS]
+        rotateByteData.append(UInt8(pps! >> 8))
+        rotateByteData.append(UInt8(pps! & 0xff))
+        // add full step
+        rotateByteData.append(UInt8(0x00))
+        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
+        // compute for checksum
+        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
+        print("rotateByteData \(rotateByteData)")
+        // append padding
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        rotateByteData.append(UInt8(0xff))
+        // convert to hex string
+        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
+        
+    }
+    
+    func checkSum(data: NSData) -> Int {
+        let b = UnsafeBufferPointer<UInt8>(start:
+            UnsafePointer(data.bytes), count: data.length)
+        
+        var sum = 0
+        for i in 0..<data.length {
+            sum += Int(b[i])
+        }
+        return sum & 0xff
+    }
+    func hexString(data:NSData)->String{
+        if data.length > 0 {
+            let  hexChars = Array("0123456789abcdef".utf8) as [UInt8];
+            let buf = UnsafeBufferPointer<UInt8>(start: UnsafePointer(data.bytes), count: data.length);
+            var output = [UInt8](count: data.length*2 + 1, repeatedValue: 0);
+            var ix:Int = 0;
+            for b in buf {
+                let hi  = Int((b & 0xf0) >> 4);
+                let low = Int(b & 0x0f);
+                output[ix++] = hexChars[ hi];
+                output[ix++] = hexChars[low];
+            }
+            let result = String.fromCString(UnsafePointer(output))!;
+            return result;
+        }
+        return "";
+    }
+    func peripheral( peripheral: CBPeripheral,
+                     didUpdateValueForCharacteristic characteristic: CBCharacteristic,
+                                                     error: NSError?) {
+        
+        let responseData = characteristic.value
+        print("reponsse data processed \(responseData)")
+        
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     deinit {
         motionManager.stop()
+        print("de init cameraviewcontroller")
+        //rotationSource.stop()
+        //motionManager.stopDeviceMotionUpdates()
         
         //We do that in our signal as soon as everything's finished
         //recorder.dispose()
@@ -125,7 +214,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         } else {
             scnView = SCNView(frame: view.bounds)
         }
-        
         
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
@@ -191,23 +279,36 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     }
     
     func tapCameraButton() {
-        //tapCameraButtonCallback?()
-        print("ewe")
         tabView.cameraButton.hidden = true
         viewModel.isRecording.value = true
+        
+        if sessionMotor {
+            let rotatePlusBuff = (Defaults[.SessionRotateCount]! + Defaults[.SessionBuffCount]!)
+            
+            let missingSecs = 0.0
+            DegreeIncrPerMicro = (0.036 / ( (Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ) - missingSecs ))
+            
+            if let bleService = btDiscoverySharedInstance.bleService {
+                bleService.sendCommand(self.computeRotationX())
+            }
+        }
     }
     
     func touchEndCameraButton() {
-        //viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
     }
-    
     
     func cancelRecording() {
         Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
         
         viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
+        
+        if sessionMotor {
+            if let bleService = btDiscoverySharedInstance.bleService {
+                bleService.sendCommand("fe000402ffffffffffffffffffffffffff");
+            }
+        }
         
         stopSession()
         
@@ -218,24 +319,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
             StitchingService.removeUnstitchedRecordings()
         }
         
-        timer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(CameraViewController.update), userInfo: nil, repeats: true)
-    }
-
-    func update() {
-        
-        timer.invalidate()
-        
-        self.navigationController?.popViewControllerAnimated(false)
-        
-//        let seconds = 5.0
-//        let delay = seconds * Double(NSEC_PER_SEC)
-//        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-//        
-//        dispatch_after(dispatchTime, dispatch_get_main_queue(), {
-//            
-//            self.navigationController?.popViewControllerAnimated(true)
-//            
-//        })
+        self.navigationController?.popViewControllerAnimated(true)
     }
     
     private func setFocusMode(mode: AVCaptureFocusMode) {
@@ -243,16 +327,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         try! videoDevice!.lockForConfiguration()
         videoDevice!.focusMode = mode
         videoDevice!.unlockForConfiguration()
-        
-//        do {
-//            try videoDevice!.lockForConfiguration()
-//            videoDevice!.focusMode = mode
-//            videoDevice!.unlockForConfiguration()
-//        } catch  {
-//            print("error on setfocusmode")
-//        }
-        
-        
     }
     
     private func setExposureMode(mode: AVCaptureExposureMode) {
@@ -397,6 +471,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         motionManager.start()
         //(.XArbitraryCorrectedZVertical)
+        //motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -499,10 +574,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
     
     private var time = Double(-1)
     
-    private func updateBallPosition() {
+    private func updateBallPosition(expTime:Double) {
         
         // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
         let exposureDuration = max(self.exposureDuration, 0.006)
+//        let exposureDuration = max(self.exposureDuration, expTime)
+        //let exposureDuration = expTime
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
         let movementPerFrameInPixels = Double(1500)
@@ -613,8 +690,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         for format in videoDevice!.formats.map({ $0 as! AVCaptureDeviceFormat }) {
             var ranges = format.videoSupportedFrameRateRanges as! [AVFrameRateRange]
             let frameRates = ranges[0]
-            if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= 30
-            {
+            if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= 30 {
                 maxFps = frameRates.maxFrameRate
                 bestFormat = format
                 
@@ -628,7 +704,6 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         videoDevice!.exposureMode = .ContinuousAutoExposure
         videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
-        //videoDevice!.
         
         AVCaptureVideoStabilizationMode.Standard
         
@@ -672,7 +747,7 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         }
     }
     
-    private func processSampleBuffer(sampleBuffer: CMSampleBufferRef) {
+    private func processSampleBuffer(sampleBuffer: CMSampleBufferRef ,exposureTime:Double) {
         
         if recorder.isFinished() {
             return; //Dirt return here. Recording is running on the main thread.
@@ -680,8 +755,11 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         
         let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         
-        if let pixelBuffer = pixelBuffer {
-            let cmRotation = self.motionManager.getRotationMatrix()
+
+        if let pixelBuffer = pixelBuffer { //, motion = self.motionManager.deviceMotion {
+            
+            let cmRotation = motionManager.getRotationMatrix()
+            //let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
             var buf = ImageBuffer()
@@ -777,11 +855,9 @@ class CameraViewController: UIViewController,TabControllerDelegate {
 //                
 //                                }
             }
-            
-            
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(cmRotation)
-            
-            updateBallPosition()
+
+            updateBallPosition(exposureTime)
             
             if recorder.hasStarted() {
                 let currentKeyframe = recorder.lastKeyframe()
@@ -826,8 +902,12 @@ class CameraViewController: UIViewController,TabControllerDelegate {
         session.stopRunning()
         videoDevice = nil
         
-        for child in scene.rootNode.childNodes {
-            child.removeFromParentNode()
+//        for child in scene.rootNode.childNodes {
+//            child.removeFromParentNode()
+//        }
+        
+        scene.rootNode.childNodes.forEach {
+            $0.removeFromParentNode()
         }
         
         scnView.removeFromSuperview()
@@ -869,7 +949,15 @@ class CameraViewController: UIViewController,TabControllerDelegate {
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
-        processSampleBuffer(sampleBuffer)
+        
+        let metadataDict:NSDictionary = CMCopyDictionaryOfAttachments(nil, sampleBuffer, kCMAttachmentMode_ShouldPropagate)!
+        
+        var exifData = NSDictionary()
+        exifData = metadataDict.objectForKey(kCGImagePropertyExifDictionary) as! NSDictionary
+        
+        let exposureTimeValue = exifData.objectForKey(kCGImagePropertyExifExposureTime as String)!
+        
+        processSampleBuffer(sampleBuffer,exposureTime: exposureTimeValue.doubleValue)
         frameCount += 1
     }
 }

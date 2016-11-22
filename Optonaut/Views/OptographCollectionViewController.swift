@@ -23,7 +23,6 @@ protocol OptographCollectionViewModel {
     func loadMore()
 }
 
-
 class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout ,TransparentNavbarWithStatusBar,TabControllerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     
     private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
@@ -139,7 +138,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     
                     if results.models.count == 1 {
                         print("nagreload lahat")
-                        strongSelf.collectionView!.reloadData()
+                        //strongSelf.collectionView!.reloadData()
                     } else {
                         print("nagreload paisa isa")
                         CATransaction.begin()
@@ -147,9 +146,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                             strongSelf.collectionView!.performBatchUpdates({
                                 strongSelf.imageCache.delete(results.delete)
                                 strongSelf.imageCache.insert(results.insert)
-//                                for data in results.delete {
-//                                    strongSelf.imageCache.deleteMp4((strongSelf.optographIDs[data]))
-//                                }
                                 
                                 strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection:
                                     0) })
@@ -175,10 +171,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         uiHidden.producer.startWithNext { [weak self] hidden in
             self?.navigationController?.setNavigationBarHidden(hidden, animated: false)
-            
             self?.collectionView!.scrollEnabled = !hidden
-          
         }
+        
         tabController!.delegate = self
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         view.addSubview(tabView)
@@ -210,7 +205,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     }
                     print("Idle")
                 case let .Stitching(progress):
-                    //self?.tabView.cameraButton.progress = CGFloat(progress)
                     if self?.progress.hidden == true {
                         self?.progress.hidden = false
                     }
@@ -220,10 +214,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     self?.progress.angle = 360
                     self?.progress.hidden = true
                     self?.tabView.cameraButton.progress = nil
-                    self?.viewModel.refresh()
                     print("StitchingFinished")
                 }
         }
+        
         updateTabs()
         initNotificationIndicator()
         imagePicker.delegate = self
@@ -281,7 +275,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            if pickedImage.size.height == 2688 && pickedImage.size.width == 5376 {
+            if pickedImage.size.height == 2048 && pickedImage.size.width == 4096 {
                 uploadTheta(pickedImage)
             } else {
                 //isThetaImage.value = false
@@ -306,7 +300,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             Defaults[.SessionUploadMode] = "opto"
             
             if Defaults[.SessionEliteUser] {
-                navigationController?.pushViewController(CameraViewController(), animated: false)
+                //navigationController?.pushViewController(CameraViewController(), animated: false)
+                navigationController?.pushViewController(CameraOverlayVC(), animated: false)
+                
             } else{
                 self.tapRightButton()
             }
@@ -346,10 +342,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             self.presentViewController(alert, animated: true, completion: nil)
         }
-//self.presentViewController(InvitationViewController(), animated: true, completion: nil)
     }
     func tapRightButtonTab() {
-        tabController!.tapNavBarTitleForFeedClass()
+        //tabController!.tapNavBarTitleForFeedClass()
+        self.presentViewController(BTList(), animated: true, completion: nil)
     }
     
     func tapRightButton() {
@@ -410,6 +406,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        
         if tabController?.pageStatus.value == .Feed {
             viewModel.isActive.value = true
         }
@@ -457,7 +454,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        
         isVisible = true
         updateNavbarAppear()
     }
@@ -494,6 +490,29 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             return
         }
         
+//        let optographID = optographIDs[indexPath.row]
+//        
+//        cell.navigationController = navigationController as? NavigationController
+//        cell.bindModel(optographID)
+//        cell.swipeView = tabController!.scrollView
+//        cell.collectionView = collectionView
+//        cell.isShareOpen.producer
+//            .startWithNext{ val in
+//                if val{
+//                    self.shareData.optographId.value = optographID
+//                    self.shareData.isSharePageOpen.value = true
+//                }
+//        }
+//        
+//        if indexPath.row > optographIDs.count - 3 {
+//            viewModel.loadMore()
+//        }
+    }
+
+    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
+        
         let optographID = optographIDs[indexPath.row]
         
         cell.navigationController = navigationController as? NavigationController
@@ -511,56 +530,42 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if indexPath.row > optographIDs.count - 3 {
             viewModel.loadMore()
         }
-//        if collectionView.indexPathsForVisibleItems().last?.row == indexPath.row {
-//            SwiftSpinner.hide()
-//        }
-    }
-
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
-        //let optographID = optographIDs[indexPath.row]
-        
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
-        
-//        cell.navigationController = navigationController as? NavigationController
-//        cell.bindModel(optographID)
-//        cell.swipeView = tabController!.scrollView
-//        cell.collectionView = collectionView
-//        cell.isShareOpen.producer
-//            .startWithNext{ val in
-//                if val{
-//                    self.shareData.optographId.value = optographID
-//                    self.shareData.isSharePageOpen.value = true
-//                }
-//        }
-//        
-//        if indexPath.row > optographIDs.count - 3 {
-//            viewModel.loadMore()
-//        }
         
         return cell
     }
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        var optographsToPick: [UUID] = []
-        optographsToPick.append(optographIDs[indexPath.row])
+        let startOptograph = optographIDs[indexPath.row]
+        let optoModel = Models.optographs[startOptograph]!
+        let storyId = optoModel.model.storyID
         
-        if (indexPath.row + 5 ) >= optographIDs.count {
-            for a in 1...5 {
-                optographsToPick.append(optographIDs[(indexPath.row + a) % optographIDs.count])
-            }
+        if storyId != "" {
+            let detailsViewController = DetailsTableViewController(optoList:[startOptograph],storyid:storyId)
+            detailsViewController.cellIndexpath = indexPath.item
+            detailsViewController.isStory = true
+            navigationController?.pushViewController(detailsViewController, animated: true)
+
         } else {
-            for a in 1...5 {
-                optographsToPick.append(optographIDs[indexPath.row + a])
+            var optographsToPick: [UUID] = []
+            optographsToPick.append(optographIDs[indexPath.row])
+            
+            if (indexPath.row + 5 ) >= optographIDs.count {
+                for a in 1...5 {
+                    optographsToPick.append(optographIDs[(indexPath.row + a) % optographIDs.count])
+                }
+            } else {
+                for a in 1...5 {
+                    optographsToPick.append(optographIDs[indexPath.row + a])
+                }
             }
+            
+            let detailsViewController = DetailsTableViewController(optoList:optographsToPick,storyid: nil)
+            detailsViewController.cellIndexpath = indexPath.item
+            navigationController?.pushViewController(detailsViewController, animated: true)
+        
         }
         
-        let detailsViewController = DetailsTableViewController(optoList:optographsToPick)
-        
-        detailsViewController.cellIndexpath = indexPath.item
-        
-        navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
     

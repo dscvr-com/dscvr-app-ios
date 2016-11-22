@@ -174,8 +174,13 @@ class FacebookShareViewController: UIViewController,UITextFieldDelegate {
     
     func keyboardWillShow(notification: NSNotification) {
         let keyboardHeight = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue().height
+        var viewHeight = (view.frame.height - keyboardHeight) * 0.5
         
-        let viewHeight = (view.frame.height - keyboardHeight) * 0.5
+        if view.frame.height == 568.0 {
+            // 5s
+            viewHeight = ((view.frame.height - keyboardHeight) * 0.5) + 50
+        }
+        
         let paddingHeight = ((view.frame.height - keyboardHeight) - viewHeight) / 2
         
         theView.anchorToEdge(.Top, padding: paddingHeight, width: view.frame.width - 20, height: viewHeight)

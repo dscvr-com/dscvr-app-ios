@@ -39,23 +39,35 @@ class ActivityCommentTableViewCell: ActivityTableViewCell {
     }
     
     override func update(activity: Activity) {
-        if self.activity != activity {
-            causingImageView.setImageWithURLString(ImageURL(activity.activityResourceComment!.causingPerson.avatarAssetID, width: 40, height: 40))
-        }
         
         if self.activity != activity {
-//            optographImageView.setImageWithURLString(ImageURL(activity.activityResourceComment!.optograph.previewAssetID, width: 32, height: 40))
+            
+            let imageUrl = ImageURL("persons/\(activity.activityResourceComment!.causingPerson.ID)/\(activity.activityResourceComment!.causingPerson.avatarAssetID).jpg", width: 47, height: 47)
+            causingImageView.kf_setImageWithURL(NSURL(string:imageUrl)!)
+            
+            nameView.text = activity.activityResourceComment!.causingPerson.userName
+            
+            let url = TextureURL(activity.activityResourceComment!.optograph!.ID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
+            self.optographImageView.kf_setImageWithURL(NSURL(string: url)!)
         }
-        
         super.update(activity)
     }
     
     func pushProfile() {
-//        navigationController?.pushViewController(ProfileTableViewController(personID: activity.activityResourceComment!.causingPerson.ID), animated: true)
+        
+        self.read()
+        let profilepage = ProfileCollectionViewController(personID: self.activity.activityResourceComment!.causingPerson.ID)
+        profilepage.isProfileVisit = true
+        self.navigationController?.pushViewController(profilepage, animated: true)
     }
     
     func pushDetails() {
-//        navigationController?.pushViewController(DetailsTableViewController(optographID: activity.activityResourceComment!.optograph.ID), animated: true)
+        if Models.optographs[self.activity.activityResourceComment!.optograph!.ID] != nil {
+            self.read()
+            let detailsViewController = DetailsTableViewController(optoList:[activity.activityResourceComment!.optograph!.ID],storyid: nil)
+            detailsViewController.cellIndexpath = 0
+            navigationController?.pushViewController(detailsViewController, animated: true)
+        }
     }
     
 }

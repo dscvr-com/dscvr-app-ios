@@ -21,7 +21,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     let centerViewController: NavigationController
     let rightViewController: NavigationController
     let leftViewController: NavigationController
-    //let fourthViewController: NavigationController
+    let fourthViewController: NavigationController
     
     var thisView = UIView()
     var isSettingsViewOpen = MutableProperty<Bool>(false)
@@ -46,7 +46,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     var postTwitter: MutableProperty<Bool>
     var isOnline: MutableProperty<Bool>
     
-    enum PageStatus { case Profile, Share, Feed }
+    enum PageStatus { case Profile, Share, Feed ,Story}
     let pageStatus = MutableProperty<PageStatus>(.Feed)
     
     var delegate: TabControllerDelegate?
@@ -90,7 +90,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         centerViewController = FeedNavViewController()
         rightViewController =  ProfileNavViewController()
         leftViewController = SharingNavViewController()
-        //fourthViewController = StNavViewController()
+        fourthViewController = StNavViewController()
     
         
         postFacebook = MutableProperty(Defaults[.SessionShareToggledFacebook])
@@ -109,7 +109,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         
         scrollView = UIScrollView(frame: view.bounds)
         scrollView.backgroundColor = UIColor.blackColor()
-        let scrollWidth: CGFloat  = 3 * self.view.frame.width
+        let scrollWidth: CGFloat  = 4 * self.view.frame.width
         let scrollHeight: CGFloat  = self.view.frame.size.height
         self.scrollView!.contentSize = CGSizeMake(scrollWidth, scrollHeight)
         self.scrollView!.pagingEnabled = true;
@@ -126,9 +126,9 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         self.scrollView!.addSubview(rightViewController.view)
         rightViewController.didMoveToParentViewController(self)
         
-//        self.addChildViewController(fourthViewController)
-//        self.scrollView!.addSubview(fourthViewController.view)
-//        fourthViewController.didMoveToParentViewController(self)
+        self.addChildViewController(fourthViewController)
+        self.scrollView!.addSubview(fourthViewController.view)
+        fourthViewController.didMoveToParentViewController(self)
         
         adminFrame = leftViewController.view.frame
         adminFrame.origin.x = adminFrame.width
@@ -138,9 +138,9 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         BFrame.origin.x = 2*BFrame.width
         rightViewController.view.frame = BFrame
         
-//        fourthFrame = centerViewController.view.frame
-//        fourthFrame.origin.x =  3 * BFrame.width
-//        fourthViewController.view.frame = fourthFrame
+        fourthFrame = centerViewController.view.frame
+        fourthFrame.origin.x =  3 * BFrame.width
+        fourthViewController.view.frame = fourthFrame
         
         view.addSubview(scrollView)
         
@@ -196,7 +196,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     func scrollViewDidScroll(scrollView:UIScrollView) {
         
         if (!Defaults[.SessionUserDidFirstLogin]) {
-            
+            //if first login
             if (scrollView.contentOffset.x <= (self.view.frame.width * 2)) {
                 scrollView.contentOffset.x = self.view.frame.width * 2
             }
@@ -207,9 +207,20 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 shareData.isSharePageOpen.value = false
             }
         }
+        
+        //else if !SessionService.isLoggedIn &&  scrollView.contentOffset.x >= (self.view.frame.width * 3){
+        //scrollView.contentOffset.x = self.view.frame.width * 2
     }
+    
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
+        
+        if !SessionService.isLoggedIn {
+            if scrollView.contentOffset.x >= (self.view.frame.width * 3) || (scrollView.contentOffset.x > (self.view.frame.width * 2) + 20){
+                scrollView.contentOffset.x = self.view.frame.width * 2
+            } else if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
+                scrollView.contentOffset.x = self.view.frame.width
+            }
+        } else if (scrollView.contentOffset.x >= self.view.frame.width && scrollView.contentOffset.x < (self.view.frame.width * 2)) {
             scrollView.contentOffset.x = self.view.frame.width
         }
         
@@ -219,6 +230,9 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         } else if scrollView.contentOffset.x == 0 {
             print("nasa share ka")
             pageStatus.value = .Share
+        } else if scrollView.contentOffset.x == self.view.frame.width * 3 {
+            print("nasa story ka")
+            pageStatus.value = .Story
         } else {
             print("nasa profile ka")
             pageStatus.value = .Profile
@@ -235,12 +249,20 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func leftButtonAction() {
-        print("23234234wrewrewrew")
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.adminFrame,animated: false)
             }, completion:{ _ in
                 print("nasa feed ka")
                 self.pageStatus.value = .Feed
+        })
+    }
+    
+    func goToProfileFromStory() {
+        UIView.animateWithDuration(0.5, animations: {
+            self.scrollView.scrollRectToVisible(self.BFrame,animated: false)
+            }, completion:{ _ in
+                print("nasa profile ka")
+                self.pageStatus.value = .Profile
         })
     }
     
@@ -272,6 +294,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func settingsView() {
+        
+//        let settingsScrollView = UIScrollView()
+//        settingsScrollView.contentSize = CGSizeMake(1000, 1000)
+//        settingsScrollView.addSubview(thisView)
         
         thisView.frame = CGRectMake(0, -(view.frame.height), view.frame.width, view.frame.height)
         thisView.backgroundColor = UIColor.whiteColor()
@@ -476,7 +502,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         dividerThree.hidden = true
         
         let versionLabel = UILabel()
-        versionLabel.text = "v0.97"
+        versionLabel.text = "v1.1"
         versionLabel.textAlignment = .Center
         versionLabel.font = .fontDisplay(10, withType: .Semibold)
         versionLabel.align(.UnderMatchingRight, relativeTo: bgImage!, padding: 2, width: 40, height: 10)
@@ -521,7 +547,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     func createSocialButtons() {
         let hideLabel = UILabel()
         hideLabel.backgroundColor = UIColor.whiteColor()
-        hideLabel.frame = CGRect(x: 0,y:threeRingButton.frame.origin.y ,width: thisView.width,height: threeRingButton.height + 2)
+        hideLabel.frame = CGRect(x: 0,y:threeRingButton.frame.origin.y ,width: thisView.width,height: view.height - threeRingButton.frame.origin.y - 35)
         thisView.addSubview(hideLabel)
         
         facebookSocialButton.text = "Facebook"
@@ -546,11 +572,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
             self?.twitterSocialButton.icon2 = toggled ? UIImage(named:"twitter_save_active")! : UIImage(named:"twitter_save_inactive")!
         }
         
-        let fbButton = UIImage(named:"facebook_save_active")?.size
-        let twitterButton = UIImage(named:"twitter_save_active")?.size
         
-        facebookSocialButton.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 60, width: (fbButton?.width)!, height: (fbButton?.height)!)
-        twitterSocialButton.align(.ToTheRightMatchingTop, relativeTo: facebookSocialButton, padding: 40 + 77, width: (twitterButton?.width)!, height: (twitterButton?.height)!)
         
         let titleLabelShare = UILabel()
         titleLabelShare.text = "AUTO SHARE IMAGE ON: "
@@ -558,10 +580,15 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         titleLabelShare.textColor = UIColor.blackColor()
         titleLabelShare.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(titleLabelShare)
-        titleLabelShare.align(.AboveMatchingLeft, relativeTo: facebookSocialButton, padding: 5, width: 200, height: 20)
+        //titleLabelShare.align(.AboveMatchingLeft, relativeTo: facebookSocialButton, padding: 5, width: 200, height: 20)
+        titleLabelShare.align(.UnderMatchingLeft, relativeTo: oneRingButton, padding: 10, width: 200, height: 20)
         
+        let fbButton = UIImage(named:"facebook_save_active")?.size
+        let twitterButton = UIImage(named:"twitter_save_active")?.size
         
-        //twitterSocialButton.hidden = true
+        facebookSocialButton.align(.UnderMatchingLeft, relativeTo: titleLabelShare, padding: 5, width: (fbButton?.width)!, height: (fbButton?.height)!)
+        twitterSocialButton.align(.UnderMatchingLeft, relativeTo: facebookSocialButton, padding: 5, width: (twitterButton?.width)!, height: (twitterButton?.height)!)
+        
     }
     
 //    func motorButtonUp() {

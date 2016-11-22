@@ -258,7 +258,7 @@ class CollectionImageCache {
         debouncerTouch = Debouncer(queue: dispatch_get_main_queue(), delay: 0.1)
         
         let documentsPath = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0])
-        logsPath = documentsPath.URLByAppendingPathComponent("mp4s")
+        logsPath = documentsPath.URLByAppendingPathComponent("StoryFiles")
         
         do {
             try fileManager.createDirectoryAtPath(logsPath!.path!, withIntermediateDirectories: true, attributes: nil)
@@ -286,6 +286,16 @@ class CollectionImageCache {
             return item.innerCache
         }
     }
+    
+    func getStory( optographID: UUID, side: TextureSide) -> CubeImageCache {
+        assertMainThread()
+        
+        
+        let item = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))
+        return item.innerCache
+        
+    }
+    
     func insertMp4IntoCache(url:String,optographId:String) -> String{
         
         let priority = DISPATCH_QUEUE_PRIORITY_BACKGROUND
@@ -319,6 +329,43 @@ class CollectionImageCache {
         }
     }
     
+    func insertStoryFile(url:NSURL?,file:NSData?,fileName:String) -> String{
+        
+        let priority = DISPATCH_QUEUE_PRIORITY_BACKGROUND
+        
+        let path = self.logsPath!.path!.stringByAppendingPathComponent("\(fileName)")
+        
+        if !self.fileManager.fileExistsAtPath(path) {
+            dispatch_async(dispatch_get_global_queue(priority, 0)) {
+                if url != nil {
+                    let videoData = NSData(contentsOfURL: url!)
+                    if (videoData != nil) {
+                        videoData?.writeToFile(path, atomically: true)
+                    }
+                } else {
+                    if let videoData:NSData = file {
+                        videoData.writeToFile(path, atomically: true)
+                    }
+                }
+            }
+            return ""
+        } else {
+            return path
+        }
+    }
+    
+    func deleteStoryFile(fileName:String) -> Bool {
+        let path = self.logsPath!.path!.stringByAppendingPathComponent("\(fileName)")
+        
+        do{
+            try fileManager.removeItemAtPath(path)
+            return true
+        }catch {
+            return false
+        }
+    }
+    
+    
     func getOptocache(index: Int, optographID: UUID, side: TextureSide) -> CubeImageCache {
         assertMainThread()
         
@@ -330,10 +377,6 @@ class CollectionImageCache {
             return item.innerCache
         
     }
-    
-    
-    
-    
     
     func disable(index: Int) {
         assertMainThread()

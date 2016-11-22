@@ -78,7 +78,7 @@ extension ModelBox where M: SQLiteModel {
     
     func insertOrIgnore() {
         objc_sync_enter(self)
-        try! model.insertOrIgnore()
+        model.insertOrIgnore()
         dispatch_async(dispatch_get_main_queue()) {
             self.property.value = self.model
         }
@@ -92,7 +92,8 @@ class Models {
     static var optographs = ModelCache<Optograph>()
     static var persons = ModelCache<Person>()
     static var locations = ModelCache<Location>()
-    
+    static var story = ModelCache<Story>()
+    static var storyChildren = ModelCache<StoryChildren>()
 }
 
 protocol ModelCacheType: class {

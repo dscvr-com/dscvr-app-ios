@@ -39,11 +39,9 @@ class ApiService<T: Mappable> {
     private static var host: String {
         switch Env {
         case .Development: return "optonaut.ngrok.io"
-        //case .Staging: return "api-staging.iam360.io"
         case .Staging: return "api-staging.dscvr.com"
-        //case .Staging: return "mapi.dscvr.com"
         case .localStaging: return "192.168.1.69:3000"
-        case .Production: return "api-production-v9.iam360.io"
+        case .Production: return "api-production-v9.dscvr.com"
         }
     }
     
@@ -64,6 +62,9 @@ class ApiService<T: Mappable> {
     static func getForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return requestForGate(endpoint, method: .GET, queries: queries, parameters: parameters)
     }
+    static func putForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+        return requestForGate(endpoint, method: .PUT, queries: queries, parameters: parameters)
+    }
     
     static func put(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .PUT, queries: queries, parameters: parameters)
@@ -71,6 +72,9 @@ class ApiService<T: Mappable> {
     
     static func delete(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .DELETE, queries: queries, parameters: nil)
+    }
+    static func deleteNewEndpoint(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
+        return requestForGate(endpoint, method: .DELETE, queries: queries, parameters: nil)
     }
     
     static func upload(endpoint: String, uploadData: [String: String]) -> SignalProducer<Float, NSError> {
@@ -106,13 +110,46 @@ class ApiService<T: Mappable> {
             }
         }
     }
-//    func downloadImage() {
-//        Alamofire.request(.GET, "https://robohash.org/123.png")
-//            .response { (request, response, data, error) in
-//            self.myImageView.image = UIImage(data: data, scale:1)
-//        }
-//    
-//    }
+    
+    static func uploadForGate(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
+        return SignalProducer { sink, disposable in
+            let mutableURLRequest = buildURLRequestForGate(endpoint, method: .POST, queries: nil)
+            
+            var request: Alamofire.Request?
+            Alamofire.upload(mutableURLRequest, multipartFormData: multipartFormData) { result in
+                
+                switch result {
+                case .Success(let upload, _, _):
+                    request = upload
+                        .validate(statusCode: 200..<300)
+                        .response { _, _, _, error in
+                            if let error = error {
+                                let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "Upload failed", error: error)
+                                sink.sendFailed(apiError)
+                            } else {
+                                sink.sendCompleted()
+                            }
+                            
+                            print("response: \(upload.response)")
+                    }
+                case .Failure(let error):
+                    let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "Upload failed", error: error as NSError)
+                    print("error: \(error)")
+                    sink.sendFailed(apiError)
+                }
+            }
+            
+            disposable.addDisposable {
+                request?.cancel()
+            }
+            }
+            .on(failed: { error in
+                if error.suspicious {
+                    //                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+                    Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
+                }
+            })
+    }
     
     static func upload(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
         return SignalProducer { sink, disposable in
@@ -144,7 +181,7 @@ class ApiService<T: Mappable> {
         }
             .on(failed: { error in
                 if error.suspicious {
-//                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+                    //NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
                 }
             })
@@ -167,7 +204,6 @@ class ApiService<T: Mappable> {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             print ("Bearer ",token)
         }
-        print("mutableRequest>>>",mutableURLRequest)
         
         return mutableURLRequest
     }
@@ -179,14 +215,13 @@ class ApiService<T: Mappable> {
                 queryStr += "\(key)=\(value.escaped)"
             }
         }
-        
         let URL = NSURL(string: "https://mapi.dscvr.com/\(endpoint)\(queryStr)")!
+        
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
         if let token = Defaults[.SessionToken] {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            //print ("token",token)
         }
         
         return mutableURLRequest
@@ -201,8 +236,6 @@ class ApiService<T: Mappable> {
             
             let mutableURLRequest = buildURLRequest(endpoint, method: method, queries: queries)
             
-            
-            //print("urlrequest >>",mutableURLRequest)
             
             if let parameters = parameters {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters, options: [])
@@ -230,6 +263,7 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                                    
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
                                     } else if let array = Mapper<T>().mapArray(json) {
@@ -258,7 +292,7 @@ class ApiService<T: Mappable> {
         }
             .on(failed: { error in
                 if error.suspicious {
-//                    NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
+                    //NotificationService.push("Uh oh. Something went wrong. We're on it!", level: .Error)
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
                 }
             })
@@ -272,6 +306,7 @@ class ApiService<T: Mappable> {
             }
             
             let mutableURLRequest = buildURLRequestForGate(endpoint, method: method, queries: queries)
+            print(mutableURLRequest)
             
             if let parameters = parameters {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters, options: [])
@@ -291,6 +326,8 @@ class ApiService<T: Mappable> {
                             let data = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
                         } catch {}
                         
+                        print(error)
+                        
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode ?? -1, message: error.description, error: error)
                         sink.sendFailed(apiError)
                     } else {
@@ -298,6 +335,8 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                                    
+                                    print(endpoint,json)
                                     
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)

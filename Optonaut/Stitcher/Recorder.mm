@@ -210,7 +210,7 @@ optonaut::StorageImageSink imageSink(Stores::post);
     
     
         self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                        self->intrinsics, optonaut::RecorderGraph::ModeTruncated);
+                                        self->intrinsics, optonaut::RecorderGraph::ModeCenter);
     
     }
   

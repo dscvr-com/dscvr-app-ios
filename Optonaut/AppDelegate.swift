@@ -53,7 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("First launch, setting NSUserDefault.")
                 NSUserDefaults.standardUserDefaults().setBool(true, forKey: "launchedBefore")
                 Defaults[.SessionVRMode] = true
-                Defaults[.SessionUseMultiRing] = true
+                Defaults[.SessionUseMultiRing] = false
             }
             
             Mixpanel.sharedInstance().track("Launch.Notification")
@@ -65,13 +65,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = tabBarViewController
             
             Defaults[.SessionGyro] = true
+            Defaults[.SessionEliteUser] = true
             
-            if SessionService.isLoggedIn && !Defaults[.SessionEliteUser]{
-                self.sendCheckElite().start()
+            //Bluetooth Notif
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.connectionChanged(_:)), name: BLEServiceChangedStatusNotification, object: nil)
+            // Start the Bluetooth discovery process
+            btDiscoverySharedInstance
             
-            }
         }
         return true
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: BLEServiceChangedStatusNotification, object: nil)
+    }
+    
+    func connectionChanged(notification: NSNotification) {
+        print("pumasok dsa functino")
+        // Connection status changed. Indicate on GUI.
+        let userInfo = notification.userInfo as! [String: Bool]
+        
+        dispatch_async(dispatch_get_main_queue(), {
+            // Set image based on connection status
+            if let isConnected: Bool = userInfo["isConnected"] {
+                if isConnected {
+                    print("Bluetooth_Connected")
+                } else {
+                    print("Bluetooth_Disconnected")                }
+            }
+        });
     }
     
     func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
@@ -118,6 +140,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(application: UIApplication) {
+        Defaults[.SessionStoryOptoID] = nil
+
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
@@ -142,10 +166,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        let mixPanel = Mixpanel.sharedInstance()
+        mixPanel.people.addPushDeviceToken(deviceToken)
+        
         let tokenChars = UnsafePointer<CChar>(deviceToken.bytes)
         var tokenString = ""
-        
-        print("DEVICE TOKEN = \(deviceToken)")
         
         for var i = 0; i < deviceToken.length; i++ {
             tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
@@ -159,7 +184,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject: AnyObject]) {
         ActivitiesService.unreadCount.value = 1
-        print()
 //        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {
 //            tabBarViewController.activityNavViewController.activityTableViewController.viewModel.refreshNotification.notify(())
 //        }
@@ -176,11 +200,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if case .Production = Env {
             print("production mixpanel")
-            Mixpanel.sharedInstanceWithToken("2cb0781fb2aaac9ef23bb1e92694caae")
+            //Mixpanel.sharedInstanceWithToken("2cb0781fb2aaac9ef23bb1e92694caae")
         } else {
             print("staging mixpanel")
             Mixpanel.sharedInstanceWithToken("905eb49cf2c78af5ceb307939f02c092")
         }
+//        let sysVer = UIDevice.currentDevice().systemVersion as NSString
+//        
+//        if sysVer.floatValue >= 8.0 {
+//            UIApplication.sharedApplication().registerForRemoteNotifications()
+//        }
+        
+        /*
+         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+         {
+         [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+         [[UIApplication sharedApplication] registerForRemoteNotifications];
+         }
+         // This code will work in iOS 7.0 and below:
+         else
+         {
+         [[UIApplication sharedApplication] registerForRemoteNotificationTypes: (UIRemoteNotificationTypeNewsstandContentAvailability| UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
+         }
+         
+         // Call .identify to flush the People record to Mixpanel
+         [mixpanel identify:mixpanel.distinctId];
+         */
         
         try! DatabaseService.prepare()
         

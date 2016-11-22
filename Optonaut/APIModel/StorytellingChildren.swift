@@ -9,34 +9,49 @@
 import Foundation
 import ObjectMapper
 
-struct StorytellingChildren: Mappable {
-    var story_object_id: String = ""
-    var story_object_story_id:  String = ""
-    var story_object_media_type: String = ""
-    var story_object_media_face: String = ""
-    var story_object_media_description: String = ""
-    var story_object_media_additional_data: String = ""
-    var story_object_position: [String] = []
-    var story_object_rotation: [String] = []
-    var story_object_created_at: String = ""
-    var story_object_deleted_at: String = ""
-    var story_object_media_filename: String = ""
-    var story_object_media_fileurl: String = ""
+struct StorytellingChildren: ApiModel,Mappable {
+    
+    var ID:UUID = ""
+    var createdAt:NSDate = NSDate()
+    var updatedAt:NSDate = NSDate()
+    var deletedAt:NSDate? = nil
+    var storyID: String = ""
+    var mediaType: String = ""
+    var mediaFace: String = ""
+    var mediaDescription: String = ""
+    var mediaAdditionalData: String = ""
+    var objectPosition: String = ""
+    var objectRotation: String = ""
+    var objectMediaFilename: String = ""
+    var objectMediaFileUrl: String = ""
     
     init?(_ map: Map) {}
     
     mutating func mapping(map: Map) {
-        story_object_id              <- map["story_object_id"]
-        story_object_story_id                 <- map["story_object_story_id"]
-        story_object_media_type  <- map["story_object_media_type"]
-        story_object_media_face  <- map["story_object_media_face"]
-        story_object_media_description  <- map["story_object_media_description"]
-        story_object_media_additional_data  <- map["story_object_media_additional_data"]
-        story_object_position  <- map["story_object_position"]
-        story_object_rotation  <- map["story_object_rotation"]
-        story_object_created_at  <- map["story_object_created_at"]
-        story_object_deleted_at  <- map["story_object_deleted_at"]
-        story_object_media_filename  <- map["story_object_media_filename"]
-        story_object_media_fileurl  <- map["story_object_media_fileurl"]
+        
+        var opArray: [AnyObject] = []
+        var orArray: [AnyObject] = []
+        
+        ID                    <- map["story_object_id"]
+        storyID               <- map["story_object_story_id"]
+        mediaType             <- map["story_object_media_type"]
+        mediaFace             <- map["story_object_media_face"]
+        mediaDescription      <- map["story_object_media_description"]
+        mediaAdditionalData   <- map["story_object_media_additional_data"]
+        opArray               <- map["story_object_position"]
+        orArray               <- map["story_object_rotation"]
+        createdAt             <- map["story_object_created_at"]
+        deletedAt             <- map["story_object_deleted_at"]
+        updatedAt             <- map["story_object_updated_at"]
+        objectMediaFilename   <- map["story_object_media_filename"]
+        objectMediaFileUrl    <- map["story_object_media_fileurl"]
+        
+        if opArray.count != 0 {
+            objectPosition = opArray.map{String($0)}.joinWithSeparator(",")
+        }
+        
+        if orArray.count != 0 {
+            objectRotation = orArray.map{String($0)}.joinWithSeparator(",")
+        }
     }
 }

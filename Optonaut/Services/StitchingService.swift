@@ -12,6 +12,7 @@ import Mixpanel
 import Async
 import ImageIO
 import AssetsLibrary
+import SwiftyUserDefaults
 
 enum StitchingError: ErrorType {
     case Busy
@@ -84,9 +85,12 @@ class StitchingService {
             
             Mixpanel.sharedInstance().track("Action.Stitching.Start")
             Mixpanel.sharedInstance().timeEvent("Action.Stitching.Finish")
-            //if motor
-            let convertToStereo = ConvertToStereo()
-            convertToStereo.convert()
+            
+            if Defaults[.SessionMotor] {
+                let convertToStereo = ConvertToStereo()
+                convertToStereo.convert()
+            }
+            
             
             // There is no such thing any more. 
             //assert(hasUnstitchedRecordings())
@@ -98,37 +102,39 @@ class StitchingService {
                 }
                 return !shallCancel
             }
-            //if motor
-//            if !shallCancel {
-//                for (face, cubeFace) in stitcher.getLeftResultThreeRing().enumerate() {
-//                    var leftFace = ImageBuffer()
-//                    cubeFace.getValue(&leftFace)
-//                    
-//                    if !shallCancel {
-//                        autoreleasepool {
-//                            let image = ImageBufferToCompressedUIImage(leftFace)
-//                            sink.sendNext(.Result(side: .Left, face: face, image: image))
-//                        }
-//                    }
-//                    Recorder.freeImageBuffer(leftFace)
-//                }
-//            }
             
-            if !shallCancel {
-                for (face, cubeFace) in stitcher.getLeftResult().enumerate() {
-                    var leftFace = ImageBuffer()
-                    cubeFace.getValue(&leftFace)
-                    
-                    if !shallCancel {
-                        autoreleasepool {
-                            let image = ImageBufferToCompressedUIImage(leftFace)
-                            sink.sendNext(.Result(side: .Left, face: face, image: image))
+            if Defaults[.SessionMotor] {
+                if !shallCancel {
+                    for (face, cubeFace) in stitcher.getLeftResultThreeRing().enumerate() {
+                        var leftFace = ImageBuffer()
+                        cubeFace.getValue(&leftFace)
+                        
+                        if !shallCancel {
+                            autoreleasepool {
+                                let image = ImageBufferToCompressedUIImage(leftFace)
+                                sink.sendNext(.Result(side: .Left, face: face, image: image))
+                            }
                         }
+                        Recorder.freeImageBuffer(leftFace)
                     }
-                    Recorder.freeImageBuffer(leftFace)
+                }
+            
+            } else {
+                if !shallCancel {
+                    for (face, cubeFace) in stitcher.getLeftResult().enumerate() {
+                        var leftFace = ImageBuffer()
+                        cubeFace.getValue(&leftFace)
+                        
+                        if !shallCancel {
+                            autoreleasepool {
+                                let image = ImageBufferToCompressedUIImage(leftFace)
+                                sink.sendNext(.Result(side: .Left, face: face, image: image))
+                            }
+                        }
+                        Recorder.freeImageBuffer(leftFace)
+                    }
                 }
             }
-            //if motor
             
             //get the ER result
             if !shallCancel {
@@ -165,38 +171,37 @@ class StitchingService {
                 
                 
             }
-            
-            //if motor
-//            if !shallCancel {
-//                for (face, cubeFace) in stitcher.getRightResultThreeRing().enumerate() {
-//                    var rightFace = ImageBuffer()
-//                    cubeFace.getValue(&rightFace)
-//                    
-//                    autoreleasepool {
-//                        if !shallCancel {
-//                            let image = ImageBufferToCompressedUIImage(rightFace)
-//                            sink.sendNext(.Result(side: .Right, face: face, image: image))
-//                        }
-//                    }
-//                    Recorder.freeImageBuffer(rightFace)
-//                }
-//            }
-            
-            if !shallCancel {
-                for (face, cubeFace) in stitcher.getRightResult().enumerate() {
-                    var rightFace = ImageBuffer()
-                    cubeFace.getValue(&rightFace)
-
-                    autoreleasepool {
-                        if !shallCancel {
-                            let image = ImageBufferToCompressedUIImage(rightFace)
-                            sink.sendNext(.Result(side: .Right, face: face, image: image))
+            if Defaults[.SessionMotor] {
+                if !shallCancel {
+                    for (face, cubeFace) in stitcher.getRightResultThreeRing().enumerate() {
+                        var rightFace = ImageBuffer()
+                        cubeFace.getValue(&rightFace)
+                        
+                        autoreleasepool {
+                            if !shallCancel {
+                                let image = ImageBufferToCompressedUIImage(rightFace)
+                                sink.sendNext(.Result(side: .Right, face: face, image: image))
+                            }
                         }
+                        Recorder.freeImageBuffer(rightFace)
                     }
-                    Recorder.freeImageBuffer(rightFace)
+                }
+            } else {
+                if !shallCancel {
+                    for (face, cubeFace) in stitcher.getRightResult().enumerate() {
+                        var rightFace = ImageBuffer()
+                        cubeFace.getValue(&rightFace)
+                        
+                        autoreleasepool {
+                            if !shallCancel {
+                                let image = ImageBufferToCompressedUIImage(rightFace)
+                                sink.sendNext(.Result(side: .Right, face: face, image: image))
+                            }
+                        }
+                        Recorder.freeImageBuffer(rightFace)
+                    }
                 }
             }
-            
             Mixpanel.sharedInstance().track("Action.Stitching.Finish")
             
             

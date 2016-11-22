@@ -9,19 +9,27 @@
 import Foundation
 import ObjectMapper
 
-struct mapChildren: Mappable {
-    var children:[StorytellingChildren]?
-    var story_id: String = ""
-    var story_optograph_id: String = ""
-    var story_person_id: String = ""
-    var story_created_at: String = ""
-    var story_updated_at: String = ""
-    var story_deleted_at: String = ""
+struct mapChildren: ApiModel, Mappable {
     
+    var ID:UUID = ""
+    var createdAt:NSDate = NSDate()
+    var updatedAt:NSDate = NSDate()
+    var deletedAt:NSDate? = nil
+    var optographID = ""
+    var personID = ""
+    var children:[StorytellingChildren]?
+    
+    init() {}
     init?(_ map: Map) {
     }
     
     mutating func mapping(map: Map) {
-        children              <- map["children"]
+        ID              <- map["id"]
+        createdAt       <- (map["created_at"], NSDateTransform())
+        updatedAt       <- (map["updated_at"], NSDateTransform())
+        updatedAt       <- (map["deleted_at"], NSDateTransform())
+        personID        <- map["person_id"]
+        optographID     <- map["optograph_id"]
+        children        <- map["children"]
     }
 }

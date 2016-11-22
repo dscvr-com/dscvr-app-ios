@@ -10,6 +10,7 @@ import Foundation
 import ReactiveCocoa
 import SpriteKit
 import SwiftyUserDefaults
+import SQLite
 
 protocol FPOptographsCollectionViewControllerDelegate {
     func optographSelected(optographID: String);
@@ -18,10 +19,8 @@ protocol FPOptographsCollectionViewControllerDelegate {
 class FPOptographsCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     private var profileViewModel: ProfileViewModel;
-    private var collectionViewModel: ProfileOptographsViewModel;
-    private var feedsModel = FeedOptographCollectionViewModel();
+    private var pfModel:FPModel
     private var optographIDs: [UUID] = [];
-    private var feedIDs: [UUID] = [];
     
     var startStory = false;
     var delegate: FPOptographsCollectionViewControllerDelegate?
@@ -29,7 +28,7 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
     init(personID: UUID) {
         
         profileViewModel = ProfileViewModel(personID: personID);
-        collectionViewModel = ProfileOptographsViewModel(personID: personID);
+        pfModel = FPModel(personID: personID)
         
         super.init(collectionViewLayout: UICollectionViewLeftAlignedLayout());
     }
@@ -50,58 +49,63 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
         
         collectionView!.registerClass(ProfileTileCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell");
         
-        //collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID);
         
-        collectionViewModel.results.producer
-            .filter{$0.changed}
-            .delayAllUntil(collectionViewModel.isActive.producer)
+        pfModel.results.producer
+            .delayAllUntil(pfModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
                 
                 if let strongSelf = self {
-                    
-                    strongSelf.optographIDs = results.models
-                        .filter{ $0.isPublished || $0.isUploading}
+                    print(results)
+                    strongSelf.optographIDs = results
                         .map{$0.ID}
-                    
-                    print("over here");
-                    print("id count: \(strongSelf.optographIDs.count)");
-                    strongSelf.feedsModel.isActive.value = true;
-                    strongSelf.feedsModel.refresh()
-                    strongSelf.collectionView?.reloadData();
-                    strongSelf.collectionViewModel.isActive.value = false;
                 }
-                })
-            .start();
+            })
+            .start { _ in
+                self.collectionView?.reloadData()
+        }
         
-        feedsModel.results.producer
-            .filter {return $0.changed }
-            //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
-            .delayAllUntil(feedsModel.isActive.producer)
-            .observeOnMain()
-            .on(next: { [weak self] results in
-                print("reload data =======")
-                
-                if let strongSelf = self {
-                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-                    strongSelf.feedIDs = results.models.map { $0.ID }
-                    strongSelf.optographIDs = strongSelf.optographIDs + results.models.map { $0.ID }
-                    print("feedIDs: \(strongSelf.optographIDs.count)");
-                    
-                    strongSelf.collectionView!.reloadData()
-                    
-                }
-                })
-            .start()
+        if !startStory {
+            let dismissButton = UIButton(frame: CGRect(x: 0, y: 0.0, width: 40.0, height: 40.0))
+            dismissButton.addTarget(self, action: #selector(dismissStorytelling), forControlEvents: .TouchUpInside)
+            dismissButton.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
+            
+            let rightBarButton = UIBarButtonItem(customView: dismissButton)
+            self.navigationItem.rightBarButtonItem = rightBarButton
+        } else {
+            var backButton = UIImage(named: "back_yellow_icn")
+            backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeStorytelling))
+        
+        }
+    }
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        if startStory  {
+            closeStorytelling()
+        }
+    }
+    
+    func closeStorytelling(){
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
+    func dismissStorytelling(){
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
-        print("did appear");
         
-        collectionViewModel.isActive.value = true;
-        collectionViewModel.refresh();
+        pfModel.isActive.value = true;
     }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        pfModel.isActive.value = false
+    }
+    
     //UICollectionView Data Source
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1;
@@ -117,7 +121,6 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
         
         let optographID = optographIDs[indexPath.item];
         cell.bind(optographID);
-        cell.refreshNotification = collectionViewModel.refreshNotification;
         cell.navigationController = navigationController as? NavigationController;
         cell.backgroundColor = UIColor.blackColor();
         
@@ -127,20 +130,21 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
     //UICollectionView Delegate
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        if startStory{
-            let detailsViewController = StoryDetailsTableViewController(optographId: optographIDs[indexPath.item])
+        if startStory {
+            
+            let detailsViewController = StoryDetailsTableViewController(optographId: optographIDs[indexPath.item],storyid: nil)
             detailsViewController.cellIndexpath = indexPath.item
             detailsViewController.isStorytelling = true
             
+            Defaults[.SessionStoryOptoID] = optographIDs[indexPath.item]
+            
             print("id: \(optographIDs[indexPath.item])");
             
-            navigationController?.pushViewController(detailsViewController, animated: true)
-        }
-        else{
+            navigationController?.presentViewController(detailsViewController, animated: true, completion: nil)
+        } else {
             delegate?.optographSelected(optographIDs[indexPath.item]);
             self.dismissViewControllerAnimated(true, completion: nil)
         }
-        
     }
     
     //UICollectionViewFlowLayout Delegate
@@ -157,4 +161,83 @@ class FPOptographsCollectionViewController: UICollectionViewController, UICollec
         return CGSize(width: width, height: width);
     }
 
+}
+
+class FPModel {
+    let refreshNotification = NotificationSignal<Void>()
+    let results = MutableProperty<[Optograph]>([])
+    let isActive = MutableProperty<Bool>(false)
+    private var refreshTimer: NSTimer?
+    
+    init(personID: UUID) {
+        
+        if let msoid = Defaults[.SessionStoryOptoID] {
+            
+            let query = OptographTable
+                .select(*)
+                .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
+                .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+                .join(.LeftOuter, StoryTable, on: StoryTable[StorySchema.ID] == OptographTable[OptographSchema.storyID])
+                .filter(PersonTable[PersonSchema.ID] == personID && OptographTable[OptographSchema.storyID] == "" && OptographTable[OptographSchema.ID] != msoid)
+            
+            refreshNotification.signal
+                .takeWhile { _ in SessionService.isLoggedIn }
+                .flatMap(.Latest) { _ in
+                    DatabaseService.query(.Many, query: query)
+                        .observeOnUserInteractive()
+                        .on(next: { row in
+                            Models.optographs.touch(Optograph.fromSQL(row))
+                            Models.persons.touch(Person.fromSQL(row))
+                            Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
+                        })
+                        .map(Optograph.fromSQL)
+                        .ignoreError()
+                        .collect()
+                        .startOnUserInteractive()
+                }
+                .observeOnMain()
+                .observeNext {self.results.value = $0 }
+            
+        } else {
+            
+            let query = OptographTable
+                .select(*)
+                .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
+                .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
+                .join(.LeftOuter, StoryTable, on: StoryTable[StorySchema.ID] == OptographTable[OptographSchema.storyID])
+                .filter(PersonTable[PersonSchema.ID] == personID && OptographTable[OptographSchema.storyID] == "")
+            
+            refreshNotification.signal
+                .takeWhile { _ in SessionService.isLoggedIn }
+                .flatMap(.Latest) { _ in
+                    DatabaseService.query(.Many, query: query)
+                        .observeOnUserInteractive()
+                        .on(next: { row in
+                            Models.optographs.touch(Optograph.fromSQL(row))
+                            Models.persons.touch(Person.fromSQL(row))
+                            Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
+                        })
+                        .map(Optograph.fromSQL)
+                        .ignoreError()
+                        .collect()
+                        .startOnUserInteractive()
+                }
+                .observeOnMain()
+                .observeNext {self.results.value = $0 }
+        }
+        
+        
+        
+        
+        
+        isActive.producer.skipRepeats().startWithNext { [weak self] isActive in
+            if isActive {
+                self?.refresh()
+            }
+        }
+    }
+    
+    func refresh() {
+        refreshNotification.notify(())
+    }
 }

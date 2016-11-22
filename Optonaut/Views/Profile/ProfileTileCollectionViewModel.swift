@@ -24,6 +24,7 @@ class ProfileTileCollectionViewModel {
     var optographBox: ModelBox<Optograph>!
     var userId = MutableProperty<Bool>(false)
     var uploadPercentStatus = MutableProperty<Float>(0.0)
+    let storyId = MutableProperty<UUID>("")
     
     var leftCount = 0
     var rightCount = 0
@@ -41,6 +42,7 @@ class ProfileTileCollectionViewModel {
             .startWithNext { [weak self] optograph in
                 self?.isPrivate.value = optograph.isPrivate
                 self?.isStitched.value = optograph.isStitched
+                self?.storyId.value = optograph.storyID
                 
                 if optograph.personID == SessionService.personID {
                     self?.userId.value = true

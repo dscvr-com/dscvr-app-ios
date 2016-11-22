@@ -200,7 +200,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         imageOptions.deliveryMode = .HighQualityFormat
         imageOptions.synchronous = true
         
-        PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: CGSizeMake(CGFloat(5376), CGFloat(2688)), contentMode: .AspectFill, options: imageOptions, resultHandler: {(result, info)in
+        PHImageManager.defaultManager().requestImageForAsset(asset, targetSize: CGSizeMake(CGFloat(4096), CGFloat(2048)), contentMode: .AspectFill, options: imageOptions, resultHandler: {(result, info)in
             if let image = result {
                 self.imagePicked.value = image
                 

@@ -157,7 +157,6 @@ struct StitcherCancellation {
 }
 
 - (NSArray<NSValue*>*)getRightResultThreeRing {
-    
     optonaut::Stitcher stitcher(Stores::right);
     
     NSArray<NSValue*>* result;

@@ -103,10 +103,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
             self!.collectionView?.reloadData()
             self!.collectionViewModel.refreshNotification.notify(())
             
-//            if self?.optographIDsNotUploaded.count != 0 {
-//                let indexPath = NSIndexPath(forRow: 1, inSection: 0)
-//                self?.collectionView?.reloadItemsAtIndexPaths([indexPath])
-//            }
         }
         
         profileViewModel.notifTabTouched.producer.startWithNext { [weak self] isNotifTabTap in
@@ -198,12 +194,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
                     strongSelf.optographIDs = results.models
                         .filter{ $0.isPublished && !$0.isUploading}
                         .map{$0.ID}
-                    
-                    //                    strongSelf.collectionView!.performBatchUpdates({
-                    //                        strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                    //                        strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                    //                        strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0 + 1, inSection: 0) })
-                    //                        }, completion: nil)
                 }
                 })
             .startWithNext { _ in
@@ -532,13 +522,18 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if indexPath.item != 0 && !isFollowClicked && !(indexPath.item == 1 && optographIDsNotUploaded.count != 0){
+            
             var cellCount:Int = 1
             
             if optographIDsNotUploaded.count != 0 {
                 cellCount += 1
             }
-            let detailsViewController = DetailsTableViewController(optoList: [optographIDs[indexPath.item - cellCount]])
-            detailsViewController.cellIndexpath = cellCount
+            
+            var optographsToPick: [UUID] = []
+            optographsToPick.append(optographIDs[indexPath.row - cellCount])
+            
+            let detailsViewController = DetailsTableViewController(optoList:optographsToPick,storyid: nil)
+            detailsViewController.cellIndexpath = indexPath.item
             navigationController?.pushViewController(detailsViewController, animated: true)
         }
     }

@@ -81,6 +81,31 @@ class InvertableHeadTrackerRotationSource : HeadTrackerRotationSource {
     }
     
 }
+class SpinRotationSource  : RotationMatrixSource {
+    private var retainCounter = 0
+    private var mat = GLKMatrix4MakeXRotation(Float(M_PI_2))
+    
+    static let Instance = SpinRotationSource()
+    
+    func getRotationMatrix() -> GLKMatrix4 {
+        mat = GLKMatrix4RotateY(mat, -Float(0.02));
+        return mat;
+    }
+    
+    func start() {
+        if retainCounter == 0 {
+        }
+        retainCounter += 1
+    }
+    
+    func stop() {
+        retainCounter -= 1
+        if retainCounter == 0 {
+        }
+        assert(retainCounter >= 0)
+    }
+    
+}
 
 class CoreMotionRotationSource : RotationMatrixSource {
     private let motionManager = CMMotionManager()
@@ -116,31 +141,6 @@ class CoreMotionRotationSource : RotationMatrixSource {
         retainCounter -= 1
         if retainCounter == 0 {
             motionManager.stopDeviceMotionUpdates()
-        }
-        assert(retainCounter >= 0)
-    }
-    
-}
-class SpinRotationSource  : RotationMatrixSource {
-    private var retainCounter = 0
-    private var mat = GLKMatrix4MakeXRotation(Float(M_PI_2))
-    
-    static let Instance = SpinRotationSource()
-    
-    func getRotationMatrix() -> GLKMatrix4 {
-        mat = GLKMatrix4RotateY(mat, -Float(0.02));
-        return mat;
-    }
-    
-    func start() {
-        if retainCounter == 0 {
-        }
-        retainCounter += 1
-    }
-    
-    func stop() {
-        retainCounter -= 1
-        if retainCounter == 0 {
         }
         assert(retainCounter >= 0)
     }

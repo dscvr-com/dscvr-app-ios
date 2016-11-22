@@ -11,6 +11,7 @@ import ObjectMapper
 
 struct OptographApiModel: ApiModel, Mappable {
     
+    var placeholder: String = ""
     var ID: UUID = ""
     var text: String = ""
     var person: PersonApiModel = PersonApiModel()
@@ -28,13 +29,14 @@ struct OptographApiModel: ApiModel, Mappable {
     var isStaffPick: Bool = false
     var directionPhi: Double = 0
     var directionTheta: Double = 0
-    
-    init() {}
+    var story: mapChildren = mapChildren()
     
     init?(_ map: Map){
     }
     
     mutating func mapping(map: Map) {
+        
+        placeholder                 <- map["placeholder"]
         ID                          <- map["id"]
         createdAt                   <- (map["created_at"], NSDateTransform())
         updatedAt                   <- (map["updated_at"], NSDateTransform())
@@ -52,5 +54,6 @@ struct OptographApiModel: ApiModel, Mappable {
         isStaffPick                 <- map["is_staff_pick"]
         directionPhi                <- map["direction_phi"]
         directionTheta              <- map["direction_theta"]
+        story                       <- map["story"]
     }
 }

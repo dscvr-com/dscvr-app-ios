@@ -45,7 +45,7 @@ struct TableViewResults<T: DeletableModel> {
         var update: [Int] = []
         var exclusiveNewModels: [T] = []
         for newModel in newModels.filter({ $0.deletedAt == nil }) {
-            if let index = models.indexOf({ $0.ID == newModel.ID }) {
+            if let index = models.indexOf({ $0.ID == newModel.ID}) {
                 if models[index] != newModel {
                     update.append(index)
                     models[index] = newModel
@@ -70,6 +70,7 @@ struct TableViewResults<T: DeletableModel> {
         
         return TableViewResults(insert: insert, update: update, delete: delete, models: models, changed: changed)
     }
+    
     func mergeForNotification(newModels: [T], deleteOld: Bool) -> TableViewResults<T> {
         
         var models = self.models

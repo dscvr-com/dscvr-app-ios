@@ -11,7 +11,7 @@ import ObjectMapper
 
 struct ActivityResourceStarModel: Mappable {
     var ID: UUID = ""
-    var optograph:OptographApiModel = OptographApiModel()
+    var optograph:OptographApiModel?
     var causingPerson:PersonApiModel = PersonApiModel()
     
     init() {}

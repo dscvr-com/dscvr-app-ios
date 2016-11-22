@@ -12,20 +12,26 @@ import ReactiveCocoa
 class CommentViewModel {
     
     let text: ConstantProperty<String>
-    let avatarImageUrl: ConstantProperty<String>
-    let displayName: ConstantProperty<String>
-    let userName: ConstantProperty<String>
+    var avatarImageUrl = MutableProperty<String>("")
+    var displayName = MutableProperty<String>("")
+    var userName = MutableProperty<String>("")
     let personID: ConstantProperty<UUID>
     let timeSinceCreated = MutableProperty<String>("")
     
     init(comment: Comment) {
-        print("comment>>>>",comment)
+        
         text = ConstantProperty(comment.text)
-        avatarImageUrl = ConstantProperty(ImageURL(comment.person.avatarAssetID, width: 40, height: 40))
-        displayName = ConstantProperty(comment.person.displayName)
-        userName = ConstantProperty("@\(comment.person.userName)")
-        personID = ConstantProperty(comment.person.ID)
+        personID = ConstantProperty(comment.person!.ID)
         timeSinceCreated.value = comment.createdAt.shortDescription
+        
+        let personModel = Models.persons[comment.person!.ID]!
+            
+        personModel.producer
+            .startWithNext { personInfo in
+            print("personInfo>>",personInfo)
+            self.avatarImageUrl.value = ImageURL("persons/\(personInfo.ID)/\(personInfo.avatarAssetID).jpg", width: 50, height: 50)
+            self.displayName.value = personInfo.displayName
+            self.userName.value = "@\(personInfo.userName)"
+        }
     }
-    
 }

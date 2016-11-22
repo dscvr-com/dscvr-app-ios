@@ -60,7 +60,7 @@ class ProfileUploadCollectionViewCell: UICollectionViewCell,UITableViewDataSourc
         return cell;
     }
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let detailsViewController = DetailsTableViewController(optoList:[optographIDsNotUploaded![indexPath.item]])
+        let detailsViewController = DetailsTableViewController(optoList:[optographIDsNotUploaded![indexPath.item]],storyid: nil)
         detailsViewController.cellIndexpath = indexPath.item
         navigationController?.pushViewController(detailsViewController, animated: true)
     }

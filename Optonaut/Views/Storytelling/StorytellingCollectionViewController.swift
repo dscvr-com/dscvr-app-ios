@@ -12,13 +12,13 @@ import Kingfisher
 class StorytellingCollectionViewController: UICollectionViewController,WhiteNavBar,TabControllerDelegate {
     
     private var profileViewModel: ProfileViewModel;
-    private var collectionViewModel: ProfileOptographsViewModel;
-    private var feedsModel = FeedOptographCollectionViewModel();
+    
+    private var feedsModel:StorytellingVCModel
     private var optographIDs: [UUID] = [];
     private var feedIDs: [UUID] = [];
     
     private var storyIDs: [UUID] = []; //user stories
-    private var storyFeed: [StorytellingFeed] = []; //feed available stories
+    //private var storyFeed: [StorytellingFeed] = []; //feed available stories
     
     var startStory = false;
     var startOpto = ""
@@ -27,13 +27,12 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     private var leftBarButton: UIBarButtonItem?
     private var rightBarButton: UIBarButtonItem?
     
+    var fromLoginPage:Bool = false
+    
     init(personID: UUID) {
         
         profileViewModel = ProfileViewModel(personID: personID);
-        collectionViewModel = ProfileOptographsViewModel(personID: personID);
-        
-//        let width = ((view.frame.size.width)/3) - 20;
-        
+        feedsModel = StorytellingVCModel(personID: personID)
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
@@ -54,9 +53,9 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         
         self.title = "Stories";
         
-        var leftBarImage = UIImage(named:"profile_page_icn")
+        var leftBarImage = UIImage(named:"iam360_navTitle")
         leftBarImage = leftBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        leftBarButton = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.showDetailsViewController))
+        leftBarButton = UIBarButtonItem(image: leftBarImage, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.dismissMe))
         
         var rightBarImage = UIImage(named:"create_story_icn")
         rightBarImage = rightBarImage?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
@@ -74,97 +73,67 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         collectionView?.backgroundColor = UIColor.whiteColor()
         
         collectionView!.registerClass(StorytellingCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell");
-        collectionView!.registerClass(ProfileTileCollectionViewCell.self, forCellWithReuseIdentifier: "tile-cell-feed");
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: "footerView")
         collectionView!.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerView")
         
-        collectionViewModel = ProfileOptographsViewModel(personID: SessionService.personID);
-        
-        collectionViewModel.results.producer
-            .filter{$0.changed}
-            .delayAllUntil(collectionViewModel.isActive.producer)
-            .observeOnMain()
-            .on(next: { [weak self] results in
-                
-                if let strongSelf = self {
-                    
-                    strongSelf.optographIDs = results.models
-                        .filter{ $0.isPublished || $0.isUploading}
-                        .map{$0.ID}
-                    
-//                    print("over here");
-//                    print("id count: \(strongSelf.optographIDs.count)");
-                    strongSelf.feedsModel.isActive.value = true;
-                    strongSelf.feedsModel.refresh()
-                    strongSelf.collectionView?.reloadData();
-                    strongSelf.collectionViewModel.isActive.value = false;
-                }
-                })
-            .start();
-        
+        //get all optographid with stories
         feedsModel.results.producer
-            .filter {return $0.changed }
-            //.retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
             .delayAllUntil(feedsModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
-                print("reload data =======")
                 
                 if let strongSelf = self {
-//                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-//                    strongSelf.feedIDs = results.models.map { $0.ID }
-//                    strongSelf.optographIDs = strongSelf.optographIDs + results.models.map { $0.ID }
-////                    print("feedIDs: \(strongSelf.optographIDs.count)");
-//                    
-//                    strongSelf.collectionView!.reloadData()
-                    
+                    strongSelf.storyIDs = results
+                        .map{$0.optographID}
                 }
                 })
-            .start()
+            .startWithNext { _ in
+                self.collectionView?.reloadData()
+        }
         
-        /*
-        ApiService<StorytellingResponse>.postForGate("story", parameters: parameters as? [String : AnyObject]).on(next: { data in
-            print("data story id: \(data.data)");
-            print("user: \(SessionService.personID)")
-        }).start();
-        */
-        
-        ApiService<StorytellingMerged>.getForGate("story/merged/"+SessionService.personID).on(next: { data in
-            print("feed count: \(data.feed.count)")
-            print("user count: \(data.user.count)")
-            
-            self.storyFeed = data.feed
-            
-            print("placeholder: \(data.feed[0].placeholder)")
-            self.collectionView?.reloadData()
-            
-            }).start()
+        tabController?.pageStatus.producer.startWithNext { val in
+            if val == .Story {
+                self.feedsModel.refreshNotification.notify(())
+                self.feedsModel.isActive.value = true
+            } else {
+                self.feedsModel.isActive.value = false
+            }
+        }
     }
     
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
         
-        collectionViewModel.isActive.value = true;
-        collectionViewModel.refresh();
+        tabController?.delegate = self
+        
+        feedsModel.isActive.value = true
+        
+        feedsModel.refreshNotification.notify()
         
         navigationController?.navigationBarHidden = false
+        
+        print("SCVC viewWillAppear")
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+    }
+    
+    func dismissMe(){
+        tabController?.goToProfileFromStory()
     }
     
     func showDetailsViewController(){
-        //88a257df-2008-4d7b-ae44-7ea603011867
-        //let detailsViewController = StoryDetailsTableViewController(optographId: startOpto)
+        
         let optoCollection = FPOptographsCollectionViewController(personID: SessionService.personID)
         optoCollection.startStory = true
         
-        //detailsViewController.cellIndexpath = 1
-        //detailsViewController.isStorytelling = true
-        
-        let navCon = UINavigationController()
-        navCon.viewControllers = [optoCollection]
-        
-       // navigationController?.pushViewController(optoCollection, animated: true)
-        navigationController?.presentViewController(navCon, animated: true, completion: nil)
+//        let navCon = UINavigationController()
+//        navCon.viewControllers = [optoCollection]
+//        navigationController?.presentViewController(navCon, animated: true, completion: nil)
+        navigationController?.pushViewController(optoCollection, animated: false)
     }
 
     //UICollectionView Data Source
@@ -176,7 +145,7 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
 //        return optographIDs.count;
         
         
-        return storyFeed.count;
+        return storyIDs.count;
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -185,45 +154,16 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
         
         if  indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell", forIndexPath: indexPath) as! StorytellingCollectionViewCell;
-            
-            cell.layer.shadowColor = UIColor.grayColor().CGColor;
-            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
-            cell.layer.shadowRadius = 2.0;
-            cell.layer.shadowOpacity = 1.0;
-            cell.layer.masksToBounds = false;
-            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
-            
-            cell.imageView.kf_setImageWithURL(NSURL(string: self.storyFeed[indexPath.row].placeholder)!)
-            print("placeholder image: \(self.storyFeed[indexPath.row].placeholder)")
-            
+            cell.indexPath = indexPath.item
+            cell.bind(storyIDs[indexPath.row])
+            cell.navigationController = navigationController as? NavigationController
             storyCell = cell
         }
-        else{
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("tile-cell-feed", forIndexPath: indexPath) as! ProfileTileCollectionViewCell;
-            
-            cell.layer.shadowColor = UIColor.grayColor().CGColor;
-            cell.layer.shadowOffset = CGSizeMake(0, 2.0);
-            cell.layer.shadowRadius = 2.0;
-            cell.layer.shadowOpacity = 1.0;
-            cell.layer.masksToBounds = false;
-            cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).CGPath;
-            
-            storyCell = cell
-        }
-        
-        
-        
-//        let optographID = optographIDs[indexPath.item];
-//        cell.bind(optographID);
-//        cell.refreshNotification = collectionViewModel.refreshNotification;
-//        cell.navigationController = navigationController as? NavigationController;
         
         storyCell.contentView.layer.cornerRadius = 10.0;
         storyCell.contentView.layer.borderWidth = 1.0;
         storyCell.contentView.layer.borderColor = UIColor.clearColor().CGColor
         storyCell.contentView.layer.masksToBounds = true;
-//
-//        cell.backgroundColor = UIColor.blackColor();
         
         return storyCell
     }
@@ -231,6 +171,17 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
     //UICollectionView Delegate
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
+        let startOptograph = storyIDs[indexPath.row]
+        print("startOpto: \(startOptograph)")
+        
+        let optoModel = Models.optographs[startOptograph]!
+        
+        let detailsViewController = DetailsTableViewController(optoList:[startOptograph],storyid: optoModel.model.storyID)
+        detailsViewController.cellIndexpath = indexPath.item
+        detailsViewController.isStory = true
+        detailsViewController.storyID = optoModel.model.storyID
+        
+        navigationController?.pushViewController(detailsViewController, animated: true)
     }
     
     //UICollectionViewFlowLayout Delegate
@@ -250,15 +201,16 @@ class StorytellingCollectionViewController: UICollectionViewController,WhiteNavB
 //            footerView.addSubview(footerLabel)
             
             let startStoryButton = UIButton()
-            startStoryButton.setTitle("Create a Story", forState: UIControlState.Normal)
+//            startStoryButton.setTitle("Create a Story", forState: UIControlState.Normal)
             startStoryButton.titleLabel?.font = UIFont(name: "Avenir-Heavy", size: 22.0)
             startStoryButton.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+            startStoryButton.setImage(UIImage(named:"create_a_story_btn" ), forState: UIControlState.Normal)
 //            startStoryButton.sizeToFit()
-            startStoryButton.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width - 40, height: 50.0)
+            startStoryButton.frame = CGRect(x: 0, y: 0, width: 330.0, height: 78.0)
             startStoryButton.center = CGPointMake(self.view.center.x, 200/2)
             startStoryButton.addTarget(self, action: #selector(showDetailsViewController), forControlEvents: UIControlEvents.TouchUpInside)
-            startStoryButton.backgroundColor = UIColor.orangeColor()
-            startStoryButton.layer.cornerRadius = 10.0
+//            startStoryButton.backgroundColor = UIColor.orangeColor()
+//            startStoryButton.layer.cornerRadius = 10.0
             footerView.addSubview(startStoryButton)
             
             let lineView = UIView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: 1))

@@ -64,9 +64,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         if view.frame.height != 568.0 {
             scrollView?.scrollEnabled = false
             shareView.fillSuperview()
-            print("view height>>>>",view.frame.height)
         } else {
-            print("view height>>",view.frame.height)
             shareView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height + 50)
         }
         
@@ -162,17 +160,6 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         activityIndicator.stopAnimating()
         
         self.view.addSubview(activityIndicator)
-        
-//        let result = FBSDKMessengerSharer.messengerPlatformCapabilities().rawValue & FBSDKMessengerPlatformCapability.Image.rawValue
-//        if result != 0 {
-//            // ok now share
-//            if let sharingImage = sharingImage {
-//                FBSDKMessengerSharer.shareImage(sharingImage, withOptions: nil)
-//            }
-//        } else {
-//            // not installed then open link. Note simulator doesn't open iTunes store.
-//            UIApplication.sharedApplication().openURL(NSURL(string: "itms://itunes.apple.com/us/app/facebook-messenger/id454638411?mt=8")!)
-//        }
         
     }
     
@@ -286,13 +273,15 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         if UIApplication.sharedApplication().canOpenURL(NSURL(string:"fb-messenger://")!) {
             UIApplication.sharedApplication().openURL(NSURL(string:"fb-messenger://")!)
         } else {
-            print("can't send an fb messenger!")
+            print("can't send to fb messenger!")
         }
     }
     
     func sendEmailButtonTapped() {
         let mailComposeViewController = configuredMailComposeViewController()
         if MFMailComposeViewController.canSendMail() {
+            mailComposeViewController.navigationBar.barTintColor = UIColor(hex:0xFF5E00)
+            mailComposeViewController.navigationBar.translucent = false;
             self.presentViewController(mailComposeViewController, animated: true, completion: nil)
         } else {
             self.showSendMailErrorAlert()
@@ -304,7 +293,7 @@ class SharingViewController: UIViewController ,TabControllerDelegate,MFMailCompo
         mailComposerVC.mailComposeDelegate = self
         
         //mailComposerVC.setToRecipients(["robert.alkuino@gmail.com"])
-        mailComposerVC.setSubject("Sharing IAM360 image")
+        mailComposerVC.setSubject("Share 360 image")
         mailComposerVC.setMessageBody("\(self.textToShare) \n\n \(self.shareUrl)", isHTML: true)
         
         return mailComposerVC
