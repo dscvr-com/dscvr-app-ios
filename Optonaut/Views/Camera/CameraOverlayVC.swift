@@ -48,7 +48,9 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
     }
     
     func getBluetoothList() {
-        blList = btDiscoverySharedInstance.devicesNameList()
+        if btDiscoverySharedInstance.devicesNameList().count > 0 {
+            blList = btDiscoverySharedInstance.devicesNameList()
+        }
     }
     
     private func setupScene() {
@@ -96,12 +98,29 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
         cameraButton.anchorToEdge(.Bottom, padding: 20, width: size.width, height: size.height)
     }
     
+    func getCBPeripheralState(state:CBPeripheralState) -> String {
+        switch state {
+        case .Disconnected:
+            return "Disconnected"
+        case .Connected:
+            return "Connected"
+        case .Disconnecting:
+            return "Disconnecting"
+        case .Connecting:
+            return "Connecting"
+        }
+    }
+    
     func getBluetoothDevicesToPair() {
         let blSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        if blList.count == 0 {
+            blSheet.addAction(UIAlertAction(title: "Searching..", style: .Default, handler: { _ in
+                return
+            }))
+        }
         
         for dev in blList {
-            
-            blSheet.addAction(UIAlertAction(title: dev.name, style: .Default, handler: { _ in
+            blSheet.addAction(UIAlertAction(title: "\(dev.name!)    (\(getCBPeripheralState(dev.state)))", style: .Default, handler: { _ in
                 btDiscoverySharedInstance.connectToPeripheral(dev)
             }))
         }
@@ -140,6 +159,7 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
     func manualClicked() {
         isMotorMode(false)
         Defaults[.SessionMotor] = false
+        Defaults[.SessionUseMultiRing] = false
     }
     
     func motorClicked() {
