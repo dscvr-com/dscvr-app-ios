@@ -106,8 +106,7 @@ struct StitcherCancellation {
 }
 
 
-
-- (struct ImageBuffer)getLeftEquirectangularResult {
+- (struct ImageBuffer)getLeftEquirectangularResultThreeRing {
     
     
     optonaut::Stitcher stitcher(Stores::left);
@@ -121,7 +120,13 @@ struct StitcherCancellation {
     
     return CVMatToImageBuffer(sphere);
     //return CVMatToImageBuffer(blackMat);
-    /*
+    
+}
+
+
+- (struct ImageBuffer)getLeftEquirectangularResult {
+    
+  
     optonaut::StitchingResultP result = Stores::left.LoadOptograph();
     result->image.Load();
     cv::Mat sphere = result->image.data;
@@ -131,7 +136,7 @@ struct StitcherCancellation {
 
     return CVMatToImageBuffer(blackMat);
     
-    */
+
     
 }
 

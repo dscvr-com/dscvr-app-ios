@@ -139,7 +139,13 @@ class StitchingService {
             //get the ER result
             if !shallCancel {
                 
-                let erImage = stitcher.getLeftEquirectangularResult()
+                var erImage :  ImageBuffer ;
+                if Defaults[.SessionMotor] {
+                     erImage = stitcher.getLeftEquirectangularResultThreeRing()
+                } else {
+                     erImage = stitcher.getLeftEquirectangularResult()
+                }
+                
                 autoreleasepool {
                     
                     let image = UIImage(CGImage: ImageBufferToCGImage(erImage))

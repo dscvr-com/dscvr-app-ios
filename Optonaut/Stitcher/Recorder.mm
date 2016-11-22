@@ -184,15 +184,16 @@ optonaut::StorageImageSink imageSink(Stores::post);
     // Yes, asserting in init is evil.
     // But you sould never even think of starting a new recording
     // while an old one is in the stores.
+    assert(!Stores::left.HasUnstitchedRecording());
+    assert(!Stores::right.HasUnstitchedRecording());
+    
+    
+    
+    Stores::left.Clear();
+    Stores::right.Clear();
     
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(!Stores::left.HasUnstitchedRecording());
-        assert(!Stores::right.HasUnstitchedRecording());
-        
-        
-    
-        Stores::left.Clear();
-        Stores::right.Clear();
+
     //Stores::common.Clear();
         Stores::post.Clear();
     
@@ -414,11 +415,12 @@ optonaut::StorageImageSink imageSink(Stores::post);
      } else {
          
      
-    assert(pipe != NULL);
-    pipe->Finish();
+         assert(pipe != NULL);
+         pipe->Finish();
+         Stores::left.SaveOptograph(pipe->GetLeftResult());
+         Stores::right.SaveOptograph(pipe->GetRightResult());
      }
-    //Stores::left.SaveOptograph(pipe->GetLeftResult());
-    //Stores::right.SaveOptograph(pipe->GetRightResult());
+    
 }
 - (void)dispose {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
