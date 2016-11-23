@@ -138,7 +138,7 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
         let blSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         if blList.count == 0 {
             timer = NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(getBluetoothList), userInfo: nil, repeats: true)
-            blSheet.addAction(UIAlertAction(title: "Searching..", style: .Default, handler: { _ in
+            blSheet.addAction(UIAlertAction(title: "Searching for nearby devices..", style: .Default, handler: { _ in
                 return
             }))
         }

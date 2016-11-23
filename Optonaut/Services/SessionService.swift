@@ -182,12 +182,19 @@ class SessionService {
     
     private static func updateMixpanel() {
         let person = Models.persons[personID]!.model
+        var personEmail = ""
+        
+        if let email = person.email {
+            personEmail = email
+        } else {
+            personEmail = ""
+        }
         
         Mixpanel.sharedInstance().identify(person.ID)
         Mixpanel.sharedInstance().people.set([
             "$first": person.displayName,
             "$username": person.userName,
-            "$email": person.email!,
+            "$email": personEmail,
             "$created": person.createdAt,
             "Followers": person.followersCount,
             "Followed": person.followedCount,
