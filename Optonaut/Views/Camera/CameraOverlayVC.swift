@@ -13,7 +13,7 @@ import Photos
 import SwiftyUserDefaults
 import CoreBluetooth
 
-class CameraOverlayVC: UIViewController,TabControllerDelegate {
+class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralManagerDelegate{
     
     private let session = AVCaptureSession()
     private var videoDevice : AVCaptureDevice?
@@ -25,6 +25,7 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
     private var backButton = UIImage(named: "camera_back_button")
     private let progressView = CameraOverlayProgressView()
     private var blList:[CBPeripheral] = []
+    var timer:NSTimer?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +39,8 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
         
         setupCamera()
         setupScene()
+        //var myBTManager = CBPeripheralManager(delegate: self, queue: nil, options: nil)
+        
         getBluetoothList()
     }
     
@@ -46,10 +49,30 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
         
         tabController!.disableScrollView()
     }
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        timer?.invalidate()
+    }
     
     func getBluetoothList() {
-        if btDiscoverySharedInstance.devicesNameList().count > 0 {
-            blList = btDiscoverySharedInstance.devicesNameList()
+        if Defaults[.SessionMotor] {
+            if btDiscoverySharedInstance.devicesNameList().count > 0 {
+                blList = btDiscoverySharedInstance.devicesNameList()
+            }
+        }
+    }
+    
+    func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
+        if peripheral.state == CBPeripheralManagerState.PoweredOn {
+            print("Broadcasting...")
+        } else if peripheral.state == CBPeripheralManagerState.PoweredOff {
+            let confirmAlert = UIAlertController(title: "", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .Alert)
+            confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+            self.presentViewController(confirmAlert, animated: true, completion: nil)
+        } else if peripheral.state == CBPeripheralManagerState.Unsupported {
+            print("Unsupported")
+        } else if peripheral.state == CBPeripheralManagerState.Unauthorized {
+            print("This option is not allowed by your application")
         }
     }
     
@@ -114,6 +137,7 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
     func getBluetoothDevicesToPair() {
         let blSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         if blList.count == 0 {
+            timer = NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(getBluetoothList), userInfo: nil, repeats: true)
             blSheet.addAction(UIAlertAction(title: "Searching..", style: .Default, handler: { _ in
                 return
             }))
@@ -136,8 +160,31 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
     }
     
     func record() {
-        navigationController?.pushViewController(CameraViewController(), animated: false)
-        navigationController?.viewControllers.removeAtIndex(1)
+        if Defaults[.SessionMotor] {
+            if blList.count == 0 {
+                let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .Alert)
+                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+                self.presentViewController(confirmAlert, animated: true, completion: nil)
+            } else {
+                for dev in blList {
+                    if getCBPeripheralState(dev.state) == "Connected" {
+                        navigationController?.pushViewController(CameraViewController(), animated: false)
+                        navigationController?.viewControllers.removeAtIndex(1)
+                        break
+                    } else {
+                        let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .Alert)
+                        confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+                        self.presentViewController(confirmAlert, animated: true, completion: nil)
+                        break
+                    }
+                }
+            }
+            
+            
+        } else {
+            navigationController?.pushViewController(CameraViewController(), animated: false)
+            navigationController?.viewControllers.removeAtIndex(1)
+        }
     }
     
     func isMotorMode(state:Bool) {
@@ -160,12 +207,11 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {
         isMotorMode(false)
         Defaults[.SessionMotor] = false
         Defaults[.SessionUseMultiRing] = false
+        
+        timer?.invalidate()
     }
     
     func motorClicked() {
-//        let confirmAlert = UIAlertController(title: "Sorry!", message: "Motor mode is still not available on this version.", preferredStyle: .Alert)
-//        confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-//        self.presentViewController(confirmAlert, animated: true, completion: nil)
         
         isMotorMode(true)
         Defaults[.SessionMotor] = true
