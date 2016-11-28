@@ -50,6 +50,7 @@
 		598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571C1CEDA771002229AF /* Avenir-Book_0.otf */; };
 		598F571F1CEDA771002229AF /* Avenir-Heavy_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */; };
 		599459B11D0926C0000F3A5B /* SearchTableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599459B01D0926C0000F3A5B /* SearchTableModel.swift */; };
+		599B8A0F1DEC5BDC00D868B5 /* MotorConfigurationApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599B8A0E1DEC5BDC00D868B5 /* MotorConfigurationApiModel.swift */; };
 		59A07C5D1D6355E3006A6CCE /* IcomoonExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F891B8F05BD00B4C8CB /* IcomoonExtension.swift */; };
 		59A35D4A1DAF27B900D207BF /* StorytellingVCModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A35D491DAF27B900D207BF /* StorytellingVCModel.swift */; };
 		59CDB7C81D2250B70094C816 /* Migration0007.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDB7C71D2250B60094C816 /* Migration0007.swift */; };
@@ -395,6 +396,7 @@
 		598F571C1CEDA771002229AF /* Avenir-Book_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Book_0.otf"; sourceTree = "<group>"; };
 		598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
 		599459B01D0926C0000F3A5B /* SearchTableModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableModel.swift; sourceTree = "<group>"; };
+		599B8A0E1DEC5BDC00D868B5 /* MotorConfigurationApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotorConfigurationApiModel.swift; sourceTree = "<group>"; };
 		59A35D491DAF27B900D207BF /* StorytellingVCModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingVCModel.swift; sourceTree = "<group>"; };
 		59CDB7C71D2250B60094C816 /* Migration0007.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0007.swift; sourceTree = "<group>"; };
 		59D828131D709C4200007B57 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Frameworks/Crashlytics.framework; sourceTree = "<group>"; };
@@ -978,6 +980,7 @@
 				BB155AA11D6E8F06002678A6 /* StorytellingPerson.swift */,
 				59F61B8E1D90E8F600C1495F /* ActivityResourceCommentModel.swift */,
 				BB93F9231D78217D00478C93 /* StorytellingApiModel.swift */,
+				599B8A0E1DEC5BDC00D868B5 /* MotorConfigurationApiModel.swift */,
 			);
 			name = ApiModel;
 			path = APIModel;
@@ -1963,6 +1966,7 @@
 				8FAB9F711B8F02D500B4C8CB /* Constants.swift in Sources */,
 				8FAB9F861B8F047700B4C8CB /* ApiService.swift in Sources */,
 				BB93F9241D78217D00478C93 /* StorytellingApiModel.swift in Sources */,
+				599B8A0F1DEC5BDC00D868B5 /* MotorConfigurationApiModel.swift in Sources */,
 				8FFCD51A1BD833F300B39EF1 /* SearchHashtagTableViewCell.swift in Sources */,
 				8FBC86A41BB7E1AD00539D4E /* OnboardingVRViewController.swift in Sources */,
 				BB88A2701D9D2EBE00EB09B0 /* ChildResponse.swift in Sources */,
