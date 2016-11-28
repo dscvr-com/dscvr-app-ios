@@ -45,7 +45,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                     .ignoreError()
                     .collect()
                     .startOnUserInteractive()
-            }
+            }   
             .observeOnMain()
             .map {self.results.value.merge($0, deleteOld: false) }
             .observeNext { self.results.value = $0 }
@@ -141,7 +141,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
     }
     
     func refresh() {
-        print("refresh function called!")
         refreshNotification.notify(())
     }
     

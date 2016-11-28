@@ -277,7 +277,6 @@ private class OverlayViewModel {
                 self?.avatarImageUrl.value = ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47)
                 self?.isFollowed.value = person.isFollowed
                 self?.isElite.value = person.eliteStatus
-                print(self?.userName.value,self?.isFollowed.value,person.isFollowed)
         }
     }
     
@@ -725,23 +724,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
     }
     
     func toggleStar() {
-        //        if SessionService.isLoggedIn {
-        //            viewModel.toggleLike()
-        //        } else {
-        //
-        //            let loginOverlayViewController = LoginOverlayViewController(
-        //                title: "Login to like this moment",
-        //                successCallback: {
-        //                    self.viewModel.toggleLike()
-        //                },
-        //                cancelCallback: { true },
-        //                alwaysCallback: {
-        //                    self.parentViewController!.tabController!.unlockUI()
-        //                    self.parentViewController!.tabController!.showUI()
-        //                }
-        //            )
-        //            parentViewController!.presentViewController(loginOverlayViewController, animated: true, completion: nil)
-        //        }
         
         if SessionService.isLoggedIn {
             viewModel.toggleLike()
@@ -766,7 +748,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
     
     func bindModel(optographId:UUID) {
         
-        print(">>>>opto",optographId)
         viewModel.bind(optographId)
         viewModel.avatarImageUrl.producer.startWithNext{
             self.avatarImageView.kf_setImageWithURL(NSURL(string:$0)!)

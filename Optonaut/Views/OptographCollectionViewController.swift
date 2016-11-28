@@ -123,11 +123,14 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             .observeOnMain()
             .on(next: { [weak self] results in
                 
-                print("nagreload!!")
-                
                 if let strongSelf = self {
-                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-                    strongSelf.optographIDs = results.models.map { $0.ID }
+//                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+                    
+                    strongSelf.collectionView!.setContentOffset(CGPointZero, animated:false)
+                    
+                    if results.models.count != 0 {
+                        strongSelf.optographIDs = results.models.map { $0.ID }
+                    }
                     
                     for optograph in results.models {
                         
@@ -137,10 +140,17 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     }
                     
                     if results.models.count == 1 {
-                        print("nagreload lahat")
-                        //strongSelf.collectionView!.reloadData()
-                    } else {
+                        strongSelf.collectionView!.reloadData()
+                    } else if results.models.count == 0 {
+                        print("walang laman")
+                    }else {
                         print("nagreload paisa isa")
+//                        strongSelf.collectionView!.performBatchUpdates({
+//                                strongSelf.collectionView!.reloadSections(NSIndexSet(index: 0))
+//                            }, completion: { (finished:Bool) -> Void in
+//                                strongSelf.refreshControl.endRefreshing()
+//                        })
+                        
                         CATransaction.begin()
                         CATransaction.setDisableActions(true)
                             strongSelf.collectionView!.performBatchUpdates({
@@ -152,20 +162,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                                 strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
                                 strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
                             }, completion: { _ in
-                                
-//                                if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
-//                                    if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
-//                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
-//                                    }
-//                                }
-                                
                                 strongSelf.refreshControl.endRefreshing()
                                 
                                 CATransaction.commit()
                                 
                             })
                     }
-                    SwiftSpinner.hide()
                 }
             }).start()
         
@@ -191,19 +193,16 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         PipelineService.stitchingStatus.producer
             .observeOnMain()
             .startWithNext { [weak self] status in
-                print("The status>>>",status)
                 
                 switch status {
                 case .Uninitialized:
                     self?.tabView.cameraButton.loading = true
-                    print("uninitialized")
                 case .Idle:
                     self?.tabView.cameraButton.progress = nil
                     if self?.tabView.cameraButton.progressLocked == false {
                         self?.tabView.cameraButton.icon = UIImage(named:"camera_icn")!
                         self?.tabView.rightButton.loading = false
                     }
-                    print("Idle")
                 case let .Stitching(progress):
                     if self?.progress.hidden == true {
                         self?.progress.hidden = false
@@ -214,7 +213,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     self?.progress.angle = 360
                     self?.progress.hidden = true
                     self?.tabView.cameraButton.progress = nil
-                    print("StitchingFinished")
                 }
         }
         
@@ -224,6 +222,16 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         PipelineService.checkStitching()
         PipelineService.checkUploading()
+        
+        tabController?.pageStatus.producer.startWithNext { val in
+            if val == .Feed {
+                print("nasa feed ka")
+                self.viewModel.isActive.value = true
+            } else {
+                print("wala sa feed")
+                self.viewModel.isActive.value = false
+            }
+        }
         
     }
     
@@ -406,11 +414,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        
-        if tabController?.pageStatus.value == .Feed {
-            viewModel.isActive.value = true
-        }
-        
         SwiftSpinner.setTitleFont(UIFont(name: "Avenir-Book", size: 20.0))
         
         if strLoader == "Loading DSCVR.." {
@@ -431,9 +434,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         view.bounds = UIScreen.mainScreen().bounds
         
-        if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) as? OptographCollectionViewCell {
-            collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
-        }
         refreshTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(hideLoader), userInfo: nil, repeats: true)
     }
     
@@ -513,7 +513,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
         
-        let optographID = optographIDs[indexPath.row]
+        let optographID:String = optographIDs[indexPath.row]
         
         cell.navigationController = navigationController as? NavigationController
         cell.bindModel(optographID)
@@ -527,7 +527,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 }
         }
         
-        if indexPath.row > optographIDs.count - 3 {
+        if indexPath.row == optographIDs.count - 1{
             viewModel.loadMore()
         }
         

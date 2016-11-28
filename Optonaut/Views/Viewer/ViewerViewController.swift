@@ -64,6 +64,7 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
     private var isInsideStory: Bool = false
     var nodes:[StoryChildren] = []
     let fixedTextLabel = UILabel()
+    let fixedTextLabel2 = UILabel()
     let removeNode = UIButton()
     var blurView = UIVisualEffectView()
     var blurView2 = UIVisualEffectView()
@@ -593,27 +594,32 @@ class ViewerViewController: UIViewController, CubeRenderDelegateDelegate  {
                 
                 print("MEDIATYPE: FXTXT")
                 
-//                dispatch_async(dispatch_get_main_queue(), {
-//                    
-//                    
-//                    self.fixedTextLabel.text = node.mediaAdditionalData
-//                    self.fixedTextLabel.textColor = UIColor.blackColor()
-//                    self.fixedTextLabel.font = UIFont(name: "BigNoodleTitling", size: 22.0)
-//                    self.fixedTextLabel.sizeToFit()
-//                    self.fixedTextLabel.frame = CGRect(x: 10.0, y: self.view.frame.size.height - 135.0, width: self.fixedTextLabel.frame.size.width + 5.0, height: self.fixedTextLabel.frame.size.height + 5.0)
-//                    self.fixedTextLabel.backgroundColor = UIColor(0xffbc00)
-//                    self.fixedTextLabel.textAlignment = NSTextAlignment.Center
-//                    
-//                    self.view.addSubview(self.fixedTextLabel)
-//                    
-//                    self.removeNode.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-//                    self.removeNode.backgroundColor = UIColor.blackColor()
-//                    self.removeNode.center = CGPoint(x: self.view.center.x - 10, y: self.view.center.y - 10)
-//                    self.removeNode.setImage(UIImage(named: "close_icn"), forState: UIControlState.Normal)
-//                    //self.removeNode.addTarget(self, action: #selector(self.removePin), forControlEvents: UIControlEvents.TouchUpInside)
-//                    self.removeNode.hidden = true
-//                    self.view.addSubview(self.removeNode)
-//                })
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    if !self.fixedTextLabel.isDescendantOfView(self.view) {
+                        //left
+                        self.fixedTextLabel.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+                        self.fixedTextLabel.text = node.mediaAdditionalData
+                        self.fixedTextLabel.textColor = UIColor.blackColor()
+                        self.fixedTextLabel.font = UIFont(name: "BigNoodleTitling", size: 22.0)
+                        self.fixedTextLabel.sizeToFit()
+                        self.fixedTextLabel.frame = CGRect(x: 50.0, y: 10, width: self.fixedTextLabel.frame.size.width + 5.0, height: self.fixedTextLabel.frame.size.height + 5.0)
+                        self.fixedTextLabel.backgroundColor = UIColor(0xffbc00)
+                        self.fixedTextLabel.textAlignment = NSTextAlignment.Center
+                        self.view.addSubview(self.fixedTextLabel)
+                        
+                        //right
+                        self.fixedTextLabel2.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+                        self.fixedTextLabel2.text = node.mediaAdditionalData
+                        self.fixedTextLabel2.textColor = UIColor.blackColor()
+                        self.fixedTextLabel2.font = UIFont(name: "BigNoodleTitling", size: 22.0)
+                        self.fixedTextLabel2.sizeToFit()
+                        self.fixedTextLabel2.frame = CGRect(x: 50.0, y: self.view.height / 2 + 10, width: self.fixedTextLabel2.frame.size.width + 5.0, height: self.fixedTextLabel2.frame.size.height + 5.0)
+                        self.fixedTextLabel2.backgroundColor = UIColor(0xffbc00)
+                        self.fixedTextLabel2.textAlignment = NSTextAlignment.Center
+                        self.view.addSubview(self.fixedTextLabel2)
+                    }
+                })
             } else if node.mediaType == "MUS"{
                 
                 let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)

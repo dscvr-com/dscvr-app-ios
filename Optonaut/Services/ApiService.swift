@@ -129,8 +129,6 @@ class ApiService<T: Mappable> {
                             } else {
                                 sink.sendCompleted()
                             }
-                            
-                            print("response: \(upload.response)")
                     }
                 case .Failure(let error):
                     let apiError = ApiError(endpoint: endpoint, timeout: false, status: -1, message: "Upload failed", error: error as NSError)
@@ -306,7 +304,6 @@ class ApiService<T: Mappable> {
             }
             
             let mutableURLRequest = buildURLRequestForGate(endpoint, method: method, queries: queries)
-            print(mutableURLRequest)
             
             if let parameters = parameters {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters, options: [])
@@ -326,8 +323,6 @@ class ApiService<T: Mappable> {
                             let data = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
                         } catch {}
                         
-                        print(error)
-                        
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode ?? -1, message: error.description, error: error)
                         sink.sendFailed(apiError)
                     } else {
@@ -335,8 +330,6 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-                                    
-                                    print(endpoint,json)
                                     
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)
