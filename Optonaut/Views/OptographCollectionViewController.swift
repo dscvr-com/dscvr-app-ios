@@ -12,7 +12,8 @@ import SpriteKit
 import Async
 import Kingfisher
 import SwiftyUserDefaults
-import AssetsLibrary
+//import AssetsLibrary
+import Photos
 
 typealias Direction = (phi: Float, theta: Float)
 
@@ -47,7 +48,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     private let fileManager = NSFileManager.defaultManager()
     var strLoader:String = ""
     
-    //let isThetaImage = MutableProperty<Bool>(false)
+    let checkPhotoPermission = MutableProperty<Bool>(false)
     
     var imageView: UIImageView!
     var imagePicker = UIImagePickerController()
@@ -225,10 +226,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         tabController?.pageStatus.producer.startWithNext { val in
             if val == .Feed {
-                print("nasa feed ka")
                 self.viewModel.isActive.value = true
+                self.configSpinnerLoader()
             } else {
-                print("wala sa feed")
                 self.viewModel.isActive.value = false
             }
         }
@@ -256,18 +256,56 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         return SamplePaths.cameraPath()
     }
     func openGallary() {
-        if Defaults[.SessionEliteUser] {
-            let imagePickVC = ViewController()
-            
-            imagePickVC.imagePicked.producer.startWithNext{ image in
-                if image != nil {
-                    self.uploadTheta(image!)
+        
+        checkPhotoLibraryPermission()
+        
+        checkPhotoPermission.producer.filter( isTrue ).startWithNext { val in
+            if Defaults[.SessionEliteUser] {
+                let imagePickVC = ViewController()
+                
+                imagePickVC.imagePicked.producer.startWithNext{ image in
+                    if image != nil {
+                        self.uploadTheta(image!)
+                    }
                 }
+                
+                self.presentViewController(imagePickVC, animated: true, completion: nil)
+            } else{
+                self.tapRightButton()
             }
+        }
+    }
+    
+    func checkPhotoLibraryPermission(){
+        
+        let status = PHPhotoLibrary.authorizationStatus()
+        switch status {
+        case .Authorized:
+            checkPhotoPermission.value = true
+        case .Denied, .Restricted :
+            checkPhotoPermission.value = false
+        case .NotDetermined:
             
-            self.presentViewController(imagePickVC, animated: true, completion: nil)
-        } else{
-            self.tapRightButton()
+            PHPhotoLibrary.requestAuthorization({(status:PHAuthorizationStatus) in
+                switch status{
+                case .Authorized:
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.checkPhotoPermission.value = true
+                    })
+                    break
+                case .Denied:
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.checkPhotoPermission.value = false
+                    })
+                    break
+                default:
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.checkPhotoPermission.value = false
+                        
+                    })
+                    break
+                }
+            })
         }
     }
     
@@ -414,6 +452,20 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        self.configSpinnerLoader()
+        
+        uiHidden.value = false
+        showUI()
+        tabController!.enableScrollView()
+        tabController!.enableNavBarGesture()
+        
+        view.bounds = UIScreen.mainScreen().bounds
+        
+        
+    }
+    
+    func configSpinnerLoader() {
+        
         SwiftSpinner.setTitleFont(UIFont(name: "Avenir-Book", size: 20.0))
         
         if strLoader == "Loading DSCVR.." {
@@ -426,16 +478,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             SwiftSpinner.hide()
             }, subtitle: "Tap to hide")
         
-        uiHidden.value = false
-        
-        showUI()
-        tabController!.enableScrollView()
-        tabController!.enableNavBarGesture()
-        
-        view.bounds = UIScreen.mainScreen().bounds
-        
         refreshTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(hideLoader), userInfo: nil, repeats: true)
     }
+    
     
     func hideLoader() {
         SwiftSpinner.hide()

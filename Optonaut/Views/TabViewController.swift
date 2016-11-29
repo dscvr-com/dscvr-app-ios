@@ -207,9 +207,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
                 shareData.isSharePageOpen.value = false
             }
         }
-        
-        //else if !SessionService.isLoggedIn &&  scrollView.contentOffset.x >= (self.view.frame.width * 3){
-        //scrollView.contentOffset.x = self.view.frame.width * 2
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
@@ -243,7 +240,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.BFrame,animated: false)
             }, completion:{ _ in
-                print("nasa profile ka")
                 self.pageStatus.value = .Profile
         })
     }
@@ -252,7 +248,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.adminFrame,animated: false)
             }, completion:{ _ in
-                print("nasa feed ka")
                 self.pageStatus.value = .Feed
         })
     }
@@ -261,7 +256,6 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         UIView.animateWithDuration(0.5, animations: {
             self.scrollView.scrollRectToVisible(self.BFrame,animated: false)
             }, completion:{ _ in
-                print("nasa profile ka")
                 self.pageStatus.value = .Profile
         })
     }

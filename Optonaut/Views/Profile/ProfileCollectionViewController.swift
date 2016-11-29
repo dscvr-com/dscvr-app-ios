@@ -318,7 +318,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         
         profileViewModel.notifTabTouched.producer.startWithNext { [weak self] isNotifTabTap in
             if isNotifTabTap {
-                print("click notification")
                 self!.isNotifClicked = true
                 self!.isFollowClicked = false
                 self!.readAllNotification()
@@ -336,7 +335,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         if (Defaults[.SessionNeedRefresh]) {
-            print("needs to refresh")
             self.reloadView()
             Defaults[.SessionNeedRefresh] = false
         }
@@ -400,10 +398,6 @@ class ProfileCollectionViewController: UICollectionViewController, UICollectionV
         if (isFollowClicked || isNotifClicked) && profileViewModel.isMe {
             return 2
         } else {
-            print("count3",optographIDs.count)
-            print(("count2",optographIDsNotUploaded.count > 0 ? 1:0))
-            print("count1",optographIDsNotUploaded.count)
-            print("number of items",optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0))
             return optographIDs.count + 1 + (optographIDsNotUploaded.count > 0 ? 1:0)
         }
         
