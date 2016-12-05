@@ -1010,8 +1010,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                     
                     if node.mediaType == "FXTXT"{
                         
-                        print("MEDIATYPE: FXTXT")
-                        
                         dispatch_async(dispatch_get_main_queue(), {
                             
                             self.fixedTextLabel.text = node.mediaAdditionalData
@@ -1031,17 +1029,12 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                             self.view.addSubview((self.removeNode))
                         })
                     } else if node.mediaType == "MUS"{
-                        print("MEDIATYPE: MUS")
                         
                         let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
-                        //let url = NSURL(string: node.objectMediaFileUrl)
-                        print("url:",url)
                         
                         if let returnPath:String = self.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
-                            print(">>>>>>",returnPath)
                             
                             if returnPath != "" {
-                                print(returnPath)
                                 self.playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
                                 self.player = AVPlayer(playerItem: self.playerItem!)
                                 self.player?.rate = 1.0
@@ -1064,16 +1057,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                             nodeItem.objectVector3 = nodeTranslation
                             nodeItem.optographID = node.mediaAdditionalData
                             nodeItem.objectType = node.mediaType
-                            
-                            print("node id: \(nodeItem.optographID)")
-                            print("nodes: \(node.mediaType)")
-                            
                             self.renderDelegate.addNodeFromServer(nodeItem)
                         }
                         
                     }
-                    print("counts: \(objectPosition.count)")
-                    print("counts: \(objectRotation.count)")
                     
                 }
             }
@@ -1103,12 +1090,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let fileName:String = (userInfo["FileName"] as! String)
         
         let url = NSURL(string: "https://bucket.dscvr.com" + fileUrl)
-        print("url:",url)
         
         if let returnPath:String = imageCache.insertStoryFile(url, file: nil, fileName: fileName) {
             
             if returnPath != "" {
-                print(returnPath)
                 playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
                 self.player = AVPlayer(playerItem: self.playerItem!)
                 self.player?.rate = 1.0
@@ -1134,7 +1119,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
         
         let url = NSURL(string: "https://bucket.dscvr.com" + nameArray[0])
-        print(url)
         playerItem = AVPlayerItem(URL: url!)
         player = AVPlayer(playerItem: playerItem!)
         player?.rate = 1.0
@@ -1148,7 +1132,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     }
     
     func showOptograph(nodeObject: StorytellingObject){
-        print("NODE NAME: \(nodeObject.optographID)")
         //check if node object is equal to home optograph id
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
         if nameArray[0] == self.optographID {
@@ -1209,7 +1192,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func showText(nodeObject: StorytellingObject){
         let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
-        print("TEXT: \(nameArray[0])")
         
         dispatch_async(dispatch_get_main_queue(), {
             if !self.self.blurView.isDescendantOfView(self.view) {
@@ -1292,8 +1274,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         let nodes = viewModel.storyNodes.value
         
         let filteredArray = nodes.filter { $0.mediaAdditionalData != nameArray[0] }
-        print("filteredArray: \(filteredArray.count)")
-        print("deletable ID: \(nameArray[0])")
         
         self.renderDelegate.removeAllNodes(self.deletablePin.optographID)
         
@@ -1343,8 +1323,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
             return
             
         }
-        
-        print("nodeObject >>",nodeObject.optographID.componentsSeparatedByString(","))
         
         
         let mediaTime = CACurrentMediaTime()

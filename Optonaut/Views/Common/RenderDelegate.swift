@@ -304,7 +304,6 @@ class CubeRenderDelegate: RenderDelegate {
         
         scene.rootNode.addChildNode(sphereGeoNode)
         scene.rootNode.addChildNode(cameraText)
-        
     }
     
     private func getDist(a: SCNNode, b: SCNNode) -> Float {
@@ -325,10 +324,10 @@ class CubeRenderDelegate: RenderDelegate {
         
         scene.rootNode.enumerateChildNodesUsingBlock{
             (node, stop) -> Void in
-            print("node.name: \(node.name)")
+            //print("node.name: \(node.name)")
             
             if node.name == nodeName{
-                print("deleted")
+                //print("deleted")
                 
                 node.removeFromParentNode()
             }
@@ -341,7 +340,7 @@ class CubeRenderDelegate: RenderDelegate {
     func listAllNodes(){
         scene.rootNode.enumerateChildNodesUsingBlock{
             (node, stop) -> Void in
-            print("node named: \(node.name)")
+            //print("node named: \(node.name)")
         }
     }
     
@@ -387,20 +386,8 @@ class CubeRenderDelegate: RenderDelegate {
         
         markNode.name = type + String(n)
         
-        print("camera x: \(self.cameraNode.eulerAngles.x)")
-        print("camera y: \(self.cameraNode.eulerAngles.y)")
-        print("camera z: \(self.cameraNode.eulerAngles.z)")
-        
         markNode.position = sphereGeoNode.position
         markNode.eulerAngles = self.cameraNode.eulerAngles;
-        
-        
-        print("node x: \(markNode.eulerAngles.x)")
-        print("node y: \(markNode.eulerAngles.y)")
-        print("node z: \(markNode.eulerAngles.z)")
-        print("posi x: \(markNode.position.x)")
-        print("posi y: \(markNode.position.y)")
-        print("posi z: \(markNode.position.z)")
         
         markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
         
@@ -415,7 +402,7 @@ class CubeRenderDelegate: RenderDelegate {
     
     func addNodeFromServer(nodeData: StorytellingObject){
         
-        print("addNodeFromServer(translation: SCNVector3, rotation: SCNVector3)")
+        //print("addNodeFromServer(translation: SCNVector3, rotation: SCNVector3)")
         
         let planeGeo = SCNPlane(width: 0.1, height: 0.1)
         planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
@@ -431,7 +418,7 @@ class CubeRenderDelegate: RenderDelegate {
         
         markNode.name = nodeData.optographID + "," + nodeData.objectType
         
-        print(">>>>>>>>>>>>>node name",markNode.name)
+        //print(">>>>>>>>>>>>>node name",markNode.name)
         
         scene.rootNode.addChildNode(markNode)
         markers.append(markNode)
@@ -665,6 +652,9 @@ class CubeRenderDelegate: RenderDelegate {
         sphereGeoNode.position = nextpoint
         
         
+       // print("dot position>>>",nextpoint)
+        
+        
         cameraText.position = nextpoint
         
         
@@ -716,7 +706,7 @@ class CubeRenderDelegate: RenderDelegate {
     
     private func createPlane(position position: SCNVector3, rotation: SCNVector3, subX: Float, subY: Float, subW: Float) -> SCNNode {
     
-         print("[createPlane] \(subX) \(subY) \(subW)   \(position)")
+         //print("[createPlane] \(subX) \(subY) \(subW)   \(position)")
         let geometry = SCNPlane(width: CGFloat(2 * subW), height: CGFloat(2 * subW))
         geometry.firstMaterial!.doubleSided = true
         

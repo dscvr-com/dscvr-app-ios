@@ -201,7 +201,7 @@ class SaveViewController: UIViewController, RedNavbar {
         }
         textInputView.removeConstraints(textInputView.constraints)
         scrollView.addSubview(textInputView)
-        
+    
         shareBackgroundView.backgroundColor = UIColor(0xfbfbfb)
         shareBackgroundView.layer.borderWidth = 1
         shareBackgroundView.layer.borderColor = UIColor(0xe6e6e6).CGColor
