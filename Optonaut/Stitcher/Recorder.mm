@@ -418,7 +418,7 @@ optonaut::StorageImageSink imageSink(Stores::post);
          assert(pipe != NULL);
          pipe->Finish();
          Stores::left.SaveOptograph(pipe->GetLeftResult());
-         Stores::right.SaveOptograph(pipe->GetRightResult());
+        Stores::right.SaveOptograph(pipe->GetRightResult());
      }
     
 }

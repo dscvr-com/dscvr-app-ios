@@ -482,7 +482,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
              rotationSource.start()
            
         } else {
-           motionManager.start()
+           motionManager.start() 
         }
         //(.XArbitraryCorrectedZVertical)
         //motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
@@ -661,7 +661,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
     
     private func setupCamera() {
         authorizeCamera()
-        
+        // mca (11/24/16): change sessionPreset to PresetHigh from Preset1280x720
         //session.sessionPreset = AVCaptureSessionPresetHigh
         session.sessionPreset = AVCaptureSessionPreset1280x720
         //session.sessionPreset = AVCaptureSessionPresetMedium
@@ -849,8 +849,9 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
                 }
                 
                 print("currentPhi <  \(Float((-2.0 * M_PI) - 0.01))")
-                if (currentPhi < Float((-2.0 * M_PI) - 0.01)) {
+                if (currentDegree < -360.0 ){
                     viewModel.isRecording.value = false //<-
+                     bData.dataHasCome.value = false
                     
                     /*print("ito?>>>>>",bData.ydirection)
                      if self.bData.ydirection == "fffffe0b"{
@@ -860,9 +861,9 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
                      }*/
                     
                     if(currentTheta == 0) {
-                        currentTheta = Float(-0.718)
+                        currentTheta = Float(-0.704928)
                     } else if(currentTheta < 0) {
-                        currentTheta = Float(0.718)
+                        currentTheta = Float(0.704928)
                     } else if(currentTheta > 0) {
                         currentTheta = Float(0)
                     }
