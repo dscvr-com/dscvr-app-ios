@@ -29,6 +29,7 @@ class BTService: NSObject, CBPeripheralDelegate {
     var positionCharacteristic: CBCharacteristic?
     var ringFlag = 0 //  0 =  center; 1 =top ; 2 bot
     var motorFlag = 0
+  
     
     
     init(initWithPeripheral peripheral: CBPeripheral) {
@@ -94,6 +95,7 @@ class BTService: NSObject, CBPeripheralDelegate {
         }
     }
     
+   
     func peripheral( peripheral: CBPeripheral,
                      didUpdateValueForCharacteristic characteristic: CBCharacteristic,
                                                      error: NSError?) {
@@ -149,8 +151,15 @@ class BTService: NSObject, CBPeripheralDelegate {
                         print("got2topring")
                         //sendCommand("fe070100003be30276009cffffffffffff"); // rotate josepeh's motor v2
                         //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
-                        sendCommand(self.computeRotationX());
-                        bData.dataHasCome.value = true
+                        
+                        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC)))
+                        dispatch_after(delayTime, dispatch_get_main_queue()) {
+                            self.sendCommand(self.computeRotationX());
+                            bData.dataHasCome.value = true
+                        }
+                        
+                        
+                        
                         
                         motorFlag = 2
                         ringFlag = 1
@@ -171,9 +180,16 @@ class BTService: NSObject, CBPeripheralDelegate {
                         //sendCommand("fe070100003be302bf00e5ffffffffffff"); // josepeh's motor //rotate the motor x
                         // sendCommand("fe070100003be30276009cffffffffffff"); // rotate josepeh's motor v2
                         
-                        sendCommand(self.computeRotationX());
-                        bData.dataHasCome.value = true
                         
+                        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC)))
+                        dispatch_after(delayTime, dispatch_get_main_queue()) {
+                            
+                            self.sendCommand(self.computeRotationX());
+                            bData.dataHasCome.value = true
+                        }
+                        
+                        
+                       
                         //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
                         ringFlag = 2
                         motorFlag = 4

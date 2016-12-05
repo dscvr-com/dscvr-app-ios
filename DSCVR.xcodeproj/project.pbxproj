@@ -1706,7 +1706,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 675Y8HZ459;
+						DevelopmentTeam = 4Y4J5JD5NJ;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -2278,9 +2278,9 @@
 				);
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dscvr;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "858cb55d-1ab3-41ff-8a40-3fec2f7ff534";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2314,9 +2314,9 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/stitcher/vendor",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.iam360.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dscvr;
 				PRODUCT_NAME = DSCVR;
-				PROVISIONING_PROFILE = "858cb55d-1ab3-41ff-8a40-3fec2f7ff534";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;
