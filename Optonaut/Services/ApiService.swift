@@ -213,7 +213,7 @@ class ApiService<T: Mappable> {
                 queryStr += "\(key)=\(value.escaped)"
             }
         }
-        let URL = NSURL(string: "https://mapi.dscvr.com/\(endpoint)\(queryStr)")!
+        let URL = NSURL(string: "https://noel.dscvr.com/\(endpoint)\(queryStr)")!
         
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
@@ -318,6 +318,7 @@ class ApiService<T: Mappable> {
                         if response?.statusCode == 401 && endpoint.rangeOfString("login") == nil {
                             SessionService.logout()
                         }
+                        print("error",error)
                         
                         do {
                             let data = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
@@ -330,6 +331,7 @@ class ApiService<T: Mappable> {
                             if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                                    print("json",json)
                                     
                                     if let object = Mapper<T>().map(json) {
                                         sink.sendNext(object)

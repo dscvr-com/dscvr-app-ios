@@ -438,7 +438,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         ActivitiesService.unreadCount.producer.startWithNext { count in
             let hidden = count <= 0
             circle.hidden = hidden
-            //circle.text = "\(count)"
         }
     }
     
@@ -612,7 +611,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         }
         
     }
-    
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 0
