@@ -146,28 +146,30 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                         print("walang laman")
                     }else {
                         print("nagreload paisa isa")
-//                        strongSelf.collectionView!.performBatchUpdates({
-//                                strongSelf.collectionView!.reloadSections(NSIndexSet(index: 0))
-//                            }, completion: { (finished:Bool) -> Void in
-//                                strongSelf.refreshControl.endRefreshing()
-//                        })
-                        
-                        CATransaction.begin()
-                        CATransaction.setDisableActions(true)
-                            strongSelf.collectionView!.performBatchUpdates({
+                        strongSelf.collectionView!.performBatchUpdates({
                                 strongSelf.imageCache.delete(results.delete)
                                 strongSelf.imageCache.insert(results.insert)
-                                
-                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection:
-                                    0) })
-                                strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
-                                strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
-                            }, completion: { _ in
+                                strongSelf.collectionView!.reloadSections(NSIndexSet(index: 0))
+                            }, completion: { (finished:Bool) -> Void in
                                 strongSelf.refreshControl.endRefreshing()
-                                
-                                CATransaction.commit()
-                                
-                            })
+                        })
+                        
+//                        CATransaction.begin()
+//                        CATransaction.setDisableActions(true)
+//                            strongSelf.collectionView!.performBatchUpdates({
+//                                strongSelf.imageCache.delete(results.delete)
+//                                strongSelf.imageCache.insert(results.insert)
+//                                
+//                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection:
+//                                    0) })
+//                                strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
+//                                strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
+//                            }, completion: { _ in
+//                                strongSelf.refreshControl.endRefreshing()
+//                                
+//                                CATransaction.commit()
+//                                
+//                            })
                     }
                 }
             }).start()
