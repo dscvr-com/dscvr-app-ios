@@ -645,7 +645,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         ///addd flags to control adding texture
         
         if isStorytelling{
-            //            self.prepareStoryTellingHUD();
             self.prepareNewHUD();
         }
         else{
@@ -894,14 +893,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func prepareNewHUD(){
-        //        let textPinImage = UIImage(named: "")
-        //        let textPin = UIButton(frame: CGRect(x: 0, y: 0, width: (textPinImage?.size.width)!, height: (textPinImage?.size.height)!))
-        
-        //        let optoPinImage = UIImage(named: "")
-        //        let optoPin = UIButton(frame: CGRect(x: 0, y: 0, width: (optoPinImage?.size.width)!, height: (optoPinImage?.size.height)!))
-        
-        //        let audioPinImage = UIImage(named: "")
-        //        let audioPin = UIButton(frame: CGRect(x: 0, y: 0, width: (audioPinImage?.size.width)!, height: (audioPinImage?.size.height)!))
         
         audioPin = UIButton(frame: CGRect(x: 10.0, y: self.view.frame.size.height - 50.0, width: 40.0, height: 40.0))
 //        audioPin.backgroundColor = UIColor.redColor()
@@ -985,7 +976,14 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         self.view.addSubview(fixedTextLabel)
         self.view.addSubview(clearTextLabel)
         self.view.addSubview(bgmImage)
-//        self.view.addSubview(removeBgm)
+        
+        let oneTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.closekeyboard(_:)))
+        oneTapGestureRecognizer.numberOfTapsRequired = 1
+        self.scnView.addGestureRecognizer(oneTapGestureRecognizer)
+    }
+    
+    func closekeyboard(recognizer:UITapGestureRecognizer) {
+        inputTextField.resignFirstResponder()
     }
 
     
@@ -1139,10 +1137,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func keyboardWillHide(notification:NSNotification){
         textFieldContainer.frame = CGRect(x: 0.0, y: self.view.frame.size.height, width: textFieldContainer.frame.size.width, height: textFieldContainer.frame.size.height)
+        inputTextField.text = ""
     }
     
     func keyboardWillShow(notification:NSNotification) {
-        print("func keyboardWillShow(notification:NSNotification)")
         
         let userInfo:NSDictionary = notification.userInfo!
         let keyboardFrame:NSValue = userInfo.valueForKey(UIKeyboardFrameEndUserInfoKey) as! NSValue
@@ -1594,6 +1592,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func oneTap(recognizer:UITapGestureRecognizer) {
+        inputTextField.resignFirstResponder()
+        
         if !isUIHide {
             UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
                 self.whiteBackground.hidden = true
