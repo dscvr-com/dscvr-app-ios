@@ -50,6 +50,7 @@ class TouchRotationSource: RotationMatrixSource {
     private let minTheta: Float
     private let maxTheta: Float
     
+    
     init(sceneSize: CGSize, hfov: Float) {
         self.hfov = hfov
         
@@ -536,8 +537,6 @@ class OptographCollectionViewCell: UICollectionViewCell{
         
         super.init(frame: frame)
         
-        
-        
         contentView.backgroundColor = UIColor(hex:0xFF5E00)
         
         shareImageAsset.layer.cornerRadius = avatarImageView.frame.size.width / 2
@@ -547,8 +546,8 @@ class OptographCollectionViewCell: UICollectionViewCell{
         yellowView.backgroundColor = UIColor.blackColor()
         contentView.addSubview(yellowView)
         
-        playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        self.yellowView.layer.addSublayer(playerLayer)
+//        playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+//        self.yellowView.layer.addSublayer(playerLayer)
         
         previewImage.placeholderImage = UIImage(named:"placeholder_img")
         previewImage.frame = CGRect(origin: CGPointZero, size: frame.size)
@@ -795,8 +794,10 @@ class OptographCollectionViewCell: UICollectionViewCell{
 //                    self?.previewImage.kf_setImageWithURL(NSURL(string: url)!)
                     
                     let stringUrl = "http://s3-ap-southeast-1.amazonaws.com/resources.staging-iam360.io/textures/\(optographId)/frame1.jpg"
-                    self?.previewImage.setImageWithURLString(stringUrl)
                     
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self?.previewImage.setImageWithURLString(stringUrl)
+                    }
                 } else {
                     let url = TextureURL(optographId, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
                     if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
