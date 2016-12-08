@@ -1137,7 +1137,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     
     func keyboardWillHide(notification:NSNotification){
         textFieldContainer.frame = CGRect(x: 0.0, y: self.view.frame.size.height, width: textFieldContainer.frame.size.width, height: textFieldContainer.frame.size.height)
-        inputTextField.text = ""
     }
     
     func keyboardWillShow(notification:NSNotification) {
@@ -1289,6 +1288,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 clearTextLabel.hidden = false
             }
         }
+        
+        inputTextField.text = ""
         
         
         return true
