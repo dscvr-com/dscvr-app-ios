@@ -38,8 +38,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                         Models.optographs.touch(Optograph.fromSQL(row))
                         Models.persons.touch(Person.fromSQL(row))
                         Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
-//                        Models.story.touch(Story.fromSQL(row))
-//                        Models.storyChildren.touch(row[OptographSchema.storyID] != "" ? StoryChildren.fromSQL(row) : nil)
                     })
                     .map(Optograph.fromSQL)
                     .ignoreError()

@@ -82,7 +82,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     Defaults[.SessionRotateCount] = Int(config.motor_configuration_rotate_count)
                     Defaults[.SessionTopCount] = Int(config.motor_configuration_top_count)
                     Defaults[.SessionBotCount] = Int(config.motor_configuration_bot_count)
-                    Defaults[.SessionBuffCount] = Int(config.motor_configuration_bot_count)
+                    Defaults[.SessionBuffCount] = Int(config.motor_configuration_buff_count)
                 }
             }
             

@@ -38,6 +38,7 @@ class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControlle
         super.init(frame: frame)
         
         imageView.frame = CGRect(origin: CGPointZero, size: frame.size)
+        imageView.placeholderImage = UIImage(named:"placeholder_img")
         imageView.rac_hidden <~ viewModel.isStitched.producer.map(negate)
         viewModel.uploadStatus.producer.equalsTo(.Uploaded)
             .combineLatestWith(viewModel.optographID.producer)
@@ -46,7 +47,9 @@ class ProfileTileCollectionViewCell: UICollectionViewCell ,UINavigationControlle
             .startWithNext { [weak self] (isUploaded, optographID) in
                 if isUploaded {
                     let url = TextureURL(optographID, side: .Left, size: frame.width, face: 0, x: 0, y: 0, d: 1)
-                    self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self?.imageView.kf_setImageWithURL(NSURL(string: url)!)
+                    }
                 } else {
                     let url = TextureURL(optographID, side: .Left, size: 0, face: 0, x: 0, y: 0, d: 1)
                     if let originalImage = KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(url) {
