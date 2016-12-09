@@ -193,7 +193,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         print("params>>",parameters)
         
         if nodes.count > 0 || self.deletableData.count > 0{
-            LoadingIndicatorView.show()
+            LoadingIndicatorView.show("Creating story..")
             
             if isEditingStory {
                 ApiService<ChildResponse>.putForGate("story/\(storyID!)", parameters: parameters as? [String : AnyObject]).on(failed: { _ in
