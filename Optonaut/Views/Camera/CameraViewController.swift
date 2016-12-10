@@ -1,4 +1,4 @@
-//
+	//
 //  ViewController.swift
 //  Optonaut
 //
@@ -323,7 +323,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
         
         //recorder.getPreviewImage()
         
-        recorder.finish()
+        recorder.cancel()
         recorder.dispose()
         
         if StitchingService.hasUnstitchedRecordings() {
@@ -350,6 +350,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
                 iso = videoDevice!.activeFormat.maxISO
             }
             videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
+            videoDevice?.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(videoDevice!.deviceWhiteBalanceGains, completionHandler: { $0 })
         } else {
             videoDevice!.exposureMode = mode
         }
@@ -717,6 +718,10 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
             videoDevice!.videoHDREnabled = false
         }
+        
+        //videoDevice!.setValue(false, forKey: "AutomaticallyAdjustsImageControlMode")
+        //videoDevice!.setValue(false, forKey: "HighDynamicRangeSceneDetectionEnabled")
+        //videoDevice!.setValue(5, forKey: "ImageControlMode")
         
         videoDevice!.exposureMode = .ContinuousAutoExposure
         videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
