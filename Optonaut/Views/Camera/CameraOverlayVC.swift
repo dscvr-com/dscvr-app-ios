@@ -170,14 +170,12 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
                     if getCBPeripheralState(dev.state) == "Connected" {
                         navigationController?.pushViewController(CameraViewController(), animated: false)
                         navigationController?.viewControllers.removeAtIndex(1)
-                        break
-                    } else {
-                        let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .Alert)
-                        confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-                        self.presentViewController(confirmAlert, animated: true, completion: nil)
-                        break
+                        return
                     }
                 }
+                let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .Alert)
+                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+                self.presentViewController(confirmAlert, animated: true, completion: nil)
             }
             
             
