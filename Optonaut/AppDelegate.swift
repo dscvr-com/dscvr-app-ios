@@ -71,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             Defaults[.SessionPPS] = 250
             Defaults[.SessionRotateCount] = 5111
-            Defaults[.SessionTopCount] = 1888
+            Defaults[.SessionTopCount] = 1999
             Defaults[.SessionBotCount] = -3998
             Defaults[.SessionBuffCount] = 0
             
