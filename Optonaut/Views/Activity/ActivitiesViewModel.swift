@@ -12,7 +12,7 @@ import SQLite
 
 class ActivitiesViewModel: NSObject {
     
-    private var refreshTimer: NSTimer!
+    //private var refreshTimer: NSTimer!
     
     let results = MutableProperty<TableViewResults<Activity>>(.empty())
     let unreadCount: MutableProperty<Int>
@@ -89,10 +89,10 @@ class ActivitiesViewModel: NSObject {
             }
         refreshNotification.notify(())
         
-        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: #selector(ActivitiesViewModel.refresh), userInfo: nil, repeats: true)
+//        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: #selector(ActivitiesViewModel.refresh), userInfo: nil, repeats: true)
         
         SessionService.onLogout { [weak self] in
-            self?.refreshTimer.invalidate()
+            //self?.refreshTimer.invalidate()
             self?.refreshNotification.dispose()
             self?.loadMoreNotification.dispose()
         }

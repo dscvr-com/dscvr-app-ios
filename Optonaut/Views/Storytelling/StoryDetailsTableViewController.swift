@@ -193,8 +193,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         print("params>>",parameters)
         
         if nodes.count > 0 || self.deletableData.count > 0{
-            print("pass data")
-            LoadingIndicatorView.show()
+            LoadingIndicatorView.show("Creating story..")
             
             if isEditingStory {
                 ApiService<ChildResponse>.putForGate("story/\(storyID!)", parameters: parameters as? [String : AnyObject]).on(failed: { _ in
@@ -262,8 +261,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         for data in deletableData {
             
-            print("data>>",data)
-            
             if let childDeleteModel:ModelBox<StoryChildren> = Models.storyChildren[data] {
                 childDeleteModel.insertOrUpdate { st in
                     st.model.deletedAt = NSDate()
@@ -292,12 +289,12 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         var modelCount = 0
         
         for data in nodes {
-            print(data)
-            print((data["story_object_media_additional_data"] as? String)!)
-            print((data["story_object_media_description"] as? String)!)
-            print((data["story_object_media_face"] as? String)!)
-            print(data["story_object_position"])
-            print(data["story_object_rotation"])
+//            print(data)
+//            print((data["story_object_media_additional_data"] as? String)!)
+//            print((data["story_object_media_description"] as? String)!)
+//            print((data["story_object_media_face"] as? String)!)
+//            print(data["story_object_position"])
+//            print(data["story_object_rotation"])
             
             let storyChildren = StoryChildren.newInstance()
             storyChildrenBox = Models.storyChildren.create(storyChildren)
@@ -359,8 +356,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 if media.objectMediaFilename == fileInfo["mediaFilename"] as! String{
                     multiformDictionary[media.storyID] = fileInfo["mediaData"]
                     
-                    print("mediaFilename: \(fileInfo["mediaFilename"] as! String)")
-                    
                     ApiService<EmptyResponse>.uploadForGate("story/upload", multipartFormData: { form in
                         form.appendBodyPart(data: mediaData.story_id.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_id")
                         form.appendBodyPart(data: SessionService.personID.dataUsingEncoding(NSUTF8StringEncoding)!, name: "story_person_id")
@@ -385,7 +380,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3){
-        print("addVectorAndRotation");
         
         nodeItem.objectVector3 = vector;
         nodeItem.objectRotation = rotation;
@@ -436,6 +430,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                                         "story_object_id": data.ID,
                                         "story_object_media_description": data.mediaDescription,
                                         "story_object_media_additional_data": data.mediaAdditionalData,
+                                        "story_object_phi": "",
+                                        "story_object_theta": "",
                                         "story_object_position": data.objectPosition.characters.split{$0 == ","}.map(String.init),
                                         "story_object_rotation": data.objectRotation.characters.split{$0 == ","}.map(String.init)]
             nodes.append(child)
@@ -495,7 +491,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
             }
             self.lastRetainableData = self.lastRetainableData.filter { $0.mediaAdditionalData != nameArray[0] }
         } else {
-            print("wow pasok dito")
             for n in nodes{
                 if n.mediaAdditionalData == nameArray[0] {
                     self.deletableData.append(n.ID)
@@ -541,8 +536,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         else if node.mediaType == "NAV"{
                             nodeItem.optographID = node.mediaAdditionalData
                         }
-                        
-                        print("node id: \(nodeItem.optographID)")
                         
                         self.renderDelegate.addNodeFromServer(nodeItem)
                     }
@@ -596,7 +589,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 
                 
                 let nameArray = nodeObject.optographID.componentsSeparatedByString(",")
-                print(nameArray)
                 
                 self.showRemovePinButton(nodeObject)
                 return
@@ -652,11 +644,7 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         self.setCubeImageCache(cubeImageCache)
         ///addd flags to control adding texture
         
-        print("optoID: \(optographID)")
-        print("indexPath: \(cellIndexpath)")
-        
         if isStorytelling{
-            //            self.prepareStoryTellingHUD();
             self.prepareNewHUD();
         }
         else{
@@ -686,7 +674,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     func insertNewNodes(node: StoryChildren) {
         viewModel.storyNodes.value.orderedInsert(node, withOrder: .OrderedAscending)
         
-        print(">>>.",node)
         let child : NSDictionary = ["story_object_media_type": node.mediaType,
                                     "story_object_media_face": node.mediaFace,
                                     "story_object_id": node.ID,
@@ -906,14 +893,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func prepareNewHUD(){
-        //        let textPinImage = UIImage(named: "")
-        //        let textPin = UIButton(frame: CGRect(x: 0, y: 0, width: (textPinImage?.size.width)!, height: (textPinImage?.size.height)!))
-        
-        //        let optoPinImage = UIImage(named: "")
-        //        let optoPin = UIButton(frame: CGRect(x: 0, y: 0, width: (optoPinImage?.size.width)!, height: (optoPinImage?.size.height)!))
-        
-        //        let audioPinImage = UIImage(named: "")
-        //        let audioPin = UIButton(frame: CGRect(x: 0, y: 0, width: (audioPinImage?.size.width)!, height: (audioPinImage?.size.height)!))
         
         audioPin = UIButton(frame: CGRect(x: 10.0, y: self.view.frame.size.height - 50.0, width: 40.0, height: 40.0))
 //        audioPin.backgroundColor = UIColor.redColor()
@@ -997,7 +976,14 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         self.view.addSubview(fixedTextLabel)
         self.view.addSubview(clearTextLabel)
         self.view.addSubview(bgmImage)
-//        self.view.addSubview(removeBgm)
+        
+        let oneTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.closekeyboard(_:)))
+        oneTapGestureRecognizer.numberOfTapsRequired = 1
+        self.scnView.addGestureRecognizer(oneTapGestureRecognizer)
+    }
+    
+    func closekeyboard(recognizer:UITapGestureRecognizer) {
+        inputTextField.resignFirstResponder()
     }
 
     
@@ -1154,7 +1140,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func keyboardWillShow(notification:NSNotification) {
-        print("func keyboardWillShow(notification:NSNotification)")
         
         let userInfo:NSDictionary = notification.userInfo!
         let keyboardFrame:NSValue = userInfo.valueForKey(UIKeyboardFrameEndUserInfoKey) as! NSValue
@@ -1252,6 +1237,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         "story_object_media_additional_data": self.inputTextField.text!,
                         "story_object_position": translationArray,
                         "nodename":nn,
+                        "story_object_theta": "",
+                        "story_object_phi": "",
                         "story_object_rotation": rotationArray]
                     self.nodes.append(child);
                     
@@ -1285,9 +1272,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                                             "story_object_media_description": "fixed text",
                                             "story_object_media_additional_data": inputTextField.text!,
                                             "story_object_position": [0.0, 0.0, 0.0],
+                                            "story_object_theta": "",
+                                            "story_object_phi": "",
                                             "story_object_rotation": [0.0, 0.0, 0.0]]
                 
-                print("text child: \(child)")
                 nodes.append(child);
                 
                 fixedTextLabel.text = inputTextField.text
@@ -1300,6 +1288,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 clearTextLabel.hidden = false
             }
         }
+        
+        inputTextField.text = ""
         
         
         return true
@@ -1333,6 +1323,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         "story_object_media_additional_data": self.nodeItem.optographID,
                         "story_object_position": translationArray,
                         "nodename":nodeName,
+                        "story_object_theta": "",
+                        "story_object_phi": "",
                         "story_object_rotation": rotationArray]
                     
                     self.nodes.append(child);
@@ -1369,7 +1361,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         
         self.presentViewController(mediaPicker, animated: true, completion: nil)
         
-        print("sessionID: \(SessionService.personID)")
         
     }
     
@@ -1418,6 +1409,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     "story_object_media_additional_data": "audio data",
                     "story_object_position": translationArray,
                     "story_object_rotation": rotationArray,
+                    "story_object_theta": "",
+                    "story_object_phi": "",
                     "story_object_media_filename": filename]
                 
                 self.nodes.append(child)
@@ -1425,7 +1418,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                 let mediaInfo : NSDictionary = ["mediaData": data!, "mediaFilename": filename]
                 
                 self.mediaArray.append(mediaInfo)
-                print("nodes count: \(self.nodes.count)")
                 
                 self.audioPin.userInteractionEnabled = false
                 
@@ -1458,8 +1450,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         //        player!.play()
         
         mediaPicker.dismissViewControllerAnimated(true, completion: nil)
-        print("you picked: \(mediaItemCollection)")
-        print("URL: \(itemURL.absoluteString)")
     }
     
     func mediaPickerDidCancel(mediaPicker: MPMediaPickerController) {
@@ -1603,6 +1593,8 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
     }
     
     func oneTap(recognizer:UITapGestureRecognizer) {
+        inputTextField.resignFirstResponder()
+        
         if !isUIHide {
             UIView.animateWithDuration(0.4,delay: 0.3, options: .CurveEaseOut, animations: {
                 self.whiteBackground.hidden = true
@@ -1840,7 +1832,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     print("MEDIATYPE: MUS")
                     
                     let url = NSURL(string: "https://bucket.dscvr.com" + node.objectMediaFileUrl)
-                    print("url:",url)
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         self.bgmImage.hidden = false
@@ -1850,7 +1841,6 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                     if let returnPath:String = self.imageCache.insertStoryFile(url, file: nil, fileName: node.objectMediaFilename) {
                         
                         if returnPath != "" {
-                            print(returnPath)
                             self.playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
                             self.player = AVPlayer(playerItem: self.playerItem!)
                             self.player?.rate = 1.0
@@ -1874,16 +1864,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
                         nodeItem.optographID = node.mediaAdditionalData
                         nodeItem.objectType = node.mediaType
                         
-                        print("node id: \(nodeItem.optographID)")
-                        print("nodes: \(node.mediaType)")
-                        
                         self.renderDelegate.addNodeFromServer(nodeItem)
                     }
                     
                 }
-                print("counts: \(objectPosition.count)")
-                print("counts: \(objectRotation.count)")
-                
             }
         }
         
@@ -1938,12 +1922,10 @@ class StoryDetailsTableViewController: UIViewController, NoNavbar,TabControllerD
         let fileName:String = (userInfo["FileName"] as! String)
         
         let url = NSURL(string: "https://bucket.dscvr.com" + fileUrl)
-        print("url:",url)
         
         if let returnPath:String = imageCache.insertStoryFile(url, file: nil, fileName: fileName) {
             
             if returnPath != "" {
-                print(returnPath)
                 playerItem = AVPlayerItem(URL: NSURL(fileURLWithPath: returnPath))
                 self.player = AVPlayer(playerItem: self.playerItem!)
                 self.player?.rate = 1.0

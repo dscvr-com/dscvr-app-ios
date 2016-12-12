@@ -38,8 +38,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                         Models.optographs.touch(Optograph.fromSQL(row))
                         Models.persons.touch(Person.fromSQL(row))
                         Models.locations.touch(row[OptographSchema.locationID] != nil ? Location.fromSQL(row) : nil)
-//                        Models.story.touch(Story.fromSQL(row))
-//                        Models.storyChildren.touch(row[OptographSchema.storyID] != "" ? StoryChildren.fromSQL(row) : nil)
                     })
                     .map(Optograph.fromSQL)
                     .ignoreError()
@@ -56,7 +54,9 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                 ApiService<OptographApiModel>.getForGate("story/feed")
                     .observeOnUserInitiated()
                     .on(next: { apiModel in
+                        
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
+                            
                             box.model.isInFeed = true
                             box.model.isStitched = true
                             box.model.isPublished = true

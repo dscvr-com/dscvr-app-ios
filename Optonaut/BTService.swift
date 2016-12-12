@@ -123,11 +123,11 @@ class BTService: NSObject, CBPeripheralDelegate {
                 let endIndex2 = responseValue.endIndex.advancedBy(-4)
                 responseValue[Range(index2 ..< endIndex2)] //time elapsed
                 
-                var timelapsed = responseValue[Range(index2 ..< endIndex2)]
+                let timelapsed = responseValue[Range(index2 ..< endIndex2)]
                 
                 print("TP>>>>" + responseValue[Range(index2 ..< endIndex2)])
                 
-                var yDirection = responseValue[Range(index ..< endIndex)]
+                let yDirection = responseValue[Range(index ..< endIndex)]
                 
                 let bData = BService.sharedInstance
                 print("ydirection",yDirection)
@@ -463,9 +463,6 @@ class BTService: NSObject, CBPeripheralDelegate {
         return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
         
     }
-    
-    
-    
     
     func computeRotationX ( ) -> String {
         var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]

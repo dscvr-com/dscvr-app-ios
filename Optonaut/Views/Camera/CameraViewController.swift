@@ -1,4 +1,4 @@
-//
+	//
 //  ViewController.swift
 //  Optonaut
 //
@@ -327,9 +327,9 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
         
         stopSession()
         
-        //recorder.getPreviewImage()
+        recorder.getPreviewImage()
         
-        recorder.finish()
+        recorder.cancel()
         recorder.dispose()
         
         if StitchingService.hasUnstitchedRecordings() {
@@ -356,6 +356,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
                 iso = videoDevice!.activeFormat.maxISO
             }
             videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
+            videoDevice?.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(videoDevice!.deviceWhiteBalanceGains, completionHandler: { $0 })
         } else {
             videoDevice!.exposureMode = mode
         }
@@ -607,9 +608,9 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
     private func updateBallPosition(expTime:Double) {
         
         // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
-        //let exposureDuration = max(self.exposureDuration, 0.006)
         
-        let exposureDuration = max(self.exposureDuration, expTime)
+        let exposureDuration = max(self.exposureDuration, 0.006)
+        //let exposureDuration = max(self.exposureDuration, expTime)
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
         let movementPerFrameInPixels = Double(1500)
@@ -731,6 +732,10 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
             videoDevice!.videoHDREnabled = false
         }
+        
+        //videoDevice!.setValue(false, forKey: "AutomaticallyAdjustsImageControlMode")
+        //videoDevice!.setValue(false, forKey: "HighDynamicRangeSceneDetectionEnabled")
+        //videoDevice!.setValue(5, forKey: "ImageControlMode")
         
         videoDevice!.exposureMode = .ContinuousAutoExposure
         videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
@@ -1083,14 +1088,15 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         
-        let metadataDict:NSDictionary = CMCopyDictionaryOfAttachments(nil, sampleBuffer, kCMAttachmentMode_ShouldPropagate)!
-        
-        var exifData = NSDictionary()
-        exifData = metadataDict.objectForKey(kCGImagePropertyExifDictionary) as! NSDictionary
-        
-        let exposureTimeValue = exifData.objectForKey(kCGImagePropertyExifExposureTime as String)!
-        
-        processSampleBuffer(sampleBuffer,exposureTime: exposureTimeValue.doubleValue)
+//        let metadataDict:NSDictionary = CMCopyDictionaryOfAttachments(nil, sampleBuffer, kCMAttachmentMode_ShouldPropagate)!
+//        
+//        var exifData = NSDictionary()
+//        exifData = metadataDict.objectForKey(kCGImagePropertyExifDictionary) as! NSDictionary
+//        
+//        let exposureTimeValue = exifData.objectForKey(kCGImagePropertyExifExposureTime as String)!
+
+        processSampleBuffer(sampleBuffer,exposureTime: 0.006)
+        //processSampleBuffer(sampleBuffer,exposureTime: exposureTimeValue.doubleValue)
         frameCount += 1
     }
 }

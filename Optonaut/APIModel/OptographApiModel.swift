@@ -35,6 +35,7 @@ struct OptographApiModel: ApiModel, Mappable {
     }
     
     mutating func mapping(map: Map) {
+        var starsCount2 = "0"
         
         placeholder                 <- map["placeholder"]
         ID                          <- map["id"]
@@ -47,7 +48,7 @@ struct OptographApiModel: ApiModel, Mappable {
         isPrivate                   <- map["is_private"]
         stitcherVersion             <- map["stitcher_version"]
         shareAlias                  <- map["share_alias"]
-        starsCount                  <- map["stars_count"]
+        starsCount2                  <- map["stars_count"]
         commentsCount               <- map["comments_count"]
         viewsCount                  <- map["views_count"]
         location                    <- map["location"]
@@ -55,5 +56,10 @@ struct OptographApiModel: ApiModel, Mappable {
         directionPhi                <- map["direction_phi"]
         directionTheta              <- map["direction_theta"]
         story                       <- map["story"]
+        
+        
+        starsCount = Int(starsCount2)!
+        
+        print("like count",starsCount)
     }
 }

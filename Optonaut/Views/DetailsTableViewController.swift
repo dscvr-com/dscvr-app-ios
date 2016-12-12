@@ -558,7 +558,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     
     func deleteOpto() {
         
-        if SessionService.isLoggedIn {
+        if (SessionService.isLoggedIn && viewModel.isPublished.value) {
             if isStory {
                 let alert = UIAlertController(title:"Are you sure?", message: "Do you really want to delete this story? You cannot undo this.", preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "Delete", style: .Default, handler: { _ in
@@ -587,6 +587,10 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
                 alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
                 self.navigationController!.presentViewController(alert, animated: true, completion: nil)
             }
+        } else if (!viewModel.isPublished.value) {
+            let alert = UIAlertController(title:"", message: "Please wait to finish the rendering of your image.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
+            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
         } else {
             let alert = UIAlertController(title:"", message: "Please login to delete this 360 image.", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))

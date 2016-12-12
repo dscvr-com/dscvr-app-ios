@@ -58,6 +58,25 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     var progress = KDCircularProgress()
     private var refreshTimer: NSTimer?
     
+//    var largePhotoIndexPath: NSIndexPath? {
+//        didSet {
+//            var indexPaths = [NSIndexPath]()
+//            if let largePhotoIndexPath = largePhotoIndexPath {
+//                indexPaths.append(largePhotoIndexPath)
+//            }
+//            if let oldValue = oldValue {
+//                indexPaths.append(oldValue)
+//            }
+//            collectionView?.performBatchUpdates({
+//                self.collectionView?.reloadItemsAtIndexPaths(indexPaths)
+//            }) { completed in
+//                if let largePhotoIndexPath = self.largePhotoIndexPath {
+//                    self.collectionView?.scrollToItemAtIndexPath(largePhotoIndexPath, atScrollPosition: .CenteredVertically, animated: true)
+//                }
+//            }
+//        }
+//    }
+    
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
         
@@ -146,28 +165,30 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                         print("walang laman")
                     }else {
                         print("nagreload paisa isa")
-//                        strongSelf.collectionView!.performBatchUpdates({
-//                                strongSelf.collectionView!.reloadSections(NSIndexSet(index: 0))
-//                            }, completion: { (finished:Bool) -> Void in
-//                                strongSelf.refreshControl.endRefreshing()
-//                        })
-                        
-                        CATransaction.begin()
-                        CATransaction.setDisableActions(true)
-                            strongSelf.collectionView!.performBatchUpdates({
+                        strongSelf.collectionView!.performBatchUpdates({
                                 strongSelf.imageCache.delete(results.delete)
                                 strongSelf.imageCache.insert(results.insert)
-                                
-                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection:
-                                    0) })
-                                strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
-                                strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
-                            }, completion: { _ in
+                                strongSelf.collectionView!.reloadSections(NSIndexSet(index: 0))
+                            }, completion: { (finished:Bool) -> Void in
                                 strongSelf.refreshControl.endRefreshing()
-                                
-                                CATransaction.commit()
-                                
-                            })
+                        })
+                        
+//                        CATransaction.begin()
+//                        CATransaction.setDisableActions(true)
+//                            strongSelf.collectionView!.performBatchUpdates({
+//                                strongSelf.imageCache.delete(results.delete)
+//                                strongSelf.imageCache.insert(results.insert)
+//                                
+//                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection:
+//                                    0) })
+//                                strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
+//                                strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
+//                            }, completion: { _ in
+//                                strongSelf.refreshControl.endRefreshing()
+//                                
+//                                CATransaction.commit()
+//                                
+//                            })
                     }
                 }
             }).start()
@@ -176,8 +197,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             self?.navigationController?.setNavigationBarHidden(hidden, animated: false)
             self?.collectionView!.scrollEnabled = !hidden
         }
-        
-        tabController!.delegate = self
         tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
         view.addSubview(tabView)
         
@@ -438,7 +457,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         ActivitiesService.unreadCount.producer.startWithNext { count in
             let hidden = count <= 0
             circle.hidden = hidden
-            //circle.text = "\(count)"
         }
     }
     
@@ -529,12 +547,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return optographIDs.count
     }
-    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        
-        guard let cell = cell as? OptographCollectionViewCell else {
-            return
-        }
-        
+//    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+//        
+//        guard let cell = cell as? OptographCollectionViewCell else {
+//            return
+//        }
+    
 //        let optographID = optographIDs[indexPath.row]
 //        
 //        cell.navigationController = navigationController as? NavigationController
@@ -552,7 +570,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 //        if indexPath.row > optographIDs.count - 3 {
 //            viewModel.loadMore()
 //        }
-    }
+//    }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
@@ -560,24 +578,28 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         let optographID:String = optographIDs[indexPath.row]
         
-        cell.navigationController = navigationController as? NavigationController
-        cell.bindModel(optographID)
-        cell.swipeView = tabController!.scrollView
-        cell.collectionView = collectionView
-        cell.isShareOpen.producer
-            .startWithNext{ val in
-                if val{
-                    self.shareData.optographId.value = optographID
-                    self.shareData.isSharePageOpen.value = true
-                }
-        }
-        
-        if indexPath.row == optographIDs.count - 1{
-            viewModel.loadMore()
+        dispatch_async(dispatch_get_main_queue()) {
+            cell.navigationController = self.navigationController as? NavigationController
+            cell.bindModel(optographID)
+            cell.swipeView = self.tabController!.scrollView
+            cell.collectionView = collectionView
+            cell.isShareOpen.producer
+                .startWithNext{ val in
+                    if val{
+                        self.shareData.optographId.value = optographID
+                        self.shareData.isSharePageOpen.value = true
+                    }
+            }
+            
+            if indexPath.row == self.optographIDs.count - 1{
+                self.viewModel.loadMore()
+            }
         }
         
         return cell
     }
+    
+    // MARK: UICollectionViewDelegate
     
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
@@ -613,6 +635,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
     }
     
+//    override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+//        largePhotoIndexPath = largePhotoIndexPath == indexPath ? nil : indexPath
+//        return true
+//    }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 0

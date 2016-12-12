@@ -182,7 +182,6 @@ class DetailsViewModel {
     
     func deleteOpto() {
         
-        
         SignalProducer<Bool, ApiError>(value: true)
             .flatMap(.Latest) { followedBefore in
                 ApiService<EmptyResponse>.delete("optographs/\(self.optographBox.model.ID)")
