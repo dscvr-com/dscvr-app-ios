@@ -205,6 +205,8 @@ optonaut::StorageImageSink imageSink(Stores::post);
         optonaut::StorageImageSink& sink = imageSink;
           self->motorPipe = new optonaut::MotorControlRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
                                                self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated);
+        
+      
 
     } else {
       
@@ -228,6 +230,37 @@ optonaut::StorageImageSink imageSink(Stores::post);
         return pipe == NULL;
     }
 }
+
+
+// get theta values
+
+-(double) getTopThetaValue {
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        
+        return motorPipe->getTopThetaValue();
+    }
+    return 0;
+}
+
+-(double) getCenterThetaValue {
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        
+        return motorPipe->getCenterThetaValue();
+    }
+    return 0;
+}
+
+
+-(double) getBotThetaValue {
+    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
+        
+        return motorPipe->getBotThetaValue();
+    }
+    return 0;
+}
+
+
+
 
 - (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure  :(AVCaptureWhiteBalanceGains)gains{
     

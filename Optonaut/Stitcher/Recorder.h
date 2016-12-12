@@ -65,6 +65,10 @@ struct ExposureInfo {
 - (void)cancel;
 - (void)dispose;
 - (bool)isDisposed;
+- (double) getTopThetaValue ;
+- (double) getCenterThetaValue ;
+- (double) getBotThetaValue ;
+
 - (struct ExposureInfo)getExposureHint;
 - (bool)previewAvailable;
 - (struct ImageBuffer)getPreviewImage;

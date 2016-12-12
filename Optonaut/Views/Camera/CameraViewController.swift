@@ -88,6 +88,11 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
     private let bData = BService.sharedInstance
     private var RotateData = String("")
     
+    private var topThetaValue = Float(0.0)
+    private var centerThetaValue = Float(0.0)
+    private var botThetaValue = Float(0.0)
+    
+    
     var timer = NSTimer()
     
     let sessionMotor = Defaults[.SessionMotor]
@@ -196,6 +201,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
     deinit {
         if Defaults[.SessionMotor] {
             rotationSource.stop()
+            motionManager.stop()
         } else {
             motionManager.stop()
             
@@ -442,6 +448,13 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
         }
         
         
+        topThetaValue = Float(recorder.getTopThetaValue())
+        centerThetaValue = Float(recorder.getCenterThetaValue())
+        botThetaValue = Float(recorder.getBotThetaValue())
+        
+        print("Motor Theta values Top : \(topThetaValue) Center: \(centerThetaValue) Bot: \(botThetaValue)")
+        
+        
         setupScene()
         setupBall()
         setupSelectionPoints()
@@ -482,6 +495,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
         
         if Defaults[.SessionMotor] {
              rotationSource.start()
+            motionManager.start()
            
         } else {
            motionManager.start() 
@@ -839,6 +853,10 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
                 currentPhi = GLKMathDegreesToRadians(Float(currentDegree))
                 print("currentPhi \(currentPhi)")
                 
+                //currentTheta = Float(motionManager.getPitch()) - Float(M_PI_2)
+                //print("rotationPitch \(motionManager.getPitch())")
+                
+                
                 cmRotation = self.rotationSource.getRotationMatrixMotor(currentPhi, thetaValue: currentTheta)
                 print("Matrix: [\(cmRotation.m00), \(cmRotation.m01), \(cmRotation.m02), \(cmRotation.m03)")
                 print("______: [\(cmRotation.m10), \(cmRotation.m11), \(cmRotation.m12), \(cmRotation.m13)")
@@ -863,23 +881,26 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
                      }*/
                     
                     if(currentTheta == 0) {
-                        currentTheta = Float(-0.704928)
+                        currentTheta = botThetaValue
                     } else if(currentTheta < 0) {
-                        currentTheta = Float(0.704928)
+                        currentTheta = topThetaValue
                     } else if(currentTheta > 0) {
-                        currentTheta = Float(0)
+                        currentTheta = centerThetaValue
                     }
                     currentDegree = 0
                 }
                 print("currentTheta \(currentTheta)")
 
-                
+               
+            
+
                 
             } else {
             
             
                 cmRotation = motionManager.getRotationMatrix()
                 print("cmRotation \(cmRotation)")
+               
               
         
                 
