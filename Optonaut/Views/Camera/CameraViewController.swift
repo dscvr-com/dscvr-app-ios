@@ -321,7 +321,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
         
         stopSession()
         
-        //recorder.getPreviewImage()
+        recorder.getPreviewImage()
         
         recorder.finish()
         recorder.dispose()

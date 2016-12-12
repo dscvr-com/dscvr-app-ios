@@ -578,20 +578,22 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         let optographID:String = optographIDs[indexPath.row]
         
-        cell.navigationController = navigationController as? NavigationController
-        cell.bindModel(optographID)
-        cell.swipeView = tabController!.scrollView
-        cell.collectionView = collectionView
-        cell.isShareOpen.producer
-            .startWithNext{ val in
-                if val{
-                    self.shareData.optographId.value = optographID
-                    self.shareData.isSharePageOpen.value = true
-                }
-        }
-        
-        if indexPath.row == optographIDs.count - 1{
-            viewModel.loadMore()
+        dispatch_async(dispatch_get_main_queue()) {
+            cell.navigationController = self.navigationController as? NavigationController
+            cell.bindModel(optographID)
+            cell.swipeView = self.tabController!.scrollView
+            cell.collectionView = collectionView
+            cell.isShareOpen.producer
+                .startWithNext{ val in
+                    if val{
+                        self.shareData.optographId.value = optographID
+                        self.shareData.isSharePageOpen.value = true
+                    }
+            }
+            
+            if indexPath.row == self.optographIDs.count - 1{
+                self.viewModel.loadMore()
+            }
         }
         
         return cell
