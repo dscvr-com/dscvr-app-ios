@@ -213,7 +213,7 @@ class ApiService<T: Mappable> {
                 queryStr += "\(key)=\(value.escaped)"
             }
         }
-        let URL = NSURL(string: "https://mapi.dscvr.com/\(endpoint)\(queryStr)")!
+        let URL = NSURL(string: "https://noel.dscvr.com/\(endpoint)\(queryStr)")!
         
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = method.rawValue

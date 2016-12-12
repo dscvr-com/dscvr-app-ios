@@ -594,9 +594,9 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
     private func updateBallPosition(expTime:Double) {
         
         // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
-        //let exposureDuration = max(self.exposureDuration, 0.006)
         
-        let exposureDuration = max(self.exposureDuration, expTime)
+        let exposureDuration = max(self.exposureDuration, 0.006)
+        //let exposureDuration = max(self.exposureDuration, expTime)
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
         let movementPerFrameInPixels = Double(1500)
@@ -1067,14 +1067,15 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         
-        let metadataDict:NSDictionary = CMCopyDictionaryOfAttachments(nil, sampleBuffer, kCMAttachmentMode_ShouldPropagate)!
-        
-        var exifData = NSDictionary()
-        exifData = metadataDict.objectForKey(kCGImagePropertyExifDictionary) as! NSDictionary
-        
-        let exposureTimeValue = exifData.objectForKey(kCGImagePropertyExifExposureTime as String)!
-        
-        processSampleBuffer(sampleBuffer,exposureTime: exposureTimeValue.doubleValue)
+//        let metadataDict:NSDictionary = CMCopyDictionaryOfAttachments(nil, sampleBuffer, kCMAttachmentMode_ShouldPropagate)!
+//        
+//        var exifData = NSDictionary()
+//        exifData = metadataDict.objectForKey(kCGImagePropertyExifDictionary) as! NSDictionary
+//        
+//        let exposureTimeValue = exifData.objectForKey(kCGImagePropertyExifExposureTime as String)!
+
+        processSampleBuffer(sampleBuffer,exposureTime: 0.006)
+        //processSampleBuffer(sampleBuffer,exposureTime: exposureTimeValue.doubleValue)
         frameCount += 1
     }
 }

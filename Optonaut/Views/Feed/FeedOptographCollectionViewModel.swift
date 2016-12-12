@@ -57,7 +57,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                         
                         Models.optographs.touch(apiModel).insertOrUpdate { box in
                             
-                            print(box.model.starsCount)
                             box.model.isInFeed = true
                             box.model.isStitched = true
                             box.model.isPublished = true
