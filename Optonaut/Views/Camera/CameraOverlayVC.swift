@@ -204,7 +204,7 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
     func manualClicked() {
         isMotorMode(false)
         Defaults[.SessionMotor] = false
-        //Defaults[.SessionUseMultiRing] = false
+        Defaults[.SessionUseMultiRing] = false
         
         timer?.invalidate()
     }

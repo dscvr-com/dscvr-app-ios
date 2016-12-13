@@ -16,6 +16,7 @@ class DetailsViewModel {
     
     let isStarred = MutableProperty<Bool>(false)
     let isPublished = MutableProperty<Bool>(false)
+    let isStitched = MutableProperty<Bool>(false)
     let starsCount = MutableProperty<Int>(0)
     let viewsCount = MutableProperty<Int>(0)
     let commentsCount = MutableProperty<Int>(0)
@@ -224,6 +225,7 @@ class DetailsViewModel {
             self?.hashtags.value = optograph.hashtagString
             self?.isPublished.value = optograph.isPublished
             self?.shareAlias = optograph.shareAlias
+            self?.isStitched.value = optograph.isStitched
             
             if let locationID = optograph.locationID {
                 

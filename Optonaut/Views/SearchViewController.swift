@@ -14,7 +14,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     var indicator = UIActivityIndicatorView()
     
-    var tableView: UITableView!
+    var tableView =  UITableView()
     
     var searchActive : Bool = false
     
@@ -32,7 +32,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         searchBar.tintColor = UIColor.blackColor();
         self.navigationItem.titleView = searchBar;
     
-        tableView = UITableView(frame: self.view.frame);
+        tableView.frame = CGRect(x: 0,y: 0,width: view.width,height: view.height - (navigationController?.navigationBar.height)!)
         tableView.dataSource = self;
         tableView.delegate = self;
         

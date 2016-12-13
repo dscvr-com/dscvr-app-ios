@@ -407,7 +407,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         labelRing1.align(.ToTheRightCentered, relativeTo: oneRingButton, padding: 24, width: calcTextWidth("ONE RING", withFont: .fontDisplay(18, withType: .Semibold)), height: 25)
         
         threeRingButton.align(.UnderCentered, relativeTo: oneRingButton, padding: 7, width: threeRingButton.icon.size.width, height: threeRingButton.icon.size.height)
-        threeRingButton.addTarget(self, action: #selector(TabViewController.threeRingButtonTouched), forControlEvents:.TouchUpInside)
+        //threeRingButton.addTarget(self, action: #selector(TabViewController.threeRingButtonTouched), forControlEvents:.TouchUpInside)
         thisView.addSubview(threeRingButton)
         
         labelRing3.textAlignment = NSTextAlignment.Center
@@ -539,10 +539,10 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
     }
     
     func createSocialButtons() {
-//        let hideLabel = UILabel()
-//        hideLabel.backgroundColor = UIColor.whiteColor()
-//        hideLabel.frame = CGRect(x: 0,y:threeRingButton.frame.origin.y ,width: thisView.width,height: view.height - threeRingButton.frame.origin.y - 35)
-//        thisView.addSubview(hideLabel)
+        let hideLabel = UILabel()
+        hideLabel.backgroundColor = UIColor.whiteColor()
+        hideLabel.frame = CGRect(x: 0,y:threeRingButton.frame.origin.y ,width: thisView.width,height: view.height - threeRingButton.frame.origin.y - 35)
+        thisView.addSubview(hideLabel)
         
         facebookSocialButton.text = "Facebook"
         facebookSocialButton.color = UIColor(0x3b5998)
@@ -574,7 +574,7 @@ class TabViewController: UIViewController,UIGestureRecognizerDelegate,UIScrollVi
         titleLabelShare.textColor = UIColor.blackColor()
         titleLabelShare.font = .fontDisplay(12, withType: .Semibold)
         thisView.addSubview(titleLabelShare)
-        titleLabelShare.align(.UnderMatchingLeft, relativeTo: threeRingButton, padding: 10, width: 200, height: 20)
+        titleLabelShare.align(.UnderMatchingLeft, relativeTo: oneRingButton, padding: 10, width: 200, height: 20)
         
         let fbButton = UIImage(named:"facebook_save_active")?.size
         let twitterButton = UIImage(named:"twitter_save_active")?.size
