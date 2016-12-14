@@ -391,8 +391,10 @@ optonaut::StorageImageSink imageSink(Stores::post);
 - (void)cancel {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
          assert(motorPipe != NULL);
+        motorPipe->Cancel();
     } else {
         assert(pipe != NULL);
+        pipe->Cancel();
     }
     // Do nothing, no threading here.
 }
