@@ -26,6 +26,8 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
     private let progressView = CameraOverlayProgressView()
     private var blList:[CBPeripheral] = []
     var timer:NSTimer?
+    var blSheet = UIAlertController()
+    var deviceLastCount: Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +60,24 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
         if Defaults[.SessionMotor] {
             if btDiscoverySharedInstance.devicesNameList().count > 0 {
                 blList = btDiscoverySharedInstance.devicesNameList()
+                if deviceLastCount != blList.count {
+                    deviceLastCount = blList.count
+                    blSheet.dismissViewControllerAnimated(false, completion: nil)
+                    getBluetoothDevicesToPair()
+                    print("may changes")
+                } else {
+                    print("walang changes")
+                }
+            } else {
+                blList = []
+                if deviceLastCount != blList.count {
+                    deviceLastCount = blList.count
+                    blSheet.dismissViewControllerAnimated(false, completion: nil)
+                    getBluetoothDevicesToPair()
+                    print("may changes zero count")
+                } else {
+                    print("walang changes zero count")
+                }
             }
         }
     }
@@ -135,7 +155,7 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
     }
     
     func getBluetoothDevicesToPair() {
-        let blSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        blSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
         if blList.count == 0 {
             timer = NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(getBluetoothList), userInfo: nil, repeats: true)
             blSheet.addAction(UIAlertAction(title: "Searching for nearby devices..", style: .Default, handler: { _ in
