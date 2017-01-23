@@ -11,9 +11,6 @@ import ReactiveCocoa
 import SpriteKit
 import Async
 import Kingfisher
-import SwiftyUserDefaults
-//import AssetsLibrary
-import Photos
 
 typealias Direction = (phi: Float, theta: Float)
 
@@ -21,10 +18,10 @@ protocol OptographCollectionViewModel {
     var isActive: MutableProperty<Bool> { get }
     var results: MutableProperty<TableViewResults<Optograph>> { get }
     func refresh()
-    func loadMore()
 }
 
-class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout ,TransparentNavbarWithStatusBar,TabControllerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate{
+
+class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
     
     private let queue = dispatch_queue_create("collection_view", DISPATCH_QUEUE_SERIAL)
     
@@ -36,46 +33,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     private var optographDirections: [UUID: Direction] = [:]
     
     private let refreshControl = UIRefreshControl()
+    private let overlayView = OverlayView()
     
     private let uiHidden = MutableProperty<Bool>(false)
     
     private var overlayIsAnimating = false
     
     private var isVisible = false
-    
-    private var tabView = TabView()
-    
-    private let fileManager = NSFileManager.defaultManager()
-    var strLoader:String = ""
-    
-    let checkPhotoPermission = MutableProperty<Bool>(false)
-    
-    var imageView: UIImageView!
-    var imagePicker = UIImagePickerController()
-    
-    let shareData = ShareData.sharedInstance
-    
-    var progress = KDCircularProgress()
-    private var refreshTimer: NSTimer?
-    
-//    var largePhotoIndexPath: NSIndexPath? {
-//        didSet {
-//            var indexPaths = [NSIndexPath]()
-//            if let largePhotoIndexPath = largePhotoIndexPath {
-//                indexPaths.append(largePhotoIndexPath)
-//            }
-//            if let oldValue = oldValue {
-//                indexPaths.append(oldValue)
-//            }
-//            collectionView?.performBatchUpdates({
-//                self.collectionView?.reloadItemsAtIndexPaths(indexPaths)
-//            }) { completed in
-//                if let largePhotoIndexPath = self.largePhotoIndexPath {
-//                    self.collectionView?.scrollToItemAtIndexPath(largePhotoIndexPath, atScrollPosition: .CenteredVertically, animated: true)
-//                }
-//            }
-//        }
-//    }
     
     init(viewModel: OptographCollectionViewModel) {
         self.viewModel = viewModel
@@ -101,9 +65,17 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         imageCache.onMemoryWarning()
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let cardboardButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
+        cardboardButton.text = String.iconWithName(.Cardboard)
+        cardboardButton.textColor = .whiteColor()
+        cardboardButton.font = UIFont.iconOfSize(24)
+        cardboardButton.userInteractionEnabled = true
+        cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewController.showCardboardAlert)))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cardboardButton)
         
         refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { [weak self] _ in
             self?.viewModel.refresh()
@@ -111,13 +83,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         }
         refreshControl.bounds = CGRect(x: refreshControl.bounds.origin.x, y: 5, width: refreshControl.bounds.width, height: refreshControl.bounds.height)
         collectionView!.addSubview(refreshControl)
-
+        
         // Register cell classes
         collectionView!.registerClass(OptographCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         
         collectionView!.delegate = self
         
-        collectionView!.pagingEnabled = false
+        collectionView!.pagingEnabled = true
         
         automaticallyAdjustsScrollViewInsets = false
         
@@ -125,35 +97,16 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         edgesForExtendedLayout = .None
         
-        tabController!.delegate = self
-
-        var leftButton = UIImage(named: "search_icn")
-        leftButton = leftButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapLeftBarButton))
-        
-        
-        var image = UIImage(named: "profile_page_icn")
-        image = image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(OptographCollectionViewController.tapRightButton))
-        
         viewModel.results.producer
-            .filter {$0.changed }
+            .filter { $0.changed }
             .retryUntil(0.1, onScheduler: QueueScheduler(queue: queue)) { [weak self] in self?.collectionView!.decelerating == false && self?.collectionView!.dragging == false }
             .delayAllUntil(viewModel.isActive.producer)
             .observeOnMain()
             .on(next: { [weak self] results in
-                
                 if let strongSelf = self {
-//                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
-                    
-                    strongSelf.collectionView!.setContentOffset(CGPointZero, animated:false)
-                    
-                    if results.models.count != 0 {
-                        strongSelf.optographIDs = results.models.map { $0.ID }
-                    }
-                    
+                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems().first!.row]
+                    strongSelf.optographIDs = results.models.map { $0.ID }
                     for optograph in results.models {
-                        
                         if strongSelf.optographDirections[optograph.ID] == nil {
                             strongSelf.optographDirections[optograph.ID] = (phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta))
                         }
@@ -161,364 +114,115 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     
                     if results.models.count == 1 {
                         strongSelf.collectionView!.reloadData()
-                    } else if results.models.count == 0 {
-                        print("walang laman")
-                    }else {
-                        print("nagreload paisa isa")
+                    } else {
+                        CATransaction.begin()
+                        CATransaction.setDisableActions(true)
                         strongSelf.collectionView!.performBatchUpdates({
-                                strongSelf.imageCache.delete(results.delete)
-                                strongSelf.imageCache.insert(results.insert)
-                                strongSelf.collectionView!.reloadSections(NSIndexSet(index: 0))
-                            }, completion: { (finished:Bool) -> Void in
+                            strongSelf.imageCache.delete(results.delete)
+                            strongSelf.imageCache.insert(results.insert)
+                            strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection: 0) })
+                            strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
+                            strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
+                            }, completion: { _ in
+                                if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
+                                    // preserves scroll position
+                                    if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
+                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
+                                    }
+                                }
                                 strongSelf.refreshControl.endRefreshing()
+                                CATransaction.commit()
                         })
-                        
-//                        CATransaction.begin()
-//                        CATransaction.setDisableActions(true)
-//                            strongSelf.collectionView!.performBatchUpdates({
-//                                strongSelf.imageCache.delete(results.delete)
-//                                strongSelf.imageCache.insert(results.insert)
-//                                
-//                                strongSelf.collectionView!.deleteItemsAtIndexPaths(results.delete.map { NSIndexPath(forItem: $0, inSection:
-//                                    0) })
-//                                strongSelf.collectionView!.reloadItemsAtIndexPaths(results.update.map { NSIndexPath(forItem: $0, inSection: 0) })
-//                                strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
-//                            }, completion: { _ in
-//                                strongSelf.refreshControl.endRefreshing()
-//                                
-//                                CATransaction.commit()
-//                                
-//                            })
                     }
+                    
                 }
-            }).start()
+                })
+            .start()
+        
+        let topOffset = navigationController!.navigationBar.frame.height + 20
+        overlayView.frame = CGRect(x: 0, y: topOffset, width: view.frame.width, height: view.frame.height - topOffset)
+        overlayView.uiHidden = uiHidden
+        overlayView.navigationController = navigationController as? NavigationController
+        overlayView.parentViewController = self
+        overlayView.rac_hidden <~ uiHidden
+        //        overlayView.deleteCallback = { [weak self] in
+        //            self?.overlayView.optographID = nil
+        //            self?.viewModel.refresh()
+        //        }
+        view.addSubview(overlayView)
         
         uiHidden.producer.startWithNext { [weak self] hidden in
             self?.navigationController?.setNavigationBarHidden(hidden, animated: false)
+            
             self?.collectionView!.scrollEnabled = !hidden
-        }
-        tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
-        view.addSubview(tabView)
-        
-        tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
-        tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
-        tabView.cameraButton.addTarget(self, action: #selector(touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
-        
-        tabView.leftButton.addTarget(self, action: #selector(tapLeftButton), forControlEvents: [.TouchDown])
-        
-        tabView.rightButton.addTarget(self, action: #selector(tapRightButtonTab), forControlEvents: [.TouchUpInside])
-        
-        createStitchingProgressBar()
-        
-        PipelineService.stitchingStatus.producer
-            .observeOnMain()
-            .startWithNext { [weak self] status in
-                
-                switch status {
-                case .Uninitialized:
-                    self?.tabView.cameraButton.loading = true
-                case .Idle:
-                    self?.tabView.cameraButton.progress = nil
-                    if self?.tabView.cameraButton.progressLocked == false {
-                        self?.tabView.cameraButton.icon = UIImage(named:"camera_icn")!
-                        self?.tabView.rightButton.loading = false
-                    }
-                case let .Stitching(progress):
-                    if self?.progress.hidden == true {
-                        self?.progress.hidden = false
-                    }
-                    let progressSize:Double = Double(progress * 360)
-                    self?.progress.angle = progressSize
-                case .StitchingFinished(_):
-                    self?.progress.angle = 360
-                    self?.progress.hidden = true
-                    self?.tabView.cameraButton.progress = nil
-                }
-        }
-        
-        updateTabs()
-        initNotificationIndicator()
-        imagePicker.delegate = self
-        
-        PipelineService.checkStitching()
-        PipelineService.checkUploading()
-        
-        tabController?.pageStatus.producer.startWithNext { val in
-            if val == .Feed {
-                self.viewModel.isActive.value = true
-                self.configSpinnerLoader()
+            
+            if hidden {
+                self?.tabController?.hideUI()
             } else {
-                self.viewModel.isActive.value = false
+                self?.tabController?.showUI()
             }
         }
-        
-    }
-    
-    func createStitchingProgressBar() {
-        let sizeWidth = UIImage(named:"camera_icn")!.size.width
-        let sizeHeight = UIImage(named:"camera_icn")!.size.height
-        
-        progress = KDCircularProgress(frame: CGRect(x: ((view.frame.width/2) - ((sizeWidth+40)/2)), y: (view.frame.height) - sizeHeight - 40, width: sizeWidth+40, height: sizeHeight+40))
-        progress.progressThickness = 0.2
-        progress.trackThickness = 0.7
-        progress.clockwise = true
-        progress.startAngle = 270
-        progress.gradientRotateSpeed = 2
-        progress.roundedCorners = true
-        progress.glowMode = .Forward
-        progress.setColors(UIColor(hex:0xFF5E00) ,UIColor(hex:0xFF7300), UIColor(hex:0xffbc00))
-        progress.hidden = true
-        view.addSubview(progress)
-    }
-    
-    func path() -> CGPath{
-        return SamplePaths.cameraPath()
-    }
-    func openGallary() {
-        
-        checkPhotoLibraryPermission()
-        
-        checkPhotoPermission.producer.filter( isTrue ).startWithNext { val in
-            if Defaults[.SessionEliteUser] {
-                let imagePickVC = ViewController()
-                
-                imagePickVC.imagePicked.producer.startWithNext{ image in
-                    if image != nil {
-                        self.uploadTheta(image!)
-                    }
-                }
-                
-                self.presentViewController(imagePickVC, animated: true, completion: nil)
-            } else{
-                self.tapRightButton()
-            }
-        }
-    }
-    
-    func checkPhotoLibraryPermission(){
-        
-        let status = PHPhotoLibrary.authorizationStatus()
-        switch status {
-        case .Authorized:
-            checkPhotoPermission.value = true
-        case .Denied, .Restricted :
-            checkPhotoPermission.value = false
-        case .NotDetermined:
-            
-            PHPhotoLibrary.requestAuthorization({(status:PHAuthorizationStatus) in
-                switch status{
-                case .Authorized:
-                    dispatch_async(dispatch_get_main_queue(), {
-                        self.checkPhotoPermission.value = true
-                    })
-                    break
-                case .Denied:
-                    dispatch_async(dispatch_get_main_queue(), {
-                        self.checkPhotoPermission.value = false
-                    })
-                    break
-                default:
-                    dispatch_async(dispatch_get_main_queue(), {
-                        self.checkPhotoPermission.value = false
-                        
-                    })
-                    break
-                }
-            })
-        }
-    }
-    
-    func uploadTheta(thetaImage:UIImage) {
-        
-        Defaults[.SessionUploadMode] = "theta"
-        
-        let createOptographViewController = SaveThetaViewController(thetaImage:thetaImage)
-        
-        createOptographViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(createOptographViewController, animated: false)
-    }
-    
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            if pickedImage.size.height == 2048 && pickedImage.size.width == 4096 {
-                uploadTheta(pickedImage)
-            } else {
-                //isThetaImage.value = false
-            }
-        }
-        
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func tapCameraButton() {
-        
-        switch PipelineService.stitchingStatus.value {
-        case .Idle:
-            self.tabController?.centerViewController.cleanup()
-            self.tabController?.rightViewController.cleanup()
-            self.tabController?.leftViewController.cleanup()
-            
-            Defaults[.SessionUploadMode] = "opto"
-            
-            if Defaults[.SessionEliteUser] {
-                //navigationController?.pushViewController(CameraViewController(), animated: false)
-                navigationController?.pushViewController(CameraOverlayVC(), animated: false)
-                
-            } else{
-                self.tapRightButton()
-            }
-            
-        case .Stitching(_):
-            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            tabController?.centerViewController.presentViewController(alert, animated: true, completion: nil)
-        case .Uninitialized: ()
-            
-        default:
-            print("wala")
-            PipelineService.stitchingStatus.value = .Idle
-            //        case let .StitchingFinished(optographID):
-            //            scrollToOptographFeed(optographID)
-            //            PipelineService.stitchingStatus.value = .Idle
-        }
-    }
-    
-    func scrollToOptographFeed(optographID: UUID) {
-        let row = optographIDs.indexOf(optographID)
-        collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
-    }
-    
-    func touchStartCameraButton() {
-        print("")
-    }
-    func touchEndCameraButton() {
-        print("")
-    }
-    func tapLeftButton() {
-        if Reachability.connectedToNetwork() {
-            openGallary()
-        } else {
-            let alert = UIAlertController(title: "Ooops!", message: "Please check network connection!", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler:nil))
-            
-            self.presentViewController(alert, animated: true, completion: nil)
-        }
-    }
-    func tapRightButtonTab() {
-        tabController!.tapNavBarTitleForFeedClass()
-        //self.presentViewController(BTList(), animated: true, completion: nil)
-    }
-    
-    func tapRightButton() {
-        tabController!.rightButtonAction()
-        if SessionService.isLoggedIn {
-            readAllNotification()
-                .on(
-                    completed: { [weak self] in
-                        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                        ActivitiesService.unreadCount.value = 0
-                    }).start()
-        }
-        
-    }
-    
-    func readAllNotification() -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.post("activities/read_all")
-    }
-    
-    func tapLeftBarButton() {
-        self.navigationController?.pushViewController(SearchViewController(), animated: true)
-    }
-    
-    func showUI() {
-        tabView.hidden = false
-    }
-    
-    func hideUI() {
-        tabView.hidden = true
-    }
-    
-    private func initNotificationIndicator() {
-        let circle = UILabel()
-        circle.frame = CGRect(x: view.frame.width - 25, y: 25, width: 10, height: 10)
-        circle.backgroundColor = .Accent
-        circle.font = UIFont.displayOfSize(10, withType: .Regular)
-        circle.textAlignment = .Center
-        circle.textColor = .whiteColor()
-        circle.layer.cornerRadius = 8
-        circle.clipsToBounds = true
-        circle.hidden = true
-        view.addSubview(circle)
-        
-        ActivitiesService.unreadCount.producer.startWithNext { count in
-            let hidden = count <= 0
-            circle.hidden = hidden
-        }
-    }
-    
-    func updateTabs() {
-        tabView.leftButton.icon = UIImage(named:"photo_library_icn")!
-        tabView.rightButton.icon = UIImage(named:"settings_icn")!
-        tabView.cameraButton.icon = UIImage(named:"camera_icn")!
-        tabView.bottomGradientOffset.value = 126
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.configSpinnerLoader()
-        
         uiHidden.value = false
-        showUI()
-        tabController!.enableScrollView()
-        tabController!.enableNavBarGesture()
+        overlayView.alpha = 0
+        
+        if !optographIDs.isEmpty {
+            lazyFadeInOverlay(delay: 0.3)
+        }
+        
+        viewModel.isActive.value = true
+        
+        CoreMotionRotationSource.Instance.start()
         
         view.bounds = UIScreen.mainScreen().bounds
         
+        RotationService.sharedInstance.rotationEnable()
         
-    }
-    
-    func configSpinnerLoader() {
-        
-        SwiftSpinner.setTitleFont(UIFont(name: "Avenir-Book", size: 20.0))
-        
-        if strLoader == "Loading DSCVR.." {
-            strLoader = "Loading DSCVR..."
-        } else {
-            strLoader = "Loading DSCVR.."
+        if let indexPath = collectionView!.indexPathsForVisibleItems().first, cell = collectionView!.cellForItemAtIndexPath(indexPath) {
+            collectionView(collectionView!, willDisplayCell: cell, forItemAtIndexPath: indexPath)
         }
-        
-        SwiftSpinner.show(strLoader).addTapHandler({
-            SwiftSpinner.hide()
-            }, subtitle: "Tap to hide")
-        
-        refreshTimer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(hideLoader), userInfo: nil, repeats: true)
     }
     
-    
-    func hideLoader() {
-        SwiftSpinner.hide()
-        refreshTimer?.invalidate()
-    }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         
-        // TODO - remove as soon as correct disposal is implemented. 
+        // TODO - remove as soon as correct disposal is implemented.
         // imageCache.reset()
         
-        //RotationService.sharedInstance.rotationDisable()
+        RotationService.sharedInstance.rotationDisable()
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
         isVisible = true
+        
+        if !optographIDs.isEmpty {
+            lazyFadeInOverlay(delay: 0)
+        }
+        
+        tabController!.delegate = self
+        
         updateNavbarAppear()
+        
+        updateTabs()
+        
+        tabController!.showUI()
+        
+        if let rotationSignal = RotationService.sharedInstance.rotationSignal {
+            rotationSignal
+                .skipRepeats()
+                .filter([.LandscapeLeft, .LandscapeRight])
+                //                .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
+                .take(1)
+                .observeOn(UIScheduler())
+                .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
+        }
     }
     
     override func viewDidDisappear(animated: Bool) {
@@ -526,12 +230,11 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         isVisible = false
         
+        CoreMotionRotationSource.Instance.stop()
+        
         viewModel.isActive.value = false
-        tabController!.disableNavBarGesture()
     }
     
-    
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -539,147 +242,161 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
     
     // MARK: UICollectionViewDataSource
-
+    
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
-
+    
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return optographIDs.count
     }
-//    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-//        
-//        guard let cell = cell as? OptographCollectionViewCell else {
-//            return
-//        }
     
-//        let optographID = optographIDs[indexPath.row]
-//        
-//        cell.navigationController = navigationController as? NavigationController
-//        cell.bindModel(optographID)
-//        cell.swipeView = tabController!.scrollView
-//        cell.collectionView = collectionView
-//        cell.isShareOpen.producer
-//            .startWithNext{ val in
-//                if val{
-//                    self.shareData.optographId.value = optographID
-//                    self.shareData.isSharePageOpen.value = true
-//                }
-//        }
-//        
-//        if indexPath.row > optographIDs.count - 3 {
-//            viewModel.loadMore()
-//        }
-//    }
-
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! OptographCollectionViewCell
         
-        let optographID:String = optographIDs[indexPath.row]
-        
-        dispatch_async(dispatch_get_main_queue()) {
-            cell.navigationController = self.navigationController as? NavigationController
-            cell.bindModel(optographID)
-            cell.swipeView = self.tabController!.scrollView
-            cell.collectionView = collectionView
-            cell.isShareOpen.producer
-                .startWithNext{ val in
-                    if val{
-                        self.shareData.optographId.value = optographID
-                        self.shareData.isSharePageOpen.value = true
-                    }
-            }
-            
-            if indexPath.row == self.optographIDs.count - 1{
-                self.viewModel.loadMore()
-            }
-        }
+        cell.uiHidden = uiHidden
         
         return cell
     }
-    
-    // MARK: UICollectionViewDelegate
-    
-    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
-        let startOptograph = optographIDs[indexPath.row]
-        let optoModel = Models.optographs[startOptograph]!
-        let storyId = optoModel.model.storyID
-        
-        if storyId != "" {
-            let detailsViewController = DetailsTableViewController(optoList:[startOptograph],storyid:storyId)
-            detailsViewController.cellIndexpath = indexPath.item
-            detailsViewController.isStory = true
-            navigationController?.pushViewController(detailsViewController, animated: true)
-
-        } else {
-            var optographsToPick: [UUID] = []
-            optographsToPick.append(optographIDs[indexPath.row])
-            
-            if (indexPath.row + 5 ) >= optographIDs.count {
-                for a in 1...5 {
-                    optographsToPick.append(optographIDs[(indexPath.row + a) % optographIDs.count])
-                }
-            } else {
-                for a in 1...5 {
-                    optographsToPick.append(optographIDs[indexPath.row + a])
-                }
-            }
-            
-            let detailsViewController = DetailsTableViewController(optoList:optographsToPick,storyid: nil)
-            detailsViewController.cellIndexpath = indexPath.item
-            navigationController?.pushViewController(detailsViewController, animated: true)
-        
-        }
-        
-    }
-    
-//    override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-//        largePhotoIndexPath = largePhotoIndexPath == indexPath ? nil : indexPath
-//        return true
-//    }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 0
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSizeMake(UIScreen.mainScreen().bounds.size.width, CGFloat((UIScreen.mainScreen().bounds.size.height/5)*2))
+        return UIScreen.mainScreen().bounds.size
     }
     
+    override func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+        guard let cell = cell as? OptographCollectionViewCell else {
+            return
+        }
+        
+        let optographID = optographIDs[indexPath.row]
+        
+        cell.direction = optographDirections[optographID]!
+        cell.willDisplay()
+        
+        let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .Left)
+        cell.setCubeImageCache(cubeImageCache)
+        
+        cell.id = indexPath.row
+        
+        if StitchingService.isStitching() {
+            imageCache.resetExcept(indexPath.row)
+        } else {
+            for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
+                let id = optographIDs[indexPath.row + i]
+                let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
+                imageCache.touch(indexPath.row + i, optographID: id, side: .Left, cubeIndices: cubeIndices)
+            }
+        }
+        
+        if overlayView.optographID == nil {
+            overlayView.optographID = optographID
+        }
+        
+        if isVisible {
+            lazyFadeInOverlay(delay: 0)
+        }
+    }
     
-//    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-//        
-//        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-//        for cell in cells {
-//            cell.setRotation(false)
-//        }
-//        
-//        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds)-20)
-//        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter){
-//            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
-//            
-//                cell.setRotation(true)
-//            }
-//        }
-//    }
-//    
-//    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-//        
-//        
-//        let cells = collectionView!.visibleCells() as! Array<OptographCollectionViewCell>
-//        for cell in cells {
-//            cell.setRotation(false)
-//        }
-//        
-//        let superCenter = CGPointMake(CGRectGetMidX(collectionView!.bounds), CGRectGetMidY(collectionView!.bounds)-20)
-//        if let visibleIndexPath: NSIndexPath = collectionView!.indexPathForItemAtPoint(superCenter) {
-//            if let cell:OptographCollectionViewCell = collectionView?.cellForItemAtIndexPath(visibleIndexPath) as? OptographCollectionViewCell {
-//                cell.setRotation(true)
-//            }
-//        }
-//    }
+    override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+        let cell = cell as! OptographCollectionViewCell
+        
+        optographDirections[optographIDs[indexPath.row]] = cell.direction
+        cell.didEndDisplay()
+        
+        imageCache.disable(indexPath.row)
+    }
+    
+    override func scrollViewDidScroll(scrollView: UIScrollView) {
+        let height = view.frame.height
+        let offset = scrollView.contentOffset.y
+        
+        if !overlayIsAnimating {
+            let relativeOffset = offset % height
+            let percentage = relativeOffset / height
+            var opacity: CGFloat = 0
+            if percentage > 0.8 || percentage < 0.2 {
+                if scrollView.decelerating && overlayView.alpha == 0 {
+                    overlayIsAnimating = true
+                    dispatch_async(dispatch_get_main_queue()) {
+                        UIView.animateWithDuration(0.2,
+                                                   delay: 0,
+                                                   options: [.AllowUserInteraction],
+                                                   animations: {
+                                                    self.overlayView.alpha = 1
+                            }, completion: nil)
+                    }
+                    return
+                }
+                
+                let normalizedPercentage = percentage < 0.2 ? percentage : 1 - percentage
+                opacity = -10 * normalizedPercentage + 2
+            }
+            
+            overlayView.alpha = opacity
+        }
+        
+        let overlayOptographID = optographIDs[Int(round(offset / height))]
+        if overlayOptographID != overlayView.optographID {
+            overlayView.optographID = overlayOptographID
+        }
+    }
+    
+    override func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        overlayIsAnimating = false
+        overlayView.layer.removeAllAnimations()
+    }
+    
+    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        overlayIsAnimating = false
+    }
+    
+    override func cleanup() {
+        for cell in collectionView!.visibleCells().map({ $0 as! OptographCollectionViewCell }) {
+            cell.forgetTextures()
+        }
+        
+        imageCache.reset()
+    }
+    
+    private func pushViewer(orientation: UIInterfaceOrientation) {
+        guard let index = collectionView!.indexPathsForVisibleItems().first?.row else {
+            return
+        }
+        
+//        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographIDs[index]]!.model)
+//        navigationController?.pushViewController(viewerViewController, animated: false)
+    }
+    
+    private func lazyFadeInOverlay(delay delay: NSTimeInterval) {
+        if overlayView.alpha == 0 && !overlayIsAnimating {
+            overlayIsAnimating = true
+            //            dispatch_async(dispatch_get_main_queue()) {
+            UIView.animateWithDuration(0.2,
+                                       delay: delay,
+                                       options: [.AllowUserInteraction],
+                                       animations: {
+                                        self.overlayView.alpha = 1
+                }, completion: { _ in
+                    self.overlayIsAnimating = false
+                }
+            )
+        }
+    }
+    
+    dynamic private func showCardboardAlert() {
+        let confirmAlert = UIAlertController(title: "Put phone in VR viewer", message: "Please turn your phone and put it into your VR viewer.", preferredStyle: .Alert)
+        confirmAlert.addAction(UIAlertAction(title: "Continue", style: .Cancel, handler: { _ in return }))
+        navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
+    }
+    
+}
+
+// MARK: - UITabBarControllerDelegate
+extension OptographCollectionViewController: DefaultTabControllerDelegate {
     
     func jumpToTop() {
         viewModel.refresh()
@@ -689,6 +406,138 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     func scrollToOptograph(optographID: UUID) {
         let row = optographIDs.indexOf(optographID)
         collectionView!.scrollToItemAtIndexPath(NSIndexPath(forRow: row!, inSection: 0), atScrollPosition: .Top, animated: true)
+    }
+    
+}
+
+private class OverlayViewModel {
+    
+    var optographBox: ModelBox<Optograph>!
+    
+    var optograph: Optograph!
+    
+    func bind(optographID: UUID) {
+        
+        optographBox = Models.optographs[optographID]!
+        
+    }
+}
+
+private class OverlayView: UIView {
+    
+    private let viewModel = OverlayViewModel()
+    
+    weak var uiHidden: MutableProperty<Bool>!
+    weak var navigationController: NavigationController?
+    weak var parentViewController: UIViewController?
+    
+    var deleteCallback: (() -> ())?
+    
+    private var optographID: UUID? {
+        didSet {
+            if let optographID = optographID  {
+                let optograph = Models.optographs[optographID]!.model
+                let person = Models.persons[optograph.personID]!.model
+                
+                viewModel.bind(optographID)
+                
+                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
+                personNameView.text = person.displayName
+                dateView.text = optograph.createdAt.longDescription
+                textView.text = optograph.text
+                
+                if let locationID = optograph.locationID {
+                    let location = Models.locations[locationID]!.model
+                    locationTextView.text = "\(location.text), \(location.countryShort)"
+                    personNameView.anchorInCorner(.TopLeft, xPad: 75, yPad: 17, width: 200, height: 18)
+                    locationTextView.anchorInCorner(.TopLeft, xPad: 75, yPad: 37, width: 200, height: 13)
+                    locationTextView.text = location.text
+                } else {
+                    personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
+                    locationTextView.text = ""
+                }
+            }
+        }
+    }
+    
+    private let whiteBackground = UIView()
+    private let avatarImageView = UIImageView()
+    private let personNameView = BoundingLabel()
+    private let locationTextView = UILabel()
+    private let optionsButtonView = BoundingButton()
+    private let dateView = UILabel()
+    private let textView = BoundingLabel()
+    
+    override init (frame: CGRect) {
+        super.init(frame: frame)
+        
+        whiteBackground.backgroundColor = UIColor.whiteColor().alpha(0.95)
+        addSubview(whiteBackground)
+        
+        avatarImageView.layer.cornerRadius = 23.5
+        avatarImageView.backgroundColor = .whiteColor()
+        avatarImageView.clipsToBounds = true
+        avatarImageView.userInteractionEnabled = true
+        addSubview(avatarImageView)
+        
+        personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
+        personNameView.textColor = .Accent
+        personNameView.userInteractionEnabled = true
+        addSubview(personNameView)
+        
+        optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
+        optionsButtonView.setTitle(String.iconWithName(.More), forState: .Normal)
+        optionsButtonView.setTitleColor(UIColor(0xc6c6c6), forState: .Normal)
+        optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.didTapOptions)))
+        addSubview(optionsButtonView)
+        
+        locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
+        locationTextView.textColor = UIColor(0x3c3c3c)
+        addSubview(locationTextView)
+        
+        dateView.font = UIFont.displayOfSize(11, withType: .Regular)
+        dateView.textColor = UIColor(0xbbbbbb)
+        dateView.textAlignment = .Right
+        addSubview(dateView)
+        
+        textView.font = UIFont.displayOfSize(14, withType: .Regular)
+        textView.textColor = .whiteColor()
+        textView.userInteractionEnabled = true
+        addSubview(textView)
+    }
+    
+    convenience init () {
+        self.init(frame: CGRectZero)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        whiteBackground.frame = CGRect(x: 0, y: 0, width: frame.width, height: 66)
+        avatarImageView.anchorInCorner(.TopLeft, xPad: 16, yPad: 9.5, width: 47, height: 47)
+        optionsButtonView.anchorInCorner(.TopRight, xPad: 16, yPad: 21, width: 24, height: 24)
+        dateView.anchorInCorner(.TopRight, xPad: 46, yPad: 27, width: 70, height: 13)
+    }
+    
+    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+        for subview in subviews as [UIView] {
+            if !subview.hidden && subview.alpha > 0 && subview.userInteractionEnabled && subview.pointInside(convertPoint(point, toView: subview), withEvent: event) {
+                return true
+            }
+        }
+        return false
+    }
+    
+}
+
+extension OverlayView: OptographOptions {
+    
+    dynamic func didTapOptions() {
+        showOptions(viewModel.optographBox.model.ID, deleteCallback: deleteCallback)
     }
     
 }

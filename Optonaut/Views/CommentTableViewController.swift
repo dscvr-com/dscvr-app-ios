@@ -13,7 +13,6 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
     var viewModel: DetailsViewModel!
     private var tableView = UITableView()
     private let commentField = UIView()
-    private let commentTextField = TextField()
     private let postButton = UIButton()
     private let commentView = UIView()
     private let imageView = UIImageView()
@@ -78,28 +77,13 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
         postButton.titleLabel!.textAlignment = .Left
         postButton.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
         postButton.userInteractionEnabled = false
-        postButton.addTarget(self,action: #selector(CommentTableViewController.postComment),forControlEvents: .TouchUpInside)
         commentField.addSubview(postButton)
         postButton.anchorToEdge(.Right, padding: 15, width: 100, height: 30)
-        
-        commentTextField.backgroundColor = UIColor.lightGrayColor()
-        commentTextField.delegate = self
-        commentTextField.returnKeyType = .Send
-        commentTextField.layer.cornerRadius = 5
-        commentTextField.clipsToBounds = true
-        commentTextField.becomeFirstResponder()
-        commentTextField.autocorrectionType = UITextAutocorrectionType.No
-        commentTextField.addTarget(self, action: #selector(CommentTableViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
-        
-        commentField.addSubview(commentTextField)
-        commentTextField.align(.ToTheLeftMatchingBottom, relativeTo: postButton, padding: 5 , width: view.frame.width - 100-20-15, height: 40)
         
         let attributes = [
             NSForegroundColorAttributeName: UIColor.darkGrayColor(),
             NSFontAttributeName : UIFont(name: "Helvetica", size: 14)!
         ]
-        
-        commentTextField.attributedPlaceholder = NSAttributedString(string: "Write a comment...", attributes:attributes)
         
         viewModel.comments.producer.startWithNext { [weak self] _ in
             
@@ -202,33 +186,11 @@ class CommentTableViewController: UIViewController,UITableViewDelegate,UITableVi
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         view.endEditing(true)
-        postComment()
         return true
     }
     
     func newCommentAdded(comment: Comment) {
         self.viewModel.insertNewComment(comment)
-    }
-    
-    func postComment() {
-        
-        if commentTextField.text != nil {
-            viewModel.commentText = commentTextField.text!
-        } else {
-            viewModel.commentText = ""
-        }
-        
-        viewModel.postComment()
-            .on(
-                next: self.newCommentAdded,
-                completed: {
-                    self.view.endEditing(true)
-                    self.commentTextField.text = nil
-                    self.postButton.userInteractionEnabled = false
-                    self.postButton.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
-                }
-            )
-            .start()
     }
  
 

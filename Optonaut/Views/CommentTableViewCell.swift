@@ -98,12 +98,6 @@ class CommentTableViewCell: UITableViewCell {
         usernameView.rac_text <~ viewModel.userName
     }
     
-    func pushProfile() {
-        let profilepage = ProfileCollectionViewController(personID: viewModel.personID.value)
-        profilepage.isProfileVisit = true
-        self.navigationController?.pushViewController(profilepage, animated: true)
-    }
-    
     override func setSelected(selected: Bool, animated: Bool) {}
     override func setHighlighted(highlighted: Bool, animated: Bool) {}
     

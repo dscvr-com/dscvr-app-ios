@@ -14,10 +14,7 @@ class TabView: PTView {
 
     private let indicatedSideLayer = CALayer()
     
-    let cameraButton = RecButton()  
-    let leftButton = TButton()
-    let rightButton = TButton()
-    
+    let cameraButton = RecordButton()
     
     private let bottomGradient = CAGradientLayer()
     
@@ -46,21 +43,10 @@ class TabView: PTView {
             self?.bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: offset)
             CATransaction.commit()
         }
-        cameraButton.icon = UIImage(named:"camera_icn")!
+        //cameraButton.icon = UIImage(named:"camera_icn")!
         let size = UIImage(named:"camera_icn")!.size
         cameraButton.anchorToEdge(.Bottom, padding: 20, width: size.width, height: size.height)
         addSubview(cameraButton)
-        
-        leftButton.icon = UIImage(named:"photo_library_icn")!
-        addSubview(leftButton)
-        let librarySizeButton = UIImage(named:"photo_library_icn")!.size
-        //leftButton.anchorInCorner(.BottomLeft, xPad: 20, yPad: 20, width: librarySizeButton.width, height: librarySizeButton.height)
-        leftButton.align(.ToTheLeftMatchingBottom, relativeTo: cameraButton, padding: 30, width: librarySizeButton.width, height: librarySizeButton.height)
-        
-        rightButton.icon = UIImage(named:"settings_icn")!
-        let rightButtonSize = UIImage(named:"settings_icn")!.size
-        rightButton.align(.ToTheRightMatchingBottom, relativeTo: cameraButton, padding: 30, width: rightButtonSize.width, height: rightButtonSize.height)
-        addSubview(rightButton)
     }
 
 }

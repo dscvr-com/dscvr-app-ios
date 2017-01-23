@@ -10,18 +10,12 @@ import Foundation
 import SceneKit
 import CardboardParams
 import SpriteKit
-import ReactiveCocoa
 
 class RenderDelegate: NSObject, SCNSceneRendererDelegate {
-
-    private let cameraNode = SCNNode()
-    private let cameraCrosshair =  SCNNode()
-    private let buttonCamera = SCNNode()
     
+    private let cameraNode = SCNNode()
     private let rotationMatrixSource: RotationMatrixSource
     private let cameraOffset: Float
-    
-    
     
     let scene = SCNScene()
     
@@ -33,43 +27,25 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         set {
             _fov = fov
             cameraNode.camera = RenderDelegate.setupCamera(fov)
-            
-            cameraCrosshair.camera = RenderDelegate.setupCrosshairCamera(fov)
-            buttonCamera.camera = RenderDelegate.setupButtonCamera(fov)
         }
     }
-
+    
     init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float) {
         self.rotationMatrixSource = rotationMatrixSource
         self.cameraOffset = cameraOffset
         
         cameraNode.camera = RenderDelegate.setupCamera(fov)
         _fov = fov
-     
-        cameraCrosshair.camera = RenderDelegate.setupCrosshairCamera(fov)
-        buttonCamera.camera = RenderDelegate.setupButtonCamera(fov)
         
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
         scene.rootNode.addChildNode(cameraNode)
-        
-    
-        cameraCrosshair.position = SCNVector3(x: 0, y: 0, z: 0)
-        cameraCrosshair.name = "cameraCrosshair"
-        scene.rootNode.addChildNode(cameraCrosshair)
-        
-        buttonCamera.position = SCNVector3(x: 0, y: 0, z: 0)
-        buttonCamera.name = "buttonCamera"
-        scene.rootNode.addChildNode(buttonCamera)
         
         // TODO(ej): Check if this is necassary for 3D vision. If so, add it to transform
         // in each render loop since pivot is broken.
         // cameraNode.pivot = SCNMatrix4MakeTranslation(0, cameraOffset, 0)
         
-        
         super.init()
     }
-    
-//    var delegate: RenderDelegateDelegate?
     
     convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double) {
         let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
@@ -105,46 +81,8 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         return camera
     }
     
-    internal static func setupButtonCamera(fov: FieldOfView) -> SCNCamera{
-        let zNear = Float(0.01)
-        let zFar = Float(10000)
-        
-        let fovLeft = tan(toRadians(fov.left)) * zNear
-        let fovRight = tan(toRadians(fov.right)) * zNear
-        let fovTop = tan(toRadians(fov.top)) * zNear
-        let fovBottom = tan(toRadians(fov.bottom)) * zNear
-        
-        let projection = GLKMatrix4MakeFrustum(-fovLeft/2, fovRight/2, -fovBottom/2, fovTop/2, zNear, zFar)
-        
-        let camera = SCNCamera()
-        camera.setProjectionTransform(SCNMatrix4FromGLKMatrix4(projection))
-        
-        return camera
-    }
-    
-    internal static func setupCrosshairCamera(fov: FieldOfView) -> SCNCamera {
-        let zNear = Float(0.01)
-        let zFar = Float(10000)
-        
-        let fovLeft = tan(toRadians(fov.left)) * zNear
-        let fovRight = tan(toRadians(fov.right)) * zNear
-        let fovTop = tan(toRadians(fov.top)) * zNear
-        let fovBottom = tan(toRadians(fov.bottom)) * zNear
-        
-        let projection = GLKMatrix4MakeFrustum(-fovLeft/16, fovRight/16, -fovBottom/16, fovTop/16, zNear, zFar)
-        
-        let camera = SCNCamera()
-        camera.setProjectionTransform(SCNMatrix4FromGLKMatrix4(projection))
-        
-        return camera
-    }
-    
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         cameraNode.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
-        
-        
-        cameraCrosshair.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
-        buttonCamera.transform = SCNMatrix4FromGLKMatrix4(rotationMatrixSource.getRotationMatrix())
     }
     
     func dispose() {
@@ -153,12 +91,6 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
         }
     }
     
-}
-
-protocol CubeRenderDelegateDelegate {
-    func didEnterFrustrum(nodeObject: StorytellingObject, inFrustrum: Bool)
-    func addVectorAndRotation(vector: SCNVector3, rotation: SCNVector3)
-    func isInButtonCamera(inFrustrum: Bool)
 }
 
 class CubeRenderDelegate: RenderDelegate {
@@ -181,68 +113,27 @@ class CubeRenderDelegate: RenderDelegate {
     // Inverse index lookup from node to index
     var indices: [SCNNode: CubeImageCache.Index] = [:]
     var adj: [SCNNode: [SCNNode]] = [:]
-    var markers = [SCNNode] ()
     
     var nodeEnterScene: (CubeImageCache.Index -> ())?
     var nodeLeaveScene: (CubeImageCache.Index -> ())?
     
-    var delegate: CubeRenderDelegateDelegate?
-    
     weak var scnView: SCNView?
-    private let sphereGeoNode: SCNNode
-    private let cameraText: SCNNode
-   
+    
     private let cubeScaling: CGFloat = 10
     private let cubeFaceCount: Int
     private let autoDispose: Bool
     private var willRequestAll: Bool
-    let imageCache: CollectionImageCache
     
-    let spriteScen = SKScene()
-    private var isStory:Bool
-    
-   
-    convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool,isStory:Bool) {
-        
+    convenience init(rotationMatrixSource: RotationMatrixSource, width: CGFloat, height: CGFloat, fov: Double, cubeFaceCount: Int, autoDispose: Bool) {
         let newFov = RenderDelegate.getFov(width, height: height, fov: fov)
         
-        self.init(rotationMatrixSource: rotationMatrixSource, fov: newFov, cameraOffset: Float(0), cubeFaceCount: cubeFaceCount, autoDispose: autoDispose,isStory: isStory)
+        self.init(rotationMatrixSource: rotationMatrixSource, fov: newFov, cameraOffset: Float(0), cubeFaceCount: cubeFaceCount, autoDispose: autoDispose)
     }
     
-    init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float, cubeFaceCount: Int, autoDispose: Bool,isStory:Bool) {
-        markers.removeAll()
-        self.isStory = isStory
+    init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float, cubeFaceCount: Int, autoDispose: Bool) {
         self.cubeFaceCount = cubeFaceCount
         self.autoDispose = autoDispose
         self.willRequestAll = false
-        
-        scnView?.showsStatistics = true
-        
-        let planeGeo = SCNPlane(width: 1.0, height: 1.0)
-        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
-        
-        
-        let circleGeo = SCNSphere(radius: 0.01)
-        
-        circleGeo.firstMaterial?.diffuse.contents = self.isStory ? UIColor.redColor():UIColor.clearColor()
-        
-        sphereGeoNode = SCNNode(geometry: circleGeo)
-        sphereGeoNode.name = "test"
-        
-        
-        let newText = SCNText(string: "hello", extrusionDepth:1.0)
-        newText.font = UIFont (name: "Arial", size: 5)
-        newText.firstMaterial!.diffuse.contents = UIColor.whiteColor()
-        newText.firstMaterial!.specular.contents = UIColor.whiteColor()
-        
-        
-        cameraText = SCNNode(geometry: newText)
-        
-        let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.width, hfov: HorizontalFieldOfView)
-        imageCache = CollectionImageCache(textureSize: textureSize)
-        
-        
-    
         super.init(rotationMatrixSource: rotationMatrixSource, fov: fov, cameraOffset: cameraOffset)
         
         
@@ -274,13 +165,13 @@ class CubeRenderDelegate: RenderDelegate {
             (SCNVector3Make(-1, 0, 0), SCNVector3Make(0, Float(-M_PI_2), 0)),
             (SCNVector3Make(0, 1, 0), SCNVector3Make(Float(-M_PI_2), Float(-M_PI_2), 0)),
             (SCNVector3Make(0, -1, 0), SCNVector3Make(Float(M_PI_2), Float(-M_PI_2), 0)),
-        ]
+            ]
         
         for face in 0..<6 {
             for subX in 0..<subSurf {
                 for subY in 0..<subSurf {
                     let node = createPlane(position: transforms[face].position, rotation: transforms[face].rotation,
-                        subX: Float(subX) * subW, subY: Float(subY) * subW, subW: subW)
+                                           subX: Float(subX) * subW, subY: Float(subY) * subW, subW: subW)
                     node.geometry!.firstMaterial!.doubleSided = true
                     
                     let index = CubeImageCache.Index(face: face, x: Float(subX) * subW, y: Float(subY) * subW, d: subW)
@@ -295,22 +186,13 @@ class CubeRenderDelegate: RenderDelegate {
         for o in planes.values {
             adj[o.node] = getKNNGeometric(o.node, k: 9)
         }
-        
-        sphereGeoNode.position = SCNVector3Make(1.0, 1.0, 0)
-        
-        
-        cameraText.position = SCNVector3Make(1.0, 1.0, 0)
-
-        
-        scene.rootNode.addChildNode(sphereGeoNode)
-        scene.rootNode.addChildNode(cameraText)
     }
     
     private func getDist(a: SCNNode, b: SCNNode) -> Float {
         let diff = GLKVector3Subtract(
             SCNVector3ToGLKVector3(a.position),
             SCNVector3ToGLKVector3(b.position))
-
+        
         return GLKVector3Length(diff)
     }
     
@@ -318,30 +200,6 @@ class CubeRenderDelegate: RenderDelegate {
         let allNodes = planes.values.map { $0.node }
         let sorted = allNodes.sort { (n1: SCNNode, n2: SCNNode) in getDist(center, b: n1) < getDist(center, b: n2) }
         return [SCNNode](sorted.prefix(k))
-    }
-    
-    func removeAllNodes(nodeName: String){
-        
-        scene.rootNode.enumerateChildNodesUsingBlock{
-            (node, stop) -> Void in
-            //print("node.name: \(node.name)")
-            
-            if node.name == nodeName{
-                //print("deleted")
-                
-                node.removeFromParentNode()
-            }
-        }
-        
-        let filteredMarkers = markers.filter { $0.name != nodeName }
-        markers = filteredMarkers
-    }
-    
-    func listAllNodes(){
-        scene.rootNode.enumerateChildNodesUsingBlock{
-            (node, stop) -> Void in
-            //print("node named: \(node.name)")
-        }
     }
     
     func setTexture(texture: SKTexture, forIndex index: CubeImageCache.Index) {
@@ -358,101 +216,6 @@ class CubeRenderDelegate: RenderDelegate {
             }
         }
     }
-    func checkIfAlreadyNode() -> Bool {
-//        if markers.count == 0 {
-//            return false
-//        }
-        
-        for marker in markers {
-            if self.scnView!.isNodeInsideFrustum(marker, withPointOfView: self.cameraCrosshair){
-                return true
-            }
-        }
-        return false
-    }
-    
-    
-    func addMarker(color: UIColor, type: String) -> String{
-        
-        let planeGeo = SCNPlane(width: 0.1, height: 0.1)
-        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
-        
-        let circleGeo = SCNSphere(radius: 0.01)
-        circleGeo.firstMaterial?.diffuse.contents = color
-        
-        let markNode = SCNNode(geometry: planeGeo)
-        
-        let n = markers.count
-        
-        markNode.name = type + String(n)
-        
-        markNode.position = sphereGeoNode.position
-        markNode.eulerAngles = self.cameraNode.eulerAngles;
-        
-        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
-        
-        scene.rootNode.addChildNode(markNode)
-        markers.append(markNode)
-        
-        delegate!.addVectorAndRotation(markNode.position, rotation: markNode.eulerAngles)
-        
-        return type + String(n)
-    }
-    
-    
-    func addNodeFromServer(nodeData: StorytellingObject){
-        
-        //print("addNodeFromServer(translation: SCNVector3, rotation: SCNVector3)")
-        
-        let planeGeo = SCNPlane(width: 0.1, height: 0.1)
-        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
-        
-        let circleGeo = SCNSphere(radius: 0.01)
-        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
-        let markNode = SCNNode(geometry: planeGeo)
-        
-        markNode.position = nodeData.objectVector3
-        markNode.eulerAngles = nodeData.objectRotation
-        
-        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "main_pin")
-        
-        markNode.name = nodeData.optographID + "," + nodeData.objectType
-        
-        //print(">>>>>>>>>>>>>node name",markNode.name)
-        
-        scene.rootNode.addChildNode(markNode)
-        markers.append(markNode)
-    }
-    
-    func addBackPin(homeID: String){
-        let planeGeo = SCNPlane(width: 0.1, height: 0.1)
-        planeGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
-        
-        let circleGeo = SCNSphere(radius: 0.01)
-        circleGeo.firstMaterial?.diffuse.contents = UIColor.redColor()
-        let markNode = SCNNode(geometry: planeGeo)
-        
-        /*
-        node x: 1.11453
-        node y: -0.0
-        node z: -0.212028
-        posi x: 0.191026
-        posi y: 0.875804
-        posi z: -0.443256
-        */
-        
-        markNode.position = SCNVector3Make(0.191026, 0.975804, -0.1514112)
-        markNode.eulerAngles = SCNVector3Make(1.11453, -0.0, -0.212028)
-        
-        markNode.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "back_pin")
-        
-        markNode.name = homeID + ",NAV"
-        
-        scene.rootNode.addChildNode(markNode)
-        markers.append(markNode)
-    }
-    
-    
     
     var id: Int = 0
     
@@ -471,56 +234,6 @@ class CubeRenderDelegate: RenderDelegate {
         }
     }
     
-    
-    func resetToBlack() {
-        nodeEnterScene = nil
-        nodeLeaveScene = nil
-        
-        sync(self) {
-            for (_, plane) in self.planes {
-                //print("resett \(self.id) \(index)")
-                plane.node.geometry?.firstMaterial?.diffuse.contents = CubeRenderDelegate.BlackTexture
-                plane.visible = false
-                plane.hasTexture = false
-            //    plane.requested = false
-            }
-        }
-        
-        
-        
-        
-        let cubeImageCache = imageCache.get(0, optographID: "6e5b494d-8e1f-4516-ab95-37165224e323", side: .Left)
-        setCubeImageCache(cubeImageCache)
-    }
-    
-    
-    
-    func setCubeImageCache(cache: CubeImageCache) {
-        
-        nodeEnterScene = nil
-        nodeLeaveScene = nil
-        
-        reset()
-        
-        nodeEnterScene = { [weak self] index in
-            dispatch_async(queue1) {
-                cache.get(index) { [weak self] (texture: SKTexture, index: CubeImageCache.Index) in
-                    self!.setTexture(texture, forIndex: index)
-         //           Async.main { [weak self] in
-          //              self?.loadingStatus.value = .Loaded
-          //          }
-                }
-            }
-        }
-        
-        nodeLeaveScene = { index in
-            dispatch_async(queue1) {
-                cache.forget(index)
-            }
-        }
-    }
-
-    
     func getVisibleAndAdjacentPlaneIndicesFromRotationMatrix(rotation: GLKMatrix4) -> [CubeImageCache.Index] {
         let dummyCam = SCNNode()
         dummyCam.camera = cameraNode.camera
@@ -537,52 +250,6 @@ class CubeRenderDelegate: RenderDelegate {
     func requestAll() {
         willRequestAll = true
     }
-    
-    func findNextPoint(p0: SCNVector3, direction: SCNVector3) -> SCNVector3{
-        
-        var x = Float()
-        var y = Float()
-        var z = Float()
-        let t = 1.0 as Float
-        
-        x = p0.x + t * direction.x
-        y = p0.y + t * direction.y
-        z = p0.z + t * direction.z
-        
-        let result = SCNVector3Make(x, y, z)
-        return result
-        
-    }
-    
-    
-    func calculateCameraDirection(cameraNode: SCNNode) -> GLKVector3 {
-        
-        let x = -cameraNode.rotation.x
-        let y = -cameraNode.rotation.y
-        let z = -cameraNode.rotation.z
-        let w = cameraNode.rotation.w
-        
-        let cameraRotationMatrix = GLKMatrix3Make(cos(w) + pow(x, 2) * (1 - cos(w)),
-                                                  x * y * (1 - cos(w)) - z * sin(w),
-                                                  x * z * (1 - cos(w)) + y*sin(w),
-                                                  
-                                                  y*x*(1-cos(w)) + z*sin(w),
-                                                  cos(w) + pow(y, 2) * (1 - cos(w)),
-                                                  y*z*(1-cos(w)) - x*sin(w),
-                                                  
-                                                  z*x*(1 - cos(w)) - y*sin(w),
-                                                  z*y*(1 - cos(w)) + x*sin(w),
-                                                  cos(w) + pow(z, 2) * ( 1 - cos(w)))
-        
-        let cameraDirection = GLKMatrix3MultiplyVector3(cameraRotationMatrix, GLKVector3Make(0.0, 0.0, -1.0))
-        
-        return cameraDirection
-        
-    }
-    
-   
-    
-    
     
     private func request(item: Item, index: CubeImageCache.Index) {
         if !item.visible {
@@ -617,75 +284,23 @@ class CubeRenderDelegate: RenderDelegate {
         }
     }
     
-    func removeMarkers () {
-        for marker in markers {
-            marker.removeFromParentNode()
-        }
-        markers.removeAll()
-    }
-    
-    func centerCameraPosition () {
-       
-        cameraNode.transform =  SCNMatrix4MakeRotation(0, 0, 0, 0)
-    
-        
-    }
-    
     override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
         super.renderer(aRenderer, updateAtTime: time)
         
         // Use the small camera for debugging.
         // let smallFov = RenderDelegate.getFov(scnView!.bounds.width, height: scnView!.bounds.height, fov: 10)
         // let smallCamera = SCNNode()
-       //  smallCamera.camera = RenderDelegate.setupCamera(smallFov)
-      //   smallCamera.transform = cameraNode.transform
-        
-//        print("override func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval)")
+        // smallCamera.camera = RenderDelegate.setupCamera(smallFov)
+        // smallCamera.transform = cameraNode.transform
         
         let visibleAndAdjacentPlanes = getVisibleAndAdjacentPlanes(self.cameraNode)
         
+        // Use verbose colors for debugging.
+        // planes.values.forEach { $0.node.geometry!.firstMaterial!.diffuse.contents = UIColor.redColor() }
+        // visibleAndAdjacentPlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.blueColor() }
+        // visiblePlanes.forEach { $0.geometry!.firstMaterial!.diffuse.contents = UIColor.greenColor() }
         
-        
-        let cameraDirection = calculateCameraDirection(self.cameraNode)
-        let camdir = SCNVector3Make(cameraDirection.x, cameraDirection.y, cameraDirection.z)
-        let nextpoint = findNextPoint(cameraNode.position, direction: SCNVector3Make(cameraDirection.x, cameraDirection.y, cameraDirection.z))
-        sphereGeoNode.position = nextpoint
-        
-        
-       // print("dot position>>>",nextpoint)
-        
-        
-        cameraText.position = nextpoint
-        
-        
-        var enteredFlag = false
-        
-        for marknode in markers {
-//            if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.buttonCamera){
-//                let node = StorytellingObject()
-//                node.objectRotation = marknode.eulerAngles
-//                node.objectVector3 = marknode.position
-//                node.optographID = marknode.name!
-//                delegate!.isInButtonCamera(false)
-//                enteredFlag = false
-//            }
-            
-            if self.scnView!.isNodeInsideFrustum(marknode, withPointOfView: self.cameraCrosshair) {
-                let node = StorytellingObject()
-                
-                node.objectRotation = marknode.eulerAngles
-                node.objectVector3 = marknode.position
-                node.optographID = marknode.name!
-                delegate!.didEnterFrustrum(node, inFrustrum: true)
-                enteredFlag = true
-            }
-        }
-
-        if !enteredFlag {
-            let node = StorytellingObject()
-            delegate!.didEnterFrustrum(node, inFrustrum: false)
-            delegate!.isInButtonCamera(false)
-        }
+        // TODO - Syncing here is not really fast. It's more like really slow.
         
         for (index, item) in planes {
             let nowVisible = visibleAndAdjacentPlanes.contains(item.node)
@@ -696,17 +311,17 @@ class CubeRenderDelegate: RenderDelegate {
             }
         }
         
+        // Forced initialisation of ALL views. We do that past the
+        // above code so faces we look at get priority.
         if willRequestAll {
             for (index, plane) in self.planes {
-               request(plane, index: index)
+                request(plane, index: index)
             }
         }
         
     }
     
     private func createPlane(position position: SCNVector3, rotation: SCNVector3, subX: Float, subY: Float, subW: Float) -> SCNNode {
-    
-         //print("[createPlane] \(subX) \(subY) \(subW)   \(position)")
         let geometry = SCNPlane(width: CGFloat(2 * subW), height: CGFloat(2 * subW))
         geometry.firstMaterial!.doubleSided = true
         
@@ -716,14 +331,13 @@ class CubeRenderDelegate: RenderDelegate {
         
         let pivot = SCNMatrix4MakeTranslation(-(subX + subW / 2) * 2 + 1, (subY + subW / 2) * 2 - 1, 0)
         
-        
         node.position = position
         node.eulerAngles = rotation
         
         var transform = SCNMatrix4Scale(SCNMatrix4MakeRotation(Float(M_PI_2), 1, 0, 0), -1, 1, 1)
         transform = SCNMatrix4Mult(node.transform, transform)
         node.transform = SCNMatrix4Mult(SCNMatrix4Invert(pivot), transform)
-
+        
         return node
     }
     
@@ -758,7 +372,7 @@ class SphereRenderDelegate: RenderDelegate {
             updateProjectionMatrix(texture.size(), isSKTexture: true)
         }
     }
-
+    
     
     override init(rotationMatrixSource: RotationMatrixSource, fov: FieldOfView, cameraOffset: Float) {
         sphereNode = SphereRenderDelegate.createSphere()
@@ -811,6 +425,7 @@ class SphereRenderDelegate: RenderDelegate {
             sphereNode.geometry?.firstMaterial?.diffuse.borderColor =  UIColor.blackColor()
             
         }
+        
     }
     
     private static func createSphere() -> SCNNode {

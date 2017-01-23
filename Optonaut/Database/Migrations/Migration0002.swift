@@ -14,8 +14,6 @@ func migration0002(db: Connection) throws {
     try db.run(createActivityResourceStar())
     try db.run(createActivityResourceViews())
     try db.run(createActivity())
-    try db.run(createStory())
-    try db.run(createStoryChildren())
 }
 
 private func createActivityResourceComment() -> String {
@@ -77,39 +75,6 @@ private func createActivity() -> String {
         t.foreignKey(ActivitySchema.activityResourceFollowID, references: ActivityResourceFollowTable, ActivityResourceFollowSchema.ID)
         t.foreignKey(ActivitySchema.activityResourceStarID, references: ActivityResourceStarTable, ActivityResourceStarSchema.ID)
         t.foreignKey(ActivitySchema.activityResourceViewsID, references: ActivityResourceViewsTable, ActivityResourceViewsSchema.ID)
-    }
-}
-private func createStory() -> String {
-    return StoryTable.create { t in
-        t.column(StorySchema.ID, primaryKey: true)
-        t.column(StorySchema.createdAt)
-        t.column(StorySchema.deletedAt)
-        t.column(StorySchema.updatedAt)
-        t.column(StorySchema.optographID)
-        t.column(StorySchema.personID)
-        t.column(StorySchema.storyChildrenId)
-        
-        t.foreignKey(StorySchema.optographID, references: OptographTable, OptographSchema.ID)
-        t.foreignKey(StorySchema.personID, references: PersonTable, PersonSchema.ID)
-    }
-}
-private func createStoryChildren() -> String {
-    return StoryChildrenTable.create { t in
-        t.column(StoryChildrenSchema.ID, primaryKey: true)
-        t.column(StoryChildrenSchema.storyMediaType)
-        t.column(StoryChildrenSchema.storyID)
-        t.column(StoryChildrenSchema.storyMediaFace)
-        t.column(StoryChildrenSchema.storyMediaDescription)
-        t.column(StoryChildrenSchema.storyMediaAdditionalData)
-        t.column(StoryChildrenSchema.storyPosition)
-        t.column(StoryChildrenSchema.storyRotation)
-        t.column(StoryChildrenSchema.storyCreatedAt)
-        t.column(StoryChildrenSchema.storyUpdatedAt)
-        t.column(StoryChildrenSchema.storyDeletedAt)
-        t.column(StoryChildrenSchema.storyMediaFilename)
-        t.column(StoryChildrenSchema.storyMediaFileurl)
-        
-        t.foreignKey(StoryChildrenSchema.storyID, references: StoryTable, StorySchema.ID)
     }
 }
 

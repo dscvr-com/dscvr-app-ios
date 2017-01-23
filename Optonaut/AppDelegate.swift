@@ -44,7 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             application.registerUserNotificationSettings(pushNotificationSettings)
             application.registerForRemoteNotifications()
             
-            
             let launchedBefore = NSUserDefaults.standardUserDefaults().boolForKey("launchedBefore")
             if launchedBefore  {
                 print("Not first launch.")

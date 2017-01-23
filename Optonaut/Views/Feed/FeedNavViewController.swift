@@ -13,8 +13,6 @@ class FeedNavViewController: NavigationController {
     
     let viewController = OptographCollectionViewController(viewModel: FeedOptographCollectionViewModel())
     
-    //weak var parentViewController: UIViewController?
-    
     deinit {
         logRetain()
     }

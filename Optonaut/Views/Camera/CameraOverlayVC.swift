@@ -48,8 +48,6 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
-        tabController!.disableScrollView()
     }
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
@@ -65,8 +63,6 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
                     blSheet.dismissViewControllerAnimated(false, completion: nil)
                     getBluetoothDevicesToPair()
                     print("may changes")
-                } else {
-                    print("walang changes")
                 }
             } else {
                 blList = []

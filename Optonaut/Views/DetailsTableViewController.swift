@@ -224,7 +224,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         avatarImageView.backgroundColor = .whiteColor()
         avatarImageView.clipsToBounds = true
         avatarImageView.userInteractionEnabled = true
-        avatarImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(pushProfile)))
         avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL(viewModel.avatarImageUrl.value, width: 47, height: 47))!)
         whiteBackground.addSubview(avatarImageView)
         
@@ -240,10 +239,7 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
         personNameView.textColor = UIColor(0xFF5E00)
         personNameView.userInteractionEnabled = true
-        personNameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pushProfile)))
         whiteBackground.addSubview(personNameView)
-        
-        likeButtonView.addTarget(self, action: #selector(self.toggleStar), forControlEvents: [.TouchDown])
         whiteBackground.addSubview(likeButtonView)
         
         
@@ -670,22 +666,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         }
     }
     
-    func toggleStar() {
-        
-        if SessionService.isLoggedIn {
-            viewModel.toggleLike()
-        } else {
-            let alert = UIAlertController(title:"", message: "Please login to like this moment.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            self.navigationController!.presentViewController(alert, animated: true, completion: nil)
-        }
-    }
-    dynamic private func pushProfile() {
-        let profilepage = ProfileCollectionViewController(personID: viewModel.optographBox.model.personID)
-        profilepage.isProfileVisit = true
-        navigationController?.pushViewController(profilepage, animated: true)
-    }
-    
     func followUser() {
         
         if SessionService.isLoggedIn {
@@ -925,7 +905,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        tabController!.disableScrollView()
         
         CoreMotionRotationSource.Instance.start()
         RotationService.sharedInstance.rotationEnable()
@@ -938,7 +917,6 @@ class DetailsTableViewController: UIViewController, NoNavbar,TabControllerDelega
         
         CoreMotionRotationSource.Instance.stop()
         RotationService.sharedInstance.rotationDisable()
-        tabController!.enableScrollView()
         
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)

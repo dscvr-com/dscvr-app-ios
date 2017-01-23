@@ -44,11 +44,8 @@ class SaveViewController: UIViewController, RedNavbar {
     private let instagramSocialButton = SocialButton()
     private let moreSocialButton = SocialButton()
     private var placeholderImage: SKTexture?
-    private var postLater = TButton()
     
     private let readyNotification = NotificationSignal<Void>()
-    //private let tabView = TabView()
-    private var cameraButton = RecButton()
     
     required init(recorderCleanup: SignalProducer<UIImage, NoError>) {
         
@@ -77,7 +74,6 @@ class SaveViewController: UIViewController, RedNavbar {
                 },
                 completed: { [weak self] in
                     print("stitching finished")
-                    //ApiService<EmptyResponse>.get("completed").start()
                     self?.viewModel.stitcherFinished.value = true
                 }
             )
@@ -110,13 +106,6 @@ class SaveViewController: UIViewController, RedNavbar {
         cancelButton = cancelButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: cancelButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.cancel))
-        
-//        viewModel.isPrivate.producer.startWithNext { [weak self] isPrivate in
-//            if let strongSelf = self {
-//                
-//                strongSelf.navigationItem.rightBarButtonItem = UIBarButtonItem(image: isPrivate ? privateButton : publicButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(strongSelf.togglePrivate))
-//            }
-//        }
         
         view.backgroundColor = .whiteColor()
         
@@ -192,7 +181,6 @@ class SaveViewController: UIViewController, RedNavbar {
         textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
         textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         textInputView.returnKeyType = .Done
-//        textInputView.keyboardType = .Twitter
         textInputView.delegate = self
         textInputView.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 14, right: 0)
         textInputView.textContainerInset = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16)
@@ -207,7 +195,6 @@ class SaveViewController: UIViewController, RedNavbar {
         shareBackgroundView.layer.borderColor = UIColor(0xe6e6e6).CGColor
         scrollView.addSubview(shareBackgroundView)
         
-        //facebookSocialButton.icon = String.iconWithName(.Facebook)
         facebookSocialButton.text = "Facebook"
         facebookSocialButton.color = UIColor(0x3b5998)
         facebookSocialButton.userInteractionEnabled = true
@@ -235,21 +222,14 @@ class SaveViewController: UIViewController, RedNavbar {
         instagramSocialButton.text = "Instagram"
         instagramSocialButton.color = UIColor(0x9b6954)
         instagramSocialButton.userInteractionEnabled = true
-//        instagramSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapInstagramSocialButton)))
-//        shareBackgroundView.addSubview(instagramSocialButton)
         
         viewModel.postInstagram.producer.startWithNext { [weak self] toggled in
             self?.instagramSocialButton.state = toggled ? .Selected : .Unselected
             self?.instagramSocialButton.icon2 = toggled ? UIImage(named:"instagram_save_active")! : UIImage(named:"instagram_save_inactive")!
         }
         
-        //moreSocialButton.icon = String.iconWithName(.ShareAlt)
         moreSocialButton.icon2 = UIImage(named:"more_save_active")!
         moreSocialButton.text = "More"
-//        moreSocialButton.rac_userInteractionEnabled <~ viewModel.isReadyForSubmit.producer.combineLatestWith(viewModel.isOnline.producer).map(and)
-//        moreSocialButton.rac_alpha <~ viewModel.isReadyForSubmit.producer.mapToTuple(1, 0.2)
-//        moreSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapMoreSocialButton)))
-//        shareBackgroundView.addSubview(moreSocialButton)
         
         scrollView.scnView = scnView
         view.addSubview(scrollView)
@@ -258,20 +238,8 @@ class SaveViewController: UIViewController, RedNavbar {
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
         
-        cameraButton.icon = UIImage(named:"upload_next")!
-        cameraButton.addTarget(self, action: #selector(readyToSubmit), forControlEvents: .TouchUpInside)
-        scrollView.addSubview(cameraButton)
-        
-        postLater.icon = UIImage(named:"post_later")!
-        postLater.addTarget(self, action: #selector(postLaterAction), forControlEvents: .TouchUpInside)
-        scrollView.addSubview(postLater)
-        
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
-            self?.cameraButton.loading = !isReady
-            self!.postLater.loading = !isReady
-//            if isReady {
-//                self?.cameraButton.icon = UIImage(named:"upload_next")!
-//            }
+            self?.tabController!.cameraButton.loading = !isReady
         }
         
         viewModel.isReadyForStitching.producer
@@ -281,7 +249,6 @@ class SaveViewController: UIViewController, RedNavbar {
                     PipelineService.stitch(strongSelf.viewModel.optographBox.model.ID)
                 }
             }
-        
         tabController!.delegate = self
     }
     func readyToSubmit(){
@@ -319,13 +286,6 @@ class SaveViewController: UIViewController, RedNavbar {
         twitterSocialButton.anchorInCorner(.TopRight, xPad: socialPadX, yPad: 10, width: 120, height: 23)
         instagramSocialButton.anchorInCorner(.BottomLeft, xPad: socialPadX, yPad: 30, width: 120, height: 23)
         moreSocialButton.anchorInCorner(.BottomRight, xPad: socialPadX, yPad: 30, width: 120, height: 23)
-        
-//        cameraButton.align(.UnderCentered, relativeTo: shareBackgroundView, padding: 25, width: 80, height: 80)
-//        
-//        postLater.anchorInCorner(.BottomRight, xPad: 20, yPad: view.frame.size.height - (cameraButton.frame.size.height + cameraButton.frame.origin.y - 10), width: postLater.icon.size.width, height: postLater.icon.size.height)
-        
-        cameraButton.anchorToEdge(.Bottom, padding: 10, width: 80, height: 80)
-        postLater.anchorInCorner(.BottomRight, xPad: 10, yPad: 10, width: postLater.icon.size.width, height: postLater.icon.size.height)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -333,7 +293,6 @@ class SaveViewController: UIViewController, RedNavbar {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
-        tabController!.disableScrollView()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -349,39 +308,19 @@ class SaveViewController: UIViewController, RedNavbar {
             NSForegroundColorAttributeName: UIColor(hex:0xFF5E00),
         ]
         
-        cameraButton.progressLocked = true
+        tabController!.delegate = self
+        tabController!.cameraButton.progressLocked = true
         
         Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
         
         // needed if user re-enabled location via Settings.app
         locationView.reloadLocation()
-        
-        if !SessionService.isLoggedIn {
-            self.readyNotification.notify(())
-            //tabController!.lockUI()
-            
-//            let loginOverlayViewController = LoginOverlayViewController(
-//                title: "Login to save your moment",
-//                successCallback: {
-//                    self.readyNotification.notify(())
-//                },
-//                cancelCallback: {
-//                    self.readyNotification.notify(())
-//                    return true
-//                },
-//                alwaysCallback: {
-//                    //self.tabController!.unlockUI()
-//                    self.tabController!.showUI()
-//                }
-//            )
-//            presentViewController(loginOverlayViewController, animated: true, completion: nil)
-        }
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         
-        cameraButton.progressLocked = false
+        tabController!.cameraButton.progressLocked = false
         
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
@@ -394,7 +333,6 @@ class SaveViewController: UIViewController, RedNavbar {
         super.viewDidDisappear(animated)
         
         Mixpanel.sharedInstance().track("View.CreateOptograph")
-        tabController!.enableScrollView()
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -601,7 +539,6 @@ class SaveViewController: UIViewController, RedNavbar {
                     ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
                         .on(
                             failed: { [weak self] _ in
-//                                errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
                                 self?.viewModel.postTwitter.value = false
                             },
                             completed: { [weak self] in
@@ -653,18 +590,15 @@ class SaveViewController: UIViewController, RedNavbar {
             .observeOnMain()
             .on(
                 started: { [weak self] in
-                    self?.cameraButton.loading = true
-                    self?.postLater.loading = true
+                    self?.tabController!.cameraButton.loading = true
                 },
                 completed: { [weak self] in
                     Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
-                    self?.postLater.loading = false
                     self?.navigationController!.popViewControllerAnimated(true)
                 }
             )
             .start()
     }
-    
 }
 
 
@@ -690,28 +624,6 @@ extension SaveViewController: TabControllerDelegate {
             submit(true)
         }
     }
-    
-    func onTapLeftButton() {
-        let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the current recording will be discarded.", preferredStyle: .Alert)
-        confirmAlert.addAction(UIAlertAction(title: "Retry", style: .Destructive, handler: { [weak self] _ in
-            if let strongSelf = self {
-                let cameraViewController = CameraViewController()
-                strongSelf.navigationController!.pushViewController(cameraViewController, animated: false)
-                
-                strongSelf.navigationController!.viewControllers.removeAtIndex(strongSelf.navigationController!.viewControllers.count - 2)
-            }
-        }))
-        confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))
-        navigationController!.presentViewController(confirmAlert, animated: true, completion: nil)
-        
-    }
-    
-    func onTapRightButton() {
-        if viewModel.isReadyForSubmit.value {
-            submit(false)
-        }
-    }
-    
 }
 
 private class ScrollView: UIScrollView {
@@ -905,12 +817,9 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         loadingIndicator.hidesWhenStopped = true
         addSubview(loadingIndicator)
         
-//        leftIconView.font = UIFont.iconOfSize(24)
-//        leftIconView.textColor = UIColor(0x919293)
         leftIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LocationView.didTap)))
         leftIconView.userInteractionEnabled = true
         leftIconView.image = UIImage(named:"location_pin")
-        //leftIconView.text = String.iconWithName(.Location)
         addSubview(leftIconView)
         
         statusText.font = UIFont.displayOfSize(13, withType: .Semibold)

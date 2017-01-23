@@ -234,7 +234,6 @@ class ApiService<T: Mappable> {
             
             let mutableURLRequest = buildURLRequest(endpoint, method: method, queries: queries)
             
-            
             if let parameters = parameters {
                 let json = try! NSJSONSerialization.dataWithJSONObject(parameters, options: [])
                 mutableURLRequest.HTTPBody = Optional(json)

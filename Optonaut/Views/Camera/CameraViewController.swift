@@ -24,7 +24,7 @@ struct staticVariables {
     static var isCenter:Bool!
 }
 
-class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheralDelegate{
+class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     private let viewModel = CameraViewModel()
     private let motionManager = CoreMotionRotationSource()
@@ -84,7 +84,6 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
     
     private let cancelButton = UIButton()
     
-    private let tabView = TabView()
     private let bData = BService.sharedInstance
     private var RotateData = String("")
     
@@ -274,39 +273,12 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
 //            view.addGestureRecognizer(tapGestureRecognizer)
 //        #endif
         
-        tabView.frame = CGRect(x: 0,y: view.frame.height - 126,width: view.frame.width,height: 126)
-        scnView.addSubview(tabView)
-        
-        //motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
-        
         view.setNeedsUpdateConstraints()
         
         cancelButton.addTarget(self, action: #selector(CameraViewController.cancelRecording), forControlEvents: .TouchUpInside)
         cancelButton.setImage(UIImage(named: "camera_back_button"), forState: .Normal)
         scnView.addSubview(cancelButton)
         cancelButton.anchorInCorner(.TopLeft, xPad: 0, yPad: 15, width: 40, height: 40)
-        
-        //tabView.cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapCameraButton)))
-        //tabView.cameraButton.addTarget(self, action: #selector(touchStartCameraButton), forControlEvents: [.TouchDown])
-        tabView.cameraButton.addTarget(self, action: #selector(tapCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
-    }
-    
-    func tapCameraButton() {
-        tabView.cameraButton.hidden = true
-        viewModel.isRecording.value = true
-        
-        if sessionMotor {
-            let rotatePlusBuff = (Defaults[.SessionRotateCount]! + Defaults[.SessionBuffCount]!)
-            
-            let missingSecs = 0.0
-            DegreeIncrPerMicro = (0.036 / ( (Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ) - missingSecs ))
-            //tabView.cameraButton.hidden = true
-            //viewModel.isRecording.value = true
-            
-            if let bleService = btDiscoverySharedInstance.bleService {
-                bleService.sendCommand(self.computeRotationX())
-            }
-        }
     }
     
     func touchEndCameraButton() {
@@ -326,8 +298,6 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
         }
         
         stopSession()
-        
-        //recorder.getPreviewImage()
         
         recorder.cancel()
         recorder.dispose()
@@ -509,14 +479,15 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
         super.viewDidDisappear(animated)
         Mixpanel.sharedInstance().track("View.Camera")
     }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
-        tabController!.disableScrollView()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        tabController!.cameraButton.hidden = false
         
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
         
@@ -524,7 +495,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
     }
     
     override func updateViewConstraints() {
-        view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero) // needed to cover tabbar (49pt)
+        view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
         tiltView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
         
@@ -543,16 +514,7 @@ class CameraViewController: UIViewController,TabControllerDelegate ,CBPeripheral
         circleView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
         circleView.autoSetDimensionsToSize(CGSize(width: 70, height: 70))
         
-        //tabView.anchorAndFillEdge(.Top, xPad: 0, yPad: 0, otherSize: 126)
-        tabView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: view)
-        tabView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset:0)
-        
         super.updateViewConstraints()
-    }
-    
-    func updateTabs() {
-        tabView.leftButton.hidden = true
-        tabView.rightButton.hidden = true
     }
     
     private func setupScene() {
@@ -1172,6 +1134,29 @@ private class DashedCircleView: UIView {
         border.frame = bounds
     }
     
+}
+    
+extension CameraViewController: TabControllerDelegate {
+        
+    func onTouchEndCameraButton() {
+        tapCameraButtonCallback = nil
+    }
+        
+    func onTapCameraButton() {
+        tabController!.cameraButton.hidden = true
+        viewModel.isRecording.value = true
+            
+        if sessionMotor {
+            let rotatePlusBuff = (Defaults[.SessionRotateCount]! + Defaults[.SessionBuffCount]!)
+                
+            let missingSecs = 0.0
+            DegreeIncrPerMicro = (0.036 / ( (Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ) - missingSecs ))
+                
+            if let bleService = btDiscoverySharedInstance.bleService {
+                bleService.sendCommand(self.computeRotationX())
+            }
+        }
+    }
 }
 
 private class CameraProgressView: UIView {

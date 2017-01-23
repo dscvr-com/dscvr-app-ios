@@ -59,7 +59,5 @@ struct OptographApiModel: ApiModel, Mappable {
         
         
         starsCount = Int(starsCount2)!
-        
-        print("like count",starsCount)
     }
 }
