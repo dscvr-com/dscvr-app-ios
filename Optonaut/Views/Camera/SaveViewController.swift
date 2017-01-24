@@ -326,7 +326,6 @@ class SaveViewController: UIViewController, RedNavbar {
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        
         Mixpanel.sharedInstance().track("View.CreateOptograph")
     }
     

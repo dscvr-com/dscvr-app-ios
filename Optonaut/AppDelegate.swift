@@ -38,12 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.application(application, didReceiveRemoteNotification: notification)
             }
             
-            let notificationTypes: UIUserNotificationType = [UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound]
-            let pushNotificationSettings = UIUserNotificationSettings(forTypes: notificationTypes, categories: nil)
-
-            application.registerUserNotificationSettings(pushNotificationSettings)
-            application.registerForRemoteNotifications()
-            
             let launchedBefore = NSUserDefaults.standardUserDefaults().boolForKey("launchedBefore")
             if launchedBefore  {
                 print("Not first launch.")
@@ -74,20 +68,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Defaults[.SessionBotCount] = -3998
             Defaults[.SessionBuffCount] = 0
             
-            ApiService<MotorConfigurationApiModel>.getForGate("config/motor").startWithNext { config in
-                if config.motor_configuration_mobile_platform == "iOS" {
-                    print("config",config)
-                    Defaults[.SessionPPS] = Int(config.motor_configuration_pulse_per_second)
-                    Defaults[.SessionRotateCount] = Int(config.motor_configuration_rotate_count)
-                    Defaults[.SessionTopCount] = Int(config.motor_configuration_top_count)
-                    Defaults[.SessionBotCount] = Int(config.motor_configuration_bot_count)
-                    Defaults[.SessionBuffCount] = Int(config.motor_configuration_buff_count)
-                }
-            }
-            
             //Bluetooth Notif
             NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.connectionChanged(_:)), name: BLEServiceChangedStatusNotification, object: nil)
-            // Start the Bluetooth discovery process
             btDiscoverySharedInstance
             
         }

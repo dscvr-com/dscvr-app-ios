@@ -361,8 +361,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             return
         }
         
-//        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographIDs[index]]!.model)
-//        navigationController?.pushViewController(viewerViewController, animated: false)
+        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographIDs[index]]!.model)
+        navigationController?.pushViewController(viewerViewController, animated: false)
     }
     
     private func lazyFadeInOverlay(delay delay: NSTimeInterval) {
@@ -441,9 +441,6 @@ private class OverlayView: UIView {
     }
     
     private let whiteBackground = UIView()
-    private let avatarImageView = UIImageView()
-    private let personNameView = BoundingLabel()
-    private let locationTextView = UILabel()
     private let optionsButtonView = BoundingButton()
     private let dateView = UILabel()
     private let textView = BoundingLabel()
@@ -451,29 +448,14 @@ private class OverlayView: UIView {
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        whiteBackground.backgroundColor = UIColor.whiteColor().alpha(0.95)
+        whiteBackground.backgroundColor = UIColor.blackColor().alpha(0.65)
         addSubview(whiteBackground)
-        
-        avatarImageView.layer.cornerRadius = 23.5
-        avatarImageView.backgroundColor = .whiteColor()
-        avatarImageView.clipsToBounds = true
-        avatarImageView.userInteractionEnabled = true
-        addSubview(avatarImageView)
-        
-        personNameView.font = UIFont.displayOfSize(15, withType: .Regular)
-        personNameView.textColor = .Accent
-        personNameView.userInteractionEnabled = true
-        addSubview(personNameView)
         
         optionsButtonView.titleLabel?.font = UIFont.iconOfSize(21)
         optionsButtonView.setTitle(String.iconWithName(.More), forState: .Normal)
         optionsButtonView.setTitleColor(UIColor(0xc6c6c6), forState: .Normal)
         optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.didTapOptions)))
         addSubview(optionsButtonView)
-        
-        locationTextView.font = UIFont.displayOfSize(11, withType: .Light)
-        locationTextView.textColor = UIColor(0x3c3c3c)
-        addSubview(locationTextView)
         
         dateView.font = UIFont.displayOfSize(11, withType: .Regular)
         dateView.textColor = UIColor(0xbbbbbb)
@@ -482,6 +464,7 @@ private class OverlayView: UIView {
         
         textView.font = UIFont.displayOfSize(14, withType: .Regular)
         textView.textColor = .whiteColor()
+        textView.backgroundColor = .clearColor()
         textView.userInteractionEnabled = true
         addSubview(textView)
     }
@@ -498,9 +481,9 @@ private class OverlayView: UIView {
         super.layoutSubviews()
         
         whiteBackground.frame = CGRect(x: 0, y: 0, width: frame.width, height: 66)
-        avatarImageView.anchorInCorner(.TopLeft, xPad: 16, yPad: 9.5, width: 47, height: 47)
         optionsButtonView.anchorInCorner(.TopRight, xPad: 16, yPad: 21, width: 24, height: 24)
         dateView.anchorInCorner(.TopRight, xPad: 46, yPad: 27, width: 70, height: 13)
+        textView.anchorInCorner(.TopLeft, xPad: 16, yPad: 25, width: self.width-dateView.frame.origin.x-10, height: textView.height)
     }
     
     override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
