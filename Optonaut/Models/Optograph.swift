@@ -84,7 +84,6 @@ struct Optograph: DeletableModel {
     var postInstagram: Bool
     var shouldBePublished: Bool
     var ringCount: String
-    var storyID: UUID
     
     static func newInstance() -> Optograph {
         return Optograph(
@@ -120,8 +119,7 @@ struct Optograph: DeletableModel {
             postTwitter: false,
             postInstagram: false,
             shouldBePublished: false,
-            ringCount: "",
-            storyID: ""
+            ringCount: ""
         )
     }
     
@@ -191,7 +189,6 @@ extension Optograph: MergeApiModel {
         isStaffPick = apiModel.isStaffPick
         directionPhi = apiModel.directionPhi
         directionTheta = apiModel.directionTheta
-        storyID = apiModel.story.ID
     }
 }
 
@@ -244,8 +241,7 @@ extension Optograph: SQLiteModel {
             postTwitter: row[OptographSchema.postTwitter],
             postInstagram: row[OptographSchema.postInstagram],
             shouldBePublished: row[OptographSchema.shouldBePublished],
-            ringCount: row[OptographSchema.ringCount],
-            storyID: row[OptographSchema.storyID]
+            ringCount: row[OptographSchema.ringCount]
         )
     }
     
@@ -282,8 +278,7 @@ extension Optograph: SQLiteModel {
             OptographSchema.postTwitter <-- postTwitter,
             OptographSchema.postInstagram <-- postInstagram,
             OptographSchema.shouldBePublished <-- shouldBePublished,
-            OptographSchema.ringCount <-- ringCount,
-            OptographSchema.storyID   <-- storyID
+            OptographSchema.ringCount <-- ringCount
         ]
     }
     

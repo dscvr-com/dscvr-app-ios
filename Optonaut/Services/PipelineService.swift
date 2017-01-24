@@ -119,9 +119,9 @@ class PipelineService {
             .observeCompleted {
                 stitchingStatus.value = .Stitching(1)
                 stitchingStatus.value = .StitchingFinished(optographID)
-                if optographBox.model.shouldBePublished {
-                    upload(optographID)
-                }
+//                if optographBox.model.shouldBePublished {
+//                    upload(optographID)
+//                }
             }
     }
     
@@ -234,8 +234,6 @@ class PipelineService {
         
         let query = OptographTable
             .select(*)
-            .join(PersonTable, on: OptographTable[OptographSchema.personID] == PersonTable[PersonSchema.ID])
-            .join(.LeftOuter, LocationTable, on: LocationTable[LocationSchema.ID] == OptographTable[OptographSchema.locationID])
             .filter(!OptographTable[OptographSchema.isStitched] && OptographTable[OptographSchema.deletedAt] == nil)
         
         let optograph = DatabaseService.defaultConnection.pluck(query).map(Optograph.fromSQL)

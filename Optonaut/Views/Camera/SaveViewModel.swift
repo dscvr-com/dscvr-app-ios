@@ -43,6 +43,7 @@ class SaveViewModel {
         
         var optograph = Optograph.newInstance()
         
+        print("personId",SessionService.personID)
         optograph.personID = SessionService.personID
         optograph.isPublished = false
         optograph.isStitched = false
@@ -91,6 +92,22 @@ class SaveViewModel {
         readyNotification.signal.observeNext {
             self.optographBox.insertOrUpdate()
             self.isInitialized.value = true
+            
+            self.placeID.producer
+                .delayLatestUntil(self.isInitialized.producer)
+                .ignoreNil()
+                .startWithNext { [weak self] _ in
+                    let coords = LocationService.lastLocation()!
+                    var location = Location.newInstance()
+                    location.latitude = coords.latitude
+                    location.longitude = coords.longitude
+                    self?.locationBox?.removeFromCache()
+                    self?.locationBox = Models.locations.create(location)
+                    self?.locationBox!.insertOrUpdate()
+                    self?.optographBox.insertOrUpdate { box in
+                        box.model.locationID = location.ID
+                    }
+            }
         }
         
         isInitialized.producer.startWithNext{ print("isInitialized \($0)")}

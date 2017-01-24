@@ -125,7 +125,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                             strongSelf.collectionView!.insertItemsAtIndexPaths(results.insert.map { NSIndexPath(forItem: $0, inSection: 0) })
                             }, completion: { _ in
                                 if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.refreshing {
-                                    // preserves scroll position
                                     if let visibleOptographID = visibleOptographID, visibleRow = strongSelf.optographIDs.indexOf({ $0 == visibleOptographID }) {
                                         strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
                                     }
@@ -145,10 +144,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         overlayView.navigationController = navigationController as? NavigationController
         overlayView.parentViewController = self
         overlayView.rac_hidden <~ uiHidden
-        //        overlayView.deleteCallback = { [weak self] in
-        //            self?.overlayView.optographID = nil
-        //            self?.viewModel.refresh()
-        //        }
         view.addSubview(overlayView)
         
         uiHidden.producer.startWithNext { [weak self] hidden in
@@ -218,7 +213,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             rotationSignal
                 .skipRepeats()
                 .filter([.LandscapeLeft, .LandscapeRight])
-                //                .takeWhile { [weak self] _ in self?.viewModel.viewIsActive.value ?? false }
                 .take(1)
                 .observeOn(UIScheduler())
                 .observeNext { [weak self] orientation in self?.pushViewer(orientation) }
@@ -437,25 +431,11 @@ private class OverlayView: UIView {
         didSet {
             if let optographID = optographID  {
                 let optograph = Models.optographs[optographID]!.model
-                let person = Models.persons[optograph.personID]!.model
                 
                 viewModel.bind(optographID)
                 
-                avatarImageView.kf_setImageWithURL(NSURL(string: ImageURL("persons/\(person.ID)/\(person.avatarAssetID).jpg", width: 47, height: 47))!)
-                personNameView.text = person.displayName
                 dateView.text = optograph.createdAt.longDescription
                 textView.text = optograph.text
-                
-                if let locationID = optograph.locationID {
-                    let location = Models.locations[locationID]!.model
-                    locationTextView.text = "\(location.text), \(location.countryShort)"
-                    personNameView.anchorInCorner(.TopLeft, xPad: 75, yPad: 17, width: 200, height: 18)
-                    locationTextView.anchorInCorner(.TopLeft, xPad: 75, yPad: 37, width: 200, height: 13)
-                    locationTextView.text = location.text
-                } else {
-                    personNameView.align(.ToTheRightCentered, relativeTo: avatarImageView, padding: 9.5, width: 100, height: 18)
-                    locationTextView.text = ""
-                }
             }
         }
     }

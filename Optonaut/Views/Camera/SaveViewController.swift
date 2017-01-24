@@ -91,9 +91,7 @@ class SaveViewController: UIViewController, RedNavbar {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if SessionService.isLoggedIn {
-            readyNotification.notify(())
-        }
+        readyNotification.notify(())
         
         title = "UPLOAD TO DSCVR"
         
@@ -217,8 +215,6 @@ class SaveViewController: UIViewController, RedNavbar {
             self?.twitterSocialButton.state = toggled ? .Selected : .Unselected
             self?.twitterSocialButton.icon2 = toggled ? UIImage(named:"twitter_save_active")! : UIImage(named:"twitter_save_inactive")!
         }
-        
-        //instagramSocialButton.icon = String.iconWithName(.Instagram)
         instagramSocialButton.text = "Instagram"
         instagramSocialButton.color = UIColor(0x9b6954)
         instagramSocialButton.userInteractionEnabled = true
@@ -249,7 +245,6 @@ class SaveViewController: UIViewController, RedNavbar {
                     PipelineService.stitch(strongSelf.viewModel.optographBox.model.ID)
                 }
             }
-        tabController!.delegate = self
     }
     func readyToSubmit(){
         if viewModel.isReadyForSubmit.value {

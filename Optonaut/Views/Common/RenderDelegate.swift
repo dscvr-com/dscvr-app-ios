@@ -223,15 +223,24 @@ class CubeRenderDelegate: RenderDelegate {
         nodeEnterScene = nil
         nodeLeaveScene = nil
         
-        sync(self) {
+//        sync(self) {
+//            for (_, plane) in self.planes {
+//                //print("resett \(self.id) \(index)")
+//                plane.node.geometry?.firstMaterial?.diffuse.contents = CubeRenderDelegate.BlackTexture
+//                plane.visible = false
+//                plane.hasTexture = false
+//                plane.requested = false
+//            }
+//        }
+        dispatch_async(dispatch_get_main_queue(), {
             for (_, plane) in self.planes {
-                //print("resett \(self.id) \(index)")
                 plane.node.geometry?.firstMaterial?.diffuse.contents = CubeRenderDelegate.BlackTexture
                 plane.visible = false
                 plane.hasTexture = false
                 plane.requested = false
             }
-        }
+        });
+        
     }
     
     func getVisibleAndAdjacentPlaneIndicesFromRotationMatrix(rotation: GLKMatrix4) -> [CubeImageCache.Index] {
@@ -441,5 +450,4 @@ class SphereRenderDelegate: RenderDelegate {
         
         return node
     }
-    
 }
