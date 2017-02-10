@@ -13,7 +13,7 @@ public class NSDateTransform: TransformType {
     public typealias Object = NSDate
     public typealias JSON = String
     
-    public func transformFromJSON(_ value: Any?) -> NSDate? {
+    public func transformFromJSON(value: AnyObject?) -> NSDate? {
         if let str = value as? String {
             return NSDate.fromRFC3339String(str)
         }
