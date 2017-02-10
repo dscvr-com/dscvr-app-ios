@@ -13,7 +13,7 @@ import Photos
 import SwiftyUserDefaults
 import CoreBluetooth
 
-class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralManagerDelegate{
+class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
     
     private let session = AVCaptureSession()
     private var videoDevice : AVCaptureDevice?
@@ -21,8 +21,7 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
     private let motorButton = UIButton()
     private let motorLabel = UILabel()
     private let manualLabel = UILabel()
-    private let cameraButton = UIButton()
-    private var backButton = UIImage(named: "camera_back_button")
+    private var backButton = UIButton()
     private let progressView = CameraOverlayProgressView()
     private var blList:[CBPeripheral] = []
     var timer:NSTimer?
@@ -48,6 +47,9 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
     }
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
@@ -94,8 +96,15 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
     
     private func setupScene() {
         
-        backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeCamera))
+//        backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeCamera))
+        
+        
+        backButton.setBackgroundImage(UIImage(named: "camera_back_button"), forState: .Normal)
+        backButton.addTarget(self, action: #selector(closeCamera), forControlEvents: .TouchUpInside)
+        view.addSubview(backButton)
+        
+        backButton.anchorInCorner(.TopLeft, xPad: 15, yPad: 26, width: 20, height: 20)
         
         progressView.progress = 0
         view.addSubview(progressView)
@@ -103,6 +112,7 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
         progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 31)
         progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -80)
         progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        
         
         manualButton.addTarget(self, action: #selector(manualClicked), forControlEvents: .TouchUpInside)
         motorButton.addTarget(self, action: #selector(motorClicked), forControlEvents: .TouchUpInside)
@@ -130,11 +140,11 @@ class CameraOverlayVC: UIViewController,TabControllerDelegate {//,CBPeripheralMa
         manualLabel.align(.UnderCentered, relativeTo: manualButton, padding: 10, width: calcTextWidth(manualLabel.text!, withFont: manualLabel.font), height: 23)
         motorLabel.align(.UnderCentered, relativeTo: motorButton, padding: 10, width: calcTextWidth(motorLabel.text!, withFont: motorLabel.font), height: 23)
         
-        cameraButton.setBackgroundImage(UIImage(named: "camera_icn"), forState: .Normal)
-        let size = UIImage(named:"camera_icn")!.size
-        cameraButton.addTarget(self, action: #selector(record), forControlEvents: .TouchUpInside)
-        view.addSubview(cameraButton)
-        cameraButton.anchorToEdge(.Bottom, padding: 20, width: size.width, height: size.height)
+//        cameraButton.setBackgroundImage(UIImage(named: "camera_icn"), forState: .Normal)
+//        let size = UIImage(named:"camera_icn")!.size
+//        cameraButton.addTarget(self, action: #selector(record), forControlEvents: .TouchUpInside)
+//        view.addSubview(cameraButton)
+//        cameraButton.anchorToEdge(.Bottom, padding: 20, width: size.width, height: size.height)
     }
     
     func getCBPeripheralState(state:CBPeripheralState) -> String {
@@ -410,3 +420,11 @@ private class CameraOverlayProgressView: UIView {
         trackingPoint.frame = CGRect(x: originX + width * CGFloat(progress) - 6, y: originY - 6, width: 12, height: 12)
     }
 }
+
+extension CameraOverlayVC: TabControllerDelegate {
+    
+    func onTapCameraButton() {
+        record()
+    }
+}
+

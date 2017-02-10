@@ -333,7 +333,7 @@ extension DefaultTabControllerDelegate {
         switch PipelineService.stitchingStatus.value {
         case .Idle:
             tabController!.leftViewController.cleanup()
-            self.tabController!.leftViewController.pushViewController(CameraViewController(), animated: false)
+            self.tabController!.leftViewController.pushViewController(CameraOverlayVC(), animated: false)
             
         case .Stitching(_):
             let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
