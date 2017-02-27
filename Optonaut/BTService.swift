@@ -13,10 +13,15 @@ import SwiftyUserDefaults
 /* Services & Characteristics UUIDs */
 //let BLEServiceUUID = CBUUID(string: "0000fff0-0000-1000-8000-00805f9b34fb")
 //let PositionCharUUID = CBUUID(string: "0000fff6-0000-1000-8000-00805f9b34fb")
-let BLEServiceUUID = CBUUID(string: "00001000-0000-1000-8000-00805f9b34fb")
-let PositionCharUUID = CBUUID(string: "00001001-0000-1000-8000-00805f9b34fb")
-let ResponseCharUUID = CBUUID(string: "00001002-0000-1000-8000-00805f9b34fb")
+
+//let BLEServiceUUID = CBUUID(string: "00001000-0000-1000-8000-00805f9b34fb")
+//let PositionCharUUID = CBUUID(string: "00001001-0000-1000-8000-00805f9b34fb")
+//let ResponseCharUUID = CBUUID(string: "00001002-0000-1000-8000-00805f9b34fb")
 let BLEServiceChangedStatusNotification = "kBLEServiceChangedStatusNotification"
+
+let BLEServiceUUID = CBUUID(string: "69400001-B5A3-F393-E0A9-E50E24DCCA99")
+let PositionCharUUID = CBUUID(string: "69400002-B5A3-F393-E0A9-E50E24DCCA99")
+let ResponseCharUUID = CBUUID(string: "69400003-B5A3-F393-E0A9-E50E24DCCA99")
 
 protocol ResponseDataRequestDelegate {
     func responseData(data: NSData) -> NSData
@@ -40,9 +45,9 @@ class BTService: NSObject, CBPeripheralDelegate {
         self.peripheral?.delegate = self
         
         // test the computations
-        print("computeBotRotation \(self.computeBotRotation())")
-        print("computeRotationX \(self.computeRotationX())")
-        print("computeTopRotation \(self.computeTopRotation())")
+        //print("computeBotRotation \(self.computeBotRotation())")
+        //print("computeRotationX \(self.computeRotationX())")
+        //print("computeTopRotation \(self.computeTopRotation())")
         ringFlag = 0
         motorFlag = 0
         
@@ -54,8 +59,8 @@ class BTService: NSObject, CBPeripheralDelegate {
     }
     
     func startDiscoveringServices() {
-        self.peripheral?.discoverServices([BLEServiceUUID])
-        //self.peripheral?.discoverServices(nil)
+        //self.peripheral?.discoverServices([BLEServiceUUID])
+        self.peripheral?.discoverServices(nil)
     }
     
     func reset() {
@@ -101,10 +106,14 @@ class BTService: NSObject, CBPeripheralDelegate {
                                                      error: NSError?) {
         
         let responseData = characteristic.value //<- notification
-        print("reponsse data2 \(responseData)")
+        
         
         let responseValue = hexString(responseData!)
-        
+        print("responseData  \(responseData)")
+        print("responseValue  \(responseValue)")
+        if responseValue == "00" {
+            return
+        }
         if Defaults[.SessionUseMultiRing]{
             
             if responseValue != "" {
@@ -247,7 +256,7 @@ class BTService: NSObject, CBPeripheralDelegate {
         if (error != nil) {
             return
         }
-        
+
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
                 print("characteristic.UUID \(characteristic.UUID)")
@@ -466,13 +475,16 @@ class BTService: NSObject, CBPeripheralDelegate {
     
     func computeRotationX ( ) -> String {
         var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]
-        
+        var xnumberSteps = toByteArray(Defaults[.SessionRotateCount]!)
         // get number of rotation
-        let xnumberSteps = Defaults[.SessionRotateCount]
-        rotateByteData.append(UInt8(xnumberSteps! >> 24))
-        rotateByteData.append(UInt8(xnumberSteps! >> 16))
-        rotateByteData.append(UInt8(xnumberSteps! >> 8))
-        rotateByteData.append(UInt8(xnumberSteps! & 0xff))
+        print("SessionTopCount \(Defaults[.SessionRotateCount]!)")
+        rotateByteData.append(xnumberSteps[3])
+        rotateByteData.append(xnumberSteps[2])
+        rotateByteData.append(xnumberSteps[1])
+        rotateByteData.append(xnumberSteps[0])
+        
+        
+        
         print("rotateByteData1 \(rotateByteData)")
         // get pps
         let pps = Defaults[.SessionPPS]
