@@ -157,6 +157,17 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 self?.tabController?.showUI()
             }
         }
+        
+        PipelineService.stitchingStatus.producer
+            .observeOnMain()
+            .startWithNext { [weak self] status in
+                switch status {
+                case .StitchingFinished(_):
+                    self?.collectionView!.reloadData()
+                default:
+                    break
+                }
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -482,7 +493,7 @@ private class OverlayView: UIView {
         
         whiteBackground.frame = CGRect(x: 0, y: 0, width: frame.width, height: 66)
         optionsButtonView.anchorInCorner(.TopRight, xPad: 16, yPad: 21, width: 24, height: 24)
-        dateView.anchorInCorner(.TopRight, xPad: 46, yPad: 27, width: 70, height: 13)
+        dateView.anchorInCorner(.TopRight, xPad: 46, yPad: 27, width: 100, height: 13)
         textView.anchorInCorner(.TopLeft, xPad: 16, yPad: 25, width: self.width-dateView.frame.origin.x-10, height: textView.height)
     }
     

@@ -127,13 +127,6 @@ class SaveViewModel {
     
     func deleteOpto() {
         
-        
-        SignalProducer<Bool, ApiError>(value: true)
-            .flatMap(.Latest) { followedBefore in
-                ApiService<EmptyResponse>.delete("optographs/\(self.optographBox.model.ID)")
-            }
-            .start()
-        
         optographBox.insertOrUpdate { box in
             print("deleted on: \(NSDate())")
             print(box.model.ID)
