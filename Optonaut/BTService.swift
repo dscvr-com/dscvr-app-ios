@@ -475,7 +475,7 @@ class BTService: NSObject, CBPeripheralDelegate {
     
     func computeRotationX ( ) -> String {
         var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]
-        var xnumberSteps = toByteArray(Defaults[.SessionRotateCount]!)
+        var xnumberSteps = toByteArray(-Defaults[.SessionRotateCount]!)
         // get number of rotation
         print("SessionTopCount \(Defaults[.SessionRotateCount]!)")
         rotateByteData.append(xnumberSteps[3])

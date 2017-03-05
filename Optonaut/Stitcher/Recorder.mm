@@ -204,7 +204,7 @@ optonaut::StorageImageSink imageSink(Stores::post);
         //   optonaut::Recorder::alignmentEnabled = true;
         optonaut::StorageImageSink& sink = imageSink;
           self->motorPipe = new optonaut::MotorControlRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                               self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated);
+                                               self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated, 1.0, debugPath);
         
       
 
@@ -213,7 +213,7 @@ optonaut::StorageImageSink imageSink(Stores::post);
     
     
         self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                        self->intrinsics, optonaut::RecorderGraph::ModeCenter);
+                                        self->intrinsics, optonaut::RecorderGraph::ModeCenter, 1.0, debugPath);
     
     }
   

@@ -107,9 +107,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         dispatch_set_target_queue(sessionQueue, high)
         screenScale = Float(UIScreen.mainScreen().scale)
         
-        if Defaults[.SessionDebuggingEnabled] {
+        //if Defaults[.SessionDebuggingEnabled] {
             Recorder.enableDebug(CameraDebugService().path)
-        }
+        //}
         
         super.init(nibName: nil, bundle: nil)
         
@@ -143,9 +143,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         //print("rotateByteData1 \(rotateByteData)")
         
         
-        var xnumberSteps = toByteArray(Defaults[.SessionRotateCount]!)
+        var xnumberSteps = toByteArray(-Defaults[.SessionRotateCount]!)
         // get number of rotation
-        print("SessionTopCount \(Defaults[.SessionRotateCount]!)")
+        print("SessionTopCount \(-Defaults[.SessionRotateCount]!)")
         rotateByteData.append(xnumberSteps[3])
         rotateByteData.append(xnumberSteps[2])
         rotateByteData.append(xnumberSteps[1])
@@ -657,12 +657,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     private func setupCamera() {
         authorizeCamera()
-        // mca (11/24/16): change sessionPreset to PresetHigh from Preset1280x720
-        //session.sessionPreset = AVCaptureSessionPresetHigh
-        session.sessionPreset = AVCaptureSessionPreset1280x720
-        //session.sessionPreset = AVCaptureSessionPresetMedium
-
         
+        session.sessionPreset = AVCaptureSessionPresetHigh
+
         videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice!) else {
             return
@@ -676,7 +673,8 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         let videoDeviceOutput = AVCaptureVideoDataOutput()
         videoDeviceOutput.videoSettings = [
-            kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)]
+            kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)
+        ]
         videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
         videoDeviceOutput.setSampleBufferDelegate(self, queue: sessionQueue)
         
@@ -691,21 +689,18 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         try! videoDevice?.lockForConfiguration()
         
-        
         var bestFormat: AVCaptureDeviceFormat?
-        //var bestFrameRate: AVFrameRateRange?
-        
-        var maxFps: Double = 0
-        
+      
         for format in videoDevice!.formats.map({ $0 as! AVCaptureDeviceFormat }) {
-            var ranges = format.videoSupportedFrameRateRanges as! [AVFrameRateRange]
-            let frameRates = ranges[0]
-            if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= 30 {
-                maxFps = frameRates.maxFrameRate
+            let dim = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+            print(format)
+            print(dim)
+            if dim.height == 1936 && dim.width == 2592 {
                 bestFormat = format
-                
             }
         }
+        
+        videoDevice?.activeFormat = bestFormat!
         
         if videoDevice!.activeFormat.videoHDRSupported.boolValue {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
