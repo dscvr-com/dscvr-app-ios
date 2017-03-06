@@ -14,10 +14,10 @@ import SwiftyUserDefaults
 //let BLEServiceUUID = CBUUID(string: "0000fff0-0000-1000-8000-00805f9b34fb")
 //let PositionCharUUID = CBUUID(string: "0000fff6-0000-1000-8000-00805f9b34fb")
 /*
-let BLEServiceUUID = CBUUID(string: "00001000-0000-1000-8000-00805f9b34fb")
-let PositionCharUUID = CBUUID(string: "00001001-0000-1000-8000-00805f9b34fb")
-let ResponseCharUUID = CBUUID(string: "00001002-0000-1000-8000-00805f9b34fb")
-*/
+ let BLEServiceUUID = CBUUID(string: "00001000-0000-1000-8000-00805f9b34fb")
+ let PositionCharUUID = CBUUID(string: "00001001-0000-1000-8000-00805f9b34fb")
+ let ResponseCharUUID = CBUUID(string: "00001002-0000-1000-8000-00805f9b34fb")
+ */
 // new motor feb 14, 2017
 
 let BLEServiceUUID = CBUUID(string: "69400001-B5A3-F393-E0A9-E50E24DCCA99")
@@ -41,7 +41,7 @@ class BTService: NSObject, CBPeripheralDelegate {
     var ringFlag = 0 //  0 =  center; 1 =top ; 2 bot
     var motorFlag = 0
     
-  
+    
     
     
     init(initWithPeripheral peripheral: CBPeripheral) {
@@ -64,8 +64,8 @@ class BTService: NSObject, CBPeripheralDelegate {
     }
     
     func startDiscoveringServices() {
-       // self.peripheral?.discoverServices([BLEServiceUUID])
-
+        // self.peripheral?.discoverServices([BLEServiceUUID])
+        
         self.peripheral?.discoverServices(nil)
     }
     
@@ -108,13 +108,13 @@ class BTService: NSObject, CBPeripheralDelegate {
         }
     }
     
-   
+    
     func peripheral( peripheral: CBPeripheral,
                      didUpdateValueForCharacteristic characteristic: CBCharacteristic,
                                                      error: NSError?) {
         
         let responseData = characteristic.value //<- notification
-       
+        
         
         
         let responseValue = hexString(responseData!)
@@ -263,7 +263,7 @@ class BTService: NSObject, CBPeripheralDelegate {
     }
     
     func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
-       print("didDiscoverCharacteristicsForService")
+        print("didDiscoverCharacteristicsForService")
         if (peripheral != self.peripheral) {
             // Wrong Peripheral
             print("Wrong Peripheral")
@@ -363,7 +363,7 @@ class BTService: NSObject, CBPeripheralDelegate {
         
         let crc = UInt8(checksum & 0xFF)
         command.append(crc)
-        //append 
+        //append
         for _ in 1...9 {
             command.append(UInt8(0xFF))
         }
@@ -379,7 +379,7 @@ class BTService: NSObject, CBPeripheralDelegate {
             self.peripheral?.writeValue(Data, forCharacteristic: positionCharacteristic, type: CBCharacteristicWriteType.WithResponse)
         }
         
-       
+        
     }
     
     func moveX(steps: Int32, speed: Int32) {

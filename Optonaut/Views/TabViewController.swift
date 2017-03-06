@@ -33,6 +33,8 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     
     var delegate: TabControllerDelegate?
     
+    //var progress = KDCircularProgress()
+    
     required init() {
         leftViewController = FeedNavViewController()
         
@@ -69,6 +71,8 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         cameraButton.addTarget(self, action: #selector(TabViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
         uiWrapper.addSubview(cameraButton)
         
+//        createStitchingProgressBar()
+        
         PipelineService.stitchingStatus.producer
             .observeOnMain()
             .startWithNext { [weak self] status in
@@ -81,8 +85,16 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
                         self?.cameraButton.icon = UIImage(named:"camera_icn")!
                     }
                 case let .Stitching(progress):
+//                    if self?.progress.hidden == true {
+//                        self?.progress.hidden = false
+//                    }
+//                    let progressSize:Double = Double(progress * 360)
+//                    self?.progress.angle = progressSize
+                    
                     self?.cameraButton.progress = CGFloat(progress)
                 case .StitchingFinished(_):
+//                    self?.progress.angle = 360
+//                    self?.progress.hidden = true
                     self?.cameraButton.progress = nil
                 }
         }
@@ -93,11 +105,29 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         view.addSubview(uiWrapper)
     }
     
+//    func createStitchingProgressBar() {
+//        let sizeWidth = UIImage(named:"camera_icn")!.size.width
+//        let sizeHeight = UIImage(named:"camera_icn")!.size.height
+//        
+//        progress = KDCircularProgress(frame: CGRect(x: ((view.frame.width/2) - ((sizeWidth+40)/2)), y: (view.frame.height) - sizeHeight - 40, width: sizeWidth+40, height: sizeHeight+40))
+//        progress.progressThickness = 0.2
+//        progress.trackThickness = 0.7
+//        progress.clockwise = true
+//        progress.startAngle = 270
+//        progress.gradientRotateSpeed = 2
+//        progress.roundedCorners = true
+//        progress.glowMode = .Forward
+//        progress.setColors(UIColor(hex:0xFF5E00) ,UIColor(hex:0xFF7300), UIColor(hex:0xffbc00))
+//        progress.hidden = true
+//        view.addSubview(progress)
+//    }
+    
     func showUI() {
         if !uiLocked {
             uiWrapper.hidden = false
         }
     }
+    
     
     func hideUI() {
         if !uiLocked {

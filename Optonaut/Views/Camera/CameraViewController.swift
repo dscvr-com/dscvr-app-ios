@@ -125,16 +125,33 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         }
     }
     
+    func toByteArray<T>( var value: T) -> [UInt8] {
+        return withUnsafePointer(&value) {
+            Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>($0), count: sizeof(T)))
+        }
+    }
+    
     func computeRotationX ( ) -> String {
         var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]
         
         // get number of rotation
-        let xnumberSteps = Defaults[.SessionRotateCount]
-        rotateByteData.append(UInt8(xnumberSteps! >> 24))
-        rotateByteData.append(UInt8(xnumberSteps! >> 16))
-        rotateByteData.append(UInt8(xnumberSteps! >> 8))
-        rotateByteData.append(UInt8(xnumberSteps! & 0xff))
-        print("rotateByteData1 \(rotateByteData)")
+        //let xnumberSteps = Defaults[.SessionRotateCount]
+        //rotateByteData.append(UInt8(xnumberSteps! >> 24))
+        //rotateByteData.append(UInt8(xnumberSteps! >> 16))
+        //rotateByteData.append(UInt8(xnumberSteps! >> 8))
+        //rotateByteData.append(UInt8(xnumberSteps! & 0xff))
+        //print("rotateByteData1 \(rotateByteData)")
+        
+        
+        var xnumberSteps = toByteArray(Defaults[.SessionRotateCount]!)
+        // get number of rotation
+        print("SessionTopCount \(Defaults[.SessionRotateCount]!)")
+        rotateByteData.append(xnumberSteps[3])
+        rotateByteData.append(xnumberSteps[2])
+        rotateByteData.append(xnumberSteps[1])
+        rotateByteData.append(xnumberSteps[0])
+        
+        
         // get pps
         let pps = Defaults[.SessionPPS]
         rotateByteData.append(UInt8(pps! >> 8))

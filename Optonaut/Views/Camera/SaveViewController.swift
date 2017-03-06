@@ -93,7 +93,7 @@ class SaveViewController: UIViewController, RedNavbar {
         
         readyNotification.notify(())
         
-        title = "UPLOAD TO DSCVR"
+        title = "RENDERING 360 IMAGE"
         
         var privateButton = UIImage(named: "privacy_me")
         var publicButton = UIImage(named: "privacy_world")
@@ -166,11 +166,13 @@ class SaveViewController: UIViewController, RedNavbar {
         locationView.didSelectLocation = { [weak self] placeID in
             self?.viewModel.placeID.value = placeID
         }
+        locationView.hidden = true
         scrollView.addSubview(locationView)
         
         textPlaceholderView.font = UIFont.textOfSize(12, withType: .Regular)
         textPlaceholderView.text = "Tell something about what you see..."
         textPlaceholderView.textColor = UIColor.DarkGrey.alpha(0.4)
+        textPlaceholderView.hidden = true
         textPlaceholderView.rac_hidden <~ viewModel.text.producer.map(isNotEmpty)
         textInputView.addSubview(textPlaceholderView)
         
@@ -180,6 +182,7 @@ class SaveViewController: UIViewController, RedNavbar {
         textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
         textInputView.returnKeyType = .Done
         textInputView.delegate = self
+        textInputView.hidden = true
         textInputView.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 14, right: 0)
         textInputView.textContainerInset = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16)
         textInputView.rac_textSignal().toSignalProducer().startWithNext { [weak self] val in
@@ -190,11 +193,13 @@ class SaveViewController: UIViewController, RedNavbar {
     
         shareBackgroundView.backgroundColor = UIColor(0xfbfbfb)
         shareBackgroundView.layer.borderWidth = 1
+        shareBackgroundView.hidden = true
         shareBackgroundView.layer.borderColor = UIColor(0xe6e6e6).CGColor
         scrollView.addSubview(shareBackgroundView)
         
         facebookSocialButton.text = "Facebook"
         facebookSocialButton.color = UIColor(0x3b5998)
+        facebookSocialButton.hidden = true
         facebookSocialButton.userInteractionEnabled = true
         facebookSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapFacebookSocialButton)))
         shareBackgroundView.addSubview(facebookSocialButton)
@@ -207,6 +212,7 @@ class SaveViewController: UIViewController, RedNavbar {
         //twitterSocialButton.icon = String.iconWithName(.Twitter)
         twitterSocialButton.text = "Twitter"
         twitterSocialButton.color = UIColor(0x55acee)
+        twitterSocialButton.hidden = true
         twitterSocialButton.userInteractionEnabled = true
         twitterSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapTwitterSocialButton)))
         shareBackgroundView.addSubview(twitterSocialButton)
@@ -236,6 +242,11 @@ class SaveViewController: UIViewController, RedNavbar {
         
         viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
             self?.tabController!.cameraButton.loading = !isReady
+            
+//            if isReady {
+//                self?.tabController!.cameraButton.icon = UIImage(named:"upload_next")!
+//            }
+//            
         }
         
         viewModel.isReadyForStitching.producer
@@ -799,6 +810,7 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.allowsSelection = true
         collectionView.rac_hidden <~ viewModel.locationLoading
+        collectionView.hidden = true
         collectionView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 16)
         viewModel.locations.producer.startWithNext { [weak self] locations in
             self?.locations = locations
@@ -814,6 +826,7 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         leftIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LocationView.didTap)))
         leftIconView.userInteractionEnabled = true
         leftIconView.image = UIImage(named:"location_pin")
+        leftIconView.hidden = true
         addSubview(leftIconView)
         
         statusText.font = UIFont.displayOfSize(13, withType: .Semibold)
@@ -822,6 +835,7 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         statusText.userInteractionEnabled = true
         statusText.rac_hidden <~ viewModel.locationEnabled
         statusText.text = "Add location"
+        statusText.hidden = true
         addSubview(statusText)
     }
     
