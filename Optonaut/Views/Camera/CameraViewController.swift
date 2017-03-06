@@ -293,7 +293,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         if sessionMotor {
             if let bleService = btDiscoverySharedInstance.bleService {
-                bleService.sendCommand("fe000402ffffffffffffffffffffffffff");
+                bleService.sendStop();
             }
         }
         
@@ -1153,7 +1153,8 @@ extension CameraViewController: TabControllerDelegate {
             DegreeIncrPerMicro = (0.036 / ( (Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ) - missingSecs ))
                 
             if let bleService = btDiscoverySharedInstance.bleService {
-                bleService.sendCommand(self.computeRotationX())
+               
+                bleService.moveX(Int32(Defaults[.SessionRotateCount]!), speed: Int32(Defaults[.SessionPPS]!))
             }
         }
     }

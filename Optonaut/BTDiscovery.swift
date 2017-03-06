@@ -81,6 +81,9 @@ class BTDiscovery: NSObject, CBCentralManagerDelegate {
         }
     }
     
+   
+    
+    
     func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
         
         // Create new service class

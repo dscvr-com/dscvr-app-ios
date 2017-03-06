@@ -66,7 +66,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Defaults[.SessionRotateCount] = 5111
             Defaults[.SessionTopCount] = 1999
             Defaults[.SessionBotCount] = -3998
-            Defaults[.SessionBuffCount] = 0
+            Defaults[.SessionBuffCount] = 20
+            
+            
+            //Defaults[.SessionPPS] = 1000
+            //Defaults[.SessionRotateCount] = 5111
+            //Defaults[.SessionTopCount] = 1999
+            //Defaults[.SessionBotCount] = -3998
+            //Defaults[.SessionBuffCount] = 20
             
             //Bluetooth Notif
             NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.connectionChanged(_:)), name: BLEServiceChangedStatusNotification, object: nil)

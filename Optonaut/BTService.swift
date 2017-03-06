@@ -13,9 +13,20 @@ import SwiftyUserDefaults
 /* Services & Characteristics UUIDs */
 //let BLEServiceUUID = CBUUID(string: "0000fff0-0000-1000-8000-00805f9b34fb")
 //let PositionCharUUID = CBUUID(string: "0000fff6-0000-1000-8000-00805f9b34fb")
+/*
 let BLEServiceUUID = CBUUID(string: "00001000-0000-1000-8000-00805f9b34fb")
 let PositionCharUUID = CBUUID(string: "00001001-0000-1000-8000-00805f9b34fb")
 let ResponseCharUUID = CBUUID(string: "00001002-0000-1000-8000-00805f9b34fb")
+*/
+// new motor feb 14, 2017
+
+let BLEServiceUUID = CBUUID(string: "69400001-B5A3-F393-E0A9-E50E24DCCA99")
+let PositionCharUUID = CBUUID(string: "69400002-B5A3-F393-E0A9-E50E24DCCA99")
+let ResponseCharUUID = CBUUID(string: "69400003-B5A3-F393-E0A9-E50E24DCCA99")
+
+
+
+
 let BLEServiceChangedStatusNotification = "kBLEServiceChangedStatusNotification"
 
 protocol ResponseDataRequestDelegate {
@@ -29,20 +40,19 @@ class BTService: NSObject, CBPeripheralDelegate {
     var positionCharacteristic: CBCharacteristic?
     var ringFlag = 0 //  0 =  center; 1 =top ; 2 bot
     var motorFlag = 0
+    
   
     
     
     init(initWithPeripheral peripheral: CBPeripheral) {
         super.init()
         
-        
+        print("did connect with peripheral")
         self.peripheral = peripheral
         self.peripheral?.delegate = self
         
         // test the computations
-        print("computeBotRotation \(self.computeBotRotation())")
-        print("computeRotationX \(self.computeRotationX())")
-        print("computeTopRotation \(self.computeTopRotation())")
+        //print("computeTopRotation \(self.computeTopRotation())")
         ringFlag = 0
         motorFlag = 0
         
@@ -54,8 +64,9 @@ class BTService: NSObject, CBPeripheralDelegate {
     }
     
     func startDiscoveringServices() {
-        self.peripheral?.discoverServices([BLEServiceUUID])
-        //self.peripheral?.discoverServices(nil)
+       // self.peripheral?.discoverServices([BLEServiceUUID])
+
+        self.peripheral?.discoverServices(nil)
     }
     
     func reset() {
@@ -75,6 +86,7 @@ class BTService: NSObject, CBPeripheralDelegate {
         
         if (peripheral != self.peripheral) {
             // Wrong Peripheral
+            print("wrong peripheral")
             return
         }
         
@@ -84,6 +96,7 @@ class BTService: NSObject, CBPeripheralDelegate {
         
         if ((peripheral.services == nil) || (peripheral.services!.count == 0)) {
             // No Services
+            print("No services")
             return
         }
         
@@ -101,10 +114,15 @@ class BTService: NSObject, CBPeripheralDelegate {
                                                      error: NSError?) {
         
         let responseData = characteristic.value //<- notification
-        print("reponsse data2 \(responseData)")
+       
+        
         
         let responseValue = hexString(responseData!)
-        
+        print("responseData  \(responseData)")
+        print("responseValue  \(responseValue)")
+        if responseValue == "00" {
+            return
+        }
         if Defaults[.SessionUseMultiRing]{
             
             if responseValue != "" {
@@ -139,7 +157,8 @@ class BTService: NSObject, CBPeripheralDelegate {
                         //"ffffee99" <- our motor
                         // Y is on center
                         bData.dataHasCome.value = false
-                        sendCommand(self.computeTopRotation());
+                        // go to top
+                        moveY(Int32(Defaults[.SessionTopCount]!), speed: Int32(Defaults[.SessionPPS]!))
                         //sendCommand("fe0702fffff9f7012c0022ffffffffffff") // top_ring
                         print("blecommanddone")
                         
@@ -154,7 +173,13 @@ class BTService: NSObject, CBPeripheralDelegate {
                         
                         let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC)))
                         dispatch_after(delayTime, dispatch_get_main_queue()) {
-                            self.sendCommand(self.computeRotationX());
+                            
+                            print("1moveX \(Defaults[.SessionRotateCount])")
+                            print("2moveX \(Defaults[.SessionPPS])")
+                            print("1moveX \(Defaults[.SessionRotateCount]!)")
+                            print("2moveX \(Defaults[.SessionPPS]!)")
+                            self.moveX(Int32(Defaults[.SessionRotateCount]!), speed: Int32(Defaults[.SessionPPS]!))
+                            //self.moveX(Int32(200), speed: Int32(1000))
                             bData.dataHasCome.value = true
                         }
                         
@@ -170,7 +195,8 @@ class BTService: NSObject, CBPeripheralDelegate {
                         // "ffffe890"
                         // Y is on top
                         bData.dataHasCome.value = false
-                        sendCommand(self.computeBotRotation());
+                        // go to bottom
+                        moveY(Int32(Defaults[.SessionBotCount]!), speed: Int32(Defaults[.SessionPPS]!))
                         
                         //sendCommand("fe070200000c12012c0052ffffffffffff") // bot_ring
                         motorFlag = 3
@@ -183,13 +209,14 @@ class BTService: NSObject, CBPeripheralDelegate {
                         
                         let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC)))
                         dispatch_after(delayTime, dispatch_get_main_queue()) {
-                            
-                            self.sendCommand(self.computeRotationX());
+                            print("3moveX \(Defaults[.SessionRotateCount])")
+                            print("4moveX \(Defaults[.SessionPPS])")
+                            print("3moveX \(Defaults[.SessionRotateCount]!)")
+                            print("4moveX \(Defaults[.SessionPPS]!)")
+                            //self.moveX(Int32(200), speed: Int32(250))
+                            self.moveX(Int32(Defaults[.SessionRotateCount]!), speed: Int32(Defaults[.SessionPPS]!))
                             bData.dataHasCome.value = true
                         }
-                        
-                        
-                       
                         //sendCommand("fe070100001c20014a008dffffffffffff") //<- our version
                         ringFlag = 2
                         motorFlag = 4
@@ -201,8 +228,9 @@ class BTService: NSObject, CBPeripheralDelegate {
                     if motorFlag == 4 {
                         //  "fffff4a2"
                         bData.dataHasCome.value = false
-                        sendCommand(self.computeTopRotation());
-                        //sendCommand(self.computeMidRotation())
+                        //sendCommand(self.computeTopRotation());
+                        
+                        moveY(Int32(Defaults[.SessionTopCount]!), speed: Int32(Defaults[.SessionPPS]!))
                         // Y is on bot
                         //sendCommand("fe07020000081f012c005bffffffffffff") //move to top command                     sendCommand("fe0702fffff9f7012c0022ffffffffffff") // top_ring
                         
@@ -221,10 +249,6 @@ class BTService: NSObject, CBPeripheralDelegate {
                 bData.bluetoothData = responseData!
                 bData.ydirection = yDirection
                 bData.timelapsed = timelapsed
-                
-                
-                
-                
             }
             
         }
@@ -239,27 +263,33 @@ class BTService: NSObject, CBPeripheralDelegate {
     }
     
     func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+       print("didDiscoverCharacteristicsForService")
         if (peripheral != self.peripheral) {
             // Wrong Peripheral
+            print("Wrong Peripheral")
             return
         }
         
         if (error != nil) {
+            print("didDiscoverCharacteristicsForService  error")
             return
         }
         
+        
         if let characteristics = service.characteristics {
+            
             for characteristic in characteristics {
                 print("characteristic.UUID \(characteristic.UUID)")
                 
                 if characteristic.UUID == PositionCharUUID {
+                    print("position characteristic")
                     self.positionCharacteristic = (characteristic)
                     self.sendBTServiceNotificationWithIsBluetoothConnected(true)
                 }
                 
                 if  characteristic.UUID == ResponseCharUUID {
                     
-                    
+                    print("response characteristic")
                     peripheral.setNotifyValue(true, forCharacteristic: characteristic)
                     
                     
@@ -267,66 +297,6 @@ class BTService: NSObject, CBPeripheralDelegate {
                     
                 }
             }
-        }
-    }
-    
-    // Mark: - Private
-    
-    func writePosition(position: UInt8) {
-        // See if characteristic has been discovered before writing to it
-        if let positionCharacteristic = self.positionCharacteristic {
-            // Need a mutable var to pass to writeValue function
-            //var positionValue = position
-            
-            let stringServiceCommand = "fe01000201ffffffffffffffffffffffffffffff"
-            //
-            
-            let length = stringServiceCommand.characters.count
-            
-            
-            let rawData = UnsafeMutablePointer<CUnsignedChar>.alloc(length/2)
-            var rawIndex = 0
-            
-            for var index = 0; index < length; index+=2{
-                let single = NSMutableString()
-                single.appendString(stringServiceCommand.substringWithRange(Range(start:stringServiceCommand.startIndex.advancedBy(index), end:stringServiceCommand.startIndex.advancedBy(index+2))))
-                rawData[rawIndex] = UInt8(single as String, radix:16)!
-                rawIndex++
-            }
-            
-            let data1:NSData = NSData(bytes: rawData, length: length/2)
-            rawData.dealloc(length/2)
-            
-            //
-            //let data = NSData(bytes: &positionValue, length: sizeof(UInt8))
-            self.peripheral?.writeValue(data1, forCharacteristic: positionCharacteristic, type: CBCharacteristicWriteType.WithResponse)
-        }
-    }
-    func sendCommand(stringServiceCommand:String) {
-        print("sendCommand \(stringServiceCommand)")
-        // See if characteristic has been discovered before writing to it
-        if let positionCharacteristic = self.positionCharacteristic {
-            // Need a mutable var to pass to writeValue function
-            
-            let length = stringServiceCommand.characters.count
-            
-            
-            let rawData = UnsafeMutablePointer<CUnsignedChar>.alloc(length/2)
-            var rawIndex = 0
-            
-            for var index = 0; index < length; index+=2{
-                let single = NSMutableString()
-                single.appendString(stringServiceCommand.substringWithRange(Range(start:stringServiceCommand.startIndex.advancedBy(index), end:stringServiceCommand.startIndex.advancedBy(index+2))))
-                rawData[rawIndex] = UInt8(single as String, radix:16)!
-                rawIndex++
-            }
-            
-            let data1:NSData = NSData(bytes: rawData, length: length/2)
-            rawData.dealloc(length/2)
-            
-            //
-            //let data = NSData(bytes: &positionValue, length: sizeof(UInt8))
-            self.peripheral?.writeValue(data1, forCharacteristic: positionCharacteristic, type: CBCharacteristicWriteType.WithResponse)
         }
     }
     
@@ -345,158 +315,6 @@ class BTService: NSObject, CBPeripheralDelegate {
         return unsigned
     }
     
-    func toByteArray<T>( var value: T) -> [UInt8] {
-        return withUnsafePointer(&value) {
-            Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>($0), count: sizeof(T)))
-        }
-    }
-    
-    func computeTopRotation ( ) -> String {
-        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x02]
-        
-        
-        var xnumberSteps = toByteArray(Defaults[.SessionTopCount]!)
-        // get number of rotation
-        print("SessionTopCount \(Defaults[.SessionTopCount]!)")
-        rotateByteData.append(xnumberSteps[3])
-        rotateByteData.append(xnumberSteps[2])
-        rotateByteData.append(xnumberSteps[1])
-        rotateByteData.append(xnumberSteps[0])
-        print("rotateByteData1 \(rotateByteData)")
-        // get pps
-        let pps = Defaults[.SessionPPS]
-        rotateByteData.append(UInt8(pps! >> 8))
-        rotateByteData.append(UInt8(pps! & 0xff))
-        // add full step
-        rotateByteData.append(UInt8(0x00))
-        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
-        // compute for checksum
-        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
-        print("rotateByteData \(rotateByteData)")
-        // append padding
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        // convert to hex string
-        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
-        
-    }
-    
-    
-    func computeBotRotation ( ) -> String {
-        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x02]
-        
-        
-        var xnumberSteps = toByteArray(Defaults[.SessionBotCount]!)
-        // get number of rotation
-        print("SessionTopCount \(Defaults[.SessionBotCount]!)")
-        rotateByteData.append(xnumberSteps[3])
-        rotateByteData.append(xnumberSteps[2])
-        rotateByteData.append(xnumberSteps[1])
-        rotateByteData.append(xnumberSteps[0])
-        
-        
-        print("rotateByteData1 \(rotateByteData)")
-        // get pps
-        let pps = Defaults[.SessionPPS]
-        rotateByteData.append(UInt8(pps! >> 8))
-        rotateByteData.append(UInt8(pps! & 0xff))
-        // add full step
-        rotateByteData.append(UInt8(0x00))
-        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
-        // compute for checksum
-        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
-        print("rotateByteData \(rotateByteData)")
-        // append padding
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        // convert to hex string
-        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
-        
-    }
-    
-    
-    
-    func computeMidRotation ( ) -> String {
-        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x02]
-        
-        let midSteps = abs(Defaults[.SessionBotCount]!) - Defaults[.SessionTopCount]!
-        
-        var xnumberSteps = toByteArray(midSteps)
-        
-        
-        
-        // get number of rotation
-        print("SessionTopCount \(Defaults[.SessionBotCount]!)")
-        rotateByteData.append(xnumberSteps[3])
-        rotateByteData.append(xnumberSteps[2])
-        rotateByteData.append(xnumberSteps[1])
-        rotateByteData.append(xnumberSteps[0])
-        
-        
-        print("rotateByteData1 \(rotateByteData)")
-        // get pps
-        let pps = Defaults[.SessionPPS]
-        rotateByteData.append(UInt8(pps! >> 8))
-        rotateByteData.append(UInt8(pps! & 0xff))
-        // add full step
-        rotateByteData.append(UInt8(0x00))
-        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
-        // compute for checksum
-        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
-        print("rotateByteData \(rotateByteData)")
-        // append padding
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        // convert to hex string
-        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
-        
-    }
-    
-    func computeRotationX ( ) -> String {
-        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]
-        
-        // get number of rotation
-        let xnumberSteps = Defaults[.SessionRotateCount]
-        rotateByteData.append(UInt8(xnumberSteps! >> 24))
-        rotateByteData.append(UInt8(xnumberSteps! >> 16))
-        rotateByteData.append(UInt8(xnumberSteps! >> 8))
-        rotateByteData.append(UInt8(xnumberSteps! & 0xff))
-        print("rotateByteData1 \(rotateByteData)")
-        // get pps
-        let pps = Defaults[.SessionPPS]
-        rotateByteData.append(UInt8(pps! >> 8))
-        rotateByteData.append(UInt8(pps! & 0xff))
-        // add full step
-        rotateByteData.append(UInt8(0x00))
-        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
-        // compute for checksum
-        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
-        print("rotateByteData \(rotateByteData)")
-        // append padding
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        // convert to hex string
-        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
-        
-    }
-    
-    
     func checkSum(data: NSData) -> Int {
         let b = UnsafeBufferPointer<UInt8>(start:
             UnsafePointer(data.bytes), count: data.length)
@@ -507,11 +325,6 @@ class BTService: NSObject, CBPeripheralDelegate {
         }
         return sum & 0xff
     }
-    
-    
-    
-    
-    
     //hextostring
     func hexString(data:NSData)->String{
         if data.length > 0 {
@@ -530,6 +343,88 @@ class BTService: NSObject, CBPeripheralDelegate {
         }
         return "";
     }
+    
+    
+    
+    
+    // ejoebstl code
+    
+    func sendCommand(opCode: UInt8, data: [UInt8]) {
+        var command : [UInt8] = [0xFE]
+        let lengthOfData = UInt8(data.count)
+        command.append(lengthOfData)
+        command.append(opCode)
+        command.appendContentsOf(data)
+        
+        var checksum = UInt32(0)
+        for c in command {
+            checksum += UInt32(c)
+        }
+        
+        let crc = UInt8(checksum & 0xFF)
+        command.append(crc)
+        //append 
+        for _ in 1...9 {
+            command.append(UInt8(0xFF))
+        }
+        
+        
+        let Data = NSMutableData(bytes: command, length: command.count)
+        if let positionCharacteristic = self.positionCharacteristic {
+            // Need a mutable var to pass to writeValue function
+            
+            print ("penn - > sending data \(Data)")
+            print ("penn - > sending positionCharacteristic \(command.count)")
+            //let data = NSData(bytes: &positionValue, length: sizeof(UInt8))
+            self.peripheral?.writeValue(Data, forCharacteristic: positionCharacteristic, type: CBCharacteristicWriteType.WithResponse)
+        }
+        
+       
+    }
+    
+    func moveX(steps: Int32, speed: Int32) {
+        var command = toByteArray(steps)
+        command = command.reverse()
+        command.append(UInt8((speed >> 8) & 0xFF))
+        command.append(UInt8(speed & 0xFF))
+        command.append(0x00) //Fullstep if <500 halfstep?
+        sendCommand(0x01, data: command)
+    }
+    
+    func moveY(steps: Int32, speed: Int32) {
+        var command = toByteArray(steps)
+        command = command.reverse()
+        command.append(UInt8((speed >> 8) & 0xFF))
+        command.append(UInt8(speed & 0xFF))
+        command.append(0x00)
+        sendCommand(0x02, data: command)
+    }
+    
+    func moveXandY(stepsX: Int32, speedX: Int32, stepsY: Int32, speedY: Int32) {
+        var command = toByteArray(stepsX)
+        command = command.reverse()
+        command.append(UInt8((speedX >> 8) & 0xFF))
+        command.append(UInt8(speedX & 0xFF))
+        var commandYpart = toByteArray(stepsY)
+        commandYpart = commandYpart.reverse()
+        commandYpart.append(UInt8((speedY >> 8) & 0xFF))
+        commandYpart.append(UInt8(speedY & 0xFF))
+        commandYpart.append(0x00)
+        command.appendContentsOf(commandYpart)
+        sendCommand(0x03, data: command)
+    }
+    
+    func sendStop() {
+        sendCommand(0x04, data: [])
+    }
+    
+    func toByteArray<T>(var value: T) -> [UInt8] {
+        return withUnsafePointer(&value) {
+            Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>($0), count: sizeof(T)))
+        }
+    }
+    
+    
     
     
 }
