@@ -13,6 +13,10 @@ import Photos
 import SwiftyUserDefaults
 import CoreBluetooth
 
+var btPeripheralSharedInstance: BLEService?
+var btServiceSharedInstance: CBService?
+
+// TODO: This class is a mess. duplication, ill state transistion, racing conditions. cleanup. 
 class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
     
     private let session = AVCaptureSession()
@@ -23,10 +27,12 @@ class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
     private let manualLabel = UILabel()
     private var backButton = UIButton()
     private let progressView = CameraOverlayProgressView()
-    private var blList:[CBPeripheral] = []
     var timer:NSTimer?
     var blSheet = UIAlertController()
     var deviceLastCount: Int = 0
+    
+    private var btDiscovery: BLEDiscovery?
+    private var deviceList: [CBPeripheral] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,9 +46,17 @@ class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
         
         setupCamera()
         setupScene()
-        //var myBTManager = CBPeripheralManager(delegate: self, queue: nil, options: nil)
         
         getBluetoothList()
+        btDiscovery = BLEDiscovery(onDeviceFound: onDeviceFound, onDeviceConnected: onDeviceConnected, services: [MotorControl.BLEServiceUUID])
+    }
+    
+    func onDeviceFound(peripheral: CBPeripheral, name: NSString) {
+        deviceList.append(peripheral)
+    }
+    
+    func onDeviceConnected(peripheral: CBPeripheral) {
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -58,18 +72,17 @@ class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
     
     func getBluetoothList() {
         if Defaults[.SessionMotor] {
-            if btDiscoverySharedInstance.devicesNameList().count > 0 {
-                blList = btDiscoverySharedInstance.devicesNameList()
-                if deviceLastCount != blList.count {
-                    deviceLastCount = blList.count
+            if deviceList.count > 0 {
+                if deviceLastCount != deviceList.count {
+                    deviceLastCount = deviceList.count
                     blSheet.dismissViewControllerAnimated(false, completion: nil)
                     getBluetoothDevicesToPair()
                     print("may changes")
                 }
             } else {
-                blList = []
-                if deviceLastCount != blList.count {
-                    deviceLastCount = blList.count
+                deviceList = []
+                if deviceLastCount != deviceList.count {
+                    deviceLastCount = deviceList.count
                     blSheet.dismissViewControllerAnimated(false, completion: nil)
                     getBluetoothDevicesToPair()
                     print("may changes zero count")
@@ -162,16 +175,17 @@ class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
     
     func getBluetoothDevicesToPair() {
         blSheet = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-        if blList.count == 0 {
+        if deviceList.count == 0 {
             timer = NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(getBluetoothList), userInfo: nil, repeats: true)
             blSheet.addAction(UIAlertAction(title: "Searching for nearby devices..", style: .Default, handler: { _ in
                 return
             }))
         }
         
-        for dev in blList {
+        for dev in deviceList {
             blSheet.addAction(UIAlertAction(title: "\(dev.name!)    (\(getCBPeripheralState(dev.state)))", style: .Default, handler: { _ in
-                btDiscoverySharedInstance.connectToPeripheral(dev)
+                btPeripheralSharedInstance = BLEService(initWithPeripheral: dev, onServiceConnected: self.serviceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: MotorControl.BLECharacteristicUUID)
+                btPeripheralSharedInstance?.startDiscoveringServices()
             }))
         }
         
@@ -181,18 +195,22 @@ class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
         
     }
     
+    func serviceConnected(service: CBService) {
+        btServiceSharedInstance = service
+    }
+    
     func closeCamera() {
         navigationController?.popViewControllerAnimated(false)
     }
     
     func record() {
         if Defaults[.SessionMotor] {
-            if blList.count == 0 {
+            if deviceList.count == 0 {
                 let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .Alert)
                 confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
                 self.presentViewController(confirmAlert, animated: true, completion: nil)
             } else {
-                for dev in blList {
+                for dev in deviceList {
                     if getCBPeripheralState(dev.state) == "Connected" {
                         navigationController?.pushViewController(CameraViewController(), animated: false)
                         navigationController?.viewControllers.removeAtIndex(1)

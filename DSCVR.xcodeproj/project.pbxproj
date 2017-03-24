@@ -27,10 +27,6 @@
 		5945F4061D46042C002B4CCD /* KDCircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5945F4051D46042C002B4CCD /* KDCircularProgress.swift */; };
 		594F6B4D1D36110500A361B3 /* UIImage+Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */; };
 		594F6B4F1D3619CF00A361B3 /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */; };
-		596DE8B61DDAD67A002BF57D /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DE8B51DDAD67A002BF57D /* BTService.swift */; };
-		596DE8B81DDAD6ED002BF57D /* BTDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DE8B71DDAD6ED002BF57D /* BTDiscovery.swift */; };
-		596DE8BA1DDAD796002BF57D /* BTList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DE8B91DDAD796002BF57D /* BTList.swift */; };
-		596DE8BC1DDAD898002BF57D /* BService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DE8BB1DDAD898002BF57D /* BService.swift */; };
 		598EB95C1D7068A200E00F9B /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598EB95B1D7068A200E00F9B /* Fabric.framework */; };
 		598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571C1CEDA771002229AF /* Avenir-Book_0.otf */; };
 		598F571F1CEDA771002229AF /* Avenir-Heavy_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */; };
@@ -176,6 +172,9 @@
 		8FFB561A1C2C2BA900D2BE62 /* OptographCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */; };
 		8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */; };
 		8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB565C1C3055D000D2BE62 /* Migration0006.swift */; };
+		A50E9A451E85A4280017C090 /* BLEDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50E9A421E85A4280017C090 /* BLEDiscovery.swift */; };
+		A50E9A461E85A4280017C090 /* BLEService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50E9A431E85A4280017C090 /* BLEService.swift */; };
+		A50E9A471E85A4280017C090 /* MotorControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50E9A441E85A4280017C090 /* MotorControl.swift */; };
 		A5233E311BC87F7500C9EFE5 /* Recorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2B1BC87F7500C9EFE5 /* Recorder.mm */; };
 		A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2D1BC87F7500C9EFE5 /* Stitcher.mm */; };
 		A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */; };
@@ -303,10 +302,6 @@
 		5945F4051D46042C002B4CCD /* KDCircularProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDCircularProgress.swift; sourceTree = "<group>"; };
 		594F6B4C1D36110500A361B3 /* UIImage+Gif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Gif.swift"; sourceTree = "<group>"; };
 		594F6B4E1D3619CF00A361B3 /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
-		596DE8B51DDAD67A002BF57D /* BTService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTService.swift; sourceTree = "<group>"; };
-		596DE8B71DDAD6ED002BF57D /* BTDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTDiscovery.swift; sourceTree = "<group>"; };
-		596DE8B91DDAD796002BF57D /* BTList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BTList.swift; sourceTree = "<group>"; };
-		596DE8BB1DDAD898002BF57D /* BService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BService.swift; sourceTree = "<group>"; };
 		598EB95B1D7068A200E00F9B /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		598F571C1CEDA771002229AF /* Avenir-Book_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Book_0.otf"; sourceTree = "<group>"; };
 		598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
@@ -466,6 +461,9 @@
 		8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OptographCollectionViewController.swift; path = ../OptographCollectionViewController.swift; sourceTree = "<group>"; };
 		8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographCollectionViewCell.swift; sourceTree = "<group>"; };
 		8FFB565C1C3055D000D2BE62 /* Migration0006.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0006.swift; sourceTree = "<group>"; };
+		A50E9A421E85A4280017C090 /* BLEDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEDiscovery.swift; sourceTree = "<group>"; };
+		A50E9A431E85A4280017C090 /* BLEService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEService.swift; sourceTree = "<group>"; };
+		A50E9A441E85A4280017C090 /* MotorControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotorControl.swift; sourceTree = "<group>"; };
 		A5172B7F1D834B3B008C41D0 /* coordinateConverter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = coordinateConverter.hpp; sourceTree = "<group>"; };
 		A5172B801D834B3B008C41D0 /* imageCorrespondenceFinder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageCorrespondenceFinder.hpp; sourceTree = "<group>"; };
 		A5172B811D834B3B008C41D0 /* imageLoader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageLoader.hpp; sourceTree = "<group>"; };
@@ -670,10 +668,7 @@
 		596DE8B41DDAD62E002BF57D /* MotorServices */ = {
 			isa = PBXGroup;
 			children = (
-				596DE8B51DDAD67A002BF57D /* BTService.swift */,
-				596DE8B71DDAD6ED002BF57D /* BTDiscovery.swift */,
-				596DE8B91DDAD796002BF57D /* BTList.swift */,
-				596DE8BB1DDAD898002BF57D /* BService.swift */,
+				A50E9A411E85A3210017C090 /* New */,
 			);
 			name = MotorServices;
 			sourceTree = "<group>";
@@ -1143,6 +1138,16 @@
 			path = Vendor;
 			sourceTree = "<group>";
 		};
+		A50E9A411E85A3210017C090 /* New */ = {
+			isa = PBXGroup;
+			children = (
+				A50E9A421E85A4280017C090 /* BLEDiscovery.swift */,
+				A50E9A431E85A4280017C090 /* BLEService.swift */,
+				A50E9A441E85A4280017C090 /* MotorControl.swift */,
+			);
+			name = New;
+			sourceTree = "<group>";
+		};
 		A56CA3D81BC05C4F0078D7E8 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
@@ -1392,7 +1397,8 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 4Y4J5JD5NJ;
+						DevelopmentTeam = 3VNDY9CY79;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -1560,13 +1566,13 @@
 				8F4185F91C529C74009E1E3F /* OptographApiModel.swift in Sources */,
 				8FE09F641BAF680A00EA105D /* Hashtag.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
+				A50E9A471E85A4280017C090 /* MotorControl.swift in Sources */,
 				A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */,
 				593EE8541DABA31900094045 /* StoryChildren.swift in Sources */,
 				8F23AA551BFF31B4008926A8 /* PersonTable.swift in Sources */,
 				A5FD5D831BEA5A4E0031ED1E /* quat.cpp in Sources */,
 				A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */,
 				8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */,
-				596DE8BC1DDAD898002BF57D /* BService.swift in Sources */,
 				BB88A2721D9D2F4600EB09B0 /* ChildNameResponse.swift in Sources */,
 				8F23AA511BFF31B4008926A8 /* CommentTable.swift in Sources */,
 				59FC45691D881CCB00B0B79D /* NYAlertView.m in Sources */,
@@ -1587,7 +1593,6 @@
 				8F23AA4E1BFF31B4008926A8 /* ActivityResourceStarTable.swift in Sources */,
 				8F0B17861BAC193000FAF649 /* LineTextField.swift in Sources */,
 				8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */,
-				596DE8BA1DDAD796002BF57D /* BTList.swift in Sources */,
 				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				593D07E91DA545F20083AEC5 /* StoryTable.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */,
@@ -1604,11 +1609,11 @@
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
 				BB88A2741D9D301B00EB09B0 /* MultiformDataInfo.swift in Sources */,
 				8F0A79571BC47F2700BCD9E3 /* BackgroundView.swift in Sources */,
+				A50E9A461E85A4280017C090 /* BLEService.swift in Sources */,
 				A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */,
 				8FC456C81C59108E0019107E /* UICollectionViewLeftAlignedLayout.m in Sources */,
 				A5DE71EA1BE28A7400316F82 /* DistortionMesh.swift in Sources */,
 				8F4CE7A01B6CEEC700BD8A71 /* Model.swift in Sources */,
-				596DE8B61DDAD67A002BF57D /* BTService.swift in Sources */,
 				8F23AA4C1BFF31B4008926A8 /* ActivityResourceCommentTable.swift in Sources */,
 				8F23AA4F1BFF31B4008926A8 /* ActivityResourceViewsTable.swift in Sources */,
 				8FAB9F801B8F03E800B4C8CB /* UIKitExtensions.swift in Sources */,
@@ -1654,7 +1659,6 @@
 				8FDBEADC1C39990F0055EA57 /* Debouncer.swift in Sources */,
 				8F5ACC111BE946EC00DF707C /* ImageURL.swift in Sources */,
 				5929D3291DE32AC800BED9AB /* flowBlender.cpp in Sources */,
-				596DE8B81DDAD6ED002BF57D /* BTDiscovery.swift in Sources */,
 				BB155A981D6E8C31002678A6 /* StorytellingFeed.swift in Sources */,
 				8FAB9F821B8F041F00B4C8CB /* LoadMoreExtension.swift in Sources */,
 				BB155AA21D6E8F06002678A6 /* StorytellingPerson.swift in Sources */,
@@ -1681,6 +1685,7 @@
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
 				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
 				5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */,
+				A50E9A451E85A4280017C090 /* BLEDiscovery.swift in Sources */,
 				594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */,
 				BB49927E1D5452A1006A20D3 /* mapChildren.swift in Sources */,
 				BB155A9C1D6E8CAB002678A6 /* StorytellingMerged.swift in Sources */,
@@ -1865,7 +1870,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
-				DEVELOPMENT_TEAM = 4Y4J5JD5NJ;
+				DEVELOPMENT_TEAM = 3VNDY9CY79;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1894,10 +1899,10 @@
 				);
 				OTHER_SWIFT_FLAGS = "";
 				"OTHER_SWIFT_FLAGS[arch=*]" = "-D DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = ejobstl.dscvr;
 				PRODUCT_NAME = DSCVR;
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = 811pp1;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1914,7 +1919,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
-				DEVELOPMENT_TEAM = 4Y4J5JD5NJ;
+				DEVELOPMENT_TEAM = 3VNDY9CY79;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1931,10 +1936,10 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/stitcher/vendor",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.dscvr;
+				PRODUCT_BUNDLE_IDENTIFIER = ejobstl.dscvr;
 				PRODUCT_NAME = DSCVR;
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = 811pp1;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 			};
 			name = Release;

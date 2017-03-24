@@ -68,16 +68,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Defaults[.SessionBotCount] = -3998
             Defaults[.SessionBuffCount] = 0
             
-            //Bluetooth Notif
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.connectionChanged(_:)), name: BLEServiceChangedStatusNotification, object: nil)
-            btDiscoverySharedInstance
+            //Bluetooth Notif/ TODO
+            //NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.connectionChanged(_:)), name: BLEServiceChangedStatusNotification, object: nil)
+            //btDiscoverySharedInstance
             
         }
         return true
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: BLEServiceChangedStatusNotification, object: nil)
+        // Bluetooth notification TODO
+        //NSNotificationCenter.defaultCenter().removeObserver(self, name: BLEServiceChangedStatusNotification, object: nil)
     }
     
     func connectionChanged(notification: NSNotification) {

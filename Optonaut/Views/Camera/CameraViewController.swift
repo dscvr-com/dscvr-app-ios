@@ -84,17 +84,18 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     private let cancelButton = UIButton()
     
-    private let bData = BService.sharedInstance
     private var RotateData = String("")
     
     private var topThetaValue = Float(0.0)
     private var centerThetaValue = Float(0.0)
     private var botThetaValue = Float(0.0)
     
+    private var motorControl: MotorControl?
+    
     
     var timer = NSTimer()
     
-    let sessionMotor = Defaults[.SessionMotor]
+    let useMotor = Defaults[.SessionMotor]
     
         
     required init() {
@@ -113,8 +114,14 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         super.init(nibName: nil, bundle: nil)
         
-        if sessionMotor {
-            RotateData = self.computeRotationX()
+        // TODO: Cleanup. Global code is a mess. 
+        if useMotor {
+            if let bleService = btServiceSharedInstance {
+                motorControl = MotorControl(s: bleService, p: bleService.peripheral, allowCommandInterrupt: false)
+            } else {
+                print("We were told to use the motor, but the ble service was not set")
+                assertionFailure()
+            }
         }
         
         tapCameraButtonCallback = { [weak self] in
@@ -125,97 +132,12 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         }
     }
     
-    func toByteArray<T>( var value: T) -> [UInt8] {
-        return withUnsafePointer(&value) {
-            Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>($0), count: sizeof(T)))
-        }
-    }
-    
-    func computeRotationX ( ) -> String {
-        var rotateByteData:[UInt8] = [0xfe, 0x07, 0x01]
-        
-        // get number of rotation
-        //let xnumberSteps = Defaults[.SessionRotateCount]
-        //rotateByteData.append(UInt8(xnumberSteps! >> 24))
-        //rotateByteData.append(UInt8(xnumberSteps! >> 16))
-        //rotateByteData.append(UInt8(xnumberSteps! >> 8))
-        //rotateByteData.append(UInt8(xnumberSteps! & 0xff))
-        //print("rotateByteData1 \(rotateByteData)")
-        
-        
-        var xnumberSteps = toByteArray(-Defaults[.SessionRotateCount]!)
-        // get number of rotation
-        print("SessionTopCount \(-Defaults[.SessionRotateCount]!)")
-        rotateByteData.append(xnumberSteps[3])
-        rotateByteData.append(xnumberSteps[2])
-        rotateByteData.append(xnumberSteps[1])
-        rotateByteData.append(xnumberSteps[0])
-        
-        
-        // get pps
-        let pps = Defaults[.SessionPPS]
-        rotateByteData.append(UInt8(pps! >> 8))
-        rotateByteData.append(UInt8(pps! & 0xff))
-        // add full step
-        rotateByteData.append(UInt8(0x00))
-        let dataCheckSum = NSData(bytes: rotateByteData, length: rotateByteData.count)
-        // compute for checksum
-        rotateByteData.append(UInt8(self.checkSum(dataCheckSum)))
-        print("rotateByteData \(rotateByteData)")
-        // append padding
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        rotateByteData.append(UInt8(0xff))
-        // convert to hex string
-        return self.hexString(NSData(bytes: rotateByteData, length: rotateByteData.count))
-        
-    }
-    
-    func checkSum(data: NSData) -> Int {
-        let b = UnsafeBufferPointer<UInt8>(start:
-            UnsafePointer(data.bytes), count: data.length)
-        
-        var sum = 0
-        for i in 0..<data.length {
-            sum += Int(b[i])
-        }
-        return sum & 0xff
-    }
-    func hexString(data:NSData)->String{
-        if data.length > 0 {
-            let  hexChars = Array("0123456789abcdef".utf8) as [UInt8];
-            let buf = UnsafeBufferPointer<UInt8>(start: UnsafePointer(data.bytes), count: data.length);
-            var output = [UInt8](count: data.length*2 + 1, repeatedValue: 0);
-            var ix:Int = 0;
-            for b in buf {
-                let hi  = Int((b & 0xf0) >> 4);
-                let low = Int(b & 0x0f);
-                output[ix++] = hexChars[ hi];
-                output[ix++] = hexChars[low];
-            }
-            let result = String.fromCString(UnsafePointer(output))!;
-            return result;
-        }
-        return "";
-    }
-    func peripheral( peripheral: CBPeripheral,
-                     didUpdateValueForCharacteristic characteristic: CBCharacteristic,
-                                                     error: NSError?) {
-        
-        let responseData = characteristic.value
-        print("reponsse data processed \(responseData)")
-        
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     deinit {
-        if Defaults[.SessionMotor] {
+        if useMotor {
             rotationSource.stop()
             motionManager.stop()
         } else {
@@ -284,12 +206,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
         view.addSubview(arrowView)
         
-//        #if DEBUG
-//            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CameraViewController.finish))
-//            tapGestureRecognizer.numberOfTapsRequired = 3
-//            view.addGestureRecognizer(tapGestureRecognizer)
-//        #endif
-        
         view.setNeedsUpdateConstraints()
         
         cancelButton.addTarget(self, action: #selector(CameraViewController.cancelRecording), forControlEvents: .TouchUpInside)
@@ -307,12 +223,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
-        
-        if sessionMotor {
-            if let bleService = btDiscoverySharedInstance.bleService {
-                bleService.sendCommand("fe000402ffffffffffffffffffffffffff");
-            }
-        }
         
         stopSession()
         
@@ -348,43 +258,12 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             videoDevice!.exposureMode = mode
         }
         videoDevice!.unlockForConfiguration()
-        
-        
-//        do {
-//            try videoDevice!.lockForConfiguration()
-//            
-//            if mode == AVCaptureExposureMode.Custom {
-//                exposureDuration = videoDevice!.exposureDuration.seconds
-//                var iso = videoDevice!.ISO
-//                if(iso > videoDevice!.activeFormat.maxISO) {
-//                    iso = videoDevice!.activeFormat.maxISO
-//                }
-//                videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
-//            } else {
-//                videoDevice!.exposureMode = mode
-//            }
-//            videoDevice!.unlockForConfiguration()
-//        
-//        } catch {
-//            print("error on setExposureMode")
-//        
-//        }
     }
     
     private func setWhitebalanceMode(mode: AVCaptureWhiteBalanceMode) {
         try! videoDevice!.lockForConfiguration()
         videoDevice!.whiteBalanceMode = mode
         videoDevice!.unlockForConfiguration()
-        
-        
-//        do {
-//            try videoDevice!.lockForConfiguration()
-//            videoDevice!.whiteBalanceMode = mode
-//            videoDevice!.unlockForConfiguration()
-//            
-//        } catch {
-//            print("setWhitebalanceMode")
-//        }
     }
     
     
@@ -412,6 +291,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
                 
                 let edgeNode = createLineNode(posA, posB: posB)
                 
+                // This code makes movement visible (half of the lines will be colored)
                 //                if i % 20 > 9 {
                 //                    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor()
                 //                }
@@ -780,111 +660,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             recorder.setIdle(!self.viewModel.isRecording.value)
             var cmRotation : GLKMatrix4
             
-            if Defaults[.SessionMotor] {
-                
-                //Motor Fixed 1ring
-                let mediaTime = CACurrentMediaTime()
-                print("mediaTime \(mediaTime)")
-                let timeDiff = mediaTime - lastElapsedTime
-                print("timeDiff \(timeDiff)")
-                
-                print("lastElapsedTime \(lastElapsedTime)")
-                
-                // static degree per 0.0001ms = 0.000475 for 75.789 s
-                // static degree per 0.0001ms = 0.002 for 18.0 s
-                // static degree per 0.0001ms = 0.00175 for 20.571 s
-                
-                
-                //let degreeIncr = (timeDiff / 0.0001 ) * 0.00175
-                //let degreeIncr = (timeDiff / 0.0001 ) * 0.000475
-                //var degreeIncr = (timeDiff / 0.0001 ) * 0.000850013
-                let degreeIncr = ((timeDiff / 0.0001) * DegreeIncrPerMicro )//<- our version
-                //var degreeIncr = (timeDiff / 0.0001) * 0.001650846
-                //var degreeIncr = (timeDiff / 0.0001) * 0.001479411
-                
-                print("degreeIncr \(degreeIncr) M_PI \(-M_PI_2)")
-                
-                if viewModel.isRecording.value {
-                    currentDegree -= Float(degreeIncr)
-                    //currentDegree += Float(degreeIncr)
-                }
-                print("currentDegree \(currentDegree)")
-                
-                
-                lastElapsedTime = mediaTime
-                
-                let rotation = GLKMatrix4MakeYRotation(GLKMathDegreesToRadians(Float(currentDegree)))
-                
-                print("rotation \(rotation)")
-                
-                // var xrotation = GLKMatrix4MakeXRotation(GLKMathDegreesToRadians(Float(30.0)))
-                
-                let currentRotation = GLKMatrix4Multiply(baseMatrix, rotation)
-                print("currentRotation \(currentRotation)")
-                // currentRotation = GLKMatrix4Multiply(currentRotation, rotation)
-                
-                //var currentRad = currentDegree  * Float(M_PI / 180.0)
-                //print("currentRad  \(currentRad)" )
-                //var currentRotation = GLKMatrix4Rotate(baseMatrix, 1.0, 0.0, currentRad, 0.0)
-                
-                print("currentDegree \(currentDegree) CACurrentMediaTime \(mediaTime) ")
-                
-                currentPhi = GLKMathDegreesToRadians(Float(currentDegree))
-                print("currentPhi \(currentPhi)")
-                
-                //currentTheta = Float(motionManager.getPitch()) - Float(M_PI_2)
-                //print("rotationPitch \(motionManager.getPitch())")
-                
-                
-                cmRotation = self.rotationSource.getRotationMatrixMotor(currentPhi, thetaValue: currentTheta)
-                print("Matrix: [\(cmRotation.m00), \(cmRotation.m01), \(cmRotation.m02), \(cmRotation.m03)")
-                print("______: [\(cmRotation.m10), \(cmRotation.m11), \(cmRotation.m12), \(cmRotation.m13)")
-                print("______: [\(cmRotation.m20), \(cmRotation.m21), \(cmRotation.m22), \(cmRotation.m23)")
-                print("______: [\(cmRotation.m30), \(cmRotation.m31), \(cmRotation.m32), \(cmRotation.m33)")
-                
-                if bData.dataHasCome.value  {
-                    viewModel.isRecording.value = true
-                    
-                }
-                
-                print("currentPhi <  \(Float((-2.0 * M_PI) - 0.01))")
-                if (currentDegree < -360.0 ){
-                    viewModel.isRecording.value = false //<-
-                     bData.dataHasCome.value = false
-                    
-                    /*print("ito?>>>>>",bData.ydirection)
-                     if self.bData.ydirection == "fffffe0b"{
-                     print(">>>>why?")
-                     viewModel.isRecording.value = true
-                     
-                     }*/
-                    
-                    if(currentTheta == 0) {
-                        currentTheta = botThetaValue
-                    } else if(currentTheta < 0) {
-                        currentTheta = topThetaValue
-                    } else if(currentTheta > 0) {
-                        currentTheta = centerThetaValue
-                    }
-                    currentDegree = 0
-                }
-                print("currentTheta \(currentTheta)")
-
-               
+            cmRotation = motionManager.getRotationMatrix()
             
-
-                
-            } else {
-            
-            
-                cmRotation = motionManager.getRotationMatrix()
-                print("cmRotation \(cmRotation)")
-               
-              
-        
-                
-            }
-              recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
+            recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             let errorVec = recorder.getAngularDistanceToBall()
             // let r = recorder.getCurrentRotation()
             // let exposureHintC = recorder.getExposureHint()
@@ -924,48 +702,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
                     
                     self.viewModel.headingToDot.value = atan2(angularDiff.x, angularDiff.y)
                 }
-                // TODO: Re-enable this code as soon as apple fixes
-                // the memory leak in AVCaptureDevice.ISO and stuff.
-                
-//                               var exposureHint = exposureHintC;
-//            
-//                                if let videoDevice = self.videoDevice {
-//                                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
-//                                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
-//                                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
-//                               }
-//                
-//                                if let videoDevice = self.videoDevice {
-//                
-//                                    self.lastExposureInfo.iso = UInt32(videoDevice.ISO)
-//                                    self.lastExposureInfo.exposureTime = videoDevice.exposureDuration.seconds
-//                                    self.lastAwbGains = videoDevice.deviceWhiteBalanceGains
-//                
-//                                    if exposureHint.iso != 0 {
-//                
-//                                        if exposureHint.iso > UInt32(videoDevice.activeFormat.maxISO) {
-//                                            exposureHint.iso = UInt32(videoDevice.activeFormat.maxISO)
-//                                        }
-//                                        if exposureHint.iso < UInt32(videoDevice.activeFormat.minISO) {
-//                                            exposureHint.iso = UInt32(videoDevice.activeFormat.minISO)
-//                                        }
-//                
-//                                        print("Hint: \(exposureHint.iso), Max: \(videoDevice.activeFormat.maxISO)")
-//                                        try! videoDevice.lockForConfiguration()
-//                                        videoDevice.exposureMode = .Custom
-//                                        videoDevice.whiteBalanceMode = .Locked
-//                
-//                                        videoDevice.setExposureModeCustomWithDuration(
-//                                            CMTimeMakeWithSeconds(exposureHint.exposureTime, 10000),
-//                                            ISO: Float(exposureHint.iso), completionHandler: nil)
-//                
-//                                        videoDevice.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(exposureHint.gains, completionHandler: nil)
-//                
-//                
-//                                        videoDevice.unlockForConfiguration()
-//                                    }
-//                
-//                                }
+
             }
             cameraNode.transform = SCNMatrix4FromGLKMatrix4(cmRotation)
 
@@ -986,18 +723,12 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
             
-            
-            //print("New CM Transform {\(cameraNode.transform.m11), \(cameraNode.transform.m12), \(cameraNode.transform.m13), \(cameraNode.transform.m14)} \n {\(cameraNode.transform.m21), \(cameraNode.transform.m22), \(cameraNode.transform.m23), \(cameraNode.transform.m24)} \n {\(cameraNode.transform.m31), \(cameraNode.transform.m32), \(cameraNode.transform.m33), \(cameraNode.transform.m34)} \n {\(cameraNode.transform.m41), \(cameraNode.transform.m42), \(cameraNode.transform.m43), \(cameraNode.transform.m44)}");
-            
             if recorder.isFinished() {
                 // needed since processSampleBuffer doesn't run on UI thread
                 Async.main {
                     self.finish()
                 }
             }
-            
-            //We always need debug data, even when not recording - the aligner is not paused when idle.
-            //debugHelper?.push(pixelBuffer, intrinsics: map(self.intrinsics.m) { Double($0) }, extrinsics: CMRotationToDoubleArray(motion.attitude.rotationMatrix), frameCount: frameCount)
         }
     }
     
@@ -1013,10 +744,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         session.stopRunning()
         videoDevice = nil
-        
-//        for child in scene.rootNode.childNodes {
-//            child.removeFromParentNode()
-//        }
         
         scene.rootNode.childNodes.forEach {
             $0.removeFromParentNode()
@@ -1158,15 +885,8 @@ extension CameraViewController: TabControllerDelegate {
         tabController!.cameraButton.hidden = true
         viewModel.isRecording.value = true
             
-        if sessionMotor {
-            let rotatePlusBuff = (Defaults[.SessionRotateCount]! + Defaults[.SessionBuffCount]!)
-                
-            let missingSecs = 0.0
-            DegreeIncrPerMicro = (0.036 / ( (Double(rotatePlusBuff) / Double(Defaults[.SessionPPS]!) ) - missingSecs ))
-                
-            if let bleService = btDiscoverySharedInstance.bleService {
-                bleService.sendCommand(self.computeRotationX())
-            }
+        if useMotor {
+            // TODO Start rotating
         }
     }
 }
