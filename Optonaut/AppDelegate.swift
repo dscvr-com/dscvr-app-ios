@@ -225,6 +225,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         VersionService.updateToLatest()
+        
+        fn()
     }
     
 }

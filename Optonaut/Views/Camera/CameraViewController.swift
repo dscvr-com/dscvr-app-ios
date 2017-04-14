@@ -103,9 +103,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         currentDegree = 0.0
         DegreeIncrPerMicro = 0.0
         
-        let high = DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.high)
         sessionQueue = DispatchQueue(label: "cameraQueue", attributes: [])
-        sessionQueue.setTarget(queue: high)
         screenScale = Float(UIScreen.main.scale)
         
         //if Defaults[.SessionDebuggingEnabled] {
@@ -158,13 +156,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Init scene view here because we need view bounds for the constructor overload
-        // that forces GLES. Please don't use metal. It will fail.
-        if #available(iOS 9.0, *) {
-            scnView = SCNView(frame: view.bounds, options: [SCNView.Option.preferredRenderingAPI.rawValue: SCNRenderingAPI.openGLES2.rawValue])
-        } else {
-            scnView = SCNView(frame: view.bounds)
-        }
+    
+        // Apple changed GPU fetching to Metal, so we also use metal here.
+        scnView = SCNView(frame: view.bounds)
         
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
@@ -436,22 +430,30 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         view.addSubview(scnView)
     }
     
+    var positionCache = [Data]()
+    var indexCache = [Data]()
+    
     fileprivate func createLineNode(_ posA: GLKVector3, posB: GLKVector3) -> SCNNode {
         var positions: [Float32] = [posA.x, posA.y, posA.z, posB.x, posB.y, posB.z]
         let positionData = withUnsafePointer(to: &positions) {
-            Data(bytes: $0, count: MemoryLayout<Float32>.size*positions.count)
+            Data(bytes: $0, count: MemoryLayout<Float32>.size * positions.count)
         }
+        positionCache.append(positionData)
+
         var indices: [Int32] = [0, 1]
         let indexData = withUnsafePointer(to: &indices) {
             Data(bytes: $0, count: MemoryLayout<Int32>.size * indices.count)
         }
+        indexCache.append(indexData)
         
         let source = SCNGeometrySource(data: positionData, semantic: SCNGeometrySource.Semantic.vertex, vectorCount: indices.count, usesFloatComponents: true, componentsPerVector: 3, bytesPerComponent: MemoryLayout<Float32>.size, dataOffset: 0, dataStride: MemoryLayout<Float32>.size * 3)
-        let element = SCNGeometryElement(data: indexData, primitiveType: SCNGeometryPrimitiveType.line, primitiveCount: indices.count, bytesPerIndex: MemoryLayout<Float32>.size)
+        let element = SCNGeometryElement(data: indexData, primitiveType: SCNGeometryPrimitiveType.line, primitiveCount: 1, bytesPerIndex: MemoryLayout<Int32>.size)
         
+        // TODO: Actually return a line here.
         let line = SCNGeometry(sources: [source], elements: [element])
+        //let line = SCNSphere(radius: CGFloat(0.02))
         let node = SCNNode(geometry: line)
-        
+        node.position = SCNVector3(x: posA.x, y: posA.y, z: posA.z)
         line.firstMaterial?.diffuse.contents = UIColor.white
         
         return node

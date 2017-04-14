@@ -18,6 +18,23 @@ public enum FontType: String {
     static let allValues = [Regular, Medium, Light, Black, Bold]
 }
 
+var TextFonts = {
+    return [
+        FontLoader.loadFont("SF-UI-Text-Regular"),
+        FontLoader.loadFont("SF-UI-Text-Semibold")
+    ]
+}()
+
+
+var DisplayFonts = {
+    return [
+        FontLoader.loadFont("SF-UI-Display-Regular"),
+        FontLoader.loadFont("SF-UI-Display-Semibold"),
+        FontLoader.loadFont("SF-UI-Display-Thin"),
+        FontLoader.loadFont("SF-UI-Display-Light")
+    ]
+}()
+
 public extension UIFont {
     
     public class func robotoOfSize(_ fontSize: CGFloat, withType type: FontType) -> UIFont {
@@ -43,13 +60,9 @@ public extension UIFont {
             static var onceTokens = toDictionary(TextFontType.allValues) { ($0, 0 as Int) }
         }
 
-        let fileName = "SF-UI-Text-\(type.rawValue)"
         let fontName = "SFUIText-\(type.rawValue)"
         if (UIFont.fontNames(forFamilyName: fontName).count == 0) {
-            // TODO
-            //dispatch_once(&Static.onceTokens[type]!) {
-                FontLoader.loadFont(fileName)
-            //}
+            let cgFonts = TextFonts
         }
 
         return UIFont(name: fontName, size: fontSize)!
@@ -76,10 +89,7 @@ public extension UIFont {
 //        let fileName = "Avenir-Book_0"
 //        let fontName = "Avenir-Book_0"
         if (UIFont.fontNames(forFamilyName: fontName).count == 0) {
-            // TODO
-            //dispatch_once(&Static.onceTokens[type]!) {
-                FontLoader.loadFont(fileName)
-            //}
+            let cgFont = DisplayFonts
         }
 
         return UIFont(name: fontName, size: fontSize)!
@@ -92,7 +102,7 @@ public extension UIFont {
 }
 
 private class FontLoader {
-    class func loadFont(_ name: String) {
+    class func loadFont(_ name: String) -> CGFont {
         let bundle = Bundle(for: FontLoader.self)
         let fontURL = bundle.url(forResource: name, withExtension: "otf")!
         let data = try! Data(contentsOf: fontURL)
@@ -106,5 +116,7 @@ private class FontLoader {
             let nsError = error!.takeUnretainedValue() as AnyObject as! NSError
             NSException(name: NSExceptionName.internalInconsistencyException, reason: errorDescription as String, userInfo: [NSUnderlyingErrorKey: nsError]).raise()
         }
+        
+        return font
     }
 }

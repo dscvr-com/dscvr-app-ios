@@ -15,7 +15,7 @@ func setupAppearanceDefaults() {
     
     UINavigationBar.appearance().tintColor = .white
     UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
-    UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: UIFont.displayOfSize(20, withType: .Regular)]
+    UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: UIFont.displayOfSize(20, withType: .Semibold)]
     
     // TODO: Icomoon!
     //let image = UIImage.iconWithName(.Back, textColor: .white, fontSize: 18, offset: CGSize(width: 13, height: 0))
