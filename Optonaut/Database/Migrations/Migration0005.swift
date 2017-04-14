@@ -8,6 +8,6 @@
 
 import SQLite
 
-func migration0005(db: Connection) throws {
+func migration0005(_ db: Connection) throws {
     try db.run(OptographTable.addColumn(OptographSchema.shareAlias, defaultValue: ""))
 }

@@ -8,43 +8,42 @@
 
 import Foundation
 import UIKit
-import HexColor
 
 class LineTextField: UITextField {
     
     static var i = 0
 
     enum Status: Equatable {
-        case Normal
-        case Disabled
-        case Indicated
-        case Warning(String)
+        case normal
+        case disabled
+        case indicated
+        case warning(String)
     }
     
     enum Size: CGFloat {
-        case Large = 18
-        case Medium = 14
-        case Small = 13
+        case large = 18
+        case medium = 14
+        case small = 13
     }
     
     enum Color {
-        case Light
-        case Dark
+        case light
+        case dark
     }
     
-    var color: Color = .Dark {
+    var color: Color = .dark {
         didSet {
             update()
         }
     }
     
-    var size: Size = .Medium {
+    var size: Size = .medium {
         didSet {
             layoutSubviews()
         }
     }
     
-    var status: Status = .Normal {
+    var status: Status = .normal {
         didSet {
             update()
         }
@@ -70,8 +69,8 @@ class LineTextField: UITextField {
         }
     }
     
-    private let lineLayer = CALayer()
-    private let messageView = UILabel()
+    fileprivate let lineLayer = CALayer()
+    fileprivate let messageView = UILabel()
     
     required override init(frame: CGRect) {
         super.init(frame: frame)
@@ -82,31 +81,31 @@ class LineTextField: UITextField {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func postInit() {
-        borderStyle = .None
-        backgroundColor = .clearColor()
+    fileprivate func postInit() {
+        borderStyle = .none
+        backgroundColor = .clear
         clipsToBounds = false
-        textAlignment = .Left
-        contentVerticalAlignment = .Top
+        textAlignment = .left
+        contentVerticalAlignment = .top
         
         update()
         
-        addTarget(self, action: "beginEditing", forControlEvents: .EditingDidBegin)
-        addTarget(self, action: "changed", forControlEvents: .EditingChanged)
-        addTarget(self, action: "endEditing", forControlEvents: .EditingDidEnd)
+        addTarget(self, action: "beginEditing", for: .editingDidBegin)
+        addTarget(self, action: "changed", for: .editingChanged)
+        addTarget(self, action: "endEditing", for: .editingDidEnd)
         
-        messageView.textAlignment = .Right
+        messageView.textAlignment = .right
         addSubview(messageView)
         
-        lineLayer.backgroundColor = UIColor.whiteColor().CGColor
+        lineLayer.backgroundColor = UIColor.white.cgColor
         layer.addSublayer(lineLayer)
     }
     
-    private func update() {
+    fileprivate func update() {
         let baseColor: UIColor = {
             switch self.color {
-            case .Light: return UIColor.whiteColor()
-            case .Dark: return UIColor.DarkGrey
+            case .light: return UIColor.white
+            case .dark: return UIColor.DarkGrey
             }
         }()
         
@@ -117,7 +116,7 @@ class LineTextField: UITextField {
             NSFontAttributeName: UIFont.textOfSize(baseFontSize, withType: .Regular)
         ]
         switch status {
-        case .Disabled: attributes[NSForegroundColorAttributeName] = baseColor.alpha(0.15)
+        case .disabled: attributes[NSForegroundColorAttributeName] = baseColor.alpha(0.15)
         default: attributes[NSForegroundColorAttributeName] = baseColor.alpha(0.4)
         }
         attributedPlaceholder = NSAttributedString(string: placeholder ?? "", attributes: attributes)
@@ -126,35 +125,35 @@ class LineTextField: UITextField {
         
         // text field
         textColor = baseColor
-        if case .Disabled = status {
-            userInteractionEnabled = false
+        if case .disabled = status {
+            isUserInteractionEnabled = false
         } else {
-            userInteractionEnabled = true
+            isUserInteractionEnabled = true
         }
         
         // line color
-        if case .Light = color {
+        if case .light = color {
             switch status {
-            case .Disabled: lineLayer.backgroundColor = baseColor.alpha(0.15).CGColor
-            case .Indicated: lineLayer.backgroundColor = baseColor.alpha(0.7).CGColor
-            default: lineLayer.backgroundColor = baseColor.alpha(1).CGColor
+            case .disabled: lineLayer.backgroundColor = baseColor.alpha(0.15).cgColor
+            case .indicated: lineLayer.backgroundColor = baseColor.alpha(0.7).cgColor
+            default: lineLayer.backgroundColor = baseColor.alpha(1).cgColor
             }
         } else {
             switch status {
-            case .Disabled: lineLayer.backgroundColor = baseColor.alpha(0.15).CGColor
-            case .Indicated: lineLayer.backgroundColor = UIColor.Accent.CGColor
-            default: lineLayer.backgroundColor = baseColor.alpha(1).CGColor
+            case .disabled: lineLayer.backgroundColor = baseColor.alpha(0.15).cgColor
+            case .indicated: lineLayer.backgroundColor = UIColor.Accent.cgColor
+            default: lineLayer.backgroundColor = baseColor.alpha(1).cgColor
             }
         }
         
         // message
-        if case .Light = color {
+        if case .light = color {
             messageView.textColor = baseColor
         } else {
             messageView.textColor = baseColor
         }
         messageView.font = UIFont.displayOfSize(10, withType: .Regular)
-        if case .Warning(let message) = status {
+        if case .warning(let message) = status {
             messageView.text = message
         } else {
             messageView.text = ""
@@ -166,28 +165,28 @@ class LineTextField: UITextField {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let onePx = 1 / UIScreen.mainScreen().scale
+        let onePx = 1 / UIScreen.main.scale
         
         switch size {
-        case .Large:
+        case .large:
             frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 51))
             lineLayer.frame = CGRect(x: 0, y: 34, width: frame.width, height: onePx)
             messageView.frame = CGRect(x: 0, y: 36, width: frame.width, height: 15)
-        case .Medium:
+        case .medium:
             frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 43))
             lineLayer.frame = CGRect(x: 0, y: 28, width: frame.width, height: onePx)
             messageView.frame = CGRect(x: 0, y: 30, width: frame.width, height: 15)
-        case .Small:
+        case .small:
             frame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: 41))
             lineLayer.frame = CGRect(x: 0, y: 24, width: frame.width, height: onePx)
             messageView.frame = CGRect(x: 0, y: 26, width: frame.width, height: 15)
         }
     }
     
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let margin: CGFloat = 5
-        let area = CGRectInset(bounds, -margin, -margin)
-        return CGRectContainsPoint(area, point)
+        let area = bounds.insetBy(dx: -margin, dy: -margin)
+        return area.contains(point)
     }
     
     func beginEditing() {
@@ -202,10 +201,10 @@ class LineTextField: UITextField {
 
 func ==(lhs: LineTextField.Status, rhs: LineTextField.Status) -> Bool {
     switch (lhs, rhs) {
-    case let (.Warning(lhs), .Warning(rhs)): return lhs == rhs
-    case (.Normal, .Normal): return true
-    case (.Disabled, .Disabled): return true
-    case (.Indicated, .Indicated): return true
+    case let (.warning(lhs), .warning(rhs)): return lhs == rhs
+    case (.normal, .normal): return true
+    case (.disabled, .disabled): return true
+    case (.indicated, .indicated): return true
     default: return false
     }
 }

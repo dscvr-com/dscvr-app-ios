@@ -15,7 +15,7 @@ struct RequestCodeApiModel: Mappable {
     var request_text: String = ""
     var prompt: String = ""
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         status              <- map["status"]

@@ -5,7 +5,7 @@ import CoreMotion
 import Device
 import CoreGraphics
 import Mixpanel
-import ReactiveCocoa
+import ReactiveSwift
 import Crashlytics
 import CardboardParams
 import Async
@@ -13,33 +13,33 @@ import SwiftyUserDefaults
 import Kingfisher
 import SpriteKit
 
-private let queue = dispatch_queue_create("viewer", DISPATCH_QUEUE_SERIAL)
+private let queue = DispatchQueue(label: "viewer", attributes: [])
 
 class ViewerViewController: UIViewController  {
     
-    private let orientation: UIInterfaceOrientation
-    private let optograph: Optograph
+    fileprivate let orientation: UIInterfaceOrientation
+    fileprivate let optograph: Optograph
     
-    private var leftRenderDelegate: CubeRenderDelegate!
-    private var rightRenderDelegate: CubeRenderDelegate!
-    private var leftScnView: SCNView!
-    private var rightScnView: SCNView!
-    private let separatorLayer = CALayer()
-    private var headset: CardboardParams
-    private let screen: ScreenParams
+    fileprivate var leftRenderDelegate: CubeRenderDelegate!
+    fileprivate var rightRenderDelegate: CubeRenderDelegate!
+    fileprivate var leftScnView: SCNView!
+    fileprivate var rightScnView: SCNView!
+    fileprivate let separatorLayer = CALayer()
+    fileprivate var headset: CardboardParams
+    fileprivate let screen: ScreenParams
     
-    private var leftProgram: DistortionProgram!
-    private var rightProgram: DistortionProgram!
+    fileprivate var leftProgram: DistortionProgram!
+    fileprivate var rightProgram: DistortionProgram!
     
-    private var rotationDisposable: Disposable?
+    fileprivate var rotationDisposable: Disposable?
     
-    private let settingsButtonView = BoundingButton()
-    private var glassesSelectionView: GlassesSelectionView?
-    private let leftLoadingView = UIActivityIndicatorView()
-    private let rightLoadingView = UIActivityIndicatorView()
+    fileprivate let settingsButtonView = BoundingButton()
+    fileprivate var glassesSelectionView: GlassesSelectionView?
+    fileprivate let leftLoadingView = UIActivityIndicatorView()
+    fileprivate let rightLoadingView = UIActivityIndicatorView()
     
-    private let leftCache: CubeImageCache
-    private let rightCache: CubeImageCache
+    fileprivate let leftCache: CubeImageCache
+    fileprivate let rightCache: CubeImageCache
     
     required init(orientation: UIInterfaceOrientation, optograph: Optograph) {
         self.orientation = orientation
@@ -47,15 +47,15 @@ class ViewerViewController: UIViewController  {
         
         // Please set this to meaningful default values.
         
-        switch UIDevice.currentDevice().deviceType {
-        case .IPhone4S: screen = ScreenParams(device: .IPhone4S)
-        case .IPhone5: screen = ScreenParams(device: .IPhone5)
-        case .IPhone5C: screen = ScreenParams(device: .IPhone5C)
-        case .IPhone5S: screen = ScreenParams(device: .IPhone5S)
-        case .IPhone6: screen = ScreenParams(device: .IPhone6)
-        case .IPhone6Plus: screen = ScreenParams(device: .IPhone6Plus)
-        case .IPhone6S: screen = ScreenParams(device: .IPhone6S)
-        case .IPhone6SPlus: screen = ScreenParams(device: .IPhone6SPlus)
+        switch UIDevice.current.deviceType {
+        case .iPhone4S: screen = ScreenParams(device: .iPhone4S)
+        case .iPhone5: screen = ScreenParams(device: .iPhone5)
+        case .iPhone5C: screen = ScreenParams(device: .iPhone5C)
+        case .iPhone5S: screen = ScreenParams(device: .iPhone5S)
+        case .iPhone6: screen = ScreenParams(device: .iPhone6)
+        case .iPhone6Plus: screen = ScreenParams(device: .iPhone6Plus)
+        case .iPhone6S: screen = ScreenParams(device: .iPhone6S)
+        case .iPhone6SPlus: screen = ScreenParams(device: .iPhone6SPlus)
         default: fatalError("device not supported")
         }
         
@@ -63,10 +63,10 @@ class ViewerViewController: UIViewController  {
         
         print("Headset: \(headset.vendor) \(headset.model)")
         
-        let textureSize = getTextureWidth(UIScreen.mainScreen().bounds.height / 2, hfov: 65) // 90 is a guess. A better value might be needed
+        let textureSize = getTextureWidth(UIScreen.main.bounds.height / 2, hfov: 65) // 90 is a guess. A better value might be needed
         
-        leftCache = CubeImageCache(optographID: optograph.ID, side: .Left, textureSize: textureSize)
-        rightCache = CubeImageCache(optographID: optograph.ID, side: .Right, textureSize: textureSize)
+        leftCache = CubeImageCache(optographID: optograph.ID, side: .left, textureSize: textureSize)
+        rightCache = CubeImageCache(optographID: optograph.ID, side: .right, textureSize: textureSize)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -79,8 +79,8 @@ class ViewerViewController: UIViewController  {
         logRetain()
     }
     
-    private func createRenderDelegates() {
-        InvertableHeadTrackerRotationSource.InvertableInstance.inverted = orientation == .LandscapeLeft
+    fileprivate func createRenderDelegates() {
+        InvertableHeadTrackerRotationSource.InvertableInstance.inverted = orientation == .landscapeLeft
         
         leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false)
         leftRenderDelegate.scnView = leftScnView
@@ -94,24 +94,24 @@ class ViewerViewController: UIViewController  {
         rightScnView.delegate = rightRenderDelegate
     }
     
-    private func applyDistortionShader() {
+    fileprivate func applyDistortionShader() {
         leftScnView.technique = leftProgram.technique
         rightScnView.technique = rightProgram.technique
         leftRenderDelegate.fov = leftProgram.fov
         rightRenderDelegate.fov = rightProgram.fov
     }
     
-    private func loadDistortionShader() {
-        if headset.vendor.containsString("Zeiss") && headset.model == "VR ONE" {
+    fileprivate func loadDistortionShader() {
+        if headset.vendor.contains("Zeiss") && headset.model == "VR ONE" {
             leftProgram = VROneDistortionProgram(isLeft: true)
             rightProgram = VROneDistortionProgram(isLeft: false)
         } else {
             if leftProgram == nil || leftProgram is VROneDistortionProgram {
-                leftProgram = CardboardDistortionProgram(params: headset, screen: screen, eye: Eye.Left)
-                rightProgram = CardboardDistortionProgram(params: headset, screen: screen, eye: Eye.Right)
+                leftProgram = CardboardDistortionProgram(params: headset, screen: screen, eye: Eye.left)
+                rightProgram = CardboardDistortionProgram(params: headset, screen: screen, eye: Eye.right)
             } else {
-                leftProgram.setParameters(headset, screen: screen, eye: .Left)
-                rightProgram.setParameters(headset, screen: screen, eye: .Right)
+                leftProgram.setParameters(headset, screen: screen, eye: .left)
+                rightProgram.setParameters(headset, screen: screen, eye: .right)
             }
         }
     }
@@ -132,31 +132,33 @@ class ViewerViewController: UIViewController  {
         view.addSubview(rightScnView)
         view.addSubview(leftScnView)
         
-        separatorLayer.backgroundColor = UIColor.whiteColor().CGColor
+        separatorLayer.backgroundColor = UIColor.white.cgColor
         separatorLayer.frame = CGRect(x: 50, y: view.frame.height / 2 - 2, width: view.frame.width - 50, height: 4)
         view.layer.addSublayer(separatorLayer)
         
-        leftLoadingView.activityIndicatorViewStyle = .WhiteLarge
+        leftLoadingView.activityIndicatorViewStyle = .whiteLarge
         leftLoadingView.startAnimating()
         leftLoadingView.hidesWhenStopped = true
         leftLoadingView.frame = CGRect(x: view.frame.width / 2 - 20, y: view.frame.height / 4 - 20, width: 40, height: 40)
         view.addSubview(leftLoadingView)
         
-        rightLoadingView.activityIndicatorViewStyle = .WhiteLarge
+        rightLoadingView.activityIndicatorViewStyle = .whiteLarge
         rightLoadingView.startAnimating()
         rightLoadingView.hidesWhenStopped = true
         rightLoadingView.frame = CGRect(x: view.frame.width / 2 - 20, y: view.frame.height * 3 / 4 - 20, width: 40, height: 40)
         view.addSubview(rightLoadingView)
         
         settingsButtonView.frame = CGRect(x: 10, y: view.frame.height / 2 - 15, width: 30, height: 30)
-        settingsButtonView.setTitle(String.iconWithName(.Settings), forState: .Normal)
-        settingsButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-        settingsButtonView.titleLabel?.font = UIFont.iconOfSize(20)
+        // TODO
+        //settingsButtonView.setTitle(String.iconWithName(.Settings), for: UIControlState())
+        settingsButtonView.setTitleColor(.white, for: UIControlState())
+        // Todo
+        //settingsButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))
         view.addSubview(settingsButtonView)
         
-        if case .LandscapeLeft = orientation {
-            view.transform = CGAffineTransformRotate(view.transform, CGFloat(M_PI))
+        if case .landscapeLeft = orientation {
+            view.transform = view.transform.rotated(by: CGFloat(M_PI))
         }
         
         if !Defaults[.SessionVRGlassesSelected] {
@@ -164,15 +166,15 @@ class ViewerViewController: UIViewController  {
         }
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        Mixpanel.sharedInstance().timeEvent("View.Viewer")
+        Mixpanel.sharedInstance()?.timeEvent("View.Viewer")
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         ScreenService.sharedInstance.max()
-        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: UIStatusBarAnimation.None)
-        UIApplication.sharedApplication().idleTimerDisabled = true
+        UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.none)
+        UIApplication.shared.isIdleTimerDisabled = true
         
         tabController!.hideUI()
         
@@ -181,12 +183,12 @@ class ViewerViewController: UIViewController  {
         RotationService.sharedInstance.rotationEnable()
         
         rotationDisposable = RotationService.sharedInstance.rotationSignal?
-            .observeNext { [weak self] orientation in
+            .observeValues { [weak self] orientation in
                 switch orientation {
-                case .Portrait:
+                case .portrait:
                     if popActivated {
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self?.navigationController?.popViewControllerAnimated(false)
+                        DispatchQueue.main.async() {
+                            self?.navigationController?.popViewController(animated: false)
                         }
                         popActivated = false
                     }
@@ -197,42 +199,42 @@ class ViewerViewController: UIViewController  {
         
         
         let leftImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 self?.leftRenderDelegate.setTexture(image, forIndex: index)
                 self?.leftLoadingView.stopAnimating()
             }
         }
         
         leftRenderDelegate.nodeEnterScene = { [weak self] index in
-            dispatch_async(queue) {
+            queue.async {
                 //print("Left enter.")
                 self?.leftCache.get(index, callback: leftImageCallback)
             }
         }
         
         leftRenderDelegate.nodeLeaveScene = { [weak self] index in
-            dispatch_async(queue) { [weak self] in
+            queue.async { [weak self] in
                 //print("Left leave.")
                 self?.leftCache.forget(index)
             }
         }
         
         let rightImageCallback = { [weak self] (image: SKTexture, index: CubeImageCache.Index) -> Void in
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
                 self?.rightRenderDelegate.setTexture(image, forIndex: index)
                 self?.rightLoadingView.stopAnimating()
             }
         }
         
         rightRenderDelegate.nodeEnterScene = { [weak self] index in
-            dispatch_async(queue) {
+            queue.async {
                 //print("Right enter.")
                 self?.rightCache.get(index, callback: rightImageCallback)
             }
         }
         
         rightRenderDelegate.nodeLeaveScene = { [weak self] index in
-            dispatch_async(queue) { [weak self] in
+            queue.async { [weak self] in
                 //print("Right leave.")
                 self?.rightCache.forget(index)
             }
@@ -242,61 +244,61 @@ class ViewerViewController: UIViewController  {
         leftRenderDelegate.requestAll()
     }
     
-    func setViewerParameters(headset: CardboardParams) {
+    func setViewerParameters(_ headset: CardboardParams) {
         self.headset = headset
         
         loadDistortionShader()
         applyDistortionShader()
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        Mixpanel.sharedInstance().track("View.Viewer", properties: ["optograph_id": optograph.ID, "optograph_description" : optograph.text])
+        Mixpanel.sharedInstance()?.track("View.Viewer", properties: ["optograph_id": optograph.ID, "optograph_description" : optograph.text])
         
         rotationDisposable?.dispose()
         RotationService.sharedInstance.rotationDisable()
         InvertableHeadTrackerRotationSource.InvertableInstance.stop()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         applyDistortionShader()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         leftCache.dispose()
         rightCache.dispose()
         leftRenderDelegate.dispose()
         rightRenderDelegate.dispose()
         
-        tabBarController?.tabBar.hidden = false
+        tabBarController?.tabBar.isHidden = false
         navigationController?.setNavigationBarHidden(false, animated: false)
         ScreenService.sharedInstance.reset()
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
-        UIApplication.sharedApplication().idleTimerDisabled = false
+        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.none)
+        UIApplication.shared.isIdleTimerDisabled = false
         
         super.viewWillDisappear(animated)
     }
     
-    private static func createScnView(frame: CGRect) -> SCNView {
+    fileprivate static func createScnView(_ frame: CGRect) -> SCNView {
         var scnView: SCNView
         if #available(iOS 9.0, *) {
-            scnView = SCNView(frame: frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+            scnView = SCNView(frame: frame, options: [SCNView.Option.preferredRenderingAPI.rawValue: SCNRenderingAPI.openGLES2.rawValue])
         } else {
             scnView = SCNView(frame: frame)
         }
         
-        scnView.backgroundColor = .blackColor()
-        scnView.playing = true
+        scnView.backgroundColor = .black
+        scnView.isPlaying = true
         
         return scnView
     }
     
     func showGlassesSelection() {
         glassesSelectionView = GlassesSelectionView()
-        glassesSelectionView!.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+        glassesSelectionView!.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI_2))
         glassesSelectionView!.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         glassesSelectionView!.glasses = CardboardParams.fromBase64(Defaults[.SessionVRGlasses]).value!.model
         
@@ -316,24 +318,24 @@ class ViewerViewController: UIViewController  {
 
 private class GlassesSelectionView: UIView {
     
-    private let blurView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .Dark)
+    fileprivate let blurView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .dark)
         return UIVisualEffectView(effect: blurEffect)
     }()
     
-    private let cancelButtonView = UIButton()
-    private let titleTextView = UILabel()
-    private let glassesIconView = UILabel()
-    private let glassesTextView = UILabel()
-    private let qrcodeIconView = UILabel()
-    private let qrcodeTextView = UILabel()
-    private var previewLayer: AVCaptureVideoPreviewLayer?
-    private let loadingIndicatorView = UIActivityIndicatorView()
+    fileprivate let cancelButtonView = UIButton()
+    fileprivate let titleTextView = UILabel()
+    fileprivate let glassesIconView = UILabel()
+    fileprivate let glassesTextView = UILabel()
+    fileprivate let qrcodeIconView = UILabel()
+    fileprivate let qrcodeTextView = UILabel()
+    fileprivate var previewLayer: AVCaptureVideoPreviewLayer?
+    fileprivate let loadingIndicatorView = UIActivityIndicatorView()
     
-    private var loading: Bool = false
+    fileprivate var loading: Bool = false
     
     var closeCallback: (() -> ())?
-    var paramsCallback: (CardboardParams -> ())?
+    var paramsCallback: ((CardboardParams) -> ())?
     
     var captureSession: AVCaptureSession?
     var code: String?
@@ -345,71 +347,77 @@ private class GlassesSelectionView: UIView {
     }
     
     init () {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         
         addSubview(blurView)
         
-        cancelButtonView.setTitle(String.iconWithName(.Cancel), forState: .Normal)
-        cancelButtonView.setTitleColor(.whiteColor(), forState: .Normal)
-        cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
+        // TODO
+        //cancelButtonView.setTitle(String.iconWithName(.cancel), for: UIControlState())
+        cancelButtonView.setTitleColor(.white, for: UIControlState())
+        // TODO
+        //cancelButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         cancelButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         addSubview(cancelButtonView)
         
         titleTextView.text = "Choose your VR glasses"
-        titleTextView.textColor = .whiteColor()
-        titleTextView.textAlignment = .Center
+        titleTextView.textColor = .white
+        titleTextView.textAlignment = .center
         titleTextView.font = UIFont.displayOfSize(35, withType: .Thin)
         addSubview(titleTextView)
         
-        glassesIconView.text = String.iconWithName(.Cardboard)
-        glassesIconView.textColor = .whiteColor()
-        glassesIconView.textAlignment = .Center
-        glassesIconView.font = UIFont.iconOfSize(73)
-        glassesIconView.userInteractionEnabled = true
+        // TODO
+        //glassesIconView.text = String.iconWithName(.Cardboard)
+        glassesIconView.textColor = .white
+        glassesIconView.textAlignment = .center
+        
+        // TODO
+        //glassesIconView.font = UIFont.iconOfSize(73)
+        glassesIconView.isUserInteractionEnabled = true
         glassesIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         addSubview(glassesIconView)
         
         glassesTextView.font = UIFont.displayOfSize(15, withType: .Semibold)
-        glassesTextView.textColor = .whiteColor()
-        glassesTextView.textAlignment = .Center
-        glassesTextView.userInteractionEnabled = true
+        glassesTextView.textColor = .white
+        glassesTextView.textAlignment = .center
+        glassesTextView.isUserInteractionEnabled = true
         glassesTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         addSubview(glassesTextView)
         
-        qrcodeIconView.text = String.iconWithName(.Qrcode)
-        qrcodeIconView.font = UIFont.iconOfSize(50)
-        qrcodeIconView.textColor = .whiteColor()
-        qrcodeIconView.textAlignment = .Center
-        qrcodeIconView.userInteractionEnabled = true
+        // TODO
+        //qrcodeIconView.text = String.iconWithName(.Qrcode)
+        //qrcodeIconView.font = UIFont.iconOfSize(50)
+        qrcodeIconView.textColor = .white
+        qrcodeIconView.textAlignment = .center
+        qrcodeIconView.isUserInteractionEnabled = true
         qrcodeIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "scan"))
         addSubview(qrcodeIconView)
         
         qrcodeTextView.font = UIFont.displayOfSize(15, withType: .Semibold)
-        qrcodeTextView.textColor = .whiteColor()
+        qrcodeTextView.textColor = .white
         qrcodeTextView.text = "Scan QR code"
-        qrcodeTextView.textAlignment = .Center
-        qrcodeTextView.userInteractionEnabled = true
+        qrcodeTextView.textAlignment = .center
+        qrcodeTextView.isUserInteractionEnabled = true
         qrcodeTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "scan"))
         addSubview(qrcodeTextView)
         
-        loadingIndicatorView.activityIndicatorViewStyle = .WhiteLarge
+        loadingIndicatorView.activityIndicatorViewStyle = .whiteLarge
         addSubview(loadingIndicatorView)
         
-        Mixpanel.sharedInstance().track("View.CardboardSelection")
+        Mixpanel.sharedInstance()?.track("View.CardboardSelection")
     }
     
     deinit {
         logRetain()
     }
     
-    private func updateLoading(loading: Bool) {
-        titleTextView.hidden = loading
-        glassesIconView.hidden = loading
-        glassesTextView.hidden = loading
-        qrcodeIconView.hidden = loading
-        qrcodeTextView.hidden = loading
-        previewLayer?.hidden = loading
-        loadingIndicatorView.hidden = !loading
+    fileprivate func updateLoading(_ loading: Bool) {
+        titleTextView.isHidden = loading
+        glassesIconView.isHidden = loading
+        glassesTextView.isHidden = loading
+        qrcodeIconView.isHidden = loading
+        qrcodeTextView.isHidden = loading
+        previewLayer?.isHidden = loading
+        loadingIndicatorView.isHidden = !loading
         
         if loading {
             loadingIndicatorView.startAnimating()
@@ -423,7 +431,7 @@ private class GlassesSelectionView: UIView {
     }
     
     
-    private override func layoutSubviews() {
+    fileprivate override func layoutSubviews() {
         blurView.frame = bounds
         
         cancelButtonView.frame = CGRect(x: bounds.width - 50, y: 20, width: 30, height: 30)
@@ -442,13 +450,13 @@ private class GlassesSelectionView: UIView {
         
     }
     
-    private func setupCamera() {
+    fileprivate func setupCamera() {
         captureSession = AVCaptureSession()
         
-        let videoCaptureDevice: AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        let videoCaptureDevice: AVCaptureDevice = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
         
         try! videoCaptureDevice.lockForConfiguration()
-        videoCaptureDevice.focusMode = .ContinuousAutoFocus
+        videoCaptureDevice.focusMode = .continuousAutoFocus
         videoCaptureDevice.unlockForConfiguration()
         
         guard let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice) else {
@@ -465,7 +473,7 @@ private class GlassesSelectionView: UIView {
         if captureSession!.canAddOutput(metadataOutput) {
             captureSession!.addOutput(metadataOutput)
             
-            let queue = dispatch_queue_create("qr_scan_queue", DISPATCH_QUEUE_SERIAL)
+            let queue = DispatchQueue(label: "qr_scan_queue", attributes: [])
             metadataOutput.setMetadataObjectsDelegate(self, queue: queue)
             metadataOutput.metadataObjectTypes = [AVMetadataObjectTypeQRCode, AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeDataMatrixCode]
         } else {
@@ -492,7 +500,7 @@ private class GlassesSelectionView: UIView {
 }
 
 extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
-    dynamic func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
+    dynamic func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
         if loading {
             return
         }
@@ -501,7 +509,7 @@ extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
             let readableObject = metadata as! AVMetadataMachineReadableCodeObject
             let code = readableObject.stringValue
             
-            if !code.isEmpty {
+            if !(code?.isEmpty)! {
                 
                 loading = true
                 captureSession?.stopRunning()
@@ -510,22 +518,22 @@ extension GlassesSelectionView: AVCaptureMetadataOutputObjectsDelegate {
                     self?.updateLoading(true)
                 }
                 
-                let shortUrl = code.containsString("http://") ? code : "http://\(code)"
+                let shortUrl = (code?.contains("http://"))! ? code : "http://\(code)"
                 
-                CardboardParams.fromUrl(shortUrl) { [weak self] result in
+                CardboardParams.fromUrl(shortUrl!) { [weak self] result in
                     
                     switch result {
-                    case let .Success(params):
+                    case let .success(params):
                         Async.main {
-                            Defaults[.SessionVRGlasses] = params.compressedRepresentation.base64EncodedStringWithOptions([])
+                            Defaults[.SessionVRGlasses] = params.compressedRepresentation.base64EncodedString()
                             
                             let cardboardDescription = "\(params.vendor) \(params.model)"
-                            Mixpanel.sharedInstance().track("View.CardboardSelection.Scanned", properties: ["cardboard": cardboardDescription, "url" : shortUrl])
-                            Mixpanel.sharedInstance().people.set(["Last scanned Cardboard": cardboardDescription])
+                            Mixpanel.sharedInstance()?.track("View.CardboardSelection.Scanned", properties: ["cardboard": cardboardDescription, "url" : shortUrl])
+                            Mixpanel.sharedInstance()?.people.set(["Last scanned Cardboard": cardboardDescription])
                             self?.paramsCallback?(params)
                             self?.cancel()
                         }
-                    case let .Failure(error):
+                    case let .failure(error):
                         print(error)
                         self?.loading = false
                         self?.captureSession?.startRunning()

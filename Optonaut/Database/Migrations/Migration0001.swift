@@ -8,7 +8,7 @@
 
 import SQLite
 
-func migration0001(db: Connection) throws {
+func migration0001(_ db: Connection) throws {
     try db.run(createPerson())
     try db.run(createLocation())
     try db.run(createOptograph())
@@ -87,7 +87,7 @@ private func createComment() -> String {
 }
 
 private func createGuestPerson() -> Insert {
-    return PersonTable.insert(or: .Fail, [
+    return PersonTable.insert(or: .fail, [
         PersonSchema.ID <- Person.guestID,
         PersonSchema.displayName <- "Guest",
         PersonSchema.userName <- "guest",
@@ -95,7 +95,7 @@ private func createGuestPerson() -> Insert {
         PersonSchema.followersCount <- 0,
         PersonSchema.followedCount <- 0,
         PersonSchema.isFollowed <- false,
-        PersonSchema.createdAt <- NSDate(),
+        PersonSchema.createdAt <- Date(),
 //        PersonSchema.wantsNewsletter <- false, // removed
         PersonSchema.avatarAssetID <- uuid(),
     ])

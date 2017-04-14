@@ -23,7 +23,7 @@ struct ActivityResourceFollow {
 
 extension ActivityResourceFollow: Mappable {
     
-    init?(_ map: Map){
+    init?(map: Map){
         self = ActivityResourceFollow.newInstance()
     }
     
@@ -44,7 +44,7 @@ extension ActivityResourceFollow: SQLiteModel {
         return ActivityResourceFollowTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> ActivityResourceFollow {
+    static func fromSQL(_ row: SQLiteRow) -> ActivityResourceFollow {
         return ActivityResourceFollow(
             ID: row[ActivityResourceFollowSchema.ID],
             causingPerson: Person.newInstance()

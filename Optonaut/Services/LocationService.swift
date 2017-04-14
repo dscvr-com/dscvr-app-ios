@@ -8,27 +8,27 @@
 
 import Foundation
 import CoreLocation
-import ReactiveCocoa
+import ReactiveSwift
 
 typealias Coordinate = (latitude: Double, longitude: Double)
 
 class LocationService: NSObject {
     
-    private static let sharedInstance = LocationService()
+    fileprivate static let sharedInstance = LocationService()
     
-    private var lastCoordinate: Coordinate?
+    fileprivate var lastCoordinate: Coordinate?
     
-    private let locationManager = CLLocationManager()
-    private var callback: (Coordinate -> ())?
+    fileprivate let locationManager = CLLocationManager()
+    fileprivate var callback: ((Coordinate) -> ())?
     
-    private override init() {
+    fileprivate override init() {
         super.init()
         
         locationManager.delegate = self
     }
     
     static var enabled: Bool {
-        return CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse || CLLocationManager.authorizationStatus() == .AuthorizedAlways
+        return CLLocationManager.authorizationStatus() == .authorizedWhenInUse || CLLocationManager.authorizationStatus() == .authorizedAlways
     }
     
     static func lastLocation() -> Coordinate? {
@@ -42,10 +42,10 @@ class LocationService: NSObject {
         }
         
         switch CLLocationManager.authorizationStatus() {
-        case .NotDetermined:
+        case .notDetermined:
             sharedInstance.locationManager.requestWhenInUseAuthorization()
-        case .Denied:
-            UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
+        case .denied:
+            UIApplication.shared.openURL(URL(string:UIApplicationOpenSettingsURLString)!)
         default: ()
         }
     }
@@ -54,14 +54,14 @@ class LocationService: NSObject {
         return SignalProducer { sink, disposable in
             
             sharedInstance.callback = { coordinate in
-                sink.sendNext(coordinate)
+                sink.send(value: coordinate)
                 sink.sendCompleted()
                 self.sharedInstance.locationManager.stopUpdatingLocation()
             }
             
             sharedInstance.locationManager.startUpdatingLocation()
             
-            disposable.addDisposable {
+            disposable.add {
                 self.sharedInstance.locationManager.stopUpdatingLocation()
             }
         }
@@ -72,7 +72,7 @@ class LocationService: NSObject {
 // MARK: - CLLocationManagerDelegate
 extension LocationService: CLLocationManagerDelegate {
     
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             let latitude = Double(location.coordinate.latitude)
             let longitude = Double(location.coordinate.longitude)

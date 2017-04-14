@@ -17,9 +17,9 @@ class PlaceholderTableViewCell: UITableViewCell {
     required override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = .clearColor()
+        backgroundColor = .clear
         
-        iconView.font = UIFont.iconOfSize(90)
+        iconView.font = UIFont.textOfSize(90, withType: .Regular)
         iconView.textColor = .DarkGrey
         contentView.addSubview(iconView)
         
@@ -35,16 +35,16 @@ class PlaceholderTableViewCell: UITableViewCell {
     }
     
     override func updateConstraints() {
-        iconView.autoAlignAxis(.Horizontal, toSameAxisOfView: contentView, withOffset: -50)
-        iconView.autoAlignAxisToSuperviewAxis(.Vertical)
+        iconView.autoAlignAxis(.horizontal, toSameAxisOf: contentView, withOffset: -50)
+        iconView.autoAlignAxis(toSuperviewAxis: .vertical)
         
-        textView.autoPinEdge(.Top, toEdge: .Bottom, ofView: iconView, withOffset: 40)
-        textView.autoAlignAxisToSuperviewAxis(.Vertical)
+        textView.autoPinEdge(.top, to: .bottom, of: iconView, withOffset: 40)
+        textView.autoAlignAxis(toSuperviewAxis: .vertical)
 
         super.updateConstraints()
     }
     
-    override func setSelected(selected: Bool, animated: Bool) {}
-    override func setHighlighted(highlighted: Bool, animated: Bool) {}
+    override func setSelected(_ selected: Bool, animated: Bool) {}
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {}
     
 }

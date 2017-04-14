@@ -8,7 +8,7 @@
 
 import SQLite
 
-func migration0002(db: Connection) throws {
+func migration0002(_ db: Connection) throws {
     try db.run(createActivityResourceComment())
     try db.run(createActivityResourceFollow())
     try db.run(createActivityResourceStar())

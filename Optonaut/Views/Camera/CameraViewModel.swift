@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 
 class CameraViewModel {
     
@@ -20,7 +20,7 @@ class CameraViewModel {
     let headingToDot = MutableProperty<Float>(0)
     
     init() {
-        isRecording.producer.startWithNext { [unowned self] isRecording in
+        isRecording.producer.startWithValues { [unowned self] isRecording in
             if isRecording {
                 self.instruction.value = "Follow the orange dot"
             } else {
@@ -28,7 +28,7 @@ class CameraViewModel {
             }
         }
         
-        distXY.producer.startWithNext { [unowned self] dist in
+        distXY.producer.startWithValues { [unowned self] dist in
             self.isCentered.value = dist < 0.11
         }
     }

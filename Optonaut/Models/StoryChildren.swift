@@ -7,13 +7,13 @@
 //
 
 import ObjectMapper
-import ReactiveCocoa
+import ReactiveSwift
 
 struct StoryChildren: Model {
     var ID: UUID
-    var createdAt: NSDate
-    var updatedAt: NSDate
-    var deletedAt: NSDate?
+    var createdAt: Date
+    var updatedAt: Date
+    var deletedAt: Date?
     var storyID: String = ""
     var mediaType: String = ""
     var mediaFace: String = ""
@@ -27,8 +27,8 @@ struct StoryChildren: Model {
     static func newInstance() -> StoryChildren {
         return StoryChildren(
             ID: uuid(),
-            createdAt: NSDate(),
-            updatedAt: NSDate(),
+            createdAt: Date(),
+            updatedAt: Date(),
             deletedAt: nil,
             storyID: "",
             mediaType: "",
@@ -47,7 +47,7 @@ struct StoryChildren: Model {
 extension StoryChildren: MergeApiModel {
     typealias AM = StorytellingChildren
     
-    mutating func mergeApiModel(apiModel: StorytellingChildren) {
+    mutating func mergeApiModel(_ apiModel: StorytellingChildren) {
         ID = apiModel.ID
         createdAt = apiModel.createdAt
         updatedAt = apiModel.updatedAt
@@ -92,7 +92,7 @@ extension StoryChildren: SQLiteModel {
         return StoryChildrenTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> StoryChildren {
+    static func fromSQL(_ row: SQLiteRow) -> StoryChildren {
         return StoryChildren(
             ID: row[StoryChildrenSchema.ID],
             createdAt: row[StoryChildrenSchema.storyCreatedAt],

@@ -7,33 +7,32 @@
 //
 
 import Foundation
-import HexColor
 
 class BackgroundView: UIView {
     
-    private let line = CAShapeLayer()
-    private let background = CALayer()
-    private let circle = CAShapeLayer()
+    fileprivate let line = CAShapeLayer()
+    fileprivate let background = CALayer()
+    fileprivate let circle = CAShapeLayer()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        line.strokeColor = UIColor.LightGrey.CGColor
-        line.fillColor = UIColor.clearColor().CGColor
+        line.strokeColor = UIColor.LightGrey.cgColor
+        line.fillColor = UIColor.clear.cgColor
         line.lineWidth = 1
         layer.addSublayer(line)
         
-        background.backgroundColor = UIColor(0xF9F9F9).CGColor
+        background.backgroundColor = UIColor(0xF9F9F9).cgColor
         layer.addSublayer(background)
         
-        circle.strokeColor = UIColor.LightGrey.CGColor
-        circle.fillColor = UIColor.whiteColor().CGColor
+        circle.strokeColor = UIColor.LightGrey.cgColor
+        circle.fillColor = UIColor.white.cgColor
         circle.lineWidth = 1
         layer.addSublayer(circle)
     }
     
     convenience init () {
-        self.init(frame: CGRectZero)
+        self.init(frame: CGRect.zero)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -44,16 +43,16 @@ class BackgroundView: UIView {
         super.layoutSubviews()
         
         let linePath = UIBezierPath()
-        linePath.moveToPoint(CGPoint(x: 0, y: 5.5))
-        linePath.addLineToPoint(CGPoint(x: frame.width, y: 5.5))
-        line.path = linePath.CGPath
+        linePath.move(to: CGPoint(x: 0, y: 5.5))
+        linePath.addLine(to: CGPoint(x: frame.width, y: 5.5))
+        line.path = linePath.cgPath
         line.frame = bounds
         
         background.frame = CGRect(x: 0, y: 6.5, width: frame.width, height: frame.height - 6.5)
         
         let circlePath = UIBezierPath()
-        circlePath.addArcWithCenter(CGPoint(x: frame.width / 2, y: 5.5), radius: 4.5, startAngle: 0, endAngle: CGFloat(M_PI * 2), clockwise: true)
-        circle.path = circlePath.CGPath
+        circlePath.addArc(withCenter: CGPoint(x: frame.width / 2, y: 5.5), radius: 4.5, startAngle: 0, endAngle: CGFloat(M_PI * 2), clockwise: true)
+        circle.path = circlePath.cgPath
         circle.frame = bounds
     }
 }

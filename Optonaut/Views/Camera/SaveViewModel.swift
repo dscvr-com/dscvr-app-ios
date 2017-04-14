@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 import Alamofire
 import ObjectMapper
@@ -35,7 +35,7 @@ class SaveViewModel {
     var locationBox: ModelBox<Location>?
     
     
-    private let placeholder = MutableProperty<UIImage?>(nil)
+    fileprivate let placeholder = MutableProperty<UIImage?>(nil)
     
     init(placeholderSignal: Signal<UIImage, NoError>, readyNotification: NotificationSignal<Void>) {
         
@@ -62,41 +62,41 @@ class SaveViewModel {
         
         isOnline = MutableProperty(Reachability.connectedToNetwork())
         
-        postFacebook.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
+        postFacebook.producer.delayLatestUntil(triggerProducer: isInitialized.producer).startWithValues { [weak self] toggled in
             Defaults[.SessionShareToggledFacebook] = toggled
             self?.optographBox.insertOrUpdate {
                 return $0.model.postFacebook = toggled
             }
         }
         
-        postTwitter.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
+        postTwitter.producer.delayLatestUntil(triggerProducer: isInitialized.producer).startWithValues { [weak self] toggled in
             Defaults[.SessionShareToggledTwitter] = toggled
             self?.optographBox.insertOrUpdate {
                 return $0.model.postTwitter = toggled
             }
         }
         
-        postInstagram.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] toggled in
+        postInstagram.producer.delayLatestUntil(triggerProducer: isInitialized.producer).startWithValues { [weak self] toggled in
             Defaults[.SessionShareToggledInstagram] = toggled
             self?.optographBox.insertOrUpdate { $0.model.postInstagram = toggled }
         }
         
-        isPrivate.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] isPrivate in
+        isPrivate.producer.delayLatestUntil(triggerProducer: isInitialized.producer).startWithValues { [weak self] isPrivate in
             self?.optographBox.insertOrUpdate { $0.model.isPrivate = isPrivate }
         }
         
-        text.producer.delayLatestUntil(isInitialized.producer).startWithNext { [weak self] text in
+        text.producer.delayLatestUntil(triggerProducer: isInitialized.producer).startWithValues { [weak self] text in
             self?.optographBox.insertOrUpdate { $0.model.text = text }
         }
         
-        readyNotification.signal.observeNext {
+        readyNotification.signal.observeValues {
             self.optographBox.insertOrUpdate()
             self.isInitialized.value = true
             
             self.placeID.producer
-                .delayLatestUntil(self.isInitialized.producer)
-                .ignoreNil()
-                .startWithNext { [weak self] _ in
+                .delayLatestUntil(triggerProducer: self.isInitialized.producer)
+                .skipNil()
+                .startWithValues { [weak self] _ in
                     let coords = LocationService.lastLocation()!
                     var location = Location.newInstance()
                     location.latitude = coords.latitude
@@ -110,31 +110,31 @@ class SaveViewModel {
             }
         }
         
-        isInitialized.producer.startWithNext{ print("isInitialized \($0)")}
-        stitcherFinished.producer.startWithNext{ print("stitcherFinished \($0)")}
-        locationLoading.producer.startWithNext{ print("locationLoading \($0)")}
+        isInitialized.producer.startWithValues{ print("isInitialized \($0)")}
+        stitcherFinished.producer.startWithValues{ print("stitcherFinished \($0)")}
+        locationLoading.producer.startWithValues{ print("locationLoading \($0)")}
         
         isReadyForStitching <~ stitcherFinished.producer
-            .combineLatestWith(isInitialized.producer).map(and)
+            .combineLatest(with: isInitialized.producer).map(and)
             .filter(isTrue)
-            .take(1)
+            .take(first: 1)
         
         isReadyForSubmit <~ isInitialized.producer
-            .combineLatestWith(locationLoading.producer.map(negate)).map(and)
-            .combineLatestWith(stitcherFinished.producer).map(and)
+            .combineLatest(with: locationLoading.producer.map(negate)).map(and)
+            .combineLatest(with: stitcherFinished.producer).map(and)
         
     }
     
     func deleteOpto() {
         
         optographBox.insertOrUpdate { box in
-            print("deleted on: \(NSDate())")
+            print("deleted on: \(Date())")
             print(box.model.ID)
-            return box.model.deletedAt = NSDate()
+            return box.model.deletedAt = Date()
         }
     }
     
-    func submit(shouldBePublished: Bool, directionPhi: Double, directionTheta: Double) -> SignalProducer<Void, NoError> {
+    func submit(_ shouldBePublished: Bool, directionPhi: Double, directionTheta: Double) -> SignalProducer<Void, NoError> {
         
         optographBox.insertOrUpdate { box in
             box.model.shouldBePublished = shouldBePublished
@@ -159,7 +159,7 @@ private struct GeocodeDetails: Mappable {
     
     init() {}
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         name            <- map["name"]

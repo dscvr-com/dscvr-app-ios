@@ -8,7 +8,7 @@
 
 import Foundation
 import SQLite
-import ReactiveCocoa
+import ReactiveSwift
 
 protocol ModelSchema {
     var ID: Expression<UUID> { get }
@@ -16,7 +16,7 @@ protocol ModelSchema {
 
 protocol SQLiteModel {
     var ID: UUID { get set }
-    static func fromSQL(row: SQLiteRow) -> Self
+    static func fromSQL(_ row: SQLiteRow) -> Self
     static func table() -> SQLiteTable
     static func schema() -> ModelSchema
     func toSQL() -> [Setter]
@@ -29,11 +29,11 @@ extension SQLiteModel {
         let setters = toSQL()
         let table = Self.table()
         do {
-            try DatabaseService.defaultConnection.run(table.insert(or: .Fail, setters))
+            try DatabaseService.defaultConnection.run(table.insert(or: .fail, setters))
         } catch {
             let rowsChanged = try DatabaseService.defaultConnection.run(table.filter(table[Self.schema().ID] ==- ID).update(setters))
             if rowsChanged != 1 {
-                throw DatabaseQueryError.NotFound
+                throw DatabaseQueryError.notFound
             }
         }
     }
@@ -42,18 +42,18 @@ extension SQLiteModel {
         let setters = toSQL()
         let table = Self.table()
         do {
-            try DatabaseService.defaultConnection.run(table.insert(or: .Fail, setters))
+            try DatabaseService.defaultConnection.run(table.insert(or: .fail, setters))
         } catch {}
     }
     
 }
 
-extension NSDate {
-    class var declaredDatatype: String {
+extension Date {
+    static var declaredDatatype: String {
         return String.declaredDatatype
     }
-    class func fromDatatypeValue(stringValue: String) -> NSDate {
-        return NSDate.fromRFC3339String(stringValue)!
+    static func fromDatatypeValue(_ stringValue: String) -> Date {
+        return Date.fromRFC3339String(stringValue)!
     }
     var datatypeValue: String {
         return toRFC3339String()
@@ -61,21 +61,21 @@ extension NSDate {
 }
 
 enum DatabaseQueryType {
-    case One
-    case Many
+    case one
+    case many
 }
 
-enum DatabaseQueryError: ErrorType {
-    case NotFound
-    case Nil
+enum DatabaseQueryError: Error {
+    case notFound
+    case `nil`
 }
 
 class DatabaseService {
     
     static var defaultConnection: Connection!
     
-    private static let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first! + "/database.sqlite3"
-    private static let migrations = [
+    fileprivate static let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! + "/database.sqlite3"
+    fileprivate static let migrations = [
         migration0001,
         migration0002,
         migration0003,
@@ -94,7 +94,7 @@ class DatabaseService {
         
         try migrate()
         
-        SessionService.onLogout(performAlways: true) { try! reset() }
+       // SessionService.onLogout(performAlways: true) { try! reset() }
     }
     
     static func reset() throws {
@@ -118,18 +118,18 @@ class DatabaseService {
         try defaultConnection.run(personsToDelete.delete())
     }
     
-    static func query(type: DatabaseQueryType, query: Table) -> SignalProducer<Row, DatabaseQueryError> {
+    static func query(_ type: DatabaseQueryType, query: Table) -> SignalProducer<Row, DatabaseQueryError> {
         return SignalProducer { sink, disposable in
             switch type {
-            case .One:
-                guard let row = DatabaseService.defaultConnection.pluck(query) else {
-                    sink.sendFailed(.NotFound)
+            case .one:
+                guard let row = try! DatabaseService.defaultConnection.pluck(query) else {
+                    sink.send(error: .notFound)
                     break
                 }
-                sink.sendNext(row)
-            case .Many:
+                sink.send(value: row)
+            case .many:
                 for row in try! DatabaseService.defaultConnection.prepare(query) {
-                    sink.sendNext(row)
+                    sink.send(value: row)
                 }
             }
             
@@ -137,9 +137,9 @@ class DatabaseService {
         }
     }
     
-    private static func migrate() throws {
+    fileprivate static func migrate() throws {
         var userVersion = defaultConnection.userVersion
-        for (index, migration) in migrations.enumerate() {
+        for (index, migration) in migrations.enumerated() {
             let migrationVersion = index + 1
             if userVersion < migrationVersion {
                 try defaultConnection.transaction {
@@ -161,7 +161,7 @@ typealias SQLiteValue = SQLite.Value
 
 extension Connection {
     public var userVersion: Int {
-        get { return Int(scalar("PRAGMA user_version") as! Int64) }
+        get { return try! Int(scalar("PRAGMA user_version") as! Int64) }
         set { try! run("PRAGMA user_version = \(newValue)") }
     }
 }

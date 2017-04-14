@@ -12,9 +12,9 @@ import ObjectMapper
 struct StorytellingChildren: ApiModel,Mappable {
     
     var ID:UUID = ""
-    var createdAt:NSDate = NSDate()
-    var updatedAt:NSDate = NSDate()
-    var deletedAt:NSDate? = nil
+    var createdAt:Date = Date()
+    var updatedAt:Date = Date()
+    var deletedAt:Date? = nil
     var storyID: String = ""
     var mediaType: String = ""
     var mediaFace: String = ""
@@ -25,7 +25,7 @@ struct StorytellingChildren: ApiModel,Mappable {
     var objectMediaFilename: String = ""
     var objectMediaFileUrl: String = ""
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         
@@ -47,11 +47,11 @@ struct StorytellingChildren: ApiModel,Mappable {
         objectMediaFileUrl    <- map["story_object_media_fileurl"]
         
         if opArray.count != 0 {
-            objectPosition = opArray.map{String($0)}.joinWithSeparator(",")
+            objectPosition = opArray.map{String(describing: $0)}.joined(separator: ",")
         }
         
         if orArray.count != 0 {
-            objectRotation = orArray.map{String($0)}.joinWithSeparator(",")
+            objectRotation = orArray.map{String(describing: $0)}.joined(separator: ",")
         }
     }
 }

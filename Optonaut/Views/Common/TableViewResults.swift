@@ -19,33 +19,33 @@ struct TableViewResults<T: DeletableModel> {
         return TableViewResults<T>(insert: [], update: [], delete: [], models: [], changed: false)
     }
     
-    func merge(newModels: [T], deleteOld: Bool) -> TableViewResults<T> {
+    func merge(_ newModels: [T], deleteOld: Bool) -> TableViewResults<T> {
 
         var models = self.models
         
         var delete: [Int] = []
         
         for deletedModel in newModels.filter({ $0.deletedAt != nil }) {
-            if let index = models.indexOf({ $0.ID == deletedModel.ID }) {
+            if let index = models.index(where: { $0.ID == deletedModel.ID }) {
                 delete.append(index)
             }
         }
         
         if deleteOld {
-            for (index, model) in models.enumerate() {
-                if newModels.indexOf({ $0.ID == model.ID }) == nil {
+            for (index, model) in models.enumerated() {
+                if newModels.index(where: { $0.ID == model.ID }) == nil {
                     delete.append(index)
                 }
             }
         }
-        for deleteIndex in delete.sort().reverse() {
-            models.removeAtIndex(deleteIndex)
+        for deleteIndex in delete.sorted().reversed() {
+            models.remove(at: deleteIndex)
         }
         
         var update: [Int] = []
         var exclusiveNewModels: [T] = []
         for newModel in newModels.filter({ $0.deletedAt == nil }) {
-            if let index = models.indexOf({ $0.ID == newModel.ID}) {
+            if let index = models.index(where: { $0.ID == newModel.ID}) {
                 if models[index] != newModel {
                     update.append(index)
                     models[index] = newModel
@@ -56,10 +56,10 @@ struct TableViewResults<T: DeletableModel> {
         }
         
         var insert: [Int] = []
-        for newModel in exclusiveNewModels.sort({ $0.createdAt > $1.createdAt }) {
-            if let index = models.indexOf({ $0.createdAt < newModel.createdAt }) {
+        for newModel in exclusiveNewModels.sorted(by: { $0.createdAt > $1.createdAt }) {
+            if let index = models.index(where: { $0.createdAt < newModel.createdAt }) {
                 insert.append(index)
-                models.insert(newModel, atIndex: index)
+                models.insert(newModel, at: index)
             } else {
                 insert.append(models.count)
                 models.append(newModel)
@@ -71,33 +71,33 @@ struct TableViewResults<T: DeletableModel> {
         return TableViewResults(insert: insert, update: update, delete: delete, models: models, changed: changed)
     }
     
-    func mergeForNotification(newModels: [T], deleteOld: Bool) -> TableViewResults<T> {
+    func mergeForNotification(_ newModels: [T], deleteOld: Bool) -> TableViewResults<T> {
         
         var models = self.models
         
         var delete: [Int] = []
         
         for deletedModel in newModels.filter({ $0.deletedAt != nil }) {
-            if let index = models.indexOf({ $0.ID == deletedModel.ID }) {
+            if let index = models.index(where: { $0.ID == deletedModel.ID }) {
                 delete.append(index)
             }
         }
         
         if deleteOld {
-            for (index, model) in models.enumerate() {
-                if newModels.indexOf({ $0.ID == model.ID }) == nil {
+            for (index, model) in models.enumerated() {
+                if newModels.index(where: { $0.ID == model.ID }) == nil {
                     delete.append(index)
                 }
             }
         }
-        for deleteIndex in delete.sort().reverse() {
-            models.removeAtIndex(deleteIndex)
+        for deleteIndex in delete.sorted().reversed() {
+            models.remove(at: deleteIndex)
         }
         
         var update: [Int] = []
         var exclusiveNewModels: [T] = []
         for newModel in newModels {
-            if let index = models.indexOf({ $0.ID == newModel.ID }) {
+            if let index = models.index(where: { $0.ID == newModel.ID }) {
                 if models[index] != newModel {
                     update.append(index)
                     models[index] = newModel
@@ -108,10 +108,10 @@ struct TableViewResults<T: DeletableModel> {
         }
         
         var insert: [Int] = []
-        for newModel in exclusiveNewModels.sort({ $0.createdAt > $1.createdAt }) {
-            if let index = models.indexOf({ $0.createdAt < newModel.createdAt }) {
+        for newModel in exclusiveNewModels.sorted(by: { $0.createdAt > $1.createdAt }) {
+            if let index = models.index(where: { $0.createdAt < newModel.createdAt }) {
                 insert.append(index)
-                models.insert(newModel, atIndex: index)
+                models.insert(newModel, at: index)
             } else {
                 insert.append(models.count)
                 models.append(newModel)

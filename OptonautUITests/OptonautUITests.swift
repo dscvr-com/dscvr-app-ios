@@ -124,14 +124,14 @@ class OptonautUITests: XCTestCase {
         // Failed to find matching element please file bug (bugreport.apple.com) and provide output from Console.app
     }
     
-    private func waitForElementToAppear(element: XCUIElement, file: String = __FILE__, line: UInt = __LINE__) {
+    fileprivate func waitForElementToAppear(_ element: XCUIElement, file: String = #file, line: UInt = #line) {
         let existsPredicate = NSPredicate(format: "exists == true")
-        expectationForPredicate(existsPredicate, evaluatedWithObject: element, handler: nil)
+        expectation(for: existsPredicate, evaluatedWith: element, handler: nil)
         
-        waitForExpectationsWithTimeout(5) { (error) -> Void in
+        waitForExpectations(timeout: 5) { (error) -> Void in
             if (error != nil) {
                 let message = "Failed to find \(element) after 5 seconds."
-                self.recordFailureWithDescription(message, inFile: file, atLine: line, expected: true)
+                self.recordFailure(withDescription: message, inFile: file, atLine: line, expected: true)
             }
         }
     }
@@ -139,8 +139,8 @@ class OptonautUITests: XCTestCase {
 }
 
 extension XCUIElement {
-    func tapAtPosition(let position: CGPoint) {
-        let cooridnate = self.coordinateWithNormalizedOffset(CGVector(dx: 0, dy: 0)).coordinateWithOffset(CGVector(dx: position.x, dy: position.y))
+    func tapAtPosition(_ position: CGPoint) {
+        let cooridnate = self.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0)).withOffset(CGVector(dx: position.x, dy: position.y))
         cooridnate.tap()
     }
 }

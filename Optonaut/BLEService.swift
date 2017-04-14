@@ -17,7 +17,7 @@ class BLEService: NSObject, CBPeripheralDelegate {
     let bleService: CBUUID
     let bleCharacteristic: CBUUID
     
-    init(initWithPeripheral peripheral: CBPeripheral, onServiceConnected: (CBService) -> Void, bleService: CBUUID, bleCharacteristic: CBUUID) {
+    init(initWithPeripheral peripheral: CBPeripheral, onServiceConnected: @escaping (CBService) -> Void, bleService: CBUUID, bleCharacteristic: CBUUID) {
         self.onServiceConnected = onServiceConnected
         
         self.p = peripheral
@@ -38,7 +38,7 @@ class BLEService: NSObject, CBPeripheralDelegate {
         }
     }
     
-    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         let uuidsForBTService: [CBUUID] = [bleCharacteristic]
         
         if (peripheral != self.p) {
@@ -56,13 +56,13 @@ class BLEService: NSObject, CBPeripheralDelegate {
         }
         
         for service in peripheral.services! {
-            if service.UUID == bleService {
-                peripheral.discoverCharacteristics(uuidsForBTService, forService: service as CBService)
+            if service.uuid == bleService {
+                peripheral.discoverCharacteristics(uuidsForBTService, for: service as CBService)
             }
         }
     }
     
-    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if (peripheral != self.p) {
             // Wrong Peripheral
             return
@@ -73,7 +73,7 @@ class BLEService: NSObject, CBPeripheralDelegate {
         }
 
         for characteristic in service.characteristics! {
-            if characteristic.UUID == bleCharacteristic {
+            if characteristic.uuid == bleCharacteristic {
                 onServiceConnected(service)
             }
         }

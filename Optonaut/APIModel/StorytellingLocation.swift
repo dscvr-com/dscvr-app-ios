@@ -23,7 +23,7 @@ struct StorytellingLocation: Mappable {
     var region: String = ""
     var poi: Bool = false
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
 //        status              <- map["status"]

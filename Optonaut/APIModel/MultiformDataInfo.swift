@@ -13,7 +13,7 @@ struct MultiformDataInfo: Mappable {
     var story_id: String = ""
     var children: [StorytellingChildren]?
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         story_id              <- map["story_id"]

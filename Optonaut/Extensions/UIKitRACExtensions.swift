@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import ReactiveCocoa
+import ReactiveSwift
 
 struct AssociationKey {
     static var hidden: UInt8 = 1
@@ -29,15 +29,15 @@ struct AssociationKey {
 }
 
 enum objc_AssociationPolicy : UInt {
-    case OBJC_ASSOCIATION_ASSIGN
-    case OBJC_ASSOCIATION_RETAIN_NONATOMIC
-    case OBJC_ASSOCIATION_COPY_NONATOMIC
-    case OBJC_ASSOCIATION_RETAIN
-    case OBJC_ASSOCIATION_COPY
+    case objc_ASSOCIATION_ASSIGN
+    case objc_ASSOCIATION_RETAIN_NONATOMIC
+    case objc_ASSOCIATION_COPY_NONATOMIC
+    case objc_ASSOCIATION_RETAIN
+    case objc_ASSOCIATION_COPY
 }
 
 // lazily creates a gettable associated property via the given factory
-func lazyAssociatedProperty<T: AnyObject>(host: AnyObject, key: UnsafePointer<Void>, factory: ()->T) -> T {
+func lazyAssociatedProperty<T: AnyObject>(_ host: AnyObject, key: UnsafeRawPointer, factory: ()->T) -> T {
     return objc_getAssociatedObject(host, key) as? T ?? {
         let associatedProperty = factory()
         objc_setAssociatedObject(host, key, associatedProperty, .OBJC_ASSOCIATION_RETAIN)
@@ -45,10 +45,10 @@ func lazyAssociatedProperty<T: AnyObject>(host: AnyObject, key: UnsafePointer<Vo
         }()
 }
 
-func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: T -> (), getter: () -> T) -> MutableProperty<T> {
+func lazyMutableProperty<T>(_ host: AnyObject, key: UnsafeRawPointer, setter: @escaping (T) -> (), getter: () -> T) -> MutableProperty<T> {
     return lazyAssociatedProperty(host, key: key) {
         let property = MutableProperty<T>(getter())
-        property.producer.startWithNext { setter($0) }
+        property.producer.startWithValues { setter($0) }
         return property
     }
 }
@@ -58,7 +58,7 @@ extension PlaceholderImageView {
     var rac_url: MutableProperty<String> {
         return lazyAssociatedProperty(self, key: &AssociationKey.imageUrl) {
             let property = MutableProperty<String>("")
-            property.producer.startWithNext(self.setImageWithURLString)
+            property.producer.startWithValues(self.setImageWithURLString)
             return property
         }
     }
@@ -82,7 +82,7 @@ extension ActionButton {
 
 extension UIButton {
     public var rac_enabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.enabled = $0 }, getter: { self.enabled })
+        return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.isEnabled = $0 }, getter: { self.isEnabled })
     }
     
     public var rac_backgroundColor: MutableProperty<UIColor?> {
@@ -92,7 +92,7 @@ extension UIButton {
     public var rac_titleColor: MutableProperty<UIColor?> {
         return lazyAssociatedProperty(self, key: &AssociationKey.buttonTitleColor) {
             let property = MutableProperty<UIColor?>(nil)
-            property.producer.startWithNext { self.setTitleColor($0, forState: .Normal) }
+            property.producer.startWithValues { self.setTitleColor($0, for: .normal) }
             return property
         }
     }
@@ -100,7 +100,7 @@ extension UIButton {
     public var rac_title: MutableProperty<String> {
         return lazyAssociatedProperty(self, key: &AssociationKey.buttonTitle) {
             let property = MutableProperty<String>("")
-            property.producer.startWithNext { self.setTitle($0, forState: .Normal) }
+            property.producer.startWithValues { self.setTitle($0, for: []) }
             return property
         }
     }
@@ -112,11 +112,11 @@ extension UIView {
     }
     
     public var rac_hidden: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.hidden, setter: { self.hidden = $0 }, getter: { self.hidden })
+        return lazyMutableProperty(self, key: &AssociationKey.hidden, setter: { self.isHidden = $0 }, getter: { self.isHidden })
     }
     
     public var rac_userInteractionEnabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.userInteractionEnabled = $0 }, getter: { self.userInteractionEnabled })
+        return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.isUserInteractionEnabled = $0 }, getter: { self.isUserInteractionEnabled })
     }
 }
 
@@ -132,7 +132,7 @@ extension UILabel {
     }
     
     public var rac_enabled: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.enabled = $0 }, getter: { self.enabled })
+        return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.isEnabled = $0 }, getter: { self.isEnabled })
     }
     
     public var rac_textColor: MutableProperty<UIColor> {
@@ -143,10 +143,10 @@ extension UILabel {
 extension UITextField {
     public var rac_text: MutableProperty<String> {
         return lazyAssociatedProperty(self, key: &AssociationKey.text) {
-            self.addTarget(self, action: "changed", forControlEvents: UIControlEvents.EditingChanged)
+            self.addTarget(self, action: "changed", for: UIControlEvents.editingChanged)
             
             let property = MutableProperty<String>(self.text ?? "")
-            property.producer.startWithNext { self.text = $0 }
+            property.producer.startWithValues { self.text = $0 }
             return property
         }
     }
@@ -174,7 +174,7 @@ extension UIActivityIndicatorView {
     public var rac_animating: MutableProperty<Bool> {
         return lazyAssociatedProperty(self, key: &AssociationKey.animating) {
             let property = MutableProperty<Bool>(false)
-            property.producer.startWithNext { $0 ? self.startAnimating() : self.stopAnimating() }
+            property.producer.startWithValues { $0 ? self.startAnimating() : self.stopAnimating() }
             return property
         }
     }

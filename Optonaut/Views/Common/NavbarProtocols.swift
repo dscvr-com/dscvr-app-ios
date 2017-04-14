@@ -15,10 +15,10 @@ protocol TransparentNavbar {
 extension TransparentNavbar where Self: UIViewController {
 
     func updateNavbarAppear() {
-        navigationController?.navigationBar.translucent = true
+        navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.shadowImage = UIImage()
         
-        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
+        UIApplication.shared.setStatusBarHidden(true, with: .none)
     }
     
 }
@@ -29,7 +29,7 @@ protocol TransparentNavbarWithStatusBar {
 extension TransparentNavbarWithStatusBar where Self: UIViewController {
     
     func updateNavbarAppear() {
-        navigationController?.navigationBar.translucent = true
+        navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.shadowImage = UIImage()
     }
     
@@ -42,17 +42,17 @@ protocol RedNavbar {
 extension RedNavbar where Self: UIViewController {
 
     func updateNavbarAppear() {
-        navigationController?.navigationBar.translucent = false
+        navigationController?.navigationBar.isTranslucent = false
         navigationController?.navigationBar.barTintColor = UIColor(hex:0x343434)
-        navigationController?.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
+        navigationController?.navigationBar.setTitleVerticalPositionAdjustment(0, for: .default)
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
+            NSForegroundColorAttributeName: UIColor.white,
         ]
         
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+        UIApplication.shared.setStatusBarHidden(false, with: .none)
         navigationController?.setNavigationBarHidden(false, animated: false)
-        navigationController?.interactivePopGestureRecognizer?.enabled = false
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
     
 }
@@ -62,17 +62,17 @@ protocol WhiteNavBar {
 extension WhiteNavBar where Self: UIViewController {
     
     func updateNavbarAppear() {
-        navigationController?.navigationBar.translucent = false
+        navigationController?.navigationBar.isTranslucent = false
         navigationController?.navigationBar.barTintColor = UIColor(hex:0xf7f7f7)
-        navigationController?.navigationBar.setTitleVerticalPositionAdjustment(0, forBarMetrics: .Default)
+        navigationController?.navigationBar.setTitleVerticalPositionAdjustment(0, for: .default)
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.displayOfSize(15, withType: .Semibold),
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
+            NSForegroundColorAttributeName: UIColor.white,
         ]
         
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+        UIApplication.shared.setStatusBarHidden(false, with: .none)
         navigationController?.setNavigationBarHidden(false, animated: false)
-        navigationController?.interactivePopGestureRecognizer?.enabled = false
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     }
     
 }
@@ -94,9 +94,9 @@ extension NoNavbar where Self: UIViewController {
 
     func updateNavbarAppear() {
         navigationController?.setNavigationBarHidden(false, animated: false)
-        navigationController?.navigationBar.translucent = true
+        navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.shadowImage = UIImage()
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+        UIApplication.shared.setStatusBarHidden(false, with: .none)
     }
     
 }

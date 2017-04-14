@@ -17,9 +17,9 @@ import Neon
 import FBSDKCoreKit
 import Kingfisher
 import SwiftyUserDefaults
-import ReactiveCocoa
+import ReactiveSwift
 
-let Env = EnvType.Staging
+let Env = EnvType.staging
 //let Env = EnvType.Production
 
 @UIApplicationMain
@@ -27,32 +27,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         prepareAndExecute(requireLogin: true) {
             
-            if let notification = launchOptions?[UIApplicationLaunchOptionsRemoteNotificationKey] as? [NSObject: AnyObject] {
-                Mixpanel.sharedInstance().track("Launch.Notification")
+            if let notification = launchOptions?[UIApplicationLaunchOptionsKey.remoteNotification] as? [AnyHashable: Any] {
+                Mixpanel.sharedInstance()?.track("Launch.Notification")
                 self.application(application, didReceiveRemoteNotification: notification)
             }
             
-            let launchedBefore = NSUserDefaults.standardUserDefaults().boolForKey("launchedBefore")
+            let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
             if launchedBefore  {
                 print("Not first launch.")
             }
             else {
                 print("First launch, setting NSUserDefault.")
-                NSUserDefaults.standardUserDefaults().setBool(true, forKey: "launchedBefore")
+                UserDefaults.standard.set(true, forKey: "launchedBefore")
                 Defaults[.SessionVRMode] = true
                 Defaults[.SessionUseMultiRing] = false
             }
             
-            Mixpanel.sharedInstance().track("Launch.Notification")
+            Mixpanel.sharedInstance()?.track("Launch.Notification")
             
-            Defaults[.SessionPhoneModel] = UIDevice.currentDevice().modelName
-            Defaults[.SessionPhoneOS] = UIDevice.currentDevice().systemVersion
+            Defaults[.SessionPhoneModel] = UIDevice.current.modelName
+            Defaults[.SessionPhoneOS] = UIDevice.current.systemVersion
             
             let tabBarViewController = TabViewController()
             self.window?.rootViewController = tabBarViewController
@@ -81,12 +81,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //NSNotificationCenter.defaultCenter().removeObserver(self, name: BLEServiceChangedStatusNotification, object: nil)
     }
     
-    func connectionChanged(notification: NSNotification) {
+    func connectionChanged(_ notification: Notification) {
         print("pumasok dsa functino")
         // Connection status changed. Indicate on GUI.
         let userInfo = notification.userInfo as! [String: Bool]
         
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             // Set image based on connection status
             if let isConnected: Bool = userInfo["isConnected"] {
                 if isConnected {
@@ -97,40 +97,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         });
     }
     
-    func sendCheckElite() -> SignalProducer<RequestCodeApiModel, ApiError> {
-        
-        let parameters = ["uuid": SessionService.personID]
-        
-        return ApiService<RequestCodeApiModel>.postForGate("api/check_status", parameters: parameters)
-            .on(next: { data in
-                print(data.message)
-                print(data.status)
-                print(data.request_text)
-                if (data.status == "ok" && data.message == "3") {
-                    Defaults[.SessionEliteUser] = true
-                } else {
-                    Defaults[.SessionEliteUser] = false
-                }
-            })
-    }
-    
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         ScreenService.sharedInstance.hardReset()
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     }
     
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
     
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
         ScreenService.sharedInstance.restore()
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     }
     
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
         FBSDKAppEvents.activateApp()
@@ -140,16 +123,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //UIApplication.sharedApplication().applicationIconBadgeNumber = 0;
     }
     
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         Defaults[.SessionStoryOptoID] = nil
 
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-        if url.scheme.hasPrefix("fb\(FBSDKSettings.appID())") && url.host == "authorize" {
-            return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
-        }
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
 
         prepareAndExecute(requireLogin: false) {
 //            let tabBarViewController = TabBarViewController()
@@ -166,45 +146,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let mixPanel = Mixpanel.sharedInstance()
-        mixPanel.people.addPushDeviceToken(deviceToken)
+        mixPanel?.people.addPushDeviceToken(deviceToken)
         
-        let tokenChars = UnsafePointer<CChar>(deviceToken.bytes)
+        let tokenChars = (deviceToken as NSData).bytes.bindMemory(to: CChar.self, capacity: deviceToken.count)
         var tokenString = ""
         
-        for var i = 0; i < deviceToken.length; i++ {
+        for i in 0 ..< deviceToken.count {
             tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
         }
         
         DeviceTokenService.deviceToken = tokenString
     }
-    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("my error===",error)
     }
     
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject: AnyObject]) {
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
         ActivitiesService.unreadCount.value = 1
 //        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {
 //            tabBarViewController.activityNavViewController.activityTableViewController.viewModel.refreshNotification.notify(())
 //        }
     }
     
-    private func prepareAndExecute(requireLogin requireLogin: Bool, fn: () -> ()) {
+    fileprivate func prepareAndExecute(requireLogin: Bool, fn: () -> ()) {
         
-        print(NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true))
+        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
         
 //        #if !DEBUG
-            Twitter.sharedInstance().startWithConsumerKey("QZJ8OamzEQ76FghX0EKWqmA7e", consumerSecret: "jhhzAwZGl386N4QxpIvwuIB5nwLeAMoCLYQaDpAm9pXb6IQAZB")
+            Twitter.sharedInstance().start(withConsumerKey: "QZJ8OamzEQ76FghX0EKWqmA7e", consumerSecret: "jhhzAwZGl386N4QxpIvwuIB5nwLeAMoCLYQaDpAm9pXb6IQAZB")
             Fabric.with([Crashlytics.sharedInstance(), Twitter.sharedInstance()])
 //        #endif    
         
-        if case .Production = Env {
+        if case .production = Env {
             print("production mixpanel")
             //Mixpanel.sharedInstanceWithToken("2cb0781fb2aaac9ef23bb1e92694caae")
         } else {
             print("staging mixpanel")
-            Mixpanel.sharedInstanceWithToken("905eb49cf2c78af5ceb307939f02c092")
+            Mixpanel.sharedInstance(withToken: "905eb49cf2c78af5ceb307939f02c092")
         }
 //        let sysVer = UIDevice.currentDevice().systemVersion as NSString
 //        
@@ -232,36 +212,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupAppearanceDefaults()
         
-        KingfisherManager.sharedManager.downloader.downloadTimeout = 60
-        KingfisherManager.sharedManager.cache.maxDiskCacheSize = 200000000
-        KingfisherManager.sharedManager.cache.maxMemoryCost = 10
+        KingfisherManager.shared.downloader.downloadTimeout = 60
+        KingfisherManager.shared.cache.maxDiskCacheSize = 200000000
+        KingfisherManager.shared.cache.maxMemoryCost = 10
         
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        window = UIWindow(frame: UIScreen.main.bounds)
         
-        window?.backgroundColor = .whiteColor()
+        window?.backgroundColor = .white
         
         SessionService.prepare()
-        SessionService.onLogout(performAlways: true) { self.window?.rootViewController = TabViewController() }
-        
-//        if SessionService.isLoggedIn || !requireLogin {
-//            if SessionService.needsOnboarding && requireLogin {
-//                window?.rootViewController = OnboardingInfoViewController()
-//            } else {
-                fn()
-//            }
-//        } else {
-//            window?.rootViewController = LoginViewController()
-//        }
-        
-        VersionService.onOutdatedApiVersion {
-            let alert = UIAlertController(title: "Update needed", message: "It seems like you run a pretty old version of DSCVR. Please update to the newest version.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Update", style: .Default, handler: { _ in
-                let appId = NSBundle.mainBundle().infoDictionary?["CFBundleIdentifier"] as? NSString
-                let url = NSURL(string: "itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=\(appId!)&mt=8")
-                UIApplication.sharedApplication().openURL(url!)
-            }))
-            self.window?.rootViewController?.presentViewController(alert, animated: true, completion: nil)
-        }
         
         window?.makeKeyAndVisible()
         
@@ -277,7 +236,7 @@ public extension UIDevice {
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
         let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8 where value != 0 else { return identifier }
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
         

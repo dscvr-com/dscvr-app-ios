@@ -11,17 +11,17 @@ import Foundation
 
 class ViewWithDiagonalLine: UIView {
     
-    private let line: UIView
+    fileprivate let line: UIView
     
-    private var lengthConstraint: NSLayoutConstraint!
+    fileprivate var lengthConstraint: NSLayoutConstraint!
     
     init() {
         // Initialize line view
         line = UIView()
         line.translatesAutoresizingMaskIntoConstraints = false
-        line.backgroundColor = UIColor.blackColor()
+        line.backgroundColor = UIColor.black
         
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         
         clipsToBounds = true // Cut off everything outside the view
         
@@ -30,15 +30,15 @@ class ViewWithDiagonalLine: UIView {
         addSubview(line)
         
         // Define line width
-        line.addConstraint(NSLayoutConstraint(item: line, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 2))
+        line.addConstraint(NSLayoutConstraint(item: line, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 2))
         
         // Set up line length constraint
-        lengthConstraint = NSLayoutConstraint(item: line, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 0)
+        lengthConstraint = NSLayoutConstraint(item: line, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
         addConstraint(lengthConstraint)
         
         // Center line in view
-        addConstraint(NSLayoutConstraint(item: line, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0))
-        addConstraint(NSLayoutConstraint(item: line, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: line, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: line, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -50,7 +50,7 @@ class ViewWithDiagonalLine: UIView {
         
         // Update length constraint and rotation angle
         lengthConstraint.constant = sqrt(pow(frame.size.width, 2) + pow(frame.size.height, 2))
-        line.transform = CGAffineTransformMakeRotation(CGFloat(M_PI) - atan2(frame.size.height, frame.size.width))
+        line.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI) - atan2(frame.size.height, frame.size.width))
 //        line.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
     }
     

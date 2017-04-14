@@ -11,8 +11,8 @@ import ObjectMapper
 
 struct Comment: Model {
     var ID: UUID
-    var createdAt: NSDate
-    var updatedAt: NSDate
+    var createdAt: Date
+    var updatedAt: Date
     var text: String
     var person: PersonApiModel?
     var optograph: Optograph
@@ -20,8 +20,8 @@ struct Comment: Model {
     static func newInstance() -> Comment {
         return Comment(
             ID:  uuid(),
-            createdAt: NSDate(),
-            updatedAt: NSDate(),
+            createdAt: Date(),
+            updatedAt: Date(),
             text: "",
             person: PersonApiModel(),
             optograph: Optograph.newInstance()
@@ -32,7 +32,7 @@ struct Comment: Model {
 
 extension Comment: Mappable {
     
-    init?(_ map: Map){
+    init?(map: Map){
         self = Comment.newInstance()
     }
     
@@ -57,7 +57,7 @@ extension Comment: SQLiteModel {
         return CommentTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> Comment {
+    static func fromSQL(_ row: SQLiteRow) -> Comment {
         return Comment(
             ID: row[CommentSchema.ID],
             createdAt: row[CommentSchema.createdAt],

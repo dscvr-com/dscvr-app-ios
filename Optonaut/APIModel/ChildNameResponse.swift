@@ -13,7 +13,7 @@ struct ChildNameResponse: Mappable {
     var story_object_id: String = ""
     var story_object_media_filename:  String = ""
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         story_object_id              <- map["story_object_id"]

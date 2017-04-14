@@ -9,9 +9,9 @@ import SQLite
 
 struct ActivitySchemaType: ModelSchema {
     let ID = Expression<UUID>("activity_id")
-    let createdAt = Expression<NSDate>("activity_created_at")
-    let updatedAt = Expression<NSDate>("activity_updated_at")
-    let deletedAt = Expression<NSDate?>("activity_deleted_at")
+    let createdAt = Expression<Date>("activity_created_at")
+    let updatedAt = Expression<Date>("activity_updated_at")
+    let deletedAt = Expression<Date?>("activity_deleted_at")
     let type = Expression<String>("activity_type")
     let isRead = Expression<Bool>("activity_is_read")
     let activityResourceStarID = Expression<UUID?>("activity_activity_resource_star_id")

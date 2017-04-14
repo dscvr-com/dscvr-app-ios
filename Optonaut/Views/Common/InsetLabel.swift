@@ -11,16 +11,16 @@ import UIKit
 
 class InsetLabel: UILabel {
     
-    var edgeInsets: UIEdgeInsets = UIEdgeInsetsZero
+    var edgeInsets: UIEdgeInsets = UIEdgeInsets.zero
     
-    override func textRectForBounds(bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+    override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
         var rect = edgeInsets.apply(bounds)
-        rect = super.textRectForBounds(rect, limitedToNumberOfLines: numberOfLines)
+        rect = super.textRect(forBounds: rect, limitedToNumberOfLines: numberOfLines)
         return edgeInsets.inverse.apply(rect)
     }
     
-    override func drawTextInRect(rect: CGRect) {
-        super.drawTextInRect(edgeInsets.apply(rect))
+    override func drawText(in rect: CGRect) {
+        super.drawText(in: edgeInsets.apply(rect))
     }
     
 }

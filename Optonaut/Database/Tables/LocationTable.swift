@@ -10,8 +10,8 @@ import SQLite
 
 struct LocationSchemaType: ModelSchema {
     let ID = Expression<UUID>("location_id")
-    let createdAt = Expression<NSDate>("location_created_at")
-    let updatedAt = Expression<NSDate>("location_updated_at")
+    let createdAt = Expression<Date>("location_created_at")
+    let updatedAt = Expression<Date>("location_updated_at")
     let text = Expression<String>("location_text")
     let country = Expression<String>("location_country")
     let countryShort = Expression<String>("location_country_short")

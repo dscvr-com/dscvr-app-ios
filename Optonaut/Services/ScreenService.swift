@@ -12,34 +12,34 @@ class ScreenService {
     
     static let sharedInstance = ScreenService()
     
-    private var originalBrightness: CGFloat?
-    private var targetBrightness: CGFloat?
-    private var fadeTimer: NSTimer?
+    fileprivate var originalBrightness: CGFloat?
+    fileprivate var targetBrightness: CGFloat?
+    fileprivate var fadeTimer: Timer?
     
-    private init() {}
+    fileprivate init() {}
     
     func max() {
-        originalBrightness = UIScreen.mainScreen().brightness
+        originalBrightness = UIScreen.main.brightness
         fadeTimer?.invalidate()
         targetBrightness = 1
-        fadeTimer = NSTimer.scheduledTimerWithTimeInterval(1 / 60, target: self, selector: "tick", userInfo: nil, repeats: true)
+        fadeTimer = Timer.scheduledTimer(timeInterval: 1 / 60, target: self, selector: "tick", userInfo: nil, repeats: true)
     }
     
     func reset() {
         fadeTimer?.invalidate()
         targetBrightness = originalBrightness
-        fadeTimer = NSTimer.scheduledTimerWithTimeInterval(1 / 60, target: self, selector: "tick", userInfo: nil, repeats: true)
+        fadeTimer = Timer.scheduledTimer(timeInterval: 1 / 60, target: self, selector: "tick", userInfo: nil, repeats: true)
     }
     
     func hardReset() {
         fadeTimer?.invalidate()
         if let originalBrightness = originalBrightness {
-            UIScreen.mainScreen().brightness = originalBrightness
+            UIScreen.main.brightness = originalBrightness
         }
     }
     
     func restore() {
-        fadeTimer = NSTimer.scheduledTimerWithTimeInterval(1 / 60, target: self, selector: "tick", userInfo: nil, repeats: true)
+        fadeTimer = Timer.scheduledTimer(timeInterval: 1 / 60, target: self, selector: "tick", userInfo: nil, repeats: true)
     }
     
     dynamic func tick() {
@@ -48,12 +48,12 @@ class ScreenService {
             return
         }
         
-        let diff = targetBrightness - UIScreen.mainScreen().brightness
+        let diff = targetBrightness - UIScreen.main.brightness
         if diff != 0 {
             if abs(diff) < 0.01 {
-                UIScreen.mainScreen().brightness += diff
+                UIScreen.main.brightness += diff
             } else {
-                UIScreen.mainScreen().brightness += (diff / 10)
+                UIScreen.main.brightness += (diff / 10)
             }
         } else {
             fadeTimer?.invalidate()

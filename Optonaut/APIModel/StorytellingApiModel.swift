@@ -15,9 +15,9 @@ struct StorytellingApiModel: ApiModel, Mappable {
     var ID: UUID = ""
     var text: String = ""
     var person: PersonApiModel = PersonApiModel()
-    var createdAt: NSDate = NSDate()
-    var updatedAt: NSDate = NSDate()
-    var deletedAt: NSDate? = nil
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
+    var deletedAt: Date? = nil
     var isStarred: Bool = false
     var isPrivate: Bool = false
     var starsCount: Int = 0
@@ -33,7 +33,7 @@ struct StorytellingApiModel: ApiModel, Mappable {
     
     init() {}
     
-    init?(_ map: Map){
+    init?(map: Map){
     }
     
     mutating func mapping(map: Map) {

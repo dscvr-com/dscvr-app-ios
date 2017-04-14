@@ -8,6 +8,6 @@
 
 import SQLite
 
-func migration0004(db: Connection) throws {
+func migration0004(_ db: Connection) throws {
     try db.run(OptographTable.addColumn(OptographSchema.stitcherVersion, defaultValue: StitcherVersion))
 }

@@ -27,19 +27,19 @@ class ActionButton: UIButton {
         }
     }
     
-    private var loadingTitleCache: String?
-    private var loadingUserInteractionEnabledCache: Bool = true
+    fileprivate var loadingTitleCache: String?
+    fileprivate var loadingUserInteractionEnabledCache: Bool = true
     
-    private var touched = false
+    fileprivate var touched = false
 
-    private let loadingIndicator = UIActivityIndicatorView()
+    fileprivate let loadingIndicator = UIActivityIndicatorView()
     
-    override var userInteractionEnabled: Bool {
+    override var isUserInteractionEnabled: Bool {
         didSet {
-            if isLoading && userInteractionEnabled {
-                userInteractionEnabled = false
+            if isLoading && isUserInteractionEnabled {
+                isUserInteractionEnabled = false
             } else if !isLoading {
-                loadingUserInteractionEnabledCache = userInteractionEnabled
+                loadingUserInteractionEnabledCache = isUserInteractionEnabled
             }
             updateBackground()
         }
@@ -55,12 +55,12 @@ class ActionButton: UIButton {
     }
     
     
-    private func postInit() {
+    fileprivate func postInit() {
         
         layer.cornerRadius = 17.5
         clipsToBounds = true
         titleLabel?.font = UIFont.displayOfSize(24, withType: .Semibold)
-        setTitleColor(.Accent, forState: .Normal)
+        setTitleColor(.Accent, for: UIControlState())
         
         loadingIndicator.hidesWhenStopped = true
         
@@ -68,8 +68,8 @@ class ActionButton: UIButton {
         
         updateBackground()
         
-        addTarget(self, action: "buttonTouched", forControlEvents: .TouchDown)
-        addTarget(self, action: "buttonUntouched", forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        addTarget(self, action: "buttonTouched", for: .touchDown)
+        addTarget(self, action: "buttonUntouched", for: [.touchUpInside, .touchUpOutside, .touchCancel])
     }
     
     override func layoutSubviews() {
@@ -78,28 +78,28 @@ class ActionButton: UIButton {
         loadingIndicator.anchorInCenter(width: loadingIndicator.frame.width, height: loadingIndicator.frame.height)
     }
     
-    private func updateLoadingIndicator() {
+    fileprivate func updateLoadingIndicator() {
         if isLoading {
-            loadingTitleCache = titleForState(.Normal)
-            setTitle(nil, forState: .Normal)
-            loadingUserInteractionEnabledCache = userInteractionEnabled
-            userInteractionEnabled = false
-            loadingIndicator.color = titleColorForState(.Normal)
+            loadingTitleCache = title(for: UIControlState())
+            setTitle(nil, for: UIControlState())
+            loadingUserInteractionEnabledCache = isUserInteractionEnabled
+            isUserInteractionEnabled = false
+            loadingIndicator.color = titleColor(for: UIControlState())
             loadingIndicator.startAnimating()
         } else {
-            setTitle(loadingTitleCache, forState: .Normal)
-            userInteractionEnabled = loadingUserInteractionEnabledCache
+            setTitle(loadingTitleCache, for: UIControlState())
+            isUserInteractionEnabled = loadingUserInteractionEnabledCache
             loadingIndicator.stopAnimating()
         }
     }
     
-    private func updateBackground() {
+    fileprivate func updateBackground() {
         if touched {
-            backgroundColor = activeBackgroundColor ?? UIColor.whiteColor().alpha(0.5)
-        } else if userInteractionEnabled {
-            backgroundColor = defaultBackgroundColor ?? UIColor.whiteColor()
+            backgroundColor = activeBackgroundColor ?? UIColor.white.alpha(0.5)
+        } else if isUserInteractionEnabled {
+            backgroundColor = defaultBackgroundColor ?? UIColor.white
         } else {
-            backgroundColor = disabledBackgroundColor ?? UIColor.whiteColor()
+            backgroundColor = disabledBackgroundColor ?? UIColor.white
         }
     }
     

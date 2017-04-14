@@ -11,8 +11,8 @@ import SceneKit
 import CardboardParams
 
 enum Eye {
-    case Left
-    case Right
+    case left
+    case right
 }
 
 
@@ -20,21 +20,21 @@ protocol DistortionProgram {
     var technique: SCNTechnique! { get }
     var fov: FieldOfView! { get }
     
-    func setParameters(params: CardboardParams, screen: ScreenParams, eye: Eye)
+    func setParameters(_ params: CardboardParams, screen: ScreenParams, eye: Eye)
 }
 
 class DistortionProgramHelpers {
     
-    static func techniqueFromName(name: String) -> SCNTechnique {
-        let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource(name, ofType: "json")!)
-        let json = try! NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! NSDictionary
+    static func techniqueFromName(_ name: String) -> SCNTechnique {
+        let data = try? Data(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: name, ofType: "json")!))
+        let json = try! JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! NSDictionary
         let technique = SCNTechnique(dictionary: json as! [String : AnyObject])
         
         return technique!
     }
     
     
-    static func truncateFov(originalFov: Float, offset: Float) -> Float {
+    static func truncateFov(_ originalFov: Float, offset: Float) -> Float {
         if offset <= 0 {
             return originalFov
         }
@@ -45,8 +45,8 @@ class DistortionProgramHelpers {
 
 class VROneDistortionProgram: DistortionProgram {
     
-    private(set) var technique: SCNTechnique!
-    private(set) var fov: FieldOfView!
+    fileprivate(set) var technique: SCNTechnique!
+    fileprivate(set) var fov: FieldOfView!
     
     init(isLeft: Bool) {
         if isLeft {
@@ -59,13 +59,13 @@ class VROneDistortionProgram: DistortionProgram {
     }
     
     
-    func setParameters(params: CardboardParams, screen: ScreenParams, eye: Eye) { }
+    func setParameters(_ params: CardboardParams, screen: ScreenParams, eye: Eye) { }
 }
 class CardboardDistortionProgram: DistortionProgram {
-    private(set) var technique: SCNTechnique!
-    private(set) var fov: FieldOfView!
-    private var coefficients: CGSize!
-    private var eyeOffset: CGSize!
+    fileprivate(set) var technique: SCNTechnique!
+    fileprivate(set) var fov: FieldOfView!
+    fileprivate var coefficients: CGSize!
+    fileprivate var eyeOffset: CGSize!
 
     init(params: CardboardParams, screen: ScreenParams, eye: Eye) {
         technique = DistortionProgramHelpers.techniqueFromName("distortion")
@@ -73,13 +73,13 @@ class CardboardDistortionProgram: DistortionProgram {
         setParameters(params, screen: screen, eye: eye)
     }
     
-    func setParameters(params: CardboardParams, screen: ScreenParams, eye: Eye) {
+    func setParameters(_ params: CardboardParams, screen: ScreenParams, eye: Eye) {
         
         var xEyeOffsetTanAngleScreen = (params.getYEyeOffsetMeters(screen) - screen.widthMeters / Float(2)) / screen.widthMeters
         
         var yEyeOffsetTanAngleScreen = (screen.heightMeters / Float(4.0) - params.interLensDistance / Float(2.0)) / screen.heightMeters
         
-        if eye == .Right {
+        if eye == .right {
             yEyeOffsetTanAngleScreen = -yEyeOffsetTanAngleScreen
         }
         
@@ -97,7 +97,7 @@ class CardboardDistortionProgram: DistortionProgram {
         self.setParameters(Distortion(coefficients: params.distortionCoefficients), fov: newFov, eyeOffsetX: xEyeOffsetTanAngleScreen, eyeOffsetY: yEyeOffsetTanAngleScreen)
     }
     
-    func setParameters(distortion: Distortion, fov: FieldOfView, eyeOffsetX: Float, eyeOffsetY: Float) {
+    func setParameters(_ distortion: Distortion, fov: FieldOfView, eyeOffsetX: Float, eyeOffsetY: Float) {
         coefficients = CGSize(width: CGFloat(distortion.coefficients[0]), height: CGFloat(distortion.coefficients[1]))
         //coefficients = CGSize(width: 0, height: 0)
         eyeOffset = CGSize(width: CGFloat(eyeOffsetX), height: CGFloat(eyeOffsetY))
@@ -108,12 +108,12 @@ class CardboardDistortionProgram: DistortionProgram {
         
         print("Texture Scale \(factor)")
         
-        technique.setValue(NSValue(CGSize: coefficients), forKey: "coefficients")
-        technique.setValue(NSValue(CGSize: eyeOffset), forKey: "eye_offset")
-        technique.setValue(NSValue(CGSize: viewportOffset), forKey: "viewport_offset")
-        technique.setValue(NSNumber(float: factor), forKey: "texture_scale")
-        technique.setValue(NSNumber(float: 0.05), forKey: "vignette_x")
-        technique.setValue(NSNumber(float: 0.02), forKey: "vignette_y")
+        technique.setValue(NSValue(cgSize: coefficients), forKey: "coefficients")
+        technique.setValue(NSValue(cgSize: eyeOffset), forKey: "eye_offset")
+        technique.setValue(NSValue(cgSize: viewportOffset), forKey: "viewport_offset")
+        technique.setValue(NSNumber(value: factor as Float), forKey: "texture_scale")
+        technique.setValue(NSNumber(value: 0.05 as Float), forKey: "vignette_x")
+        technique.setValue(NSNumber(value: 0.02 as Float), forKey: "vignette_y")
         
         self.fov = fov
     }

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import ReactiveCocoa
+import ReactiveSwift
 import SceneKit
 import SpriteKit
 import Async
@@ -23,26 +23,26 @@ class TouchRotationSource: RotationMatrixSource {
     var theta: Float = Float(-M_PI_2)
     
     // FOV of the scene
-    private let vfov: Float
-    private let hfov: Float
+    fileprivate let vfov: Float
+    fileprivate let hfov: Float
     
     // Damping
-    private var phiDiff: Float = 0
-    private var thetaDiff: Float = 0
+    fileprivate var phiDiff: Float = 0
+    fileprivate var thetaDiff: Float = 0
     var phiDamp: Float = 0
     var thetaDamp: Float = 0
     var dampFactor: Float = 0.9
     
-    private var touchStartPoint: CGPoint?
+    fileprivate var touchStartPoint: CGPoint?
     
-    private let sceneWidth: Int
-    private let sceneHeight: Int
+    fileprivate let sceneWidth: Int
+    fileprivate let sceneHeight: Int
     
     // Dependent on optograph format. This values are suitable for
     // Stitcher version <= 7.
-    private let border = Float(M_PI) / Float(6.45)
-    private let minTheta: Float
-    private let maxTheta: Float
+    fileprivate let border = Float(M_PI) / Float(6.45)
+    fileprivate let minTheta: Float
+    fileprivate let maxTheta: Float
     
     init(sceneSize: CGSize, hfov: Float) {
         self.hfov = hfov
@@ -56,12 +56,12 @@ class TouchRotationSource: RotationMatrixSource {
         minTheta = Float(-M_PI) - maxTheta
     }
     
-    func touchStart(point: CGPoint) {
+    func touchStart(_ point: CGPoint) {
         touchStartPoint = point
         isTouching = true
     }
     
-    func touchMove(point: CGPoint) {
+    func touchMove(_ point: CGPoint) {
         if !isTouching {
             return
         }
@@ -120,10 +120,10 @@ class TouchRotationSource: RotationMatrixSource {
 }
 
 class CombinedMotionManager: RotationMatrixSource {
-    private let coreMotionRotationSource: CoreMotionRotationSource
-    private let touchRotationSource: TouchRotationSource
+    fileprivate let coreMotionRotationSource: CoreMotionRotationSource
+    fileprivate let touchRotationSource: TouchRotationSource
     
-    private var lastCoreMotionRotationMatrix: GLKMatrix4?
+    fileprivate var lastCoreMotionRotationMatrix: GLKMatrix4?
     
     init(sceneSize: CGSize, hfov: Float) {
         self.coreMotionRotationSource = CoreMotionRotationSource.Instance
@@ -135,11 +135,11 @@ class CombinedMotionManager: RotationMatrixSource {
         self.touchRotationSource = touchRotationSource
     }
     
-    func touchStart(point: CGPoint) {
+    func touchStart(_ point: CGPoint) {
         touchRotationSource.touchStart(point)
     }
     
-    func touchMove(point: CGPoint) {
+    func touchMove(_ point: CGPoint) {
         touchRotationSource.touchMove(point)
     }
     
@@ -151,7 +151,7 @@ class CombinedMotionManager: RotationMatrixSource {
         touchRotationSource.reset()
     }
     
-    func setDirection(direction: Direction) {
+    func setDirection(_ direction: Direction) {
         touchRotationSource.phi = direction.phi
         touchRotationSource.theta = direction.theta
     }
@@ -185,28 +185,28 @@ class CombinedMotionManager: RotationMatrixSource {
     }
 }
 
-private let queue = dispatch_queue_create("collection_view_cell", DISPATCH_QUEUE_SERIAL)
+private let queue = DispatchQueue(label: "collection_view_cell", attributes: [])
 
 class OptographCollectionViewCell: UICollectionViewCell {
     
     weak var uiHidden: MutableProperty<Bool>!
     
     // subviews
-    private let topElements = UIView()
-    private let bottomElements = UIView()
-    private let bottomBackgroundView = UIView()
-    private let loadingOverlayView = UIView()
+    fileprivate let topElements = UIView()
+    fileprivate let bottomElements = UIView()
+    fileprivate let bottomBackgroundView = UIView()
+    fileprivate let loadingOverlayView = UIView()
     
-    private var combinedMotionManager: CombinedMotionManager!
-    private var renderDelegate: CubeRenderDelegate!
-    private var scnView: SCNView!
+    fileprivate var combinedMotionManager: CombinedMotionManager!
+    fileprivate var renderDelegate: CubeRenderDelegate!
+    fileprivate var scnView: SCNView!
     
-    private let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+    fileprivate let loadingIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     
-    private var touchStart: CGPoint?
+    fileprivate var touchStart: CGPoint?
     
-    private enum LoadingStatus { case Nothing, Preview, Loaded }
-    private let loadingStatus = MutableProperty<LoadingStatus>(.Nothing)
+    fileprivate enum LoadingStatus { case nothing, preview, loaded }
+    fileprivate let loadingStatus = MutableProperty<LoadingStatus>(.nothing)
     
     var direction: Direction {
         set(direction) {
@@ -220,10 +220,10 @@ class OptographCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        contentView.backgroundColor = .blackColor()
+        contentView.backgroundColor = .black
         
         if #available(iOS 9.0, *) {
-            scnView = SCNView(frame: contentView.frame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+            scnView = SCNView(frame: contentView.frame, options: [SCNView.Option.preferredRenderingAPI.rawValue: SCNRenderingAPI.openGLES2.rawValue])
         } else {
             scnView = SCNView(frame: contentView.frame)
         }
@@ -239,17 +239,17 @@ class OptographCollectionViewCell: UICollectionViewCell {
         
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
-        scnView.backgroundColor = .clearColor()
-        scnView.hidden = false
+        scnView.backgroundColor = .clear
+        scnView.isHidden = false
         contentView.addSubview(scnView)
         
-        loadingOverlayView.backgroundColor = .blackColor()
+        loadingOverlayView.backgroundColor = .black
         loadingOverlayView.frame = contentView.frame
-        loadingOverlayView.rac_hidden <~ loadingStatus.producer.equalsTo(.Nothing).map(negate)
+        loadingOverlayView.rac_hidden <~ loadingStatus.producer.equalsTo(value: .nothing).map(negate)
         contentView.addSubview(loadingOverlayView)
         
         loadingIndicatorView.frame = contentView.frame
-        loadingIndicatorView.rac_animating <~ loadingStatus.producer.equalsTo(.Nothing)
+        loadingIndicatorView.rac_animating <~ loadingStatus.producer.equalsTo(value: .nothing)
         contentView.addSubview(loadingIndicatorView)
     }
     
@@ -257,9 +257,9 @@ class OptographCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesBegan(touches, withEvent: event)
-        var point = touches.first!.locationInView(contentView)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        var point = touches.first!.location(in: contentView)
         touchStart = point
         
         if !uiHidden.value {
@@ -271,9 +271,9 @@ class OptographCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesMoved(touches, withEvent: event)
-        var point = touches.first!.locationInView(contentView)
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        var point = touches.first!.location(in: contentView)
         
         if !uiHidden.value {
             if abs(point.x - touchStart!.x) > 20 {
@@ -288,12 +288,12 @@ class OptographCollectionViewCell: UICollectionViewCell {
         combinedMotionManager.touchMove(point)
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        let distance = touchStart!.distanceTo(touches.first!.locationInView(self))
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let distance = touchStart!.distanceTo(touches.first!.location(in: self))
         if distance < 10 {
             uiHidden.value = !uiHidden.value
         }
-        super.touchesEnded(touches, withEvent: event)
+        super.touchesEnded(touches, with: event)
         if touches.count == 1 {
             combinedMotionManager.touchEnd()
         }
@@ -305,19 +305,19 @@ class OptographCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-        super.touchesCancelled(touches, withEvent: event)
-        if let touches = touches where touches.count == 1 {
+    override func touchesCancelled(_ touches: Set<UITouch>?, with event: UIEvent?) {
+        super.touchesCancelled(touches!, with: event)
+        if let touches = touches, touches.count == 1 {
             combinedMotionManager.touchEnd()
         }
     }
     
-    func getVisibleAndAdjacentPlaneIndices(direction: Direction) -> [CubeImageCache.Index] {
+    func getVisibleAndAdjacentPlaneIndices(_ direction: Direction) -> [CubeImageCache.Index] {
         let rotation = phiThetaToRotationMatrix(direction.phi, theta: direction.theta)
         return renderDelegate.getVisibleAndAdjacentPlaneIndicesFromRotationMatrix(rotation)
     }
     
-    func setCubeImageCache(cache: CubeImageCache) {
+    func setCubeImageCache(_ cache: CubeImageCache) {
         
         renderDelegate.nodeEnterScene = nil
         renderDelegate.nodeLeaveScene = nil
@@ -325,31 +325,31 @@ class OptographCollectionViewCell: UICollectionViewCell {
         renderDelegate.reset()
         
         renderDelegate.nodeEnterScene = { [weak self] index in
-            dispatch_async(queue) {
+            queue.async {
                 cache.get(index) { [weak self] (texture: SKTexture, index: CubeImageCache.Index) in
                     self?.renderDelegate.setTexture(texture, forIndex: index)
                     Async.main { [weak self] in
-                        self?.loadingStatus.value = .Loaded
+                        self?.loadingStatus.value = .loaded
                     }
                 }
             }
         }
         
         renderDelegate.nodeLeaveScene = { index in
-            dispatch_async(queue) {
+            queue.async {
                 cache.forget(index)
             }
         }
     }
     
     func willDisplay() {
-        scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
+        scnView.isPlaying = UIDevice.current.deviceType != .simulator
     }
     
     func didEndDisplay() {
-        scnView.playing = false
+        scnView.isPlaying = false
         combinedMotionManager.reset()
-        loadingStatus.value = .Nothing
+        loadingStatus.value = .nothing
         renderDelegate.reset()
     }
     

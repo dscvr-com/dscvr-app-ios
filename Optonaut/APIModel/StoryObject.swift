@@ -14,7 +14,7 @@ struct StoryObject: Mappable {
     var message:  String = ""
     var children: [StorytellingChildren]?
     
-    init?(_ map: Map) {
+    init?(map: Map) {
     
     }
     

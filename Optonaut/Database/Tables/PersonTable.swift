@@ -10,8 +10,8 @@ import SQLite
 
 struct PersonSchemaType: ModelSchema {
     let ID = Expression<UUID>("person_id")
-    let createdAt = Expression<NSDate>("person_created_at")
-    let updatedAt = Expression<NSDate>("person_updated_at")
+    let createdAt = Expression<Date>("person_created_at")
+    let updatedAt = Expression<Date>("person_updated_at")
     let email = Expression<String?>("person_email")
     let displayName = Expression<String>("person_display_name")
     let userName = Expression<String>("person_user_name")

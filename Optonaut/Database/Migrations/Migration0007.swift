@@ -8,6 +8,6 @@
 
 import SQLite
 
-func migration0007(db: Connection) throws {
+func migration0007(_ db: Connection) throws {
     try db.run(OptographTable.addColumn(OptographSchema.ringCount, defaultValue: ""))
 }

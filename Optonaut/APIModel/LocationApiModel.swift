@@ -12,8 +12,8 @@ import ObjectMapper
 struct LocationApiModel: ApiModel, Mappable {
     
     var ID: UUID = ""
-    var createdAt: NSDate = NSDate()
-    var updatedAt: NSDate = NSDate()
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
     var text: String = ""
     var country: String = ""
     var countryShort: String = ""
@@ -25,7 +25,7 @@ struct LocationApiModel: ApiModel, Mappable {
     
     init() {}
     
-    init?(_ map: Map){}
+    init?(map: Map){}
     
     mutating func mapping(map: Map) {
         ID              <- map["id"]

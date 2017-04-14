@@ -9,44 +9,44 @@ import CoreMotion
 
 let StitcherVersion: String = Recorder.getVersion()
 
-func CMRotationToGLKMatrix4(r: CMRotationMatrix) -> GLKMatrix4{
+func CMRotationToGLKMatrix4(_ r: CMRotationMatrix) -> GLKMatrix4{
     return GLKMatrix4Make(Float(r.m11), Float(r.m12), Float(r.m13), 0,
         Float(r.m21), Float(r.m22), Float(r.m23), 0,
         Float(r.m31), Float(r.m32), Float(r.m33), 0,
         0,     0,     0,     1)
 }
 
-func CMRotationToDoubleArray(r: CMRotationMatrix) -> [Double] {
+func CMRotationToDoubleArray(_ r: CMRotationMatrix) -> [Double] {
     return [r.m11, r.m12, r.m13, 0,
         r.m21, r.m22, r.m23, 0,
         r.m31, r.m32, r.m33, 0,
         0,     0,     0,     1]
 }
 
-func ImageBufferToCGImage(buf: ImageBuffer) -> CGImage {
-    let bitmapContext = CGBitmapContextCreateWithData(
-        buf.data, Int(buf.width), Int(buf.height), 8, Int(buf.width) * 4,
-        CGColorSpaceCreateDeviceRGB(),
-        CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.NoneSkipFirst.rawValue,
-        nil, nil)
-    return CGBitmapContextCreateImage(bitmapContext)!
+func ImageBufferToCGImage(_ buf: ImageBuffer) -> CGImage {
+    let bitmapContext = CGContext(
+        data: buf.data, width: Int(buf.width), height: Int(buf.height), bitsPerComponent: 8, bytesPerRow: Int(buf.width) * 4,
+        space: CGColorSpaceCreateDeviceRGB(),
+        bitmapInfo: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue,
+        releaseCallback: nil, releaseInfo: nil)
+    return bitmapContext!.makeImage()!
 }
 
-func ImageBufferToCompressedUIImage(input: ImageBuffer) -> UIImage {
+func ImageBufferToCompressedUIImage(_ input: ImageBuffer) -> UIImage {
     let cgImage = ImageBufferToCGImage(input)
-    return UIImage(CGImage: cgImage)
+    return UIImage(cgImage: cgImage)
 }
 
-func ImageBufferToCompressedJPG(input: ImageBuffer, ratio: CGFloat) -> NSData? {
+func ImageBufferToCompressedJPG(_ input: ImageBuffer, ratio: CGFloat) -> Data? {
     return UIImageJPEGRepresentation(ImageBufferToCompressedUIImage(input), ratio)
 }
 
-func RotateCGImage(image: CGImage, orientation: UIImageOrientation) -> CGImage {
+func RotateCGImage(_ image: CGImage, orientation: UIImageOrientation) -> CGImage {
     
-    let imageSize = CGSize(width: CGImageGetWidth(image), height: CGImageGetHeight(image))
+    let imageSize = CGSize(width: image.width, height: image.height)
     var rotatedSize = imageSize
     
-    if orientation == UIImageOrientation.Right || orientation == UIImageOrientation.Left {
+    if orientation == UIImageOrientation.right || orientation == UIImageOrientation.left {
         rotatedSize = CGSize(width: imageSize.height, height: imageSize.width)
     }
     
@@ -54,25 +54,25 @@ func RotateCGImage(image: CGImage, orientation: UIImageOrientation) -> CGImage {
     let rotCenterY = rotatedSize.height / 2
     
     UIGraphicsBeginImageContextWithOptions(rotatedSize, false, 1)
-    let context = UIGraphicsGetCurrentContext()
+    let context = UIGraphicsGetCurrentContext()!
     
-    CGContextTranslateCTM(context, rotCenterX, rotCenterY)
+    context.translateBy(x: rotCenterX, y: rotCenterY)
     switch orientation {
-    case .Right:
-        CGContextRotateCTM(context, CGFloat(-M_PI_2))
-        CGContextTranslateCTM(context, -rotCenterY, -rotCenterX)
-    case .Left:
-        CGContextRotateCTM(context, CGFloat(M_PI_2))
-        CGContextTranslateCTM(context, -rotCenterY, -rotCenterX)
-    case .Down, .Up:
-        CGContextRotateCTM(context, CGFloat(M_PI))
-        CGContextTranslateCTM(context, -rotCenterX, -rotCenterY)
+    case .right:
+        context.rotate(by: CGFloat(-M_PI_2))
+        context.translateBy(x: -rotCenterY, y: -rotCenterX)
+    case .left:
+        context.rotate(by: CGFloat(M_PI_2))
+        context.translateBy(x: -rotCenterY, y: -rotCenterX)
+    case .down, .up:
+        context.rotate(by: CGFloat(M_PI))
+        context.translateBy(x: -rotCenterX, y: -rotCenterY)
     default: ()
     }
     
-    CGContextDrawImage(context, CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height), image)
+    context.draw(image, in: CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
     
-    let res = CGBitmapContextCreateImage(context)!
+    let res = context.makeImage()!
     UIGraphicsEndImageContext()
     return res
 }

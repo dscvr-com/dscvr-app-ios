@@ -8,7 +8,7 @@
 
 import SQLite
 
-func migration0006(db: Connection) throws {
+func migration0006(_ db: Connection) throws {
     try db.run(OptographTable.addColumn(OptographSchema.isInFeed, defaultValue: false))
     try db.run(OptographTable.addColumn(OptographSchema.directionPhi, defaultValue: 0))
     try db.run(OptographTable.addColumn(OptographSchema.directionTheta, defaultValue: 0))
@@ -30,7 +30,7 @@ func migration0006(db: Connection) throws {
     
     try db.run(PersonTable.addColumn(PersonSchema.optographsCount, defaultValue: 0))
     
-    let aLongTimeAgo = NSDate(timeIntervalSince1970: 0)
+    let aLongTimeAgo = Date(timeIntervalSince1970: 0)
     
     try db.run(ActivityTable.addColumn(ActivitySchema.updatedAt, defaultValue: aLongTimeAgo))
     try db.run(CommentTable.addColumn(CommentSchema.updatedAt, defaultValue: aLongTimeAgo))

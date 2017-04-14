@@ -11,35 +11,35 @@ import Foundation
 protocol OptographOptions: class {
     var navigationController: NavigationController? { get }
     func didTapOptions()
-    func showOptions(optographID: UUID, deleteCallback: (() -> ())?)
+    func showOptions(_ optographID: UUID, deleteCallback: (() -> ())?)
 }
 
 extension OptographOptions {
     
-    func showOptions(optographID: UUID, deleteCallback: (() -> ())? = nil) {
+    func showOptions(_ optographID: UUID, deleteCallback: (() -> ())? = nil) {
         
         let optographBox = Models.optographs[optographID]!
         
-        let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        actionAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
-            let confirmAlert = UIAlertController(title: "Are you sure?", message: "Do you really want to delete this Optograph? You cannot undo this.", preferredStyle: .Alert)
-            confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
-            confirmAlert.addAction(UIAlertAction(title: "Delete", style: .Destructive, handler: { _ in
+        actionAlert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
+            let confirmAlert = UIAlertController(title: "Are you sure?", message: "Do you really want to delete this Optograph? You cannot undo this.", preferredStyle: .alert)
+            confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in return }))
+            confirmAlert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
                 PipelineService.stopStitching()
                 optographBox.insertOrUpdate { box in
-                    print("date today \(NSDate())")
+                    print("date today \(Date())")
                     print(box.model.ID)
-                    return box.model.deletedAt = NSDate()
+                    return box.model.deletedAt = Date()
                 }
                 deleteCallback?()
             }))
-            self.navigationController?.presentViewController(confirmAlert, animated: true, completion: nil)
+            self.navigationController?.present(confirmAlert, animated: true, completion: nil)
         }))
         
-        actionAlert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        actionAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in return }))
         
-        navigationController?.presentViewController(actionAlert, animated: true, completion: nil)
+        navigationController?.present(actionAlert, animated: true, completion: nil)
     }
     
 }

@@ -12,15 +12,15 @@ import ObjectMapper
 struct mapChildren: ApiModel, Mappable {
     
     var ID:UUID = ""
-    var createdAt:NSDate = NSDate()
-    var updatedAt:NSDate = NSDate()
-    var deletedAt:NSDate? = nil
+    var createdAt:Date = Date()
+    var updatedAt:Date = Date()
+    var deletedAt:Date? = nil
     var optographID = ""
     var personID = ""
     var children:[StorytellingChildren]?
     
     init() {}
-    init?(_ map: Map) {
+    init?(map: Map) {
     }
     
     mutating func mapping(map: Map) {

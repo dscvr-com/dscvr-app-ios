@@ -10,14 +10,14 @@ import Foundation
 
 protocol LoadMore: UITableViewDelegate {
     
-    typealias Item
+    associatedtype Item
     
     var items: [Item] { get }
     var tableView: UITableView { get }
     
-    func checkRow(indexPath: NSIndexPath, success: () -> Void)
+    func checkRow(_ indexPath: IndexPath, success: () -> Void)
     
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath)
     
 }
 
@@ -34,7 +34,7 @@ extension LoadMore where Self: UIViewController {
         }
     }
     
-    func checkRow(indexPath: NSIndexPath, success: () -> Void) {
+    func checkRow(_ indexPath: IndexPath, success: () -> Void) {
         let preloadOffset = 4
         if indexPath.row > lastLoadMoreRow && indexPath.row > items.count - preloadOffset {
             success()

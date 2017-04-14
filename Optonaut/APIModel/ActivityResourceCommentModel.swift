@@ -16,7 +16,7 @@ struct ActivityResourceCommentModel: Mappable {
     //var comment: Comment
     
     init() {}
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         ID              <- map["id"]

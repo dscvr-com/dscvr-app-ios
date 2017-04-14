@@ -14,7 +14,7 @@ struct LoginApiModel: Mappable {
     var ID:  UUID = ""
     var onboardingVersion: Int = 0
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         token              <- map["token"]

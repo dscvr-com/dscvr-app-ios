@@ -7,12 +7,12 @@
 //
 
 import ObjectMapper
-import ReactiveCocoa
+import ReactiveSwift
 
 struct Person: Model {
     var ID: UUID
-    var createdAt: NSDate
-    var updatedAt: NSDate
+    var createdAt: Date
+    var updatedAt: Date
     var email: String?
     var displayName: String
     var userName: String
@@ -29,8 +29,8 @@ struct Person: Model {
     static func newInstance() -> Person {
         return Person(
             ID: uuid(),
-            createdAt: NSDate(),
-            updatedAt: NSDate(),
+            createdAt: Date(),
+            updatedAt: Date(),
             email: nil,
             displayName: "",
             userName: "",
@@ -43,16 +43,12 @@ struct Person: Model {
             eliteStatus: 0
         )
     }
-    
-    func report() -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.post("persons/\(ID)/report")
-    }
 }
 
 extension Person: MergeApiModel {
     typealias AM = PersonApiModel
     
-    mutating func mergeApiModel(apiModel: PersonApiModel) {
+    mutating func mergeApiModel(_ apiModel: PersonApiModel) {
         ID = apiModel.ID
         createdAt = apiModel.createdAt
         updatedAt = apiModel.updatedAt
@@ -96,7 +92,7 @@ extension Person: SQLiteModel {
         return PersonTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> Person {
+    static func fromSQL(_ row: SQLiteRow) -> Person {
         return Person(
             ID: row[PersonSchema.ID],
             createdAt: row[PersonSchema.createdAt],

@@ -19,7 +19,7 @@ class Distortion {
         self.coefficients = coefficients
     }
     
-    func distortionFactor(radius : Float) -> Float {
+    func distortionFactor(_ radius : Float) -> Float {
         var result = Float(1.0)
         var factor = Float(1.0)
         let squared = radius * radius
@@ -31,11 +31,11 @@ class Distortion {
         return result
     }
     
-    func distort(radius : Float) -> Float {
+    func distort(_ radius : Float) -> Float {
         return radius * distortionFactor(radius)
     }
     
-    func distortInverse(radius : Float) -> Float {
+    func distortInverse(_ radius : Float) -> Float {
         var r0 = radius / Float(0.9);
         var r1 = radius * Float(0.9);
         var dr0 = radius - distort(r0);
@@ -49,13 +49,13 @@ class Distortion {
         return r1
     }
     
-    static func solveLeastSquares(matA: [[Double]], vecY: [Double]) -> [Double] {
+    static func solveLeastSquares(_ matA: [[Double]], vecY: [Double]) -> [Double] {
         let numSamples = matA.count
         let numCoefficients = matA[0].count
         
         assert(numCoefficients == 2) //Only 2 coeffs supported atm due to inversion.
     
-        var matATA = [[Double]](count: numCoefficients, repeatedValue: [Double](count: numCoefficients, repeatedValue: 0))
+        var matATA = [[Double]](repeating: [Double](repeating: 0, count: numCoefficients), count: numCoefficients)
         
         for k in 0..<numCoefficients {
             for j in 0..<numCoefficients {
@@ -67,7 +67,7 @@ class Distortion {
             }
         }
         
-        var matInvATA = [[Double]](count: numCoefficients, repeatedValue: [Double](count: numCoefficients, repeatedValue: 0))
+        var matInvATA = [[Double]](repeating: [Double](repeating: 0, count: numCoefficients), count: numCoefficients)
         
         let det: Double = matATA[0][0] * matATA[1][1] - matATA[0][1] * matATA[1][0]
         
@@ -76,7 +76,7 @@ class Distortion {
         matInvATA[0][1] = (-matATA[1][0] / det)
         matInvATA[1][0] = (-matATA[0][1] / det)
     
-        var vecATY = [Double](count: numCoefficients, repeatedValue: 0)
+        var vecATY = [Double](repeating: 0, count: numCoefficients)
         for j in 0..<numCoefficients {
             var sum = Double(0.0)
             for i in 0..<numSamples {
@@ -84,7 +84,7 @@ class Distortion {
             }
             vecATY[j] = sum
         }
-        var vecX = [Double](count: numCoefficients, repeatedValue: 0)
+        var vecX = [Double](repeating: 0, count: numCoefficients)
         for j in 0..<numCoefficients {
             var sum = Double(0.0)
             for i in 0..<numCoefficients {
@@ -95,12 +95,12 @@ class Distortion {
         return vecX;
     }
     
-    func getApproximateInverseDistortion(maxRadius: Float) -> Distortion {
+    func getApproximateInverseDistortion(_ maxRadius: Float) -> Distortion {
         let numSamples = 10
         let numCoefficients = 2
         
-        var matA = [[Double]](count: numSamples, repeatedValue: [Double](count: numCoefficients, repeatedValue: 0))
-        var vecY = [Double](count: numSamples, repeatedValue: 0)
+        var matA = [[Double]](repeating: [Double](repeating: 0, count: numCoefficients), count: numSamples)
+        var vecY = [Double](repeating: 0, count: numSamples)
         
         for i in 0..<numSamples {
             let r = Double(maxRadius) * Double(i + 1) / Double(numSamples);
@@ -114,7 +114,7 @@ class Distortion {
         }
         let vecK = Distortion.solveLeastSquares(matA, vecY: vecY);
     
-        var newCoefficients = [Float](count: vecK.count, repeatedValue: 0)
+        var newCoefficients = [Float](repeating: 0, count: vecK.count)
         for i in 0..<vecK.count {
             newCoefficients[i] = Float(vecK[i])
         }

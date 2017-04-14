@@ -11,51 +11,51 @@ import CoreBluetooth
 
 class BLEDiscovery: NSObject, CBCentralManagerDelegate {
 
-    private var centralManager: CBCentralManager!
-    private let onDeviceFound: (CBPeripheral, NSString) -> Void
-    private let onDeviceConnected: (CBPeripheral) -> Void
-    private let services: [CBUUID]
+    fileprivate var centralManager: CBCentralManager!
+    fileprivate let onDeviceFound: (CBPeripheral, NSString) -> Void
+    fileprivate let onDeviceConnected: (CBPeripheral) -> Void
+    fileprivate let services: [CBUUID]
     
-    init(onDeviceFound: (CBPeripheral, NSString) -> Void, onDeviceConnected: (CBPeripheral) -> Void, services: [CBUUID]) {
+    init(onDeviceFound: @escaping (CBPeripheral, NSString) -> Void, onDeviceConnected: @escaping (CBPeripheral) -> Void, services: [CBUUID]) {
         self.onDeviceFound = onDeviceFound
         self.onDeviceConnected = onDeviceConnected
         self.services = services
         
         super.init()
         
-        self.centralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue())
+        self.centralManager = CBCentralManager(delegate: self, queue: DispatchQueue.main)
     }
     
     func startScanning() {
-        centralManager.scanForPeripheralsWithServices(services, options: nil)
+        centralManager.scanForPeripherals(withServices: services, options: nil)
         print("Searching for BLE Devices")
         
     }
     
-    func centralManagerDidUpdateState(central: CBCentralManager) {
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch (central.state) {
-        case .PoweredOff:
+        case .poweredOff:
             break;
-        case .Unauthorized:
+        case .unauthorized:
             // Indicate to user that the iOS device does not support BLE.
             break
             
-        case .Unknown:
+        case .unknown:
             // Wait for another event
             break
             
-        case .PoweredOn:
+        case .poweredOn:
             self.startScanning()
             
-        case .Resetting:
+        case .resetting:
             break;
-        case .Unsupported:
+        case .unsupported:
             break;
         }
     }
     
-    func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
-        let nameOfDeviceFound = (advertisementData as NSDictionary).objectForKey(CBAdvertisementDataLocalNameKey) as? NSString
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        let nameOfDeviceFound = (advertisementData as NSDictionary).object(forKey: CBAdvertisementDataLocalNameKey) as? NSString
         
         if let name = nameOfDeviceFound {
             self.onDeviceFound(peripheral, name)
@@ -63,12 +63,12 @@ class BLEDiscovery: NSObject, CBCentralManagerDelegate {
         
     }
     
-    func connectPeripheral(peripheral: CBPeripheral) {
+    func connectPeripheral(_ peripheral: CBPeripheral) {
         // Connect to peripheral
-        centralManager.connectPeripheral(peripheral, options: nil)
+        centralManager.connect(peripheral, options: nil)
     }
     
-    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         
         //let bleService = BTService(initWithPeripheral: peripheral)
         self.onDeviceConnected(peripheral)
@@ -77,7 +77,7 @@ class BLEDiscovery: NSObject, CBCentralManagerDelegate {
         central.stopScan()
     }
     
-    func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         
         // Start scanning for new devices
         self.startScanning()

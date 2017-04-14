@@ -27,7 +27,7 @@ struct ActivityResourceComment {
 
 extension ActivityResourceComment: Mappable {
     
-    init?(_ map: Map){
+    init?(map: Map){
         self = ActivityResourceComment.newInstance()
     }
     
@@ -50,7 +50,7 @@ extension ActivityResourceComment: SQLiteModel {
         return ActivityResourceCommentTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> ActivityResourceComment {
+    static func fromSQL(_ row: SQLiteRow) -> ActivityResourceComment {
         return ActivityResourceComment(
             ID: row[ActivityResourceCommentSchema.ID],
             optograph: Optograph.newInstance(),

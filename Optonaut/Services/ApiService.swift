@@ -8,18 +8,18 @@
 
 import Foundation
 import Alamofire
-import ReactiveCocoa
+import ReactiveSwift
 import ObjectMapper
 import Crashlytics
 import SwiftyUserDefaults
 
 struct EmptyResponse: Mappable {
     init() {}
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     mutating func mapping(map: Map) {}
 }
 
-struct ApiError: ErrorType {
+struct ApiError: Error {
     
     static let Nil = ApiError(endpoint: "", timeout: false, status: nil, message: "", error: nil)
     
@@ -35,13 +35,14 @@ struct ApiError: ErrorType {
 }
 
 class ApiService<T: Mappable> {
-    
-    private static var host: String {
+    // TODO: No Api for us
+    /*
+    fileprivate static var host: String {
         switch Env {
-        case .Development: return "optonaut.ngrok.io"
-        case .Staging: return "api-staging.dscvr.com"
+        case .development: return "optonaut.ngrok.io"
+        case .staging: return "api-staging.dscvr.com"
         case .localStaging: return "192.168.1.69:3000"
-        case .Production: return "api-production-v9.dscvr.com"
+        case .production: return "api-production-v9.dscvr.com"
         }
     }
     
@@ -49,35 +50,35 @@ class ApiService<T: Mappable> {
         return ApiService<EmptyResponse>.get("public/info")
     }
     
-    static func get(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
+    static func get(_ endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .GET, queries: queries, parameters: nil)
     }
     
-    static func post(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+    static func post(_ endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .POST, queries: queries, parameters: parameters)
     }
-    static func postForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+    static func postForGate(_ endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return requestForGate(endpoint, method: .POST, queries: queries, parameters: parameters)
     }
-    static func getForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+    static func getForGate(_ endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return requestForGate(endpoint, method: .GET, queries: queries, parameters: parameters)
     }
-    static func putForGate(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+    static func putForGate(_ endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return requestForGate(endpoint, method: .PUT, queries: queries, parameters: parameters)
     }
     
-    static func put(endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
+    static func put(_ endpoint: String, queries: [String: String]? = nil, parameters: [String: AnyObject]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .PUT, queries: queries, parameters: parameters)
     }
     
-    static func delete(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
+    static func delete(_ endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
         return request(endpoint, method: .DELETE, queries: queries, parameters: nil)
     }
-    static func deleteNewEndpoint(endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
+    static func deleteNewEndpoint(_ endpoint: String, queries: [String: String]? = nil) -> SignalProducer<T, ApiError> {
         return requestForGate(endpoint, method: .DELETE, queries: queries, parameters: nil)
     }
     
-    static func upload(endpoint: String, uploadData: [String: String]) -> SignalProducer<Float, NSError> {
+    static func upload(_ endpoint: String, uploadData: [String: String]) -> SignalProducer<Float, NSError> {
         return SignalProducer<Float, NSError> { sink, disposable in
             let mutableURLRequest = buildURLRequest(endpoint, method: .POST, queries: nil)
             let multipartFormData = { (data: MultipartFormData) in
@@ -111,7 +112,7 @@ class ApiService<T: Mappable> {
         }
     }
     
-    static func uploadForGate(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
+    static func uploadForGate(_ endpoint: String, multipartFormData: (MultipartFormData) -> Void) -> SignalProducer<Void, ApiError> {
         return SignalProducer { sink, disposable in
             let mutableURLRequest = buildURLRequestForGate(endpoint, method: .POST, queries: nil)
             
@@ -149,7 +150,7 @@ class ApiService<T: Mappable> {
             })
     }
     
-    static func upload(endpoint: String, multipartFormData: MultipartFormData -> Void) -> SignalProducer<Void, ApiError> {
+    static func upload(_ endpoint: String, multipartFormData: (MultipartFormData) -> Void) -> SignalProducer<Void, ApiError> {
         return SignalProducer { sink, disposable in
             let mutableURLRequest = buildURLRequest(endpoint, method: .POST, queries: nil)
             
@@ -185,17 +186,17 @@ class ApiService<T: Mappable> {
             })
     }
     
-    private static func buildURLRequest(endpoint: String, method: Alamofire.Method, queries: [String: String]?) -> NSMutableURLRequest {
+    fileprivate static func buildURLRequest(_ endpoint: String, method: Alamofire.Method, queries: [String: String]?) -> NSMutableURLRequest {
         var queryStr = ""
         if let queries = queries {
-            for (index, (key, value)) in queries.enumerate() {
+            for (index, (key, value)) in queries.enumerated() {
                 queryStr += index == 0 ? "?" : "&"
                 queryStr += "\(key)=\(value.escaped)"
             }
         }
         
-        let URL = NSURL(string: "https://\(host)/\(endpoint)\(queryStr)")!
-        let mutableURLRequest = NSMutableURLRequest(URL: URL)
+        let URL = Foundation.URL(string: "https://\(host)/\(endpoint)\(queryStr)")!
+        let mutableURLRequest = NSMutableURLRequest(url: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
         if let token = Defaults[.SessionToken] {
@@ -205,17 +206,17 @@ class ApiService<T: Mappable> {
         
         return mutableURLRequest
     }
-    private static func buildURLRequestForGate(endpoint: String, method: Alamofire.Method, queries: [String: String]?) -> NSMutableURLRequest {
+    fileprivate static func buildURLRequestForGate(_ endpoint: String, method: Alamofire.Method, queries: [String: String]?) -> NSMutableURLRequest {
         var queryStr = ""
         if let queries = queries {
-            for (index, (key, value)) in queries.enumerate() {
+            for (index, (key, value)) in queries.enumerated() {
                 queryStr += index == 0 ? "?" : "&"
                 queryStr += "\(key)=\(value.escaped)"
             }
         }
-        let URL = NSURL(string: "https://mapi.dscvr.com/\(endpoint)\(queryStr)")!
+        let URL = Foundation.URL(string: "https://mapi.dscvr.com/\(endpoint)\(queryStr)")!
         
-        let mutableURLRequest = NSMutableURLRequest(URL: URL)
+        let mutableURLRequest = NSMutableURLRequest(url: URL)
         mutableURLRequest.HTTPMethod = method.rawValue
         
         if let token = Defaults[.SessionToken] {
@@ -225,7 +226,7 @@ class ApiService<T: Mappable> {
         return mutableURLRequest
     }
     
-    private static func request(endpoint: String, method: Alamofire.Method, queries: [String: String]? = nil, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
+    fileprivate static func request(_ endpoint: String, method: Alamofire.Method, queries: [String: String]? = nil, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return SignalProducer { sink, disposable in
             if !Reachability.connectedToNetwork() {
                 sink.sendFailed(ApiError(endpoint: endpoint, timeout: false, status: nil, message: "Offline", error: nil))
@@ -256,8 +257,8 @@ class ApiService<T: Mappable> {
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode ?? -1, message: error.description, error: error)
                         sink.sendFailed(apiError)
                     } else {
-                        if let data = data where data.length > 0 {
-                            if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
+                        if let data = data, data.length > 0 {
+                            if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding), jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
                                     
@@ -295,7 +296,7 @@ class ApiService<T: Mappable> {
             })
     }
     
-    private static func requestForGate(endpoint: String, method: Alamofire.Method, queries: [String: String]? = nil, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
+    fileprivate static func requestForGate(_ endpoint: String, method: Alamofire.Method, queries: [String: String]? = nil, parameters: [String: AnyObject]?) -> SignalProducer<T, ApiError> {
         return SignalProducer { sink, disposable in
             if !Reachability.connectedToNetwork() {
                 sink.sendFailed(ApiError(endpoint: endpoint, timeout: false, status: nil, message: "Offline", error: nil))
@@ -326,8 +327,8 @@ class ApiService<T: Mappable> {
                         let apiError = ApiError(endpoint: endpoint, timeout: error.code == NSURLErrorTimedOut, status: response?.statusCode ?? -1, message: error.description, error: error)
                         sink.sendFailed(apiError)
                     } else {
-                        if let data = data where data.length > 0 {
-                            if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding) where jsonStr != "[]" {
+                        if let data = data, data.length > 0 {
+                            if let jsonStr = String(data: data, encoding: NSUTF8StringEncoding), jsonStr != "[]" {
                                 do {
                                     let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
                                     
@@ -363,5 +364,6 @@ class ApiService<T: Mappable> {
                     Answers.logCustomEventWithName("Error", customAttributes: ["type": "api", "error": error.message])
                 }
             })
-    }
+
+    }*/ 
 }

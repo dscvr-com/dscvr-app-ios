@@ -14,8 +14,8 @@ protocol UniqueView {
 
 class NavigationController: UINavigationController {
     
-    override func pushViewController(viewController: UIViewController, animated: Bool) {
-        if let new = viewController as? UniqueView, old = viewControllers.last as? UniqueView where new.uniqueIdentifier == old.uniqueIdentifier {
+    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
+        if let new = viewController as? UniqueView, let old = viewControllers.last as? UniqueView, new.uniqueIdentifier == old.uniqueIdentifier {
             return
         }
         super.pushViewController(viewController, animated: animated)

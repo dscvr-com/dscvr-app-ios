@@ -10,10 +10,10 @@ import UIKit
 
 extension UIImage {
     
-    enum Dimension { case Width, Height }
+    enum Dimension { case width, height }
     
-    func resized(dimension: Dimension, value: CGFloat) -> UIImage {
-        let resizeWidth = dimension == .Width
+    func resized(_ dimension: Dimension, value: CGFloat) -> UIImage {
+        let resizeWidth = dimension == .width
         let oldValue = resizeWidth ? size.width : size.height
         let scale = value / CGFloat(oldValue)
         let otherValue = (resizeWidth ? size.height : size.width) * scale
@@ -21,8 +21,8 @@ extension UIImage {
         let newSizeAsInt = CGSize(width: Int(newSize.width), height: Int(newSize.height))
         
         UIGraphicsBeginImageContextWithOptions(newSizeAsInt, false, 1.0)
-        drawInRect(CGRect(origin: CGPointZero, size: newSizeAsInt))
-        let newImage = UIGraphicsGetImageFromCurrentImageContext();
+        draw(in: CGRect(origin: CGPoint.zero, size: newSizeAsInt))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext();
         return newImage;
     }
@@ -34,21 +34,21 @@ extension UIImage {
     /// - parameter w: Width of the texture subface, between 0 and 1.
     /// - parameter d: Width of the texture subface, in pixels.
     /// - returns: The generated subface, as UIImage.
-    func subface(x: CGFloat, y: CGFloat, w: CGFloat, d: Int) -> UIImage {
+    func subface(_ x: CGFloat, y: CGFloat, w: CGFloat, d: Int) -> UIImage {
         let targetSize = CGSize(width: d, height: d)
         
         let sourceArea = CGRect(x: size.width * x, y: size.height * y, width: size.width * w, height: size.height * w)
-        let imagePart = CGImageCreateWithImageInRect(self.CGImage!, sourceArea)!
+        let imagePart = self.cgImage!.cropping(to: sourceArea)!
         
         UIGraphicsBeginImageContextWithOptions(targetSize, false, 1.0)
-        UIImage(CGImage: imagePart).drawInRect(CGRect(origin: CGPointZero, size: targetSize))
-        let subface = UIGraphicsGetImageFromCurrentImageContext()
+        UIImage(cgImage: imagePart).draw(in: CGRect(origin: CGPoint.zero, size: targetSize))
+        let subface = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
         return subface;
     }
     
-    func centeredCropWithSize(targetSize: CGSize) -> UIImage {
+    func centeredCropWithSize(_ targetSize: CGSize) -> UIImage {
         let widthRatio = targetSize.width / size.width
         let heightRatio = targetSize.height / size.height
         
@@ -65,8 +65,8 @@ extension UIImage {
         let rect = CGRect(origin: origin, size: newSize)
         
         UIGraphicsBeginImageContextWithOptions(targetSize, false, scale)
-        drawInRect(rect)
-        let croppedImage = UIGraphicsGetImageFromCurrentImageContext()
+        draw(in: rect)
+        let croppedImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
         return croppedImage
@@ -74,57 +74,57 @@ extension UIImage {
     
     func fixedOrientation() -> UIImage {
         
-        if imageOrientation == UIImageOrientation.Up {
+        if imageOrientation == UIImageOrientation.up {
             return self
         }
         
-        var transform: CGAffineTransform = CGAffineTransformIdentity
+        var transform: CGAffineTransform = CGAffineTransform.identity
         
         switch imageOrientation {
-        case UIImageOrientation.Down, UIImageOrientation.DownMirrored:
-            transform = CGAffineTransformTranslate(transform, size.width, size.height)
-            transform = CGAffineTransformRotate(transform, CGFloat(M_PI))
+        case UIImageOrientation.down, UIImageOrientation.downMirrored:
+            transform = transform.translatedBy(x: size.width, y: size.height)
+            transform = transform.rotated(by: CGFloat(M_PI))
             break
-        case UIImageOrientation.Left, UIImageOrientation.LeftMirrored:
-            transform = CGAffineTransformTranslate(transform, size.width, 0)
-            transform = CGAffineTransformRotate(transform, CGFloat(M_PI_2))
+        case UIImageOrientation.left, UIImageOrientation.leftMirrored:
+            transform = transform.translatedBy(x: size.width, y: 0)
+            transform = transform.rotated(by: CGFloat(M_PI_2))
             break
-        case UIImageOrientation.Right, UIImageOrientation.RightMirrored:
-            transform = CGAffineTransformTranslate(transform, 0, size.height)
-            transform = CGAffineTransformRotate(transform, CGFloat(-M_PI_2))
+        case UIImageOrientation.right, UIImageOrientation.rightMirrored:
+            transform = transform.translatedBy(x: 0, y: size.height)
+            transform = transform.rotated(by: CGFloat(-M_PI_2))
             break
-        case UIImageOrientation.Up, UIImageOrientation.UpMirrored:
+        case UIImageOrientation.up, UIImageOrientation.upMirrored:
             break
         }
         
         switch imageOrientation {
-        case UIImageOrientation.UpMirrored, UIImageOrientation.DownMirrored:
-            CGAffineTransformTranslate(transform, size.width, 0)
-            CGAffineTransformScale(transform, -1, 1)
+        case UIImageOrientation.upMirrored, UIImageOrientation.downMirrored:
+            transform.translatedBy(x: size.width, y: 0)
+            transform.scaledBy(x: -1, y: 1)
             break
-        case UIImageOrientation.LeftMirrored, UIImageOrientation.RightMirrored:
-            CGAffineTransformTranslate(transform, size.height, 0)
-            CGAffineTransformScale(transform, -1, 1)
-        case UIImageOrientation.Up, UIImageOrientation.Down, UIImageOrientation.Left, UIImageOrientation.Right:
+        case UIImageOrientation.leftMirrored, UIImageOrientation.rightMirrored:
+            transform.translatedBy(x: size.height, y: 0)
+            transform.scaledBy(x: -1, y: 1)
+        case UIImageOrientation.up, UIImageOrientation.down, UIImageOrientation.left, UIImageOrientation.right:
             break
         }
         
-        let ctx: CGContextRef = CGBitmapContextCreate(nil, Int(size.width), Int(size.height), CGImageGetBitsPerComponent(CGImage), 0, CGImageGetColorSpace(CGImage), CGImageAlphaInfo.PremultipliedLast.rawValue)!
+        let ctx: CGContext = CGContext(data: nil, width: Int(size.width), height: Int(size.height), bitsPerComponent: self.cgImage!.bitsPerComponent, bytesPerRow: 0, space: self.cgImage!.colorSpace!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
         
-        CGContextConcatCTM(ctx, transform)
+        ctx.concatenate(transform)
         
         switch imageOrientation {
-        case UIImageOrientation.Left, UIImageOrientation.LeftMirrored, UIImageOrientation.Right, UIImageOrientation.RightMirrored:
-            CGContextDrawImage(ctx, CGRectMake(0, 0, size.height, size.width), CGImage)
+        case UIImageOrientation.left, UIImageOrientation.leftMirrored, UIImageOrientation.right, UIImageOrientation.rightMirrored:
+            ctx.draw(self.cgImage!, in: CGRect(x: 0, y: 0, width: size.height, height: size.width))
             break
         default:
-            CGContextDrawImage(ctx, CGRectMake(0, 0, size.width, size.height), CGImage)
+            ctx.draw(self.cgImage!, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
             break
         }
         
-        let cgImage: CGImageRef = CGBitmapContextCreateImage(ctx)!
+        let cgImage: CGImage = ctx.makeImage()!
         
-        return UIImage(CGImage: cgImage)
+        return UIImage(cgImage: cgImage)
     }
     
 }
@@ -133,7 +133,7 @@ extension UIEdgeInsets {
     var inverse: UIEdgeInsets {
         return UIEdgeInsets(top: -top, left: -left, bottom: -bottom, right: -right)
     }
-    func apply(rect: CGRect) -> CGRect {
+    func apply(_ rect: CGRect) -> CGRect {
         return UIEdgeInsetsInsetRect(rect, self)
     }
 }
@@ -141,10 +141,12 @@ extension UIEdgeInsets {
 extension UITableViewCell {
     var tableView: UITableView? {
         get {
-            for var view = self.superview; view != nil; view = view!.superview {
+            var view = self.superview
+            while(view != nil) {
                 if view! is UITableView {
                     return view as? UITableView
                 }
+                view = view?.superview
             }
             return nil
         }
@@ -160,19 +162,15 @@ class PlaceholderImageView: UIImageView {
         }
     }
     
-    func setImageWithURLString(urlStr: String) {
-        if let url = NSURL(string: urlStr) {
-            if self.placeholderImage != nil {
-                self.kf_setImageWithURL(url, placeholderImage: self.placeholderImage)
-            } else {
-                self.kf_setImageWithURL(url)
-            }
+    func setImageWithURLString(_ urlStr: String) {
+        if let url = URL(string: urlStr) {
+            self.kf_setImage(with: url)
         }
     }
 }
 
 class UIShortPressGestureRecognizer: UILongPressGestureRecognizer {
-    override init(target: AnyObject?, action: Selector) {
+    override init(target: Any?, action: Selector?) {
         super.init(target: target, action: action)
         
         minimumPressDuration = 0.05

@@ -11,8 +11,8 @@ import ObjectMapper
 
 struct Hashtag: Model {
     var ID: UUID
-    var createdAt: NSDate
-    var updatedAt: NSDate
+    var createdAt: Date
+    var updatedAt: Date
     var name: String
     var previewAssetID: UUID
     var isFollowed: Bool
@@ -20,8 +20,8 @@ struct Hashtag: Model {
     static func newInstance() -> Hashtag {
         return Hashtag(
             ID: uuid(),
-            createdAt: NSDate(),
-            updatedAt: NSDate(),
+            createdAt: Date(),
+            updatedAt: Date(),
             name: "",
             previewAssetID: "",
             isFollowed: false
@@ -32,7 +32,7 @@ struct Hashtag: Model {
 
 extension Hashtag: Mappable {
     
-    init?(_ map: Map){
+    init?(map: Map){
         self = Hashtag.newInstance()
     }
     
@@ -57,7 +57,7 @@ extension Hashtag: SQLiteModel {
         return HashtagTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> Hashtag {
+    static func fromSQL(_ row: SQLiteRow) -> Hashtag {
         return Hashtag(
             ID: row[HashtagSchema.ID],
             createdAt: row[HashtagSchema.createdAt],

@@ -7,18 +7,18 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import SQLite
 import SwiftyUserDefaults
 
 class FeedOptographCollectionViewModel: OptographCollectionViewModel {
     
-    private var refreshTimer: NSTimer?
+    fileprivate var refreshTimer: Timer?
     
     let results = MutableProperty<TableViewResults<Optograph>>(.empty())
     let isActive = MutableProperty<Bool>(false)
     
-    private let refreshNotification = NotificationSignal<Void>()
+    fileprivate let refreshNotification = NotificationSignal<Void>()
     
     init() {
         
@@ -27,10 +27,10 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .order(OptographTable[OptographSchema.createdAt].asc)
         
         refreshNotification.signal
-            .flatMap(.Latest) { _ in
-                DatabaseService.query(.Many, query: query)
+            .flatMap(.latest) { _ in
+                DatabaseService.query(.many, query: query)
                     .observeOnUserInteractive()
-                    .on(next: { row in
+                    .on(value: { row in
                         Models.optographs.touch(Optograph.fromSQL(row))
                     })
                     .map(Optograph.fromSQL)
@@ -40,7 +40,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             }   
             .observeOnMain()
             .map {self.results.value.merge($0, deleteOld: false) }
-            .observeNext { self.results.value = $0 }
+            .observeValues { self.results.value = $0 }
         
 //        refreshNotification.signal
 //            .takeWhile { _ in Reachability.connectedToNetwork() }
@@ -67,7 +67,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
 //        }
  
         
-        isActive.producer.skipRepeats().startWithNext { [weak self] isActive in
+        isActive.producer.skipRepeats().startWithValues { [weak self] isActive in
             if isActive {
                 self?.refresh()
             } else {
@@ -76,8 +76,8 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         }
         
         PipelineService.stitchingStatus.producer
-            .startWithNext { [weak self] status in
-                if case .StitchingFinished(_) = status {
+            .startWithValues { [weak self] status in
+                if case .stitchingFinished(_) = status {
                     self?.refresh()
                 }
         }

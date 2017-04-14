@@ -34,19 +34,19 @@ class MotorControl: NSObject, CBPeripheralDelegate {
         self.executing = false
         super.init()
         for characteristic in service.characteristics! {
-            if characteristic.UUID == MotorControl.BLECharacteristicResponseUUID {
-                peripheral.setNotifyValue(true, forCharacteristic: characteristic as CBCharacteristic)
+            if characteristic.uuid == MotorControl.BLECharacteristicResponseUUID {
+                peripheral.setNotifyValue(true, for: characteristic as CBCharacteristic)
             }
         }
         peripheral.delegate = self
     }
 
-    func sendCommand(opCode: UInt8, data: [UInt8]) {
+    func sendCommand(_ opCode: UInt8, data: [UInt8]) {
         var command : [UInt8] = [0xFE]
         let lengthOfData = UInt8(data.count)
         command.append(lengthOfData)
         command.append(opCode)
-        command.appendContentsOf(data)
+        command.append(contentsOf: data)
         
         var checksum = UInt32(0)
         for c in command {
@@ -60,15 +60,15 @@ class MotorControl: NSObject, CBPeripheralDelegate {
         for characteristic in service.characteristics! {
             let thisCharacteristic = characteristic as CBCharacteristic
             // check for data characteristic
-            if thisCharacteristic.UUID == MotorControl.BLECharacteristicUUID {
-                self.peripheral.writeValue(Data, forCharacteristic: thisCharacteristic, type: CBCharacteristicWriteType.WithoutResponse)
+            if thisCharacteristic.uuid == MotorControl.BLECharacteristicUUID {
+                self.peripheral.writeValue(Data as Data, for: thisCharacteristic, type: CBCharacteristicWriteType.withoutResponse)
             }
         }
     }
     
-    func moveX(steps: Int32, speed: Int32) {
+    func moveX(_ steps: Int32, speed: Int32) {
         var command = toByteArray(steps)
-        command = command.reverse()
+        command = command.reversed()
         command.append(UInt8((speed >> 8) & 0xFF))
         command.append(UInt8(speed & 0xFF))
         command.append(0x00)
@@ -76,9 +76,9 @@ class MotorControl: NSObject, CBPeripheralDelegate {
         self.executing = true
     }
     
-    func moveY(steps: Int32, speed: Int32) {
+    func moveY(_ steps: Int32, speed: Int32) {
         var command = toByteArray(steps)
-        command = command.reverse()
+        command = command.reversed()
         command.append(UInt8((speed >> 8) & 0xFF))
         command.append(UInt8(speed & 0xFF))
         command.append(0x00)
@@ -86,17 +86,17 @@ class MotorControl: NSObject, CBPeripheralDelegate {
         self.executing = true
     }
 
-    func moveXandY(stepsX: Int32, speedX: Int32, stepsY: Int32, speedY: Int32) {
+    func moveXandY(_ stepsX: Int32, speedX: Int32, stepsY: Int32, speedY: Int32) {
         var command = toByteArray(stepsX)
-        command = command.reverse()
+        command = command.reversed()
         command.append(UInt8((speedX >> 8) & 0xFF))
         command.append(UInt8(speedX & 0xFF))
         var commandYpart = toByteArray(stepsY)
-        commandYpart = commandYpart.reverse()
+        commandYpart = commandYpart.reversed()
         commandYpart.append(UInt8((speedY >> 8) & 0xFF))
         commandYpart.append(UInt8(speedY & 0xFF))
         commandYpart.append(0x00)
-        command.appendContentsOf(commandYpart)
+        command.append(contentsOf: commandYpart)
         sendCommand(0x03, data: command)
         self.executing = true
     }
@@ -106,24 +106,25 @@ class MotorControl: NSObject, CBPeripheralDelegate {
         self.executing = true
     }
     
-    func toByteArray<T>(var value: T) -> [UInt8] {
-        return withUnsafePointer(&value) {
-            Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>($0), count: sizeof(T)))
-        }
+    func toByteArray<T>(_ value: T) -> [UInt8] {
+        var value = value
+        return withUnsafePointer(to: &value) {
+            Array(UnsafeBufferPointer(start: $0, count: MemoryLayout<T>.size)) as Any
+        } as! [UInt8]
     }
     
     
-    func fromByteArray<T>(value: [UInt8], _: T.Type) -> T {
+    func fromByteArray<T>(_ value: [UInt8], _: T.Type) -> T {
         return value.withUnsafeBufferPointer {
-            return UnsafePointer<T>($0.baseAddress).memory
+            return UnsafeRawPointer($0.baseAddress!).load(as: T.self)
         }
     }
     
     
-    func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
-        if characteristic.UUID.isEqual(MotorControl.BLECharacteristicResponseUUID) {
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        if characteristic.uuid.isEqual(MotorControl.BLECharacteristicResponseUUID) {
             let data = characteristic.value
-            let numberOfBytes = data?.length
+            let numberOfBytes = data!.count
             
             // TODO: Check if this is actually the move command. 
             if (numberOfBytes != 20) {
@@ -131,8 +132,8 @@ class MotorControl: NSObject, CBPeripheralDelegate {
                 return
             }
             
-            var byteArray = [UInt8](count: numberOfBytes!, repeatedValue: 0)
-            data?.getBytes(&byteArray, length: numberOfBytes!)
+            var byteArray = [UInt8](repeating: 0, count: numberOfBytes)
+            (data as NSData?)?.getBytes(&byteArray, length: numberOfBytes)
             
             motorPositionX = fromByteArray([byteArray[10], byteArray[9], byteArray[8], byteArray[7]], Int.self)
             motorPositionY = fromByteArray([byteArray[6], byteArray[5], byteArray[4], byteArray[3]], Int.self)

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 import KMPlaceholderTextView
 import Mixpanel
@@ -21,31 +21,31 @@ import SpriteKit
 
 class SaveViewController: UIViewController, RedNavbar {
     
-    private let viewModel: SaveViewModel
+    fileprivate let viewModel: SaveViewModel
     
-    private var touchRotationSource: TouchRotationSource!
-    private var renderDelegate: SphereRenderDelegate!
-    private var scnView: SCNView!
+    fileprivate var touchRotationSource: TouchRotationSource!
+    fileprivate var renderDelegate: SphereRenderDelegate!
+    fileprivate var scnView: SCNView!
     
     // subviews
-    private let scrollView = ScrollView()
-    private let blurView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .Dark)
+    fileprivate let scrollView = ScrollView()
+    fileprivate let blurView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .dark)
         return UIVisualEffectView(effect: blurEffect)
     }()
-    private let dragTextView = UILabel()
-    private let dragIconView = UILabel()
-    private let locationView: LocationView
-    private let textInputView = UITextView()
-    private let textPlaceholderView = UILabel()
-    private let shareBackgroundView = UIView()
-    private let facebookSocialButton = SocialButton()
-    private let twitterSocialButton = SocialButton()
-    private let instagramSocialButton = SocialButton()
-    private let moreSocialButton = SocialButton()
-    private var placeholderImage: SKTexture?
+    fileprivate let dragTextView = UILabel()
+    fileprivate let dragIconView = UILabel()
+    fileprivate let locationView: LocationView
+    fileprivate let textInputView = UITextView()
+    fileprivate let textPlaceholderView = UILabel()
+    fileprivate let shareBackgroundView = UIView()
+    fileprivate let facebookSocialButton = SocialButton()
+    fileprivate let twitterSocialButton = SocialButton()
+    fileprivate let instagramSocialButton = SocialButton()
+    fileprivate let moreSocialButton = SocialButton()
+    fileprivate var placeholderImage: SKTexture?
     
-    private let readyNotification = NotificationSignal<Void>()
+    fileprivate let readyNotification = NotificationSignal<Void>()
     
     required init(recorderCleanup: SignalProducer<UIImage, NoError>) {
         
@@ -58,23 +58,23 @@ class SaveViewController: UIViewController, RedNavbar {
         super.init(nibName: nil, bundle: nil)
         
         recorderCleanup
-            .startOn(QueueScheduler(queue: dispatch_queue_create("recorderQueue", DISPATCH_QUEUE_SERIAL)))
+            .start(on: QueueScheduler(qos: .background, name: "RecorderQueue", targeting: nil))
             .on(event: { event in
                 placeholderSink.action(event)
             })
             .map { SKTexture(image: $0) }
             .observeOnMain()
             .on(
-                next: { [weak self] image in
+                completed: { [weak self] in
+                    print("stitching finished")
+                    self?.viewModel.stitcherFinished.value = true
+                },
+                value: { [weak self] image in
                     if let renderDelegate = self?.renderDelegate {
                         renderDelegate.texture = image
                     } else {
                         self?.placeholderImage = image
                     }
-                },
-                completed: { [weak self] in
-                    print("stitching finished")
-                    self?.viewModel.stitcherFinished.value = true
                 }
             )
             .start()
@@ -99,17 +99,17 @@ class SaveViewController: UIViewController, RedNavbar {
         var publicButton = UIImage(named: "privacy_world")
         var cancelButton = UIImage(named: "camera_back_button")
         
-        privateButton = privateButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        publicButton = publicButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-        cancelButton = cancelButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        privateButton = privateButton?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        publicButton = publicButton?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        cancelButton = cancelButton?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: cancelButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(self.cancel))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: cancelButton, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.cancel))
         
-        view.backgroundColor = .whiteColor()
+        view.backgroundColor = .white
         
         let scnFrame = CGRect(x: 0, y: 0, width: view.frame.width, height: 0.46 * view.frame.width)
         if #available(iOS 9.0, *) {
-            scnView = SCNView(frame: scnFrame, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+            scnView = SCNView(frame: scnFrame, options: [SCNView.Option.preferredRenderingAPI.rawValue as String: SCNRenderingAPI.openGLES2.rawValue])
         } else {
             scnView = SCNView(frame: scnFrame)
         }
@@ -124,8 +124,8 @@ class SaveViewController: UIViewController, RedNavbar {
         
         scnView.scene = renderDelegate.scene
         scnView.delegate = renderDelegate
-        scnView.backgroundColor = .blackColor()
-        scnView.playing = UIDevice.currentDevice().deviceType != .Simulator
+        scnView.backgroundColor = .black
+        scnView.isPlaying = UIDevice.current.deviceType != .simulator
         scrollView.addSubview(scnView)
         
         renderDelegate.texture = placeholderImage
@@ -134,7 +134,7 @@ class SaveViewController: UIViewController, RedNavbar {
         
         let gradientMaskLayer = CAGradientLayer()
         gradientMaskLayer.frame = blurView.frame
-        gradientMaskLayer.colors = [UIColor.blackColor().CGColor, UIColor.clearColor().CGColor, UIColor.clearColor().CGColor, UIColor.blackColor().CGColor]
+        gradientMaskLayer.colors = [UIColor.black.cgColor, UIColor.clear.cgColor, UIColor.clear.cgColor, UIColor.black.cgColor]
         gradientMaskLayer.locations = [0.0, 0.4, 0.6, 1.0]
         gradientMaskLayer.startPoint = CGPoint(x: 0, y: 0.5)
         gradientMaskLayer.endPoint = CGPoint(x: 1, y: 0.5)
@@ -145,94 +145,54 @@ class SaveViewController: UIViewController, RedNavbar {
         let dragText = "Move the image to select your favorite spot"
         let dragTextWidth = calcTextWidth(dragText, withFont: .displayOfSize(13, withType: .Light))
         dragTextView.text = dragText
-        dragTextView.textAlignment = .Center
+        dragTextView.textAlignment = .center
         dragTextView.font = UIFont.displayOfSize(13, withType: .Light)
-        dragTextView.textColor = .whiteColor()
-        dragTextView.layer.shadowColor = UIColor.blackColor().CGColor
+        dragTextView.textColor = .white
+        dragTextView.layer.shadowColor = UIColor.black.cgColor
         dragTextView.layer.shadowRadius = 5
-        dragTextView.layer.shadowOffset = CGSizeZero
+        dragTextView.layer.shadowOffset = CGSize.zero
         dragTextView.layer.shadowOpacity = 1
         dragTextView.layer.masksToBounds = false
         dragTextView.layer.shouldRasterize = true
         dragTextView.frame = CGRect(x: view.frame.width / 2 - dragTextWidth / 2 + 15, y: 0.46 * view.frame.width - 40, width: dragTextWidth, height: 20)
         scrollView.addSubview(dragTextView)
         
-        dragIconView.text = String.iconWithName(.DragImage)
-        dragIconView.font = UIFont.iconOfSize(20)
-        dragIconView.textColor = .whiteColor()
+        // TODO: Icomoon
+        //dragIconView.text = String.iconWithName(.DragImage)
+        //dragIconView.font = UIFont.iconOfSize(20)
+        dragIconView.textColor = .white
         dragIconView.frame = CGRect(x: -30, y: 0, width: 20, height: 20)
         dragTextView.addSubview(dragIconView)
         
         locationView.didSelectLocation = { [weak self] placeID in
             self?.viewModel.placeID.value = placeID
         }
-        locationView.hidden = true
+        locationView.isHidden = true
         scrollView.addSubview(locationView)
         
         textPlaceholderView.font = UIFont.textOfSize(12, withType: .Regular)
         textPlaceholderView.text = "Tell something about what you see..."
         textPlaceholderView.textColor = UIColor.DarkGrey.alpha(0.4)
-        textPlaceholderView.hidden = true
+        textPlaceholderView.isHidden = true
         textPlaceholderView.rac_hidden <~ viewModel.text.producer.map(isNotEmpty)
         textInputView.addSubview(textPlaceholderView)
         
         textInputView.font = UIFont.textOfSize(12, withType: .Regular)
         textInputView.textColor = UIColor(0x4d4d4d)
         textInputView.textContainer.lineFragmentPadding = 0 // remove left padding
-        textInputView.textContainerInset = UIEdgeInsetsZero // remove top padding
-        textInputView.returnKeyType = .Done
+        textInputView.textContainerInset = UIEdgeInsets.zero // remove top padding
+        textInputView.returnKeyType = .done
         textInputView.delegate = self
-        textInputView.hidden = true
+        textInputView.isHidden = true
         textInputView.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 14, right: 0)
         textInputView.textContainerInset = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16)
-        textInputView.rac_textSignal().toSignalProducer().startWithNext { [weak self] val in
-            self?.viewModel.text.value = val as! String
-        }
+        // TODO
+        //textInputView.rac_text.toSignalProducer().startWithNext { [weak self] val in
+        //    self?.viewModel.text.value = val as! String
+        //}
         textInputView.removeConstraints(textInputView.constraints)
         scrollView.addSubview(textInputView)
     
-        shareBackgroundView.backgroundColor = UIColor(0xfbfbfb)
-        shareBackgroundView.layer.borderWidth = 1
-        shareBackgroundView.hidden = true
-        shareBackgroundView.layer.borderColor = UIColor(0xe6e6e6).CGColor
-        scrollView.addSubview(shareBackgroundView)
-        
-        facebookSocialButton.text = "Facebook"
-        facebookSocialButton.color = UIColor(0x3b5998)
-        facebookSocialButton.hidden = true
-        facebookSocialButton.userInteractionEnabled = true
-        facebookSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapFacebookSocialButton)))
-        shareBackgroundView.addSubview(facebookSocialButton)
-        
-        viewModel.postFacebook.producer.startWithNext { [weak self] toggled in
-            self?.facebookSocialButton.state = toggled ? .Selected : .Unselected
-            self?.facebookSocialButton.icon2 = toggled ? UIImage(named:"facebook_save_active")! : UIImage(named:"facebook_save_inactive")!
-        }
-        
-        //twitterSocialButton.icon = String.iconWithName(.Twitter)
-        twitterSocialButton.text = "Twitter"
-        twitterSocialButton.color = UIColor(0x55acee)
-        twitterSocialButton.hidden = true
-        twitterSocialButton.userInteractionEnabled = true
-        twitterSocialButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SaveViewController.tapTwitterSocialButton)))
-        shareBackgroundView.addSubview(twitterSocialButton)
-        
-        viewModel.postTwitter.producer.startWithNext { [weak self] toggled in
-            self?.twitterSocialButton.state = toggled ? .Selected : .Unselected
-            self?.twitterSocialButton.icon2 = toggled ? UIImage(named:"twitter_save_active")! : UIImage(named:"twitter_save_inactive")!
-        }
-        instagramSocialButton.text = "Instagram"
-        instagramSocialButton.color = UIColor(0x9b6954)
-        instagramSocialButton.userInteractionEnabled = true
-        
-        viewModel.postInstagram.producer.startWithNext { [weak self] toggled in
-            self?.instagramSocialButton.state = toggled ? .Selected : .Unselected
-            self?.instagramSocialButton.icon2 = toggled ? UIImage(named:"instagram_save_active")! : UIImage(named:"instagram_save_inactive")!
-        }
-        
-        moreSocialButton.icon2 = UIImage(named:"more_save_active")!
-        moreSocialButton.text = "More"
-        
         scrollView.scnView = scnView
         view.addSubview(scrollView)
         
@@ -240,7 +200,7 @@ class SaveViewController: UIViewController, RedNavbar {
         tapGestureRecognizer.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGestureRecognizer)
         
-        viewModel.isReadyForSubmit.producer.startWithNext { [weak self] isReady in
+        viewModel.isReadyForSubmit.producer.startWithValues { [weak self] isReady in
             self?.tabController!.cameraButton.loading = !isReady
             
 //            if isReady {
@@ -251,7 +211,7 @@ class SaveViewController: UIViewController, RedNavbar {
         
         viewModel.isReadyForStitching.producer
             .filter(isTrue)
-            .startWithNext { [weak self] _ in
+            .startWithValues { [weak self] _ in
                 if let strongSelf = self {
                     PipelineService.stitch(strongSelf.viewModel.optographBox.model.ID)
                 }
@@ -274,40 +234,40 @@ class SaveViewController: UIViewController, RedNavbar {
         let contentHeight = 0.46 * view.frame.width + 85 + 68 + 120 + 126
         let scrollEnabled = contentHeight > view.frame.height
         scrollView.contentSize = CGSize(width: view.frame.width, height: scrollEnabled ? contentHeight : view.frame.height)
-        scrollView.scrollEnabled = scrollEnabled
+        scrollView.isScrollEnabled = scrollEnabled
         
         scrollView.fillSuperview()
-        locationView.alignAndFillWidth(align: .UnderCentered, relativeTo: scnView, padding: 0, height: 68)
-        textInputView.alignAndFillWidth(align: .UnderCentered, relativeTo: locationView, padding: 0, height: 85)
-        textPlaceholderView.anchorInCorner(.TopLeft, xPad: 16, yPad: 7, width: 250, height: 20)
+        locationView.alignAndFillWidth(align: .underCentered, relativeTo: scnView, padding: 0, height: 68)
+        textInputView.alignAndFillWidth(align: .underCentered, relativeTo: locationView, padding: 0, height: 85)
+        textPlaceholderView.anchorInCorner(.topLeft, xPad: 16, yPad: 7, width: 250, height: 20)
         
         if scrollEnabled {
-            shareBackgroundView.align(.UnderCentered, relativeTo: textInputView, padding: 0, width: view.frame.width + 2, height: 120)
+            shareBackgroundView.align(.underCentered, relativeTo: textInputView, padding: 0, width: view.frame.width + 2, height: 120)
         } else {
-            shareBackgroundView.anchorInCorner(.BottomLeft, xPad: -1, yPad: 126, width: view.frame.width + 2, height: 120)
+            shareBackgroundView.anchorInCorner(.bottomLeft, xPad: -1, yPad: 126, width: view.frame.width + 2, height: 120)
         }
         
         let socialPadX = (view.frame.width - 2 * 120) / 3
-        facebookSocialButton.anchorInCorner(.TopLeft, xPad: socialPadX, yPad: 10, width: 120, height: 23)
-        twitterSocialButton.anchorInCorner(.TopRight, xPad: socialPadX, yPad: 10, width: 120, height: 23)
-        instagramSocialButton.anchorInCorner(.BottomLeft, xPad: socialPadX, yPad: 30, width: 120, height: 23)
-        moreSocialButton.anchorInCorner(.BottomRight, xPad: socialPadX, yPad: 30, width: 120, height: 23)
+        facebookSocialButton.anchorInCorner(.topLeft, xPad: socialPadX, yPad: 10, width: 120, height: 23)
+        twitterSocialButton.anchorInCorner(.topRight, xPad: socialPadX, yPad: 10, width: 120, height: 23)
+        instagramSocialButton.anchorInCorner(.bottomLeft, xPad: socialPadX, yPad: 30, width: 120, height: 23)
+        moreSocialButton.anchorInCorner(.bottomRight, xPad: socialPadX, yPad: 30, width: 120, height: 23)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SaveViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SaveViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SaveViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         updateNavbarAppear()
         
         navigationController?.setNavigationBarHidden(false, animated: false)
-        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
+        UIApplication.shared.setStatusBarHidden(true, with: .none)
         
         navigationController?.navigationBar.titleTextAttributes = [
             NSFontAttributeName: UIFont.fontDisplay(14, withType: .Regular),
@@ -317,280 +277,125 @@ class SaveViewController: UIViewController, RedNavbar {
         tabController!.delegate = self
         tabController!.cameraButton.progressLocked = true
         
-        Mixpanel.sharedInstance().timeEvent("View.CreateOptograph")
+        Mixpanel.sharedInstance()?.timeEvent("View.CreateOptograph")
         
         // needed if user re-enabled location via Settings.app
         locationView.reloadLocation()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
         tabController!.cameraButton.progressLocked = false
         
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        navigationController?.interactivePopGestureRecognizer?.enabled = true
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: .None)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        UIApplication.shared.setStatusBarHidden(false, with: .none)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        Mixpanel.sharedInstance().track("View.CreateOptograph")
+        Mixpanel.sharedInstance()?.track("View.CreateOptograph")
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesBegan(touches, withEvent: event)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
         
         if let touch = touches.first {
-            let point = touch.locationInView(scnView)
+            let point = touch.location(in: scnView)
             touchRotationSource.touchStart(CGPoint(x: point.x, y: 0))
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesMoved(touches, withEvent: event)
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
         
-        dragTextView.hidden = true
+        dragTextView.isHidden = true
         touchRotationSource.dampFactor = 0.9
         
         if let touch = touches.first {
-            let point = touch.locationInView(scnView)
+            let point = touch.location(in: scnView)
             touchRotationSource.touchMove(CGPoint(x: point.x, y: 0))
         }
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesEnded(touches, withEvent: event)
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
         
         if touches.count == 1 {
             touchRotationSource.touchEnd()
         }
     }
     
-    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-        super.touchesCancelled(touches, withEvent: event)
+    override func touchesCancelled(_ touches: Set<UITouch>?, with event: UIEvent?) {
+        super.touchesCancelled(touches!, with: event)
         
         if touches?.count == 1 {
             touchRotationSource.touchEnd()
         }
     }
     
-    dynamic private func keyboardWillShow(notification: NSNotification) {
+    dynamic fileprivate func keyboardWillShow(_ notification: Notification) {
         scrollView.contentOffset = CGPoint(x: 0, y: scrollView.contentSize.height - scrollView.bounds.size.height)
     }
     
-    dynamic private func keyboardWillHide(notification: NSNotification) {
+    dynamic fileprivate func keyboardWillHide(_ notification: Notification) {
         scrollView.contentOffset = CGPoint(x: 0, y: 0)
     }
     
-    dynamic private func cancel() {
-        let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .Alert)
-        confirmAlert.addAction(UIAlertAction(title: "Discard", style: .Destructive, handler: { _ in
+    dynamic fileprivate func cancel() {
+        let confirmAlert = UIAlertController(title: "Discard Moment?", message: "If you go back now, the recording will be discarded.", preferredStyle: .alert)
+        confirmAlert.addAction(UIAlertAction(title: "Discard", style: .destructive, handler: { _ in
             PipelineService.stopStitching()
             LoadingIndicatorView.show("Discarding..")
-            self.viewModel.isReadyForSubmit.producer.skipRepeats().startWithNext { val in
+            self.viewModel.isReadyForSubmit.producer.skipRepeats().startWithValues { val in
                 if val{
                     LoadingIndicatorView.hide()
                     self.viewModel.deleteOpto()
-                    self.navigationController!.popViewControllerAnimated(true)
+                    self.navigationController!.popViewController(animated: true)
                 }
             }
         }))
-        confirmAlert.addAction(UIAlertAction(title: "Keep", style: .Cancel, handler: nil))
-        navigationController!.presentViewController(confirmAlert, animated: true, completion: nil)
+        confirmAlert.addAction(UIAlertAction(title: "Keep", style: .cancel, handler: nil))
+        navigationController!.present(confirmAlert, animated: true, completion: nil)
     }
     
     func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    dynamic private func togglePrivate() {
-        let settingsSheet = UIAlertController(title: "Set Visibility", message: "Who should be able to see your moment?", preferredStyle: .ActionSheet)
+    dynamic fileprivate func togglePrivate() {
+        let settingsSheet = UIAlertController(title: "Set Visibility", message: "Who should be able to see your moment?", preferredStyle: .actionSheet)
         
-        settingsSheet.addAction(UIAlertAction(title: "Everybody (Default)", style: .Default, handler: { [weak self] _ in
+        settingsSheet.addAction(UIAlertAction(title: "Everybody (Default)", style: .default, handler: { [weak self] _ in
             self?.viewModel.isPrivate.value = false
         }))
         
-        settingsSheet.addAction(UIAlertAction(title: "Just me", style: .Destructive, handler: { [weak self] _ in
+        settingsSheet.addAction(UIAlertAction(title: "Just me", style: .destructive, handler: { [weak self] _ in
             self?.viewModel.isPrivate.value = true
         }))
         
-        settingsSheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: { _ in return }))
+        settingsSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in return }))
         
-        navigationController?.presentViewController(settingsSheet, animated: true, completion: nil)
+        navigationController?.present(settingsSheet, animated: true, completion: nil)
     }
     
-    private func signupAlert() {
-        let alert = UIAlertController(title: "Login Needed", message: "In order to share your moment you need to create an account. Your image won't be lost and can be shared afterwards.", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { _ in return }))
-        presentViewController(alert, animated: true, completion: nil)
+    fileprivate func signupAlert() {
+        let alert = UIAlertController(title: "Login Needed", message: "In order to share your moment you need to create an account. Your image won't be lost and can be shared afterwards.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in return }))
+        present(alert, animated: true, completion: nil)
     }
     
-    private func offlineAlert() {
-        let alert = UIAlertController(title: "No Network Connection", message: "In order to share your moment you need a network connection. Your image won't be lost and can still be shared later.", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { _ in return }))
-        presentViewController(alert, animated: true, completion: nil)
+    fileprivate func offlineAlert() {
+        let alert = UIAlertController(title: "No Network Connection", message: "In order to share your moment you need a network connection. Your image won't be lost and can still be shared later.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { _ in return }))
+        present(alert, animated: true, completion: nil)
     }
     
-    dynamic private func tapFacebookSocialButton() {
-        if !viewModel.isLoggedIn.value {
-            signupAlert()
-            return
-        }
-        
-        let loginManager = FBSDKLoginManager()
-        let publishPermissions = ["publish_actions"]
-        
-        let errorBlock = { [weak self] (message: String) in
-            self?.viewModel.postFacebook.value = false
-            
-            let alert = UIAlertController(title: "Facebook Signin unsuccessful", message: message, preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Try again", style: .Default, handler: { _ in return }))
-            self?.presentViewController(alert, animated: true, completion: nil)
-        }
-        
-        let successBlock = { [weak self] (token: FBSDKAccessToken!) in
-            let parameters  = [
-                "facebook_user_id": token.userID,
-                "facebook_token": token.tokenString,
-            ]
-            ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
-                .on(
-                    failed: { _ in
-                        errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
-                    },
-                    completed: { [weak self] in
-                        self?.viewModel.postFacebook.value = true
-                    }
-                )
-                .start()
-        }
-        
-        if let token = FBSDKAccessToken.currentAccessToken() where publishPermissions.reduce(true, combine: { $0 && token.hasGranted($1) }) {
-            viewModel.postFacebook.value = !viewModel.postFacebook.value
-            return
-        }
-        
-        if !viewModel.isOnline.value {
-            offlineAlert()
-            return
-        }
-        
-        facebookSocialButton.state = .Loading
-        
-        loginManager.logInWithPublishPermissions(publishPermissions, fromViewController: self) { [weak self] result, error in
-            if error != nil || result.isCancelled {
-                self?.viewModel.postFacebook.value = false
-                loginManager.logOut()
-            } else {
-                let grantedPermissions = result.grantedPermissions.map( {"\($0)"} )
-                let allPermissionsGranted = publishPermissions.reduce(true) { $0 && grantedPermissions.contains($1) }
-                
-                if allPermissionsGranted {
-                    successBlock(result.token)
-                } else {
-                    errorBlock("Please allow access to all points in the list. Don't worry, your data will be kept safe.")
-                }
-            }
-        }
-    }
     
-    dynamic private func tapTwitterSocialButton() {
-        if !viewModel.isLoggedIn.value {
-            signupAlert()
-            return
-        }
-            
-        twitterSocialButton.state = .Loading
-        
-        if let session = Twitter.sharedInstance().sessionStore.session() {
-            let newValue = !viewModel.postTwitter.value
-            
-            if !newValue {
-                viewModel.postTwitter.value = newValue
-                return
-            }
-            
-            let parameters  = [
-                "twitter_token": session.authToken,
-                "twitter_secret": session.authTokenSecret,
-            ]
-            ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
-                .on(
-                    failed: { [weak self] _ in
-                        //                                errorBlock("Something went wrong and we couldn't sign you in. Please try again.")
-                        self?.viewModel.postTwitter.value = !newValue
-                    },
-                    completed: { [weak self] in
-                        self?.viewModel.postTwitter.value = newValue
-                    }
-                )
-                .start()
-            
-        } else {
-            if !viewModel.isOnline.value {
-                offlineAlert()
-                return
-            }
-            
-            Twitter.sharedInstance().logInWithViewController(self) { [weak self] (session, error) in
-                if let session = session {
-                    let parameters  = [
-                        "twitter_token": session.authToken,
-                        "twitter_secret": session.authTokenSecret,
-                    ]
-                    ApiService<EmptyResponse>.put("persons/me", parameters: parameters)
-                        .on(
-                            failed: { [weak self] _ in
-                                self?.viewModel.postTwitter.value = false
-                            },
-                            completed: { [weak self] in
-                                self?.viewModel.postTwitter.value = true
-                            }
-                        )
-                        .start()
-                } else {
-                    self?.viewModel.postTwitter.value = false
-                }
-            }
-        }
-    }
-    
-    dynamic private func tapInstagramSocialButton() {
-        if !viewModel.isLoggedIn.value {
-            signupAlert()
-            return
-        }
-        
-        viewModel.postInstagram.value = !viewModel.postInstagram.value
-    }
-    
-    dynamic private func tapMoreSocialButton() {
-        if !viewModel.isLoggedIn.value {
-            signupAlert()
-            return
-        }
-        
-        moreSocialButton.state = .Loading
-        
-        let shareAlias = viewModel.optographBox.model.shareAlias
-        
-        Async.main { [weak self] in
-            let textToShare = "Check out this awesome Optograph"
-            let baseURL = Env == .Staging ? "staging.opto.space:8005" : "opto.space"
-            let url = NSURL(string: "http://\(baseURL)/\(shareAlias)")!
-            let activityVC = UIActivityViewController(activityItems: [textToShare, url], applicationActivities: nil)
-            activityVC.excludedActivityTypes = [UIActivityTypeAirDrop]
-            
-            self?.navigationController?.presentViewController(activityVC, animated: true) { [weak self] _ in
-                self?.moreSocialButton.state = .Unselected
-            }
-        }
-    }
-    
-    private func submit(shouldBePublished: Bool) {
+    fileprivate func submit(_ shouldBePublished: Bool) {
         viewModel.submit(shouldBePublished, directionPhi: Double(touchRotationSource.phi), directionTheta: Double(touchRotationSource.theta))
             .observeOnMain()
             .on(
@@ -598,8 +403,8 @@ class SaveViewController: UIViewController, RedNavbar {
                     self?.tabController!.cameraButton.loading = true
                 },
                 completed: { [weak self] in
-                    Mixpanel.sharedInstance().track("Action.CreateOptograph.Post")
-                    self?.navigationController!.popViewControllerAnimated(true)
+                    Mixpanel.sharedInstance()?.track("Action.CreateOptograph.Post")
+                    self?.navigationController!.popViewController(animated: true)
                 }
             )
             .start()
@@ -610,7 +415,7 @@ class SaveViewController: UIViewController, RedNavbar {
 // MARK: - UITextViewDelegate
 extension SaveViewController: UITextViewDelegate {
 
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             view.endEditing(true)
             return false
@@ -635,14 +440,14 @@ private class ScrollView: UIScrollView {
     
     weak var scnView: SCNView!
     
-    private override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+    fileprivate override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         return point.y > scnView.height
     }
 }
 
 private class LocationViewModel {
     
-    enum State { case Disabled, Selection }
+    enum State { case disabled, selection }
     
     let locations = MutableProperty<[GeocodePreview]>([])
     let selectedLocation = MutableProperty<Int?>(nil)
@@ -652,7 +457,7 @@ private class LocationViewModel {
     let locationEnabled = MutableProperty<Bool>(false)
     let locationLoading = MutableProperty<Bool>(false)
     
-    var locationPermissionTimer: NSTimer?
+    var locationPermissionTimer: Timer?
     
     weak var isOnline: MutableProperty<Bool>!
     
@@ -661,15 +466,15 @@ private class LocationViewModel {
         
         locationEnabled.value = LocationService.enabled
         
-        state = MutableProperty(LocationService.enabled ? .Selection : .Disabled)
+        state = MutableProperty(LocationService.enabled ? .selection : .disabled)
         
         locationSignal.signal
             .map { _ in self.locationEnabled.value }
             .filter(identity)
-            .flatMap(.Latest) { [weak self] _ in
+            .flatMap(.latest) { [weak self] _ in
                 LocationService.location()
-                    .take(1)
-                    .on(next: { (lat, lon) in
+                    .take(first: 1)
+                    .on(value: { (lat, lon) in
                         self?.locationLoading.value = true
                         self?.selectedLocation.value = nil
                         var location = Location.newInstance()
@@ -678,22 +483,13 @@ private class LocationViewModel {
                     })
                     .ignoreError()
             }
-            .flatMap(.Latest) { (lat, lon) -> SignalProducer<[GeocodePreview], NoError> in
-                if isOnline.value {
-                    return ApiService<GeocodePreview>.get("locations/geocode-reverse", queries: ["lat": "\(lat)", "lon": "\(lon)"])
-                        .on(failed: { [weak self] _ in
-                            self?.isOnline.value = false
-                            self?.locationLoading.value = false
-                        })
-                        .failedAsNext { _ in GeocodePreview(name: "Use location (\(lat.roundToPlaces(1)), \(lon.roundToPlaces(1)))") }
-                        .collect()
-                } else {
-                    return SignalProducer(value: [GeocodePreview(name: "Use location (\(lat.roundToPlaces(1)), \(lon.roundToPlaces(1)))")])
-                }
+            .flatMap(.latest) { (lat, lon) -> SignalProducer<[GeocodePreview], NoError> in
+                  return SignalProducer(value: [GeocodePreview(name: "Use location (\(lat.rounded()), \(lon.rounded()))")])
+                
             }
-            .observeNext { [weak self] locations in
+            .observe { [weak self] locations in
                 self?.locationLoading.value = false
-                self?.locations.value = locations
+                self?.locations.value = locations.value!
             }
         
     }
@@ -703,13 +499,13 @@ private class LocationViewModel {
     }
     
     func enableLocation() {
-        locationPermissionTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(LocationViewModel.checkLocationPermission), userInfo: nil, repeats: true)
+        locationPermissionTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(LocationViewModel.checkLocationPermission), userInfo: nil, repeats: true)
         LocationService.askPermission()
     }
     
-    dynamic private func checkLocationPermission() {
+    dynamic fileprivate func checkLocationPermission() {
         let enabled = LocationService.enabled
-        state.value = enabled ? .Selection : .Disabled
+        state.value = enabled ? .selection : .disabled
         if locationPermissionTimer != nil && enabled {
             locationEnabled.value = true
             locationSignal.notify(())
@@ -730,7 +526,7 @@ private struct GeocodePreview: Mappable {
     
     init() {}
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         placeID  <- map["place_id"]
@@ -741,7 +537,7 @@ private struct GeocodePreview: Mappable {
 
 private class LocationCollectionViewCell: UICollectionViewCell {
     
-    private let textView = UILabel()
+    fileprivate let textView = UILabel()
     
     var text = "" {
         didSet {
@@ -749,12 +545,13 @@ private class LocationCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    var isSelected = false {
-        didSet {
-            contentView.backgroundColor = isSelected ? UIColor(0x5f5f5f) : UIColor(0xefefef)
-            textView.textColor = isSelected ? .whiteColor() : UIColor(0x5f5f5f)
-        }
-    }
+    // TODO
+    //var isSelected = false {
+    //    didSet {
+    //        contentView.backgroundColor = isSelected ? UIColor(0x5f5f5f) : UIColor(0xefefef)
+    //        textView.textColor = isSelected ? .white : UIColor(0x5f5f5f)
+    //    }
+    //}
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -770,7 +567,7 @@ private class LocationCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private override func layoutSubviews() {
+    fileprivate override func layoutSubviews() {
         super.layoutSubviews()
         
         textView.fillSuperview(left: 10, right: 10, top: 0, bottom: 0)
@@ -780,43 +577,43 @@ private class LocationCollectionViewCell: UICollectionViewCell {
 
 private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    private let bottomBorder = CALayer()
-    private let leftIconView = UIImageView()
-    private let statusText = UILabel()
-    private let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
-    private let loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+    fileprivate let bottomBorder = CALayer()
+    fileprivate let leftIconView = UIImageView()
+    fileprivate let statusText = UILabel()
+    fileprivate let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
+    fileprivate let loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
     
-    var didSelectLocation: (String? -> ())?
+    var didSelectLocation: ((String?) -> ())?
     
     var viewModel: LocationViewModel!
     
-    private var locations: [GeocodePreview] = []
+    fileprivate var locations: [GeocodePreview] = []
     
     convenience init(isOnline: MutableProperty<Bool>) {
-        self.init(frame: CGRectZero)
+        self.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         
         viewModel = LocationViewModel(isOnline: isOnline)
         
-        bottomBorder.backgroundColor = UIColor(0xe6e6e6).CGColor
+        bottomBorder.backgroundColor = UIColor(0xe6e6e6).cgColor
         layer.addSublayer(bottomBorder)
         
         let flowLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        flowLayout.scrollDirection = .Horizontal
+        flowLayout.scrollDirection = .horizontal
         
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.registerClass(LocationCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-        collectionView.backgroundColor = .clearColor()
+        collectionView.register(LocationCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.backgroundColor = UIColor.clear
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.allowsSelection = true
         collectionView.rac_hidden <~ viewModel.locationLoading
-        collectionView.hidden = true
+        collectionView.isHidden = true
         collectionView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 16)
-        viewModel.locations.producer.startWithNext { [weak self] locations in
+        viewModel.locations.producer.startWithValues { [weak self] locations in
             self?.locations = locations
             self?.collectionView.reloadData()
         }
-        viewModel.selectedLocation.producer.startWithNext { [weak self] _ in self?.collectionView.reloadData() }
+        viewModel.selectedLocation.producer.startWithValues { [weak self] _ in self?.collectionView.reloadData() }
         addSubview(collectionView)
         
         loadingIndicator.rac_animating <~ viewModel.locationLoading
@@ -824,22 +621,22 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         addSubview(loadingIndicator)
         
         leftIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LocationView.didTap)))
-        leftIconView.userInteractionEnabled = true
+        leftIconView.isUserInteractionEnabled = true
         leftIconView.image = UIImage(named:"location_pin")
-        leftIconView.hidden = true
+        leftIconView.isHidden = true
         addSubview(leftIconView)
         
         statusText.font = UIFont.displayOfSize(13, withType: .Semibold)
         statusText.textColor = UIColor(0x919293)
         statusText.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LocationView.didTap)))
-        statusText.userInteractionEnabled = true
+        statusText.isUserInteractionEnabled = true
         statusText.rac_hidden <~ viewModel.locationEnabled
         statusText.text = "Add location"
-        statusText.hidden = true
+        statusText.isHidden = true
         addSubview(statusText)
     }
     
-    private override init(frame: CGRect) {
+    fileprivate override init(frame: CGRect) {
         super.init(frame: frame)
     }
 
@@ -857,7 +654,7 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         collectionView.frame = CGRect(x: 54, y: 0, width: frame.width - 54, height: 68)
     }
     
-    dynamic private func didTap() {
+    dynamic fileprivate func didTap() {
         if viewModel.locationEnabled.value {
             reloadLocation()
         } else {
@@ -865,7 +662,7 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         }
     }
     
-    dynamic private func enableLocation() {
+    dynamic fileprivate func enableLocation() {
         viewModel.enableLocation()
     }
     
@@ -874,29 +671,29 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
         viewModel.locationSignal.notify(())
     }
     
-    dynamic private func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! LocationCollectionViewCell
+    dynamic fileprivate func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! LocationCollectionViewCell
         let location = locations[indexPath.row]
         cell.text = "\(location.name)"
         cell.isSelected = viewModel.selectedLocation.value == indexPath.row
         return cell
     }
 
-    dynamic func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+    dynamic func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
-    dynamic func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    dynamic func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return locations.count
     }
     
-    dynamic private func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    dynamic fileprivate func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let location = locations[indexPath.row]
         let text = "\(location.name)"
         return CGSize(width: calcTextWidth(text, withFont: .displayOfSize(11, withType: .Semibold)) + 20, height: 28)
     }
     
-    dynamic private func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    dynamic fileprivate func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if viewModel.selectedLocation.value == indexPath.row {
             viewModel.selectedLocation.value = nil
             didSelectLocation?(nil)
@@ -910,10 +707,10 @@ private class LocationView: UIView, UICollectionViewDelegate, UICollectionViewDa
 
 private class SocialButton: UIView {
     
-    private let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
-    private let textView = UILabel()
-    private var touched = false
-    private var iconView2 = UIImageView()
+    fileprivate let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    fileprivate let textView = UILabel()
+    fileprivate var touched = false
+    fileprivate var iconView2 = UIImageView()
     
     var text = "" {
         didSet {
@@ -933,9 +730,9 @@ private class SocialButton: UIView {
         }
     }
     
-    enum State { case Selected, Unselected, Loading }
+    enum State { case selected, unselected, loading }
     
-    var state: State = .Unselected {
+    var state: State = .unselected {
         didSet {
             updateColors()
         }
@@ -971,43 +768,43 @@ private class SocialButton: UIView {
         iconView2.frame = CGRect(x: 0,y: 0,width: iconWidth,height: iconHeight)
     }
     
-    private override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesBegan(touches, withEvent: event)
+    fileprivate override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
         touched = true
         updateColors()
     }
     
-    private override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-        super.touchesCancelled(touches, withEvent: event)
+    fileprivate override func touchesCancelled(_ touches: Set<UITouch>?, with event: UIEvent?) {
+        super.touchesCancelled(touches!, with: event)
         touched = false
         updateColors()
     }
     
-    private override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesEnded(touches, withEvent: event)
+    fileprivate override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
         touched = false
         updateColors()
     }
     
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let margin: CGFloat = 5
-        let area = CGRectInset(bounds, -margin, -margin)
-        return CGRectContainsPoint(area, point)
+        let area = bounds.insetBy(dx: -margin, dy: -margin)
+        return area.contains(point)
     }
     
-    private func updateColors() {
-        if state == .Loading {
+    fileprivate func updateColors() {
+        if state == .loading {
             loadingView.startAnimating()
-            iconView2.hidden = true
+            iconView2.isHidden = true
         } else {
             loadingView.stopAnimating()
-            iconView2.hidden = false
+            iconView2.isHidden = false
         }
         
         var textColor = UIColor(0x919293)
         if touched {
             textColor = color.alpha(0.7)
-        } else if state == .Selected {
+        } else if state == .selected {
             textColor = color
         }
         

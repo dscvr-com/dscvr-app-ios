@@ -26,7 +26,7 @@ struct StorytellingPerson: Mappable {
     var followed_count: String = ""
     var is_followed: Bool = false
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         id <- map["id"]

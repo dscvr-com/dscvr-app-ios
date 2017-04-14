@@ -8,34 +8,34 @@
 
 import Foundation
 import UIKit
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 func uuid() -> UUID {
-    return NSUUID().UUIDString.lowercaseString
+    return NSUUID().uuidString.lowercased()
 }
 
-func isValidEmail(email: String) -> Bool {
+func isValidEmail(_ email: String) -> Bool {
     let emailRegEx = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
     let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
-    return emailTest.evaluateWithObject(email)
+    return emailTest.evaluate(with: email)
 }
 
-func isValidPassword(password: String) -> Bool {
+func isValidPassword(_ password: String) -> Bool {
     return password.characters.count >= 5
 }
 
-func isValidUserName(userName: String) -> Bool {
+func isValidUserName(_ userName: String) -> Bool {
     let userNameRegEx = "^[a-zA-Z0-9_]+$"
     let userNameTest = NSPredicate(format:"SELF MATCHES %@", userNameRegEx)
-    return userNameTest.evaluateWithObject(userName)
+    return userNameTest.evaluate(with: userName)
 }
 
-func identity<T>(el: T) -> T {
+func identity<T>(_ el: T) -> T {
     return el
 }
 
-func calcTextHeight(text: String, withWidth width: CGFloat, andFont font: UIFont) -> CGFloat {
+func calcTextHeight(_ text: String, withWidth width: CGFloat, andFont font: UIFont) -> CGFloat {
     if text.isEmpty {
         return 0
     }
@@ -43,17 +43,17 @@ func calcTextHeight(text: String, withWidth width: CGFloat, andFont font: UIFont
     let attributes = [NSFontAttributeName: font]
     let textAS = NSAttributedString(string: text, attributes: attributes)
     let tmpSize = CGSize(width: width, height: 100000)
-    let textRect = textAS.boundingRectWithSize(tmpSize, options: [.UsesFontLeading, .UsesLineFragmentOrigin], context: nil)
+    let textRect = textAS.boundingRect(with: tmpSize, options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil)
     
     return textRect.height
 }
 
-func calcTextWidth(text: String, withFont font: UIFont) -> CGFloat {
+func calcTextWidth(_ text: String, withFont font: UIFont) -> CGFloat {
     if text.isEmpty {
         return 0
     }
     
-    let size = (text as NSString).sizeWithAttributes([NSFontAttributeName: font])
+    let size = (text as NSString).size(attributes: [NSFontAttributeName: font])
     return size.width
 }
 
@@ -61,8 +61,8 @@ class NotificationSignal<T> {
     
     let (signal, sink) = Signal<T, NoError>.pipe()
     
-    func notify(value: T) {
-        sink.sendNext(value)
+    func notify(_ value: T) {
+        sink.send(value: value)
     }
     
     func dispose() {
@@ -71,43 +71,43 @@ class NotificationSignal<T> {
     
 }
 
-func isTrue(val: Bool) -> Bool {
+func isTrue(_ val: Bool) -> Bool {
     return val
 }
 
-func isFalse(val: Bool) -> Bool {
+func isFalse(_ val: Bool) -> Bool {
     return !val
 }
 
-func negate(val: Bool) -> Bool {
+func negate(_ val: Bool) -> Bool {
     return !val
 }
 
-func isEmpty(val: String) -> Bool {
+func isEmpty(_ val: String) -> Bool {
     return val.isEmpty
 }
 
-func isNotEmpty(val: String) -> Bool {
+func isNotEmpty(_ val: String) -> Bool {
     return !val.isEmpty
 }
 
-func and(a: Bool, _ b: Bool) -> Bool {
+func and(_ a: Bool, _ b: Bool) -> Bool {
     return a && b
 }
 
-func or(a: Bool, _ b: Bool) -> Bool {
+func or(_ a: Bool, _ b: Bool) -> Bool {
     return a || b
 }
 
-func toRadians(deg: Float) -> Float {
+func toRadians(_ deg: Float) -> Float {
     return deg / Float(180) * Float(M_PI)
 }
 
-func toDegrees(rad: Float) -> Float {
+func toDegrees(_ rad: Float) -> Float {
     return rad * Float(180) / Float(M_PI)
 }
 
-func extractRotationVector(matrix: GLKMatrix4) -> GLKVector3 {
+func extractRotationVector(_ matrix: GLKMatrix4) -> GLKVector3 {
     let x = atan2(matrix.m21, matrix.m22);
     let y = atan2(-matrix.m20, sqrt(matrix.m21 * matrix.m21 + matrix.m22 * matrix.m22));
     let z = atan2(matrix.m10, matrix.m00);
@@ -115,7 +115,7 @@ func extractRotationVector(matrix: GLKMatrix4) -> GLKVector3 {
     return GLKVector3Make(x, y, z);
 }
 
-func carthesianToSpherical(vec: GLKVector3) -> GLKVector2 {
+func carthesianToSpherical(_ vec: GLKVector3) -> GLKVector2 {
     let len = GLKVector3Length(vec)
     let theta = acos(vec.z / len);
     let phi = atan2(vec.y, vec.x);
@@ -123,27 +123,28 @@ func carthesianToSpherical(vec: GLKVector3) -> GLKVector2 {
     return GLKVector2Make(phi, theta)
 }
 
-func getBearing(a: GLKVector2, b: GLKVector2) -> Float {
+func getBearing(_ a: GLKVector2, b: GLKVector2) -> Float {
     let y = sin(a.s - b.s) * cos(b.t);
     let x = cos(a.t) * sin(b.t) -
             sin(a.t) * cos(b.t) * cos(b.s - a.s);
     return atan2(y, x);
 }
 
-func getTextureWidth(sceneWidth: CGFloat, hfov: Float) -> CGFloat {
+func getTextureWidth(_ sceneWidth: CGFloat, hfov: Float) -> CGFloat {
     return CGFloat((sceneWidth * 360) / (CGFloat(hfov) * CGFloat(M_PI)))
 }
 
-func toDictionary<E, K, V>(array: [E], transformer: (element: E) -> (key: K, value: V)?) -> Dictionary<K, V> {
-    return array.reduce([:]) { (var dict, e) in
-        if let (key, value) = transformer(element: e) {
+func toDictionary<E, K, V>(_ array: [E], transformer: (_ element: E) -> (key: K, value: V)?) -> Dictionary<K, V> {
+    return array.reduce([:]) { (d, e) in
+        var dict = d
+        if let (key, value) = transformer(e) {
             dict[key] = value
         }
         return dict
     }
 }
 
-func safeOptional<T>(val: T!) -> T? {
+func safeOptional<T>(_ val: T!) -> T? {
     if let val = val {
         return val
     } else {
@@ -151,11 +152,11 @@ func safeOptional<T>(val: T!) -> T? {
     }
 }
 
-func phiThetaToRotationMatrix(phi: Float, theta: Float) -> GLKMatrix4 {
+func phiThetaToRotationMatrix(_ phi: Float, theta: Float) -> GLKMatrix4 {
     return GLKMatrix4Multiply(GLKMatrix4MakeZRotation(-phi), GLKMatrix4MakeXRotation(-theta))
 }
 
-func sync(obj: AnyObject, fn: () -> ()) {
+func sync(_ obj: AnyObject, fn: () -> ()) {
     objc_sync_enter(obj)
     fn()
     objc_sync_exit(obj)

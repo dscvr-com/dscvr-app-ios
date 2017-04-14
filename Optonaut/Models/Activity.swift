@@ -19,9 +19,9 @@ enum ActivityType: String {
 struct Activity: DeletableModel {
     
     var ID: UUID
-    var createdAt: NSDate
-    var updatedAt: NSDate
-    var deletedAt: NSDate?
+    var createdAt: Date
+    var updatedAt: Date
+    var deletedAt: Date?
     var isRead: Bool
     var type: ActivityType
     var activityResourceStar: ActivityResourceStarModel?
@@ -50,8 +50,8 @@ struct Activity: DeletableModel {
     static func newInstance() -> Activity {
         return Activity(
             ID: uuid(),
-            createdAt: NSDate(),
-            updatedAt: NSDate(),
+            createdAt: Date(),
+            updatedAt: Date(),
             deletedAt: nil,
             isRead: false,
             type: .Nil,
@@ -72,7 +72,7 @@ func ==(lhs: Activity, rhs: Activity) -> Bool {
 
 extension Activity: Mappable {
     
-    init?(_ map: Map){
+    init?(map: Map){
         self = Activity.newInstance()
     }
     
@@ -120,7 +120,7 @@ extension Activity: SQLiteModel {
         return ActivityTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> Activity {
+    static func fromSQL(_ row: SQLiteRow) -> Activity {
         return Activity(
             ID: row[ActivitySchema.ID],
             createdAt: row[ActivitySchema.createdAt],

@@ -25,7 +25,7 @@ struct ActivityResourceViews {
 
 extension ActivityResourceViews: Mappable {
     
-    init?(_ map: Map){
+    init?(map: Map){
         self = ActivityResourceViews.newInstance()
     }
     
@@ -47,7 +47,7 @@ extension ActivityResourceViews: SQLiteModel {
         return ActivityResourceViewsTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> ActivityResourceViews {
+    static func fromSQL(_ row: SQLiteRow) -> ActivityResourceViews {
         return ActivityResourceViews(
             ID: row[ActivityResourceViewsSchema.ID],
             optograph: Optograph.newInstance(),

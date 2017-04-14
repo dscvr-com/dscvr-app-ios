@@ -8,28 +8,27 @@
 //
 
 import UIKit
-import ReactiveCocoa
+import ReactiveSwift
 import Async
-import Icomoon
+//import Icomoon
 import SwiftyUserDefaults
 import Result
 
 class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     
-    enum ActiveSide: Equatable { case Left, Right }
+    enum ActiveSide: Equatable { case left, right }
     
-    private let uiWrapper = PassThroughView()
+    fileprivate let uiWrapper = PassThroughView()
     
     let cameraButton = RecordButton()
     
-    private let bottomGradient = CAGradientLayer()
+    fileprivate let bottomGradient = CAGradientLayer()
     
     let bottomGradientOffset = MutableProperty<CGFloat>(126)
-    
     let leftViewController: NavigationController
     
-    private var uiHidden = false
-    private var uiLocked = false
+    fileprivate var uiHidden = false
+    fileprivate var uiLocked = false
     
     var delegate: TabControllerDelegate?
     
@@ -51,14 +50,14 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         
         addChildViewController(leftViewController)
         
-        view.insertSubview(leftViewController.view, atIndex: 0)
+        view.insertSubview(leftViewController.view, at: 0)
         
         let width = view.frame.width
         
-        bottomGradient.colors = [UIColor.clearColor().CGColor, UIColor.blackColor().alpha(0.5).CGColor]
+        bottomGradient.colors = [UIColor.clear.cgColor, UIColor.black.alpha(0.5).cgColor]
         uiWrapper.layer.addSublayer(bottomGradient)
         
-        bottomGradientOffset.producer.startWithNext { [weak self] offset in
+        bottomGradientOffset.producer.startWithValues { [weak self] offset in
             CATransaction.begin()
             CATransaction.setDisableActions(true)
             self?.bottomGradient.frame = CGRect(x: 0, y: 0, width: width, height: offset)
@@ -67,24 +66,24 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         
         cameraButton.frame = CGRect(x: view.frame.width / 2 - 35, y: 126 / 2 - 35, width: 70, height: 70)
         cameraButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TabViewController.tapCameraButton)))
-        cameraButton.addTarget(self, action: #selector(TabViewController.touchStartCameraButton), forControlEvents: [.TouchDown])
-        cameraButton.addTarget(self, action: #selector(TabViewController.touchEndCameraButton), forControlEvents: [.TouchUpInside, .TouchUpOutside, .TouchCancel])
+        cameraButton.addTarget(self, action: #selector(TabViewController.touchStartCameraButton), for: [.touchDown])
+        cameraButton.addTarget(self, action: #selector(TabViewController.touchEndCameraButton), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         uiWrapper.addSubview(cameraButton)
         
 //        createStitchingProgressBar()
         
         PipelineService.stitchingStatus.producer
             .observeOnMain()
-            .startWithNext { [weak self] status in
+            .startWithValues { [weak self] status in
                 switch status {
-                case .Uninitialized:
+                case .uninitialized:
                     self?.cameraButton.loading = true
-                case .Idle:
+                case .idle:
                     self?.cameraButton.progress = nil
                     if self?.cameraButton.progressLocked == false {
                         self?.cameraButton.icon = UIImage(named:"camera_icn")!
                     }
-                case let .Stitching(progress):
+                case let .stitching(progress):
 //                    if self?.progress.hidden == true {
 //                        self?.progress.hidden = false
 //                    }
@@ -92,7 +91,7 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
 //                    self?.progress.angle = progressSize
                     
                     self?.cameraButton.progress = CGFloat(progress)
-                case .StitchingFinished(_):
+                case .stitchingFinished(_):
 //                    self?.progress.angle = 360
 //                    self?.progress.hidden = true
                     self?.cameraButton.progress = nil
@@ -124,14 +123,14 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
     
     func showUI() {
         if !uiLocked {
-            uiWrapper.hidden = false
+            uiWrapper.isHidden = false
         }
     }
     
     
     func hideUI() {
         if !uiLocked {
-            uiWrapper.hidden = true
+            uiWrapper.isHidden = true
         }
     }
     
@@ -143,15 +142,15 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
         uiLocked = false
     }
     
-    dynamic private func tapCameraButton() {
+    dynamic fileprivate func tapCameraButton() {
         delegate?.onTapCameraButton()
     }
     
-    dynamic private func touchStartCameraButton() {
+    dynamic fileprivate func touchStartCameraButton() {
         delegate?.onTouchStartCameraButton()
     }
     
-    dynamic private func touchEndCameraButton() {
+    dynamic fileprivate func touchEndCameraButton() {
         delegate?.onTouchEndCameraButton()
     }
 }
@@ -159,20 +158,20 @@ class TabViewController: UIViewController,UIImagePickerControllerDelegate,UINavi
 
 class RecordButton: UIButton {
     
-    private var touched = false
+    fileprivate var touched = false
     
-    private let progressLayer = CALayer()
-    private let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+    fileprivate let progressLayer = CALayer()
+    fileprivate let loadingView = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     
     var icon: UIImage = UIImage(named:"camera_icn")! {
         didSet {
-            setImage(icon, forState: .Normal)
+            setImage(icon, for: UIControlState())
         }
     }
     
-    var iconColor: UIColor = .whiteColor() {
+    var iconColor: UIColor = .white {
         didSet {
-            setTitleColor(iconColor.alpha(loading ? 0 : 1), forState: .Normal)
+            setTitleColor(iconColor.alpha(loading ? 0 : 1), for: UIControlState())
         }
     }
     
@@ -184,9 +183,9 @@ class RecordButton: UIButton {
                 loadingView.stopAnimating()
             }
             
-            setTitleColor(titleColorForState(.Normal)!.alpha(loading ? 0 : 1), forState: .Normal)
+            setTitleColor(titleColor(for: UIControlState())!.alpha(loading ? 0 : 1), for: UIControlState())
             
-            userInteractionEnabled = !loading
+            isUserInteractionEnabled = !loading
         }
     }
     
@@ -203,10 +202,10 @@ class RecordButton: UIButton {
         didSet {
             if !progressLocked {
                 if let progress = progress {
-                    backgroundColor = UIColor.clearColor()
+                    backgroundColor = UIColor.clear
                     loading = progress != 1
                 } else {
-                    backgroundColor = UIColor.clearColor()
+                    backgroundColor = UIColor.clear
                     loading = false
                 }
                 
@@ -223,13 +222,14 @@ class RecordButton: UIButton {
         loadingView.hidesWhenStopped = true
         addSubview(loadingView)
         
-        backgroundColor = UIColor.clearColor()
+        backgroundColor = UIColor.clear
         clipsToBounds = true
         
         layer.cornerRadius = bounds.size.width * 0.5
         
-        setTitleColor(.whiteColor(), forState: .Normal)
-        titleLabel?.font = UIFont.iconOfSize(33)
+        setTitleColor(.white, for: UIControlState())
+        // TOODO: Icomoon!
+        //titleLabel?.font = UIFont.iconOfSize(33)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -246,7 +246,7 @@ class RecordButton: UIButton {
 
 class TabButton: UIButton {
     
-    enum Color { case Light, Dark }
+    enum Color { case light, dark }
     
     var title: String = "" {
         didSet {
@@ -254,16 +254,17 @@ class TabButton: UIButton {
         }
     }
     
-    var icon: Icon = .Cancel {
-        didSet {
-            setTitle(String.iconWithName(icon), forState: .Normal)
-        }
-    }
+    // Todo: Add Icomoon
+    //var icon: Icon = .Cancel {
+    //    didSet {
+    //        setTitle(String.iconWithName(icon), for: UIControlState())
+    //    }
+    //}
     
-    var color: Color = .Dark {
+    var color: Color = .dark {
         didSet {
-            let actualColor = color == .Dark ? .whiteColor() : UIColor(0x919293)
-            setTitleColor(actualColor, forState: .Normal)
+            let actualColor = color == .dark ? .white : UIColor(0x919293)
+            setTitleColor(actualColor, for: UIControlState())
             text.textColor = actualColor
             loadingView.color = actualColor
         }
@@ -277,34 +278,35 @@ class TabButton: UIButton {
                 loadingView.stopAnimating()
             }
             
-            setTitleColor(titleColorForState(.Normal)!.alpha(loading ? 0 : 1), forState: .Normal)
+            setTitleColor(titleColor(for: UIControlState())!.alpha(loading ? 0 : 1), for: UIControlState())
             
-            userInteractionEnabled = !loading
+            isUserInteractionEnabled = !loading
         }
     }
     
     //    private let activeBorderLayer = CALayer()
     
-    private let text = UILabel()
-    private let loadingView = UIActivityIndicatorView()
+    fileprivate let text = UILabel()
+    fileprivate let loadingView = UIActivityIndicatorView()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        setTitleColor(.whiteColor(), forState: .Normal)
-        titleLabel?.font = UIFont.iconOfSize(28)
+        setTitleColor(.white, for: UIControlState())
+        // TODO: Icomoon
+        //titleLabel?.font = UIFont.iconOfSize(28)
         
         loadingView.hidesWhenStopped = true
         addSubview(loadingView)
         
         text.font = UIFont.displayOfSize(9, withType: .Light)
-        text.textColor = .whiteColor()
-        text.textAlignment = .Center
+        text.textColor = .white
+        text.textAlignment = .center
         addSubview(text)
     }
     
     convenience init () {
-        self.init(frame: CGRectZero)
+        self.init(frame: CGRect.zero)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -320,10 +322,10 @@ class TabButton: UIButton {
         loadingView.fillSuperview()
     }
     
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let margin: CGFloat = 10
-        let area = CGRectInset(bounds, -margin, -margin)
-        return CGRectContainsPoint(area, point)
+        let area = bounds.insetBy(dx: -margin, dy: -margin)
+        return area.contains(point)
     }
     
 }
@@ -331,7 +333,7 @@ class TabButton: UIButton {
 protocol TabControllerDelegate {
     var tabController: TabViewController? { get }
     func jumpToTop()
-    func scrollToOptograph(optographID: UUID)
+    func scrollToOptograph(_ optographID: UUID)
     func onTouchStartCameraButton()
     func onTouchEndCameraButton()
     func onTapCameraButton()
@@ -342,7 +344,7 @@ protocol TabControllerDelegate {
 }
 
 extension TabControllerDelegate {
-    func scrollToOptograph(optographID: UUID) {}
+    func scrollToOptograph(_ optographID: UUID) {}
     func jumpToTop() {}
     func onTouchStartCameraButton() {}
     func onTouchEndCameraButton() {}
@@ -361,25 +363,25 @@ extension DefaultTabControllerDelegate {
     
     func onTapCameraButton() {
         switch PipelineService.stitchingStatus.value {
-        case .Idle:
+        case .idle:
             tabController!.leftViewController.cleanup()
             self.tabController!.leftViewController.pushViewController(CameraOverlayVC(), animated: false)
             
-        case .Stitching(_):
-            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { _ in return }))
-            tabController?.leftViewController.presentViewController(alert, animated: true, completion: nil)
-        case let .StitchingFinished(optographID):
+        case .stitching(_):
+            let alert = UIAlertController(title: "Rendering in progress", message: "Please wait until your last image has finished rendering.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { _ in return }))
+            tabController?.leftViewController.present(alert, animated: true, completion: nil)
+        case let .stitchingFinished(optographID):
             scrollToOptograph(optographID)
-            PipelineService.stitchingStatus.value = .Idle
-        case .Uninitialized: ()
+            PipelineService.stitchingStatus.value = .idle
+        case .uninitialized: ()
         }
     }
 }
 
 extension UIViewController {
     var tabController: TabViewController? {
-        return navigationController?.parentViewController as? TabViewController
+        return navigationController?.parent as? TabViewController
     }
     
     func updateTabs() {
@@ -401,9 +403,9 @@ extension UINavigationController {
 }
 
 class PassThroughView: UIView {
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         for subview in subviews as [UIView] {
-            if !subview.hidden && subview.alpha > 0 && subview.userInteractionEnabled && subview.pointInside(convertPoint(point, toView: subview), withEvent: event) {
+            if !subview.isHidden && subview.alpha > 0 && subview.isUserInteractionEnabled && subview.point(inside: convert(point, to: subview), with: event) {
                 return true
             }
         }

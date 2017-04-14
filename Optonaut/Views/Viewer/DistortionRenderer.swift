@@ -11,15 +11,15 @@ import SceneKit
 
 class DistortionRenderer : NSObject, SCNSceneRendererDelegate {
     
-    func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
+    func renderer(_ aRenderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         
     }
     
-    func renderer(aRenderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: NSTimeInterval) {
+    func renderer(_ aRenderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
         
     }
     
-    func renderer(aRenderer: SCNSceneRenderer, didRenderScene scene: SCNScene, atTime time: NSTimeInterval) {
+    func renderer(_ aRenderer: SCNSceneRenderer, didRenderScene scene: SCNScene, atTime time: TimeInterval) {
         
     }
 }

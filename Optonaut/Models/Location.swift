@@ -10,8 +10,8 @@ import ObjectMapper
 
 struct Location: Model {
     var ID: UUID
-    var createdAt: NSDate
-    var updatedAt: NSDate
+    var createdAt: Date
+    var updatedAt: Date
     var text: String
     var country: String
     var countryShort: String
@@ -24,8 +24,8 @@ struct Location: Model {
     static func newInstance() -> Location {
         return Location(
             ID: uuid(),
-            createdAt: NSDate(),
-            updatedAt: NSDate(),
+            createdAt: Date(),
+            updatedAt: Date(),
             text: "",
             country: "",
             countryShort: "",
@@ -46,7 +46,7 @@ func ==(lhs: Location, rhs: Location) -> Bool {
 extension Location: MergeApiModel {
     typealias AM = LocationApiModel
     
-    mutating func mergeApiModel(apiModel: LocationApiModel) {
+    mutating func mergeApiModel(_ apiModel: LocationApiModel) {
         ID = apiModel.ID
         createdAt = apiModel.createdAt
         updatedAt = apiModel.updatedAt
@@ -71,7 +71,7 @@ extension Location: SQLiteModel  {
         return LocationTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> Location{
+    static func fromSQL(_ row: SQLiteRow) -> Location{
         return Location(
             ID: row[LocationSchema.ID],
             createdAt: row[LocationSchema.createdAt],

@@ -12,9 +12,9 @@ import ObjectMapper
 struct MotorConfigurationApiModel: ApiModel, Mappable {
     
     var ID:UUID = ""
-    var createdAt:NSDate = NSDate()
-    var updatedAt:NSDate = NSDate()
-    var deletedAt:NSDate? = nil
+    var createdAt:Date = Date()
+    var updatedAt:Date = Date()
+    var deletedAt:Date? = nil
     var motor_configuration_pulse_per_second = ""
     var motor_configuration_buff_count = ""
     var motor_configuration_rotate_count = ""
@@ -23,7 +23,7 @@ struct MotorConfigurationApiModel: ApiModel, Mappable {
     var motor_configuration_mobile_platform = ""
     
     init() {}
-    init?(_ map: Map) {
+    init?(map: Map) {
     }
     
     mutating func mapping(map: Map) {

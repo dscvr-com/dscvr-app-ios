@@ -14,7 +14,7 @@ struct StorytellingResponse: Mappable {
     var message:  String = ""
     var data: String = ""
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         status              <- map["status"]

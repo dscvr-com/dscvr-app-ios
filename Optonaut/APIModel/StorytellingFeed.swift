@@ -41,7 +41,7 @@ struct StorytellingFeed: Mappable {
     var story: StoryObject?
     
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         placeholder <- map["placeholder"]

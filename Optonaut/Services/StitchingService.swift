@@ -7,36 +7,36 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import Mixpanel
 import Async
 import ImageIO
 import AssetsLibrary
 import SwiftyUserDefaults
 
-enum StitchingError: ErrorType {
-    case Busy
+enum StitchingError: Error {
+    case busy
 }
 
 enum StitchingResult {
-    case Progress(Float)
-    case Result(side: TextureSide, face: Int, image: UIImage)
+    case progress(Float)
+    case result(side: TextureSide, face: Int, image: UIImage)
 }
 
-enum StitcherError : ErrorType {
-    case Cancel
+enum StitcherError : Error {
+    case cancel
 }
 
 class StitchingService {
     
     typealias StitchingSignal = Signal<StitchingResult, StitchingError>
     
-    private static var activeSignal: StitchingSignal?
-    private static var activeSink: Observer<StitchingResult, StitchingError>?
-    private static let storeRef = Stitcher()
-    private static var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
-    private static var shallCancel = false
-    private static var currentOptograph: UUID?
+    fileprivate static var activeSignal: StitchingSignal?
+    fileprivate static var activeSink: Observer<StitchingResult, StitchingError>?
+    fileprivate static let storeRef = Stitcher()
+    fileprivate static var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
+    fileprivate static var shallCancel = false
+    fileprivate static var currentOptograph: UUID?
     
     /// Returns the currently running stitching process, or
     /// nil, if the stitching service is idle.
@@ -61,7 +61,7 @@ class StitchingService {
     }
     
     /// This function starts a new stitching process.
-    static func startStitching(optographID: UUID) -> StitchingSignal {
+    static func startStitching(_ optographID: UUID) -> StitchingSignal {
         if isStitching() {
             assert(optographID == currentOptograph)
             return activeSignal!
@@ -80,15 +80,15 @@ class StitchingService {
         
         registerBackgroundTask()
         
-        let priority = DISPATCH_QUEUE_PRIORITY_BACKGROUND
-        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+        let priority = DispatchQueue.GlobalQueuePriority.background
+        DispatchQueue.global(priority: priority).async {
             
-            Mixpanel.sharedInstance().track("Action.Stitching.Start")
-            Mixpanel.sharedInstance().timeEvent("Action.Stitching.Finish")
+            Mixpanel.sharedInstance()?.track("Action.Stitching.Start")
+            Mixpanel.sharedInstance()?.timeEvent("Action.Stitching.Finish")
             
             if Defaults[.SessionMotor] {
                 let convertToStereo = ConvertToStereo()
-                convertToStereo.convert()
+                convertToStereo?.convert()
             }
             
             
@@ -98,21 +98,21 @@ class StitchingService {
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
                 Async.main {
-                    sink.sendNext(.Progress(progress))
+                    sink.send(value: .progress(progress))
                 }
                 return !shallCancel
             }
             
             if Defaults[.SessionMotor] {
                 if !shallCancel {
-                    for (face, cubeFace) in stitcher.getLeftResultThreeRing().enumerate() {
+                    for (face, cubeFace) in stitcher.getLeftResultThreeRing().enumerated() {
                         var leftFace = ImageBuffer()
                         cubeFace.getValue(&leftFace)
                         
                         if !shallCancel {
                             autoreleasepool {
                                 let image = ImageBufferToCompressedUIImage(leftFace)
-                                sink.sendNext(.Result(side: .Left, face: face, image: image))
+                                sink.send(value: .result(side: .left, face: face, image: image))
                             }
                         }
                         Recorder.freeImageBuffer(leftFace)
@@ -121,14 +121,14 @@ class StitchingService {
             
             } else {
                 if !shallCancel {
-                    for (face, cubeFace) in stitcher.getLeftResult().enumerate() {
+                    for (face, cubeFace) in stitcher.getLeftResult().enumerated() {
                         var leftFace = ImageBuffer()
                         cubeFace.getValue(&leftFace)
                         
                         if !shallCancel {
                             autoreleasepool {
                                 let image = ImageBufferToCompressedUIImage(leftFace)
-                                sink.sendNext(.Result(side: .Left, face: face, image: image))
+                                sink.send(value: .result(side: .left, face: face, image: image))
                             }
                         }
                         Recorder.freeImageBuffer(leftFace)
@@ -148,29 +148,22 @@ class StitchingService {
                 
                 autoreleasepool {
                     
-                    let image = UIImage(CGImage: ImageBufferToCGImage(erImage))
+                    let image = UIImage(cgImage: ImageBufferToCGImage(erImage))
                     let imageData = UIImageJPEGRepresentation(image, 1.0)
                     
                     let asset = ALAssetsLibrary()
                     
-                    let strModel = "RICOH THETA S" as String
-                    let strMake = "RICOH" as String
                     
+                    let strModel: String = "RICOH THETA S"
+                    let strMake: String = "RICOH"
                     
-                    let metaData = NSMutableDictionary()
-                    let tiffData = NSMutableDictionary()
+                    let tiffData: [String: String] = [kCGImagePropertyTIFFModel as String: strModel,
+                                    kCGImagePropertyTIFFMake as String: strMake]
                     
-                    tiffData.setObject(strModel, forKey: kCGImagePropertyTIFFModel as String)
-                    tiffData.setObject(strMake, forKey: kCGImagePropertyTIFFMake as String)
-                    
-                    metaData.setObject(tiffData, forKey: kCGImagePropertyTIFFDictionary as String)
-                    
-
-                    
-                    asset.writeImageDataToSavedPhotosAlbum(imageData, metadata: metaData as [NSObject : AnyObject] , completionBlock: { (path:NSURL!, error:NSError!) -> Void in
+                    asset.writeImageData(toSavedPhotosAlbum: imageData, metadata: tiffData, completionBlock: { (path:URL!, error:NSError!) -> Void in
                         print("meta path >>> \(path)")
                         print("meta error >>> \(error)")
-                    })
+                    } as! ALAssetsLibraryWriteImageCompletionBlock)
                     
                 }
                 Recorder.freeImageBuffer(erImage)
@@ -179,14 +172,14 @@ class StitchingService {
             }
             if Defaults[.SessionMotor] {
                 if !shallCancel {
-                    for (face, cubeFace) in stitcher.getRightResultThreeRing().enumerate() {
+                    for (face, cubeFace) in stitcher.getRightResultThreeRing().enumerated() {
                         var rightFace = ImageBuffer()
                         cubeFace.getValue(&rightFace)
                         
                         autoreleasepool {
                             if !shallCancel {
                                 let image = ImageBufferToCompressedUIImage(rightFace)
-                                sink.sendNext(.Result(side: .Right, face: face, image: image))
+                                sink.send(value: .result(side: .right, face: face, image: image))
                             }
                         }
                         Recorder.freeImageBuffer(rightFace)
@@ -194,21 +187,21 @@ class StitchingService {
                 }
             } else {
                 if !shallCancel {
-                    for (face, cubeFace) in stitcher.getRightResult().enumerate() {
+                    for (face, cubeFace) in stitcher.getRightResult().enumerated() {
                         var rightFace = ImageBuffer()
                         cubeFace.getValue(&rightFace)
                         
                         autoreleasepool {
                             if !shallCancel {
                                 let image = ImageBufferToCompressedUIImage(rightFace)
-                                sink.sendNext(.Result(side: .Right, face: face, image: image))
+                                sink.send(value: .result(side: .right, face: face, image: image))
                             }
                         }
                         Recorder.freeImageBuffer(rightFace)
                     }
                 }
             }
-            Mixpanel.sharedInstance().track("Action.Stitching.Finish")
+            Mixpanel.sharedInstance()?.track("Action.Stitching.Finish")
             
             
             // Executing this on the main thread is important
@@ -245,15 +238,15 @@ class StitchingService {
         }
     }
     
-    private static func registerBackgroundTask() {
-        backgroundTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler {
+    fileprivate static func registerBackgroundTask() {
+        backgroundTask = UIApplication.shared.beginBackgroundTask (expirationHandler: {
             cancelStitching()
-        }
+        })
         assert(backgroundTask != UIBackgroundTaskInvalid)
     }
     
-    private static func unregisterBackgroundTask() {
-        UIApplication.sharedApplication().endBackgroundTask(backgroundTask)
+    fileprivate static func unregisterBackgroundTask() {
+        UIApplication.shared.endBackgroundTask(backgroundTask)
         backgroundTask = UIBackgroundTaskInvalid
     }
     
@@ -261,7 +254,7 @@ class StitchingService {
     // send completed is called on termination.
     static func cancelStitching() {
         assert(isStitching())
-        Mixpanel.sharedInstance().track("Action.Stitching.Cancel")
+        Mixpanel.sharedInstance()?.track("Action.Stitching.Cancel")
         shallCancel = true
     }
 }

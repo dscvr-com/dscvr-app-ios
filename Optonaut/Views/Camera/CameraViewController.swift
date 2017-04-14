@@ -10,7 +10,7 @@ import UIKit
 import AVFoundation
 import CoreMotion
 import CoreGraphics
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 import Alamofire
 import SceneKit
@@ -26,74 +26,74 @@ struct staticVariables {
 
 class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
-    private let viewModel = CameraViewModel()
-    private let motionManager = CoreMotionRotationSource()
-    private let rotationSource = CustomRotationMatrixSource.Instance
+    fileprivate let viewModel = CameraViewModel()
+    fileprivate let motionManager = CoreMotionRotationSource()
+    fileprivate let rotationSource = CustomRotationMatrixSource.Instance
     
     // camera
-    private let session = AVCaptureSession()
-    private let sessionQueue: dispatch_queue_t
-    private var videoDevice : AVCaptureDevice?
+    fileprivate let session = AVCaptureSession()
+    fileprivate let sessionQueue: DispatchQueue
+    fileprivate var videoDevice : AVCaptureDevice?
     
-    private var lastExposureInfo = ExposureInfo()
-    private var lastAwbGains = AVCaptureWhiteBalanceGains()
-    private var exposureDuration:Double = 1
-    private var captureWidth = Int(1)
+    fileprivate var lastExposureInfo = ExposureInfo()
+    fileprivate var lastAwbGains = AVCaptureWhiteBalanceGains()
+    fileprivate var exposureDuration:Double = 1
+    fileprivate var captureWidth = Int(1)
     
-    private let sensorWidthInMeters = Double(0.004)
-    private let estimatedArmLengthInMeters = Double(0.50)
+    fileprivate let sensorWidthInMeters = Double(0.004)
+    fileprivate let estimatedArmLengthInMeters = Double(0.50)
     
     // stitcher pointer and variables
-    private var recorder: Recorder!
-    private var frameCount = 0
-    private var debugCount = 0
-    private var previewImageCount = 0
-    private let intrinsics = CameraIntrinsics
-    private var lastKeyframe: SelectionPoint?
+    fileprivate var recorder: Recorder!
+    fileprivate var frameCount = 0
+    fileprivate var debugCount = 0
+    fileprivate var previewImageCount = 0
+    fileprivate let intrinsics = CameraIntrinsics
+    fileprivate var lastKeyframe: SelectionPoint?
     
     // lines
-    private var edges: [Edge: SCNNode] = [:]
-    private let screenScale : Float
-    private let lineWidth = Float(3)
+    fileprivate var edges: [Edge: SCNNode] = [:]
+    fileprivate let screenScale : Float
+    fileprivate let lineWidth = Float(3)
     
     // subviews
-    private let tiltView = TiltView()
-    private let progressView = CameraProgressView()
-    private let instructionView = UILabel()
-    private let circleView = DashedCircleView()
-    private let arrowView = UILabel()
+    fileprivate let tiltView = TiltView()
+    fileprivate let progressView = CameraProgressView()
+    fileprivate let instructionView = UILabel()
+    fileprivate let circleView = DashedCircleView()
+    fileprivate let arrowView = UILabel()
     
     // sphere
-    private let cameraNode = SCNNode()
-    private var scnView : SCNView!
-    private let scene = SCNScene()
+    fileprivate let cameraNode = SCNNode()
+    fileprivate var scnView : SCNView!
+    fileprivate let scene = SCNScene()
     //for motor
-    private var currentDegree : Float
-    private var DegreeIncrPerMicro : Double
+    fileprivate var currentDegree : Float
+    fileprivate var DegreeIncrPerMicro : Double
     var ringFlag = 0
     
     // ball
-    private let ballNode = SCNNode()
-    private var ballSpeed = GLKVector3Make(0, 0, 0)
-    private let baseMatrix = GLKMatrix4Make(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1 , 0.0, 0.0, -1.0, 0.00, 0.0, 0.0, 0.0, 0.0, 1.0)
+    fileprivate let ballNode = SCNNode()
+    fileprivate var ballSpeed = GLKVector3Make(0, 0, 0)
+    fileprivate let baseMatrix = GLKMatrix4Make(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1 , 0.0, 0.0, -1.0, 0.00, 0.0, 0.0, 0.0, 0.0, 1.0)
     
-    private var tapCameraButtonCallback: (() -> ())?
-    private var lastElapsedTime = CACurrentMediaTime()
-    private var currentTheta = Float(0.0)
-    private var currentPhi = Float(0.0)
+    fileprivate var tapCameraButtonCallback: (() -> ())?
+    fileprivate var lastElapsedTime = CACurrentMediaTime()
+    fileprivate var currentTheta = Float(0.0)
+    fileprivate var currentPhi = Float(0.0)
     
-    private let cancelButton = UIButton()
+    fileprivate let cancelButton = UIButton()
     
-    private var RotateData = String("")
+    fileprivate var RotateData = String("")
     
-    private var topThetaValue = Float(0.0)
-    private var centerThetaValue = Float(0.0)
-    private var botThetaValue = Float(0.0)
+    fileprivate var topThetaValue = Float(0.0)
+    fileprivate var centerThetaValue = Float(0.0)
+    fileprivate var botThetaValue = Float(0.0)
     
-    private var motorControl: MotorControl?
+    fileprivate var motorControl: MotorControl?
     
     
-    var timer = NSTimer()
+    var timer = Timer()
     
     let useMotor = Defaults[.SessionMotor]
     
@@ -103,10 +103,10 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         currentDegree = 0.0
         DegreeIncrPerMicro = 0.0
         
-        let high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
-        sessionQueue = dispatch_queue_create("cameraQueue", DISPATCH_QUEUE_SERIAL)
-        dispatch_set_target_queue(sessionQueue, high)
-        screenScale = Float(UIScreen.mainScreen().scale)
+        let high = DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.high)
+        sessionQueue = DispatchQueue(label: "cameraQueue", attributes: [])
+        sessionQueue.setTarget(queue: high)
+        screenScale = Float(UIScreen.main.scale)
         
         //if Defaults[.SessionDebuggingEnabled] {
             Recorder.enableDebug(CameraDebugService().path)
@@ -125,9 +125,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         }
         
         tapCameraButtonCallback = { [weak self] in
-            let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .Alert)
-            confirmAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-            self?.presentViewController(confirmAlert, animated: true, completion: nil)
+            let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .alert)
+            confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            self?.present(confirmAlert, animated: true, completion: nil)
             
         }
     }
@@ -161,57 +161,58 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         // Init scene view here because we need view bounds for the constructor overload
         // that forces GLES. Please don't use metal. It will fail.
         if #available(iOS 9.0, *) {
-            scnView = SCNView(frame: view.bounds, options: [SCNPreferredRenderingAPIKey: SCNRenderingAPI.OpenGLES2.rawValue])
+            scnView = SCNView(frame: view.bounds, options: [SCNView.Option.preferredRenderingAPI.rawValue: SCNRenderingAPI.openGLES2.rawValue])
         } else {
             scnView = SCNView(frame: view.bounds)
         }
         
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer.frame = view.bounds
-        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        view.layer.addSublayer(previewLayer)
+        previewLayer?.frame = view.bounds
+        previewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
+        view.layer.addSublayer(previewLayer!)
         
-        viewModel.tiltAngle.producer.startWithNext { [weak self] val in self?.tiltView.angle = val }
-        viewModel.distXY.producer.startWithNext { [weak self] val in self?.tiltView.distXY = val }
+        viewModel.tiltAngle.producer.startWithValues { [weak self] val in self?.tiltView.angle = val }
+        viewModel.distXY.producer.startWithValues { [weak self] val in self?.tiltView.distXY = val }
         tiltView.innerRadius = 35
         view.addSubview(tiltView)
         
-        viewModel.progress.producer.startWithNext { [weak self] val in self?.progressView.progress = val }
-        viewModel.isRecording.producer.startWithNext { [weak self] val in self?.progressView.isActive = val}
+        viewModel.progress.producer.startWithValues { [weak self] val in self?.progressView.progress = val }
+        viewModel.isRecording.producer.startWithValues { [weak self] val in self?.progressView.isActive = val}
         view.addSubview(progressView)
         
         instructionView.font = UIFont.robotoOfSize(22, withType: .Medium)
         instructionView.numberOfLines = 0
-        instructionView.textColor = .whiteColor()
-        instructionView.textAlignment = .Center
+        instructionView.textColor = .white
+        instructionView.textAlignment = .center
         instructionView.rac_text <~ viewModel.instruction
         view.addSubview(instructionView)
         
         circleView.layer.cornerRadius = 35
-        viewModel.isRecording.producer.startWithNext { [weak self] val in self?.circleView.isDashed = !val }
-        viewModel.isCentered.producer.startWithNext { [weak self] val in self?.circleView.isActive = val }
+        viewModel.isRecording.producer.startWithValues { [weak self] val in self?.circleView.isDashed = !val }
+        viewModel.isCentered.producer.startWithValues { [weak self] val in self?.circleView.isActive = val }
         view.addSubview(circleView)
         
-        arrowView.text = String.iconWithName(.Next)
+        // TODO: Re-enable Icomoon
+        //arrowView.text = String.iconWithName(.Next)
         arrowView.textColor = UIColor(hex:0xFF5E00)
-        arrowView.textAlignment = .Center
-        arrowView.font = UIFont.iconOfSize(40)
+        arrowView.textAlignment = .center
+        //arrowView.font = UIFont.iconOfSize(40)
         arrowView.rac_alpha <~ viewModel.distXY.producer.map { distXY in
             let distLimit = Float(M_PI / 30)
             return 1 - max(CGFloat((distLimit - distXY) / distLimit + 1), 0)
         }
         viewModel.headingToDot.producer
-            .map { CGAffineTransformMakeRotation(CGFloat($0) + CGFloat(M_PI_2)) }
-            .startWithNext { [weak self] transform in self?.arrowView.transform = transform }
+            .map { CGAffineTransform(rotationAngle: CGFloat($0) + CGFloat(M_PI_2)) }
+            .startWithValues { [weak self] transform in self?.arrowView.transform = transform }
         view.addSubview(arrowView)
         
         view.setNeedsUpdateConstraints()
         
-        cancelButton.addTarget(self, action: #selector(CameraViewController.cancelRecording), forControlEvents: .TouchUpInside)
-        cancelButton.setImage(UIImage(named: "camera_back_button"), forState: .Normal)
+        cancelButton.addTarget(self, action: #selector(CameraViewController.cancelRecording), for: .touchUpInside)
+        cancelButton.setImage(UIImage(named: "camera_back_button"), for: UIControlState())
         scnView.addSubview(cancelButton)
-        cancelButton.anchorInCorner(.TopLeft, xPad: 0, yPad: 15, width: 40, height: 40)
+        cancelButton.anchorInCorner(.topLeft, xPad: 0, yPad: 15, width: 40, height: 40)
     }
     
     func touchEndCameraButton() {
@@ -219,7 +220,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     }
     
     func cancelRecording() {
-        Mixpanel.sharedInstance().track("Action.Camera.CancelRecording")
+        Mixpanel.sharedInstance()?.track("Action.Camera.CancelRecording")
         
         viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
@@ -233,26 +234,26 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             StitchingService.removeUnstitchedRecordings()
         }
         
-        self.navigationController?.popViewControllerAnimated(true)
+        self.navigationController?.popViewController(animated: true)
     }
     
-    private func setFocusMode(mode: AVCaptureFocusMode) {
+    fileprivate func setFocusMode(_ mode: AVCaptureFocusMode) {
         
         try! videoDevice!.lockForConfiguration()
         videoDevice!.focusMode = mode
         videoDevice!.unlockForConfiguration()
     }
     
-    private func setExposureMode(mode: AVCaptureExposureMode) {
+    fileprivate func setExposureMode(_ mode: AVCaptureExposureMode) {
         try! videoDevice!.lockForConfiguration()
         
-        if mode == AVCaptureExposureMode.Custom {
+        if mode == AVCaptureExposureMode.custom {
             exposureDuration = videoDevice!.exposureDuration.seconds
-            var iso = videoDevice!.ISO
+            var iso = videoDevice!.iso
             if(iso > videoDevice!.activeFormat.maxISO) {
                 iso = videoDevice!.activeFormat.maxISO
             }
-            videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, ISO: iso, completionHandler: nil)
+            videoDevice?.setExposureModeCustomWithDuration(videoDevice!.exposureDuration, iso: iso, completionHandler: nil)
             videoDevice?.setWhiteBalanceModeLockedWithDeviceWhiteBalanceGains(videoDevice!.deviceWhiteBalanceGains, completionHandler: { $0 })
         } else {
             videoDevice!.exposureMode = mode
@@ -260,24 +261,24 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         videoDevice!.unlockForConfiguration()
     }
     
-    private func setWhitebalanceMode(mode: AVCaptureWhiteBalanceMode) {
+    fileprivate func setWhitebalanceMode(_ mode: AVCaptureWhiteBalanceMode) {
         try! videoDevice!.lockForConfiguration()
         videoDevice!.whiteBalanceMode = mode
         videoDevice!.unlockForConfiguration()
     }
     
     
-    private func setupSelectionPoints() {
-        let rawPoints = recorder.getSelectionPoints()
+    fileprivate func setupSelectionPoints() {
+        let rawPoints = recorder.getSelectionPoints()!
         var points = [SelectionPoint]()
         
-        while rawPoints.HasMore() {
-            let point = rawPoints.Next()
-            points.append(point)
+        while rawPoints.hasMore() {
+            let point = rawPoints.next()
+            points.append(point!)
         }
         
         var points2 = points;
-        points2.removeAtIndex(0);
+        points2.remove(at: 0);
         
         var i = 0
         
@@ -305,7 +306,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         }
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         switch Defaults[.SessionUseMultiRing] {
@@ -332,34 +333,34 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         // We do this to avoid re-focusing during recording, which breaks the Optograph
         
         viewModel.isRecording.producer
-            .map { $0 ? .Locked : .ContinuousAutoFocus }
-            .startWithNext { [unowned self] val in self.setFocusMode(val) }
+            .map { $0 ? .locked : .continuousAutoFocus }
+            .startWithValues { [unowned self] val in self.setFocusMode(val) }
         
         viewModel.isRecording.producer
             .filter { $0 }
-            .take(1)
-            .startWithNext { [unowned self] val in
-                self.setExposureMode(.Custom)
-                self.setWhitebalanceMode(.Locked)
+            .take(first: 1)
+            .startWithValues { [unowned self] val in
+                self.setExposureMode(.custom)
+                self.setWhitebalanceMode(.locked)
         }
         
         updateTabs()
         
         tabController!.delegate = self
         
-        Mixpanel.sharedInstance().timeEvent("View.Camera")
+        Mixpanel.sharedInstance()?.timeEvent("View.Camera")
         
-        viewModel.isRecording.producer.filter(identity).take(1).startWithNext { _ in
-            Mixpanel.sharedInstance().track("Action.Camera.StartRecording")
+        viewModel.isRecording.producer.filter(identity).take(first: 1).startWithValues { _ in
+            Mixpanel.sharedInstance()?.track("Action.Camera.StartRecording")
         }
         
         navigationController?.setNavigationBarHidden(true, animated: false)
-        UIApplication.sharedApplication().setStatusBarHidden(true, withAnimation: .None)
+        UIApplication.shared.setStatusBarHidden(true, with: .none)
         
         
         frameCount = 0
         
-        UIApplication.sharedApplication().idleTimerDisabled = true
+        UIApplication.shared.isIdleTimerDisabled = true
         
         if Defaults[.SessionMotor] {
              rotationSource.start()
@@ -372,49 +373,49 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         //motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        Mixpanel.sharedInstance().track("View.Camera")
+        Mixpanel.sharedInstance()?.track("View.Camera")
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        tabController!.cameraButton.hidden = false
+        tabController!.cameraButton.isHidden = false
         
-        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.None)
+        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.none)
         
-        UIApplication.sharedApplication().idleTimerDisabled = false
+        UIApplication.shared.isIdleTimerDisabled = false
     }
     
     override func updateViewConstraints() {
-        view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
+        view.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.zero)
         
-        tiltView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
+        tiltView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.zero)
         
-        progressView.autoPinEdge(.Top, toEdge: .Top, ofView: view, withOffset: 28)
-        progressView.autoMatchDimension(.Width, toDimension: .Width, ofView: view, withOffset: -80)
-        progressView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        progressView.autoPinEdge(.top, to: .top, of: view, withOffset: 28)
+        progressView.autoMatch(.width, to: .width, of: view, withOffset: -80)
+        progressView.autoAlignAxis(.vertical, toSameAxisOf: view)
         
-        instructionView.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withMultiplier: 0.5)
-        instructionView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
+        instructionView.autoAlignAxis(.horizontal, toSameAxisOf: view, withMultiplier: 0.5)
+        instructionView.autoAlignAxis(.vertical, toSameAxisOf: view)
         
-        arrowView.autoAlignAxis(.Horizontal, toSameAxisOfView: view)
-        arrowView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        arrowView.autoSetDimensionsToSize(CGSize(width: 70, height: 70))
+        arrowView.autoAlignAxis(.horizontal, toSameAxisOf: view)
+        arrowView.autoAlignAxis(.vertical, toSameAxisOf: view)
+        arrowView.autoSetDimensions(to: CGSize(width: 70, height: 70))
         
-        circleView.autoAlignAxis(.Horizontal, toSameAxisOfView: view)
-        circleView.autoAlignAxis(.Vertical, toSameAxisOfView: view)
-        circleView.autoSetDimensionsToSize(CGSize(width: 70, height: 70))
+        circleView.autoAlignAxis(.horizontal, toSameAxisOf: view)
+        circleView.autoAlignAxis(.vertical, toSameAxisOf: view)
+        circleView.autoSetDimensions(to: CGSize(width: 70, height: 70))
         
         super.updateViewConstraints()
     }
     
-    private func setupScene() {
+    fileprivate func setupScene() {
         let camera = SCNCamera()
         let fov = 45 as Double
         camera.zNear = 0.01
@@ -427,32 +428,36 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         scene.rootNode.addChildNode(cameraNode)
         
-        scnView.backgroundColor = UIColor.clearColor()
+        scnView.backgroundColor = UIColor.clear
         scnView.scene = scene
-        scnView.playing = true
+        scnView.isPlaying = true
         scnView.delegate = self
         
         view.addSubview(scnView)
     }
     
-    private func createLineNode(posA: GLKVector3, posB: GLKVector3) -> SCNNode {
-        let positions: [Float32] = [posA.x, posA.y, posA.z, posB.x, posB.y, posB.z]
-        let positionData = NSData(bytes: positions, length: sizeof(Float32)*positions.count)
-        let indices: [Int32] = [0, 1]
-        let indexData = NSData(bytes: indices, length: sizeof(Int32) * indices.count)
+    fileprivate func createLineNode(_ posA: GLKVector3, posB: GLKVector3) -> SCNNode {
+        var positions: [Float32] = [posA.x, posA.y, posA.z, posB.x, posB.y, posB.z]
+        let positionData = withUnsafePointer(to: &positions) {
+            Data(bytes: $0, count: MemoryLayout<Float32>.size*positions.count)
+        }
+        var indices: [Int32] = [0, 1]
+        let indexData = withUnsafePointer(to: &indices) {
+            Data(bytes: $0, count: MemoryLayout<Int32>.size * indices.count)
+        }
         
-        let source = SCNGeometrySource(data: positionData, semantic: SCNGeometrySourceSemanticVertex, vectorCount: indices.count, floatComponents: true, componentsPerVector: 3, bytesPerComponent: sizeof(Float32), dataOffset: 0, dataStride: sizeof(Float32) * 3)
-        let element = SCNGeometryElement(data: indexData, primitiveType: SCNGeometryPrimitiveType.Line, primitiveCount: indices.count, bytesPerIndex: sizeof(Int32))
+        let source = SCNGeometrySource(data: positionData, semantic: SCNGeometrySource.Semantic.vertex, vectorCount: indices.count, usesFloatComponents: true, componentsPerVector: 3, bytesPerComponent: MemoryLayout<Float32>.size, dataOffset: 0, dataStride: MemoryLayout<Float32>.size * 3)
+        let element = SCNGeometryElement(data: indexData, primitiveType: SCNGeometryPrimitiveType.line, primitiveCount: indices.count, bytesPerIndex: MemoryLayout<Float32>.size)
         
         let line = SCNGeometry(sources: [source], elements: [element])
         let node = SCNNode(geometry: line)
         
-        line.firstMaterial?.diffuse.contents = UIColor.whiteColor()
+        line.firstMaterial?.diffuse.contents = UIColor.white
         
         return node
     }
     
-    private func setupBall() {
+    fileprivate func setupBall() {
         
         let ballGeometry = SCNSphere(radius: CGFloat(0.04))
         
@@ -462,9 +467,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         scene.rootNode.addChildNode(ballNode)
     }
     
-    private var time = Double(-1)
+    fileprivate var time = Double(-1)
     
-    private func updateBallPosition(expTime:Double) {
+    fileprivate func updateBallPosition(_ expTime:Double) {
         
         // Quick hack to limit expo duration in calculations, due to unexpected results of CACurrentMediaTime
         
@@ -535,12 +540,12 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
     }
     
-    private func setupCamera() {
+    fileprivate func setupCamera() {
         authorizeCamera()
         
         session.sessionPreset = AVCaptureSessionPresetHigh
 
-        videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        videoDevice = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice!) else {
             return
         }
@@ -552,9 +557,10 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         }
         
         let videoDeviceOutput = AVCaptureVideoDataOutput()
-        videoDeviceOutput.videoSettings = [
-            kCVPixelBufferPixelFormatTypeKey: NSNumber(unsignedInt: kCVPixelFormatType_32BGRA)
-        ]
+        // TODO
+        //videoDeviceOutput.videoSettings = [
+        //    kCVPixelBufferPixelFormatTypeKey: NSNumber(value: kCVPixelFormatType_32BGRA as UInt32)
+        //]
         videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
         videoDeviceOutput.setSampleBufferDelegate(self, queue: sessionQueue)
         
@@ -562,8 +568,8 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             session.addOutput(videoDeviceOutput)
         }
         
-        let conn = videoDeviceOutput.connectionWithMediaType(AVMediaTypeVideo)
-        conn.videoOrientation = AVCaptureVideoOrientation.Portrait
+        let conn = videoDeviceOutput.connection(withMediaType: AVMediaTypeVideo)!
+        conn.videoOrientation = AVCaptureVideoOrientation.portrait
         
         session.commitConfiguration()
         
@@ -582,19 +588,19 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         videoDevice?.activeFormat = bestFormat!
         
-        if videoDevice!.activeFormat.videoHDRSupported.boolValue {
+        if videoDevice!.activeFormat.isVideoHDRSupported {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
-            videoDevice!.videoHDREnabled = false
+            videoDevice!.isVideoHDREnabled = false
         }
         
         //videoDevice!.setValue(false, forKey: "AutomaticallyAdjustsImageControlMode")
         //videoDevice!.setValue(false, forKey: "HighDynamicRangeSceneDetectionEnabled")
         //videoDevice!.setValue(5, forKey: "ImageControlMode")
         
-        videoDevice!.exposureMode = .ContinuousAutoExposure
-        videoDevice!.whiteBalanceMode = .ContinuousAutoWhiteBalance
+        videoDevice!.exposureMode = .continuousAutoExposure
+        videoDevice!.whiteBalanceMode = .continuousAutoWhiteBalance
         
-        AVCaptureVideoStabilizationMode.Standard
+        AVCaptureVideoStabilizationMode.standard
         
         videoDevice!.activeVideoMinFrameDuration = CMTimeMake(1, 30)
         videoDevice!.activeVideoMaxFrameDuration = CMTimeMake(1, 30)
@@ -604,7 +610,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         session.startRunning()
     }
     
-    private func authorizeCamera() {
+    fileprivate func authorizeCamera() {
         var alreadyFailed = false
         let failAlert = {
             Async.main { [weak self] in
@@ -614,15 +620,15 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
                     alreadyFailed = true
                 }
                 
-                let alert = UIAlertController(title: "No access to camera", message: "Please enable permission to use the camera and photos.", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Enable", style: .Default, handler: { _ in
-                    UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
+                let alert = UIAlertController(title: "No access to camera", message: "Please enable permission to use the camera and photos.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Enable", style: .default, handler: { _ in
+                    UIApplication.shared.openURL(URL(string:UIApplicationOpenSettingsURLString)!)
                 }))
-                self?.presentViewController(alert, animated: true, completion: nil)
+                self?.present(alert, animated: true, completion: nil)
             }
         }
         
-        AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: { granted in
+        AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: { granted in
             if !granted {
                 failAlert()
             }
@@ -630,13 +636,13 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         PHPhotoLibrary.requestAuthorization { status in
             switch status {
-            case .NotDetermined, .Restricted, .Denied: failAlert()
+            case .notDetermined, .restricted, .denied: failAlert()
             default: ()
             }
         }
     }
     
-    private func processSampleBuffer(sampleBuffer: CMSampleBufferRef ,exposureTime:Double) {
+    fileprivate func processSampleBuffer(_ sampleBuffer: CMSampleBuffer ,exposureTime:Double) {
         
         if recorder.isFinished() {
             return; //Dirt return here. Recording is running on the main thread.
@@ -648,7 +654,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         if let pixelBuffer = pixelBuffer { //, motion = self.motionManager.deviceMotion {
             
             //let cmRotation = CMRotationToGLKMatrix4(motion.attitude.rotationMatrix)
-            CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
+            CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
             
             var buf = ImageBuffer()
             buf.data = CVPixelBufferGetBaseAddress(pixelBuffer)
@@ -669,7 +675,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             
             
             Async.main {
-                if self.isViewLoaded() {
+                if self.isViewLoaded {
                     // This is safe, since the main thread also disposes the stitcher.
                     if self.recorder.isDisposed() || self.recorder.isFinished() {
                         return
@@ -709,7 +715,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             updateBallPosition(exposureTime)
             
             if recorder.hasStarted() {
-                let currentKeyframe = recorder.lastKeyframe()
+                let currentKeyframe = recorder.lastKeyframe()!
                 
                 if lastKeyframe == nil {
                     lastKeyframe = currentKeyframe
@@ -721,7 +727,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
                 }
             }
             
-            CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly)
+            CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
             
             if recorder.isFinished() {
                 // needed since processSampleBuffer doesn't run on UI thread
@@ -732,13 +738,13 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         }
     }
     
-    private func stopSession() {
+    fileprivate func stopSession() {
         
         if let videoDevice = self.videoDevice {
             try! videoDevice.lockForConfiguration()
-            videoDevice.focusMode = .ContinuousAutoFocus
-            videoDevice.exposureMode = .ContinuousAutoExposure
-            videoDevice.whiteBalanceMode = .ContinuousAutoWhiteBalance
+            videoDevice.focusMode = .continuousAutoFocus
+            videoDevice.exposureMode = .continuousAutoExposure
+            videoDevice.whiteBalanceMode = .continuousAutoWhiteBalance
             videoDevice.unlockForConfiguration()
         }
         
@@ -754,18 +760,18 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     func finish() {
         
-        Mixpanel.sharedInstance().track("Action.Camera.FinishRecording")
+        Mixpanel.sharedInstance()?.track("Action.Camera.FinishRecording")
         
         stopSession()
         
-        let recorder_ = recorder
+        let recorder_ = recorder!
         
         let recorderCleanup = SignalProducer<UIImage, NoError> { sink, disposable in
             
             if recorder_.previewAvailable() {
                 let previewData = recorder_.getPreviewImage()
                 autoreleasepool {
-                    sink.sendNext(UIImage(CGImage: ImageBufferToCGImage(previewData)))
+                    sink.send(value: UIImage(cgImage: ImageBufferToCGImage(previewData)))
                 }
                 Recorder.freeImageBuffer(previewData)
             }
@@ -780,14 +786,14 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         let createOptographViewController = SaveViewController(recorderCleanup: recorderCleanup)
         createOptographViewController.hidesBottomBarWhenPushed = true
         navigationController!.pushViewController(createOptographViewController, animated: false)
-        navigationController!.viewControllers.removeAtIndex(1)
+        navigationController!.viewControllers.remove(at: 1)
     }
     
 }
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
-    func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
+    func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, from connection: AVCaptureConnection!) {
         
 //        let metadataDict:NSDictionary = CMCopyDictionaryOfAttachments(nil, sampleBuffer, kCMAttachmentMode_ShouldPropagate)!
 //        
@@ -805,7 +811,7 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 // MARK: - SCNSceneRendererDelegate
 extension CameraViewController: SCNSceneRendererDelegate {
     
-    func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval) {
+    func renderer(_ aRenderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         //let timestamp = NSDateFormatter.localizedStringFromDate(NSDate(), dateStyle: .ShortStyle, timeStyle: .LongStyle)
         
         //print("[\(timestamp)] Rendering");
@@ -836,7 +842,7 @@ private class DashedCircleView: UIView {
     
     var isActive = false {
         didSet {
-            border.strokeColor = isActive ? UIColor(hex:0xFF5E00).CGColor : UIColor.whiteColor().CGColor
+            border.strokeColor = isActive ? UIColor(hex:0xFF5E00).cgColor : UIColor.white.cgColor
         }
     }
     
@@ -846,7 +852,7 @@ private class DashedCircleView: UIView {
         }
     }
     
-    private let border = CAShapeLayer()
+    fileprivate let border = CAShapeLayer()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
@@ -859,17 +865,17 @@ private class DashedCircleView: UIView {
     }
     
     convenience init () {
-        self.init(frame: CGRectZero)
+        self.init(frame: CGRect.zero)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private override func layoutSubviews() {
+    fileprivate override func layoutSubviews() {
         super.layoutSubviews()
         
-        border.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: layer.cornerRadius).CGPath
+        border.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: layer.cornerRadius).cgPath
         border.frame = bounds
     }
     
@@ -882,7 +888,7 @@ extension CameraViewController: TabControllerDelegate {
     }
         
     func onTapCameraButton() {
-        tabController!.cameraButton.hidden = true
+        tabController!.cameraButton.isHidden = true
         viewModel.isRecording.value = true
             
         if useMotor {
@@ -900,23 +906,23 @@ private class CameraProgressView: UIView {
     }
     var isActive = false {
         didSet {
-            foregroundLine.backgroundColor = isActive ? UIColor(hex:0xFF5E00).CGColor : UIColor.whiteColor().CGColor
-            trackingPoint.backgroundColor = isActive ? UIColor(hex:0xFF5E00).CGColor : UIColor.whiteColor().CGColor
+            foregroundLine.backgroundColor = isActive ? UIColor(hex:0xFF5E00).cgColor : UIColor.white.cgColor
+            trackingPoint.backgroundColor = isActive ? UIColor(hex:0xFF5E00).cgColor : UIColor.white.cgColor
         }
     }
     
-    private let firstBackgroundLine = CALayer()
-    private let endPoint = CALayer()
-    private let foregroundLine = CALayer()
-    private let trackingPoint = CALayer()
+    fileprivate let firstBackgroundLine = CALayer()
+    fileprivate let endPoint = CALayer()
+    fileprivate let foregroundLine = CALayer()
+    fileprivate let trackingPoint = CALayer()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        firstBackgroundLine.backgroundColor = UIColor.whiteColor().CGColor
+        firstBackgroundLine.backgroundColor = UIColor.white.cgColor
         layer.addSublayer(firstBackgroundLine)
         
-        endPoint.backgroundColor = UIColor.whiteColor().CGColor
+        endPoint.backgroundColor = UIColor.white.cgColor
         endPoint.cornerRadius = 3.5
         layer.addSublayer(endPoint)
         
@@ -928,14 +934,14 @@ private class CameraProgressView: UIView {
     }
     
     convenience init () {
-        self.init(frame: CGRectZero)
+        self.init(frame: CGRect.zero)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private override func layoutSubviews() {
+    fileprivate override func layoutSubviews() {
         super.layoutSubviews()
         
         let width = bounds.width - 12
@@ -969,45 +975,45 @@ private class TiltView: UIView {
         }
     }
     
-    private let diagonalLine = CAShapeLayer()
-    private let verticalLine = CAShapeLayer()
-    private let ringSegment = CAShapeLayer()
-    private let circleSegment = CAShapeLayer()
+    fileprivate let diagonalLine = CAShapeLayer()
+    fileprivate let verticalLine = CAShapeLayer()
+    fileprivate let ringSegment = CAShapeLayer()
+    fileprivate let circleSegment = CAShapeLayer()
     
     override init (frame: CGRect) {
         super.init(frame: frame)
         
-        diagonalLine.strokeColor = UIColor.whiteColor().CGColor
-        diagonalLine.fillColor = UIColor.clearColor().CGColor
+        diagonalLine.strokeColor = UIColor.white.cgColor
+        diagonalLine.fillColor = UIColor.clear.cgColor
         diagonalLine.lineWidth = 2
         layer.addSublayer(diagonalLine)
         
-        verticalLine.strokeColor = UIColor(hex:0xFF5E00).CGColor
-        verticalLine.fillColor = UIColor.clearColor().CGColor
+        verticalLine.strokeColor = UIColor(hex:0xFF5E00).cgColor
+        verticalLine.fillColor = UIColor.clear.cgColor
         verticalLine.lineWidth = 2
         layer.addSublayer(verticalLine)
         
-        ringSegment.strokeColor = UIColor(hex:0xFF5E00).CGColor
-        ringSegment.fillColor = UIColor(hex:0xFF5E00).CGColor
+        ringSegment.strokeColor = UIColor(hex:0xFF5E00).cgColor
+        ringSegment.fillColor = UIColor(hex:0xFF5E00).cgColor
         ringSegment.lineWidth = 2
         layer.addSublayer(ringSegment)
         
-        circleSegment.strokeColor = UIColor.clearColor().CGColor
-        circleSegment.fillColor = UIColor(hex:0xFF5E00).hatched2.CGColor
+        circleSegment.strokeColor = UIColor.clear.cgColor
+        circleSegment.fillColor = UIColor(hex:0xFF5E00).hatched2.cgColor
         layer.addSublayer(circleSegment)
     }
     
     convenience init () {
-        self.init(frame: CGRectZero)
+        self.init(frame: CGRect.zero)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func updatePaths() {
+    fileprivate func updatePaths() {
         let angle = CGFloat(self.angle)
-        let swap = {(inout a: CGFloat, inout b: CGFloat) in
+        let swap = {(a: inout CGFloat, b: inout CGFloat) in
             if angle < 0 {
                 let tmp = a
                 a = b
@@ -1019,33 +1025,33 @@ private class TiltView: UIView {
         let cy = bounds.height / 2
         
         let diagonalPath = UIBezierPath()
-        diagonalPath.moveToPoint(CGPoint(x: cx - tan(angle) * cy, y: 0))
-        diagonalPath.addLineToPoint(CGPoint(x: cx + tan(angle) * cy, y: bounds.height))
-        diagonalLine.path = diagonalPath.CGPath
+        diagonalPath.move(to: CGPoint(x: cx - tan(angle) * cy, y: 0))
+        diagonalPath.addLine(to: CGPoint(x: cx + tan(angle) * cy, y: bounds.height))
+        diagonalLine.path = diagonalPath.cgPath
         
         let verticalPath = UIBezierPath()
         let verticalLineHeight = (cy - CGFloat(innerRadius)) * 3 / 5
         let radius = verticalLineHeight + CGFloat(innerRadius)
-        verticalPath.moveToPoint(CGPoint(x: cx, y: cy - radius))
-        verticalPath.addLineToPoint(CGPoint(x: cx, y: cy - CGFloat(innerRadius)))
-        verticalLine.path = verticalPath.CGPath
+        verticalPath.move(to: CGPoint(x: cx, y: cy - radius))
+        verticalPath.addLine(to: CGPoint(x: cx, y: cy - CGFloat(innerRadius)))
+        verticalLine.path = verticalPath.cgPath
         
         let ringSegmentPath = UIBezierPath()
         let offsetAngle = min(abs(angle) * 2, CGFloat(Float(M_PI * 0.05))) * (angle > 0 ? 1 : -1)
         var offsetStartAngle = CGFloat(-M_PI_2) + offsetAngle
         var offsetEndAngle = CGFloat(-M_PI_2) - angle - offsetAngle
         swap(&offsetStartAngle, &offsetEndAngle)
-        ringSegmentPath.addArcWithCenter(CGPoint(x: cx, y: cy), radius: radius, startAngle: offsetStartAngle, endAngle: offsetEndAngle, clockwise: false)
-        ringSegment.path = ringSegmentPath.CGPath
+        ringSegmentPath.addArc(withCenter: CGPoint(x: cx, y: cy), radius: radius, startAngle: offsetStartAngle, endAngle: offsetEndAngle, clockwise: false)
+        ringSegment.path = ringSegmentPath.cgPath
         
         let circleSegmentPath = UIBezierPath()
         let startAngle = CGFloat(-M_PI_2)
         let endAngle = CGFloat(-M_PI_2) - angle
-        circleSegmentPath.moveToPoint(CGPoint(x: cx, y: cy - CGFloat(innerRadius)))
-        circleSegmentPath.addArcWithCenter(CGPoint(x: cx, y: cy), radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: angle < 0)
-        circleSegmentPath.addLineToPoint(CGPoint(x: cx + CGFloat(innerRadius) * cos(endAngle), y: cy + CGFloat(innerRadius) * sin(endAngle)))
-        circleSegmentPath.addArcWithCenter(CGPoint(x: cx, y: cy), radius: CGFloat(innerRadius), startAngle: endAngle, endAngle: startAngle, clockwise: angle > 0)
-        circleSegment.path = circleSegmentPath.CGPath
+        circleSegmentPath.move(to: CGPoint(x: cx, y: cy - CGFloat(innerRadius)))
+        circleSegmentPath.addArc(withCenter: CGPoint(x: cx, y: cy), radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: angle < 0)
+        circleSegmentPath.addLine(to: CGPoint(x: cx + CGFloat(innerRadius) * cos(endAngle), y: cy + CGFloat(innerRadius) * sin(endAngle)))
+        circleSegmentPath.addArc(withCenter: CGPoint(x: cx, y: cy), radius: CGFloat(innerRadius), startAngle: endAngle, endAngle: startAngle, clockwise: angle > 0)
+        circleSegment.path = circleSegmentPath.cgPath
         
         // Update transparency
         let visibleLimit = Float(M_PI / 90)
@@ -1060,7 +1066,7 @@ private class TiltView: UIView {
         }
     }
     
-    private override func layoutSubviews() {
+    fileprivate override func layoutSubviews() {
         super.layoutSubviews()
         
         updatePaths()

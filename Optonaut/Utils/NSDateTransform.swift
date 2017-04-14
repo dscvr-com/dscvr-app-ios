@@ -9,18 +9,18 @@
 import Foundation
 import ObjectMapper
 
-public class NSDateTransform: TransformType {
-    public typealias Object = NSDate
+open class NSDateTransform: TransformType {
+    public typealias Object = Date
     public typealias JSON = String
     
-    public func transformFromJSON(value: AnyObject?) -> NSDate? {
+    open func transformFromJSON(_ value: Any?) -> Date? {
         if let str = value as? String {
-            return NSDate.fromRFC3339String(str)
+            return Date.fromRFC3339String(str)
         }
         return nil
     }
     
-    public func transformToJSON(value: NSDate?) -> String? {
+    open func transformToJSON(_ value: Date?) -> String? {
         if let date = value {
             return date.toRFC3339String()
         }

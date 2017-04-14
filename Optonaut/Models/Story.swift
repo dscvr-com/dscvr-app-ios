@@ -11,9 +11,9 @@ import ReactiveCocoa
 
 struct Story: Model {
     var ID: UUID
-    var createdAt: NSDate
-    var updatedAt: NSDate
-    var deletedAt: NSDate?
+    var createdAt: Date
+    var updatedAt: Date
+    var deletedAt: Date?
     var optographID: UUID
     var personID: UUID
     var childrenID: UUID
@@ -21,8 +21,8 @@ struct Story: Model {
     static func newInstance() -> Story {
         return Story(
             ID: uuid(),
-            createdAt: NSDate(),
-            updatedAt: NSDate(),
+            createdAt: Date(),
+            updatedAt: Date(),
             deletedAt: nil,
             optographID: "",
             personID: "",
@@ -34,7 +34,7 @@ struct Story: Model {
 extension Story: MergeApiModel {
     typealias AM = mapChildren
     
-    mutating func mergeApiModel(apiModel: mapChildren) {
+    mutating func mergeApiModel(_ apiModel: mapChildren) {
         ID = apiModel.ID
         createdAt = apiModel.createdAt
         updatedAt = apiModel.updatedAt
@@ -66,7 +66,7 @@ extension Story: SQLiteModel {
         return StoryTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> Story {
+    static func fromSQL(_ row: SQLiteRow) -> Story {
         return Story(
             ID: row[StorySchema.ID],
             createdAt: row[StorySchema.createdAt],

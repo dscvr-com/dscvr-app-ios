@@ -6,13 +6,13 @@
 //  Copyright © 2015 Optonaut. All rights reserved.
 //
 
-import ReactiveCocoa
+import ReactiveSwift
 import Kingfisher
 
 enum OptographAsset {
-    case PreviewImage(NSData)
-    case LeftImage(NSData)
-    case RightImage(NSData)
+    case previewImage(Data)
+    case leftImage(Data)
+    case rightImage(Data)
 }
 
 typealias HashtagStrings = Array<String>
@@ -25,14 +25,14 @@ struct CubeTextureStatus: SQLiteValue, Equatable {
     var status: [Bool] = [false, false, false, false, false, false]
     
     var completed: Bool {
-        return status.reduce(true, combine: and)
+        return status.reduce(true, and)
     }
     
     static var declaredDatatype: String {
         return Int64.declaredDatatype
     }
     
-    static func fromDatatypeValue(datatypeValue: Int64) -> CubeTextureStatus {
+    static func fromDatatypeValue(_ datatypeValue: Int64) -> CubeTextureStatus {
         var status = CubeTextureStatus()
         var val = datatypeValue
         for i in 0..<6 {
@@ -54,9 +54,9 @@ struct Optograph: DeletableModel {
     var ID: UUID
     var text: String
     var personID: UUID
-    var createdAt: NSDate
-    var updatedAt: NSDate
-    var deletedAt: NSDate?
+    var createdAt: Date
+    var updatedAt: Date
+    var deletedAt: Date?
     var isStarred: Bool
     var starsCount: Int
     var commentsCount: Int
@@ -90,8 +90,8 @@ struct Optograph: DeletableModel {
             ID: uuid(),
             text: "",
             personID: "",
-            createdAt: NSDate(),
-            updatedAt: NSDate(),
+            createdAt: Date(),
+            updatedAt: Date(),
             deletedAt: nil,
             isStarred: false,
             starsCount: 0,
@@ -124,11 +124,7 @@ struct Optograph: DeletableModel {
     }
     
     mutating func delete() {
-        deletedAt = NSDate()
-    }
-    
-    func report() -> SignalProducer<EmptyResponse, ApiError> {
-        return ApiService<EmptyResponse>.post("optographs/\(ID)/report")
+        deletedAt = Date()
     }
     
 }
@@ -171,7 +167,7 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
 extension Optograph: MergeApiModel {
     typealias AM = OptographApiModel
     
-    mutating func mergeApiModel(apiModel: AM) {
+    mutating func mergeApiModel(_ apiModel: AM) {
         ID = apiModel.ID
         text = apiModel.text
         personID = apiModel.person.ID
@@ -202,7 +198,7 @@ extension Optograph: SQLiteModel {
         return OptographTable
     }
     
-    static func fromSQL(row: SQLiteRow) -> Optograph {
+    static func fromSQL(_ row: SQLiteRow) -> Optograph {
         let leftCubeTextureStatusUpload = row.get(OptographSchema.leftCubeTextureStatusUpload)
         let rightCubeTextureStatusUpload = row.get(OptographSchema.rightCubeTextureStatusUpload)
         let leftCubeTextureStatusSave = row.get(OptographSchema.leftCubeTextureStatusSave)

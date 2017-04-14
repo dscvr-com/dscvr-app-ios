@@ -8,21 +8,21 @@
 
 import Foundation
 import Kingfisher
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 import SpriteKit
 
 extension ImageDownloader {
     
-    func downloadImageForURL(url: String) -> SignalProducer<UIImage, NoError> {
+    func downloadImageForURL(_ url: String) -> SignalProducer<UIImage, NoError> {
+        
         return SignalProducer { sink, disposable in
-            let task = self.downloadImageWithURL(
-                NSURL(string: url)!,
-                progressBlock: nil,
+            let task = self.downloadImage(
+                with: URL(string: url)!,
                 completionHandler: { (image, error, _, _) in
-                    if !disposable.disposed {
+                    if !disposable.isDisposed {
                         if let image = image {
-                            sink.sendNext(image)
+                            sink.send(value: image)
                         }
                         if let error = error {
                             print("KingfisherManager Download Error")
@@ -32,17 +32,17 @@ extension ImageDownloader {
                     }
             })
             
-            disposable.addDisposable {
+            disposable.add {
                 task?.cancel()
             }
         }
     }
     
-    func downloadSKTextureForURL(url: String) -> SignalProducer<SKTexture, NoError> {
+    func downloadSKTextureForURL(_ url: String) -> SignalProducer<SKTexture, NoError> {
         return downloadImageForURL(url).map { SKTexture(image: $0) }
     }
     
-    func downloadDataForURL(url: String) -> SignalProducer<NSData, NoError> {
+    func downloadDataForURL(_ url: String) -> SignalProducer<Data, NoError> {
         return downloadImageForURL(url).map { UIImageJPEGRepresentation($0, 0.7)! }
     }
 }

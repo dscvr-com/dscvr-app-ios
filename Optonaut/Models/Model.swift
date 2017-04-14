@@ -12,26 +12,26 @@ typealias UUID = String
 
 protocol ApiModel {
     var ID: UUID { get }
-    var createdAt: NSDate { get }
-    var updatedAt: NSDate { get }
+    var createdAt: Date { get }
+    var updatedAt: Date { get }
 }
 
 protocol Model {
     var ID: UUID { get set }
-    var createdAt: NSDate { get set }
-    var updatedAt: NSDate { get set }
+    var createdAt: Date { get set }
+    var updatedAt: Date { get set }
 }
 
 protocol MergeApiModel: Model {
     associatedtype AM: ApiModel
     
-    mutating func mergeApiModel(apiModel: AM)
+    mutating func mergeApiModel(_ apiModel: AM)
     static func newInstance() -> Self
-    static func fromApiModel(apiModel: AM) -> Self
+    static func fromApiModel(_ apiModel: AM) -> Self
 }
 
 extension MergeApiModel {
-    static func fromApiModel(apiModel: AM) -> Self {
+    static func fromApiModel(_ apiModel: AM) -> Self {
         var model = newInstance()
         model.mergeApiModel(apiModel)
         return model
@@ -39,21 +39,21 @@ extension MergeApiModel {
 }
 
 protocol DeletableModel: Model, Equatable {
-    var deletedAt: NSDate? { get set }
+    var deletedAt: Date? { get set }
 }
 
 extension Array where Element: Model {
     
-    mutating func orderedInsert(newModel: Element, withOrder order: NSComparisonResult) {
+    mutating func orderedInsert(_ newModel: Element, withOrder order: ComparisonResult) {
         // replace if already in array
-        if let index = indexOf({ $0.ID == newModel.ID }) {
+        if let index = index(where: { $0.ID == newModel.ID }) {
             self[index] = newModel
             return
         }
         
-        for (index, model) in self.enumerate() {
+        for (index, model) in self.enumerated() {
             if model.createdAt.compare(newModel.createdAt) != order {
-                insert(newModel, atIndex: index)
+                insert(newModel, at: index)
                 return
             }
         }
@@ -62,7 +62,7 @@ extension Array where Element: Model {
         append(newModel)
     }
     
-    func orderedMerge(newModels: Array, withOrder order: NSComparisonResult) -> Array {
+    func orderedMerge(_ newModels: Array, withOrder order: ComparisonResult) -> Array {
         var newArray = self
         
         for newModel in newModels {

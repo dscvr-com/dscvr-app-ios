@@ -10,28 +10,28 @@ import Foundation
 
 extension String {
     var escaped: String {
-       return CFURLCreateStringByAddingPercentEscapes(nil, self, nil, "!*'();:@&=+$,/?%#[]\" ", kCFStringEncodingASCII) as String
+       return CFURLCreateStringByAddingPercentEscapes(nil, self as CFString, nil, "!*'();:@&=+$,/?%#[]\" " as CFString, kCFStringEncodingASCII) as String
     }
     
-    func stringByAppendingPathComponent(path: String) -> String {
+    func stringByAppendingPathComponent(_ path: String) -> String {
         let nsSt = self as NSString
-        return nsSt.stringByAppendingPathComponent(path)
+        return nsSt.appendingPathComponent(path)
     }
     
-    func NSRangeOfString(substring: String) -> NSRange? {
-        guard let substringRange = rangeOfString(substring) else {
+    func NSRangeOfString(_ substring: String) -> NSRange? {
+        guard let substringRange = range(of: substring) else {
             return nil
         }
         
-        let start = startIndex.distanceTo(substringRange.startIndex)
-        let length = substringRange.startIndex.distanceTo(substringRange.endIndex) + 1
+        let start = characters.distance(from: startIndex, to: substringRange.lowerBound)
+        let length = characters.distance(from: substringRange.lowerBound, to: substringRange.upperBound) + 1
         return NSMakeRange(start, length)
     }
 }
 
 extension Array {
     
-    func first<L: BooleanType>(predicate: Element -> L) -> Element? {
+    func first(_ predicate: (Element) -> Bool) -> Element? {
         for item in self {
             if predicate(item) {
                 return item
@@ -42,14 +42,14 @@ extension Array {
 }
 
 extension Double {
-    func roundToPlaces(places: Int) -> Double {
+    mutating func roundToPlaces(_ places: Int) -> Double {
         let divisor = pow(10, Double(places))
-        return round(self * divisor) / divisor
+        return (self * divisor).rounded() / divisor
     }
 }
 
 extension CGPoint {
-    func distanceTo(otherPoint: CGPoint) -> CGFloat {
+    func distanceTo(_ otherPoint: CGPoint) -> CGFloat {
         let p1 = self
         let p2 = otherPoint
         let squareX = (p1.x - p2.x) * (p1.x - p2.x)

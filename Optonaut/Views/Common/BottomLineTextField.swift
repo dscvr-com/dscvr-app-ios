@@ -8,11 +8,10 @@
 
 import Foundation
 import UIKit
-import HexColor
 
 class BottomLineTextField: UITextField {
     
-    private let lineView = UIView()
+    fileprivate let lineView = UIView()
     
     var offset: CGFloat = 7
     var lineColor = UIColor(0xe5e5e5)
@@ -26,11 +25,11 @@ class BottomLineTextField: UITextField {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func postInit() {
+    fileprivate func postInit() {
         delegate = self
         
-        borderStyle = .None
-        backgroundColor = .clearColor()
+        borderStyle = .none
+        backgroundColor = .clear
         clipsToBounds = false
         
         lineView.backgroundColor = lineColor
@@ -50,11 +49,11 @@ class BottomLineTextField: UITextField {
 // MARK: - UITextFieldDelegate
 extension BottomLineTextField: UITextFieldDelegate {
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         lineView.backgroundColor = textColor
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         lineView.backgroundColor = lineColor
     }
     

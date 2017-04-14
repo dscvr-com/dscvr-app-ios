@@ -11,23 +11,25 @@ import SceneKit
 
 // UGLY and Unused. And also untested. 
 class DistortionMesh {
-    static let BytesPerFloat = sizeof(CFloat)
-    static let BytesPerShort = sizeof(CShort)
+    // TOOD: Remove, since not really compatible with swift 3. 
+    /*
+    static let BytesPerFloat = MemoryLayout<CFloat>.size
+    static let BytesPerShort = MemoryLayout<CShort>.size
     static let ComponentsPerVertex = 4
     static let Rows = 40
     static let Cols = 40
     
-    static func clamp(val: Float, minVal: Float, maxVal: Float) -> Float
+    static func clamp(_ val: Float, minVal: Float, maxVal: Float) -> Float
     {
         return max(minVal, min(maxVal, val))
     }
     
-    private let vertexBuffer: SCNGeometrySource
-    private let texCoordBuffer: SCNGeometrySource
-    private let indexBuffer: SCNGeometryElement
+    fileprivate let vertexBuffer: SCNGeometrySource
+    fileprivate let texCoordBuffer: SCNGeometrySource
+    fileprivate let indexBuffer: SCNGeometryElement
     
-    private var vertexData = [CFloat](count: DistortionMesh.Cols * DistortionMesh.Rows * DistortionMesh.ComponentsPerVertex, repeatedValue: 0)
-    private var indexData = [CShort](count: (DistortionMesh.Rows - 1) * DistortionMesh.Cols * 2 + (DistortionMesh.Rows - 2), repeatedValue: 0)
+    fileprivate var vertexData = [CFloat](repeating: 0, count: DistortionMesh.Cols * DistortionMesh.Rows * DistortionMesh.ComponentsPerVertex)
+    fileprivate var indexData = [CShort](repeating: 0, count: (DistortionMesh.Rows - 1) * DistortionMesh.Cols * 2 + (DistortionMesh.Rows - 2))
     let geometry: SCNGeometry
     
     init(distortion: Distortion,
@@ -99,27 +101,34 @@ class DistortionMesh {
                 vertexOffset = vertexOffset + DistortionMesh.Cols
             }
    
-            vertexBuffer = SCNGeometrySource(data: NSData(bytes: vertexData, length: vertexData.count * DistortionMesh.BytesPerFloat),
-                semantic: SCNGeometrySourceSemanticVertex,
-                vectorCount: vertexData.count,
-                floatComponents: true,
-                componentsPerVector: 2,
-                bytesPerComponent: DistortionMesh.BytesPerFloat,
-                dataOffset: 0,
-                dataStride: DistortionMesh.ComponentsPerVertex * DistortionMesh.BytesPerFloat)
+            vertexBuffer = withUnsafePointer(to: &vertexData) {
+                SCNGeometrySource(data: Data(bytes: $0, count: vertexData.count * DistortionMesh.BytesPerFloat),
+                    semantic: SCNGeometrySource.Semantic.vertex,
+                    vectorCount: vertexData.count,
+                    usesFloatComponents: true,
+                    componentsPerVector: 2,
+                    bytesPerComponent: DistortionMesh.BytesPerFloat,
+                    dataOffset: 0,
+                    dataStride: DistortionMesh.ComponentsPerVertex * DistortionMesh.BytesPerFloat)
+            }
+        
+            texCoordBuffer = withUnsafePointer(to: &vertexData) {
+                SCNGeometrySource(data: Data(bytes: $0, count: vertexData.count * DistortionMesh.BytesPerFloat),
+                    semantic: SCNGeometrySource.Semantic.texcoord,
+                    vectorCount: vertexData.count,
+                    usesFloatComponents: true,
+                    componentsPerVector: 2,
+                    bytesPerComponent: DistortionMesh.BytesPerFloat,
+                    dataOffset: 2,
+                    dataStride: DistortionMesh.ComponentsPerVertex * DistortionMesh.BytesPerFloat)
+            }
+        
             
-            texCoordBuffer = SCNGeometrySource(data: NSData(bytes: vertexData, length: vertexData.count * DistortionMesh.BytesPerFloat),
-                semantic: SCNGeometrySourceSemanticTexcoord,
-                vectorCount: vertexData.count,
-                floatComponents: true,
-                componentsPerVector: 2,
-                bytesPerComponent: DistortionMesh.BytesPerFloat,
-                dataOffset: 2,
-                dataStride: DistortionMesh.ComponentsPerVertex * DistortionMesh.BytesPerFloat)
-            
-            
-            indexBuffer = SCNGeometryElement(data: NSData(bytes: indexData, length: indexData.count * DistortionMesh.BytesPerShort), primitiveType: .TriangleStrip, primitiveCount: indexData.count, bytesPerIndex: DistortionMesh.BytesPerShort)
-            
+            indexBuffer = withUnsafePointer(to: &indexData) {
+                 SCNGeometryElement(data: Data(bytes: $0, count: indexData.count * DistortionMesh.BytesPerShort), primitiveType: .triangleStrip, primitiveCount: indexData.count, bytesPerIndex: DistortionMesh.BytesPerShort)
+            }
+        
             geometry = SCNGeometry(sources: [vertexBuffer, texCoordBuffer], elements: [indexBuffer])
     }
+ */
 }

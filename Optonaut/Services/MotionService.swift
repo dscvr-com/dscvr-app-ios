@@ -8,7 +8,7 @@
 
 import Foundation
 import CoreMotion
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 protocol RotationMatrixSource {
@@ -16,8 +16,8 @@ protocol RotationMatrixSource {
 }
 
 class HeadTrackerRotationSource : RotationMatrixSource {
-    private let headTracker = HeadTracker()
-    private var retainCounter = 0
+    fileprivate let headTracker = HeadTracker()
+    fileprivate var retainCounter = 0
     
     static let Instance = HeadTrackerRotationSource()
     
@@ -49,7 +49,7 @@ class HeadTrackerRotationSource : RotationMatrixSource {
     
     func start() {
         if retainCounter == 0 {
-            headTracker.startTracking(.LandscapeRight)
+            headTracker.startTracking(.landscapeRight)
         }
         retainCounter += 1
     }
@@ -82,8 +82,8 @@ class InvertableHeadTrackerRotationSource : HeadTrackerRotationSource {
     
 }
 class SpinRotationSource  : RotationMatrixSource {
-    private var retainCounter = 0
-    private var mat = GLKMatrix4MakeXRotation(Float(M_PI_2))
+    fileprivate var retainCounter = 0
+    fileprivate var mat = GLKMatrix4MakeXRotation(Float(M_PI_2))
     
     static let Instance = SpinRotationSource()
     
@@ -114,7 +114,7 @@ class CustomRotationMatrixSource : RotationMatrixSource {
     
     static let Instance = CustomRotationMatrixSource()
     
-    private init() { }
+    fileprivate init() { }
     
     func getRotationMatrix() -> GLKMatrix4 {
         
@@ -146,7 +146,7 @@ class CustomRotationMatrixSource : RotationMatrixSource {
         return GLKMatrix4Multiply(rotPhi, temp)
     }
     
-    func getRotationMatrixMotor(currentPhi: Float , thetaValue: Float) -> GLKMatrix4 {
+    func getRotationMatrixMotor(_ currentPhi: Float , thetaValue: Float) -> GLKMatrix4 {
         
         // Generate some movement - just for debugging.
         
@@ -193,8 +193,8 @@ class CustomRotationMatrixSource : RotationMatrixSource {
 }
 
 class CoreMotionRotationSource : RotationMatrixSource {
-    private let motionManager = CMMotionManager()
-    private var retainCounter = 0
+    fileprivate let motionManager = CMMotionManager()
+    fileprivate var retainCounter = 0
     
     static let Instance = CoreMotionRotationSource()
     
@@ -236,11 +236,11 @@ class RotationService {
     
     typealias RotationSignal = Signal<UIInterfaceOrientation, NoError>
     static let sharedInstance = RotationService()
-    private let motionManager = CMMotionManager()
+    fileprivate let motionManager = CMMotionManager()
     var rotationSignal: RotationSignal?
-    private var retainCounter = 0
+    fileprivate var retainCounter = 0
     
-    private init() {}
+    fileprivate init() {}
     
     func rotationEnable() {
         
@@ -255,17 +255,17 @@ class RotationService {
             
             rotationSignal = signal
             
-            let queue = NSOperationQueue()
+            let queue = OperationQueue()
             queue.name = "Rotation queue"
-            motionManager.startAccelerometerUpdatesToQueue(queue, withHandler: { accelerometerData, error in
+            motionManager.startAccelerometerUpdates(to: queue, withHandler: { accelerometerData, error in
                 if let accelerometerData = accelerometerData {
                     let x = accelerometerData.acceleration.x
                     let y = accelerometerData.acceleration.y
                     if sqrt(x * x + y * y) > 0.4 { // Motion is unambigous
                         if abs(x) > abs(y) + 0.2 { // Turned enough
-                            sink.sendNext(x > 0 ? .LandscapeLeft : .LandscapeRight)
+                            sink.send(value: x > 0 ? .landscapeLeft : .landscapeRight)
                         } else if abs(y) > abs(x) + 0.2 {
-                            sink.sendNext(.Portrait)
+                            sink.send(value: .portrait)
                         }
                     }
                 }

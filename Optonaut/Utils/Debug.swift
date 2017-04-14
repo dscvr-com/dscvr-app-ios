@@ -9,17 +9,17 @@
 import Foundation
 
 func logRetain() {
-    let caller = NSThread.callStackSymbols()[1]
-    let results = caller.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: " -[]+?.,")).filter(isNotEmpty)
+    let caller = Thread.callStackSymbols[1]
+    let results = caller.components(separatedBy: CharacterSet(charactersIn: " -[]+?.,")).filter(isNotEmpty)
     print("Deinit \(results[3])")
 }
 
 func logInit() {
-    let caller = NSThread.callStackSymbols()[1]
-    let results = caller.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: " -[]+?.,")).filter(isNotEmpty)
+    let caller = Thread.callStackSymbols[1]
+    let results = caller.components(separatedBy: CharacterSet(charactersIn: " -[]+?.,")).filter(isNotEmpty)
     print("Init \(results[3])")
 }
 
 func assertMainThread() {
-    assert(NSThread.currentThread().isMainThread, "has to be called on main thread")
+    assert(Thread.current.isMainThread, "has to be called on main thread")
 }

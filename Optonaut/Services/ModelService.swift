@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import Result
 
 class ModelBox<M: Model> {
@@ -15,7 +15,7 @@ class ModelBox<M: Model> {
     typealias ModelType = M
     
     // parent relationship
-    private weak var cache: ModelCache<ModelType>?
+    fileprivate weak var cache: ModelCache<ModelType>?
     
     var model: ModelType
     
@@ -23,27 +23,27 @@ class ModelBox<M: Model> {
         return property.producer
     }
     
-    private let property: MutableProperty<ModelType>
+    fileprivate let property: MutableProperty<ModelType>
     
-    private init(model: ModelType) {
+    fileprivate init(model: ModelType) {
         self.model = model
         property = MutableProperty(model)
     }
     
-    func update(closure: ModelBox -> ()) {
+    func update(_ closure: (ModelBox) -> ()) {
         objc_sync_enter(self)
         closure(self)
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             self.property.value = self.model
         }
         objc_sync_exit(self)
     }
     
-    func replace(model: ModelType) {
+    func replace(_ model: ModelType) {
         assert(model.ID == self.model.ID)
         objc_sync_enter(self)
         self.model = model
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             self.property.value = model
         }
         objc_sync_exit(self)
@@ -60,17 +60,17 @@ extension ModelBox where M: SQLiteModel {
     func insertOrUpdate() {
         objc_sync_enter(self)
         try! model.insertOrUpdate()
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             self.property.value = self.model
         }
         objc_sync_exit(self)
     }
     
-    func insertOrUpdate(closure: ModelBox -> ()) {
+    func insertOrUpdate(_ closure: (ModelBox) -> ()) {
         objc_sync_enter(self)
         closure(self)
         try! model.insertOrUpdate()
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             self.property.value = self.model
         }
         objc_sync_exit(self)
@@ -79,7 +79,7 @@ extension ModelBox where M: SQLiteModel {
     func insertOrIgnore() {
         objc_sync_enter(self)
         model.insertOrIgnore()
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             self.property.value = self.model
         }
         objc_sync_exit(self)
@@ -104,20 +104,20 @@ protocol ModelCacheType: class {
 
 extension ModelCacheType {
     
-    func create(model: ModelType) -> ModelBox<ModelType> {
+    func create(_ model: ModelType) -> ModelBox<ModelType> {
         assert(cache[model.ID] == nil)
         cache[model.ID] = ModelBox(model: model)
         return cache[model.ID]!
     }
     
-    func touch(model: ModelType?) -> ModelBox<ModelType>? {
+    func touch(_ model: ModelType?) -> ModelBox<ModelType>? {
         if let model = model {
             return touch(model)
         }
         return nil
     }
     
-    func touch(model: ModelType) -> ModelBox<ModelType> {
+    func touch(_ model: ModelType) -> ModelBox<ModelType> {
         guard let box = cache[model.ID] else {
             return create(model)
         }
@@ -130,9 +130,9 @@ extension ModelCacheType {
         return box
     }
     
-    func forget(uuid: UUID?) {
+    func forget(_ uuid: UUID?) {
         if let uuid = uuid {
-            cache.removeValueForKey(uuid)
+            cache.removeValue(forKey: uuid)
         }
     }
     
@@ -149,7 +149,7 @@ extension ModelCacheType {
 
 extension ModelCacheType where ModelType: MergeApiModel {
     
-    func touch(apiModel: ApiModel) -> ModelBox<ModelType> {
+    func touch(_ apiModel: ApiModel) -> ModelBox<ModelType> {
         let apiModel = apiModel as! ModelType.AM
         
         if let box = cache[apiModel.ID]  {
@@ -165,7 +165,7 @@ extension ModelCacheType where ModelType: MergeApiModel {
         return create(model)
     }
     
-    func touch(apiModel: ApiModel?) -> ModelBox<ModelType>? {
+    func touch(_ apiModel: ApiModel?) -> ModelBox<ModelType>? {
         if let apiModel = apiModel {
             return touch(apiModel)
         }

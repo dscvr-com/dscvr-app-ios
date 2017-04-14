@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 import SQLite
 import Mixpanel
 import SwiftyUserDefaults
@@ -62,7 +62,7 @@ class SessionService {
         return Defaults[.SessionOnboardingVersion] < OnboardingVersion
     }
     
-    private static var logoutCallbacks: [(performAlways: Bool, fn: () -> ())] = []
+    fileprivate static var logoutCallbacks: [(performAlways: Bool, fn: () -> ())] = []
     
     static let loginNotifiaction = NotificationSignal<Void>()
     
@@ -70,7 +70,7 @@ class SessionService {
         
         if isLoggedIn {
             let query = PersonTable.filter(PersonTable[PersonSchema.ID] == personID)
-            let person = DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
+            let person = try! DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
             Models.persons.create(person)
             
             updateMixpanel()
@@ -81,89 +81,12 @@ class SessionService {
         }
     }
     
-    static func login(identifier: LoginIdentifier, password: String) -> SignalProducer<Void, ApiError> {
-        var parameters: [String: AnyObject] = ["email": "", "user_name": "", "password": password]
-        switch identifier {
-        case .Email(let email): parameters["email"] = email
-        case .UserName(let userName): parameters["user_name"] = userName
-        }
-        
-        return ApiService<LoginApiModel>.post("persons/login", parameters: parameters)
-            .on(next: { loginData in
-                Defaults[.SessionPassword] = password
-            })
-            .flatMap(.Latest) { handleSignin($0) }
-    }
-    
-    static func handleSignin(loginData: LoginApiModel) -> SignalProducer<Void, ApiError> {
-       return SignalProducer(value: loginData)
-            .on(next: { loginData in
-                Defaults[.SessionToken] = loginData.token
-                Defaults[.SessionPersonID] = loginData.ID
-                Defaults[.SessionDebuggingEnabled] = false
-                Defaults[.SessionOnboardingVersion] = loginData.onboardingVersion
-                Defaults[.SessionVRGlassesSelected] = false
-                Defaults[.SessionVRGlasses] = DefaultVRGlasses
-                //Defaults[.SessionShareToggledFacebook] = safeOptional(FBSDKAccessToken.currentAccessToken())?.hasGranted("publish_actions") ?? false
-                Defaults[.SessionShareToggledTwitter] = false
-                Defaults[.SessionShareToggledInstagram] = false
-                Defaults[.SessionUseMultiRing] = false
-                Defaults[.SessionNeedRefresh] = true
-            })
-            .flatMap(.Latest) { _ in
-                ApiService<PersonApiModel>.get("persons/me") }
-            .map(Person.fromApiModel)
-            .on(
-                next: { person in
-                    
-                    Models.persons.touch(person).insertOrUpdate()
-                    //Defaults[.SessionEliteUser] = person.eliteStatus == 1 ? true:false
-                    Mixpanel.sharedInstance().createAlias(person.ID, forDistinctID: Mixpanel.sharedInstance().distinctId)
-                    updateMixpanel()
-                    loginNotifiaction.notify(())
-                },
-                failed: { _ in
-                    reset()
-                }
-            )
-            .flatMap(.Latest) { _ in SignalProducer.empty }
-    }
-    
-    static func facebookSignin(userID: String, token: String) -> SignalProducer<Void, ApiError> {
-        let parameters = [
-            "facebook_user_id": userID,
-            "facebook_token": token,
-        ]
-        print(parameters)
-        return ApiService<LoginApiModel>.post("persons/facebook/signin", parameters: parameters)
-            .flatMap(.Latest) { SessionService.handleSignin($0) }
-    }
-    
-    static func logout() {
-        for (_, fn) in logoutCallbacks {
-            fn()
-        }
-        // logout twitter
-        if let session = Twitter.sharedInstance().sessionStore.session() {
-            Twitter.sharedInstance().sessionStore.logOutUserID(session.userID)
-        }
-        
-        // logout facebook
-        FBSDKAccessToken.setCurrentAccessToken(nil)
-        
-        reset()
-        
-        logoutCallbacks = logoutCallbacks.filter { (performAlways, _) in performAlways }
-    }
-    
-    static func onLogout(performAlways performAlways: Bool = false, fn: () -> ()) {
-        logoutCallbacks.append((performAlways, fn))
-    }
+
     static func logoutReset() {
         reset()
     }
     
-    private static func reset() {
+    fileprivate static func reset() {
         Defaults[.SessionToken] = nil
         Defaults[.SessionPersonID] = nil
         Defaults[.SessionPassword] = nil
@@ -176,11 +99,11 @@ class SessionService {
         Defaults[.SessionShareToggledInstagram] = false
         //Defaults[.SessionEliteUser] = false
         
-        Mixpanel.sharedInstance().reset()
-        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+        Mixpanel.sharedInstance()?.reset()
+        UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
-    private static func updateMixpanel() {
+    fileprivate static func updateMixpanel() {
         let person = Models.persons[personID]!.model
         var personEmail = ""
         
@@ -190,8 +113,8 @@ class SessionService {
             personEmail = ""
         }
         
-        Mixpanel.sharedInstance().identify(person.ID)
-        Mixpanel.sharedInstance().people.set([
+        Mixpanel.sharedInstance()?.identify(person.ID)
+        Mixpanel.sharedInstance()?.people.set([
             "$first": person.displayName,
             "$username": person.userName,
             "$email": personEmail,
@@ -205,6 +128,6 @@ class SessionService {
 }
 
 enum LoginIdentifier {
-    case UserName(String)
-    case Email(String)
+    case userName(String)
+    case email(String)
 }

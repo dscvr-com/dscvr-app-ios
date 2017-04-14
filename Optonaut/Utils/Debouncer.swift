@@ -10,21 +10,21 @@ import Foundation
 
 class Debouncer {
     
-    private let queue: dispatch_queue_t
-    private let delay: Int64
-    private var lastFireTime: dispatch_time_t = 0
+    fileprivate let queue: DispatchQueue
+    fileprivate let delay: Int64
+    fileprivate var lastFireTime: DispatchTime = DispatchTime.now()
     
-    init(queue: dispatch_queue_t, delay: NSTimeInterval) {
+    init(queue: DispatchQueue, delay: TimeInterval) {
         self.queue = queue
         self.delay = Int64(delay * Double(NSEC_PER_SEC))
     }
     
-    func debounce(fn: () -> ()) {
-        lastFireTime = dispatch_time(DISPATCH_TIME_NOW, 0)
+    func debounce(_ fn: @escaping () -> ()) {
+        lastFireTime = DispatchTime.now() + Double(0) / Double(NSEC_PER_SEC)
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay), queue) {
-            let now = dispatch_time(DISPATCH_TIME_NOW, 0)
-            let when = dispatch_time(self.lastFireTime, self.delay)
+        queue.asyncAfter(deadline: DispatchTime.now() + Double(delay) / Double(NSEC_PER_SEC)) {
+            let now = DispatchTime.now() + Double(0) / Double(NSEC_PER_SEC)
+            let when = self.lastFireTime + Double(self.delay) / Double(NSEC_PER_SEC)
             if now >= when {
                 fn()
             }

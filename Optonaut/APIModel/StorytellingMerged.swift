@@ -14,7 +14,7 @@ struct StorytellingMerged: Mappable {
     var user: [StorytellingFeed] = []
     
     
-    init?(_ map: Map) {}
+    init?(map: Map) {}
     
     mutating func mapping(map: Map) {
         feed <- map["feed"]

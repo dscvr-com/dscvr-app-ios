@@ -7,12 +7,12 @@
 //
 
 import Foundation
-import ReactiveCocoa
+import ReactiveSwift
 
 class ActivitiesService {
     
     static let unreadCount: MutableProperty<Int> = {
-        return MutableProperty(UIApplication.sharedApplication().applicationIconBadgeNumber)
+        return MutableProperty(UIApplication.shared.applicationIconBadgeNumber)
     }()
     
 }

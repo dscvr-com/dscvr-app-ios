@@ -74,7 +74,6 @@
 		8F23AA7E1C08ADB4008926A8 /* Migration0005.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */; };
 		8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F276F281C36DC4E003C348C /* FeedNavViewController.swift */; };
 		8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F276F2A1C3819A6003C348C /* ActivitiesService.swift */; };
-		8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
 		8F4185F41C525538009E1E3F /* ModelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185F31C525538009E1E3F /* ModelService.swift */; };
 		8F4185F91C529C74009E1E3F /* OptographApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185F81C529C74009E1E3F /* OptographApiModel.swift */; };
@@ -134,7 +133,6 @@
 		8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */; };
 		8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */; };
 		8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */; };
-		8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */; };
 		8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7411B8E3D7900656D99 /* LocationService.swift */; };
 		8FB634801B79AF9F00B48158 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6347F1B79AF9F00B48158 /* Comment.swift */; };
 		8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */; };
@@ -179,6 +177,7 @@
 		A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2D1BC87F7500C9EFE5 /* Stitcher.mm */; };
 		A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */; };
 		A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E301BC87F7500C9EFE5 /* Stores.mm */; };
+		A5424BAB1EA108D400E27E1B /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */; };
 		A568D4951BD12F5A008FF556 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4971BD13348008FF556 /* HeadTracker.mm */; };
 		A56CA4061BC070450078D7E8 /* lut in Resources */ = {isa = PBXBuildFile; fileRef = A56CA3FF1BC070450078D7E8 /* lut */; };
@@ -602,6 +601,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5424BAB1EA108D400E27E1B /* ReactiveCocoa.framework in Frameworks */,
 				59D828141D709C4200007B57 /* Crashlytics.framework in Frameworks */,
 				598EB95C1D7068A200E00F9B /* Fabric.framework in Frameworks */,
 				59E9E3181D62277500D326F8 /* Icomoon.framework in Frameworks */,
@@ -613,8 +613,6 @@
 				8FA66BA51B80905C00EE5D44 /* SQLite.framework in Frameworks */,
 				8FBDE8B21B5D186800C78486 /* Device.framework in Frameworks */,
 				8F17CF6D1B4EE7DA00A10DA3 /* ObjectMapper.framework in Frameworks */,
-				8FB2D6D01B7C91DB00BFB795 /* HexColor.framework in Frameworks */,
-				8F281F831B3AB7C20038F1A8 /* ReactiveCocoa.framework in Frameworks */,
 				8F5FD9DA1B3B0080007E073C /* Result.framework in Frameworks */,
 				8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */,
 				8F8E32D21BFE152C00E09392 /* SwiftyUserDefaults.framework in Frameworks */,
@@ -1388,16 +1386,18 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = Optonaut;
 				TargetAttributes = {
 					8FA86D4B1C08F2C80033CBA9 = {
 						CreatedOnToolsVersion = 7.1.1;
+						LastSwiftMigration = 0820;
 						TestTargetID = 8FCCA02A1B3806040091F1B1;
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
 						DevelopmentTeam = 3VNDY9CY79;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
@@ -1407,6 +1407,7 @@
 					};
 					8FCCA03F1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
+						LastSwiftMigration = 0820;
 						TestTargetID = 8FCCA02A1B3806040091F1B1;
 					};
 				};
@@ -1754,6 +1755,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.optonaut.OptonautUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "f0f6cc20-a27e-43c2-85ab-99258340f77e";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Optonaut;
 				USES_XCTRUNNER = YES;
 			};
@@ -1768,6 +1770,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.optonaut.OptonautUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "f0f6cc20-a27e-43c2-85ab-99258340f77e";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Optonaut;
 				USES_XCTRUNNER = YES;
 			};
@@ -1776,6 +1779,7 @@
 		8FCCA0481B3806040091F1B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1786,14 +1790,15 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1823,6 +1828,7 @@
 		8FCCA0491B3806040091F1B1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1833,14 +1839,15 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1855,6 +1862,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1890,7 +1898,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = Optonaut/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1905,6 +1913,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1929,7 +1939,7 @@
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				INFOPLIST_FILE = Optonaut/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1941,6 +1951,8 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Optonaut/Optonaut-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -1960,6 +1972,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DSCVR.app/DSCVR";
 			};
 			name = Debug;
@@ -1976,6 +1989,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "optonaut.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DSCVR.app/DSCVR";
 			};
 			name = Release;

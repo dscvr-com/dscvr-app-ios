@@ -9,9 +9,9 @@
 import UIKit
 
 class BoundingButton: UIButton {
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let margin: CGFloat = 5
-        let area = CGRectInset(bounds, -margin, -margin)
-        return CGRectContainsPoint(area, point)
+        let area = bounds.insetBy(dx: -margin, dy: -margin)
+        return area.contains(point)
     }
 }
