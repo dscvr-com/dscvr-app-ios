@@ -146,6 +146,8 @@ class StitchingService {
                      erImage = stitcher.getLeftEquirectangularResult()
                 }
                 
+                /*
+                 // TODO: Save to photo album.
                 autoreleasepool {
                     
                     let image = UIImage(cgImage: ImageBufferToCGImage(erImage))
@@ -163,9 +165,10 @@ class StitchingService {
                     asset.writeImageData(toSavedPhotosAlbum: imageData, metadata: tiffData, completionBlock: { (path:URL!, error:NSError!) -> Void in
                         print("meta path >>> \(path)")
                         print("meta error >>> \(error)")
-                    } as! ALAssetsLibraryWriteImageCompletionBlock)
+                    })
                     
                 }
+                */
                 Recorder.freeImageBuffer(erImage)
                 
                 

@@ -106,9 +106,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         sessionQueue = DispatchQueue(label: "cameraQueue", attributes: [])
         screenScale = Float(UIScreen.main.scale)
         
-        //if Defaults[.SessionDebuggingEnabled] {
+        if Defaults[.SessionDebuggingEnabled] {
             Recorder.enableDebug(CameraDebugService().path)
-        //}
+        }
         
         super.init(nibName: nil, bundle: nil)
         
@@ -450,8 +450,8 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         let element = SCNGeometryElement(data: indexData, primitiveType: SCNGeometryPrimitiveType.line, primitiveCount: 1, bytesPerIndex: MemoryLayout<Int32>.size)
         
         // TODO: Actually return a line here.
-        let line = SCNGeometry(sources: [source], elements: [element])
-        //let line = SCNSphere(radius: CGFloat(0.02))
+        //let line = SCNGeometry(sources: [source], elements: [element])
+        let line = SCNSphere(radius: CGFloat(0.02))
         let node = SCNNode(geometry: line)
         node.position = SCNVector3(x: posA.x, y: posA.y, z: posA.z)
         line.firstMaterial?.diffuse.contents = UIColor.white

@@ -65,8 +65,9 @@ class PipelineService {
         
         stitchingSignal
             .observeOnUserInitiated()
-            .observe { result in
-                switch result.value! {
+            .ignoreError() // TODO - no idea if this is safe. 
+            .observeValues { result in
+                switch result {
                 case let .result(side, face, image):
                     
                     // This is a hack to circumvent asynchronous de/encoding of the image by Kingfisher. 
