@@ -156,9 +156,11 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-    
-        // Apple changed GPU fetching to Metal, so we also use metal here.
-        scnView = SCNView(frame: view.bounds)
+        if #available(iOS 9.0, *) {
+            scnView = SCNView(frame: view.bounds, options: [SCNView.Option.preferredRenderingAPI.rawValue: SCNRenderingAPI.openGLES2.rawValue])
+        } else {
+            scnView = SCNView(frame: view.bounds)
+        }
         
         // layer for preview
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
@@ -559,10 +561,10 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         }
         
         let videoDeviceOutput = AVCaptureVideoDataOutput()
-        // TODO
-        //videoDeviceOutput.videoSettings = [
-        //    kCVPixelBufferPixelFormatTypeKey: NSNumber(value: kCVPixelFormatType_32BGRA as UInt32)
-        //]
+        
+        videoDeviceOutput.videoSettings = [
+            kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA as UInt32)
+        ]
         videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
         videoDeviceOutput.setSampleBufferDelegate(self, queue: sessionQueue)
         
