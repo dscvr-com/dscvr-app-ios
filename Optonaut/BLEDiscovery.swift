@@ -15,6 +15,7 @@ class BLEDiscovery: NSObject, CBCentralManagerDelegate {
     fileprivate let onDeviceFound: (CBPeripheral, NSString) -> Void
     fileprivate let onDeviceConnected: (CBPeripheral) -> Void
     fileprivate let services: [CBUUID]
+    var connectedPeripherals: [CBPeripheral] = []
     
     init(onDeviceFound: @escaping (CBPeripheral, NSString) -> Void, onDeviceConnected: @escaping (CBPeripheral) -> Void, services: [CBUUID]) {
         self.onDeviceFound = onDeviceFound
@@ -31,7 +32,12 @@ class BLEDiscovery: NSObject, CBCentralManagerDelegate {
         print("Searching for BLE Devices")
         
     }
-    
+
+    func disconnectPeripheral(peripheralIndex: Int)
+    {
+        centralManager.cancelPeripheralConnection(connectedPeripherals[peripheralIndex])
+    }
+
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch (central.state) {
         case .poweredOff:
@@ -73,6 +79,7 @@ class BLEDiscovery: NSObject, CBCentralManagerDelegate {
         //let bleService = BTService(initWithPeripheral: peripheral)
         self.onDeviceConnected(peripheral)
         print(peripheral)
+        connectedPeripherals.append(peripheral)
         // Stop scanning for new devices
         central.stopScan()
     }

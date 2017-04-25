@@ -62,11 +62,14 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     fileprivate let cameraNode = SCNNode()
     fileprivate var scnView : SCNView!
     fileprivate let scene = SCNScene()
-    //for motor
+
+    // motor
     fileprivate var currentDegree : Float
     fileprivate var DegreeIncrPerMicro : Double
     var ringFlag = 0
-    
+    var motorControl: MotorControl!
+    let useMotor = Defaults[.SessionMotor]
+
     // ball
     fileprivate let ballNode = SCNNode()
     fileprivate var ballSpeed = GLKVector3Make(0, 0, 0)
@@ -85,13 +88,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     fileprivate var centerThetaValue = Float(0.0)
     fileprivate var botThetaValue = Float(0.0)
     
-    fileprivate var motorControl: MotorControl?
-    
-    
     var timer = Timer()
-    
-    let useMotor = Defaults[.SessionMotor]
-    
         
     required init() {
         
@@ -127,10 +124,8 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         if useMotor {
             motionManager.stop()
         } else {
-            motionManager.stop()
-            
+            motionManager.stop()            
         }
-        
         print("de init cameraviewcontroller")
         //rotationSource.stop()
         //motionManager.stopDeviceMotionUpdates()
@@ -143,7 +138,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        motorControl.moveX(500, speed: 1000)
         if #available(iOS 9.0, *) {
             scnView = SCNView(frame: view.bounds, options: [SCNView.Option.preferredRenderingAPI.rawValue: SCNRenderingAPI.openGLES2.rawValue])
         } else {

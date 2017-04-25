@@ -111,18 +111,14 @@ class MotorControl: NSObject, CBPeripheralDelegate {
 
     func toByteArray<T>(_ value: T) -> [UInt8] {
         var value = value
-        return withUnsafePointer(to: &value) {
-            Array(UnsafeBufferPointer(start: $0, count: MemoryLayout<T>.size)) as Any
-            } as! [UInt8]
+        return withUnsafeBytes(of: &value) { Array($0) }
     }
-
 
     func fromByteArray<T>(_ value: [UInt8], _: T.Type) -> T {
-        return value.withUnsafeBufferPointer {
-            return UnsafeRawPointer($0.baseAddress!).load(as: T.self)
+        return value.withUnsafeBytes {
+            $0.baseAddress!.load(as: T.self)
         }
     }
-
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if characteristic.uuid.isEqual(MotorControl.BLECharacteristicResponseUUID) {

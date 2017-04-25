@@ -13,6 +13,8 @@ import Photos
 import SwiftyUserDefaults
 import CoreBluetooth
 
+var bt: BLEDiscovery!
+
 class CameraOverlayVC: UIViewController {
     
     fileprivate let session = AVCaptureSession()
@@ -28,7 +30,6 @@ class CameraOverlayVC: UIViewController {
     var deviceLastCount: Int = 0
 
     //bluetoothCode
-    private var bt: BLEDiscovery!
     var btService : BLEService?
     var btMotorControl : MotorControl?
     var btDevices = [CBPeripheral]()
@@ -46,7 +47,12 @@ class CameraOverlayVC: UIViewController {
         setupCamera()
         setupScene()
 
-        bt = BLEDiscovery(onDeviceFound: onDeviceFound, onDeviceConnected: onDeviceConnected, services: [MotorControl.BLEServiceUUID])
+        if bt == nil {
+            bt = BLEDiscovery(onDeviceFound: onDeviceFound, onDeviceConnected: onDeviceConnected, services: [MotorControl.BLEServiceUUID])
+        } else {
+            btService = BLEService(initWithPeripheral: bt.connectedPeripherals[0], onServiceConnected: onServiceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: [MotorControl.BLECharacteristicUUID, MotorControl.BLECharacteristicResponseUUID])
+            btService?.startDiscoveringServices()
+        }
 
     }
 
@@ -74,8 +80,6 @@ class CameraOverlayVC: UIViewController {
 
     func onServiceConnected(service: CBService) {
         btMotorControl = MotorControl(s: service, p: service.peripheral, allowCommandInterrupt: true)
-        print("connected")
-//        _ = Timer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(ConnectViewController.performSegue), userInfo: nil, repeats: false)
     }
 
     fileprivate func setupScene() {
@@ -153,14 +157,20 @@ class CameraOverlayVC: UIViewController {
 //                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
 //                self.present(confirmAlert, animated: true, completion: nil)
 //            }
-
-            
+            if btMotorControl == nil {
+                let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
+                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                self.present(confirmAlert, animated: true, completion: nil)
+            }
+            print("wohooo")
         } else {
             navigationController?.pushViewController(CameraViewController(), animated: false)
+            let cvc = navigationController?.viewControllers[2] as! CameraViewController
+            cvc.motorControl = btMotorControl
             navigationController?.viewControllers.remove(at: 1)
         }
     }
-    
+
     func isMotorMode(_ state:Bool) {
         if state {
             manualButton.setBackgroundImage(UIImage(named: "manualButton_off"), for: UIControlState())
@@ -245,7 +255,7 @@ class CameraOverlayVC: UIViewController {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
             videoDevice!.isVideoHDREnabled = false
         }
-        
+
         videoDevice!.exposureMode = .continuousAutoExposure
         videoDevice!.whiteBalanceMode = .continuousAutoWhiteBalance
         
