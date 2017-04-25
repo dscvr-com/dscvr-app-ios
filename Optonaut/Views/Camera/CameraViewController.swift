@@ -20,16 +20,11 @@ import SwiftyUserDefaults
 import Photos
 import CoreBluetooth
 
-struct staticVariables {
-    static var isCenter:Bool!
-}
-
 class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     fileprivate let viewModel = CameraViewModel()
     fileprivate let motionManager = CoreMotionRotationSource()
-    fileprivate let rotationSource = CustomRotationMatrixSource.Instance
-    
+
     // camera
     fileprivate let session = AVCaptureSession()
     fileprivate let sessionQueue: DispatchQueue
@@ -112,14 +107,8 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         super.init(nibName: nil, bundle: nil)
         
-        // TODO: Cleanup. Global code is a mess. 
         if useMotor {
-            if let bleService = btServiceSharedInstance {
-                motorControl = MotorControl(s: bleService, p: bleService.peripheral, allowCommandInterrupt: false)
-            } else {
-                print("We were told to use the motor, but the ble service was not set")
                 assertionFailure()
-            }
         }
         
         tapCameraButtonCallback = { [weak self] in
@@ -136,7 +125,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     deinit {
         if useMotor {
-            rotationSource.stop()
             motionManager.stop()
         } else {
             motionManager.stop()
@@ -359,9 +347,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         UIApplication.shared.isIdleTimerDisabled = true
         
         if Defaults[.SessionMotor] {
-             rotationSource.start()
-            motionManager.start()
-           
+           motionManager.start()
         } else {
            motionManager.start() 
         }

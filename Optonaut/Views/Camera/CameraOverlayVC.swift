@@ -13,11 +13,7 @@ import Photos
 import SwiftyUserDefaults
 import CoreBluetooth
 
-var btPeripheralSharedInstance: BLEService?
-var btServiceSharedInstance: CBService?
-
-// TODO: This class is a mess. duplication, ill state transistion, racing conditions. cleanup. 
-class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
+class CameraOverlayVC: UIViewController {
     
     fileprivate let session = AVCaptureSession()
     fileprivate var videoDevice : AVCaptureDevice?
@@ -30,9 +26,12 @@ class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
     var timer:Timer?
     var blSheet = UIAlertController()
     var deviceLastCount: Int = 0
-    
-    fileprivate var btDiscovery: BLEDiscovery?
-    fileprivate var deviceList: [CBPeripheral] = []
+
+    //bluetoothCode
+    private var bt: BLEDiscovery!
+    var btService : BLEService?
+    var btMotorControl : MotorControl?
+    var btDevices = [CBPeripheral]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,70 +45,39 @@ class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
         
         setupCamera()
         setupScene()
-        
-        getBluetoothList()
-        btDiscovery = BLEDiscovery(onDeviceFound: onDeviceFound, onDeviceConnected: onDeviceConnected, services: [MotorControl.BLEServiceUUID])
+
+        bt = BLEDiscovery(onDeviceFound: onDeviceFound, onDeviceConnected: onDeviceConnected, services: [MotorControl.BLEServiceUUID])
+
     }
-    
-    func onDeviceFound(_ peripheral: CBPeripheral, name: NSString) {
-        deviceList.append(peripheral)
-    }
-    
-    func onDeviceConnected(_ peripheral: CBPeripheral) {
-        
-    }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         UIApplication.shared.setStatusBarHidden(true, with: .none)
     }
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         timer?.invalidate()
     }
-    
-    func getBluetoothList() {
-        if Defaults[.SessionMotor] {
-            if deviceList.count > 0 {
-                if deviceLastCount != deviceList.count {
-                    deviceLastCount = deviceList.count
-                    blSheet.dismiss(animated: false, completion: nil)
-                    getBluetoothDevicesToPair()
-                    print("may changes")
-                }
-            } else {
-                deviceList = []
-                if deviceLastCount != deviceList.count {
-                    deviceLastCount = deviceList.count
-                    blSheet.dismiss(animated: false, completion: nil)
-                    getBluetoothDevicesToPair()
-                    print("may changes zero count")
-                } else {
-                    print("walang changes zero count")
-                }
-            }
-        }
+
+    func onDeviceFound(device: CBPeripheral, name: NSString) {
+        self.btDevices = self.btDevices + [device]
+        bt.connectPeripheral(btDevices[0])
     }
-    
-    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        // TODO, WTF did you write here? 
-        /*
-        if peripheral.state == CBPeripheralState. {
-            print("Broadcasting...")
-        } else if peripheral.state == CBPeripheralState.poweredOff {
-            let confirmAlert = UIAlertController(title: "", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
-            confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            self.present(confirmAlert, animated: true, completion: nil)
-        } else if peripheral.state == CBPeripheralState.unsupported {
-            print("Unsupported")
-        } else if peripheral.state == CBPeripheralState.unauthorized {
-            print("This option is not allowed by your application")
-        }
- */
+
+    func onDeviceConnected(device: CBPeripheral) {
+        btService = BLEService(initWithPeripheral: device, onServiceConnected: onServiceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: [MotorControl.BLECharacteristicUUID, MotorControl.BLECharacteristicResponseUUID])
+        btService?.startDiscoveringServices()
     }
-    
+
+    func onServiceConnected(service: CBService) {
+        btMotorControl = MotorControl(s: service, p: service.peripheral, allowCommandInterrupt: true)
+        print("connected")
+//        _ = Timer.scheduledTimerWithTimeInterval(2, target: self, selector: #selector(ConnectViewController.performSegue), userInfo: nil, repeats: false)
+    }
+
     fileprivate func setupScene() {
         
 //        backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
@@ -162,69 +130,30 @@ class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
 //        view.addSubview(cameraButton)
 //        cameraButton.anchorToEdge(.Bottom, padding: 20, width: size.width, height: size.height)
     }
-    
-    func getCBPeripheralState(_ state:CBPeripheralState) -> String {
-        switch state {
-        case .disconnected:
-            return "Disconnected"
-        case .connected:
-            return "Connected"
-        case .disconnecting:
-            return "Disconnecting"
-        case .connecting:
-            return "Connecting"
-        }
-    }
-    
-    func getBluetoothDevicesToPair() {
-        blSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        if deviceList.count == 0 {
-            timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(getBluetoothList), userInfo: nil, repeats: true)
-            blSheet.addAction(UIAlertAction(title: "Searching for nearby devices..", style: .default, handler: { _ in
-                return
-            }))
-        }
-        
-        for dev in deviceList {
-            blSheet.addAction(UIAlertAction(title: "\(dev.name!)    (\(getCBPeripheralState(dev.state)))", style: .default, handler: { _ in
-                btPeripheralSharedInstance = BLEService(initWithPeripheral: dev, onServiceConnected: self.serviceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: MotorControl.BLECharacteristicUUID)
-                btPeripheralSharedInstance?.startDiscoveringServices()
-            }))
-        }
-        
-        blSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in return }))
-        
-        self.present(blSheet, animated: true, completion: nil)
-        
-    }
-    
-    func serviceConnected(_ service: CBService) {
-        btServiceSharedInstance = service
-    }
-    
+
     func closeCamera() {
         navigationController?.popViewController(animated: false)
     }
     
     func record() {
         if Defaults[.SessionMotor] {
-            if deviceList.count == 0 {
-                let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
-                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                self.present(confirmAlert, animated: true, completion: nil)
-            } else {
-                for dev in deviceList {
-                    if getCBPeripheralState(dev.state) == "Connected" {
-                        navigationController?.pushViewController(CameraViewController(), animated: false)
-                        navigationController?.viewControllers.remove(at: 1)
-                        return
-                    }
-                }
-                let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
-                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                self.present(confirmAlert, animated: true, completion: nil)
-            }
-            
+//            if deviceList.count == 0 {
+//                let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
+//                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+//                self.present(confirmAlert, animated: true, completion: nil)
+//            } else {
+//                for dev in deviceList {
+//                    if getCBPeripheralState(dev.state) == "Connected" {
+//                        navigationController?.pushViewController(CameraViewController(), animated: false)
+//                        navigationController?.viewControllers.remove(at: 1)
+//                        return
+//                    }
+//                }
+//                let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
+//                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+//                self.present(confirmAlert, animated: true, completion: nil)
+//            }
+
             
         } else {
             navigationController?.pushViewController(CameraViewController(), animated: false)
@@ -262,7 +191,6 @@ class CameraOverlayVC: UIViewController {//,CBPeripheralManagerDelegate{
         Defaults[.SessionMotor] = true
         Defaults[.SessionUseMultiRing] = true
         
-        getBluetoothDevicesToPair()
     }
     
     fileprivate func setupCamera() {
