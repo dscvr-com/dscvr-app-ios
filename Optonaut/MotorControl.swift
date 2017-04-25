@@ -12,18 +12,21 @@ import CoreBluetooth
 class MotorControl: NSObject, CBPeripheralDelegate {
     var service : CBService
     var peripheral : CBPeripheral
-    
+
     var positionInitialized: Bool
     var motorPositionX: Int
     var motorPositionY: Int
 
     let allowCommandInterrupt: Bool
     var executing: Bool
-    
+
     static let BLEServiceUUID =                CBUUID(string: "69400001-B5A3-F393-E0A9-E50E24DCCA99")
     static let BLECharacteristicUUID =         CBUUID(string: "69400002-B5A3-F393-E0A9-E50E24DCCA99")
     static let BLECharacteristicResponseUUID = CBUUID(string: "69400003-B5A3-F393-E0A9-E50E24DCCA99")
-    
+    static let topButton =    "FE01080108FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    static let bottomButton = "FE01080007FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+
+
     init(s: CBService, p: CBPeripheral, allowCommandInterrupt: Bool) {
         self.service = s
         self.peripheral = p
@@ -47,7 +50,7 @@ class MotorControl: NSObject, CBPeripheralDelegate {
         command.append(lengthOfData)
         command.append(opCode)
         command.append(contentsOf: data)
-        
+
         var checksum = UInt32(0)
         for c in command {
             checksum += UInt32(c)
@@ -55,7 +58,7 @@ class MotorControl: NSObject, CBPeripheralDelegate {
 
         let crc = UInt8(checksum & 0xFF)
         command.append(crc)
-        
+
         let Data = NSMutableData(bytes: command, length: command.count)
         for characteristic in service.characteristics! {
             let thisCharacteristic = characteristic as CBCharacteristic
@@ -65,7 +68,7 @@ class MotorControl: NSObject, CBPeripheralDelegate {
             }
         }
     }
-    
+
     func moveX(_ steps: Int32, speed: Int32) {
         var command = toByteArray(steps)
         command = command.reversed()
@@ -75,7 +78,7 @@ class MotorControl: NSObject, CBPeripheralDelegate {
         sendCommand(0x01, data: command)
         self.executing = true
     }
-    
+
     func moveY(_ steps: Int32, speed: Int32) {
         var command = toByteArray(steps)
         command = command.reversed()
@@ -105,39 +108,50 @@ class MotorControl: NSObject, CBPeripheralDelegate {
         sendCommand(0x04, data: [])
         self.executing = true
     }
-    
+
     func toByteArray<T>(_ value: T) -> [UInt8] {
         var value = value
         return withUnsafePointer(to: &value) {
             Array(UnsafeBufferPointer(start: $0, count: MemoryLayout<T>.size)) as Any
-        } as! [UInt8]
+            } as! [UInt8]
     }
-    
-    
+
+
     func fromByteArray<T>(_ value: [UInt8], _: T.Type) -> T {
         return value.withUnsafeBufferPointer {
             return UnsafeRawPointer($0.baseAddress!).load(as: T.self)
         }
     }
-    
-    
+
+
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if characteristic.uuid.isEqual(MotorControl.BLECharacteristicResponseUUID) {
             let data = characteristic.value
             let numberOfBytes = data!.count
-            
-            // TODO: Check if this is actually the move command. 
+
             if (numberOfBytes != 20) {
                 print("Error on BLE notification: Received \(numberOfBytes) bytes instead of 20.")
                 return
             }
-            
+
             var byteArray = [UInt8](repeating: 0, count: numberOfBytes)
             (data as NSData?)?.getBytes(&byteArray, length: numberOfBytes)
-            
+
+            let str = byteArray.reduce("", { $0 + String(format: "%02x", $1)})
+            print(str)
+
+            if (str.uppercased() == MotorControl.topButton) {
+                print("top")
+                return
+            }
+            if (str.uppercased() == MotorControl.bottomButton) {
+                print("bottom")
+                return
+            }
+
             motorPositionX = fromByteArray([byteArray[10], byteArray[9], byteArray[8], byteArray[7]], Int.self)
             motorPositionY = fromByteArray([byteArray[6], byteArray[5], byteArray[4], byteArray[3]], Int.self)
-            
+
             print("Received update from motor. x: \(motorPositionX), y: \(motorPositionY)")
             self.executing = false
         }
