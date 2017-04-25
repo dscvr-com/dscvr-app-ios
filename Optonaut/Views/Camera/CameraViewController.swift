@@ -286,12 +286,15 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
                 let posA = GLKMatrix4MultiplyVector3(a.extrinsics, vec)
                 let posB = GLKMatrix4MultiplyVector3(b.extrinsics, vec)
                 
+                print("\(posA.x) \(posA.y) \(posA.z)")
+                print("\(posB.x) \(posB.y) \(posB.z)")
+                
                 let edgeNode = createLineNode(posA, posB: posB)
                 
                 // This code makes movement visible (half of the lines will be colored)
-                //                if i % 20 > 9 {
-                //                    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.blackColor()
-                //                }
+                //if i % 2 > 0 {
+                //    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.black
+                //}
                 
                 edges[edge] = edgeNode
                 
@@ -432,30 +435,20 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         view.addSubview(scnView)
     }
     
-    var positionCache = [Data]()
-    var indexCache = [Data]()
-    
     fileprivate func createLineNode(_ posA: GLKVector3, posB: GLKVector3) -> SCNNode {
-        var positions: [Float32] = [posA.x, posA.y, posA.z, posB.x, posB.y, posB.z]
-        let positionData = withUnsafePointer(to: &positions) {
-            Data(bytes: $0, count: MemoryLayout<Float32>.size * positions.count)
-        }
-        positionCache.append(positionData)
-
-        var indices: [Int32] = [0, 1]
-        let indexData = withUnsafePointer(to: &indices) {
-            Data(bytes: $0, count: MemoryLayout<Int32>.size * indices.count)
-        }
-        indexCache.append(indexData)
         
-        let source = SCNGeometrySource(data: positionData, semantic: SCNGeometrySource.Semantic.vertex, vectorCount: indices.count, usesFloatComponents: true, componentsPerVector: 3, bytesPerComponent: MemoryLayout<Float32>.size, dataOffset: 0, dataStride: MemoryLayout<Float32>.size * 3)
-        let element = SCNGeometryElement(data: indexData, primitiveType: SCNGeometryPrimitiveType.line, primitiveCount: 1, bytesPerIndex: MemoryLayout<Int32>.size)
+        let positions: [Float32] = [posA.x, posA.y, posA.z, posB.x, posB.y, posB.z]
+        let positionData = NSData(bytes: positions, length: MemoryLayout<Float32>.size * positions.count)
+        let indices: [Int32] = [0, 1]
+        let indexData = NSData(bytes: indices, length: MemoryLayout<Int32>.size * indices.count)
         
-        // TODO: Actually return a line here.
-        //let line = SCNGeometry(sources: [source], elements: [element])
-        let line = SCNSphere(radius: CGFloat(0.02))
+        
+        let source = SCNGeometrySource(data: positionData as Data!, semantic: SCNGeometrySource.Semantic.vertex, vectorCount: indices.count, usesFloatComponents: true, componentsPerVector: 3, bytesPerComponent: MemoryLayout<Float32>.size, dataOffset: 0, dataStride: MemoryLayout<Float32>.size * 3)
+        let element = SCNGeometryElement(data: indexData as Data!, primitiveType: SCNGeometryPrimitiveType.line, primitiveCount: indices.count, bytesPerIndex: MemoryLayout<Int32>.size)
+        
+        let line = SCNGeometry(sources: [source], elements: [element])
         let node = SCNNode(geometry: line)
-        node.position = SCNVector3(x: posA.x, y: posA.y, z: posA.z)
+        //node.position = SCNVector3(x: posA.x, y: posA.y, z: posA.z)
         line.firstMaterial?.diffuse.contents = UIColor.white
         
         return node
