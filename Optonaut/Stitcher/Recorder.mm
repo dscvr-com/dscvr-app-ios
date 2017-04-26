@@ -6,7 +6,7 @@
 #include <string>
 #define OPTONAUT_TARGET_PHONE
 
-#include "motorControlRecorder.hpp"
+#include "multiRingRecorder2.hpp"
 #include "recorder2.hpp"
 #include "recorder.hpp"
 #include "storageImageSink.hpp"
@@ -122,7 +122,7 @@ std::string debugPath;
 @implementation Recorder {
 @private
     optonaut::Recorder2* pipe;
-    optonaut::MotorControlRecorder* motorPipe;
+    optonaut::MultiRingRecorder* motorPipe;
     cv::Mat intrinsics;
     NSString* tempPath;
     int internalRecordingMode;
@@ -203,7 +203,7 @@ optonaut::StorageImageSink imageSink(Stores::post);
         //   optonaut::Recorder::exposureEnabled = false;
         //   optonaut::Recorder::alignmentEnabled = true;
         optonaut::StorageImageSink& sink = imageSink;
-          self->motorPipe = new optonaut::MotorControlRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+          self->motorPipe = new optonaut::MultiRingRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
                                                self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated, 1.0, debugPath);
         
       
@@ -230,37 +230,6 @@ optonaut::StorageImageSink imageSink(Stores::post);
         return pipe == NULL;
     }
 }
-
-
-// get theta values
-
--(double) getTopThetaValue {
-    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        
-        return motorPipe->getTopThetaValue();
-    }
-    return 0;
-}
-
--(double) getCenterThetaValue {
-    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        
-        return motorPipe->getCenterThetaValue();
-    }
-    return 0;
-}
-
-
--(double) getBotThetaValue {
-    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        
-        return motorPipe->getBotThetaValue();
-    }
-    return 0;
-}
-
-
-
 
 - (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure  :(AVCaptureWhiteBalanceGains)gains{
     

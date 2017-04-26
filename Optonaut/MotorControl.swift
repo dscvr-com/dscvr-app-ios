@@ -9,28 +9,38 @@
 import Foundation
 import CoreBluetooth
 
+struct MotorCommand {
+    
+    init(_dest: Point, _speed: Point) {
+        self.destination = _dest
+        self.speed = _speed
+    }
+    
+    let destination: Point // In Radiants
+    let speed: Point // In steps/second
+}
+
 class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
     var service : CBService
     var peripheral : CBPeripheral
 
     var positionInitialized: Bool
-    var motorPositionX: Int
-    var motorPositionY: Int
     var startTime = CFAbsoluteTimeGetCurrent()
-    var isMovingForwardPhi = false
-    var isMovingBackwardPhi = false
-    var isMovingForwardTheta = false
-    var isMovingBackwardTheta = false
-
+    
     static let motorStepsX = 5111
     static let motorStepsY = 17820
 
-    var phi = Float(-M_PI_2)
-    var theta = Float(-M_PI_2)
-    var thetaLow = Float(0)
-    var thetaHigh = Float(0)
-    var startPhi = Float(0)
-    var startTheta = Float(-M_PI_2)
+    var currentScript = [MotorCommand]()
+    
+    // Positions in RADIANTS
+    var startPosition = Point(x: 0, y: -(Float)(M_PI_2))
+    var moved = Point(x: 0, y: 0)
+    var currentPosition = Point(x: 0, y: -(Float)(M_PI_2))
+    
+    // Speed in RADS/SEC
+    var speed = Point(x: 1, y: 1)
+    // Command in RADIANTS
+    var command = Point(x: 0, y: 0)
 
 
     let allowCommandInterrupt: Bool
@@ -42,91 +52,64 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
     static let topButton =    "FE01080108FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
     static let bottomButton = "FE01080007FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
 
+    // This function is polled
     func getRotationMatrix() -> GLKMatrix4 {
-        updateAngles()
-        print("Phi: \(phi)     Theta: \(theta)")
-        return phiThetaToRotationMatrix(phi, theta: theta)
+        let currentPosition = updateAngles()
+        
+        let diff = pabs(p: moved - command)
+        let eps = Float(0.000001)
+        
+        if(diff.x < eps && diff.y < eps && currentScript.count > 0) {
+            execNextCommand()
+        }
+        
+        print("Phi: \(currentPosition.x)     Theta: \(currentPosition.y)")
+        return phiThetaToRotationMatrix(currentPosition.x, theta: currentPosition.y)
+    }
+    
+    private func execNextCommand() {
+        let nextCommand = currentScript.remove(at: 0)
+        moveXandYRadiants(radsX: nextCommand.destination.x, speedX: Int32(nextCommand.speed.x), radsY: nextCommand.destination.y, speedY: Int32(nextCommand.speed.y))
+    }
+    
+    func runScript(script: [MotorCommand]) {
+        assert(currentScript.count == 0)
+        
+        currentScript = script
+        execNextCommand()
+    }
+    
+    func stepsToRadiantsX(steps: Int32) -> Float {
+        return Float(steps) / Float(MotorControl.motorStepsX) * Float(M_PI * 2)
+    }
+    
+    func radiantsToStepsX(rads: Float) -> Int32 {
+        return Int32(rads / Float(M_PI * 2) * Float(MotorControl.motorStepsX))
+    }
+    
+    func stepsToRadiantsY(steps: Int32) -> Float {
+        return Float(steps) / Float(MotorControl.motorStepsY) * Float(M_PI * 2)
+    }
+    
+    func radiantsToStepsY(rads: Float) -> Int32 {
+        return Int32(rads / Float(M_PI * 2) * Float(MotorControl.motorStepsY))
     }
 
-    func start(values: [Float]) {
-        thetaLow = values[0] - 5
-        thetaHigh = values[2] + 5
-        startTime = CFAbsoluteTimeGetCurrent()
-        isMovingForwardPhi = true
-        moveX(Int32(Float(-MotorControl.motorStepsX) * (390 / 360)) , speed: 500)
-        _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsX) * (390 / 360) / 500), repeats: false, block: {_ in
-            self.isMovingForwardPhi = false
-            self.startPhi = self.phi
-            self.startTime = CFAbsoluteTimeGetCurrent()
-            self.isMovingBackwardPhi = true
-            self.moveX(Int32(Float(MotorControl.motorStepsX) * Float(30) / 360), speed: 500)
-            _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsX) * Float(30) / 360 / 500), repeats: false, block: {_ in
-                self.isMovingBackwardPhi = false
-                self.startPhi = self.phi
-                self.startTime = CFAbsoluteTimeGetCurrent()
-                self.isMovingForwardTheta = true
-                self.moveY(Int32(Float(MotorControl.motorStepsY) * Float(self.thetaHigh) / 360), speed: 500)
-                _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsY) * Float(self.thetaHigh) / 360 / 500), repeats: false, block: {_ in
-                    self.isMovingForwardTheta = false
-                    self.startTheta = self.theta
-                    self.startTime = CFAbsoluteTimeGetCurrent()
-                    self.isMovingForwardPhi = true
-                    self.moveX(Int32(Float(-MotorControl.motorStepsX) * (390 / 360)), speed: 500)
-                    _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsX) * (390 / 360) / 500), repeats: false, block: {_ in
-                        self.isMovingForwardPhi = false
-                        self.startPhi = self.phi
-                        self.startTime = CFAbsoluteTimeGetCurrent()
-                        self.isMovingBackwardPhi = true
-                        self.moveX(Int32(Float(MotorControl.motorStepsX) * Float(30) / 360), speed: 500)
-                        _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsX) * Float(30) / 360 / 500), repeats: false, block: {_ in
-                            self.isMovingBackwardPhi = false
-                            self.startPhi = self.phi
-                            self.startTime = CFAbsoluteTimeGetCurrent()
-                            self.isMovingBackwardTheta = true
-                            self.moveY(Int32(Float(-MotorControl.motorStepsY) * (Float(self.thetaHigh) / 360 + Float(-self.thetaLow) / 360)), speed: 500)
-                            _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(-MotorControl.motorStepsY) * (Float(self.thetaHigh) / 360 + Float(-self.thetaLow) / 360) / 500), repeats: false, block: {_ in
-                                self.isMovingBackwardTheta = false
-                                self.startTheta = self.theta
-                                self.startTime = CFAbsoluteTimeGetCurrent()
-                                self.moveX(Int32(Float(-MotorControl.motorStepsX) * (390 / 360)), speed: 500)
-                                _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsX) * (390 / 360) / 500), repeats: false, block: {_ in
-                                    self.isMovingForwardPhi = false
-                                    self.startPhi = self.phi
-                                    self.moveY(Int32(Float(MotorControl.motorStepsY) * Float(-self.thetaLow) / 360), speed: 500)
-
-                                })
-                            })
-                        })
-                    })
-                })
-            })
-        })
-    }
-
-    func updateAngles() {
+    func updateAngles() -> Point {
         let currentTime = CFAbsoluteTimeGetCurrent()
         let timediff = currentTime - startTime
-        let phiInGrad = timediff / (Double(MotorControl.motorStepsX) / 500) * 360
-        let thetaInGrad = timediff / (Double(MotorControl.motorStepsY) / 500) * 360
-        if isMovingForwardPhi {
-            phi = startPhi + Float(phiInGrad * M_PI / Double(180))
-        }
-        if isMovingBackwardPhi {
-            phi = startPhi - Float(phiInGrad * M_PI / Double(180))
-        }
-        if isMovingForwardTheta {
-            theta = startTheta - Float(thetaInGrad * M_PI / Double(180))
-        }
-        if isMovingBackwardTheta {
-            theta = startTheta + Float(thetaInGrad * M_PI / Double(180))
-        }
+        
+        moved = pmin(a: pabs(p: speed * Float(timediff)), b: pabs(p: command)) // Vector we moved so far.
+        moved = Point(x: moved.x * sign(command.x), y: moved.y * sign(command.y))
+        
+        currentPosition = moved + startPosition
+        
+        return currentPosition
     }
 
     init(s: CBService, p: CBPeripheral, allowCommandInterrupt: Bool) {
         self.service = s
         self.peripheral = p
-        self.motorPositionX = 0
-        self.motorPositionY = 0
         self.positionInitialized = false
         self.allowCommandInterrupt = allowCommandInterrupt
         self.executing = false
@@ -163,6 +146,14 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
             }
         }
     }
+    
+    func moveXRadiants(rads: Float, speed: Int32) {
+        startPosition = currentPosition
+        self.speed = Point(x: stepsToRadiantsX(steps: speed), y: 1)
+        command = Point(x: rads, y: 0)
+        startTime = CFAbsoluteTimeGetCurrent()
+        moveX(-radiantsToStepsX(rads: rads), speed: speed)
+    }
 
     func moveX(_ steps: Int32, speed: Int32) {
         var command = toByteArray(steps)
@@ -172,6 +163,14 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
         command.append(0x00)
         sendCommand(0x01, data: command)
         self.executing = true
+    }
+    
+    func moveYRadiants(rads: Float, speed: Int32) {
+        startPosition = currentPosition
+        self.speed = Point(x: 1, y: stepsToRadiantsY(steps: speed))
+        command = Point(x: 0, y: rads)
+        startTime = CFAbsoluteTimeGetCurrent()
+        moveY(-radiantsToStepsY(rads: rads), speed: speed)
     }
 
     func moveY(_ steps: Int32, speed: Int32) {
@@ -183,8 +182,21 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
         sendCommand(0x02, data: command)
         self.executing = true
     }
+    
+    func moveXandYRadiants(radsX: Float, speedX: Int32, radsY: Float, speedY: Int32) {
+        startPosition = currentPosition
+        speed = Point(x: stepsToRadiantsX(steps: speedX), y: stepsToRadiantsY(steps: speedY))
+        command = Point(x: radsX, y: radsY)
+        startTime = CFAbsoluteTimeGetCurrent()
+        let stepsX = radiantsToStepsX(rads: radsX)
+        let stepsY = radiantsToStepsY(rads: radsY)
+        moveXandY(-stepsX, speedX: speedX, stepsY: -stepsY, speedY: speedY)
+    }
 
     func moveXandY(_ stepsX: Int32, speedX: Int32, stepsY: Int32, speedY: Int32) {
+        if (stepsX == 0 && stepsY == 0) {
+            return
+        }
         var command = toByteArray(stepsX)
         command = command.reversed()
         command.append(UInt8((speedX >> 8) & 0xFF))
@@ -239,12 +251,13 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
                 print("bottom")
                 return
             }
-
+/*
             motorPositionX = fromByteArray([byteArray[10], byteArray[9], byteArray[8], byteArray[7]], Int.self)
             motorPositionY = fromByteArray([byteArray[6], byteArray[5], byteArray[4], byteArray[3]], Int.self)
 
             print("Received update from motor. x: \(motorPositionX), y: \(motorPositionY)")
             self.executing = false
+ */
         }
     }
 }

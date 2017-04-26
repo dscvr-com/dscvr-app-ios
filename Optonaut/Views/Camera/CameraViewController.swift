@@ -82,10 +82,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     fileprivate var RotateData = String("")
     
-    fileprivate var topThetaValue = Float(0.0)
-    fileprivate var centerThetaValue = Float(0.0)
-    fileprivate var botThetaValue = Float(0.0)
-    
     var timer = Timer()
         
     required init() {
@@ -285,13 +281,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         case false:
             self.recorder = Recorder(.Center)
         }
-        
-        
-        topThetaValue = Float(recorder.getTopThetaValue())
-        centerThetaValue = Float(recorder.getCenterThetaValue())
-        botThetaValue = Float(recorder.getBotThetaValue())
-        
-        print("Motor Theta values Top : \(topThetaValue) Center: \(centerThetaValue) Bot: \(botThetaValue)")
         
         
         setupScene()
@@ -853,8 +842,37 @@ extension CameraViewController: TabControllerDelegate {
         tabController!.cameraButton.isHidden = true
         viewModel.isRecording.value = true
         if useMotor {
-            let thetaValues = calculatePoints()
-            motorControl.start(values: thetaValues)
+            let v = calculatePoints()
+            var thetaValues = [Float]()
+            
+            // Hard coded re-ordering. Please look away.
+            if(v.count == 3) {
+                thetaValues = [v[1], v[2], v[0]]
+            } else if(v.count == 1) {
+                thetaValues = [v[0]]
+            } else {
+                assert(false)
+            }
+            
+            for index in 1..<thetaValues.count {
+                thetaValues[index] = thetaValues[index] - thetaValues[index - 1]
+            }
+            thetaValues[0] = 0
+            
+            let script = thetaValues.flatMap { pos in
+                return [
+                    MotorCommand(
+                        _dest: Point(x: 0, y: pos),
+                        _speed: Point(x: 500, y: 500)
+                    ),
+                    MotorCommand(
+                        _dest: Point(x: Float(M_PI * 2), y: 0),
+                        _speed: Point(x: 500, y: 500)
+                    )
+                ]
+            }
+            
+            motorControl.runScript(script: script)
         }
     }
 
@@ -863,10 +881,10 @@ extension CameraViewController: TabControllerDelegate {
         let vec = GLKVector3Make(0, 0, -1)
         for i in points {
             let posA = GLKMatrix4MultiplyVector3(i.extrinsics, vec)
-            var value = atan(posA.z)
-            value = value * 180 / Float(M_PI)
-            if !result.contains(value) {
-                result.append(value)
+            let angle = -asin(posA.z)
+            
+            if !result.contains(angle) {
+                result.append(angle)
             }
         }
         return result

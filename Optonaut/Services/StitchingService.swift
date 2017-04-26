@@ -87,8 +87,8 @@ class StitchingService {
             Mixpanel.sharedInstance()?.timeEvent("Action.Stitching.Finish")
             
             if Defaults[.SessionUseMultiRing] {
-                let convertToStereo = ConvertToStereo()
-                convertToStereo?.convert()
+                let globalAlignment = GlobalAlignment()
+                globalAlignment!.finish()
             }
             
             

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		49EE20AD1DDEE98C00441C98 /* ConvertToStereo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49EE20AB1DDEE98C00441C98 /* ConvertToStereo.mm */; };
+		49EE20AD1DDEE98C00441C98 /* GlobalAlignment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49EE20AB1DDEE98C00441C98 /* GlobalAlignment.mm */; };
 		5903A99F1DD9B387000DB58B /* CameraOverlayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903A99E1DD9B387000DB58B /* CameraOverlayVC.swift */; };
 		5929D3291DE32AC800BED9AB /* flowBlender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5929D3281DE32AC800BED9AB /* flowBlender.cpp */; };
 		5930CF711DA655A300582ACB /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5930CF701DA655A300582ACB /* Story.swift */; };
@@ -187,6 +187,7 @@
 		A56CA4131BC070AE0078D7E8 /* barrell_displacement.fsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA40D1BC070AE0078D7E8 /* barrell_displacement.fsh */; };
 		A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */ = {isa = PBXBuildFile; fileRef = A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */; };
 		A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */; };
+		A5A3E53F1EB0CAB500971847 /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A3E53E1EB0CAB500971847 /* Point.swift */; };
 		A5DE71E91BE28A7400316F82 /* Distortion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E01BE28A7400316F82 /* Distortion.swift */; };
 		A5DE71EA1BE28A7400316F82 /* DistortionMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E11BE28A7400316F82 /* DistortionMesh.swift */; };
 		A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E21BE28A7400316F82 /* DistortionProgram.swift */; };
@@ -265,10 +266,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		49EE20AB1DDEE98C00441C98 /* ConvertToStereo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConvertToStereo.mm; path = Optonaut/Stitcher/ConvertToStereo.mm; sourceTree = SOURCE_ROOT; };
-		49EE20AC1DDEE98C00441C98 /* ConvertToStereo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConvertToStereo.h; path = Optonaut/Stitcher/ConvertToStereo.h; sourceTree = SOURCE_ROOT; };
+		49EE20AB1DDEE98C00441C98 /* GlobalAlignment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GlobalAlignment.mm; path = Optonaut/Stitcher/GlobalAlignment.mm; sourceTree = SOURCE_ROOT; };
+		49EE20AC1DDEE98C00441C98 /* GlobalAlignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalAlignment.h; path = Optonaut/Stitcher/GlobalAlignment.h; sourceTree = SOURCE_ROOT; };
 		5903A99E1DD9B387000DB58B /* CameraOverlayVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraOverlayVC.swift; sourceTree = "<group>"; };
-		5929D3261DE316AA00BED9AB /* motorControlRecorder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = motorControlRecorder.hpp; sourceTree = "<group>"; };
 		5929D3271DE316D300BED9AB /* convertToStereo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = convertToStereo.hpp; sourceTree = "<group>"; };
 		5929D3281DE32AC800BED9AB /* flowBlender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flowBlender.cpp; sourceTree = "<group>"; };
 		5929D32A1DE32AE400BED9AB /* flowBlender.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = flowBlender.hpp; sourceTree = "<group>"; };
@@ -501,6 +501,8 @@
 		A56CA40E1BC070AE0078D7E8 /* barrell_displacement.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = barrell_displacement.json; path = Shader/Cardboard/barrell_displacement.json; sourceTree = "<group>"; };
 		A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = barrell_displacement.vsh; path = Shader/Cardboard/barrell_displacement.vsh; sourceTree = "<group>"; };
 		A56DE1161C502D730099A14D /* panoramaBlur.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = panoramaBlur.hpp; sourceTree = "<group>"; };
+		A5A3E53E1EB0CAB500971847 /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
+		A5A3E5401EB0F3C300971847 /* multiRingRecorder2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = multiRingRecorder2.hpp; sourceTree = "<group>"; };
 		A5DE71E01BE28A7400316F82 /* Distortion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distortion.swift; sourceTree = "<group>"; };
 		A5DE71E11BE28A7400316F82 /* DistortionMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionMesh.swift; sourceTree = "<group>"; };
 		A5DE71E21BE28A7400316F82 /* DistortionProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistortionProgram.swift; sourceTree = "<group>"; };
@@ -563,7 +565,6 @@
 		B153E2121D06B1FB00CC4B72 /* Alignment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Alignment.h; path = Optonaut/Stitcher/Alignment.h; sourceTree = SOURCE_ROOT; };
 		B153E2131D06B22800CC4B72 /* Alingment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Alingment.mm; path = Optonaut/Stitcher/Alingment.mm; sourceTree = SOURCE_ROOT; };
 		B17042151CF6CF04004E2F26 /* globalAlignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = globalAlignment.hpp; sourceTree = "<group>"; };
-		B17042171CF6CF7A004E2F26 /* recorderMotor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = recorderMotor.hpp; sourceTree = "<group>"; };
 		B17042181CF6CF80004E2F26 /* visualStabilizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualStabilizer.hpp; sourceTree = "<group>"; };
 		BB155A971D6E8C31002678A6 /* StorytellingFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingFeed.swift; sourceTree = "<group>"; };
 		BB155A9B1D6E8CAB002678A6 /* StorytellingMerged.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorytellingMerged.swift; sourceTree = "<group>"; };
@@ -932,8 +933,8 @@
 		8FAB9F691B8F02D500B4C8CB /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
-				49EE20AB1DDEE98C00441C98 /* ConvertToStereo.mm */,
-				49EE20AC1DDEE98C00441C98 /* ConvertToStereo.h */,
+				49EE20AB1DDEE98C00441C98 /* GlobalAlignment.mm */,
+				49EE20AC1DDEE98C00441C98 /* GlobalAlignment.h */,
 				A5233E281BC87F7500C9EFE5 /* CommonExternal.h */,
 				A5233E291BC87F7500C9EFE5 /* CommonInternal.h */,
 				A5233E2A1BC87F7500C9EFE5 /* Recorder.h */,
@@ -1140,6 +1141,7 @@
 			children = (
 				A50E9A421E85A4280017C090 /* BLEDiscovery.swift */,
 				A50E9A431E85A4280017C090 /* BLEService.swift */,
+				A5A3E53E1EB0CAB500971847 /* Point.swift */,
 				A50E9A441E85A4280017C090 /* MotorControl.swift */,
 			);
 			name = New;
@@ -1291,7 +1293,7 @@
 		A5FD5D631BEA5A4E0031ED1E /* recorder */ = {
 			isa = PBXGroup;
 			children = (
-				5929D3261DE316AA00BED9AB /* motorControlRecorder.hpp */,
+				A5A3E5401EB0F3C300971847 /* multiRingRecorder2.hpp */,
 				A5172B7F1D834B3B008C41D0 /* coordinateConverter.hpp */,
 				A5172B801D834B3B008C41D0 /* imageCorrespondenceFinder.hpp */,
 				A5172B811D834B3B008C41D0 /* imageLoader.hpp */,
@@ -1300,7 +1302,6 @@
 				A5172B841D834B3B008C41D0 /* stereoGenerator.hpp */,
 				A5172B851D834B3B008C41D0 /* storageImageSink.hpp */,
 				B17042181CF6CF80004E2F26 /* visualStabilizer.hpp */,
-				B17042171CF6CF7A004E2F26 /* recorderMotor.hpp */,
 				A547FA101C5578D500FBC17D /* jumpFilter.hpp */,
 				A547FA111C5578D500FBC17D /* ringCloser.hpp */,
 				A5376ECF1C4DA163004EFE88 /* asyncTolerantRingRecorder.hpp */,
@@ -1404,7 +1405,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 93N5JQ6UW7;
+						DevelopmentTeam = 3VNDY9CY79;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -1633,7 +1634,7 @@
 				BB88A2701D9D2EBE00EB09B0 /* ChildResponse.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
 				A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */,
-				49EE20AD1DDEE98C00441C98 /* ConvertToStereo.mm in Sources */,
+				49EE20AD1DDEE98C00441C98 /* GlobalAlignment.mm in Sources */,
 				8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */,
 				8F4185FF1C53C464009E1E3F /* LoginApiModel.swift in Sources */,
 				A5FD5D801BEA5A4E0031ED1E /* checkpointStore.cpp in Sources */,
@@ -1719,6 +1720,7 @@
 				59405BF31D3D36EB00D1BA45 /* ActivityResourceStarModel.swift in Sources */,
 				8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */,
 				8F5335A61BDBBF5D0058961A /* ActivityResourceComment.swift in Sources */,
+				A5A3E53F1EB0CAB500971847 /* Point.swift in Sources */,
 				A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */,
 				8F5FDA011B3EECB0007E073C /* Activity.swift in Sources */,
 				59F61B8F1D90E8F600C1495F /* ActivityResourceCommentModel.swift in Sources */,
@@ -1884,7 +1886,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
-				DEVELOPMENT_TEAM = 93N5JQ6UW7;
+				DEVELOPMENT_TEAM = 3VNDY9CY79;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1935,7 +1937,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
-				DEVELOPMENT_TEAM = 93N5JQ6UW7;
+				DEVELOPMENT_TEAM = 3VNDY9CY79;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

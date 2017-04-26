@@ -6,7 +6,7 @@
 #import "Stitcher.h"
 #import "Alignment.h"
 #import "HeadTracker.h"
-#import "ConvertToStereo.h"
+#import "GlobalAlignment.h"
 #import "UICollectionViewLeftAlignedLayout.h"
 #import <CommonCrypto/CommonCrypto.h>
 #import "NYAlertViewController.h"

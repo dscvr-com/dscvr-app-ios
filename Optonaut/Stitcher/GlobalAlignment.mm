@@ -6,15 +6,14 @@
 #define OPTONAUT_TARGET_PHONE
 
 #include "stitcher.hpp"
-#include "ConvertToStereo.h"
-#include "convertToStereo.hpp"
+#include "GlobalAlignment.hpp"
 #include "Stores.h"
 #include "CommonInternal.h"
 #include "progressCallback.hpp"
 #include "projection.hpp"
 #include "panoramaBlur.hpp"
 
-@implementation ConvertToStereo
+@implementation GlobalAlignment: NSObject
 
 -(id)init {
     self = [super init];
@@ -24,11 +23,11 @@
 struct ConversionCancellation {
 };
 
--(void)convert {
-    optonaut::ConvertToStereo convertToStereo(Stores::post, Stores::left, Stores::right);
+-(void)finish {
+    optonaut::GlobalAlignment globalAlignment(Stores::post, Stores::left, Stores::right);
     
     try {
-        convertToStereo.Finish();
+        globalAlignment.Finish();
     
     } catch (ConversionCancellation c) { }
 };
