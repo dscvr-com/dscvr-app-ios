@@ -68,35 +68,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Defaults[.SessionBotCount] = -3998
             Defaults[.SessionBuffCount] = 0
             
-            //Bluetooth Notif/ TODO
-            //NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.connectionChanged(_:)), name: BLEServiceChangedStatusNotification, object: nil)
-            //btDiscoverySharedInstance
-            
         }
         return true
     }
     
     deinit {
-        // Bluetooth notification TODO
-        //NSNotificationCenter.defaultCenter().removeObserver(self, name: BLEServiceChangedStatusNotification, object: nil)
     }
-    
-    func connectionChanged(_ notification: Notification) {
-        print("pumasok dsa functino")
-        // Connection status changed. Indicate on GUI.
-        let userInfo = notification.userInfo as! [String: Bool]
-        
-        DispatchQueue.main.async(execute: {
-            // Set image based on connection status
-            if let isConnected: Bool = userInfo["isConnected"] {
-                if isConnected {
-                    print("Bluetooth_Connected")
-                } else {
-                    print("Bluetooth_Disconnected")                }
-            }
-        });
-    }
-    
+
     func applicationWillResignActive(_ application: UIApplication) {
         ScreenService.sharedInstance.hardReset()
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
