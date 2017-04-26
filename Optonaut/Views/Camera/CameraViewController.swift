@@ -102,10 +102,14 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .alert)
             confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             self?.present(confirmAlert, animated: true, completion: nil)
-            
         }
+
+        _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsY) * (45 / 360) / 1000), repeats: false, block: {_ in
+            self.tabController!.cameraButton.isHidden = false
+        })
+
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

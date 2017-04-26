@@ -24,9 +24,9 @@ class CameraOverlayVC: UIViewController {
     fileprivate let motorLabel = UILabel()
     fileprivate let manualLabel = UILabel()
     fileprivate var backButton = UIButton()
-    fileprivate let progressView = CameraOverlayProgressView()
     var blSheet = UIAlertController()
     var deviceLastCount: Int = 0
+    let connectionstatus = UILabel()
 
     //bluetoothCode
     var btService : BLEService?
@@ -42,15 +42,27 @@ class CameraOverlayVC: UIViewController {
         view.layer.addSublayer(previewLayer)
         
         tabController?.delegate = self
-        
+
+        connectionstatus.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 20)
+        connectionstatus.text = "Looking for Orbit 360 Motor..."
+        connectionstatus.textAlignment = .center
+        connectionstatus.font = connectionstatus.font.withSize(12)
+        connectionstatus.textColor = UIColor.white
+        connectionstatus.backgroundColor = UIColor.black
+        view.addSubview(connectionstatus)
+
         setupCamera()
         setupScene()
 
         if bt == nil {
             bt = BLEDiscovery(onDeviceFound: onDeviceFound, onDeviceConnected: onDeviceConnected, services: [MotorControl.BLEServiceUUID])
         } else {
-            btService = BLEService(initWithPeripheral: bt.connectedPeripherals[0], onServiceConnected: onServiceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: [MotorControl.BLECharacteristicUUID, MotorControl.BLECharacteristicResponseUUID])
-            btService?.startDiscoveringServices()
+            if !bt.connectedPeripherals.isEmpty {
+                btService = BLEService(initWithPeripheral: bt.connectedPeripherals[0], onServiceConnected: onServiceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: [MotorControl.BLECharacteristicUUID, MotorControl.BLECharacteristicResponseUUID])
+                btService?.startDiscoveringServices()
+            } else {
+                bt.startScanning()
+            }
         }
 
     }
@@ -78,6 +90,7 @@ class CameraOverlayVC: UIViewController {
 
     func onServiceConnected(service: CBService) {
         btMotorControl = MotorControl(s: service, p: service.peripheral, allowCommandInterrupt: true)
+        connectionstatus.text = "Orbit 360 Motor connected"
     }
 
     fileprivate func setupScene() {
@@ -91,14 +104,6 @@ class CameraOverlayVC: UIViewController {
         view.addSubview(backButton)
         
         backButton.anchorInCorner(.topLeft, xPad: 15, yPad: 26, width: 20, height: 20)
-        
-        progressView.progress = 0
-        view.addSubview(progressView)
-        
-        progressView.autoPinEdge(.top, to: .top, of: view, withOffset: 31)
-        progressView.autoMatch(.width, to: .width, of: view, withOffset: -80)
-        progressView.autoAlignAxis(.vertical, toSameAxisOf: view)
-        
         
         manualButton.addTarget(self, action: #selector(manualClicked), for: .touchUpInside)
         motorButton.addTarget(self, action: #selector(motorClicked), for: .touchUpInside)
@@ -159,7 +164,6 @@ class CameraOverlayVC: UIViewController {
         let stepsToVertical = Float(MotorControl.motorStepsY) * (45 / 360)
         self.btMotorControl?.moveY(Int32(-stepsToVertical), speed: 1000)
         self.navigationController?.pushViewController(CameraViewController(), animated: false)
-        tabController!.cameraButton.isHidden = false
         let cvc = self.navigationController?.viewControllers[2] as! CameraViewController
         cvc.motorControl = self.btMotorControl
         cvc.motionManager = cvc.motorControl
@@ -315,68 +319,13 @@ class CameraOverlayVC: UIViewController {
     }
 
 }
-private class CameraOverlayProgressView: UIView {
-    
-    var progress: Float = 0 {
-        didSet {
-            layoutSubviews()
-        }
-    }
-    var isActive = false {
-        didSet {
-            foregroundLine.backgroundColor = isActive ? UIColor(hex:0xFF5E00).cgColor : UIColor.white.cgColor
-            trackingPoint.backgroundColor = isActive ? UIColor(hex:0xFF5E00).cgColor : UIColor.white.cgColor
-        }
-    }
-    
-    fileprivate let firstBackgroundLine = CALayer()
-    fileprivate let endPoint = CALayer()
-    fileprivate let foregroundLine = CALayer()
-    fileprivate let trackingPoint = CALayer()
-    
-    override init (frame: CGRect) {
-        super.init(frame: frame)
-        
-        firstBackgroundLine.backgroundColor = UIColor.white.cgColor
-        layer.addSublayer(firstBackgroundLine)
-        
-        endPoint.backgroundColor = UIColor.white.cgColor
-        endPoint.cornerRadius = 3.5
-        layer.addSublayer(endPoint)
-        
-        foregroundLine.cornerRadius = 1
-        layer.addSublayer(foregroundLine)
-        
-        trackingPoint.cornerRadius = 7
-        layer.addSublayer(trackingPoint)
-    }
-    
-    convenience init () {
-        self.init(frame: CGRect.zero)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    fileprivate override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        let width = bounds.width - 12
-        let originX = bounds.origin.x + 6
-        let originY = bounds.origin.y + 6
-        
-        firstBackgroundLine.frame = CGRect(x: originX, y: originY - 0.6, width: width, height: 1.2)
-        endPoint.frame = CGRect(x: width + 3.5, y: originY - 3.5, width: 7, height: 7)
-        foregroundLine.frame = CGRect(x: originX, y: originY - 1, width: width * CGFloat(progress), height: 2)
-        trackingPoint.frame = CGRect(x: originX + width * CGFloat(progress) - 6, y: originY - 6, width: 12, height: 12)
-    }
-}
 
 extension CameraOverlayVC: TabControllerDelegate {
     
     func onTapCameraButton() {
         tabController!.cameraButton.isHidden = true
+        motorButton.isUserInteractionEnabled = false
+        manualButton.isUserInteractionEnabled = false
         record()
     }
 }
