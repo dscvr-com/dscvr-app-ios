@@ -27,6 +27,7 @@ class CameraOverlayVC: UIViewController {
     var blSheet = UIAlertController()
     var deviceLastCount: Int = 0
     let connectionstatus = UILabel()
+    var verticalTimer = Timer()
 
     //bluetoothCode
     var btService : BLEService?
@@ -140,19 +141,21 @@ class CameraOverlayVC: UIViewController {
 
     func closeCamera() {
         navigationController?.popViewController(animated: false)
+        verticalTimer.invalidate()
+//        self.tabController!.cameraButton.isHidden = false Crash?
     }
-    
+
     func record() {
         if Defaults[.SessionMotor] {
             if btMotorControl == nil {
-                tabController!.cameraButton.isHidden = false
+                self.tabController!.cameraButton.isHidden = false
                 let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
                 confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
                 self.present(confirmAlert, animated: true, completion: nil)
             } else {
                 let stepsToFront = Float(MotorControl.motorStepsY) * (135 / 360)
                 btMotorControl?.moveY(Int32(stepsToFront), speed: 1000)
-                _ = Timer.scheduledTimer(timeInterval: TimeInterval(Float(stepsToFront) / Float(1000)), target: self, selector: #selector(moveToVertical), userInfo: nil, repeats: false)
+                verticalTimer = Timer.scheduledTimer(timeInterval: TimeInterval(Float(stepsToFront) / Float(1000)), target: self, selector: #selector(moveToVertical), userInfo: nil, repeats: false)
             }
         } else {
             navigationController?.pushViewController(CameraViewController(), animated: false)
@@ -324,6 +327,7 @@ extension CameraOverlayVC: TabControllerDelegate {
     
     func onTapCameraButton() {
         tabController!.cameraButton.isHidden = true
+        backButton.isHidden = true
         motorButton.isUserInteractionEnabled = false
         manualButton.isUserInteractionEnabled = false
         record()

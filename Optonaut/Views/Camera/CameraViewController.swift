@@ -67,6 +67,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     // motor
     var motorControl: MotorControl!
     let useMotor = Defaults[.SessionMotor]
+    var verticalTimer: Timer!
 
     // ball
     fileprivate let ballNode = SCNNode()
@@ -104,7 +105,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             self?.present(confirmAlert, animated: true, completion: nil)
         }
 
-        _ = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsY) * (45 / 360) / 1000), repeats: false, block: {_ in
+        verticalTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsY) * (45 / 360) / 1000), repeats: false, block: {_ in
             self.tabController!.cameraButton.isHidden = false
         })
 
@@ -189,7 +190,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     func cancelRecording() {
         Mixpanel.sharedInstance()?.track("Action.Camera.CancelRecording")
-        
+        verticalTimer.invalidate()
+        tabController!.cameraButton.isHidden = false
+
         viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
         
