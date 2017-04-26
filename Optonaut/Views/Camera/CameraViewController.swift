@@ -23,7 +23,7 @@ import CoreBluetooth
 class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     fileprivate let viewModel = CameraViewModel()
-    fileprivate let motionManager = CoreMotionRotationSource()
+    var motionManager: RotationMatrixSource!
 
     // camera
     fileprivate let session = AVCaptureSession()
@@ -50,6 +50,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     fileprivate var edges: [Edge: SCNNode] = [:]
     fileprivate let screenScale : Float
     fileprivate let lineWidth = Float(3)
+    var points = [SelectionPoint]()
     
     // subviews
     fileprivate let tiltView = TiltView()
@@ -64,9 +65,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     fileprivate let scene = SCNScene()
 
     // motor
-    fileprivate var currentDegree : Float
-    fileprivate var DegreeIncrPerMicro : Double
-    var ringFlag = 0
     var motorControl: MotorControl!
     let useMotor = Defaults[.SessionMotor]
 
@@ -91,10 +89,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     var timer = Timer()
         
     required init() {
-        
-        currentDegree = 0.0
-        DegreeIncrPerMicro = 0.0
-        
         sessionQueue = DispatchQueue(label: "cameraQueue", attributes: [])
         screenScale = Float(UIScreen.main.scale)
         
@@ -104,8 +98,8 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         super.init(nibName: nil, bundle: nil)
         
-        if useMotor {
-                assertionFailure()
+        if !useMotor {
+            motionManager = CoreMotionRotationSource()
         }
         
         tapCameraButtonCallback = { [weak self] in
@@ -121,15 +115,11 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     }
     
     deinit {
-        if useMotor {
-            motionManager.stop()
-        } else {
-            motionManager.stop()            
+        if !useMotor {
+            (motionManager as! CoreMotionRotationSource).stop()
         }
         print("de init cameraviewcontroller")
-        //rotationSource.stop()
-        //motionManager.stopDeviceMotionUpdates()
-        
+
         //We do that in our signal as soon as everything's finished
         //recorder.dispose()
         
@@ -138,7 +128,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        motorControl.moveX(500, speed: 1000)
         if #available(iOS 9.0, *) {
             scnView = SCNView(frame: view.bounds, options: [SCNView.Option.preferredRenderingAPI.rawValue: SCNRenderingAPI.openGLES2.rawValue])
         } else {
@@ -249,7 +238,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     fileprivate func setupSelectionPoints() {
         let rawPoints = recorder.getSelectionPoints()!
-        var points = [SelectionPoint]()
         
         while rawPoints.hasMore() {
             let point = rawPoints.next()
@@ -275,10 +263,10 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
                 let edgeNode = createLineNode(posA, posB: posB)
                 
                 // This code makes movement visible (half of the lines will be colored)
-                //if i % 2 > 0 {
-                //    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.black
-                //}
-                
+//                if i % 2 > 0 {
+//                    edgeNode.geometry!.firstMaterial!.diffuse.contents = UIColor.black
+//                }
+
                 edges[edge] = edgeNode
                 
                 scene.rootNode.addChildNode(edgeNode)
@@ -344,13 +332,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         UIApplication.shared.isIdleTimerDisabled = true
         
-        if Defaults[.SessionMotor] {
-           motionManager.start()
-        } else {
-           motionManager.start() 
+        if !useMotor {
+           (motionManager as! CoreMotionRotationSource).start()
         }
-        //(.XArbitraryCorrectedZVertical)
-        //motionManager.startDeviceMotionUpdatesUsingReferenceFrame(.XArbitraryCorrectedZVertical)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -643,8 +627,8 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             
             recorder.setIdle(!self.viewModel.isRecording.value)
             var cmRotation : GLKMatrix4
-            
-            cmRotation = motionManager.getRotationMatrix()
+
+            cmRotation = self.motionManager.getRotationMatrix()
             
             recorder.push(cmRotation, buf, lastExposureInfo, lastAwbGains)
             let errorVec = recorder.getAngularDistanceToBall()
@@ -868,10 +852,24 @@ extension CameraViewController: TabControllerDelegate {
     func onTapCameraButton() {
         tabController!.cameraButton.isHidden = true
         viewModel.isRecording.value = true
-            
         if useMotor {
-            // TODO Start rotating
+            let thetaValues = calculatePoints()
+            motorControl.start(values: thetaValues)
         }
+    }
+
+    func calculatePoints() -> [Float] {
+        var result = [Float]()
+        let vec = GLKVector3Make(0, 0, -1)
+        for i in points {
+            let posA = GLKMatrix4MultiplyVector3(i.extrinsics, vec)
+            var value = atan(posA.z)
+            value = value * 180 / Float(M_PI)
+            if !result.contains(value) {
+                result.append(value)
+            }
+        }
+        return result
     }
 }
 

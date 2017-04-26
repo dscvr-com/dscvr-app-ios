@@ -86,7 +86,7 @@ class StitchingService {
             Mixpanel.sharedInstance()?.track("Action.Stitching.Start")
             Mixpanel.sharedInstance()?.timeEvent("Action.Stitching.Finish")
             
-            if Defaults[.SessionMotor] {
+            if Defaults[.SessionUseMultiRing] {
                 let convertToStereo = ConvertToStereo()
                 convertToStereo?.convert()
             }
@@ -103,7 +103,7 @@ class StitchingService {
                 return !shallCancel
             }
             
-            if Defaults[.SessionMotor] {
+            if Defaults[.SessionUseMultiRing] {
                 if !shallCancel {
                     for (face, cubeFace) in stitcher.getLeftResultThreeRing().enumerated() {
                         var leftFace = ImageBuffer()
@@ -140,7 +140,7 @@ class StitchingService {
             if !shallCancel {
                 
                 var erImage :  ImageBuffer ;
-                if Defaults[.SessionMotor] {
+                if Defaults[.SessionUseMultiRing] {
                      erImage = stitcher.getLeftEquirectangularResultThreeRing()
                 } else {
                      erImage = stitcher.getLeftEquirectangularResult()
@@ -173,7 +173,7 @@ class StitchingService {
                 
                 
             }
-            if Defaults[.SessionMotor] {
+            if Defaults[.SessionUseMultiRing] {
                 if !shallCancel {
                     for (face, cubeFace) in stitcher.getRightResultThreeRing().enumerated() {
                         var rightFace = ImageBuffer()

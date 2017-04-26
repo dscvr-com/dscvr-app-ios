@@ -25,7 +25,6 @@ class CameraOverlayVC: UIViewController {
     fileprivate let manualLabel = UILabel()
     fileprivate var backButton = UIButton()
     fileprivate let progressView = CameraOverlayProgressView()
-    var timer:Timer?
     var blSheet = UIAlertController()
     var deviceLastCount: Int = 0
 
@@ -65,7 +64,6 @@ class CameraOverlayVC: UIViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        timer?.invalidate()
     }
 
     func onDeviceFound(device: CBPeripheral, name: NSString) {
@@ -141,34 +139,31 @@ class CameraOverlayVC: UIViewController {
     
     func record() {
         if Defaults[.SessionMotor] {
-//            if deviceList.count == 0 {
-//                let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
-//                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-//                self.present(confirmAlert, animated: true, completion: nil)
-//            } else {
-//                for dev in deviceList {
-//                    if getCBPeripheralState(dev.state) == "Connected" {
-//                        navigationController?.pushViewController(CameraViewController(), animated: false)
-//                        navigationController?.viewControllers.remove(at: 1)
-//                        return
-//                    }
-//                }
-//                let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
-//                confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-//                self.present(confirmAlert, animated: true, completion: nil)
-//            }
             if btMotorControl == nil {
+                tabController!.cameraButton.isHidden = false
                 let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
                 confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
                 self.present(confirmAlert, animated: true, completion: nil)
+            } else {
+                let stepsToFront = Float(MotorControl.motorStepsY) * (135 / 360)
+                btMotorControl?.moveY(Int32(stepsToFront), speed: 1000)
+                _ = Timer.scheduledTimer(timeInterval: TimeInterval(Float(stepsToFront) / Float(1000)), target: self, selector: #selector(moveToVertical), userInfo: nil, repeats: false)
             }
-            print("wohooo")
         } else {
             navigationController?.pushViewController(CameraViewController(), animated: false)
-            let cvc = navigationController?.viewControllers[2] as! CameraViewController
-            cvc.motorControl = btMotorControl
             navigationController?.viewControllers.remove(at: 1)
         }
+    }
+
+    func moveToVertical() {
+        let stepsToVertical = Float(MotorControl.motorStepsY) * (45 / 360)
+        self.btMotorControl?.moveY(Int32(-stepsToVertical), speed: 1000)
+        self.navigationController?.pushViewController(CameraViewController(), animated: false)
+        tabController!.cameraButton.isHidden = false
+        let cvc = self.navigationController?.viewControllers[2] as! CameraViewController
+        cvc.motorControl = self.btMotorControl
+        cvc.motionManager = cvc.motorControl
+        self.navigationController?.viewControllers.remove(at: 1)
     }
 
     func isMotorMode(_ state:Bool) {
@@ -191,8 +186,6 @@ class CameraOverlayVC: UIViewController {
         isMotorMode(false)
         Defaults[.SessionMotor] = false
         Defaults[.SessionUseMultiRing] = false
-        
-        timer?.invalidate()
     }
     
     func motorClicked() {
@@ -383,6 +376,7 @@ private class CameraOverlayProgressView: UIView {
 extension CameraOverlayVC: TabControllerDelegate {
     
     func onTapCameraButton() {
+        tabController!.cameraButton.isHidden = true
         record()
     }
 }
