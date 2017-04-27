@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		49EE20AD1DDEE98C00441C98 /* GlobalAlignment.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49EE20AB1DDEE98C00441C98 /* GlobalAlignment.mm */; };
 		5903A99F1DD9B387000DB58B /* CameraOverlayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903A99E1DD9B387000DB58B /* CameraOverlayVC.swift */; };
 		5929D3291DE32AC800BED9AB /* flowBlender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5929D3281DE32AC800BED9AB /* flowBlender.cpp */; };
 		5930CF711DA655A300582ACB /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5930CF701DA655A300582ACB /* Story.swift */; };
@@ -266,10 +265,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		49EE20AB1DDEE98C00441C98 /* GlobalAlignment.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GlobalAlignment.mm; path = Optonaut/Stitcher/GlobalAlignment.mm; sourceTree = SOURCE_ROOT; };
-		49EE20AC1DDEE98C00441C98 /* GlobalAlignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalAlignment.h; path = Optonaut/Stitcher/GlobalAlignment.h; sourceTree = SOURCE_ROOT; };
 		5903A99E1DD9B387000DB58B /* CameraOverlayVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraOverlayVC.swift; sourceTree = "<group>"; };
-		5929D3271DE316D300BED9AB /* convertToStereo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = convertToStereo.hpp; sourceTree = "<group>"; };
 		5929D3281DE32AC800BED9AB /* flowBlender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flowBlender.cpp; sourceTree = "<group>"; };
 		5929D32A1DE32AE400BED9AB /* flowBlender.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = flowBlender.hpp; sourceTree = "<group>"; };
 		592EEE371DD196F0005FBB49 /* LTMorphingLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LTMorphingLabel.framework; path = Carthage/Build/iOS/LTMorphingLabel.framework; sourceTree = "<group>"; };
@@ -642,7 +638,6 @@
 			children = (
 				5929D32A1DE32AE400BED9AB /* flowBlender.hpp */,
 				5929D3281DE32AC800BED9AB /* flowBlender.cpp */,
-				5929D3271DE316D300BED9AB /* convertToStereo.hpp */,
 				B17042151CF6CF04004E2F26 /* globalAlignment.hpp */,
 				5936B1771CAD34F500F808D8 /* dynamicSeamer.cpp */,
 				5936B1781CAD34F500F808D8 /* dynamicSeamer.hpp */,
@@ -933,8 +928,6 @@
 		8FAB9F691B8F02D500B4C8CB /* Stitcher */ = {
 			isa = PBXGroup;
 			children = (
-				49EE20AB1DDEE98C00441C98 /* GlobalAlignment.mm */,
-				49EE20AC1DDEE98C00441C98 /* GlobalAlignment.h */,
 				A5233E281BC87F7500C9EFE5 /* CommonExternal.h */,
 				A5233E291BC87F7500C9EFE5 /* CommonInternal.h */,
 				A5233E2A1BC87F7500C9EFE5 /* Recorder.h */,
@@ -1634,7 +1627,6 @@
 				BB88A2701D9D2EBE00EB09B0 /* ChildResponse.swift in Sources */,
 				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
 				A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */,
-				49EE20AD1DDEE98C00441C98 /* GlobalAlignment.mm in Sources */,
 				8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */,
 				8F4185FF1C53C464009E1E3F /* LoginApiModel.swift in Sources */,
 				A5FD5D801BEA5A4E0031ED1E /* checkpointStore.cpp in Sources */,
