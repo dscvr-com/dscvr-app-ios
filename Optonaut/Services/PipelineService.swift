@@ -120,14 +120,12 @@ class PipelineService {
             .observeCompleted {
                 stitchingStatus.value = .stitching(1)
                 stitchingStatus.value = .stitchingFinished(optographID)
-//                if optographBox.model.shouldBePublished {
-//                    upload(optographID)
-//                }
+                
             }
     }
     
     fileprivate static func upload(_ optographID: UUID) {
-        
+        DataBase.sharedInstance.addOptograph(optographID: "optographID")
         let optographBox = Models.optographs[optographID]!
         
         if let leftCubeTextureUploadStatus = optographBox.model.leftCubeTextureStatusUpload {
