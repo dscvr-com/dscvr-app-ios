@@ -536,7 +536,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
       
         for format in videoDevice!.formats.map({ $0 as! AVCaptureDeviceFormat }) {
             let dim = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-            if dim.height == 1936 && dim.width == 2592 {
+            if dim.height == 720 && dim.width == 1280 {
                 for rate in format.videoSupportedFrameRateRanges.map({ $0 as! AVFrameRateRange }) {
                     if bestFormat == nil || bestFrameRate!.minFrameDuration > rate.minFrameDuration {
                         bestFormat = format
@@ -545,6 +545,11 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
                 }
 
             }
+            // Print formats, for debugging. 
+            // for rate in format.videoSupportedFrameRateRanges.map({ $0 as! AVFrameRateRange }) {
+            //     print(format)
+            //    print(rate)
+            // }
         }
         
         print(bestFormat)
