@@ -80,10 +80,8 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     fileprivate let cancelButton = UIButton()
     
-    fileprivate var RotateData = String("")
+    fileprivate var finishCommand: MotorCommand?
     
-    var timer = Timer()
-        
     required init() {
         sessionQueue = DispatchQueue(label: "cameraQueue", attributes: [])
         screenScale = Float(UIScreen.main.scale)
@@ -527,15 +525,23 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         try! videoDevice?.lockForConfiguration()
         
         var bestFormat: AVCaptureDeviceFormat?
+        var bestFrameRate: AVFrameRateRange?
       
         for format in videoDevice!.formats.map({ $0 as! AVCaptureDeviceFormat }) {
             let dim = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-            print(format)
-            print(dim)
             if dim.height == 1936 && dim.width == 2592 {
-                bestFormat = format
+                for rate in format.videoSupportedFrameRateRanges.map({ $0 as! AVFrameRateRange }) {
+                    if bestFormat == nil || bestFrameRate!.minFrameDuration > rate.minFrameDuration {
+                        bestFormat = format
+                        bestFrameRate = rate
+                    }
+                }
+
             }
         }
+        
+        print(bestFormat)
+        print(bestFrameRate)
         
         videoDevice?.activeFormat = bestFormat!
         
@@ -544,17 +550,11 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             videoDevice!.isVideoHDREnabled = false
         }
         
-        //videoDevice!.setValue(false, forKey: "AutomaticallyAdjustsImageControlMode")
-        //videoDevice!.setValue(false, forKey: "HighDynamicRangeSceneDetectionEnabled")
-        //videoDevice!.setValue(5, forKey: "ImageControlMode")
-        
         videoDevice!.exposureMode = .continuousAutoExposure
         videoDevice!.whiteBalanceMode = .continuousAutoWhiteBalance
         
-        AVCaptureVideoStabilizationMode.standard
-        
-        videoDevice!.activeVideoMinFrameDuration = CMTimeMake(1, 30)
-        videoDevice!.activeVideoMaxFrameDuration = CMTimeMake(1, 30)
+        videoDevice!.activeVideoMinFrameDuration = bestFrameRate!.minFrameDuration
+        videoDevice!.activeVideoMaxFrameDuration = bestFrameRate!.minFrameDuration
         
         videoDevice!.unlockForConfiguration()
         
@@ -713,6 +713,10 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         Mixpanel.sharedInstance()?.track("Action.Camera.FinishRecording")
         
+        if useMotor {
+            motorControl.runScript(script: [finishCommand!])
+        }
+        
         stopSession()
         
         let recorder_ = recorder!
@@ -854,23 +858,29 @@ extension CameraViewController: TabControllerDelegate {
                 assert(false)
             }
             
+            var sum = Float(0)
+            
             for index in 1..<thetaValues.count {
                 thetaValues[index] = thetaValues[index] - thetaValues[index - 1]
+                sum = sum + thetaValues[index]
             }
             thetaValues[0] = 0
             
+            // TODO: Make speed variable
             let script = thetaValues.flatMap { pos in
                 return [
                     MotorCommand(
                         _dest: Point(x: 0, y: pos),
-                        _speed: Point(x: 500, y: 500)
+                        _speed: Point(x: 500, y: 1000)
                     ),
                     MotorCommand(
                         _dest: Point(x: Float(M_PI * 2), y: 0),
-                        _speed: Point(x: 500, y: 500)
+                        _speed: Point(x: 500, y: 1000)
                     )
                 ]
             }
+            
+            finishCommand = MotorCommand(_dest: Point(x: 0, y: -sum), _speed: Point(x: 1000, y: 500))
             
             motorControl.runScript(script: script)
         }

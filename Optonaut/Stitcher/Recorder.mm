@@ -152,7 +152,8 @@ std::string debugPath;
 // Promote to class variables instead (somehow). 
 //optonaut::StorageSink storageSink(Stores::left, Stores::right);
 //optonaut::StitcherSink stitcherSink;
-optonaut::StorageImageSink imageSink(Stores::post);
+optonaut::StorageImageSink leftSink(Stores::left);
+optonaut::StorageImageSink rightSink(Stores::right);
 
 
 -(id)init:(RecorderMode)recorderMode {
@@ -193,28 +194,11 @@ optonaut::StorageImageSink imageSink(Stores::post);
     Stores::right.Clear();
     
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-
-    //Stores::common.Clear();
-        Stores::post.Clear();
-    
-    //   optonaut::CheckpointStore::DebugStore = &Stores::debug;
-    
-    //optonaut::StereoSink& sink = storageSink;
-        //   optonaut::Recorder::exposureEnabled = false;
-        //   optonaut::Recorder::alignmentEnabled = true;
-        optonaut::StorageImageSink& sink = imageSink;
           self->motorPipe = new optonaut::MultiRingRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                               self->intrinsics, sink, optonaut::RecorderGraph::ModeTruncated, 1.0, debugPath);
-        
-      
-
+                                               self->intrinsics, leftSink, rightSink, optonaut::RecorderGraph::ModeTruncated, 1.0, debugPath);
     } else {
-      
-    
-    
         self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
                                         self->intrinsics, optonaut::RecorderGraph::ModeCenter, 1.0, debugPath);
-    
     }
   
     
@@ -453,13 +437,7 @@ optonaut::StorageImageSink imageSink(Stores::post);
     }
     
     cv::Mat extrinsics;
-    //optonaut::ExposureInfo info = pipe->GetExposureHint();
     ExposureInfo converted;
-    /*converted.iso = info.iso;
-    converted.gains.redGain = info.gains.red;
-    converted.gains.greenGain = info.gains.green;
-    converted.gains.blueGain = info.gains.blue;
-    converted.exposureTime = info.exposureTime;*/
     
     return converted;
 }

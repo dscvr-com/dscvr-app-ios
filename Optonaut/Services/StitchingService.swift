@@ -86,11 +86,6 @@ class StitchingService {
             Mixpanel.sharedInstance()?.track("Action.Stitching.Start")
             Mixpanel.sharedInstance()?.timeEvent("Action.Stitching.Finish")
             
-            if Defaults[.SessionUseMultiRing] {
-                let globalAlignment = GlobalAlignment()
-                globalAlignment!.finish()
-            }
-            
             
             // There is no such thing any more. 
             //assert(hasUnstitchedRecordings())
