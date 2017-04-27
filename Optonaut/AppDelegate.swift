@@ -28,7 +28,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: path)
+        let filePath = url.appendingPathComponent("optographs.sqlite3")?.path
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: filePath!) {
+            print("DataBase AVAILABLE")
+        } else {
+            print("DataBase NOT AVAILABLE - newly created")
+            let database = DataBase.sharedInstance
+            database.createDataBase()
+            if fileManager.fileExists(atPath: filePath!) {
+                print("DataBase AVAILABLE")
+            }
+        }
+
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         prepareAndExecute(requireLogin: true) {
