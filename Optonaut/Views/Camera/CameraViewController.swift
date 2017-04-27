@@ -67,6 +67,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     // motor
     var motorControl: MotorControl!
     let useMotor = Defaults[.SessionMotor]
+    var verticalTimer: Timer!
 
     // ball
     fileprivate let ballNode = SCNNode()
@@ -100,10 +101,14 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             let confirmAlert = UIAlertController(title: "Hold the camera button", message: "In order to record please keep the camera button pressed", preferredStyle: .alert)
             confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             self?.present(confirmAlert, animated: true, completion: nil)
-            
         }
+
+        verticalTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsY) * (45 / 360) / 1000), repeats: false, block: {_ in
+            self.tabController!.cameraButton.isHidden = false
+        })
+
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -183,7 +188,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     func cancelRecording() {
         Mixpanel.sharedInstance()?.track("Action.Camera.CancelRecording")
-        
+        verticalTimer.invalidate()
+        tabController!.cameraButton.isHidden = false
+
         viewModel.isRecording.value = false
         tapCameraButtonCallback = nil
         
