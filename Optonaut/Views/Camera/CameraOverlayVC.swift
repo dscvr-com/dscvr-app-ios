@@ -152,6 +152,9 @@ class CameraOverlayVC: UIViewController {
                 let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
                 confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
                 self.present(confirmAlert, animated: true, completion: nil)
+                motorButton.isUserInteractionEnabled = true
+                manualButton.isUserInteractionEnabled = true
+                backButton.isHidden = false
             } else {
                 let stepsToFront = Float(MotorControl.motorStepsY) * (135 / 360)
                 btMotorControl?.moveY(Int32(stepsToFront), speed: 1000)
@@ -176,13 +179,13 @@ class CameraOverlayVC: UIViewController {
     func isMotorMode(_ state:Bool) {
         if state {
             manualButton.setBackgroundImage(UIImage(named: "manualButton_off"), for: UIControlState())
-            motorButton.setBackgroundImage(UIImage(named: "motorButton_on"), for: UIControlState())
+            motorButton.setBackgroundImage(UIImage(named: "one_ring_active_icn"), for: UIControlState())
             
             manualLabel.textColor = UIColor(0x979797)
             motorLabel.textColor = UIColor(0xFF5E00)
         } else {
             manualButton.setBackgroundImage(UIImage(named: "manualButton_on"), for: UIControlState())
-            motorButton.setBackgroundImage(UIImage(named: "motorButton_off"), for: UIControlState())
+            motorButton.setBackgroundImage(UIImage(named: "one_ring_inactive_icn"), for: UIControlState())
             
             manualLabel.textColor = UIColor(0xFF5E00)
             motorLabel.textColor = UIColor(0x979797)
@@ -199,7 +202,7 @@ class CameraOverlayVC: UIViewController {
         
         isMotorMode(true)
         Defaults[.SessionMotor] = true
-        Defaults[.SessionUseMultiRing] = true
+        Defaults[.SessionUseMultiRing] = false
         
     }
     
