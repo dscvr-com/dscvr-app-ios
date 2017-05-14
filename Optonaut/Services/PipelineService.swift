@@ -125,7 +125,6 @@ class PipelineService {
     }
     
     fileprivate static func upload(_ optographID: UUID) {
-        DataBase.sharedInstance.addOptograph(optographID: "optographID")
         let optographBox = Models.optographs[optographID]!
         
         if let leftCubeTextureUploadStatus = optographBox.model.leftCubeTextureStatusUpload {
@@ -189,6 +188,7 @@ class PipelineService {
                 if box.model.leftCubeTextureStatusUpload == nil && box.model.rightCubeTextureStatusUpload == nil {
                     box.model.isPublished = true
                     box.model.isUploading = false
+                    DataBase.sharedInstance.addOptograph(optographID: optographID)
                 }
             }
         }
