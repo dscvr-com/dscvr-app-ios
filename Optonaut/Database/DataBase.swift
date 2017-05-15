@@ -67,4 +67,26 @@ class DataBase {
         return ""
     }
 
+    func getOptographIDsAsArray() -> [String] {
+        var resultArray = [String]()
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        let number = Expression<Int64>("number")
+        let optograph = Expression<String>("optograph")
+        let optoID = Table("optoID")
+        do {
+            let db = try Connection("\(path)/optographs.sqlite3")
+            let optographID = try db.prepare(optoID.select(optograph))
+            print("Database Access success")
+            for x in optographID {
+                let resultAsString = x[optograph]
+                resultArray.append(resultAsString)
+            }
+            return resultArray
+        } catch {
+            print("retreiving failed")
+        }
+        return resultArray
+    }
+
+
 }

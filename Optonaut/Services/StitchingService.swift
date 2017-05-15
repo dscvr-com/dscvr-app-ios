@@ -221,6 +221,9 @@ class StitchingService {
    
     
     static func removeUnstitchedRecordings() {
+        if (isStitching()) { //testcode to prevent crash when miscalled
+            return
+        }
         assert(!isStitching())
         if hasUnstitchedRecordings() {
             storeRef.clear()

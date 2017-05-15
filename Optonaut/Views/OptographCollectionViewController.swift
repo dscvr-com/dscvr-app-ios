@@ -25,6 +25,8 @@ fileprivate let queueScheduler = QueueScheduler(qos: .background, name: "collect
 
 
 class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
+
+    let dataBase = DataBase.sharedInstance
     
     fileprivate let viewModel: OptographCollectionViewModel
     fileprivate let imageCache: CollectionImageCache
@@ -99,48 +101,50 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         collectionView!.delaysContentTouches = false
         
         edgesForExtendedLayout = UIRectEdge()
-        
-        viewModel.results.producer
-            .filter { $0.changed }
-            .retryUntil(interval: DispatchTimeInterval.milliseconds(100), onScheduler: queueScheduler) { [weak self] in self?.collectionView!.isDecelerating == false && self?.collectionView!.isDragging == false }
-            .delayAllUntil(triggerProducer: viewModel.isActive.producer)
-            .observeOnMain()
-            .on(value: { [weak self] results in
-                if let strongSelf = self {
-                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems.first!.row]
-                    strongSelf.optographIDs = results.models.map { $0.ID }
-                    for optograph in results.models {
-                        if strongSelf.optographDirections[optograph.ID] == nil {
-                            strongSelf.optographDirections[optograph.ID] = (phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta))
-                        }
-                    }
-                    
-                    if results.models.count == 1 {
-                        strongSelf.collectionView!.reloadData()
-                    } else {
-                        CATransaction.begin()
-                        CATransaction.setDisableActions(true)
-                        strongSelf.collectionView!.performBatchUpdates({
-                            strongSelf.imageCache.delete(results.delete)
-                            strongSelf.imageCache.insert(results.insert)
-                            strongSelf.collectionView!.deleteItems(at: results.delete.map { IndexPath(item: $0, section: 0) })
-                            strongSelf.collectionView!.reloadItems(at: results.update.map { IndexPath(item: $0, section: 0) })
-                            strongSelf.collectionView!.insertItems(at: results.insert.map { IndexPath(item: $0, section: 0) })
-                            }, completion: { _ in
-                                if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.isRefreshing {
-                                    if let visibleOptographID = visibleOptographID, let visibleRow = strongSelf.optographIDs.index(where: { $0 == visibleOptographID }) {
-                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
-                                    }
-                                }
-                                strongSelf.refreshControl.endRefreshing()
-                                CATransaction.commit()
-                        })
-                    }
-                    
-                }
-                })
-            .start()
-        
+
+//        viewModel.results.producer
+//            .filter { $0.changed }
+//            .retryUntil(interval: DispatchTimeInterval.milliseconds(100), onScheduler: queueScheduler) { [weak self] in self?.collectionView!.isDecelerating == false && self?.collectionView!.isDragging == false }
+//            .delayAllUntil(triggerProducer: viewModel.isActive.producer)
+//            .observeOnMain()
+//            .on(value: { [weak self] results in
+//                if let strongSelf = self {
+//                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems.first!.row]
+////                    strongSelf.optographIDs = results.models.map { $0.ID }
+//                    for optograph in results.models {
+//                        if strongSelf.optographDirections[optograph.ID] == nil {
+//                            strongSelf.optographDirections[optograph.ID] = (phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta))
+//                        }
+//                    }
+//                    
+//                    if results.models.count == 1 {
+//                        strongSelf.collectionView!.reloadData()
+//                    } else {
+//                        CATransaction.begin()
+//                        CATransaction.setDisableActions(true)
+//                        strongSelf.collectionView!.performBatchUpdates({
+//                            strongSelf.imageCache.delete(results.delete)
+//                            strongSelf.imageCache.insert(results.insert)
+//                            strongSelf.collectionView!.deleteItems(at: results.delete.map { IndexPath(item: $0, section: 0) })
+//                            strongSelf.collectionView!.reloadItems(at: results.update.map { IndexPath(item: $0, section: 0) })
+//                            strongSelf.collectionView!.insertItems(at: results.insert.map { IndexPath(item: $0, section: 0) })
+//                            }, completion: { _ in
+//                                if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.isRefreshing {
+//                                    if let visibleOptographID = visibleOptographID, let visibleRow = strongSelf.optographIDs.index(where: { $0 == visibleOptographID }) {
+//                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
+//                                    }
+//                                }
+//                                strongSelf.refreshControl.endRefreshing()
+//                                CATransaction.commit()
+//                        })
+//                    }
+//                    
+//                }
+//                })
+//            .start()
+
+        optographIDs = dataBase.getOptographIDsAsArray().reversed()
+
         let topOffset = navigationController!.navigationBar.frame.height + 20
         overlayView.frame = CGRect(x: 0, y: topOffset, width: view.frame.width, height: view.frame.height - topOffset)
         overlayView.uiHidden = uiHidden
@@ -282,7 +286,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         let optographID = optographIDs[indexPath.row]
         
-        cell.direction = optographDirections[optographID]!
+        cell.direction = (phi: Float(M_PI_2), theta: Float(-M_PI_2))//optographDirections[optographID]!
         cell.willDisplay()
         
         let cubeImageCache = imageCache.get(indexPath.row, optographID: optographID, side: .left)
@@ -295,7 +299,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         } else {
             for i in [-2, -1, 1, 2] where indexPath.row + i > 0 && indexPath.row + i < optographIDs.count {
                 let id = optographIDs[indexPath.row + i]
-                let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices(optographDirections[id]!)
+                let cubeIndices = cell.getVisibleAndAdjacentPlaneIndices((phi: Float(M_PI_2), theta: Float(-M_PI_2))/*optographDirections[id]!*/)
                 imageCache.touch(indexPath.row + i, optographID: id, side: .left, cubeIndices: cubeIndices)
             }
         }
@@ -412,7 +416,12 @@ extension OptographCollectionViewController: DefaultTabControllerDelegate {
     }
     
     func scrollToOptograph(_ optographID: UUID) {
-        let row = optographIDs.index(of: optographID)
+        dataBase.addOptograph(optographID: optographID)
+        optographIDs = dataBase.getOptographIDsAsArray().reversed()
+        imageCache.insert([0])
+        self.collectionView!.reloadData()
+//        let row = optographIDs.index(of: optographID)
+        let row = optographIDs.index(of: optographIDs.first!)
         collectionView!.scrollToItem(at: IndexPath(row: row!, section: 0), at: .top, animated: true)
     }
     
