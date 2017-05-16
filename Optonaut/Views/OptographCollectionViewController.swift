@@ -492,6 +492,8 @@ private class OverlayView: UIView {
         optionsButtonView.titleLabel?.font = UIFont.textOfSize(21, withType: .Regular)
         // TODO
         //optionsButtonView.setTitle(String.iconWithName(.more), for: UIControlState())
+        optionsButtonView.setBackgroundImage(UIImage(named: "profile_delete_icn"), for: UIControlState())
+        optionsButtonView.contentMode = .scaleAspectFit
         optionsButtonView.setTitleColor(UIColor(0xc6c6c6), for: UIControlState())
         optionsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OverlayView.didTapOptions)))
         addSubview(optionsButtonView)

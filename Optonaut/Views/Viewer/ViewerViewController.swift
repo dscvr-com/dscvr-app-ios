@@ -151,7 +151,9 @@ class ViewerViewController: UIViewController  {
         settingsButtonView.frame = CGRect(x: 10, y: view.frame.height / 2 - 15, width: 30, height: 30)
         // TODO
         //settingsButtonView.setTitle(String.iconWithName(.Settings), for: UIControlState())
+        settingsButtonView.setBackgroundImage(UIImage(named: "vr_icon"), for: UIControlState())
         settingsButtonView.setTitleColor(.white, for: UIControlState())
+        settingsButtonView.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI_2))
         // Todo
         //settingsButtonView.titleLabel?.font = UIFont.iconOfSize(20)
         settingsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "showGlassesSelection"))

@@ -88,5 +88,21 @@ class DataBase {
         return resultArray
     }
 
+    func deleteOptograph(optographID: String) {
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        let optoID = Table("optoID")
+        let optograph = Expression<String>("optograph")
+        let foundOptograph = optoID.filter(optograph == optographID)
+        do {
+            let db = try Connection("\(path)/optographs.sqlite3")
+            if (try db.run(foundOptograph.delete()) == 1) {
+                print("Delete Access success")
+            } else {
+                print ("Delete Access Fail")
+            }
+        } catch {
+            print("retreiving failed")
+        }
+    }
 
 }

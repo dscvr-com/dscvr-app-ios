@@ -30,6 +30,7 @@ extension OptographOptions {
                 optographBox.insertOrUpdate { box in
                     print("date today \(Date())")
                     print(box.model.ID)
+                    DataBase.sharedInstance.deleteOptograph(optographID: optographID)
                     return box.model.deletedAt = Date()
                 }
                 deleteCallback?()
