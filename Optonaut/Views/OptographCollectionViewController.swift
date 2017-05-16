@@ -68,10 +68,19 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         imageCache.onMemoryWarning()
     }
-    
+
+    func updateOptographCollection(_ notification: NSNotification) {
+        if let optographID = notification.userInfo?["id"] as? String {
+            PipelineService.stitchingStatus.value = .idle
+            scrollToOptograph(optographID)
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        NotificationCenter.default.addObserver(self, selector: #selector(self.updateOptographCollection(_:)), name: NSNotification.Name(rawValue: stitchingFinishedNotificationKey), object: nil)
+
         let cardboardButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
         // TODO: Icomoon
         //cardboardButton.text = String.iconWithName(.Cardboard)
@@ -318,8 +327,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         optographDirections[optographIDs[indexPath.row]] = cell.direction
         cell.didEndDisplay()
-        
-        imageCache.disable(indexPath.row)
+
+        DispatchQueue.main.async {
+            self.imageCache.disable(indexPath.row)
+        }
     }
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -418,7 +429,9 @@ extension OptographCollectionViewController: DefaultTabControllerDelegate {
     func scrollToOptograph(_ optographID: UUID) {
         dataBase.addOptograph(optographID: optographID)
         optographIDs = dataBase.getOptographIDsAsArray().reversed()
-        imageCache.insert([0])
+        DispatchQueue.main.async {
+            self.imageCache.insert([0])
+        }
         self.collectionView!.reloadData()
 //        let row = optographIDs.index(of: optographID)
         let row = optographIDs.index(of: optographIDs.first!)

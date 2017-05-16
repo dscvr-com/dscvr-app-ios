@@ -372,8 +372,10 @@ extension DefaultTabControllerDelegate {
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { _ in return }))
             tabController?.leftViewController.present(alert, animated: true, completion: nil)
         case let .stitchingFinished(optographID):
-            scrollToOptograph(optographID)
+//            scrollToOptograph(optographID)
             PipelineService.stitchingStatus.value = .idle
+            tabController!.leftViewController.cleanup()
+            self.tabController!.leftViewController.pushViewController(CameraOverlayVC(), animated: false)
         case .uninitialized: ()
         }
     }

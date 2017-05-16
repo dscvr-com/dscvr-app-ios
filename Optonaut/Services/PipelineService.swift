@@ -22,6 +22,8 @@ func ==(lhs: PipelineService.StitchingStatus, rhs: PipelineService.StitchingStat
     }
 }
 
+let stitchingFinishedNotificationKey = "meyer.stitchingFinished"
+
 class PipelineService {
     
     enum StitchingStatus: Equatable {
@@ -115,6 +117,8 @@ class PipelineService {
             .on(completed: {
                 print("remove")
                 StitchingService.removeUnstitchedRecordings()
+                let optographIDDict:[String: String] = ["id": optographID]
+                NotificationCenter.default.post(name: Notification.Name(rawValue: stitchingFinishedNotificationKey), object: self, userInfo: optographIDDict)
             })
             .observeOnMain()
             .observeCompleted {
