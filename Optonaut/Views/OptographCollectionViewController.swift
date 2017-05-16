@@ -81,10 +81,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateOptographCollection(_:)), name: NSNotification.Name(rawValue: stitchingFinishedNotificationKey), object: nil)
 
-        let cardboardButton = UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
+        let cardboardButton = UIButton()//UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
+        cardboardButton.setBackgroundImage(UIImage(named: "vr_icon"), for: UIControlState())
+        cardboardButton.frame = CGRect(x: 0, y: -2, width: 35, height: 24)
         // TODO: Icomoon
         //cardboardButton.text = String.iconWithName(.Cardboard)
-        cardboardButton.textColor = .white
+        //cardboardButton.textColor = .white
         //cardboardButton.font = UIFont.iconOfSize(24)
         cardboardButton.isUserInteractionEnabled = true
         cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewController.showCardboardAlert)))
