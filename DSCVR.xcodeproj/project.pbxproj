@@ -70,7 +70,6 @@
 		8F7738151B380F5D001F642B /* Optograph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7738131B380F5D001F642B /* Optograph.swift */; };
 		8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F77C5191BC45DE1003B1594 /* StitchingService.swift */; };
 		8F86D4F71B9B9664009F91EB /* PureLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F86D4F61B9B9664009F91EB /* PureLayout.framework */; };
-		8F8E32D01BFE043200E09392 /* DeviceTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F8E32CF1BFE043200E09392 /* DeviceTokenService.swift */; };
 		8F8E32D21BFE152C00E09392 /* SwiftyUserDefaults.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F8E32D11BFE152C00E09392 /* SwiftyUserDefaults.framework */; };
 		8F954C621B9C81C200B87B43 /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */; };
 		8FA55BEB1B386E8C00BBA4A2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */; };
@@ -96,7 +95,6 @@
 		8FAB9F801B8F03E800B4C8CB /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F7F1B8F03E800B4C8CB /* UIKitExtensions.swift */; };
 		8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */; };
 		8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */; };
-		8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */; };
 		8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7411B8E3D7900656D99 /* LocationService.swift */; };
 		8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */; };
 		8FBC86971BB723E600539D4E /* SF-UI-Display-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86921BB723DA00539D4E /* SF-UI-Display-Semibold.otf */; };
@@ -301,7 +299,6 @@
 		8F7738131B380F5D001F642B /* Optograph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optograph.swift; sourceTree = "<group>"; };
 		8F77C5191BC45DE1003B1594 /* StitchingService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StitchingService.swift; sourceTree = "<group>"; };
 		8F86D4F61B9B9664009F91EB /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/iOS/PureLayout.framework; sourceTree = "<group>"; };
-		8F8E32CF1BFE043200E09392 /* DeviceTokenService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceTokenService.swift; sourceTree = "<group>"; };
 		8F8E32D11BFE152C00E09392 /* SwiftyUserDefaults.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyUserDefaults.framework; path = Carthage/Build/iOS/SwiftyUserDefaults.framework; sourceTree = "<group>"; };
 		8F954C611B9C81C200B87B43 /* UIColorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
 		8FA55BE91B386E8C00BBA4A2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
@@ -329,7 +326,6 @@
 		8FAB9F7F1B8F03E800B4C8CB /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
 		8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIFontExtensions.swift; sourceTree = "<group>"; };
 		8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateExtensions.swift; sourceTree = "<group>"; };
-		8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HexColor.framework; path = Carthage/Build/iOS/HexColor.framework; sourceTree = "<group>"; };
 		8FB3B7411B8E3D7900656D99 /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Regular.otf"; sourceTree = "<group>"; };
@@ -839,10 +835,8 @@
 			children = (
 				8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */,
 				8FEA6F201BA5969700153677 /* DatabaseService.swift */,
-				8F8E32CF1BFE043200E09392 /* DeviceTokenService.swift */,
 				8FB3B7411B8E3D7900656D99 /* LocationService.swift */,
 				8F4185F31C525538009E1E3F /* ModelService.swift */,
-				8FAB9F941B8FB6D000B4C8CB /* NotificationService.swift */,
 				8FD845C01BC9BBFF0064048D /* PipelineService.swift */,
 				8F77C5191BC45DE1003B1594 /* StitchingService.swift */,
 				8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */,
@@ -1534,7 +1528,6 @@
 				8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
 				8F0B17821BAC068000FAF649 /* ActionButton.swift in Sources */,
-				8FAB9F951B8FB6D000B4C8CB /* NotificationService.swift in Sources */,
 				8FD845C51BCAA4530064048D /* WebImage.swift in Sources */,
 				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
 				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
@@ -1549,7 +1542,6 @@
 				A5FD5D841BEA5A4E0031ED1E /* support.cpp in Sources */,
 				8F77C51A1BC45DE1003B1594 /* StitchingService.swift in Sources */,
 				8F276F2B1C3819A6003C348C /* ActivitiesService.swift in Sources */,
-				8F8E32D01BFE043200E09392 /* DeviceTokenService.swift in Sources */,
 				5936B1881CAD34F500F808D8 /* simpleSphereStitcher.cpp in Sources */,
 				8F23AA781C072702008926A8 /* BoundingLabel.swift in Sources */,
 				8FC7E3751BD15B9D00E97CC3 /* OrientationEKF.mm in Sources */,

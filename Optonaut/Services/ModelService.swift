@@ -88,10 +88,7 @@ extension ModelBox where M: SQLiteModel {
 }
 
 class Models {
-    
     static var optographs = ModelCache<Optograph>()
-//    static var persons = ModelCache<Person>()
-//    static var locations = ModelCache<Location>()
 }
 
 protocol ModelCacheType: class {
