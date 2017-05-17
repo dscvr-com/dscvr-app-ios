@@ -14,12 +14,6 @@
       "idiom" : "universal",
       "filename" : "logo_icn@3x.png",
       "scale" : "3x"
-    },
-    {
-      "idiom" : "universal",
-      "filename" : "logo_icn@1.5x.png",
-      "unassigned" : true,
-      "scale" : "1x"
     }
   ],
   "info" : {

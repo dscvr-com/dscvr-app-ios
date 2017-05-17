@@ -32,7 +32,7 @@ class SaveViewModel {
     let isOptoInServer = MutableProperty<Bool>(false)
     
     let optographBox: ModelBox<Optograph>
-    var locationBox: ModelBox<Location>?
+//    var locationBox: ModelBox<Location>?
     
     
     fileprivate let placeholder = MutableProperty<UIImage?>(nil)
@@ -43,8 +43,8 @@ class SaveViewModel {
         
         var optograph = Optograph.newInstance()
         
-        print("personId",SessionService.personID)
-        optograph.personID = SessionService.personID
+//        print("personId",SessionService.personID)
+//        optograph.personID = SessionService.personID
         optograph.isPublished = false
         optograph.isStitched = false
         optograph.isSubmitted = false
@@ -97,15 +97,15 @@ class SaveViewModel {
                 .delayLatestUntil(triggerProducer: self.isInitialized.producer)
                 .skipNil()
                 .startWithValues { [weak self] _ in
-                    let coords = LocationService.lastLocation()!
-                    var location = Location.newInstance()
-                    location.latitude = coords.latitude
-                    location.longitude = coords.longitude
-                    self?.locationBox?.removeFromCache()
-                    self?.locationBox = Models.locations.create(location)
-                    self?.optographBox.insertOrUpdate { box in
-                        box.model.locationID = location.ID
-                    }
+//                    let coords = LocationService.lastLocation()!
+//                    var location = Location.newInstance()
+//                    location.latitude = coords.latitude
+//                    location.longitude = coords.longitude
+//                    self?.locationBox?.removeFromCache()
+//                    self?.locationBox = Models.locations.create(location)
+//                    self?.optographBox.insertOrUpdate { box in
+//                        box.model.locationID = location.ID
+//                    }
             }
         }
 

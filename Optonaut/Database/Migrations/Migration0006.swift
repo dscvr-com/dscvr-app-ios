@@ -22,12 +22,4 @@ func migration0006(_ db: Connection) throws {
     try db.run(OptographTable.addColumn(OptographSchema.shouldBePublished, defaultValue: false))
     try db.run(OptographTable.addColumn(OptographSchema.isSubmitted, defaultValue: true))
     try db.run(OptographTable.addColumn(OptographSchema.isOnServer, defaultValue: true))
-    
-    try db.run(PersonTable.addColumn(PersonSchema.optographsCount, defaultValue: 0))
-    
-    let aLongTimeAgo = Date(timeIntervalSince1970: 0)
-    
-    try db.run(ActivityTable.addColumn(ActivitySchema.updatedAt, defaultValue: aLongTimeAgo))
-    try db.run(OptographTable.addColumn(OptographSchema.updatedAt, defaultValue: aLongTimeAgo))
-    try db.run(PersonTable.addColumn(PersonSchema.updatedAt, defaultValue: aLongTimeAgo))
 }

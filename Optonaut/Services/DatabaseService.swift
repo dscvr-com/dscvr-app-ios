@@ -77,7 +77,6 @@ class DatabaseService {
     fileprivate static let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! + "/database.sqlite3"
     fileprivate static let migrations = [
         migration0001,
-        migration0002,
         migration0003,
         migration0004,
         migration0005,
@@ -92,22 +91,22 @@ class DatabaseService {
     }
     
     static func reset() throws {
-        let ephemeralTables = [
-            ActivityTable,
-            ActivityResourceStarTable,
-            ActivityResourceCommentTable,
-            ActivityResourceViewsTable,
-            ActivityResourceFollowTable,
-        ]
-        for ephemeralTable in ephemeralTables {
-            try defaultConnection.run(ephemeralTable.delete())
-        }
-        
-        let optographsToDelete = OptographTable.filter(OptographSchema.personID != Person.guestID)
-        try defaultConnection.run(optographsToDelete.delete())
-        
-        let personsToDelete = PersonTable.filter(PersonSchema.ID != Person.guestID)
-        try defaultConnection.run(personsToDelete.delete())
+//        let ephemeralTables = [
+//            ActivityTable,
+//            ActivityResourceStarTable,
+//            ActivityResourceCommentTable,
+//            ActivityResourceViewsTable,
+//            ActivityResourceFollowTable,
+//        ]
+//        for ephemeralTable in ephemeralTables {
+//            try defaultConnection.run(ephemeralTable.delete())
+//        }
+
+//        let optographsToDelete = OptographTable.filter(OptographSchema.personID != Person.guestID)
+//        try defaultConnection.run(optographsToDelete.delete())
+
+//        let personsToDelete = PersonTable.filter(PersonSchema.ID != Person.guestID)
+//        try defaultConnection.run(personsToDelete.delete())
     }
     
     static func query(_ type: DatabaseQueryType, query: Table) -> SignalProducer<Row, DatabaseQueryError> {

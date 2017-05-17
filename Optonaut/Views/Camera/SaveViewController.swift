@@ -477,9 +477,9 @@ private class LocationViewModel {
                     .on(value: { (lat, lon) in
                         self?.locationLoading.value = true
                         self?.selectedLocation.value = nil
-                        var location = Location.newInstance()
-                        location.latitude = lat
-                        location.longitude = lon
+//                        var location = Location.newInstance()
+//                        location.latitude = lat
+//                        location.longitude = lon
                     })
                     .ignoreError()
             }

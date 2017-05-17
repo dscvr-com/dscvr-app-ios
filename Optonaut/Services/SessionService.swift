@@ -54,10 +54,10 @@ class SessionService {
         return Defaults[.SessionPersonID] != nil && Defaults[.SessionToken] != nil
     }
     
-    static var personID: String {
-        return Defaults[.SessionPersonID] ?? Person.guestID
-    }
-    
+//    static var personID: String {
+//        return Defaults[.SessionPersonID] ?? Person.guestID
+//    }
+
     static var needsOnboarding: Bool {
         return Defaults[.SessionOnboardingVersion] < OnboardingVersion
     }
@@ -68,14 +68,14 @@ class SessionService {
     
     static func prepare() {
         
-        if isLoggedIn {
-            let query = PersonTable.filter(PersonTable[PersonSchema.ID] == personID)
-            let person = try! DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
-            Models.persons.create(person)
-            
-            updateMixpanel()
-        }
-        
+//        if isLoggedIn {
+//            let query = PersonTable.filter(PersonTable[PersonSchema.ID] == personID)
+//            let person = try! DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
+//            Models.persons.create(person)
+//            
+//            updateMixpanel()
+//        }
+
         if Defaults[.SessionVRGlasses].isEmpty {
             Defaults[.SessionVRGlasses] = DefaultVRGlasses
         }
@@ -101,28 +101,6 @@ class SessionService {
         
         Mixpanel.sharedInstance()?.reset()
         UIApplication.shared.applicationIconBadgeNumber = 0
-    }
-    
-    fileprivate static func updateMixpanel() {
-        let person = Models.persons[personID]!.model
-        var personEmail = ""
-        
-        if let email = person.email {
-            personEmail = email
-        } else {
-            personEmail = ""
-        }
-        
-        Mixpanel.sharedInstance()?.identify(person.ID)
-        Mixpanel.sharedInstance()?.people.set([
-            "$first": person.displayName,
-            "$username": person.userName,
-            "$email": personEmail,
-            "$created": person.createdAt,
-            "Followers": person.followersCount,
-            "Followed": person.followedCount,
-            "EliteStatus": person.eliteStatus
-        ])
     }
     
 }
