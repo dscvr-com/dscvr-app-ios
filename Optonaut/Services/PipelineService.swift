@@ -166,13 +166,8 @@ class PipelineService {
                 box.model.isUploading = true
             }
             
-            let sideLetter = side == .left ? "l" : "r"
             let url = TextureURL(optographID, side: side, size: 0, face: face, x: 0, y: 0, d: 1)
-            
-            objc_sync_enter(KingfisherManager.shared)
-            let image = KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: url)!
-            objc_sync_exit(KingfisherManager.shared)
-            
+
             optographBox.insertOrUpdate { box in
                 switch side {
                     case .left:

@@ -10,10 +10,7 @@ import SQLite
 
 func migration0001(_ db: Connection) throws {
     try db.run(createPerson())
-    try db.run(createLocation())
     try db.run(createOptograph())
-    try db.run(createHashtag())
-    try db.run(createComment())
     try db.run(createGuestPerson())
 }
 
@@ -29,17 +26,6 @@ private func createPerson() -> String {
         t.column(PersonSchema.isFollowed)
         t.column(PersonSchema.createdAt)
         t.column(PersonSchema.avatarAssetID)
-    }
-}
-
-private func createLocation() -> String {
-    return LocationTable.create { t in
-        t.column(LocationSchema.ID, primaryKey: true)
-        t.column(LocationSchema.text)
-        t.column(LocationSchema.country)
-        t.column(LocationSchema.createdAt)
-        t.column(LocationSchema.latitude)
-        t.column(LocationSchema.longitude)
     }
 }
 
@@ -61,28 +47,6 @@ private func createOptograph() -> String {
         t.column(OptographSchema.hashtagString)
         
         t.foreignKey(OptographSchema.personID, references: PersonTable, PersonSchema.ID)
-        t.foreignKey(OptographSchema.locationID, references: LocationTable, LocationSchema.ID)
-    }
-}
-
-private func createHashtag() -> String {
-    return HashtagTable.create { t in
-        t.column(HashtagSchema.ID, primaryKey: true)
-        t.column(HashtagSchema.name)
-        t.column(HashtagSchema.previewAssetID)
-        t.column(HashtagSchema.isFollowed)
-    }
-}
-
-private func createComment() -> String {
-    return CommentTable.create { t in
-        t.column(CommentSchema.ID, primaryKey: true)
-        t.column(CommentSchema.text)
-        t.column(CommentSchema.createdAt)
-        t.column(CommentSchema.personID)
-        t.column(CommentSchema.optographID)
-        
-        t.foreignKey(CommentSchema.optographID, references: OptographTable, OptographSchema.ID)
     }
 }
 
@@ -96,7 +60,6 @@ private func createGuestPerson() -> Insert {
         PersonSchema.followedCount <- 0,
         PersonSchema.isFollowed <- false,
         PersonSchema.createdAt <- Date(),
-//        PersonSchema.wantsNewsletter <- false, // removed
         PersonSchema.avatarAssetID <- uuid(),
     ])
 }

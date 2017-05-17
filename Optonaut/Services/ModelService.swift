@@ -92,8 +92,6 @@ class Models {
     static var optographs = ModelCache<Optograph>()
     static var persons = ModelCache<Person>()
     static var locations = ModelCache<Location>()
-    static var story = ModelCache<Story>()
-    static var storyChildren = ModelCache<StoryChildren>()
 }
 
 protocol ModelCacheType: class {

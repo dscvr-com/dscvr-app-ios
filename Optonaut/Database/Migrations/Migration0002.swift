@@ -24,7 +24,6 @@ private func createActivityResourceComment() -> String {
         t.column(ActivityResourceCommentSchema.causingPersonID)
         
         t.foreignKey(ActivityResourceCommentSchema.optographID, references: OptographTable, OptographSchema.ID)
-        t.foreignKey(ActivityResourceCommentSchema.commentID, references: CommentTable, CommentSchema.ID)
         t.foreignKey(ActivityResourceCommentSchema.causingPersonID, references: PersonTable, PersonSchema.ID)
     }
 }

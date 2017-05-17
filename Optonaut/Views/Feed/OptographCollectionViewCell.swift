@@ -20,7 +20,7 @@ class TouchRotationSource: RotationMatrixSource {
     // phi and theta are switched since native apps and the browser use
     // different reference frames.
     var phi: Float = 0
-    var theta: Float = Float(-M_PI_2)
+    var theta: Float = -(.pi / 2)
     
     // FOV of the scene
     fileprivate let vfov: Float
@@ -40,7 +40,7 @@ class TouchRotationSource: RotationMatrixSource {
     
     // Dependent on optograph format. This values are suitable for
     // Stitcher version <= 7.
-    fileprivate let border = Float(M_PI) / Float(6.45)
+    fileprivate let border = .pi / Float(6.45)
     fileprivate let minTheta: Float
     fileprivate let maxTheta: Float
     
@@ -52,8 +52,8 @@ class TouchRotationSource: RotationMatrixSource {
         
         vfov = hfov * Float(sceneHeight) / Float(sceneWidth)
         
-        maxTheta = -border - (vfov * Float(M_PI) / 180) / 2
-        minTheta = Float(-M_PI) - maxTheta
+        maxTheta = -border - (vfov * .pi / 180) / 2
+        minTheta = -(.pi) - maxTheta
     }
     
     func touchStart(_ point: CGPoint) {
@@ -68,7 +68,7 @@ class TouchRotationSource: RotationMatrixSource {
         
         let x0 = Float(sceneWidth / 2)
         let y0 = Float(sceneHeight / 2)
-        let flen = y0 / tan(vfov / 2 * Float(M_PI) / 180)
+        let flen = y0 / tan(vfov / 2 * .pi / 180)
         
         let startPhi = atan((Float(touchStartPoint!.x) - x0) / flen)
         let startTheta = atan((Float(touchStartPoint!.y) - y0) / flen)

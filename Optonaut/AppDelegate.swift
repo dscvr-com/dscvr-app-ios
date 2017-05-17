@@ -20,7 +20,6 @@ import SwiftyUserDefaults
 import ReactiveSwift
 
 let Env = EnvType.staging
-//let Env = EnvType.Production
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -43,16 +42,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("DataBase AVAILABLE")
             }
         }
-
-        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         prepareAndExecute(requireLogin: true) {
-            
-            if let notification = launchOptions?[UIApplicationLaunchOptionsKey.remoteNotification] as? [AnyHashable: Any] {
-                Mixpanel.sharedInstance()?.track("Launch.Notification")
-                self.application(application, didReceiveRemoteNotification: notification)
-            }
-            
             let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
             if launchedBefore  {
                 print("Not first launch.")
@@ -108,61 +99,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        
-        FBSDKAppEvents.activateApp()
-        
         // Re-register background task if necassary.
         StitchingService.onApplicationResuming()
-        //UIApplication.sharedApplication().applicationIconBadgeNumber = 0;
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
         Defaults[.SessionStoryOptoID] = nil
-
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-    
-    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
 
-        prepareAndExecute(requireLogin: false) {
-//            let tabBarViewController = TabBarViewController()
-//            
-//            if case .Optograph(let uuid) = url.applicationURLData {
-//                let detailsViewController = DetailsTableViewController(optographID: uuid)
-//                tabBarViewController.feedNavViewController.pushViewController(detailsViewController, animated: false)
-//            }
-//            
-//            self.window?.rootViewController = tabBarViewController
-            self.window?.rootViewController = TabViewController()
-        }
-        
-        return true
-    }
-    
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let mixPanel = Mixpanel.sharedInstance()
-        mixPanel?.people.addPushDeviceToken(deviceToken)
-        
-        let tokenChars = (deviceToken as NSData).bytes.bindMemory(to: CChar.self, capacity: deviceToken.count)
-        var tokenString = ""
-        
-        for i in 0 ..< deviceToken.count {
-            tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
-        }
-        
-        DeviceTokenService.deviceToken = tokenString
-    }
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("my error===",error)
-    }
-    
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
-        ActivitiesService.unreadCount.value = 1
-//        if let tabBarViewController = window?.rootViewController as? TabBarViewController where SessionService.isLoggedIn {
-//            tabBarViewController.activityNavViewController.activityTableViewController.viewModel.refreshNotification.notify(())
-//        }
-    }
-    
     fileprivate func prepareAndExecute(requireLogin: Bool, fn: () -> ()) {
         
         print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
@@ -179,27 +124,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("staging mixpanel")
             Mixpanel.sharedInstance(withToken: "905eb49cf2c78af5ceb307939f02c092")
         }
-//        let sysVer = UIDevice.currentDevice().systemVersion as NSString
-//        
-//        if sysVer.floatValue >= 8.0 {
-//            UIApplication.sharedApplication().registerForRemoteNotifications()
-//        }
-        
-        /*
-         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
-         {
-         [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
-         [[UIApplication sharedApplication] registerForRemoteNotifications];
-         }
-         // This code will work in iOS 7.0 and below:
-         else
-         {
-         [[UIApplication sharedApplication] registerForRemoteNotificationTypes: (UIRemoteNotificationTypeNewsstandContentAvailability| UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
-         }
-         
-         // Call .identify to flush the People record to Mixpanel
-         [mixpanel identify:mixpanel.distinctId];
-         */
         
         try! DatabaseService.prepare()
         
@@ -213,8 +137,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window?.backgroundColor = .white
         
-        SessionService.prepare()
-        
+//        SessionService.prepare()
+
         window?.makeKeyAndVisible()
         
         VersionService.updateToLatest()

@@ -103,13 +103,12 @@ class SaveViewModel {
                     location.longitude = coords.longitude
                     self?.locationBox?.removeFromCache()
                     self?.locationBox = Models.locations.create(location)
-                    self?.locationBox!.insertOrUpdate()
                     self?.optographBox.insertOrUpdate { box in
                         box.model.locationID = location.ID
                     }
             }
         }
-        
+
         isInitialized.producer.startWithValues{ print("isInitialized \($0)")}
         stitcherFinished.producer.startWithValues{ print("stitcherFinished \($0)")}
         locationLoading.producer.startWithValues{ print("locationLoading \($0)")}

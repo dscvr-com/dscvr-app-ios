@@ -23,20 +23,11 @@ func migration0006(_ db: Connection) throws {
     try db.run(OptographTable.addColumn(OptographSchema.isSubmitted, defaultValue: true))
     try db.run(OptographTable.addColumn(OptographSchema.isOnServer, defaultValue: true))
     
-    try db.run(LocationTable.addColumn(LocationSchema.countryShort, defaultValue: ""))
-    try db.run(LocationTable.addColumn(LocationSchema.place, defaultValue: ""))
-    try db.run(LocationTable.addColumn(LocationSchema.region, defaultValue: ""))
-    try db.run(LocationTable.addColumn(LocationSchema.POI, defaultValue: false))
-    
     try db.run(PersonTable.addColumn(PersonSchema.optographsCount, defaultValue: 0))
     
     let aLongTimeAgo = Date(timeIntervalSince1970: 0)
     
     try db.run(ActivityTable.addColumn(ActivitySchema.updatedAt, defaultValue: aLongTimeAgo))
-    try db.run(CommentTable.addColumn(CommentSchema.updatedAt, defaultValue: aLongTimeAgo))
-    try db.run(HashtagTable.addColumn(HashtagSchema.createdAt, defaultValue: aLongTimeAgo))
-    try db.run(HashtagTable.addColumn(HashtagSchema.updatedAt, defaultValue: aLongTimeAgo))
-    try db.run(LocationTable.addColumn(LocationSchema.updatedAt, defaultValue: aLongTimeAgo))
     try db.run(OptographTable.addColumn(OptographSchema.updatedAt, defaultValue: aLongTimeAgo))
     try db.run(PersonTable.addColumn(PersonSchema.updatedAt, defaultValue: aLongTimeAgo))
 }

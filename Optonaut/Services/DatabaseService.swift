@@ -88,13 +88,7 @@ class DatabaseService {
     static func prepare() throws {
         // set database connection instance
         defaultConnection = try Connection(path)
-        
-        // enable console logging
-//        defaultConnection.trace { msg in print("\(msg)\n") }
-        
         try migrate()
-        
-       // SessionService.onLogout(performAlways: true) { try! reset() }
     }
     
     static func reset() throws {
@@ -104,8 +98,6 @@ class DatabaseService {
             ActivityResourceCommentTable,
             ActivityResourceViewsTable,
             ActivityResourceFollowTable,
-            CommentTable,
-            HashtagTable,
         ]
         for ephemeralTable in ephemeralTables {
             try defaultConnection.run(ephemeralTable.delete())

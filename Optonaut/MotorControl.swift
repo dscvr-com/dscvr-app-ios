@@ -33,9 +33,9 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
     var currentScript = [MotorCommand]()
     
     // Positions in RADIANTS
-    var startPosition = Point(x: 0, y: -(Float)(M_PI_2))
+    var startPosition = Point(x: 0, y: -(.pi / 2))
     var moved = Point(x: 0, y: 0)
-    var currentPosition = Point(x: 0, y: -(Float)(M_PI_2))
+    var currentPosition = Point(x: 0, y: -(.pi / 2))
     
     // Speed in RADS/SEC
     var speed = Point(x: 1, y: 1)
