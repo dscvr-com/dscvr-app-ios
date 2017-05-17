@@ -44,35 +44,11 @@ class CameraDebugService {
         let context = CGContext(data: baseAddress, width: width, height: height, bitsPerComponent: 8, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo)
         let cgImage = context!.makeImage()!
         CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
-    
-        //let smallWidth = width / 2
-        //let smallHeight = height / 2
-        //let smallContext = CGBitmapContextCreate(nil, smallWidth, smallHeight, 8, bytesPerRow, colorSpace, bitmapInfo)
-        
-        //CGContextSetInterpolationQuality(smallContext, .None)
-        //CGContextDrawImage(smallContext, CGRect(x: 0, y: 0, width: smallWidth, height: smallHeight), cgImage)
-        
-        //let smallCGImage = CGBitmapContextCreateImage(smallContext)!
-        
         (queue).async {
             self.saveFilesToDisk(cgImage, intrinsics: intrinsics, extrinsics: extrinsics, frameCount: frameCount)
         }
     }
-    
-    //func upload() -> SignalProducer<Float, NSError> {
-    //    if !Reachability.connectedToNetwork() {
-    //        return SignalProducer<Float, NSError>(value: 0)
-    //    }
-    //
-    //    var uploadData: [String: String] = [:]
-    //    let enumerator = NSFileManager.defaultManager().enumeratorAtPath(path)
-    //    while let element = enumerator?.nextObject() as? String {
-    //        uploadData["\(path)/\(element)"] = element
-    //    }
-    //
-    //    return ApiService<EmptyResponse>.upload("optographs/tmp-\(NSDate().timeIntervalSince1970)/upload-debug", uploadData: uploadData)
-    //}
-    
+
     fileprivate func saveFilesToDisk(_ cgImage: CGImage, intrinsics: [Double], extrinsics: [Double], frameCount: Int) {
         // json data file
         let data: [String: Any] = [

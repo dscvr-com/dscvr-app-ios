@@ -155,13 +155,8 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
         && lhs.rightCubeTextureStatusSave     == rhs.rightCubeTextureStatusSave
         && lhs.isStaffPick                    == rhs.isStaffPick
         && lhs.hashtagString                  == rhs.hashtagString
-//        && lhs.isInFeed                       == rhs.isInFeed // needs to be excluded since an optograph can be both in a profile and feed
         && lhs.directionPhi                   == rhs.directionPhi
         && lhs.directionTheta                 == rhs.directionTheta
-//        && lhs.postFacebook                   == rhs.postFacebook // needs to be excluded since this information is not exposed from REST api
-//        && lhs.postTwitter                    == rhs.postTwitter // needs to be excluded since this information is not exposed from REST api
-//        && lhs.postInstagram                  == rhs.postInstagram // needs to be excluded since this information is not exposed from REST api
-//        && lhs.shouldBePublished              == rhs.shouldBePublished // needs to be excluded since this information is not exposed from REST api
 }
 
 extension Optograph: MergeApiModel {
@@ -170,7 +165,6 @@ extension Optograph: MergeApiModel {
     mutating func mergeApiModel(_ apiModel: AM) {
         ID = apiModel.ID
         text = apiModel.text
-        personID = apiModel.person.ID
         createdAt = apiModel.createdAt
         updatedAt = apiModel.updatedAt
         deletedAt = apiModel.deletedAt
@@ -181,7 +175,6 @@ extension Optograph: MergeApiModel {
         starsCount = apiModel.starsCount
         commentsCount = apiModel.commentsCount
         viewsCount = apiModel.viewsCount
-        locationID = apiModel.location?.ID
         isStaffPick = apiModel.isStaffPick
         directionPhi = apiModel.directionPhi
         directionTheta = apiModel.directionTheta

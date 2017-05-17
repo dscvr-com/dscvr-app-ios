@@ -89,26 +89,7 @@ class DatabaseService {
         defaultConnection = try Connection(path)
         try migrate()
     }
-    
-    static func reset() throws {
-//        let ephemeralTables = [
-//            ActivityTable,
-//            ActivityResourceStarTable,
-//            ActivityResourceCommentTable,
-//            ActivityResourceViewsTable,
-//            ActivityResourceFollowTable,
-//        ]
-//        for ephemeralTable in ephemeralTables {
-//            try defaultConnection.run(ephemeralTable.delete())
-//        }
 
-//        let optographsToDelete = OptographTable.filter(OptographSchema.personID != Person.guestID)
-//        try defaultConnection.run(optographsToDelete.delete())
-
-//        let personsToDelete = PersonTable.filter(PersonSchema.ID != Person.guestID)
-//        try defaultConnection.run(personsToDelete.delete())
-    }
-    
     static func query(_ type: DatabaseQueryType, query: Table) -> SignalProducer<Row, DatabaseQueryError> {
         return SignalProducer { sink, disposable in
             switch type {

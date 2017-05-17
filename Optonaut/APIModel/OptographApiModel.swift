@@ -14,7 +14,6 @@ struct OptographApiModel: ApiModel, Mappable {
     var placeholder: String = ""
     var ID: UUID = ""
     var text: String = ""
-    var person: PersonApiModel = PersonApiModel()
     var createdAt: Date = Date()
     var updatedAt: Date = Date()
     var deletedAt: Date? = nil
@@ -23,14 +22,12 @@ struct OptographApiModel: ApiModel, Mappable {
     var starsCount: Int = 0
     var commentsCount: Int = 0
     var viewsCount: Int = 0
-    var location: LocationApiModel?
     var stitcherVersion: String = ""
     var shareAlias: String = ""
     var isStaffPick: Bool = false
     var directionPhi: Double = 0
     var directionTheta: Double = 0
-    var story: mapChildren = mapChildren()
-    
+
     init?(map: Map){
     }
     
@@ -43,7 +40,6 @@ struct OptographApiModel: ApiModel, Mappable {
         updatedAt                   <- (map["updated_at"], NSDateTransform())
         deletedAt                   <- (map["deleted_at"], NSDateTransform())
         text                        <- map["text"]
-        person                      <- map["person"]
         isStarred                   <- map["is_starred"]
         isPrivate                   <- map["is_private"]
         stitcherVersion             <- map["stitcher_version"]
@@ -51,11 +47,9 @@ struct OptographApiModel: ApiModel, Mappable {
         starsCount2                  <- map["stars_count"]
         commentsCount               <- map["comments_count"]
         viewsCount                  <- map["views_count"]
-        location                    <- map["location"]
         isStaffPick                 <- map["is_staff_pick"]
         directionPhi                <- map["direction_phi"]
         directionTheta              <- map["direction_theta"]
-        story                       <- map["story"]
         
         
         starsCount = Int(starsCount2)!
