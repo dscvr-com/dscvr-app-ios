@@ -22,8 +22,6 @@ func ==(lhs: PipelineService.StitchingStatus, rhs: PipelineService.StitchingStat
     }
 }
 
-let stitchingFinishedNotificationKey = "meyer.stitchingFinished"
-
 class PipelineService {
     
     enum StitchingStatus: Equatable {

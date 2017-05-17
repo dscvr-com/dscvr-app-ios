@@ -27,12 +27,14 @@ extension OptographOptions {
             confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in return }))
             confirmAlert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
                 PipelineService.stopStitching()
-                optographBox.insertOrUpdate { box in
-                    print("date today \(Date())")
-                    print(box.model.ID)
-                    DataBase.sharedInstance.deleteOptograph(optographID: optographID)
-                    return box.model.deletedAt = Date()
-                }
+                //optographBox.insertOrUpdate { box in
+                //    print("date today \(Date())")
+                //    print(box.model.ID)
+                let optographIDDict:[String: String] = ["id": optographID]
+                let name = Notification.Name(rawValue: deletedOptographNotificationKey)
+                NotificationCenter.default.post(name: name, object: self, userInfo: optographIDDict)
+                //    return box.model.deletedAt = Date()
+                //}
                 deleteCallback?()
             }))
             self.navigationController?.present(confirmAlert, animated: true, completion: nil)

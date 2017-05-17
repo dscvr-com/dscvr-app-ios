@@ -23,6 +23,9 @@ protocol OptographCollectionViewModel {
 fileprivate let queue = DispatchQueue(label: "collection_view", attributes: [])
 fileprivate let queueScheduler = QueueScheduler(qos: .background, name: "collection_view", targeting: queue)
 
+let stitchingFinishedNotificationKey = "meyer.stitchingFinished"
+let deletedOptographNotificationKey = "meyer.deletedOptograph"
+
 
 class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
 
@@ -68,18 +71,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         imageCache.onMemoryWarning()
     }
-
-    func updateOptographCollection(_ notification: NSNotification) {
-        if let optographID = notification.userInfo?["id"] as? String {
-            PipelineService.stitchingStatus.value = .idle
-            scrollToOptograph(optographID)
-        }
-    }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateOptographCollection(_:)), name: NSNotification.Name(rawValue: stitchingFinishedNotificationKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.refreshDataSourceForCollectionView(_:)), name: NSNotification.Name(rawValue: deletedOptographNotificationKey), object: nil)
 
         let cardboardButton = UIButton()//UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
         cardboardButton.setBackgroundImage(UIImage(named: "vr_icon"), for: UIControlState())
@@ -326,8 +323,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let cell = cell as! OptographCollectionViewCell
-        
-        optographDirections[optographIDs[indexPath.row]] = cell.direction
+//        optographDirections[optographIDs[indexPath.row]] = cell.direction
         cell.didEndDisplay()
 
         DispatchQueue.main.async {
@@ -363,8 +359,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             
             overlayView.alpha = opacity
         }
-        
-        let overlayOptographID = optographIDs[Int(round(offset / height))]
+        var overlayOptographID: UUID! = ""
+        if (Int(round(offset / height)) < optographIDs.count) {
+            overlayOptographID = optographIDs[Int(round(offset / height))]
+        } else {
+            return
+        }
+
         if overlayOptographID != overlayView.optographID {
             overlayView.optographID = overlayOptographID
         }
@@ -417,7 +418,65 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         confirmAlert.addAction(UIAlertAction(title: "Continue", style: .cancel, handler: { _ in return }))
         navigationController?.present(confirmAlert, animated: true, completion: nil)
     }
-    
+
+    func updateOptographCollection(_ notification: NSNotification) {
+        if let optographID = notification.userInfo?["id"] as? String {
+            PipelineService.stitchingStatus.value = .idle
+            dataBase.addOptograph(optographID: optographID)
+            optographIDs = dataBase.getOptographIDsAsArray().reversed()
+            DispatchQueue.main.async {
+                self.imageCache.insert([0])
+            }
+            self.collectionView!.reloadData()
+            let row = optographIDs.index(of: optographIDs.first!)
+            collectionView!.scrollToItem(at: IndexPath(row: row!, section: 0), at: .top, animated: true)
+        }
+    }
+
+    func refreshDataSourceForCollectionView(_ notification: NSNotification) {
+        print(" ")
+        print(" ")
+        print(" ")
+        print("OptographIDS:")
+        print(optographIDs)
+        print("Database:")
+        print(dataBase.getOptographIDsAsArray())
+        if let optographID = notification.userInfo?["id"] as? String {
+            print("OptographID: \(optographID)")
+            print(" ")
+            let helperIDholder = dataBase.getOptographIDsAsArray()
+            print("HelperIDS:")
+            print(helperIDholder)
+            dataBase.deleteOptograph(optographID: optographID)
+            print("Database after Delete:")
+            print(dataBase.getOptographIDsAsArray())
+            let index = helperIDholder.index(of: optographID)
+            print("Index: \(index ?? -1)")
+            let reversedIndex = helperIDholder.count - index! - 1
+            print("ReversedIndex: \(reversedIndex)")
+            imageCache.delete([reversedIndex])
+            optographIDs = dataBase.getOptographIDsAsArray().reversed()
+            print("OptographIDS after Delete:")
+            print(optographIDs)
+            if optographIDs.isEmpty {
+                print("Case: Only one item in collection")
+                let row = helperIDholder.index(of: helperIDholder.first!)
+                print("Row: \(row)")
+                collectionView?.deleteItems(at: [IndexPath(row: row!, section: 0)])
+                collectionView!.reloadData()
+                overlayView.isHidden = true
+                print(" ")
+                print(" ")
+                print(" ")
+            } else {
+                print("Case: Multiple items in collection")
+                scrollToOptograph("")
+                print(" ")
+                print(" ")
+                print(" ")
+            }
+        }
+    }
 }
 
 // MARK: - UITabBarControllerDelegate
@@ -429,11 +488,6 @@ extension OptographCollectionViewController: DefaultTabControllerDelegate {
     }
     
     func scrollToOptograph(_ optographID: UUID) {
-        dataBase.addOptograph(optographID: optographID)
-        optographIDs = dataBase.getOptographIDsAsArray().reversed()
-        DispatchQueue.main.async {
-            self.imageCache.insert([0])
-        }
         self.collectionView!.reloadData()
 //        let row = optographIDs.index(of: optographID)
         let row = optographIDs.index(of: optographIDs.first!)
