@@ -202,15 +202,7 @@ class PipelineService {
                 && OptographTable[OptographSchema.isSubmitted])
         
         let optographs = try! DatabaseService.defaultConnection.prepare(query).map(Optograph.fromSQL)
-        
-        if Reachability.connectedToNetwork() {
-            for optograph in optographs {
-                Models.optographs.touch(optograph)
-                print("optoid",optograph.ID)
-                upload(optograph.ID)
-            }
         }
-    }
     
     static func checkStitching() {
         if StitchingService.isStitching() {

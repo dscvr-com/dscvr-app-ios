@@ -48,8 +48,7 @@ private func buildURL(_ path: String, width: Int, height: Int, filter: String?) 
     let scale = UIScreen.main.scale
     let scaledWidth = Int(CGFloat(width) * scale)
     let scaledHeight = Int(CGFloat(height) * scale)
-    //let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
-    let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
+//    let securityKey = "lBgF7SQaW3TDZ75ZiCuPXIDyWoADA6zY3KUkro5i"
     
     let filterStr = filter != nil ? "filters:\(filter!)/" : ""
     let urlPartToSign = "\(scaledWidth)x\(scaledHeight)/\(filterStr)\(s3Host)/\(path)"

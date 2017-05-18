@@ -16,10 +16,6 @@ func setupAppearanceDefaults() {
     UINavigationBar.appearance().tintColor = .white
     UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
     UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: UIFont.displayOfSize(20, withType: .Semibold)]
-    
-    // TODO: Icomoon!
-    //let image = UIImage.iconWithName(.Back, textColor: .white, fontSize: 18, offset: CGSize(width: 13, height: 0))
-    //UINavigationBar.appearance().backIndicatorImage = image
     UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffset(horizontal: -200, vertical: 0), for: .default)
     UINavigationBar.appearance().backIndicatorTransitionMaskImage = UIImage()
 }
@@ -54,34 +50,16 @@ extension UIColor {
             return UIColor(0xEEEEEE)
         }
     }
+
     static var Clear: UIColor {
         get {
             return UIColor.clear
         }
     }
-    
-//    static var LightGreyActive: UIColor {
-//        get {
-//            return UIColor.blackColor().alpha(0.20)
-//        }
-//    }
-    
+
     static var Success: UIColor {
         get {
             return UIColor(0x91CB3E)
         }
     }
 }
-// TODO: Re-Add Icomoon
-/*
-func setTabBarIcon(_ tabBarItem: UITabBarItem, icon: Icon, withFontSize fontSize: CGFloat) {
-    tabBarItem.title = String.iconWithName(icon)
-    
-    let attribues = [
-        NSFontAttributeName: UIFont.iconOfSize(fontSize),
-        NSForegroundColorAttributeName: UIColor.white,
-    ]
-    tabBarItem.setTitleTextAttributes(attribues, for: UIControlState())
-    tabBarItem.titlePositionAdjustment = UIOffsetMake(0, -13)
-}
-*/

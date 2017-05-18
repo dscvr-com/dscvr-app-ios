@@ -64,22 +64,6 @@ extension PlaceholderImageView {
     }
 }
 
-extension LineTextField {
-    
-    var rac_status: MutableProperty<LineTextField.Status> {
-        return lazyMutableProperty(self, key: &AssociationKey.status, setter: { self.status = $0 }, getter: { self.status })
-    }
-    
-}
-
-extension ActionButton {
-    
-    var rac_loading: MutableProperty<Bool> {
-        return lazyMutableProperty(self, key: &AssociationKey.loading, setter: { self.isLoading = $0 }, getter: { self.isLoading })
-    }
-    
-}
-
 extension UIButton {
     public var rac_enabled: MutableProperty<Bool> {
         return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.isEnabled = $0 }, getter: { self.isEnabled })

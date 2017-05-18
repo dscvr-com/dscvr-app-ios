@@ -161,15 +161,3 @@ func sync(_ obj: AnyObject, fn: () -> ()) {
     fn()
     objc_sync_exit(obj)
 }
-
-//class NotificationSignal {
-//    
-//    let (signal, sink) =  Signal<Void, NoError>.pipe()
-//    
-//    func notify() {
-//        sink.sendNext(())
-//    }
-//    
-//}
-
-

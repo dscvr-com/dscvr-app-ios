@@ -186,10 +186,6 @@ class SaveViewController: UIViewController, RedNavbar {
         textInputView.isHidden = true
         textInputView.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 14, right: 0)
         textInputView.textContainerInset = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16)
-        // TODO
-        //textInputView.rac_text.toSignalProducer().startWithNext { [weak self] val in
-        //    self?.viewModel.text.value = val as! String
-        //}
         textInputView.removeConstraints(textInputView.constraints)
         scrollView.addSubview(textInputView)
     
@@ -202,11 +198,6 @@ class SaveViewController: UIViewController, RedNavbar {
         
         viewModel.isReadyForSubmit.producer.startWithValues { [weak self] isReady in
             self?.tabController!.cameraButton.loading = !isReady
-            
-//            if isReady {
-//                self?.tabController!.cameraButton.icon = UIImage(named:"upload_next")!
-//            }
-//            
         }
         
         viewModel.isReadyForStitching.producer
@@ -477,9 +468,6 @@ private class LocationViewModel {
                     .on(value: { (lat, lon) in
                         self?.locationLoading.value = true
                         self?.selectedLocation.value = nil
-//                        var location = Location.newInstance()
-//                        location.latitude = lat
-//                        location.longitude = lon
                     })
                     .ignoreError()
             }
@@ -544,15 +532,7 @@ private class LocationCollectionViewCell: UICollectionViewCell {
             textView.text = text
         }
     }
-    
-    // TODO
-    //var isSelected = false {
-    //    didSet {
-    //        contentView.backgroundColor = isSelected ? UIColor(0x5f5f5f) : UIColor(0xefefef)
-    //        textView.textColor = isSelected ? .white : UIColor(0x5f5f5f)
-    //    }
-    //}
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         

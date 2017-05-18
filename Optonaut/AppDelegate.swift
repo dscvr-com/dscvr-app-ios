@@ -136,13 +136,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         
         window?.backgroundColor = .white
-        
-//        SessionService.prepare()
-
         window?.makeKeyAndVisible()
-        
-        VersionService.updateToLatest()
-        
+
         fn()
     }
     

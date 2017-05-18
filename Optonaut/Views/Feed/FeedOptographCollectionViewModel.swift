@@ -42,31 +42,6 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
             .map {self.results.value.merge($0, deleteOld: false) }
             .observeValues { self.results.value = $0 }
         
-//        refreshNotification.signal
-//            .takeWhile { _ in Reachability.connectedToNetwork() }
-//            .flatMap(.Latest) { _ in
-//                ApiService<OptographApiModel>.get("optographs/feed")
-//                    .observeOnUserInitiated()
-//                    .on(next: { apiModel in
-//                        Models.optographs.touch(apiModel).insertOrUpdate { box in
-//                            box.model.isInFeed = true
-//                            box.model.isStitched = true
-//                            box.model.isPublished = true
-//                            box.model.isSubmitted = true
-//                        }
-//                    })
-//                    .map(Optograph.fromApiModel)
-//                    .ignoreError()
-//                    .collect()
-//                    .startOnUserInitiated()
-//            }
-//            .observeOnMain()
-//            .map { self.results.value.merge($0, deleteOld: false) }
-//            .observeNext { results in
-//                self.results.value = results
-//        }
- 
-        
         isActive.producer.skipRepeats().startWithValues { [weak self] isActive in
             if isActive {
                 self?.refresh()
