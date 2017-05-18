@@ -53,10 +53,6 @@ class SessionService {
     static var isLoggedIn: Bool {
         return Defaults[.SessionPersonID] != nil && Defaults[.SessionToken] != nil
     }
-    
-//    static var personID: String {
-//        return Defaults[.SessionPersonID] ?? Person.guestID
-//    }
 
     static var needsOnboarding: Bool {
         return Defaults[.SessionOnboardingVersion] < OnboardingVersion
@@ -67,15 +63,6 @@ class SessionService {
     static let loginNotifiaction = NotificationSignal<Void>()
     
     static func prepare() {
-        
-//        if isLoggedIn {
-//            let query = PersonTable.filter(PersonTable[PersonSchema.ID] == personID)
-//            let person = try! DatabaseService.defaultConnection.pluck(query).map(Person.fromSQL)!
-//            Models.persons.create(person)
-//            
-//            updateMixpanel()
-//        }
-
         if Defaults[.SessionVRGlasses].isEmpty {
             Defaults[.SessionVRGlasses] = DefaultVRGlasses
         }
