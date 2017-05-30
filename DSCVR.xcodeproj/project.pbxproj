@@ -174,6 +174,7 @@
 		BB88A26E1D9A8AF600EB09B0 /* Merriweather Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */; };
 		E861F4091ECD0D36009682CA /* one_ring_active_icn.png in Resources */ = {isa = PBXBuildFile; fileRef = E861F4071ECD0D36009682CA /* one_ring_active_icn.png */; };
 		E861F40A1ECD0D36009682CA /* one_ring_inactive_icn.png in Resources */ = {isa = PBXBuildFile; fileRef = E861F4081ECD0D36009682CA /* one_ring_inactive_icn.png */; };
+		E8D43F7B1EDDD4E800CDC3D6 /* KingFisherReplacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D43F7A1EDDD4E800CDC3D6 /* KingFisherReplacement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -468,6 +469,7 @@
 		BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Merriweather Light.ttf"; sourceTree = "<group>"; };
 		E861F4071ECD0D36009682CA /* one_ring_active_icn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_active_icn.png; sourceTree = "<group>"; };
 		E861F4081ECD0D36009682CA /* one_ring_inactive_icn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_inactive_icn.png; sourceTree = "<group>"; };
+		E8D43F7A1EDDD4E800CDC3D6 /* KingFisherReplacement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingFisherReplacement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -663,6 +665,7 @@
 			isa = PBXGroup;
 			children = (
 				A57786631EB2497A004E0E4C /* DataBase.swift */,
+				E8D43F7A1EDDD4E800CDC3D6 /* KingFisherReplacement.swift */,
 				8F23AA401BFF31B4008926A8 /* Migrations */,
 				8F23AA411BFF31B4008926A8 /* Tables */,
 			);
@@ -1431,6 +1434,7 @@
 				8F23AA761C0712ED008926A8 /* Migration0003.swift in Sources */,
 				5903A99F1DD9B387000DB58B /* CameraOverlayVC.swift in Sources */,
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
+				E8D43F7B1EDDD4E800CDC3D6 /* KingFisherReplacement.swift in Sources */,
 				A50E9A461E85A4280017C090 /* BLEService.swift in Sources */,
 				A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */,
 				8FC456C81C59108E0019107E /* UICollectionViewLeftAlignedLayout.m in Sources */,

@@ -42,7 +42,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("DataBase AVAILABLE")
             }
         }
-        
+        let photourl = NSURL(fileURLWithPath: path)
+        let photofilePath = photourl.appendingPathComponent("SavedOptographs")?.path
+        if fileManager.fileExists(atPath: photofilePath!) {
+            print("PhotoDirectory already exists")
+        } else {
+            SavePhotosInterface.sharedInstance.createPhotoDirectory()
+            print("PhotoDirectory created")
+        }
+
         prepareAndExecute(requireLogin: true) {
             let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
             if launchedBefore  {
