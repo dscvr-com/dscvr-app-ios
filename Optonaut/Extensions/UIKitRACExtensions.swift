@@ -53,17 +53,6 @@ func lazyMutableProperty<T>(_ host: AnyObject, key: UnsafeRawPointer, setter: @e
     }
 }
 
-extension PlaceholderImageView {
-
-    var rac_url: MutableProperty<String> {
-        return lazyAssociatedProperty(self, key: &AssociationKey.imageUrl) {
-            let property = MutableProperty<String>("")
-            property.producer.startWithValues(self.setImageWithURLString)
-            return property
-        }
-    }
-}
-
 extension UIButton {
     public var rac_enabled: MutableProperty<Bool> {
         return lazyMutableProperty(self, key: &AssociationKey.enabled, setter: { self.isEnabled = $0 }, getter: { self.isEnabled })

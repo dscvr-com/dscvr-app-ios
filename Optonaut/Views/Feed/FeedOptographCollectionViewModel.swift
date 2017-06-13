@@ -15,40 +15,20 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
     
     fileprivate var refreshTimer: Timer?
     
-    let results = MutableProperty<TableViewResults<Optograph>>(.empty())
+    let results = MutableProperty<[Optograph]>([Optograph]())
     let isActive = MutableProperty<Bool>(false)
     
     fileprivate let refreshNotification = NotificationSignal<Void>()
     
     init() {
         
-        let query = OptographTable.select(*)
-            .filter(OptographTable[OptographSchema.isInFeed] && OptographTable[OptographSchema.deletedAt] == nil)
-            .order(OptographTable[OptographSchema.createdAt].asc)
-        
         refreshNotification.signal
-            .flatMap(.latest) { _ in
-                DatabaseService.query(.many, query: query)
-                    .observeOnUserInteractive()
-                    .on(value: { row in
-                        Models.optographs.touch(Optograph.fromSQL(row))
-                    })
-                    .map(Optograph.fromSQL)
-                    .ignoreError()
-                    .collect()
-                    .startOnUserInteractive()
-            }   
-            .observeOnMain()
-            .map {self.results.value.merge($0, deleteOld: false) }
-            .observeValues { self.results.value = $0 }
-        
-        isActive.producer.skipRepeats().startWithValues { [weak self] isActive in
-            if isActive {
-                self?.refresh()
-            } else {
-                self?.refreshTimer?.invalidate()
-            }
+            .observe { _ in
+                self.results.value = DataBase.sharedInstance.getOptographs()
+                    .filter{ $0.deletedAt == nil }
+                    .sorted{ $0.createdAt > $1.createdAt }
         }
+        
         
         PipelineService.stitchingStatus.producer
             .startWithValues { [weak self] status in
@@ -56,6 +36,8 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
                     self?.refresh()
                 }
         }
+        
+        refresh()
     }
     
     func refresh() {

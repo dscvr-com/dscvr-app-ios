@@ -23,7 +23,6 @@
 		598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571C1CEDA771002229AF /* Avenir-Book_0.otf */; };
 		598F571F1CEDA771002229AF /* Avenir-Heavy_0.otf in Resources */ = {isa = PBXBuildFile; fileRef = 598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */; };
 		599B8A0F1DEC5BDC00D868B5 /* MotorConfigurationApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599B8A0E1DEC5BDC00D868B5 /* MotorConfigurationApiModel.swift */; };
-		59CDB7C81D2250B70094C816 /* Migration0007.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CDB7C71D2250B60094C816 /* Migration0007.swift */; };
 		59D828141D709C4200007B57 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D828131D709C4200007B57 /* Crashlytics.framework */; };
 		59F9226C1CDE0D0E005868A8 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F9226B1CDE0D0E005868A8 /* TabView.swift */; };
 		59FC45691D881CCB00B0B79D /* NYAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59FC45661D881CCB00B0B79D /* NYAlertView.m */; };
@@ -34,20 +33,14 @@
 		8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */; };
 		8F21F48F1C4405300075C8EC /* CollectionImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */; };
 		8F2214C31B976E6100E693CE /* FoundationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2214C21B976E6100E693CE /* FoundationExtension.swift */; };
-		8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA4A1BFF31B4008926A8 /* OptographTable.swift */; };
-		8F23AA571BFF31EC008926A8 /* Migration0001.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA561BFF31EC008926A8 /* Migration0001.swift */; };
 		8F23AA611C01F8A5008926A8 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */; };
 		8F23AA621C01F8A5008926A8 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */; };
 		8F23AA631C01F8A5008926A8 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA5E1C01F8A5008926A8 /* opencv2.framework */; };
 		8F23AA651C021CA4008926A8 /* Neon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F23AA641C021CA4008926A8 /* Neon.framework */; };
-		8F23AA761C0712ED008926A8 /* Migration0003.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA751C0712ED008926A8 /* Migration0003.swift */; };
 		8F23AA781C072702008926A8 /* BoundingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA771C072702008926A8 /* BoundingLabel.swift */; };
-		8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA791C077C1B008926A8 /* Migration0004.swift */; };
 		8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA7B1C07BC6D008926A8 /* BoundingButton.swift */; };
-		8F23AA7E1C08ADB4008926A8 /* Migration0005.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */; };
 		8F276F291C36DC4E003C348C /* FeedNavViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F276F281C36DC4E003C348C /* FeedNavViewController.swift */; };
 		8F29FB571B84C26500B2C005 /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F29FB561B84C26500B2C005 /* Async.framework */; };
-		8F4185F41C525538009E1E3F /* ModelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185F31C525538009E1E3F /* ModelService.swift */; };
 		8F4185F91C529C74009E1E3F /* OptographApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4185F81C529C74009E1E3F /* OptographApiModel.swift */; };
 		8F47150E1C49648F00663684 /* TwitterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150D1C49648F00663684 /* TwitterKit.framework */; };
 		8F4715101C4964AD00663684 /* TwitterCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F47150F1C4964AD00663684 /* TwitterCore.framework */; };
@@ -86,7 +79,6 @@
 		8FAB9F801B8F03E800B4C8CB /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F7F1B8F03E800B4C8CB /* UIKitExtensions.swift */; };
 		8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */; };
 		8FAB9F8E1B8F39F100B4C8CB /* NSDateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */; };
-		8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB3B7411B8E3D7900656D99 /* LocationService.swift */; };
 		8FBC86961BB723E600539D4E /* SF-UI-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */; };
 		8FBC86971BB723E600539D4E /* SF-UI-Display-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86921BB723DA00539D4E /* SF-UI-Display-Semibold.otf */; };
 		8FBC86981BB723E600539D4E /* SF-UI-Display-Ultralight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC86931BB723DA00539D4E /* SF-UI-Display-Ultralight.otf */; };
@@ -114,12 +106,10 @@
 		8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */; };
 		8FE09F621BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */; };
 		8FE4BA191C2B059A00CD0068 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */; };
-		8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEA6F201BA5969700153677 /* DatabaseService.swift */; };
 		8FFA5F541B812749004CC2B3 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA5F531B812749004CC2B3 /* ModelTests.swift */; };
 		8FFA5F551B8127DE004CC2B3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CE79F1B6CEEC700BD8A71 /* Model.swift */; };
 		8FFB561A1C2C2BA900D2BE62 /* OptographCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */; };
 		8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */; };
-		8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFB565C1C3055D000D2BE62 /* Migration0006.swift */; };
 		A50E9A451E85A4280017C090 /* BLEDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50E9A421E85A4280017C090 /* BLEDiscovery.swift */; };
 		A50E9A461E85A4280017C090 /* BLEService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50E9A431E85A4280017C090 /* BLEService.swift */; };
 		A50E9A471E85A4280017C090 /* MotorControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50E9A441E85A4280017C090 /* MotorControl.swift */; };
@@ -127,6 +117,7 @@
 		A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2D1BC87F7500C9EFE5 /* Stitcher.mm */; };
 		A5233E331BC87F7500C9EFE5 /* StitcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */; };
 		A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5233E301BC87F7500C9EFE5 /* Stores.mm */; };
+		A523DF841EF08BE2005E3E6E /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A523DF831EF08BE2005E3E6E /* ImageStore.swift */; };
 		A5424BB41EA14CFA00E27E1B /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5424BB31EA14CF900E27E1B /* ReactiveSwift.framework */; };
 		A568D4951BD12F5A008FF556 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = A568D4971BD13348008FF556 /* HeadTracker.mm */; };
@@ -150,7 +141,6 @@
 		A5DE71EE1BE28A7400316F82 /* distortion.json in Resources */ = {isa = PBXBuildFile; fileRef = A5DE71E61BE28A7400316F82 /* distortion.json */; };
 		A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */ = {isa = PBXBuildFile; fileRef = A5DE71E71BE28A7400316F82 /* distortion.vsh */; };
 		A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */; };
-		A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E43B231C5D11F9005BBF1A /* ImageCacheService.swift */; };
 		A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F8AF231C4B1BA300072032 /* debugHook.cpp */; };
 		A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F8AF2B1C4B1BB200072032 /* static_counter.cpp */; };
 		A5FD5D7D1BEA5A4E0031ED1E /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D471BEA5A4E0031ED1E /* image.cpp */; };
@@ -174,7 +164,6 @@
 		BB88A26E1D9A8AF600EB09B0 /* Merriweather Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */; };
 		E861F4091ECD0D36009682CA /* one_ring_active_icn.png in Resources */ = {isa = PBXBuildFile; fileRef = E861F4071ECD0D36009682CA /* one_ring_active_icn.png */; };
 		E861F40A1ECD0D36009682CA /* one_ring_inactive_icn.png in Resources */ = {isa = PBXBuildFile; fileRef = E861F4081ECD0D36009682CA /* one_ring_inactive_icn.png */; };
-		E8D43F7B1EDDD4E800CDC3D6 /* KingFisherReplacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D43F7A1EDDD4E800CDC3D6 /* KingFisherReplacement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -234,7 +223,6 @@
 		598F571C1CEDA771002229AF /* Avenir-Book_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Book_0.otf"; sourceTree = "<group>"; };
 		598F571D1CEDA771002229AF /* Avenir-Heavy_0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Avenir-Heavy_0.otf"; sourceTree = "<group>"; };
 		599B8A0E1DEC5BDC00D868B5 /* MotorConfigurationApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotorConfigurationApiModel.swift; sourceTree = "<group>"; };
-		59CDB7C71D2250B60094C816 /* Migration0007.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0007.swift; sourceTree = "<group>"; };
 		59D828131D709C4200007B57 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Frameworks/Crashlytics.framework; sourceTree = "<group>"; };
 		59E9E3171D62277500D326F8 /* Icomoon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Icomoon.framework; sourceTree = "<group>"; };
 		59F9226B1CDE0D0E005868A8 /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
@@ -248,21 +236,15 @@
 		8F1E717D1BCBD93200F3D6FB /* RACExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RACExtensions.swift; sourceTree = "<group>"; };
 		8F21F48E1C44052F0075C8EC /* CollectionImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionImageCache.swift; sourceTree = "<group>"; };
 		8F2214C21B976E6100E693CE /* FoundationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtension.swift; sourceTree = "<group>"; };
-		8F23AA4A1BFF31B4008926A8 /* OptographTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographTable.swift; sourceTree = "<group>"; };
-		8F23AA561BFF31EC008926A8 /* Migration0001.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0001.swift; sourceTree = "<group>"; };
 		8F23AA5C1C01F8A5008926A8 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = Frameworks/FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		8F23AA5D1C01F8A5008926A8 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = Frameworks/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		8F23AA5E1C01F8A5008926A8 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Frameworks/opencv2.framework; sourceTree = "<group>"; };
 		8F23AA641C021CA4008926A8 /* Neon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Neon.framework; path = Carthage/Build/iOS/Neon.framework; sourceTree = "<group>"; };
-		8F23AA751C0712ED008926A8 /* Migration0003.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0003.swift; sourceTree = "<group>"; };
 		8F23AA771C072702008926A8 /* BoundingLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingLabel.swift; sourceTree = "<group>"; };
-		8F23AA791C077C1B008926A8 /* Migration0004.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0004.swift; sourceTree = "<group>"; };
 		8F23AA7B1C07BC6D008926A8 /* BoundingButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoundingButton.swift; sourceTree = "<group>"; };
-		8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0005.swift; sourceTree = "<group>"; };
 		8F276F281C36DC4E003C348C /* FeedNavViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedNavViewController.swift; sourceTree = "<group>"; };
 		8F281F821B3AB7C20038F1A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		8F29FB561B84C26500B2C005 /* Async.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Async.framework; path = Carthage/Build/iOS/Async.framework; sourceTree = "<group>"; };
-		8F4185F31C525538009E1E3F /* ModelService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelService.swift; sourceTree = "<group>"; };
 		8F4185F81C529C74009E1E3F /* OptographApiModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographApiModel.swift; sourceTree = "<group>"; };
 		8F47150D1C49648F00663684 /* TwitterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterKit.framework; path = Frameworks/TwitterKit.framework; sourceTree = "<group>"; };
 		8F47150F1C4964AD00663684 /* TwitterCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwitterCore.framework; path = Frameworks/TwitterCore.framework; sourceTree = "<group>"; };
@@ -306,7 +288,6 @@
 		8FAB9F871B8F04F700B4C8CB /* UIFontExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIFontExtensions.swift; sourceTree = "<group>"; };
 		8FAB9F8D1B8F39F100B4C8CB /* NSDateExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDateExtensions.swift; sourceTree = "<group>"; };
 		8FB2D6CF1B7C91DB00BFB795 /* HexColor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HexColor.framework; path = Carthage/Build/iOS/HexColor.framework; sourceTree = "<group>"; };
-		8FB3B7411B8E3D7900656D99 /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		8FBC86911BB723DA00539D4E /* SF-UI-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Regular.otf"; sourceTree = "<group>"; };
 		8FBC86921BB723DA00539D4E /* SF-UI-Display-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Semibold.otf"; sourceTree = "<group>"; };
 		8FBC86931BB723DA00539D4E /* SF-UI-Display-Ultralight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Display-Ultralight.otf"; sourceTree = "<group>"; };
@@ -345,11 +326,9 @@
 		8FE09F5F1BAEFD7100EA105D /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
 		8FE09F601BAEFD7100EA105D /* CWStatusBarNotificationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotificationUtils.swift; sourceTree = "<group>"; };
 		8FE4BA181C2B059A00CD0068 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
-		8FEA6F201BA5969700153677 /* DatabaseService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8FFA5F531B812749004CC2B3 /* ModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		8FFB56191C2C2BA800D2BE62 /* OptographCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OptographCollectionViewController.swift; path = ../OptographCollectionViewController.swift; sourceTree = "<group>"; };
 		8FFB561B1C2C371900D2BE62 /* OptographCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptographCollectionViewCell.swift; sourceTree = "<group>"; };
-		8FFB565C1C3055D000D2BE62 /* Migration0006.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration0006.swift; sourceTree = "<group>"; };
 		A50E9A421E85A4280017C090 /* BLEDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEDiscovery.swift; sourceTree = "<group>"; };
 		A50E9A431E85A4280017C090 /* BLEService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEService.swift; sourceTree = "<group>"; };
 		A50E9A441E85A4280017C090 /* MotorControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MotorControl.swift; sourceTree = "<group>"; };
@@ -371,6 +350,7 @@
 		A5233E2E1BC87F7500C9EFE5 /* StitcherUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StitcherUtils.swift; path = Optonaut/Stitcher/StitcherUtils.swift; sourceTree = SOURCE_ROOT; };
 		A5233E2F1BC87F7500C9EFE5 /* Stores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stores.h; path = Optonaut/Stitcher/Stores.h; sourceTree = SOURCE_ROOT; };
 		A5233E301BC87F7500C9EFE5 /* Stores.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Stores.mm; path = Optonaut/Stitcher/Stores.mm; sourceTree = SOURCE_ROOT; };
+		A523DF831EF08BE2005E3E6E /* ImageStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		A5376ECF1C4DA163004EFE88 /* asyncTolerantRingRecorder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncTolerantRingRecorder.hpp; sourceTree = "<group>"; };
 		A5376ED01C4DA163004EFE88 /* imageSelector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = imageSelector.hpp; sourceTree = "<group>"; };
 		A5376ED11C4DA163004EFE88 /* alignmentGraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = alignmentGraph.hpp; sourceTree = "<group>"; };
@@ -405,7 +385,6 @@
 		A5DE71E61BE28A7400316F82 /* distortion.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = distortion.json; sourceTree = "<group>"; };
 		A5DE71E71BE28A7400316F82 /* distortion.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = distortion.vsh; sourceTree = "<group>"; };
 		A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewerViewController.swift; sourceTree = "<group>"; };
-		A5E43B231C5D11F9005BBF1A /* ImageCacheService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCacheService.swift; sourceTree = "<group>"; };
 		A5F8AF231C4B1BA300072032 /* debugHook.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debugHook.cpp; path = debug/debugHook.cpp; sourceTree = "<group>"; };
 		A5F8AF241C4B1BA300072032 /* debugHook.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = debugHook.hpp; path = debug/debugHook.hpp; sourceTree = "<group>"; };
 		A5F8AF261C4B1BB200072032 /* assert.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = assert.hpp; sourceTree = "<group>"; };
@@ -469,7 +448,6 @@
 		BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Merriweather Light.ttf"; sourceTree = "<group>"; };
 		E861F4071ECD0D36009682CA /* one_ring_active_icn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_active_icn.png; sourceTree = "<group>"; };
 		E861F4081ECD0D36009682CA /* one_ring_inactive_icn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_inactive_icn.png; sourceTree = "<group>"; };
-		E8D43F7A1EDDD4E800CDC3D6 /* KingFisherReplacement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingFisherReplacement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -561,27 +539,6 @@
 			path = NYAlertViewController;
 			sourceTree = "<group>";
 		};
-		8F23AA401BFF31B4008926A8 /* Migrations */ = {
-			isa = PBXGroup;
-			children = (
-				8F23AA561BFF31EC008926A8 /* Migration0001.swift */,
-				8F23AA751C0712ED008926A8 /* Migration0003.swift */,
-				8F23AA791C077C1B008926A8 /* Migration0004.swift */,
-				8F23AA7D1C08ADB3008926A8 /* Migration0005.swift */,
-				8FFB565C1C3055D000D2BE62 /* Migration0006.swift */,
-				59CDB7C71D2250B60094C816 /* Migration0007.swift */,
-			);
-			path = Migrations;
-			sourceTree = "<group>";
-		};
-		8F23AA411BFF31B4008926A8 /* Tables */ = {
-			isa = PBXGroup;
-			children = (
-				8F23AA4A1BFF31B4008926A8 /* OptographTable.swift */,
-			);
-			path = Tables;
-			sourceTree = "<group>";
-		};
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -665,9 +622,7 @@
 			isa = PBXGroup;
 			children = (
 				A57786631EB2497A004E0E4C /* DataBase.swift */,
-				E8D43F7A1EDDD4E800CDC3D6 /* KingFisherReplacement.swift */,
-				8F23AA401BFF31B4008926A8 /* Migrations */,
-				8F23AA411BFF31B4008926A8 /* Tables */,
+				A523DF831EF08BE2005E3E6E /* ImageStore.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -800,15 +755,11 @@
 			isa = PBXGroup;
 			children = (
 				8FAB9F5B1B8F023C00B4C8CB /* CameraDebugService.swift */,
-				8FEA6F201BA5969700153677 /* DatabaseService.swift */,
-				8FB3B7411B8E3D7900656D99 /* LocationService.swift */,
-				8F4185F31C525538009E1E3F /* ModelService.swift */,
 				8FD845C01BC9BBFF0064048D /* PipelineService.swift */,
 				8F77C5191BC45DE1003B1594 /* StitchingService.swift */,
 				8F1E717B1BCAD84D00F3D6FB /* MotionService.swift */,
 				8F1E0AC31B98251A002E2FB5 /* SessionService.swift */,
 				8FC7E3631BCF158200E97CC3 /* ScreenService.swift */,
-				A5E43B231C5D11F9005BBF1A /* ImageCacheService.swift */,
 			);
 			name = Services;
 			path = Optonaut/Services;
@@ -1404,7 +1355,6 @@
 				A5DE71EB1BE28A7400316F82 /* DistortionProgram.swift in Sources */,
 				A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */,
 				8FAB9F5C1B8F023C00B4C8CB /* CameraDebugService.swift in Sources */,
-				8FFB565D1C3055D000D2BE62 /* Migration0006.swift in Sources */,
 				8FC7E3731BD15B9D00E97CC3 /* HeadTracker.mm in Sources */,
 				8F4185F91C529C74009E1E3F /* OptographApiModel.swift in Sources */,
 				8FAB9F751B8F02D500B4C8CB /* NSDateTransform.swift in Sources */,
@@ -1425,16 +1375,11 @@
 				8FAB9F2F1B8F01DF00B4C8CB /* CameraViewModel.swift in Sources */,
 				8FD845B81BC870B90064048D /* Debug.swift in Sources */,
 				8F1E717E1BCBD93200F3D6FB /* RACExtensions.swift in Sources */,
-				8FEA6F211BA5969700153677 /* DatabaseService.swift in Sources */,
 				8FAB9F311B8F01DF00B4C8CB /* SaveViewModel.swift in Sources */,
 				A568D4981BD13348008FF556 /* HeadTracker.mm in Sources */,
 				8FAB9F301B8F01DF00B4C8CB /* SaveViewController.swift in Sources */,
-				59CDB7C81D2250B70094C816 /* Migration0007.swift in Sources */,
-				8F23AA7E1C08ADB4008926A8 /* Migration0005.swift in Sources */,
-				8F23AA761C0712ED008926A8 /* Migration0003.swift in Sources */,
 				5903A99F1DD9B387000DB58B /* CameraOverlayVC.swift in Sources */,
 				8FAB9F701B8F02D500B4C8CB /* Appearance.swift in Sources */,
-				E8D43F7B1EDDD4E800CDC3D6 /* KingFisherReplacement.swift in Sources */,
 				A50E9A461E85A4280017C090 /* BLEService.swift in Sources */,
 				A5233E321BC87F7500C9EFE5 /* Stitcher.mm in Sources */,
 				8FC456C81C59108E0019107E /* UICollectionViewLeftAlignedLayout.m in Sources */,
@@ -1445,8 +1390,6 @@
 				A5DE71E91BE28A7400316F82 /* Distortion.swift in Sources */,
 				8FAB9F711B8F02D500B4C8CB /* Constants.swift in Sources */,
 				599B8A0F1DEC5BDC00D868B5 /* MotorConfigurationApiModel.swift in Sources */,
-				8F23AA541BFF31B4008926A8 /* OptographTable.swift in Sources */,
-				A5E43B241C5D11F9005BBF1A /* ImageCacheService.swift in Sources */,
 				8FFB561C1C2C371900D2BE62 /* OptographCollectionViewCell.swift in Sources */,
 				A5FD5D801BEA5A4E0031ED1E /* checkpointStore.cpp in Sources */,
 				8FAA02981B9DAE3200B5E6BC /* NavigationController.swift in Sources */,
@@ -1464,6 +1407,7 @@
 				A5233E341BC87F7500C9EFE5 /* Stores.mm in Sources */,
 				8FAB9F881B8F04F700B4C8CB /* UIFontExtensions.swift in Sources */,
 				8FAB9F341B8F01DF00B4C8CB /* NavbarProtocols.swift in Sources */,
+				A523DF841EF08BE2005E3E6E /* ImageStore.swift in Sources */,
 				8FAB9F2E1B8F01DF00B4C8CB /* CameraViewController.swift in Sources */,
 				8FAB9F481B8F01DF00B4C8CB /* FeedOptographCollectionViewModel.swift in Sources */,
 				8FC7E3781BD15B9D00E97CC3 /* MagnetSensor.mm in Sources */,
@@ -1482,14 +1426,11 @@
 				594F6B4F1D3619CF00A361B3 /* LoadingIndicatorView.swift in Sources */,
 				8F23AA7C1C07BC6D008926A8 /* BoundingButton.swift in Sources */,
 				8FC7E3641BCF158200E97CC3 /* ScreenService.swift in Sources */,
-				8FB3B7421B8E3D7900656D99 /* LocationService.swift in Sources */,
 				A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */,
 				5936B1851CAD34F500F808D8 /* multiringStitcher.cpp in Sources */,
 				A50E9A451E85A4280017C090 /* BLEDiscovery.swift in Sources */,
 				594378FD1CDC472800C84E6F /* TabViewController.swift in Sources */,
-				8F4185F41C525538009E1E3F /* ModelService.swift in Sources */,
 				8F707C161C5A2A17000AF7BF /* TableViewResults.swift in Sources */,
-				8F23AA571BFF31EC008926A8 /* Migration0001.swift in Sources */,
 				8FE09F611BAEFD7100EA105D /* CWStatusBarNotification.swift in Sources */,
 				8F21F48F1C4405300075C8EC /* CollectionImageCache.swift in Sources */,
 				A5FD5D841BEA5A4E0031ED1E /* support.cpp in Sources */,
@@ -1500,7 +1441,6 @@
 				A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */,
 				A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */,
 				594F6B4D1D36110500A361B3 /* UIImage+Gif.swift in Sources */,
-				8F23AA7A1C077C1C008926A8 /* Migration0004.swift in Sources */,
 				A57786641EB2497A004E0E4C /* DataBase.swift in Sources */,
 				A5A3E53F1EB0CAB500971847 /* Point.swift in Sources */,
 				A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */,

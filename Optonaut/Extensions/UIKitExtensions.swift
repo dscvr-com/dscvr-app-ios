@@ -161,12 +161,6 @@ class PlaceholderImageView: UIImageView {
             }
         }
     }
-    
-    func setImageWithURLString(_ urlStr: String) {
-        if let url = URL(string: urlStr) {
-            self.kf_setImage(with: url)
-        }
-    }
 }
 
 class UIShortPressGestureRecognizer: UILongPressGestureRecognizer {

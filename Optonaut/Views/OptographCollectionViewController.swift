@@ -10,13 +10,12 @@ import UIKit
 import ReactiveSwift
 import SpriteKit
 import Async
-import Kingfisher
 
 typealias Direction = (phi: Float, theta: Float)
 
 protocol OptographCollectionViewModel {
     var isActive: MutableProperty<Bool> { get }
-    var results: MutableProperty<TableViewResults<Optograph>> { get }
+    var results: MutableProperty<[Optograph]> { get }
     func refresh()
 }
 
@@ -89,11 +88,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewController.showCardboardAlert)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cardboardButton)
         
-        // TODO
-        //refreshControl.rac_signalForControlEvents(.ValueChanged).toSignalProducer().startWithNext { [weak self] _ in
-        //    self?.viewModel.refresh()
-        //    Async.main(after: 10) { [weak self] in self?.refreshControl.endRefreshing() }
-        //}
         refreshControl.bounds = CGRect(x: refreshControl.bounds.origin.x, y: 5, width: refreshControl.bounds.width, height: refreshControl.bounds.height)
         collectionView!.addSubview(refreshControl)
         
@@ -109,47 +103,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         collectionView!.delaysContentTouches = false
         
         edgesForExtendedLayout = UIRectEdge()
-
-//        viewModel.results.producer
-//            .filter { $0.changed }
-//            .retryUntil(interval: DispatchTimeInterval.milliseconds(100), onScheduler: queueScheduler) { [weak self] in self?.collectionView!.isDecelerating == false && self?.collectionView!.isDragging == false }
-//            .delayAllUntil(triggerProducer: viewModel.isActive.producer)
-//            .observeOnMain()
-//            .on(value: { [weak self] results in
-//                if let strongSelf = self {
-//                    let visibleOptographID: UUID? = strongSelf.optographIDs.isEmpty ? nil : strongSelf.optographIDs[strongSelf.collectionView!.indexPathsForVisibleItems.first!.row]
-////                    strongSelf.optographIDs = results.models.map { $0.ID }
-//                    for optograph in results.models {
-//                        if strongSelf.optographDirections[optograph.ID] == nil {
-//                            strongSelf.optographDirections[optograph.ID] = (phi: Float(optograph.directionPhi), theta: Float(optograph.directionTheta))
-//                        }
-//                    }
-//                    
-//                    if results.models.count == 1 {
-//                        strongSelf.collectionView!.reloadData()
-//                    } else {
-//                        CATransaction.begin()
-//                        CATransaction.setDisableActions(true)
-//                        strongSelf.collectionView!.performBatchUpdates({
-//                            strongSelf.imageCache.delete(results.delete)
-//                            strongSelf.imageCache.insert(results.insert)
-//                            strongSelf.collectionView!.deleteItems(at: results.delete.map { IndexPath(item: $0, section: 0) })
-//                            strongSelf.collectionView!.reloadItems(at: results.update.map { IndexPath(item: $0, section: 0) })
-//                            strongSelf.collectionView!.insertItems(at: results.insert.map { IndexPath(item: $0, section: 0) })
-//                            }, completion: { _ in
-//                                if (!results.delete.isEmpty || !results.insert.isEmpty) && !strongSelf.refreshControl.isRefreshing {
-//                                    if let visibleOptographID = visibleOptographID, let visibleRow = strongSelf.optographIDs.index(where: { $0 == visibleOptographID }) {
-//                                        strongSelf.collectionView!.contentOffset = CGPoint(x: 0, y: CGFloat(visibleRow) * strongSelf.view.frame.height)
-//                                    }
-//                                }
-//                                strongSelf.refreshControl.endRefreshing()
-//                                CATransaction.commit()
-//                        })
-//                    }
-//                    
-//                }
-//                })
-//            .start()
 
         optographIDs = dataBase.getOptographIDsAsArray().reversed()
 
@@ -393,7 +346,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             return
         }
         
-        let viewerViewController = ViewerViewController(orientation: orientation, optograph: Models.optographs[optographIDs[index]]!.model)
+        let optograph = DataBase.sharedInstance.getOptograph(id: overlayView.optographID!)
+        let viewerViewController = ViewerViewController(orientation: orientation, optograph: optograph)
         navigationController?.pushViewController(viewerViewController, animated: false)
     }
     
@@ -422,7 +376,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     func updateOptographCollection(_ notification: NSNotification) {
         if let optographID = notification.userInfo?["id"] as? String {
             PipelineService.stitchingStatus.value = .idle
-            dataBase.addOptograph(optographID: optographID)
+            
+            // TODO: Only fetch optographs with finished stitching. 
             optographIDs = dataBase.getOptographIDsAsArray().reversed()
             DispatchQueue.main.async {
                 self.imageCache.insert([0])
@@ -498,14 +453,11 @@ extension OptographCollectionViewController: DefaultTabControllerDelegate {
 
 private class OverlayViewModel {
     
-    var optographBox: ModelBox<Optograph>!
-    
     var optograph: Optograph!
     
     func bind(_ optographID: UUID) {
         
-        optographBox = Models.optographs[optographID]!
-        
+        optograph = DataBase.sharedInstance.getOptograph(id: optographID)
     }
 }
 
@@ -522,12 +474,11 @@ private class OverlayView: UIView {
     fileprivate var optographID: UUID? {
         didSet {
             if let optographID = optographID  {
-                let optograph = Models.optographs[optographID]!.model
+                let optograph = DataBase.sharedInstance.getOptograph(id: optographID)
                 
                 viewModel.bind(optographID)
                 
                 dateView.text = optograph.createdAt.longDescription
-                textView.text = optograph.text
             }
         }
     }
@@ -595,7 +546,7 @@ private class OverlayView: UIView {
 extension OverlayView: OptographOptions {
     
     dynamic func didTapOptions() {
-        showOptions(viewModel.optographBox.model.ID, deleteCallback: deleteCallback)
+        showOptions(viewModel.optograph.ID, deleteCallback: deleteCallback)
     }
     
 }

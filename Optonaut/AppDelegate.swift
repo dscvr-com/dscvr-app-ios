@@ -15,7 +15,6 @@ import PureLayout
 import Mixpanel
 import Neon
 import FBSDKCoreKit
-import Kingfisher
 import SwiftyUserDefaults
 import ReactiveSwift
 
@@ -47,7 +46,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if fileManager.fileExists(atPath: photofilePath!) {
             print("PhotoDirectory already exists")
         } else {
-            SavePhotosInterface.sharedInstance.createPhotoDirectory()
             print("PhotoDirectory created")
         }
 
@@ -133,15 +131,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Mixpanel.sharedInstance(withToken: "905eb49cf2c78af5ceb307939f02c092")
         }
         
-        try! DatabaseService.prepare()
-        
         setupAppearanceDefaults()
-        
-        KingfisherManager.shared.downloader.downloadTimeout = 60
-        KingfisherManager.shared.cache.maxDiskCacheSize = 200000000
-        KingfisherManager.shared.cache.maxMemoryCost = 10
-        
-        window = UIWindow(frame: UIScreen.main.bounds)
+               window = UIWindow(frame: UIScreen.main.bounds)
         
         window?.backgroundColor = .white
         window?.makeKeyAndVisible()

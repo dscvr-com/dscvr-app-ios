@@ -22,22 +22,6 @@ protocol Model {
     var updatedAt: Date { get set }
 }
 
-protocol MergeApiModel: Model {
-    associatedtype AM: ApiModel
-    
-    mutating func mergeApiModel(_ apiModel: AM)
-    static func newInstance() -> Self
-    static func fromApiModel(_ apiModel: AM) -> Self
-}
-
-extension MergeApiModel {
-    static func fromApiModel(_ apiModel: AM) -> Self {
-        var model = newInstance()
-        model.mergeApiModel(apiModel)
-        return model
-    }
-}
-
 protocol DeletableModel: Model, Equatable {
     var deletedAt: Date? { get set }
 }

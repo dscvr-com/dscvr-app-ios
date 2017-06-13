@@ -18,8 +18,6 @@ extension OptographOptions {
     
     func showOptions(_ optographID: UUID, deleteCallback: (() -> ())? = nil) {
         
-        let optographBox = Models.optographs[optographID]!
-        
         let actionAlert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         actionAlert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in

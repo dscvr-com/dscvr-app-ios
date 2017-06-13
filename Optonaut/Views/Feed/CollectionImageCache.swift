@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Kingfisher
 import SpriteKit
 import Async
 
@@ -40,7 +39,6 @@ class CubeImageCache {
     
     fileprivate class Item {
         var image: SKTexture?
-        var downloadTask: ImageManager.DownloadTask?
         var callback: Callback?
         var canDelete: Bool = false
     }
@@ -96,79 +94,20 @@ class CubeImageCache {
             if let image = self.items[index]?.image {
                 // Case 1 - Image is Pre-Fetched.
                 callback?(image, index)
-            } else if self.items[index]?.downloadTask == nil {
-                // Case 2.1 - Image is not Pre-Fetched, but we have it in our disk cache.
-                let tiledUrl =  URL(string: self.url(index, textureSize: self.textureSize))!
-                let tiledImage = ImageManager.sharedInstance.retrieveImageFromCache(tiledUrl, requester: self)
-                
-                if let tiledImage = tiledImage {
-                    self.fullfillImageCallback(index, callback: callback, image: tiledImage)
-                    return
-                }
-                
-                // Case 2.2 - Image is not Pre-Fetched, but we have the full face in our disk cache.
+            } else  {
+                // Case 2 - Image is not Pre-Fetched, but we have the full face in our disk cache.
                 
                 // Image is resolved by URL - query whole face and then get subface manually.
                 // Occurs when image was just taken on this phone
-                let fullFaceUrl = URL(string: self.url(Index(face: index.face, x: 0.0, y: 0.0, d: 1.0), textureSize: 0))!
-                let originalImage = ImageManager.sharedInstance.retrieveImageFromCache(fullFaceUrl, requester: self)
+                let originalImage = ImageStore.getFace(optographId: optographID, side: side == .left ? "left" : "right", face: index.face)
+           
+                assert(index.d == 1) // Subfacing no longer allowed.
                 
+                self.fullfillImageCallback(index, callback: nil, image: originalImage)
+             
+                callback?(self.items[index]!.image!, index)
+                return;
                 
-                if let originalImage = originalImage {
-                    
-                    let subfaceSize = index.d
-                    let subfaceCount = Int(Float(1) / subfaceSize + Float(0.5))
-                   
-                    // If we request a subface in this case, let's cheat and prepare all subfaces at once.
-                    for x in 0..<subfaceCount {
-                        for y in 0..<subfaceCount {
-                            let tiledIndex = Index(face: index.face, x: Float(x) * subfaceSize, y: Float(y) * subfaceSize, d: subfaceSize)
-                            let tiledImage = originalImage.subface(CGFloat(tiledIndex.x), y: CGFloat(tiledIndex.y), w: CGFloat(tiledIndex.d), d: Int(self.textureSize))
-                            
-                            // Store subface - way faster loading next time.
-                            let tiledUrl = URL(string: self.url(tiledIndex, textureSize: self.textureSize))!
-                            ImageManager.sharedInstance.addImageToCache(tiledUrl, image: tiledImage)
-                            self.fullfillImageCallback(tiledIndex, callback: nil, image: tiledImage)
-                        }
-                    }
-                    callback?(self.items[index]!.image!, index)
-                    return;
-                }
-                
-                // Case 2.3 - We don't have anything. Download.
-                let item = Item()
-                item.callback = callback
-                self.items[index] = item
-            
-                item.downloadTask = ImageManager.sharedInstance.downloadImage(
-                    tiledUrl, requester: self,
-                    completionHandler: { (image, error, _, _) in
-                        if let error = error, error.code != -999 {
-                            print(error)
-                        }
-                        // needed because completionHandler is called on mainthread
-                        self.queue.async() {
-                            sync(self) {
-                                if let image = image, let item = self.items[index] {
-                                    let tex = SKTexture(image: image)
-                                    
-                                    item.downloadTask = nil
-                                    
-                                    if item.callback != nil {
-                                        item.image = tex
-                                        item.callback?(tex, index)
-                                        item.callback = nil
-                                    } else {
-                                        self.forgetInternal(index)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                )
-    
-            } else if self.items[index]?.callback == nil {
-                self.items[index]?.callback = callback
             }
         }
     }
@@ -190,7 +129,6 @@ class CubeImageCache {
     
     func forget(_ index: Index) {
         sync(self) {
-            self.items[index]?.downloadTask?.cancel()
             self.forgetInternal(index)
         }
     }
@@ -222,10 +160,6 @@ class CubeImageCache {
     */
     func dispose() {
         sync(self) {
-            self.items.values.forEach {
-                $0.downloadTask?.cancel()
-                $0.callback = nil
-            }
             self.disposed = true
             self.items.removeAll()
         }
@@ -287,97 +221,6 @@ class CollectionImageCache {
         }
     }
     
-    func getStory( _ optographID: UUID, side: TextureSide) -> CubeImageCache {
-        assertMainThread()
-        
-        
-        let item = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))
-        return item.innerCache
-        
-    }
-    
-    func insertMp4IntoCache(_ url:String,optographId:String) -> String{
-        
-        let priority = DispatchQueue.GlobalQueuePriority.background
-        
-        let path = self.logsPath!.path.stringByAppendingPathComponent("\(optographId).mp4")
-        
-        if !self.fileManager.fileExists(atPath: path) {
-            DispatchQueue.global(priority: priority).async {
-                
-                let videoData = try? Data(contentsOf: URL(string:url)!)
-                
-                if (videoData != nil) {
-                    
-                    try? videoData?.write(to: URL(fileURLWithPath: path), options: [.atomic])
-                }
-            }
-            return ""
-        } else {
-            return path
-        }
-    }
-    
-    func deleteMp4(_ optographId:String) -> Bool {
-        let path = self.logsPath!.path.stringByAppendingPathComponent("\(optographId).mp4")
-        
-        do{
-            try fileManager.removeItem(atPath: path)
-            return true
-        }catch {
-            return false
-        }
-    }
-    
-    func insertStoryFile(_ url:URL?,file:Data?,fileName:String) -> String{
-        
-        let priority = DispatchQueue.GlobalQueuePriority.background
-        
-        let path = self.logsPath!.path.stringByAppendingPathComponent("\(fileName)")
-        
-        if !self.fileManager.fileExists(atPath: path) {
-            DispatchQueue.global(priority: priority).async {
-                if url != nil {
-                    let videoData = try? Data(contentsOf: url!)
-                    if (videoData != nil) {
-                        try? videoData?.write(to: URL(fileURLWithPath: path), options: [.atomic])
-                    }
-                } else {
-                    if let videoData:Data = file {
-                        try? videoData.write(to: URL(fileURLWithPath: path), options: [.atomic])
-                    }
-                }
-            }
-            return ""
-        } else {
-            return path
-        }
-    }
-    
-    func deleteStoryFile(_ fileName:String) -> Bool {
-        let path = self.logsPath!.path.stringByAppendingPathComponent("\(fileName)")
-        
-        do{
-            try fileManager.removeItem(atPath: path)
-            return true
-        }catch {
-            return false
-        }
-    }
-    
-    
-    func getOptocache(_ index: Int, optographID: UUID, side: TextureSide) -> CubeImageCache {
-        assertMainThread()
-        
-        let cacheIndex = index % CollectionImageCache.cacheSize
-        
-            let item = (index: index, innerCache: CubeImageCache(optographID: optographID, side: side, textureSize: textureSize))
-            items[cacheIndex]?.innerCache.dispose()
-            items[cacheIndex] = item
-            return item.innerCache
-        
-    }
-    
     func disable(_ index: Int) {
         assertMainThread()
         
@@ -400,7 +243,6 @@ class CollectionImageCache {
             }
         }
     }
-    
     func resetExcept(_ index: Int) {
         for i in 0..<CollectionImageCache.cacheSize where i != (index % CollectionImageCache.cacheSize) {
             items[i]?.innerCache.dispose()

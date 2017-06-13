@@ -7,7 +7,6 @@
 //
 
 import ReactiveSwift
-//import Kingfisher
 
 enum OptographAsset {
     case previewImage(Data)
@@ -18,11 +17,12 @@ enum OptographAsset {
 typealias HashtagStrings = Array<String>
 
 
-struct Optograph {
+struct Optograph : DeletableModel {
     
     var ID: UUID
     var createdAt: Date
     var updatedAt: Date
+    var deletedAt: Date?
     var isStitched: Bool
     var stitcherVersion: String
     var directionPhi: Double
@@ -34,6 +34,7 @@ struct Optograph {
             ID: uuid(),
             createdAt: Date(),
             updatedAt: Date(),
+            deletedAt: nil,
             isStitched: true,
             stitcherVersion: "",
             directionPhi: 0,
@@ -48,20 +49,8 @@ func ==(lhs: Optograph, rhs: Optograph) -> Bool {
     return lhs.ID                             == rhs.ID
         && lhs.createdAt                      == rhs.createdAt
         && lhs.updatedAt                      == rhs.updatedAt
+        && lhs.deletedAt                      == rhs.deletedAt
         && lhs.isStitched                     == rhs.isStitched
         && lhs.stitcherVersion                == rhs.stitcherVersion
-}
-
-extension Optograph: MergeApiModel {
-    typealias AM = OptographApiModel
-    
-    mutating func mergeApiModel(_ apiModel: AM) {
-        ID = apiModel.ID
-        createdAt = apiModel.createdAt
-        updatedAt = apiModel.updatedAt
-        stitcherVersion = apiModel.stitcherVersion
-        directionPhi = apiModel.directionPhi
-        directionTheta = apiModel.directionTheta
-    }
 }
 

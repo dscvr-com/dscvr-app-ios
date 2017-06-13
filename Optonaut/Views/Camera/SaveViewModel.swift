@@ -21,7 +21,7 @@ class SaveViewModel {
     let stitcherFinished = MutableProperty<Bool>(false)
     let isReadyForStitching = MutableProperty<Bool>(false)
     
-    let optograph: Optograph
+    var optograph: Optograph
     
     
     fileprivate let placeholder = MutableProperty<UIImage?>(nil)
@@ -45,6 +45,10 @@ class SaveViewModel {
         isReadyForSubmit <~ isInitialized.producer
             .combineLatest(with: stitcherFinished.producer).map(and)
         
+        readyNotification.signal.observe { _ in
+            self.isInitialized.value = true
+        }
+        
     }
     
     func deleteOpto() {
@@ -55,6 +59,7 @@ class SaveViewModel {
     
     func submit(_ shouldBePublished: Bool, directionPhi: Double, directionTheta: Double) -> SignalProducer<Void, NoError> {
         // TODO: Save.
+        DataBase.sharedInstance.addOptograph(optograph: optograph)
         return SignalProducer(value: ())
     }
 }

@@ -10,7 +10,6 @@ import Crashlytics
 import CardboardParams
 import Async
 import SwiftyUserDefaults
-import Kingfisher
 import SpriteKit
 
 private let queue = DispatchQueue(label: "viewer", attributes: [])
@@ -82,9 +81,9 @@ class ViewerViewController: UIViewController  {
     fileprivate func createRenderDelegates() {
         InvertableHeadTrackerRotationSource.InvertableInstance.inverted = orientation == .landscapeLeft
         
-        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 2, autoDispose: false)
+        leftRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: leftProgram.fov, cameraOffset: Float(-0.2), cubeFaceCount: 1, autoDispose: false)
         leftRenderDelegate.scnView = leftScnView
-        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 2, autoDispose: false)
+        rightRenderDelegate = CubeRenderDelegate(rotationMatrixSource: InvertableHeadTrackerRotationSource.InvertableInstance, fov: rightProgram.fov, cameraOffset: Float(0.2), cubeFaceCount: 1, autoDispose: false)
         rightRenderDelegate.scnView = rightScnView
         
         leftScnView.scene = leftRenderDelegate.scene
@@ -255,8 +254,6 @@ class ViewerViewController: UIViewController  {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
-        Mixpanel.sharedInstance()?.track("View.Viewer", properties: ["optograph_id": optograph.ID, "optograph_description" : optograph.text])
         
         rotationDisposable?.dispose()
         RotationService.sharedInstance.rotationDisable()
