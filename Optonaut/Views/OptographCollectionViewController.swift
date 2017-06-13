@@ -377,7 +377,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if let optographID = notification.userInfo?["id"] as? String {
             PipelineService.stitchingStatus.value = .idle
             
-            // TODO: Only fetch optographs with finished stitching. 
+            // TODO: Only fetch optographs with finished stitching.
             optographIDs = dataBase.getOptographIDsAsArray().reversed()
             DispatchQueue.main.async {
                 self.imageCache.insert([0])
