@@ -20,7 +20,13 @@ class SavePhotosInterface {
         photosPath = photosPath.appendingPathComponent(OptographID)
         return photosPath as NSURL
     }
-
+    
+    func getPhotoDirectory() -> URL {
+        let documentsPath = URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
+        let logsPath = documentsPath.appendingPathComponent("SavedOptographs")
+        return logsPath
+    }
+    
     func createPhotoDirectory() {
         let documentsPath = URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
         let logsPath = documentsPath.appendingPathComponent("SavedOptographs")

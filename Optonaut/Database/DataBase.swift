@@ -32,6 +32,8 @@ class DataBase {
         }
     }
 
+    
+    // func addOptograph(optograph: Optograph)
     func addOptograph(optographID: String) {
         let number = Expression<Int64>("number")
         let optograph = Expression<String>("optograph")
@@ -67,6 +69,7 @@ class DataBase {
         return ""
     }
 
+    // getOptographs() -> [Optographs]
     func getOptographIDsAsArray() -> [String] {
         var resultArray = [String]()
         let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
