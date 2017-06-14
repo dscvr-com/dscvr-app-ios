@@ -31,11 +31,14 @@ class SaveViewModel {
         placeholder <~ placeholderSignal.map { image -> UIImage? in return image }
         
         optograph = Optograph.newInstance()
+        print("Adding: \(optograph.ID)")
         
         optograph.isStitched = false
         
         isInitialized.producer.startWithValues{ print("isInitialized \($0)")}
         stitcherFinished.producer.startWithValues{ print("stitcherFinished \($0)")}
+        
+        DataBase.sharedInstance.addOptograph(optograph: optograph)
         
         isReadyForStitching <~ stitcherFinished.producer
             .combineLatest(with: isInitialized.producer).map(and)
@@ -52,14 +55,12 @@ class SaveViewModel {
     }
     
     func deleteOpto() {
-        // TODO: Delete, if exists
+        DataBase.sharedInstance.deleteOptograph(optographID: optograph.ID)
     }
     
      
     
     func submit(_ shouldBePublished: Bool, directionPhi: Double, directionTheta: Double) -> SignalProducer<Void, NoError> {
-        // TODO: Save.
-        DataBase.sharedInstance.addOptograph(optograph: optograph)
         return SignalProducer(value: ())
     }
 }
