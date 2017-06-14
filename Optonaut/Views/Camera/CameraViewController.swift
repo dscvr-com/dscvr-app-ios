@@ -330,7 +330,10 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         if !useMotor {
            (motionManager as! CoreMotionRotationSource).start()
+        } else {
+            onTapCameraButton()
         }
+
     }
     
     override func viewDidDisappear(_ animated: Bool) {
