@@ -57,42 +57,25 @@ class DataBase {
                                                  directionPhi <- optograph.directionPhi,
                                                  directionTheta <- optograph.directionTheta,
                                                  ringCount <- optograph.ringCount))
-            print("inserted id: \(rowid)")
+            print("addOptograph inserted id: \(rowid)")
         } catch {
-            print("insertion failed: \(error)")
+            print("addOptograph insertion failed: \(error)")
         }
     }
-    
-    func getOptographID(index: Int64) -> String {
-        do {
-            let db = try Connection("\(path)/optographs.sqlite3")
-            let query = optoID.select(id)
-                .filter(self.index == index)
-            let optographID = try db.prepare(query)
-            print("Database Access success")
-            for x in optographID {
-                let resultAsString = x[id]
-                return resultAsString
-            }
-        } catch {
-            print("retreiving failed")
-        }
-        return ""
-    }
-    
+
     func getOptographIDsAsArray() -> [String] {
         var resultArray = [String]()
         do {
             let db = try Connection("\(path)/optographs.sqlite3")
             let optographID = try db.prepare(optoID.select(id))
-            print("Database Access success")
+            print("getOptographIDsAsArray success")
             for x in optographID {
                 let resultAsString = x[id]
                 resultArray.append(resultAsString)
             }
             return resultArray
         } catch {
-            print("retreiving failed")
+            print("getOptographIDsAsArray failed")
         }
         return resultArray
     }
@@ -102,14 +85,14 @@ class DataBase {
         do {
             let db = try Connection("\(path)/optographs.sqlite3")
             let optographID = try db.prepare(optoID)
-            print("Database Access success")
+            print("getOptographs success")
             for x in optographID {
                 let tempOptograph = createNewOptographFromData(optographData: x)
                 resultArray.append(tempOptograph)
             }
             return resultArray
         } catch {
-            print("retreiving failed")
+            print("getOptographs failed")
         }
         return resultArray
     }
@@ -120,18 +103,37 @@ class DataBase {
         do {
             let db = try Connection("\(path)/optographs.sqlite3")
             let optographIDs = try db.prepare(foundOptographs)
-            print("Database Access success")
+            print("getUnstitchedOptographs success")
             for x in optographIDs {
                 let tempOptograph = createNewOptographFromData(optographData: x)
                 resultArray.append(tempOptograph)
             }
             return resultArray
         } catch {
-            print("retreiving failed")
+            print("getUnstitchedOptographs failed")
         }
         return resultArray
     }
-    
+
+    func getStitchedOptographs() -> [Optograph] {
+        var resultArray = [Optograph]()
+        let foundOptographs = optoID.filter(isStitched == true)
+        do {
+            let db = try Connection("\(path)/optographs.sqlite3")
+            let optographIDs = try db.prepare(foundOptographs)
+            print("getStitchedOptographs success")
+            for x in optographIDs {
+                let tempOptograph = createNewOptographFromData(optographData: x)
+                resultArray.append(tempOptograph)
+            }
+            return resultArray
+        } catch {
+            print("getStitchedOptographs failed")
+        }
+        return resultArray
+    }
+
+
     func saveOptograph(optograph: Optograph) {
         let foundOptograph = optoID.filter(self.id == optograph.ID)
         do {
@@ -157,13 +159,13 @@ class DataBase {
         do {
             let db = try Connection("\(path)/optographs.sqlite3")
             let optographData = try db.prepare(foundOptograph)
-            print("Database Access success")
+            print("getOptograph success")
             for x in optographData {
                 let result = createNewOptographFromData(optographData: x)
                 return result;
             }
         } catch {
-            print("retreiving failed")
+            print("getOptograph failed")
         }
         return Optograph.newInstance()
     }
