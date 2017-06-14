@@ -96,9 +96,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         if !useMotor {
             motionManager = CoreMotionRotationSource()
         } else {
-            verticalTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsY) * (45 / 360) / 1000), repeats: false, block: {_ in
-                self.tabController!.cameraButton.isHidden = false
-            })
+       //     verticalTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsY) * (45 / 360) / 1000), repeats: false, block: {_ in
+       //         self.tabController!.cameraButton.isHidden = false
+       //     })
         }
         
         tapCameraButtonCallback = { [weak self] in
