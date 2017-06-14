@@ -25,7 +25,7 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         refreshNotification.signal
             .observe { _ in
                 self.results.value = DataBase.sharedInstance.getOptographs()
-                    .filter{ $0.deletedAt == nil }
+                    .filter{ $0.deletedAt == nil && $0.isStitched }
                     .sorted{ $0.createdAt > $1.createdAt }
         }
         
@@ -38,6 +38,10 @@ class FeedOptographCollectionViewModel: OptographCollectionViewModel {
         }
         
         refresh()
+    }
+    
+    func getOptographIds() -> [UUID] {
+        return self.results.value.map { $0.ID }
     }
     
     func refresh() {

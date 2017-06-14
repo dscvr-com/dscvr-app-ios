@@ -110,7 +110,7 @@ class DataBase {
             }
             return resultArray
         } catch {
-            print("getUnstitchedOptographs failed")
+            print("getUnstitchedOptographs failed  \(error)")
         }
         return resultArray
     }
@@ -128,7 +128,7 @@ class DataBase {
             }
             return resultArray
         } catch {
-            print("getStitchedOptographs failed")
+            print("getStitchedOptographs failed  \(error)")
         }
         return resultArray
     }
@@ -138,19 +138,17 @@ class DataBase {
         let foundOptograph = optoID.filter(self.id == optograph.ID)
         do {
             let db = try Connection("\(path)/optographs.sqlite3")
-            if (try db.run(foundOptograph.update(createdAt <- optograph.createdAt,
+            if(try db.run(foundOptograph.update(createdAt <- optograph.createdAt,
                                                  updatedAt <- optograph.updatedAt,
                                                  isStitched <- optograph.isStitched,
                                                  stitcherVersion <- optograph.stitcherVersion,
                                                  directionPhi <- optograph.directionPhi,
                                                  directionTheta <- optograph.directionTheta,
-                                                 ringCount <- optograph.ringCount)) == 1) {
-                print("Update Access success")
-            } else {
-                print ("Update Access Fail")
+                                                 ringCount <- optograph.ringCount)) != 1) {
+                print("update failed, no rows were updated")
             }
         } catch {
-            print("update failed")
+            print("update failed \(error)")
         }
     }
     
@@ -165,7 +163,7 @@ class DataBase {
                 return result;
             }
         } catch {
-            print("getOptograph failed")
+            print("getOptograph failed \(error)")
         }
         return Optograph.newInstance()
     }

@@ -30,7 +30,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 
     let dataBase = DataBase.sharedInstance
     
-    fileprivate let viewModel: OptographCollectionViewModel
+    fileprivate let viewModel: FeedOptographCollectionViewModel
     fileprivate let imageCache: CollectionImageCache
     fileprivate let overlayDebouncer: Debouncer
     
@@ -46,7 +46,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     
     fileprivate var isVisible = false
     
-    init(viewModel: OptographCollectionViewModel) {
+    init(viewModel: FeedOptographCollectionViewModel) {
         self.viewModel = viewModel
         
         overlayDebouncer = Debouncer(queue: DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive), delay: 0.01)
@@ -104,7 +104,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         edgesForExtendedLayout = UIRectEdge()
 
-        optographIDs = dataBase.getOptographIDsAsArray().reversed()
+        optographIDs = self.viewModel.getOptographIds()
 
         let topOffset = navigationController!.navigationBar.frame.height + 20
         overlayView.frame = CGRect(x: 0, y: topOffset, width: view.frame.width, height: view.frame.height - topOffset)
@@ -374,61 +374,32 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
 
     func updateOptographCollection(_ notification: NSNotification) {
-        if let optographID = notification.userInfo?["id"] as? String {
-            PipelineService.stitchingStatus.value = .idle
-            
-            // TODO: Only fetch optographs with finished stitching.
-            optographIDs = dataBase.getOptographIDsAsArray().reversed()
-            DispatchQueue.main.async {
-                self.imageCache.insert([0])
-            }
-            self.collectionView!.reloadData()
-            let row = optographIDs.index(of: optographIDs.first!)
-            collectionView!.scrollToItem(at: IndexPath(row: row!, section: 0), at: .top, animated: true)
-        }
+        PipelineService.stitchingStatus.value = .idle
+        self.viewModel.refresh()
+        optographIDs = self.viewModel.getOptographIds()
+        collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
 
     func refreshDataSourceForCollectionView(_ notification: NSNotification) {
-        print(" ")
-        print(" ")
-        print(" ")
-        print("OptographIDS:")
-        print(optographIDs)
-        print("Database:")
-        print(dataBase.getOptographIDsAsArray())
         if let optographID = notification.userInfo?["id"] as? String {
-            print("OptographID: \(optographID)")
-            print(" ")
-            let helperIDholder = dataBase.getOptographIDsAsArray()
-            print("HelperIDS:")
-            print(helperIDholder)
+            let helperIDholder = self.viewModel.getOptographIds()
             dataBase.deleteOptograph(optographID: optographID)
-            print("Database after Delete:")
-            print(dataBase.getOptographIDsAsArray())
             let index = helperIDholder.index(of: optographID)
             print("Index: \(index ?? -1)")
             let reversedIndex = helperIDholder.count - index! - 1
             print("ReversedIndex: \(reversedIndex)")
             imageCache.delete([reversedIndex])
-            optographIDs = dataBase.getOptographIDsAsArray().reversed()
+            self.viewModel.refresh()
+            optographIDs = self.viewModel.getOptographIds()
             print("OptographIDS after Delete:")
             print(optographIDs)
             if optographIDs.isEmpty {
-                print("Case: Only one item in collection")
                 let row = helperIDholder.index(of: helperIDholder.first!)
-                print("Row: \(row)")
                 collectionView?.deleteItems(at: [IndexPath(row: row!, section: 0)])
                 collectionView!.reloadData()
                 overlayView.isHidden = true
-                print(" ")
-                print(" ")
-                print(" ")
             } else {
-                print("Case: Multiple items in collection")
                 scrollToOptograph("")
-                print(" ")
-                print(" ")
-                print(" ")
             }
         }
     }

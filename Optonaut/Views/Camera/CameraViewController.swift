@@ -95,6 +95,10 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         if !useMotor {
             motionManager = CoreMotionRotationSource()
+        } else {
+            verticalTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsY) * (45 / 360) / 1000), repeats: false, block: {_ in
+                self.tabController!.cameraButton.isHidden = false
+            })
         }
         
         tapCameraButtonCallback = { [weak self] in
@@ -102,11 +106,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             self?.present(confirmAlert, animated: true, completion: nil)
         }
-
-        verticalTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(Float(MotorControl.motorStepsY) * (45 / 360) / 1000), repeats: false, block: {_ in
-            self.tabController!.cameraButton.isHidden = false
-        })
-
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -287,6 +286,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
             self.recorder = Recorder(.Center)
         }
         
+        if !useMotor {
+            self.tabController!.cameraButton.isHidden = false
+        }
         
         setupScene()
         setupBall()

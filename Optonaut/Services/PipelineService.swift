@@ -66,16 +66,7 @@ class PipelineService {
             .observeValues { result in
                 switch result {
                 case let .result(side, face, image):
-                    
                     ImageStore.saveFace(image: image, optographId: optographID, side: side == .left ? "left" : "right", face: face)
-                    
-                    var optograph = DataBase.sharedInstance.getOptograph(id: optographID)
-                    optograph.isStitched = true
-                    optograph.stitcherVersion = StitcherVersion
-                    
-                    DataBase.sharedInstance.saveOptograph(optograph: optograph)
-                    
-                    
                 case .progress(let progress):
                     stitchingStatus.value = .stitching(min(0.99, progress))
                 }
@@ -84,8 +75,16 @@ class PipelineService {
         stitchingSignal
             .on(completed: {
                 print("remove")
+                
+                var optograph = DataBase.sharedInstance.getOptograph(id: optographID)
+                optograph.isStitched = true
+                print("Saving: \(optographID)")
+                optograph.stitcherVersion = StitcherVersion
+                DataBase.sharedInstance.saveOptograph(optograph: optograph)
+                
                 StitchingService.removeUnstitchedRecordings()
                 let optographIDDict:[String: String] = ["id": optographID]
+                
                 NotificationCenter.default.post(name: Notification.Name(rawValue: stitchingFinishedNotificationKey), object: self, userInfo: optographIDDict)
             })
             .observeOnMain()
