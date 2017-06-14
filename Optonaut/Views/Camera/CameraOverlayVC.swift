@@ -156,9 +156,12 @@ class CameraOverlayVC: UIViewController {
                 manualButton.isUserInteractionEnabled = true
                 backButton.isHidden = false
             } else {
-                let stepsToFront = Float(MotorControl.motorStepsY) * (135 / 360)
-                btMotorControl?.moveY(Int32(stepsToFront), speed: 1000)
-                verticalTimer = Timer.scheduledTimer(timeInterval: TimeInterval(Float(stepsToFront) / Float(1000)), target: self, selector: #selector(moveToVertical), userInfo: nil, repeats: false)
+                // Disabled code to re-calib the motor.
+                //let stepsToFront = Float(MotorControl.motorStepsY) * (135 / 360)
+                //btMotorControl?.moveY(Int32(stepsToFront), speed: 1000)
+                //verticalTimer = Timer.scheduledTimer(timeInterval: TimeInterval(Float(stepsToFront) / Float(1000)), target: self, selector: #selector(moveToVertical), userInfo: nil, repeats: false)
+                
+                goToCameraViewContoller();
             }
         } else {
             navigationController?.pushViewController(CameraViewController(), animated: false)
@@ -169,6 +172,10 @@ class CameraOverlayVC: UIViewController {
     func moveToVertical() {
         let stepsToVertical = Float(MotorControl.motorStepsY) * (45 / 360)
         self.btMotorControl?.moveY(Int32(-stepsToVertical), speed: 1000)
+        goToCameraViewContoller();
+    }
+    
+    func goToCameraViewContoller() {
         self.navigationController?.pushViewController(CameraViewController(), animated: false)
         let cvc = self.navigationController?.viewControllers[2] as! CameraViewController
         cvc.motorControl = self.btMotorControl
