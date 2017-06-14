@@ -14,6 +14,8 @@ import SwiftyUserDefaults
 import CoreBluetooth
 
 var bt: BLEDiscovery!
+let remoteManualNotificationKey = "meyer.remoteManual"
+let remoteMotorNotificationKey = "meyer.remoteMotor"
 
 class CameraOverlayVC: UIViewController {
     
@@ -36,7 +38,10 @@ class CameraOverlayVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteManual), name: NSNotification.Name(rawValue: remoteManualNotificationKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteMotor), name: NSNotification.Name(rawValue: remoteMotorNotificationKey), object: nil)
+
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)!
         previewLayer.frame = view.bounds
         previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
@@ -68,6 +73,18 @@ class CameraOverlayVC: UIViewController {
 
     }
 
+    func remoteManual() {
+        NotificationCenter.default.removeObserver(self)
+        manualClicked()
+        onTapCameraButton()
+    }
+
+    func remoteMotor() {
+        NotificationCenter.default.removeObserver(self)
+        motorClicked()
+        onTapCameraButton()
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -95,11 +112,6 @@ class CameraOverlayVC: UIViewController {
     }
 
     fileprivate func setupScene() {
-        
-//        backButton = backButton?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(image: backButton, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(closeCamera))
-        
-        
         backButton.setBackgroundImage(UIImage(named: "camera_back_button"), for: UIControlState())
         backButton.addTarget(self, action: #selector(closeCamera), for: .touchUpInside)
         view.addSubview(backButton)
@@ -131,18 +143,11 @@ class CameraOverlayVC: UIViewController {
         
         manualLabel.align(.underCentered, relativeTo: manualButton, padding: 10, width: calcTextWidth(manualLabel.text!, withFont: manualLabel.font), height: 23)
         motorLabel.align(.underCentered, relativeTo: motorButton, padding: 10, width: calcTextWidth(motorLabel.text!, withFont: motorLabel.font), height: 23)
-        
-//        cameraButton.setBackgroundImage(UIImage(named: "camera_icn"), forState: .Normal)
-//        let size = UIImage(named:"camera_icn")!.size
-//        cameraButton.addTarget(self, action: #selector(record), forControlEvents: .TouchUpInside)
-//        view.addSubview(cameraButton)
-//        cameraButton.anchorToEdge(.Bottom, padding: 20, width: size.width, height: size.height)
-    }
+            }
 
     func closeCamera() {
         navigationController?.popViewController(animated: false)
         verticalTimer.invalidate()
-//        self.tabController!.cameraButton.isHidden = false Crash?
     }
 
     func record() {
@@ -199,11 +204,9 @@ class CameraOverlayVC: UIViewController {
     }
     
     func motorClicked() {
-        
         isMotorMode(true)
         Defaults[.SessionMotor] = true
         Defaults[.SessionUseMultiRing] = false
-        
     }
     
     fileprivate func setupCamera() {
@@ -223,11 +226,8 @@ class CameraOverlayVC: UIViewController {
         }
         
         let videoDeviceOutput = AVCaptureVideoDataOutput()
-        // TODO. 
-        //videoDeviceOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey: NSNumber(value: kCVPixelFormatType_32BGRA as UInt32)]
         videoDeviceOutput.alwaysDiscardsLateVideoFrames = true
-        //videoDeviceOutput.setSampleBufferDelegate(self, queue: sessionQueue)
-        
+
         if session.canAddOutput(videoDeviceOutput) {
             session.addOutput(videoDeviceOutput)
         }
@@ -239,21 +239,6 @@ class CameraOverlayVC: UIViewController {
         
         try! videoDevice?.lockForConfiguration()
         
-        
-        var bestFormat: AVCaptureDeviceFormat?
-        
-        var maxFps: Double = 0
-        
-        for format in videoDevice!.formats.map({ $0 as! AVCaptureDeviceFormat }) {
-            var ranges = format.videoSupportedFrameRateRanges as! [AVFrameRateRange]
-            let frameRates = ranges[0]
-            if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= 30 {
-                maxFps = frameRates.maxFrameRate
-                bestFormat = format
-                
-            }
-        }
-        
         if videoDevice!.activeFormat.isVideoHDRSupported {
             videoDevice!.automaticallyAdjustsVideoHDREnabled = false
             videoDevice!.isVideoHDREnabled = false
@@ -261,9 +246,7 @@ class CameraOverlayVC: UIViewController {
 
         videoDevice!.exposureMode = .continuousAutoExposure
         videoDevice!.whiteBalanceMode = .continuousAutoWhiteBalance
-        
-        AVCaptureVideoStabilizationMode.standard
-        
+
         videoDevice!.activeVideoMinFrameDuration = CMTimeMake(1, 30)
         videoDevice!.activeVideoMaxFrameDuration = CMTimeMake(1, 30)
         

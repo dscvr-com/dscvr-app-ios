@@ -226,7 +226,7 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
             $0.baseAddress!.load(as: T.self)
         }
     }
-
+    
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if characteristic.uuid.isEqual(MotorControl.BLECharacteristicResponseUUID) {
             let data = characteristic.value
@@ -245,19 +245,14 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
 
             if (str.uppercased() == MotorControl.topButton) {
                 print("top")
+                NotificationCenter.default.post(name: Notification.Name(rawValue: remoteManualNotificationKey), object: self, userInfo: nil)
                 return
             }
             if (str.uppercased() == MotorControl.bottomButton) {
                 print("bottom")
+                NotificationCenter.default.post(name: Notification.Name(rawValue: remoteMotorNotificationKey), object: self, userInfo: nil)
                 return
             }
-/*
-            motorPositionX = fromByteArray([byteArray[10], byteArray[9], byteArray[8], byteArray[7]], Int.self)
-            motorPositionY = fromByteArray([byteArray[6], byteArray[5], byteArray[4], byteArray[3]], Int.self)
-
-            print("Received update from motor. x: \(motorPositionX), y: \(motorPositionY)")
-            self.executing = false
- */
         }
     }
 }
