@@ -121,8 +121,9 @@ std::string debugPath;
 
 @implementation Recorder {
 @private
+    // TODO: use subclasses instead
     optonaut::Recorder2* pipe;
-    optonaut::MultiRingRecorder* motorPipe;
+    optonaut::MultiRingRecorder* multiRingPipe;
     cv::Mat intrinsics;
     NSString* tempPath;
     int internalRecordingMode;
@@ -194,7 +195,7 @@ optonaut::StorageImageSink rightSink(Stores::right);
     Stores::right.Clear();
     
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-          self->motorPipe = new optonaut::MultiRingRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
+        self->multiRingPipe = new optonaut::MultiRingRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
                                                self->intrinsics, leftSink, rightSink, optonaut::RecorderGraph::ModeTruncated, 1.0, debugPath);
     } else {
         self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
@@ -209,7 +210,7 @@ optonaut::StorageImageSink rightSink(Stores::right);
 
 - (bool)isDisposed {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        return motorPipe == NULL;
+        return multiRingPipe == NULL;
     } else {
         return pipe == NULL;
     }
@@ -218,7 +219,7 @@ optonaut::StorageImageSink rightSink(Stores::right);
 - (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure  :(AVCaptureWhiteBalanceGains)gains{
     
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
+        assert(multiRingPipe != NULL);
         
     } else {
         assert(pipe != NULL);
@@ -237,7 +238,7 @@ optonaut::StorageImageSink rightSink(Stores::right);
     GLK4ToCVMat(extrinsics, oImage->originalExtrinsics);
 
       if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-          motorPipe->Push(oImage);
+          multiRingPipe->Push(oImage);
       } else {
           pipe->Push(oImage);
           
@@ -250,8 +251,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 - (SelectionPoint*)lastKeyframe {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
         
-        assert(motorPipe != NULL);
-        return ConvertSelectionPoint(motorPipe->GetCurrentKeyframe().closestPoint);
+        assert(multiRingPipe != NULL);
+        return ConvertSelectionPoint(multiRingPipe->GetCurrentKeyframe().closestPoint);
     } else {
         assert(pipe != NULL);
         return ConvertSelectionPoint(pipe->GetCurrentKeyframe().closestPoint);
@@ -269,15 +270,15 @@ optonaut::StorageImageSink rightSink(Stores::right);
     ConvertSelectionPoint(a, &convA);
     ConvertSelectionPoint(b, &convB);
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        return motorPipe->AreAdjacent(convA, convB);
+        return multiRingPipe->AreAdjacent(convA, convB);
     } else {
         return pipe->AreAdjacent(convA, convB);
     }
 }
 - (SelectionPointIterator*)getSelectionPoints {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
-        return [[SelectionPointIterator alloc] init: motorPipe->GetSelectionPoints()];
+        assert(multiRingPipe != NULL);
+        return [[SelectionPointIterator alloc] init: multiRingPipe->GetSelectionPoints()];
     } else {
         assert(pipe != NULL);
         return [[SelectionPointIterator alloc] init: pipe->GetSelectionPoints()];
@@ -285,8 +286,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (void)setIdle:(bool)isIdle {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
-        motorPipe->SetIdle(isIdle);
+        assert(multiRingPipe != NULL);
+        multiRingPipe->SetIdle(isIdle);
     } else {
         assert(pipe != NULL);
         pipe->SetIdle(isIdle);
@@ -294,8 +295,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (bool)isIdle {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
-        return motorPipe->IsIdle();
+        assert(multiRingPipe != NULL);
+        return multiRingPipe->IsIdle();
     } else {
         assert(pipe != NULL);
         return pipe->IsIdle();
@@ -303,8 +304,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (bool)hasStarted {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
-        return motorPipe->HasStarted();
+        assert(multiRingPipe != NULL);
+        return multiRingPipe->HasStarted();
     } else {
         assert(pipe != NULL);
         return pipe->HasStarted();
@@ -313,7 +314,7 @@ optonaut::StorageImageSink rightSink(Stores::right);
 
 - (bool)hasResults {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
+        assert(multiRingPipe != NULL);
         return true;
     } else {
         assert(pipe != NULL);
@@ -322,8 +323,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (GLKMatrix4)getBallPosition {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
-        return CVMatToGLK4(motorPipe->GetBallPosition());
+        assert(multiRingPipe != NULL);
+        return CVMatToGLK4(multiRingPipe->GetBallPosition());
     } else {
         assert(pipe != NULL);
         return CVMatToGLK4(pipe->GetBallPosition());
@@ -334,8 +335,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 
 - (bool)isFinished {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
-        return motorPipe->IsFinished();
+        assert(multiRingPipe != NULL);
+        return multiRingPipe->IsFinished();
     } else {
         assert(pipe != NULL);
         return pipe->IsFinished();
@@ -343,8 +344,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (void)cancel {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-         assert(motorPipe != NULL);
-        motorPipe->Cancel();
+        assert(multiRingPipe != NULL);
+        multiRingPipe->Cancel();
     } else {
         assert(pipe != NULL);
         pipe->Cancel();
@@ -354,8 +355,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 - (double)getDistanceToBall {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
         
-        assert(motorPipe != NULL);
-        return motorPipe->GetDistanceToBall();
+        assert(multiRingPipe != NULL);
+        return multiRingPipe->GetDistanceToBall();
     } else {
     assert(pipe != NULL);
     return pipe->GetDistanceToBall();
@@ -363,9 +364,9 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (GLKVector3)getAngularDistanceToBall {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
+        assert(multiRingPipe != NULL);
         //Special coord remapping, so we respect the screen coord system.
-        const Mat &m = motorPipe->GetAngularDistanceToBall();
+        const Mat &m = multiRingPipe->GetAngularDistanceToBall();
         return GLKVector3Make((float)-m.at<double>(1, 0), (float)-m.at<double>(0, 0), (float)-m.at<double>(2, 0));
         
     } else {
@@ -379,8 +380,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (uint32_t)getRecordedImagesCount {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
-        return motorPipe->GetRecordedImagesCount();
+        assert(multiRingPipe != NULL);
+        return multiRingPipe->GetRecordedImagesCount();
     } else {
         assert(pipe != NULL);
         return pipe->GetRecordedImagesCount();
@@ -388,8 +389,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (uint32_t)getImagesToRecordCount {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
-        return motorPipe->GetImagesToRecordCount();
+        assert(multiRingPipe != NULL);
+        return multiRingPipe->GetImagesToRecordCount();
     } else {
         assert(pipe != NULL);
         return pipe->GetImagesToRecordCount();
@@ -398,8 +399,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 - (void)finish {
     
      if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-         assert(motorPipe != NULL);
-         motorPipe->Finish();
+         assert(multiRingPipe != NULL);
+         multiRingPipe->Finish();
      } else {
          assert(pipe != NULL);
          pipe->Finish();
@@ -410,11 +411,11 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (void)dispose {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
+        assert(multiRingPipe != NULL);
         // Do nothing, except deleting
         [[NSFileManager defaultManager] removeItemAtPath:self->tempPath error:nil];
-        delete motorPipe;
-        motorPipe = NULL;
+        delete multiRingPipe;
+        multiRingPipe = NULL;
         
     } else {
         
@@ -431,7 +432,7 @@ optonaut::StorageImageSink rightSink(Stores::right);
     
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
         
-        assert(motorPipe != NULL);
+        assert(multiRingPipe != NULL);
     } else {
         assert(pipe != NULL);
     }
@@ -443,7 +444,7 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (bool)previewAvailable {
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(motorPipe != NULL);
+        assert(multiRingPipe != NULL);
     } else {
         assert(pipe != NULL);
     }
@@ -451,8 +452,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
 }
 - (struct ImageBuffer)getPreviewImage {
      if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-         assert(motorPipe != NULL);
-         return CVMatToImageBuffer(motorPipe->GetPreviewImage()->image.data);
+         assert(multiRingPipe != NULL);
+         return CVMatToImageBuffer(multiRingPipe->GetPreviewImage()->image.data);
 
      } else {
          assert(pipe != NULL);

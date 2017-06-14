@@ -375,9 +375,12 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 
     func updateOptographCollection(_ notification: NSNotification) {
         PipelineService.stitchingStatus.value = .idle
-        self.viewModel.refresh()
-        optographIDs = self.viewModel.getOptographIds()
-        collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        Async.main {
+            self.imageCache.reset()
+            self.viewModel.refresh()
+            self.optographIDs = self.viewModel.getOptographIds()
+            self.collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        }
     }
 
     func refreshDataSourceForCollectionView(_ notification: NSNotification) {
@@ -389,6 +392,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             let reversedIndex = helperIDholder.count - index! - 1
             print("ReversedIndex: \(reversedIndex)")
             imageCache.delete([reversedIndex])
+            self.imageCache.reset()
             self.viewModel.refresh()
             optographIDs = self.viewModel.getOptographIds()
             print("OptographIDS after Delete:")

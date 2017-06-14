@@ -13,6 +13,9 @@ import MobileCoreServices
 
 class ImageStore {
     
+    
+    static let placeHolderImage = #imageLiteral(resourceName: "placeholder_img")
+    
     static let directoryPath: String = {
         let appId = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? NSString
         let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first! + "/\(appId!)/optographs/"
@@ -38,7 +41,11 @@ class ImageStore {
     static func getFace(optographId: UUID, side: String, face: Int) -> UIImage {
         let path = pathForOptographFace(optographId: optographId, side: side, face: face)
         let uiImage = UIImage(contentsOfFile: path)
-        return uiImage!
+        if let uiImage = uiImage {
+            return uiImage
+        } else {
+            return placeHolderImage
+        }
     }
 
     

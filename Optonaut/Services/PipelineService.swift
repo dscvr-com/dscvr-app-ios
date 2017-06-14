@@ -106,7 +106,13 @@ class PipelineService {
         let optographs = DataBase.sharedInstance.getUnstitchedOptographs()
         
         if optographs.count > 0 {
-            stitch(optographs[0].ID)
+            if(StitchingService.hasUnstitchedRecordings()) {
+                stitch(optographs[0].ID)
+            } else {
+                // Corrupt database entry.
+                DataBase.sharedInstance.deleteOptograph(optographID: optographs[0].ID)
+                stitchingStatus.value = .idle
+            }
         } else {
             stitchingStatus.value = .idle
             
