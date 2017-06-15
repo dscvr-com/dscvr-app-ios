@@ -97,8 +97,14 @@ class StitchingService {
                 }
                 return !shallCancel
             }
-            
-    
+
+            if !shallCancel {
+                autoreleasepool {
+                    let image = ImageBufferToCompressedUIImage(stitcher.getLeftEquirectangularResult())
+                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                }
+            }
+
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getLeftResult().enumerated() {
                     var leftFace = ImageBuffer()
@@ -107,7 +113,6 @@ class StitchingService {
                     if !shallCancel {
                         autoreleasepool {
                             let image = ImageBufferToCompressedUIImage(leftFace)
-//                            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
                             sink.send(value: .result(side: .left, face: face, image: image))
                         }
                     }
@@ -116,7 +121,6 @@ class StitchingService {
             }
             
             // TODO: Save to photo gallery
-         
             if !shallCancel {
                 for (face, cubeFace) in stitcher.getRightResult().enumerated() {
                     var rightFace = ImageBuffer()
