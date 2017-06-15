@@ -55,6 +55,8 @@ class ViewerViewController: UIViewController  {
         case .iPhone6Plus: screen = ScreenParams(device: .iPhone6Plus)
         case .iPhone6S: screen = ScreenParams(device: .iPhone6S)
         case .iPhone6SPlus: screen = ScreenParams(device: .iPhone6SPlus)
+        case .iPhone7: screen = ScreenParams(device: .iPhone6S)
+        case .iPhone7Plus: screen = ScreenParams(device: .iPhone6SPlus)
         default: screen = ScreenParams(device: .iPhone6S)
         }
         
