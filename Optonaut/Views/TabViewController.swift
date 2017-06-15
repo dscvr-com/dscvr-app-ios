@@ -147,11 +147,13 @@ class RecordButton: UIButton {
     var loading = false {
         didSet {
             if loading {
-                loadingView.startAnimating()
+                SwiftSpinner.show("Stitching in progress")
+//                loadingView.startAnimating()
             } else {
-                loadingView.stopAnimating()
+//                loadingView.stopAnimating()
+                SwiftSpinner.hide()
             }
-            
+
             setTitleColor(titleColor(for: UIControlState())!.alpha(loading ? 0 : 1), for: UIControlState())
             
             isUserInteractionEnabled = !loading
