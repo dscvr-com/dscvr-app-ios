@@ -107,6 +107,7 @@ class StitchingService {
                     if !shallCancel {
                         autoreleasepool {
                             let image = ImageBufferToCompressedUIImage(leftFace)
+//                            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
                             sink.send(value: .result(side: .left, face: face, image: image))
                         }
                     }

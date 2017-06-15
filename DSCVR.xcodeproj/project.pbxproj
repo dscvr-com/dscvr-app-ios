@@ -164,6 +164,10 @@
 		BB88A26E1D9A8AF600EB09B0 /* Merriweather Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */; };
 		E861F4091ECD0D36009682CA /* one_ring_active_icn.png in Resources */ = {isa = PBXBuildFile; fileRef = E861F4071ECD0D36009682CA /* one_ring_active_icn.png */; };
 		E861F40A1ECD0D36009682CA /* one_ring_inactive_icn.png in Resources */ = {isa = PBXBuildFile; fileRef = E861F4081ECD0D36009682CA /* one_ring_inactive_icn.png */; };
+		E8E139261EF2B9C700712EE2 /* one_ring_inactive_icnwhite.png in Resources */ = {isa = PBXBuildFile; fileRef = E8E139251EF2B9C700712EE2 /* one_ring_inactive_icnwhite.png */; };
+		E8E1392B1EF2C04700712EE2 /* motor_active.png in Resources */ = {isa = PBXBuildFile; fileRef = E8E139281EF2C04700712EE2 /* motor_active.png */; };
+		E8E1392C1EF2C04700712EE2 /* motor_inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = E8E139291EF2C04700712EE2 /* motor_inactive.png */; };
+		E8E1392D1EF2C04700712EE2 /* motor_inactive_white.png in Resources */ = {isa = PBXBuildFile; fileRef = E8E1392A1EF2C04700712EE2 /* motor_inactive_white.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -448,6 +452,10 @@
 		BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Merriweather Light.ttf"; sourceTree = "<group>"; };
 		E861F4071ECD0D36009682CA /* one_ring_active_icn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_active_icn.png; sourceTree = "<group>"; };
 		E861F4081ECD0D36009682CA /* one_ring_inactive_icn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_inactive_icn.png; sourceTree = "<group>"; };
+		E8E139251EF2B9C700712EE2 /* one_ring_inactive_icnwhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_inactive_icnwhite.png; sourceTree = "<group>"; };
+		E8E139281EF2C04700712EE2 /* motor_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = motor_active.png; sourceTree = "<group>"; };
+		E8E139291EF2C04700712EE2 /* motor_inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = motor_inactive.png; sourceTree = "<group>"; };
+		E8E1392A1EF2C04700712EE2 /* motor_inactive_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = motor_inactive_white.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1104,6 +1112,7 @@
 		E861F4051ECD0D36009682CA /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				E8E139271EF2C04700712EE2 /* motorButton */,
 				E861F4061ECD0D36009682CA /* motorButtonOneRing */,
 			);
 			path = icons;
@@ -1112,10 +1121,21 @@
 		E861F4061ECD0D36009682CA /* motorButtonOneRing */ = {
 			isa = PBXGroup;
 			children = (
+				E8E139251EF2B9C700712EE2 /* one_ring_inactive_icnwhite.png */,
 				E861F4071ECD0D36009682CA /* one_ring_active_icn.png */,
 				E861F4081ECD0D36009682CA /* one_ring_inactive_icn.png */,
 			);
 			path = motorButtonOneRing;
+			sourceTree = "<group>";
+		};
+		E8E139271EF2C04700712EE2 /* motorButton */ = {
+			isa = PBXGroup;
+			children = (
+				E8E139281EF2C04700712EE2 /* motor_active.png */,
+				E8E139291EF2C04700712EE2 /* motor_inactive.png */,
+				E8E1392A1EF2C04700712EE2 /* motor_inactive_white.png */,
+			);
+			path = motorButton;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1194,7 +1214,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 675Y8HZ459;
+						DevelopmentTeam = 93N5JQ6UW7;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -1248,11 +1268,14 @@
 				BB88A2681D9A30CD00EB09B0 /* big_noodle_titling.ttf in Resources */,
 				BB88A2661D9A2AB100EB09B0 /* bubblegum.caf in Resources */,
 				BB88A2651D9A2AAA00EB09B0 /* Roadgeek 2005 Series 1B.ttf in Resources */,
+				E8E1392D1EF2C04700712EE2 /* motor_inactive_white.png in Resources */,
 				8F4715131C49698B00663684 /* TwitterKitResources.bundle in Resources */,
+				E8E1392C1EF2C04700712EE2 /* motor_inactive.png in Resources */,
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
 				A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */,
+				E8E1392B1EF2C04700712EE2 /* motor_active.png in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,
 				8FBC869C1BB72A8800539D4E /* SF-UI-Display-Light.otf in Resources */,
 				A5DE71EE1BE28A7400316F82 /* distortion.json in Resources */,
@@ -1266,6 +1289,7 @@
 				A56CA4131BC070AE0078D7E8 /* barrell_displacement.fsh in Resources */,
 				A56CA40C1BC070450078D7E8 /* zeiss_displacement_right.vsh in Resources */,
 				A56CA40A1BC070450078D7E8 /* zeiss_displacement_right.fsh in Resources */,
+				E8E139261EF2B9C700712EE2 /* one_ring_inactive_icnwhite.png in Resources */,
 				8FBC86971BB723E600539D4E /* SF-UI-Display-Semibold.otf in Resources */,
 				A56CA4071BC070450078D7E8 /* zeiss_displacement_left.fsh in Resources */,
 				8FBC86981BB723E600539D4E /* SF-UI-Display-Ultralight.otf in Resources */,
@@ -1606,7 +1630,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
-				DEVELOPMENT_TEAM = 675Y8HZ459;
+				DEVELOPMENT_TEAM = 93N5JQ6UW7;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1657,7 +1681,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
-				DEVELOPMENT_TEAM = 675Y8HZ459;
+				DEVELOPMENT_TEAM = 93N5JQ6UW7;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
