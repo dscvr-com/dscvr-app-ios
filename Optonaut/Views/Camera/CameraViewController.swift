@@ -187,7 +187,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
     
     func cancelRecording() {
         Mixpanel.sharedInstance()?.track("Action.Camera.CancelRecording")
-        verticalTimer.invalidate()
+//        verticalTimer.invalidate()
         tabController!.cameraButton.isHidden = false
 
         viewModel.isRecording.value = false
