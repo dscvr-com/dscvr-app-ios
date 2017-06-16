@@ -172,6 +172,7 @@ class CameraOverlayVC: UIViewController {
                 }
             } else {
                 motorButtonClicked = true
+                backButton.isHidden = false
                 tabController!.cameraButton.isHidden = false
                 manualButton.setBackgroundImage(UIImage(named: "one_ring_active_icn"), for: UIControlState())
                 motorButton.setBackgroundImage(UIImage(named: "motorButton_off"), for: UIControlState())

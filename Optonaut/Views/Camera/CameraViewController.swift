@@ -331,7 +331,10 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         if !useMotor {
            (motionManager as! CoreMotionRotationSource).start()
         } else {
-            onTapCameraButton()
+            tabController!.cameraButton.isHidden = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500), execute: {
+                self.onTapCameraButton()
+            })
         }
 
     }
