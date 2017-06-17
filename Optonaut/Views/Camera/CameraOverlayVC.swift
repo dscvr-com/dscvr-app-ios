@@ -13,10 +13,6 @@ import Photos
 import SwiftyUserDefaults
 import CoreBluetooth
 
-var bt: BLEDiscovery!
-let remoteManualNotificationKey = "meyer.remoteManual"
-let remoteMotorNotificationKey = "meyer.remoteMotor"
-
 class CameraOverlayVC: UIViewController {
     
     fileprivate let session = AVCaptureSession()
@@ -27,21 +23,13 @@ class CameraOverlayVC: UIViewController {
     fileprivate let manualLabel = UILabel()
     fileprivate var backButton = UIButton()
     var blSheet = UIAlertController()
-    var deviceLastCount: Int = 0
     let connectionstatus = UILabel()
     var verticalTimer = Timer()
     var motorButtonClicked = false
 
-    //bluetoothCode
-    var btService : BLEService?
-    var btMotorControl : MotorControl?
-    var btDevices = [CBPeripheral]()
-
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteManual), name: NSNotification.Name(rawValue: remoteManualNotificationKey), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteMotor), name: NSNotification.Name(rawValue: remoteMotorNotificationKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.updateConnectionStatusLabel), name: NSNotification.Name(rawValue: didConnectMotorNotificationKey), object: nil)
 
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)!
         previewLayer.frame = view.bounds
@@ -51,7 +39,11 @@ class CameraOverlayVC: UIViewController {
         tabController?.delegate = self
 
         connectionstatus.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 20)
-        connectionstatus.text = "Looking for Orbit 360 Motor..."
+        if bt.connectedPeripherals.isEmpty {
+            connectionstatus.text = "Looking for Orbit 360 Motor..."
+        } else {
+            connectionstatus.text = "Orbit 360 Motor connected"
+        }
         connectionstatus.textAlignment = .center
         connectionstatus.font = connectionstatus.font.withSize(12)
         connectionstatus.textColor = UIColor.white
@@ -60,30 +52,6 @@ class CameraOverlayVC: UIViewController {
 
         setupCamera()
         setupScene()
-
-        if bt == nil {
-            bt = BLEDiscovery(onDeviceFound: onDeviceFound, onDeviceConnected: onDeviceConnected, services: [MotorControl.BLEServiceUUID])
-        } else {
-            if !bt.connectedPeripherals.isEmpty {
-                btService = BLEService(initWithPeripheral: bt.connectedPeripherals[0], onServiceConnected: onServiceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: [MotorControl.BLECharacteristicUUID, MotorControl.BLECharacteristicResponseUUID])
-                btService?.startDiscoveringServices()
-            } else {
-                bt.startScanning()
-            }
-        }
-
-    }
-
-    func remoteManual() {
-        NotificationCenter.default.removeObserver(self)
-        manualClicked()
-        onTapCameraButton()
-    }
-
-    func remoteMotor() {
-        NotificationCenter.default.removeObserver(self)
-        motorClicked()
-        onTapCameraButton()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -97,18 +65,7 @@ class CameraOverlayVC: UIViewController {
         super.viewDidDisappear(animated)
     }
 
-    func onDeviceFound(device: CBPeripheral, name: NSString) {
-        self.btDevices = self.btDevices + [device]
-        bt.connectPeripheral(btDevices[0])
-    }
-
-    func onDeviceConnected(device: CBPeripheral) {
-        btService = BLEService(initWithPeripheral: device, onServiceConnected: onServiceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: [MotorControl.BLECharacteristicUUID, MotorControl.BLECharacteristicResponseUUID])
-        btService?.startDiscoveringServices()
-    }
-
-    func onServiceConnected(service: CBService) {
-        btMotorControl = MotorControl(s: service, p: service.peripheral, allowCommandInterrupt: true)
+    func updateConnectionStatusLabel() {
         connectionstatus.text = "Orbit 360 Motor connected"
     }
 
@@ -154,7 +111,7 @@ class CameraOverlayVC: UIViewController {
     func record() {
         if Defaults[.SessionMotor] {
             if motorButtonClicked {
-                if btMotorControl == nil {
+                if bt.connectedPeripherals.isEmpty {
                     self.tabController!.cameraButton.isHidden = false
                     let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
                     confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
@@ -193,14 +150,14 @@ class CameraOverlayVC: UIViewController {
 
     func moveToVertical() {
         let stepsToVertical = Float(MotorControl.motorStepsY) * (45 / 360)
-        self.btMotorControl?.moveY(Int32(-stepsToVertical), speed: 1000)
+        btMotorControl?.moveY(Int32(-stepsToVertical), speed: 1000)
         goToCameraViewContoller();
     }
     
     func goToCameraViewContoller() {
         self.navigationController?.pushViewController(CameraViewController(), animated: false)
         let cvc = self.navigationController?.viewControllers[2] as! CameraViewController
-        cvc.motorControl = self.btMotorControl
+        cvc.motorControl = btMotorControl
         cvc.motionManager = cvc.motorControl
         self.navigationController?.viewControllers.remove(at: 1)
     }

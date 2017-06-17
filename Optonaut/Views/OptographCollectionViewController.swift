@@ -10,6 +10,8 @@ import UIKit
 import ReactiveSwift
 import SpriteKit
 import Async
+import CoreBluetooth
+import SwiftyUserDefaults
 
 typealias Direction = (phi: Float, theta: Float)
 
@@ -19,12 +21,18 @@ protocol OptographCollectionViewModel {
     func refresh()
 }
 
+
 fileprivate let queue = DispatchQueue(label: "collection_view", attributes: [])
 fileprivate let queueScheduler = QueueScheduler(qos: .background, name: "collection_view", targeting: queue)
 
+var bt: BLEDiscovery!
+var btMotorControl : MotorControl?
+
+let remoteManualNotificationKey = "meyer.remoteManual"
+let remoteMotorNotificationKey = "meyer.remoteMotor"
 let stitchingFinishedNotificationKey = "meyer.stitchingFinished"
 let deletedOptographNotificationKey = "meyer.deletedOptograph"
-
+let didConnectMotorNotificationKey = "meyer.didConnectMotor"
 
 class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
 
@@ -41,11 +49,13 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     fileprivate let overlayView = OverlayView()
     
     fileprivate let uiHidden = MutableProperty<Bool>(false)
-    
     fileprivate var overlayIsAnimating = false
-    
     fileprivate var isVisible = false
-    
+
+    //bluetoothCode
+    var btService : BLEService?
+    var btDevices = [CBPeripheral]()
+
     init(viewModel: FeedOptographCollectionViewModel) {
         self.viewModel = viewModel
         
@@ -77,13 +87,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateOptographCollection(_:)), name: NSNotification.Name(rawValue: stitchingFinishedNotificationKey), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshDataSourceForCollectionView(_:)), name: NSNotification.Name(rawValue: deletedOptographNotificationKey), object: nil)
 
-        let cardboardButton = UIButton()//UILabel(frame: CGRect(x: 0, y: -2, width: 24, height: 24))
+        let cardboardButton = UIButton()
         cardboardButton.setBackgroundImage(UIImage(named: "vr_icon"), for: UIControlState())
         cardboardButton.frame = CGRect(x: 0, y: -2, width: 35, height: 24)
-        // TODO: Icomoon
-        //cardboardButton.text = String.iconWithName(.Cardboard)
-        //cardboardButton.textColor = .white
-        //cardboardButton.font = UIFont.iconOfSize(24)
         cardboardButton.isUserInteractionEnabled = true
         cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewController.showCardboardAlert)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cardboardButton)
@@ -136,8 +142,68 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                     break
                 }
         }
+
+        if bt == nil {
+            bt = BLEDiscovery(onDeviceFound: onDeviceFound, onDeviceConnected: onDeviceConnected, services: [MotorControl.BLEServiceUUID])
+        } else {
+            if !bt.connectedPeripherals.isEmpty {
+                btService = BLEService(initWithPeripheral: bt.connectedPeripherals[0], onServiceConnected: onServiceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: [MotorControl.BLECharacteristicUUID, MotorControl.BLECharacteristicResponseUUID])
+                btService?.startDiscoveringServices()
+            } else {
+                bt.startScanning()
+            }
+        }
+
     }
-    
+
+    func registerObserver() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteManual), name: NSNotification.Name(rawValue: remoteManualNotificationKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteMotor), name: NSNotification.Name(rawValue: remoteMotorNotificationKey), object: nil)
+    }
+
+    func onDeviceFound(device: CBPeripheral, name: NSString) {
+        self.btDevices = self.btDevices + [device]
+        bt.connectPeripheral(btDevices[0])
+    }
+
+    func onDeviceConnected(device: CBPeripheral) {
+        btService = BLEService(initWithPeripheral: device, onServiceConnected: onServiceConnected, bleService: MotorControl.BLEServiceUUID, bleCharacteristic: [MotorControl.BLECharacteristicUUID, MotorControl.BLECharacteristicResponseUUID])
+        btService?.startDiscoveringServices()
+    }
+
+    func onServiceConnected(service: CBService) {
+        btMotorControl = MotorControl(s: service, p: service.peripheral, allowCommandInterrupt: true)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: didConnectMotorNotificationKey), object: self, userInfo: nil)
+        registerObserver()
+    }
+
+    func remoteManual() {
+        Defaults[.SessionUseMultiRing] = false
+        record()
+    }
+
+    func remoteMotor() {
+        Defaults[.SessionUseMultiRing] = true
+        record()
+    }
+
+    func record() {
+        NotificationCenter.default.removeObserver(self)
+        Defaults[.SessionMotor] = true
+        tabController!.cameraButton.isHidden = true
+        if bt.connectedPeripherals.isEmpty {
+            self.tabController!.cameraButton.isHidden = false
+            let confirmAlert = UIAlertController(title: "Error!", message: "Motor recordings require Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
+            confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            self.present(confirmAlert, animated: true, completion: nil)
+        } else {
+            self.navigationController?.pushViewController(CameraViewController(), animated: false)
+            let cvc = self.navigationController?.viewControllers[1] as! CameraViewController
+            cvc.motorControl = btMotorControl
+            cvc.motionManager = cvc.motorControl
+        }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -381,6 +447,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             self.optographIDs = self.viewModel.getOptographIds()
             self.collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteManual), name: NSNotification.Name(rawValue: remoteManualNotificationKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteMotor), name: NSNotification.Name(rawValue: remoteMotorNotificationKey), object: nil)
     }
 
     func refreshDataSourceForCollectionView(_ notification: NSNotification) {

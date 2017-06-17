@@ -85,7 +85,7 @@ class BLEDiscovery: NSObject, CBCentralManagerDelegate {
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        
+        connectedPeripherals.removeAll()
         // Start scanning for new devices
         self.startScanning()
     }
