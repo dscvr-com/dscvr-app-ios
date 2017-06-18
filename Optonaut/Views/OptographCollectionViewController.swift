@@ -198,9 +198,19 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             self.present(confirmAlert, animated: true, completion: nil)
         } else {
             self.navigationController?.pushViewController(CameraViewController(), animated: false)
-            let cvc = self.navigationController?.viewControllers[1] as! CameraViewController
-            cvc.motorControl = btMotorControl
-            cvc.motionManager = cvc.motorControl
+            do {
+                guard let cvc = self.navigationController?.viewControllers[1] as? CameraViewController else {
+                    throw NSError()
+                }
+                cvc.motorControl = btMotorControl
+                cvc.motionManager = cvc.motorControl
+            } catch {
+                let cvc = self.navigationController?.viewControllers[2] as! CameraViewController
+                cvc.motorControl = btMotorControl
+                cvc.motionManager = cvc.motorControl
+                navigationController?.viewControllers.remove(at: 1)
+
+            }
         }
     }
 
@@ -447,8 +457,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             self.optographIDs = self.viewModel.getOptographIds()
             self.collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteManual), name: NSNotification.Name(rawValue: remoteManualNotificationKey), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteMotor), name: NSNotification.Name(rawValue: remoteMotorNotificationKey), object: nil)
+        registerObserver()
     }
 
     func refreshDataSourceForCollectionView(_ notification: NSNotification) {
