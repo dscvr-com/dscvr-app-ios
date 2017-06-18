@@ -11,13 +11,15 @@ import CoreBluetooth
 
 struct MotorCommand {
     
-    init(_dest: Point, _speed: Point) {
+    init(_dest: Point, _speed: Point, _sleep: Int = 0) {
         self.destination = _dest
         self.speed = _speed
+        self.sleep = _sleep
     }
     
     let destination: Point // In Radiants
     let speed: Point // In steps/second
+    let sleep: Int
 }
 
 class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
@@ -41,7 +43,8 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
     var speed = Point(x: 1, y: 1)
     // Command in RADIANTS
     var command = Point(x: 0, y: 0)
-
+    
+    var sleep: Int = 0
 
     let allowCommandInterrupt: Bool
     var executing: Bool
@@ -60,7 +63,12 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
         let eps = Float(0.000001)
         
         if(diff.x < eps && diff.y < eps && currentScript.count > 0) {
-            execNextCommand()
+            sleep = sleep - 1
+            startPosition = currentPosition
+            command = Point(x: 0, y: 0)
+            if(sleep <= 0) {
+                execNextCommand()
+            }
         }
         
         print("Phi: \(currentPosition.x)     Theta: \(currentPosition.y)")
@@ -69,6 +77,7 @@ class MotorControl: NSObject, CBPeripheralDelegate, RotationMatrixSource {
     
     private func execNextCommand() {
         let nextCommand = currentScript.remove(at: 0)
+        sleep = nextCommand.sleep
         moveXandYRadiants(radsX: nextCommand.destination.x, speedX: Int32(nextCommand.speed.x), radsY: nextCommand.destination.y, speedY: Int32(nextCommand.speed.y))
     }
     

@@ -860,7 +860,7 @@ extension CameraViewController: TabControllerDelegate {
         tabController!.cameraButton.isHidden = true
         viewModel.isRecording.value = true
         if useMotor {
-            let v = calculatePoints()
+            var v: [Float] = calculatePoints()
             var thetaValues = [Float]()
             
             // Hard coded re-ordering. Please look away.
@@ -878,19 +878,18 @@ extension CameraViewController: TabControllerDelegate {
                 thetaValues[index] = thetaValues[index] - thetaValues[index - 1]
                 sum = sum + thetaValues[index]
             }
-            thetaValues[0] = 0
             
             // TODO: Make speed variable
             let script = thetaValues.flatMap { pos in
                 return [
                     MotorCommand(
                         _dest: Point(x: 0, y: pos),
-                        _speed: Point(x: 500, y: 1000)
-                    ),
+                        _speed: Point(x: 500, y: 1000),
+                        _sleep: 60),
                     MotorCommand(
                         _dest: Point(x: Float(M_PI * 2), y: 0),
-                        _speed: Point(x: 500, y: 1000)
-                    )
+                        _speed: Point(x: 500, y: 1000),
+                        _sleep: 60)
                 ]
             }
             
