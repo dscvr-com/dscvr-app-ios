@@ -463,7 +463,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             self.imageCache.reset()
             self.viewModel.refresh()
             self.optographIDs = self.viewModel.getOptographIds()
-            self.collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            if self.optographIDs.count > 1 {
+                self.collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            }
         }
     }
 
