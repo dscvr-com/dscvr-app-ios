@@ -250,8 +250,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         updateNavbarAppear()
         
-        updateTabs()
-        
+//        updateTabs()
+
         tabController!.showUI()
         
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {

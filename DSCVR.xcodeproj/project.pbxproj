@@ -168,6 +168,7 @@
 		E8E1392B1EF2C04700712EE2 /* motor_active.png in Resources */ = {isa = PBXBuildFile; fileRef = E8E139281EF2C04700712EE2 /* motor_active.png */; };
 		E8E1392C1EF2C04700712EE2 /* motor_inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = E8E139291EF2C04700712EE2 /* motor_inactive.png */; };
 		E8E1392D1EF2C04700712EE2 /* motor_inactive_white.png in Resources */ = {isa = PBXBuildFile; fileRef = E8E1392A1EF2C04700712EE2 /* motor_inactive_white.png */; };
+		E8E1464A1EF6A4A70081D71E /* camera_without_icn.png in Resources */ = {isa = PBXBuildFile; fileRef = E8E146491EF6A4A70081D71E /* camera_without_icn.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -456,6 +457,7 @@
 		E8E139281EF2C04700712EE2 /* motor_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = motor_active.png; sourceTree = "<group>"; };
 		E8E139291EF2C04700712EE2 /* motor_inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = motor_inactive.png; sourceTree = "<group>"; };
 		E8E1392A1EF2C04700712EE2 /* motor_inactive_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = motor_inactive_white.png; sourceTree = "<group>"; };
+		E8E146491EF6A4A70081D71E /* camera_without_icn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera_without_icn.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1112,6 +1114,7 @@
 		E861F4051ECD0D36009682CA /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				E8E146481EF6A4A70081D71E /* recordButton */,
 				E8E139271EF2C04700712EE2 /* motorButton */,
 				E861F4061ECD0D36009682CA /* motorButtonOneRing */,
 			);
@@ -1136,6 +1139,14 @@
 				E8E1392A1EF2C04700712EE2 /* motor_inactive_white.png */,
 			);
 			path = motorButton;
+			sourceTree = "<group>";
+		};
+		E8E146481EF6A4A70081D71E /* recordButton */ = {
+			isa = PBXGroup;
+			children = (
+				E8E146491EF6A4A70081D71E /* camera_without_icn.png */,
+			);
+			path = recordButton;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1214,7 +1225,7 @@
 					};
 					8FCCA02A1B3806040091F1B1 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = 675Y8HZ459;
+						DevelopmentTeam = 93N5JQ6UW7;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -1287,6 +1298,7 @@
 				A5FD5D8B1BEA5A570031ED1E /* lib in Resources */,
 				A56CA4081BC070450078D7E8 /* zeiss_displacement_left.json in Resources */,
 				A56CA4131BC070AE0078D7E8 /* barrell_displacement.fsh in Resources */,
+				E8E1464A1EF6A4A70081D71E /* camera_without_icn.png in Resources */,
 				A56CA40C1BC070450078D7E8 /* zeiss_displacement_right.vsh in Resources */,
 				A56CA40A1BC070450078D7E8 /* zeiss_displacement_right.fsh in Resources */,
 				E8E139261EF2B9C700712EE2 /* one_ring_inactive_icnwhite.png in Resources */,
@@ -1630,7 +1642,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
-				DEVELOPMENT_TEAM = 675Y8HZ459;
+				DEVELOPMENT_TEAM = 93N5JQ6UW7;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1681,7 +1693,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 84;
-				DEVELOPMENT_TEAM = 675Y8HZ459;
+				DEVELOPMENT_TEAM = 93N5JQ6UW7;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
