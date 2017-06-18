@@ -144,6 +144,8 @@ class CameraOverlayVC: UIViewController {
             }
         } else {
             navigationController?.pushViewController(CameraViewController(), animated: false)
+            NotificationCenter.default.removeObserver(navigationController?.viewControllers[0], name: NSNotification.Name(rawValue: remoteMotorNotificationKey), object: nil)
+            NotificationCenter.default.removeObserver(navigationController?.viewControllers[0], name: NSNotification.Name(rawValue: remoteManualNotificationKey), object: nil)
             navigationController?.viewControllers.remove(at: 1)
         }
     }
@@ -159,6 +161,8 @@ class CameraOverlayVC: UIViewController {
         let cvc = self.navigationController?.viewControllers[2] as! CameraViewController
         cvc.motorControl = btMotorControl
         cvc.motionManager = cvc.motorControl
+        NotificationCenter.default.removeObserver(navigationController?.viewControllers[0], name: NSNotification.Name(rawValue: remoteMotorNotificationKey), object: nil)
+        NotificationCenter.default.removeObserver(navigationController?.viewControllers[0], name: NSNotification.Name(rawValue: remoteManualNotificationKey), object: nil)
         self.navigationController?.viewControllers.remove(at: 1)
     }
 
