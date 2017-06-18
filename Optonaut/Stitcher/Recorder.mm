@@ -157,7 +157,7 @@ optonaut::StorageImageSink leftSink(Stores::left);
 optonaut::StorageImageSink rightSink(Stores::right);
 
 
--(id)init:(RecorderMode)recorderMode {
+-(id)init:(RecorderMode)recorderMode:(bool)highAccuracy {
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
     
@@ -196,10 +196,10 @@ optonaut::StorageImageSink rightSink(Stores::right);
     
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
         self->multiRingPipe = new optonaut::MultiRingRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                               self->intrinsics, leftSink, rightSink, optonaut::RecorderGraph::ModeTruncated, 1.0, debugPath);
+                                               self->intrinsics, leftSink, rightSink, optonaut::RecorderGraph::ModeTruncated, 1.0, debugPath, highAccuracy);
     } else {
         self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                        self->intrinsics, optonaut::RecorderGraph::ModeCenter, 1.0, debugPath);
+                                        self->intrinsics, optonaut::RecorderGraph::ModeCenter, 1.0, debugPath, highAccuracy);
     }
   
     
