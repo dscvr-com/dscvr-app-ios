@@ -743,13 +743,6 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         let recorderCleanup = SignalProducer<UIImage, NoError> { sink, disposable in
             
-            if recorder_.previewAvailable() {
-                let previewData = recorder_.getPreviewImage()
-                autoreleasepool {
-                    sink.send(value: UIImage(cgImage: ImageBufferToCGImage(previewData)))
-                }
-                Recorder.freeImageBuffer(previewData)
-            }
             recorder_.finish()
             
             sink.sendCompleted()

@@ -427,37 +427,4 @@ optonaut::StorageImageSink rightSink(Stores::right);
     pipe = NULL;
     }
 }
-
-- (struct ExposureInfo)getExposureHint {
-    
-    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        
-        assert(multiRingPipe != NULL);
-    } else {
-        assert(pipe != NULL);
-    }
-    
-    cv::Mat extrinsics;
-    ExposureInfo converted;
-    
-    return converted;
-}
-- (bool)previewAvailable {
-    if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-        assert(multiRingPipe != NULL);
-    } else {
-        assert(pipe != NULL);
-    }
-    return true;
-}
-- (struct ImageBuffer)getPreviewImage {
-     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
-         assert(multiRingPipe != NULL);
-         return CVMatToImageBuffer(multiRingPipe->GetPreviewImage()->image.data);
-
-     } else {
-         assert(pipe != NULL);
-         return CVMatToImageBuffer(pipe->GetPreviewImage()->image.data);
-     }
-}
 @end
