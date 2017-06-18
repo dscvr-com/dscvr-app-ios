@@ -162,6 +162,7 @@
 		BB88A26B1D9A64FB00EB09B0 /* Nexa Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A2691D9A64E300EB09B0 /* Nexa Bold.otf */; };
 		BB88A26C1D9A64FB00EB09B0 /* Nexa Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A26A1D9A64E300EB09B0 /* Nexa Light.otf */; };
 		BB88A26E1D9A8AF600EB09B0 /* Merriweather Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */; };
+		E8400E081EF7396B003207A5 /* qr.png in Resources */ = {isa = PBXBuildFile; fileRef = E8400E071EF7396B003207A5 /* qr.png */; };
 		E861F4091ECD0D36009682CA /* one_ring_active_icn.png in Resources */ = {isa = PBXBuildFile; fileRef = E861F4071ECD0D36009682CA /* one_ring_active_icn.png */; };
 		E861F40A1ECD0D36009682CA /* one_ring_inactive_icn.png in Resources */ = {isa = PBXBuildFile; fileRef = E861F4081ECD0D36009682CA /* one_ring_inactive_icn.png */; };
 		E8E139261EF2B9C700712EE2 /* one_ring_inactive_icnwhite.png in Resources */ = {isa = PBXBuildFile; fileRef = E8E139251EF2B9C700712EE2 /* one_ring_inactive_icnwhite.png */; };
@@ -450,6 +451,7 @@
 		BB88A2691D9A64E300EB09B0 /* Nexa Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nexa Bold.otf"; sourceTree = "<group>"; };
 		BB88A26A1D9A64E300EB09B0 /* Nexa Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nexa Light.otf"; sourceTree = "<group>"; };
 		BB88A26D1D9A8AB500EB09B0 /* Merriweather Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Merriweather Light.ttf"; sourceTree = "<group>"; };
+		E8400E071EF7396B003207A5 /* qr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qr.png; sourceTree = "<group>"; };
 		E861F4071ECD0D36009682CA /* one_ring_active_icn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_active_icn.png; sourceTree = "<group>"; };
 		E861F4081ECD0D36009682CA /* one_ring_inactive_icn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_inactive_icn.png; sourceTree = "<group>"; };
 		E8E139251EF2B9C700712EE2 /* one_ring_inactive_icnwhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = one_ring_inactive_icnwhite.png; sourceTree = "<group>"; };
@@ -1109,9 +1111,18 @@
 			path = stereo;
 			sourceTree = "<group>";
 		};
+		E8400E061EF7396B003207A5 /* qr */ = {
+			isa = PBXGroup;
+			children = (
+				E8400E071EF7396B003207A5 /* qr.png */,
+			);
+			path = qr;
+			sourceTree = "<group>";
+		};
 		E861F4051ECD0D36009682CA /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				E8400E061EF7396B003207A5 /* qr */,
 				E8E146481EF6A4A70081D71E /* recordButton */,
 				E8E139271EF2C04700712EE2 /* motorButton */,
 				E861F4061ECD0D36009682CA /* motorButtonOneRing */,
@@ -1283,6 +1294,7 @@
 				A56CA4141BC070AE0078D7E8 /* barrell_displacement.json in Resources */,
 				598F571E1CEDA771002229AF /* Avenir-Book_0.otf in Resources */,
 				A56CA4151BC070AE0078D7E8 /* barrell_displacement.vsh in Resources */,
+				E8400E081EF7396B003207A5 /* qr.png in Resources */,
 				A5DE71EF1BE28A7400316F82 /* distortion.vsh in Resources */,
 				E8E1392B1EF2C04700712EE2 /* motor_active.png in Resources */,
 				8FBC869E1BB72AFC00539D4E /* SF-UI-Display-Thin.otf in Resources */,

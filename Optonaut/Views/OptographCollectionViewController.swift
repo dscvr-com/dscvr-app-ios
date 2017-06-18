@@ -93,7 +93,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 
         let cardboardButton = UIButton()
         cardboardButton.setBackgroundImage(UIImage(named: "vr_icon"), for: UIControlState())
-        cardboardButton.frame = CGRect(x: 0, y: -2, width: 35, height: 24)
+        cardboardButton.frame = CGRect(x: 0, y: -2, width: 42, height: 24)
         cardboardButton.isUserInteractionEnabled = true
         cardboardButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OptographCollectionViewController.showCardboardAlert)))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: cardboardButton)

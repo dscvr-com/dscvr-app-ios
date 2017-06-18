@@ -151,7 +151,7 @@ class ViewerViewController: UIViewController  {
         rightLoadingView.frame = CGRect(x: view.frame.width / 2 - 20, y: view.frame.height * 3 / 4 - 20, width: 40, height: 40)
         view.addSubview(rightLoadingView)
         
-        settingsButtonView.frame = CGRect(x: 10, y: view.frame.height / 2 - 15, width: 30, height: 30)
+        settingsButtonView.frame = CGRect(x: 10, y: view.frame.height / 2 - 11, width: 34, height: 22)
         // TODO
         //settingsButtonView.setTitle(String.iconWithName(.Settings), for: UIControlState())
         settingsButtonView.setBackgroundImage(UIImage(named: "vr_icon"), for: UIControlState())
@@ -325,11 +325,13 @@ private class GlassesSelectionView: UIView {
         let blurEffect = UIBlurEffect(style: .dark)
         return UIVisualEffectView(effect: blurEffect)
     }()
-    
+
     fileprivate let cancelButtonView = UIButton()
     fileprivate let titleTextView = UILabel()
     fileprivate let glassesIconView = UILabel()
     fileprivate let glassesTextView = UILabel()
+    var qrImageview = UIImageView()
+    var vrImageview = UIImageView()
     fileprivate let qrcodeIconView = UILabel()
     fileprivate let qrcodeTextView = UILabel()
     fileprivate var previewLayer: AVCaptureVideoPreviewLayer?
@@ -368,13 +370,10 @@ private class GlassesSelectionView: UIView {
         titleTextView.font = UIFont.displayOfSize(35, withType: .Thin)
         addSubview(titleTextView)
         
-        // TODO
-        //glassesIconView.text = String.iconWithName(.Cardboard)
-        glassesIconView.textColor = .white
-        glassesIconView.textAlignment = .center
-        
-        // TODO
-        //glassesIconView.font = UIFont.iconOfSize(73)
+        let vrimage: UIImage = UIImage(named: "vr_icon")!
+        vrImageview = UIImageView(image: vrimage)
+        addSubview(vrImageview)
+
         glassesIconView.isUserInteractionEnabled = true
         glassesIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         addSubview(glassesIconView)
@@ -386,14 +385,14 @@ private class GlassesSelectionView: UIView {
         glassesTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "cancel"))
         addSubview(glassesTextView)
         
-        // TODO
-        //qrcodeIconView.text = String.iconWithName(.Qrcode)
-        //qrcodeIconView.font = UIFont.iconOfSize(50)
-        qrcodeIconView.textColor = .white
-        qrcodeIconView.textAlignment = .center
+        let qrimage: UIImage = UIImage(named: "qr")!
+        qrImageview = UIImageView(image: qrimage)
+        addSubview(qrImageview)
+
         qrcodeIconView.isUserInteractionEnabled = true
         qrcodeIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "scan"))
         addSubview(qrcodeIconView)
+
         
         qrcodeTextView.font = UIFont.displayOfSize(15, withType: .Semibold)
         qrcodeTextView.textColor = .white
@@ -441,14 +440,17 @@ private class GlassesSelectionView: UIView {
         
         titleTextView.frame = CGRect(x: 0, y: bounds.height * 0.25 - 19, width: bounds.width, height: 38)
         
-        glassesIconView.frame = CGRect(x: bounds.width * 0.37 - 37, y: bounds.height * 0.5, width: 74, height: 50)
+        glassesIconView.frame = CGRect(x: bounds.width * 0.37 - 37, y: bounds.height * 0.5 - 12, width: 74, height: 50)
         glassesTextView.frame = CGRect(x: bounds.width * 0.37 - 100, y: bounds.height * 0.5 + 70, width: 200, height: 20)
         
-        qrcodeIconView.frame = CGRect(x: bounds.width * 0.63 - 37, y: bounds.height * 0.5, width: 74, height: 50)
+        qrcodeIconView.frame = CGRect(x: bounds.width * 0.63 - 37, y: bounds.height * 0.5 - 25, width: 74, height: 74)
         qrcodeTextView.frame = CGRect(x: bounds.width * 0.63 - 100, y: bounds.height * 0.5 + 70, width: 200, height: 20)
         
         loadingIndicatorView.frame = CGRect(x: bounds.width * 0.5 - 20, y: bounds.height * 0.5 - 20, width: 40, height: 40)
-        
+
+        vrImageview.frame = CGRect(x: bounds.width * 0.37 - 37, y: bounds.height * 0.5 - 12, width: 74, height: 50)
+        qrImageview.frame = CGRect(x: bounds.width * 0.63 - 37, y: bounds.height * 0.5 - 25, width: 74, height: 74)
+
         super.layoutSubviews()
         
     }
