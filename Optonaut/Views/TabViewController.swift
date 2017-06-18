@@ -147,11 +147,11 @@ class RecordButton: UIButton {
     var loading = false {
         didSet {
             if loading {
-                SwiftSpinner.show("Stitching in progress")
-//                loadingView.startAnimating()
+                loadingView.startAnimating()
+                icon = UIImage(named:"camera_without_icn")!
             } else {
-//                loadingView.stopAnimating()
-                SwiftSpinner.hide()
+                loadingView.stopAnimating()
+                icon = UIImage(named:"camera_icn")!
             }
 
             setTitleColor(titleColor(for: UIControlState())!.alpha(loading ? 0 : 1), for: UIControlState())
