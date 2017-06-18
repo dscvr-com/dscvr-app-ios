@@ -201,7 +201,8 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         if StitchingService.hasUnstitchedRecordings() {
             StitchingService.removeUnstitchedRecordings()
         }
-        
+        NotificationCenter.default.post(name: Notification.Name(rawValue: registerObserverNotificationKey), object: self, userInfo: nil)
+
         self.navigationController?.popViewController(animated: true)
     }
     

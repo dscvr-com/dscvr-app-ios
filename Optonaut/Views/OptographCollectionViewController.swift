@@ -33,6 +33,8 @@ let remoteMotorNotificationKey = "meyer.remoteMotor"
 let stitchingFinishedNotificationKey = "meyer.stitchingFinished"
 let deletedOptographNotificationKey = "meyer.deletedOptograph"
 let didConnectMotorNotificationKey = "meyer.didConnectMotor"
+let registerObserverNotificationKey = "meyer.registerObserver"
+
 
 class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
 
@@ -84,8 +86,10 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.updateOptographCollection(_:)), name: NSNotification.Name(rawValue: stitchingFinishedNotificationKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.updateOptographCollection), name: NSNotification.Name(rawValue: stitchingFinishedNotificationKey), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshDataSourceForCollectionView(_:)), name: NSNotification.Name(rawValue: deletedOptographNotificationKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.registerObserver), name: NSNotification.Name(rawValue: registerObserverNotificationKey), object: nil)
+
 
         let cardboardButton = UIButton()
         cardboardButton.setBackgroundImage(UIImage(named: "vr_icon"), for: UIControlState())
@@ -188,7 +192,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
     }
 
     func record() {
-        NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: remoteMotorNotificationKey), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: remoteManualNotificationKey), object: nil)
         Defaults[.SessionMotor] = true
         tabController!.cameraButton.isHidden = true
         if bt.connectedPeripherals.isEmpty {
@@ -198,9 +203,19 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             self.present(confirmAlert, animated: true, completion: nil)
         } else {
             self.navigationController?.pushViewController(CameraViewController(), animated: false)
-            let cvc = self.navigationController?.viewControllers[1] as! CameraViewController
-            cvc.motorControl = btMotorControl
-            cvc.motionManager = cvc.motorControl
+            do {
+                guard let cvc = self.navigationController?.viewControllers[1] as? CameraViewController else {
+                    throw NSError()
+                }
+                cvc.motorControl = btMotorControl
+                cvc.motionManager = cvc.motorControl
+            } catch {
+                let cvc = self.navigationController?.viewControllers[2] as! CameraViewController
+                cvc.motorControl = btMotorControl
+                cvc.motionManager = cvc.motorControl
+                navigationController?.viewControllers.remove(at: 1)
+
+            }
         }
     }
 
@@ -249,8 +264,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         tabController!.delegate = self
         
         updateNavbarAppear()
-        
-//        updateTabs()
 
         tabController!.showUI()
         
@@ -439,16 +452,21 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         navigationController?.present(confirmAlert, animated: true, completion: nil)
     }
 
-    func updateOptographCollection(_ notification: NSNotification) {
+    func updateOptographCollection() {
         PipelineService.stitchingStatus.value = .idle
+        refreshCollection()
+        registerObserver()
+    }
+
+    func refreshCollection() {
         Async.main {
             self.imageCache.reset()
             self.viewModel.refresh()
             self.optographIDs = self.viewModel.getOptographIds()
-            self.collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            if self.optographIDs.count > 1 {
+                self.collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            }
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteManual), name: NSNotification.Name(rawValue: remoteManualNotificationKey), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.remoteMotor), name: NSNotification.Name(rawValue: remoteMotorNotificationKey), object: nil)
     }
 
     func refreshDataSourceForCollectionView(_ notification: NSNotification) {
