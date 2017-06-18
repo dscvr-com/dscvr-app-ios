@@ -71,6 +71,7 @@ class StitchingService {
         }
         
         assert(!isStitching())
+        assert(hasUnstitchedRecordings())
         currentOptograph = optographID
         
         shallCancel = false
