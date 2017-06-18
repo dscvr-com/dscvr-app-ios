@@ -116,7 +116,7 @@ class PipelineService {
         } else {
             stitchingStatus.value = .idle
             
-            if !StitchingService.isStitching() && StitchingService.hasUnstitchedRecordings() {
+            if !StitchingService.isStitching() && StitchingService.hasData() {
                 // This happens when an optograph was recorded, but never
                 // inserted into the DB, for example due to cancel.
                 // So it needs to be removed.

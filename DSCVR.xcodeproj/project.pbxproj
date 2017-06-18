@@ -413,7 +413,6 @@
 		A5FD5D4E1BEA5A4E0031ED1E /* static_timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = static_timer.cpp; sourceTree = "<group>"; };
 		A5FD5D4F1BEA5A4E0031ED1E /* static_timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = static_timer.hpp; sourceTree = "<group>"; };
 		A5FD5D501BEA5A4E0031ED1E /* support.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = support.hpp; sourceTree = "<group>"; };
-		A5FD5D521BEA5A4E0031ED1E /* correlation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = correlation.hpp; sourceTree = "<group>"; };
 		A5FD5D531BEA5A4E0031ED1E /* pairwiseCorrelator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pairwiseCorrelator.hpp; sourceTree = "<group>"; };
 		A5FD5D541BEA5A4E0031ED1E /* pairwiseVisualAligner.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pairwiseVisualAligner.hpp; sourceTree = "<group>"; };
 		A5FD5D561BEA5A4E0031ED1E /* checkpointStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = checkpointStore.cpp; sourceTree = "<group>"; };
@@ -1037,7 +1036,6 @@
 			children = (
 				A56DE1161C502D730099A14D /* panoramaBlur.hpp */,
 				A55C80FC1BF920D000420E52 /* planarCorrelator.hpp */,
-				A5FD5D521BEA5A4E0031ED1E /* correlation.hpp */,
 				A5FD5D531BEA5A4E0031ED1E /* pairwiseCorrelator.hpp */,
 				A5FD5D541BEA5A4E0031ED1E /* pairwiseVisualAligner.hpp */,
 			);

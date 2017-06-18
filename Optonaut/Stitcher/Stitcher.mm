@@ -23,8 +23,9 @@ struct StitcherCancellation {
 
 };
 
--(NSArray<NSValue*>*)getCubeFaces:(cv::Mat)sphere {
-    int width = sphere.cols / 4;
+-(NSArray<NSValue*>*)getCubeFaces:(struct ImageBuffer)erBuf {
+    Mat sphere = ImageBufferToCVMat(erBuf);
+    int width = sphere.cols / 4; // That's as good as it gets.
 
     NSMutableArray<NSValue*>* cubeFaces = [[NSMutableArray<NSValue*> alloc] init];
     
@@ -61,36 +62,9 @@ struct StitcherCancellation {
     callback = new optonaut::ProgressCallbackAccumulator(*callbackWrapper, {0.5f, 0.5f});
 }
 
-- (NSArray<NSValue*>*)getLeftResult {
-    
-    
-
-    
-    NSArray<NSValue*>* result;
-    
-    try {
-        optonaut::StitchingResultP result = Stores::left.LoadOptograph();
-        result->image.Load();
-        cv::Mat sphere = result->image.data;
-        cv::Mat blurred;
-        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
-        panoBlur.Blur(sphere, blurred);
-        sphere.release();
-        
-        return [self getCubeFaces:blurred];
-    } catch (StitcherCancellation c) { }
-
-    return result;
-    
-}
-
-- (NSArray<NSValue*>*)getLeftResultThreeRing {
-    
-    
+- (struct ImageBuffer)getLeftResult {
     
     optonaut::Stitcher stitcher(Stores::left);
-    
-    NSArray<NSValue*>* result;
     
     try {
         cv::Mat sphere = stitcher.Finish(callback->At(0))->image.data;
@@ -99,101 +73,34 @@ struct StitcherCancellation {
         panoBlur.Blur(sphere, blurred);
         sphere.release();
         
-        return [self getCubeFaces:blurred];
+        return CVMatToImageBuffer(blurred);
     } catch (StitcherCancellation c) { }
-    return result;
+
+    return ImageBuffer();
     
 }
 
-
-- (struct ImageBuffer)getLeftEquirectangularResultThreeRing {
-    
-    
-    optonaut::Stitcher stitcher(Stores::left);
-    
-    cv::Mat sphere = stitcher.Finish(optonaut::ProgressCallback::Empty)->image.data;
-    //cv::Mat blackMat;
-    cv::Mat blurred;
-    optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
-    panoBlur.Blur(sphere, blurred);
-    //panoBlur.Black(sphere, blackMat);
-    
-    return CVMatToImageBuffer(sphere);
-    //return CVMatToImageBuffer(blackMat);
-    
-}
-
-
-- (struct ImageBuffer)getLeftEquirectangularResult {
-    
-  
-    optonaut::StitchingResultP result = Stores::left.LoadOptograph();
-    result->image.Load();
-    cv::Mat sphere = result->image.data;
-    cv::Mat blackMat;
-    optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
-    panoBlur.Black(sphere, blackMat);
-
-    return CVMatToImageBuffer(blackMat);
-    
-
-    
-}
-
-- (NSArray<NSValue*>*)getRightResult {
-    
-
-    
-    NSArray<NSValue*>* result;
-    
-    try {
-        optonaut::StitchingResultP result = Stores::right.LoadOptograph();
-        result->image.Load();
-        cv::Mat sphere = result->image.data;
-        cv::Mat blurred;
-        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
-        panoBlur.Blur(sphere, blurred);
-        sphere.release();
-        
-        return [self getCubeFaces:blurred];
-    } catch (StitcherCancellation c) { }
-    return result;
-    
-}
-
-- (NSArray<NSValue*>*)getRightResultThreeRing {
+- (struct ImageBuffer)getRightResult {
     optonaut::Stitcher stitcher(Stores::right);
     
-    NSArray<NSValue*>* result;
-    
     try {
+        
         cv::Mat sphere = stitcher.Finish(callback->At(1))->image.data;
         cv::Mat blurred;
         optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
         panoBlur.Blur(sphere, blurred);
         sphere.release();
         
-        return [self getCubeFaces:blurred];
+        return CVMatToImageBuffer(blurred);
     } catch (StitcherCancellation c) { }
-    return result;
-    
-}
-
-
-- (struct ImageBuffer)getRightEquirectangularResult {
-    optonaut::StitchingResultP result = Stores::right.LoadOptograph();
-    result->image.Load();
-    cv::Mat sphere = result->image.data;
-    cv::Mat blackMat;
-    optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
-    panoBlur.Black(sphere, blackMat);
-    
-    return CVMatToImageBuffer(blackMat);
-    
+    return ImageBuffer();
 }
 
 - (bool)hasUnstitchedRecordings {
-    return Stores::left.HasUnstitchedRecording() || Stores::right.HasUnstitchedRecording();
+    return Stores::left.HasUnstitchedRecording() && Stores::right.HasUnstitchedRecording();
+}
+- (bool)hasData {
+    return Stores::left.HasData() || Stores::right.HasData();
 }
 - (void)clear {
     if(callback != NULL) {

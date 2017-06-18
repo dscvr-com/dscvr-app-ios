@@ -60,6 +60,8 @@ class ViewerViewController: UIViewController  {
         default: screen = ScreenParams(device: .iPhone6S)
         }
         
+        print("Creating VR headset: \(Defaults[.SessionVRGlasses])")
+        
         headset = CardboardParams.fromBase64(Defaults[.SessionVRGlasses]).value!
         
         print("Headset: \(headset.vendor) \(headset.model)")

@@ -18,7 +18,7 @@ class CameraDebugService {
 
     let path: String = {
         let appId = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? NSString
-        let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first! + "/\(appId!)/static/debug"
+        let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first! + "/\(appId!)/static/debug/"
         try! FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
         return path
         }()

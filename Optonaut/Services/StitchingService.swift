@@ -59,6 +59,9 @@ class StitchingService {
     static func hasUnstitchedRecordings() -> Bool {
         return storeRef.hasUnstitchedRecordings()
     }
+    static func hasData() -> Bool {
+        return storeRef.hasData()
+    }
     
     /// This function starts a new stitching process.
     static func startStitching(_ optographID: UUID) -> StitchingSignal {
@@ -68,7 +71,7 @@ class StitchingService {
         }
         
         assert(!isStitching())
-        //assert(hasUnstitchedRecordings())
+        assert(hasUnstitchedRecordings())
         currentOptograph = optographID
         
         shallCancel = false
@@ -86,10 +89,6 @@ class StitchingService {
             Mixpanel.sharedInstance()?.track("Action.Stitching.Start")
             Mixpanel.sharedInstance()?.timeEvent("Action.Stitching.Finish")
             
-            
-            // There is no such thing any more. 
-            //assert(hasUnstitchedRecordings())
-            
             let stitcher = Stitcher()
             stitcher.setProgressCallback { progress in
                 Async.main {
@@ -100,39 +99,39 @@ class StitchingService {
 
             if !shallCancel {
                 autoreleasepool {
-                    let image = ImageBufferToCompressedUIImage(stitcher.getLeftEquirectangularResult())
+                    let buffer = stitcher.getLeftResult()
+                    let image = ImageBufferToCompressedUIImage(buffer)
                     UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                    for (face, cubeFace) in stitcher.getCubeFaces(buffer).enumerated() {
+                        var leftFace = ImageBuffer()
+                        cubeFace.getValue(&leftFace)
+                        
+                        if !shallCancel {
+                            autoreleasepool {
+                                let image = ImageBufferToCompressedUIImage(leftFace)
+                                sink.send(value: .result(side: .left, face: face, image: image))
+                            }
+                        }
+                        Recorder.freeImageBuffer(leftFace)
+                    }
                 }
             }
 
-            if !shallCancel {
-                for (face, cubeFace) in stitcher.getLeftResult().enumerated() {
-                    var leftFace = ImageBuffer()
-                    cubeFace.getValue(&leftFace)
-                    
-                    if !shallCancel {
-                        autoreleasepool {
-                            let image = ImageBufferToCompressedUIImage(leftFace)
-                            sink.send(value: .result(side: .left, face: face, image: image))
-                        }
-                    }
-                    Recorder.freeImageBuffer(leftFace)
-                }
-            }
-            
             // TODO: Save to photo gallery
             if !shallCancel {
-                for (face, cubeFace) in stitcher.getRightResult().enumerated() {
-                    var rightFace = ImageBuffer()
-                    cubeFace.getValue(&rightFace)
-                    
-                    autoreleasepool {
+                autoreleasepool {
+                    let buffer = stitcher.getRightResult()
+                    //let image = ImageBufferToCompressedUIImage(buffer)
+                    for (face, cubeFace) in stitcher.getCubeFaces(buffer).enumerated() {
+                        var rightFace = ImageBuffer()
+                        cubeFace.getValue(&rightFace)
+                        
                         if !shallCancel {
                             let image = ImageBufferToCompressedUIImage(rightFace)
                             sink.send(value: .result(side: .right, face: face, image: image))
                         }
+                        Recorder.freeImageBuffer(rightFace)
                     }
-                    Recorder.freeImageBuffer(rightFace)
                 }
             }
             
@@ -158,11 +157,8 @@ class StitchingService {
    
     
     static func removeUnstitchedRecordings() {
-        if (isStitching()) { //testcode to prevent crash when miscalled
-            return
-        }
         assert(!isStitching())
-        if hasUnstitchedRecordings() {
+        if hasData() {
             storeRef.clear()
         }
     }

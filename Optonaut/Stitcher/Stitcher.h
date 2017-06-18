@@ -2,14 +2,11 @@
 #include "CommonExternal.h"
 
 @interface Stitcher : NSObject
-- (NSArray<NSValue*>*)getLeftResult;
-- (NSArray<NSValue*>*)getRightResult;
+- (struct ImageBuffer)getLeftResult;
+- (struct ImageBuffer)getRightResult;
+- (NSArray<NSValue*>*)getCubeFaces:(struct ImageBuffer)erBuf;
 - (void)clear;
 - (bool)hasUnstitchedRecordings;
+- (bool)hasData;
 - (void)setProgressCallback:(bool(^)(float))progressHandler;
-- (struct ImageBuffer)getLeftEquirectangularResult;
-- (struct ImageBuffer)getRightEquirectangularResult;
-- (struct ImageBuffer)getLeftEquirectangularResultThreeRing ;
-- (NSArray<NSValue*>*)getLeftResultThreeRing;
-- (NSArray<NSValue*>*)getRightResultThreeRing;
 @end

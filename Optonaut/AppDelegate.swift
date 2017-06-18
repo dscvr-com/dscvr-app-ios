@@ -48,39 +48,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             print("PhotoDirectory created")
         }
+        
+        setupAppearanceDefaults()
+        window = UIWindow(frame: UIScreen.main.bounds)
+        
+        window?.backgroundColor = .white
+        window?.makeKeyAndVisible()
 
-        prepareAndExecute(requireLogin: true) {
-            let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
-            if launchedBefore  {
-                print("Not first launch.")
-            }
-            else {
-                print("First launch, setting NSUserDefault.")
-                UserDefaults.standard.set(true, forKey: "launchedBefore")
-                Defaults[.SessionVRMode] = true
-                Defaults[.SessionUseMultiRing] = false
-            }
-            
-            Mixpanel.sharedInstance()?.track("Launch.Notification")
-            
-            Defaults[.SessionPhoneModel] = UIDevice.current.modelName
-            Defaults[.SessionPhoneOS] = UIDevice.current.systemVersion
-            
-            let tabBarViewController = TabViewController()
-            self.window?.rootViewController = tabBarViewController
-            
-            Defaults[.SessionGyro] = true
-            Defaults[.SessionEliteUser] = true
-            
-            //motor configurations
-            
-            Defaults[.SessionPPS] = 250
-            Defaults[.SessionRotateCount] = 5111
-            Defaults[.SessionTopCount] = 1999
-            Defaults[.SessionBotCount] = -3998
-            Defaults[.SessionBuffCount] = 0
+        let launchedBefore = UserDefaults.standard.bool(forKey: "launchedBefore")
+        if launchedBefore  {
+            print("Not first launch.")
+        }
+        else {
+            print("First launch, setting NSUserDefault.")
+            UserDefaults.standard.set(true, forKey: "launchedBefore")
+            Defaults[.SessionVRMode] = true
+            Defaults[.SessionUseMultiRing] = false
+            Defaults[.SessionVRGlasses] = DefaultVRGlasses
             
         }
+        
+        Mixpanel.sharedInstance()?.track("Launch.Notification")
+        
+        Defaults[.SessionPhoneModel] = UIDevice.current.modelName
+        Defaults[.SessionPhoneOS] = UIDevice.current.systemVersion
+        
+        let tabBarViewController = TabViewController()
+        self.window?.rootViewController = tabBarViewController
+        
         return true
     }
     
@@ -113,33 +108,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Defaults[.SessionStoryOptoID] = nil
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-    fileprivate func prepareAndExecute(requireLogin: Bool, fn: () -> ()) {
-        
-        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
-        
-//        #if !DEBUG
-            Twitter.sharedInstance().start(withConsumerKey: "QZJ8OamzEQ76FghX0EKWqmA7e", consumerSecret: "jhhzAwZGl386N4QxpIvwuIB5nwLeAMoCLYQaDpAm9pXb6IQAZB")
-            Fabric.with([Crashlytics.sharedInstance(), Twitter.sharedInstance()])
-//        #endif    
-        
-        if case .production = Env {
-            print("production mixpanel")
-            //Mixpanel.sharedInstanceWithToken("2cb0781fb2aaac9ef23bb1e92694caae")
-        } else {
-            print("staging mixpanel")
-            Mixpanel.sharedInstance(withToken: "905eb49cf2c78af5ceb307939f02c092")
-        }
-        
-        setupAppearanceDefaults()
-               window = UIWindow(frame: UIScreen.main.bounds)
-        
-        window?.backgroundColor = .white
-        window?.makeKeyAndVisible()
-
-        fn()
-    }
-    
 }
 
 public extension UIDevice {
