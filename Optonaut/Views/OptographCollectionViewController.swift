@@ -33,6 +33,8 @@ let remoteMotorNotificationKey = "meyer.remoteMotor"
 let stitchingFinishedNotificationKey = "meyer.stitchingFinished"
 let deletedOptographNotificationKey = "meyer.deletedOptograph"
 let didConnectMotorNotificationKey = "meyer.didConnectMotor"
+let registerObserverNotificationKey = "meyer.registerObserver"
+
 
 class OptographCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RedNavbar {
 
@@ -86,6 +88,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateOptographCollection), name: NSNotification.Name(rawValue: stitchingFinishedNotificationKey), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshDataSourceForCollectionView(_:)), name: NSNotification.Name(rawValue: deletedOptographNotificationKey), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.registerObserver), name: NSNotification.Name(rawValue: registerObserverNotificationKey), object: nil)
+
 
         let cardboardButton = UIButton()
         cardboardButton.setBackgroundImage(UIImage(named: "vr_icon"), for: UIControlState())
