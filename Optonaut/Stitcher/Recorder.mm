@@ -186,8 +186,8 @@ optonaut::StorageImageSink rightSink(Stores::right);
     // Yes, asserting in init is evil.
     // But you sould never even think of starting a new recording
     // while an old one is in the stores.
-    assert(!Stores::left.HasUnstitchedRecording());
-    assert(!Stores::right.HasUnstitchedRecording());
+    assert(!Stores::left.HasData());
+    assert(!Stores::right.HasData());
     
     
     
