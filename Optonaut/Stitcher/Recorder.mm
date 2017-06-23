@@ -196,7 +196,7 @@ optonaut::StorageImageSink rightSink(Stores::right);
     
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
         self->multiRingPipe = new optonaut::MultiRingRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                               self->intrinsics, leftSink, rightSink, optonaut::RecorderGraph::ModeTruncated, 1.0, debugPath, highAccuracy);
+                                               self->intrinsics, leftSink, rightSink, optonaut::RecorderGraph::ModeTruncated, 2.0, debugPath, highAccuracy);
     } else {
         self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
                                         self->intrinsics, optonaut::RecorderGraph::ModeCenter, 1.0, debugPath, highAccuracy);

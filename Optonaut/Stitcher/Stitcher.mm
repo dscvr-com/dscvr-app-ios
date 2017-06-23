@@ -23,15 +23,22 @@ struct StitcherCancellation {
 
 };
 
--(NSArray<NSValue*>*)getCubeFaces:(struct ImageBuffer)erBuf {
-    Mat sphere = ImageBufferToCVMat(erBuf);
-    int width = sphere.cols / 4; // That's as good as it gets.
+-(NSArray<NSValue*>*)blurAndGetCubeFaces:(struct ImageBuffer)erBuf {
+    
+    cv::Mat sphere = ImageBufferToCVMat(erBuf);
+    cv::Mat blurred;
+    optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
+    panoBlur.Blur(sphere, blurred);
+    sphere.release();
+
+    
+    int width = blurred.cols / 4; // That's as good as it gets.
 
     NSMutableArray<NSValue*>* cubeFaces = [[NSMutableArray<NSValue*> alloc] init];
     
     for(int i = 0; i < 6; i++) {
         Mat m;
-        optonaut::CreateCubeMapFace(sphere, m, i, width, width);
+        optonaut::CreateCubeMapFace(blurred, m, i, width, width);
         ImageBuffer buf = CVMatToImageBuffer(m);
         NSValue* conv = [NSValue valueWithBytes:&buf objCType:@encode(ImageBuffer)];
         [cubeFaces addObject:conv];
@@ -68,12 +75,7 @@ struct StitcherCancellation {
     
     try {
         cv::Mat sphere = stitcher.Finish(callback->At(0))->image.data;
-        cv::Mat blurred;
-        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
-        panoBlur.Blur(sphere, blurred);
-        sphere.release();
-        
-        return CVMatToImageBuffer(blurred);
+        return CVMatToImageBuffer(sphere);
     } catch (StitcherCancellation c) { }
 
     return ImageBuffer();
@@ -84,14 +86,8 @@ struct StitcherCancellation {
     optonaut::Stitcher stitcher(Stores::right);
     
     try {
-        
-        cv::Mat sphere = stitcher.Finish(callback->At(1))->image.data;
-        cv::Mat blurred;
-        optonaut::PanoramaBlur panoBlur(sphere.size(), cv::Size(sphere.cols, std::max(sphere.cols / 2, sphere.rows)));
-        panoBlur.Blur(sphere, blurred);
-        sphere.release();
-        
-        return CVMatToImageBuffer(blurred);
+        cv::Mat sphere = stitcher.Finish(callback->At(0))->image.data;
+        return CVMatToImageBuffer(sphere);
     } catch (StitcherCancellation c) { }
     return ImageBuffer();
 }

@@ -442,7 +442,7 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         //let exposureDuration = max(self.exposureDuration, expTime)
         
         let ballSphereRadius = Float(0.9) // Don't put it on 1, since it would overlap with the rings then.
-        let movementPerFrameInPixels = Double(1500)
+        let movementPerFrameInPixels = Double(300)
         
         let newTime = CACurrentMediaTime()
         

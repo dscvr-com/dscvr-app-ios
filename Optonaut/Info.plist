@@ -2,12 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSCameraUsageDescription</key>
-	<string>Take a nice stereo panorama picture. </string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Save the picture to the photo roll.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>DSCVR 360</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -172,8 +170,12 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Take a nice stereo panorama picture. </string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Please enable location detection.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Save the picture to the photo roll.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Merriweather Light.ttf</string>

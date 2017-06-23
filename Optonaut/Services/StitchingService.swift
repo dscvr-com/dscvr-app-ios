@@ -13,6 +13,9 @@ import Async
 import ImageIO
 import AssetsLibrary
 import SwiftyUserDefaults
+import CoreImage
+import Photos
+import MobileCoreServices
 
 enum StitchingError: Error {
     case busy
@@ -63,6 +66,33 @@ class StitchingService {
         return storeRef.hasData()
     }
     
+    static func saveToPhotoAlbumWithMetadata(_ image: CGImage, _ name: UUID) {
+        
+        //UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! + "/savedMoments/"
+        let filePath = path + name + ".jpg"
+        try! FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+        
+        let cfPath = CFURLCreateWithFileSystemPath(nil, filePath as CFString, CFURLPathStyle.cfurlposixPathStyle, false)
+        let destination = CGImageDestinationCreateWithURL(cfPath!, kUTTypeJPEG, 1, nil)
+        let properties: CFDictionary = [
+            "Make": "RICOH",
+            "Model": "RICOH THETA S",
+            "ProjectionType": "equirectangular",
+            "UsePanoramaViewer": "TRUE"
+        ] as CFDictionary
+    
+        
+        CGImageDestinationAddImage(destination!, image, properties)
+        CGImageDestinationFinalize(destination!)
+        
+        try? PHPhotoLibrary.shared().performChangesAndWait {
+            PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: URL(fileURLWithPath: filePath))
+        }
+    }
+    
+    
     /// This function starts a new stitching process.
     static func startStitching(_ optographID: UUID) -> StitchingSignal {
         if isStitching() {
@@ -100,9 +130,9 @@ class StitchingService {
             if !shallCancel {
                 autoreleasepool {
                     let buffer = stitcher.getLeftResult()
-                    let image = ImageBufferToCompressedUIImage(buffer)
-                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                    for (face, cubeFace) in stitcher.getCubeFaces(buffer).enumerated() {
+                    let image = ImageBufferToCGImage(buffer)
+                    saveToPhotoAlbumWithMetadata(image, currentOptograph!)
+                    for (face, cubeFace) in stitcher.blurAndGetCubeFaces(buffer).enumerated() {
                         var leftFace = ImageBuffer()
                         cubeFace.getValue(&leftFace)
                         
@@ -122,7 +152,7 @@ class StitchingService {
                 autoreleasepool {
                     let buffer = stitcher.getRightResult()
                     //let image = ImageBufferToCompressedUIImage(buffer)
-                    for (face, cubeFace) in stitcher.getCubeFaces(buffer).enumerated() {
+                    for (face, cubeFace) in stitcher.blurAndGetCubeFaces(buffer).enumerated() {
                         var rightFace = ImageBuffer()
                         cubeFace.getValue(&rightFace)
                         
