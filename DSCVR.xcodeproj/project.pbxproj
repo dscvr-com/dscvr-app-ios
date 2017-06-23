@@ -143,6 +143,9 @@
 		A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5DE71E81BE28A7400316F82 /* ViewerViewController.swift */; };
 		A5F8AF251C4B1BA300072032 /* debugHook.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F8AF231C4B1BA300072032 /* debugHook.cpp */; };
 		A5F8AF2D1C4B1BB200072032 /* static_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F8AF2B1C4B1BB200072032 /* static_counter.cpp */; };
+		A5FBD9381EFD8833008D71E9 /* ExifHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5FBD9371EFD8833008D71E9 /* ExifHelper.mm */; };
+		A5FBD93C1EFD8F53008D71E9 /* exiv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5FBD93A1EFD8D31008D71E9 /* exiv2.framework */; };
+		A5FBD93E1EFD91DC008D71E9 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A5FBD93D1EFD91DC008D71E9 /* libiconv.tbd */; };
 		A5FD5D7D1BEA5A4E0031ED1E /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D471BEA5A4E0031ED1E /* image.cpp */; };
 		A5FD5D7E1BEA5A4E0031ED1E /* progressCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D4B1BEA5A4E0031ED1E /* progressCallback.cpp */; };
 		A5FD5D7F1BEA5A4E0031ED1E /* static_timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD5D4E1BEA5A4E0031ED1E /* static_timer.cpp */; };
@@ -400,6 +403,10 @@
 		A5F8AF2A1C4B1BB200072032 /* reduceProcessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reduceProcessor.hpp; sourceTree = "<group>"; };
 		A5F8AF2B1C4B1BB200072032 /* static_counter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = static_counter.cpp; sourceTree = "<group>"; };
 		A5F8AF2C1C4B1BB200072032 /* static_counter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = static_counter.hpp; sourceTree = "<group>"; };
+		A5FBD9371EFD8833008D71E9 /* ExifHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExifHelper.mm; path = Optonaut/Stitcher/ExifHelper.mm; sourceTree = SOURCE_ROOT; };
+		A5FBD9391EFD883D008D71E9 /* ExifHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ExifHelper.h; path = Optonaut/Stitcher/ExifHelper.h; sourceTree = SOURCE_ROOT; };
+		A5FBD93A1EFD8D31008D71E9 /* exiv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = exiv2.framework; path = Frameworks/exiv2.framework; sourceTree = "<group>"; };
+		A5FBD93D1EFD91DC008D71E9 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		A5FD5D421BEA5A4E0031ED1E /* asyncQueueWorker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncQueueWorker.hpp; sourceTree = "<group>"; };
 		A5FD5D431BEA5A4E0031ED1E /* asyncStreamWrapper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = asyncStreamWrapper.hpp; sourceTree = "<group>"; };
 		A5FD5D441BEA5A4E0031ED1E /* drawing.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = drawing.hpp; sourceTree = "<group>"; };
@@ -473,6 +480,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5FBD93E1EFD91DC008D71E9 /* libiconv.tbd in Frameworks */,
+				A5FBD93C1EFD8F53008D71E9 /* exiv2.framework in Frameworks */,
 				A5424BB41EA14CFA00E27E1B /* ReactiveSwift.framework in Frameworks */,
 				59D828141D709C4200007B57 /* Crashlytics.framework in Frameworks */,
 				598EB95C1D7068A200E00F9B /* Fabric.framework in Frameworks */,
@@ -553,6 +562,8 @@
 		8F366DD01B59321C00C0012E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A5FBD93D1EFD91DC008D71E9 /* libiconv.tbd */,
+				A5FBD93A1EFD8D31008D71E9 /* exiv2.framework */,
 				A5424BB31EA14CF900E27E1B /* ReactiveSwift.framework */,
 				592EEE371DD196F0005FBB49 /* LTMorphingLabel.framework */,
 				59D828131D709C4200007B57 /* Crashlytics.framework */,
@@ -743,6 +754,8 @@
 				A568D4971BD13348008FF556 /* HeadTracker.mm */,
 				B153E2121D06B1FB00CC4B72 /* Alignment.h */,
 				B153E2131D06B22800CC4B72 /* Alingment.mm */,
+				A5FBD9371EFD8833008D71E9 /* ExifHelper.mm */,
+				A5FBD9391EFD883D008D71E9 /* ExifHelper.h */,
 			);
 			name = Stitcher;
 			path = Utils/Stitcher;
@@ -1487,6 +1500,7 @@
 				A5DE71F01BE28A7400316F82 /* ViewerViewController.swift in Sources */,
 				A5FD5D851BEA5A4E0031ED1E /* recorder.cpp in Sources */,
 				594F6B4D1D36110500A361B3 /* UIImage+Gif.swift in Sources */,
+				A5FBD9381EFD8833008D71E9 /* ExifHelper.mm in Sources */,
 				A57786641EB2497A004E0E4C /* DataBase.swift in Sources */,
 				A5A3E53F1EB0CAB500971847 /* Point.swift in Sources */,
 				A5FD5D861BEA5A4E0031ED1E /* monoStitcher.cpp in Sources */,

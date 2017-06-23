@@ -76,16 +76,33 @@ class StitchingService {
         
         let cfPath = CFURLCreateWithFileSystemPath(nil, filePath as CFString, CFURLPathStyle.cfurlposixPathStyle, false)
         let destination = CGImageDestinationCreateWithURL(cfPath!, kUTTypeJPEG, 1, nil)
-        let properties: CFDictionary = [
-            "Make": "RICOH",
-            "Model": "RICOH THETA S",
+        /*let exifProperties = [
             "ProjectionType": "equirectangular",
-            "UsePanoramaViewer": "TRUE"
+            //"UsePanoramaViewer": "TRUE",
+            // We need this since our result is a *partial* panorama.
+            "FullPanoWidthPixels": "\(image.width)",
+            "FullPanoHeightPixels": "\(Int(image.width / 2))",
+            "CroppedAreaLeftPixels": "0",
+            "CroppedAreaTopPixels": "\(Int((image.width - image.height) / 2))",
+            "CroppedAreaImageWidthPixels": "\(image.width)",
+            "CroppedAreaImageHeightPixels": "\(image.height)",
         ] as CFDictionary
-    
+        */
+        
+        // This is a hack.
+        let tiffProperties = [
+            kCGImagePropertyTIFFMake as String: "DSCVR",
+            kCGImagePropertyTIFFModel as String: "DSCVR 360"
+        ] as CFDictionary
+        
+        let properties = [
+            kCGImagePropertyExifDictionary as String: tiffProperties
+        ] as CFDictionary
         
         CGImageDestinationAddImage(destination!, image, properties)
         CGImageDestinationFinalize(destination!)
+        
+        ExifHelper.addPanoExifData(filePath, Int32(image.width), Int32(image.height))
         
         try? PHPhotoLibrary.shared().performChangesAndWait {
             PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: URL(fileURLWithPath: filePath))
