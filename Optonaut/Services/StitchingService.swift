@@ -68,44 +68,46 @@ class StitchingService {
     
     static func saveToPhotoAlbumWithMetadata(_ image: CGImage, _ name: UUID) {
         
-        //UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-        
         let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! + "/savedMoments/"
         let filePath = path + name + ".jpg"
         try! FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
         
         let cfPath = CFURLCreateWithFileSystemPath(nil, filePath as CFString, CFURLPathStyle.cfurlposixPathStyle, false)
         let destination = CGImageDestinationCreateWithURL(cfPath!, kUTTypeJPEG, 1, nil)
-        /*let exifProperties = [
-            "ProjectionType": "equirectangular",
-            //"UsePanoramaViewer": "TRUE",
-            // We need this since our result is a *partial* panorama.
-            "FullPanoWidthPixels": "\(image.width)",
-            "FullPanoHeightPixels": "\(Int(image.width / 2))",
-            "CroppedAreaLeftPixels": "0",
-            "CroppedAreaTopPixels": "\(Int((image.width - image.height) / 2))",
-            "CroppedAreaImageWidthPixels": "\(image.width)",
-            "CroppedAreaImageHeightPixels": "\(image.height)",
-        ] as CFDictionary
-        */
         
-        // This is a hack.
-        let tiffProperties = [
-            kCGImagePropertyTIFFMake as String: "DSCVR",
-            kCGImagePropertyTIFFModel as String: "DSCVR 360"
-        ] as CFDictionary
+        let data = CGImageMetadataCreateMutable()
         
-        let properties = [
-            kCGImagePropertyExifDictionary as String: tiffProperties
-        ] as CFDictionary
+        // This writes XMP, we can later use it to add the second image in carboard cam format.
+        assert(CGImageMetadataRegisterNamespaceForPrefix(data, "http://ns.google.com/photos/1.0/panorama/" as CFString, "GPano" as CFString, nil))
         
-        CGImageDestinationAddImage(destination!, image, properties)
+        let fullPanoHeight = Int(image.width / 2)
+        
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:ProjectionType" as CFString, "equirectangular" as CFString))
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:UsePanoramaViewer" as CFString, "TRUE" as CFString))
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:FullPanoWidthPixels" as CFString, "\(image.width)" as CFString))
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:FullPanoHeightPixels" as CFString, "\(fullPanoHeight)" as CFString))
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaLeftPixels" as CFString, "0" as CFString))
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaTopPixels" as CFString, "\(Int((fullPanoHeight - image.height) / 2))" as CFString))
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaImageWidthPixels" as CFString, "\(image.width)" as CFString))
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaImageHeightPixels" as CFString, "\(image.height)" as CFString))
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:StitchingSoftware" as CFString, "DSCVR 360" as CFString))
+        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CaptureSoftware" as CFString, "DSCVR 360" as CFString))
+        
+        print(data)
+        
+        CGImageDestinationAddImageAndMetadata(destination!, image, data, nil)
         CGImageDestinationFinalize(destination!)
         
-        ExifHelper.addPanoExifData(filePath, Int32(image.width), Int32(image.height))
-        
-        try? PHPhotoLibrary.shared().performChangesAndWait {
-            PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: URL(fileURLWithPath: filePath))
+        do {
+            try PHPhotoLibrary.shared().performChangesAndWait {
+                let creation = PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: URL(fileURLWithPath: filePath))
+                let collection = PHAssetCollection.fetchAssetCollections(with: PHAssetCollectionType.album, subtype: PHAssetCollectionSubtype.smartAlbumPanoramas, options: nil)
+                if let collection = collection.firstObject, let creation = creation {
+                    PHAssetCollectionChangeRequest.init(for: collection)!.addAssets([creation.placeholderForCreatedAsset] as NSFastEnumeration)
+                }
+            }
+        } catch {
+            print("Error adding to gallery: \(error)")
         }
     }
     

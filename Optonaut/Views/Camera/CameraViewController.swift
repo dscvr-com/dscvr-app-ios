@@ -177,8 +177,16 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         cancelButton.addTarget(self, action: #selector(CameraViewController.cancelRecording), for: .touchUpInside)
         cancelButton.setImage(UIImage(named: "camera_back_button"), for: UIControlState())
-        scnView.addSubview(cancelButton)
         cancelButton.anchorInCorner(.topLeft, xPad: 0, yPad: 15, width: 40, height: 40)
+        scnView.addSubview(cancelButton)
+
+        
+        if useMotor {
+            tiltView.isHidden = true
+            cancelButton.isHidden = true
+            instructionView.isHidden = true
+            arrowView.isHidden = true
+        }
     }
     
     func touchEndCameraButton() {
@@ -429,7 +437,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         ballNode.geometry = ballGeometry
         ballNode.geometry?.firstMaterial?.diffuse.contents = UIColor(hex:0xFF5E00)
         
-        scene.rootNode.addChildNode(ballNode)
+        if !useMotor {
+            scene.rootNode.addChildNode(ballNode)
+        }
     }
     
     fileprivate var time = Double(-1)
