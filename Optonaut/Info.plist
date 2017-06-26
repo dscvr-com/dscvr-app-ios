@@ -42,7 +42,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>3</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -170,6 +170,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Connects to the IAM 360 Bluetooth Base</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Take a nice stereo panorama picture. </string>
 	<key>NSLocationWhenInUseUsageDescription</key>
