@@ -82,17 +82,17 @@ class StitchingService {
         
         let fullPanoHeight = Int(image.width / 2)
         
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:ProjectionType" as CFString, "equirectangular" as CFString))
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:UsePanoramaViewer" as CFString, "TRUE" as CFString))
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:FullPanoWidthPixels" as CFString, "\(image.width)" as CFString))
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:FullPanoHeightPixels" as CFString, "\(fullPanoHeight)" as CFString))
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaLeftPixels" as CFString, "0" as CFString))
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaTopPixels" as CFString, "\(Int((fullPanoHeight - image.height) / 2))" as CFString))
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaImageWidthPixels" as CFString, "\(image.width)" as CFString))
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaImageHeightPixels" as CFString, "\(image.height)" as CFString))
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:StitchingSoftware" as CFString, "DSCVR 360" as CFString))
-        assert(CGImageMetadataSetValueWithPath(data, nil, "GPano:CaptureSoftware" as CFString, "DSCVR 360" as CFString))
-        
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:ProjectionType" as CFString, "equirectangular" as CFString)
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:UsePanoramaViewer" as CFString, "TRUE" as CFString)
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:FullPanoWidthPixels" as CFString, "\(image.width)" as CFString)
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:FullPanoHeightPixels" as CFString, "\(fullPanoHeight)" as CFString)
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaLeftPixels" as CFString, "0" as CFString)
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaTopPixels" as CFString, "\(Int((fullPanoHeight - image.height) / 2))" as CFString)
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaImageWidthPixels" as CFString, "\(image.width)" as CFString)
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:CroppedAreaImageHeightPixels" as CFString, "\(image.height)" as CFString)
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:StitchingSoftware" as CFString, "DSCVR 360" as CFString)
+        CGImageMetadataSetValueWithPath(data, nil, "GPano:CaptureSoftware" as CFString, "DSCVR 360" as CFString)
+    
         print(data)
         
         CGImageDestinationAddImageAndMetadata(destination!, image, data, nil)
