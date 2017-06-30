@@ -46,7 +46,7 @@ struct ExposureInfo {
 + (GLKMatrix3)getIPhone5Intrinsics;
 + (void)freeImageBuffer:(struct ImageBuffer)toFree;
 
-- (id)init:(RecorderMode)recorderMode:(bool)highAccuracy;
+- (id)init:(RecorderMode)recorderMode:(struct RecorderParamInfo)parms;
 - (void)push:(GLKMatrix4)extrinsics :(struct ImageBuffer)image :(struct ExposureInfo)exposure :(AVCaptureWhiteBalanceGains)gains;
 - (GLKMatrix4)getCurrentRotation;
 - (SelectionPointIterator*)getSelectionPoints;

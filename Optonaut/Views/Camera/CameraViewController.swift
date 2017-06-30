@@ -290,9 +290,9 @@ class CameraViewController: UIViewController ,CBPeripheralDelegate{
         
         switch Defaults[.SessionUseMultiRing] {
         case true:
-            self.recorder = Recorder(.Truncated, useMotor)
+            self.recorder = Recorder(.Truncated, RecorderParamService.getRecorderParamsForThisDevice(useMotor))
         case false:
-            self.recorder = Recorder(.Center, useMotor)
+            self.recorder = Recorder(.Center, RecorderParamService.getRecorderParamsForThisDevice(useMotor))
         }
         
         if !useMotor {

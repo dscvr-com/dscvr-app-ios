@@ -162,11 +162,9 @@ optonaut::StorageImageSink leftSink(Stores::left);
 optonaut::StorageImageSink rightSink(Stores::right);
 
 
--(id)init:(RecorderMode)recorderMode:(bool)highAccuracy {
+-(id)init:(RecorderMode)recorderMode:(RecorderParamInfo)info {
     self = [super init];
     self->intrinsics = optonaut::iPhone6Intrinsics;
-    
-  
     
     internalRecordingMode = optonaut::RecorderGraph::ModeTruncated;
     
@@ -186,25 +184,23 @@ optonaut::StorageImageSink rightSink(Stores::right);
         default: break; //Explicitely default to truncated. This removes the compiler warning.
     }
     
-    
-    
     // Yes, asserting in init is evil.
     // But you sould never even think of starting a new recording
     // while an old one is in the stores.
     assert(!Stores::left.HasData());
     assert(!Stores::right.HasData());
     
-    
-    
     Stores::left.Clear();
     Stores::right.Clear();
     
+    optonaut::RecorderParamInfo paramInfo = optonaut::RecorderParamInfo(info.graphHOverlap, info.graphVOverlap, info.stereoHBuffer, info.stereoVBuffer, info.tolerance, info.halfGraph);
+    
     if ( internalRecordingMode ==  optonaut::RecorderGraph::ModeTruncated ) {
         self->multiRingPipe = new optonaut::MultiRingRecorder(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                               self->intrinsics, leftSink, rightSink, optonaut::RecorderGraph::ModeTruncated, 2.0, debugPath, highAccuracy);
+                                               self->intrinsics, leftSink, rightSink, optonaut::RecorderGraph::ModeTruncated, paramInfo.tolerance, debugPath, paramInfo);
     } else {
         self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                        self->intrinsics, optonaut::RecorderGraph::ModeCenter, 2.0, debugPath, highAccuracy);
+                                        self->intrinsics, optonaut::RecorderGraph::ModeCenter, paramInfo.tolerance, debugPath, paramInfo);
     }
   
     

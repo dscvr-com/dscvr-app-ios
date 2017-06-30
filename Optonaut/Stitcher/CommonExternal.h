@@ -5,12 +5,19 @@ struct ImageBuffer {
     void* data;
     uint32_t width;
     uint32_t height;
-
-    ImageBuffer() {
-        data = NULL;
-        width = 0;
-        height = 0;
-    }
 };
+
+struct ImageBuffer MakeImageBuffer();
+
+struct RecorderParamInfo {
+    double graphHOverlap;
+    double graphVOverlap;
+    double stereoHBuffer;
+    double stereoVBuffer;
+    double tolerance;
+    bool halfGraph;
+};
+
+struct RecorderParamInfo MakeRecorderParamInfo();
 
 #endif

@@ -78,7 +78,7 @@ struct StitcherCancellation {
         return CVMatToImageBuffer(sphere);
     } catch (StitcherCancellation c) { }
 
-    return ImageBuffer();
+    return MakeImageBuffer();
     
 }
 
@@ -89,7 +89,7 @@ struct StitcherCancellation {
         cv::Mat sphere = stitcher.Finish(callback->At(0))->image.data;
         return CVMatToImageBuffer(sphere);
     } catch (StitcherCancellation c) { }
-    return ImageBuffer();
+    return MakeImageBuffer();
 }
 
 - (bool)hasUnstitchedRecordings {
