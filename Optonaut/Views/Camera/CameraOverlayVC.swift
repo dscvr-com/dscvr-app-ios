@@ -59,6 +59,7 @@ class CameraOverlayVC: UIViewController {
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         UIApplication.shared.setStatusBarHidden(true, with: .none)
+        tabController!.cameraButton.isHidden = true
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -104,6 +105,7 @@ class CameraOverlayVC: UIViewController {
             }
 
     func closeCamera() {
+        tabController!.cameraButton.isHidden = false
         navigationController?.popViewController(animated: false)
         verticalTimer.invalidate()
     }
@@ -112,7 +114,7 @@ class CameraOverlayVC: UIViewController {
         if Defaults[.SessionMotor] {
             if motorButtonClicked {
                 if bt.connectedPeripherals.isEmpty {
-                    self.tabController!.cameraButton.isHidden = false
+//                    self.tabController!.cameraButton.isHidden = false
                     let confirmAlert = UIAlertController(title: "Error!", message: "Motor mode requires Bluetooth turned ON and paired to any DSCVR Orbit Motor.", preferredStyle: .alert)
                     confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
                     self.present(confirmAlert, animated: true, completion: nil)
@@ -130,14 +132,14 @@ class CameraOverlayVC: UIViewController {
             } else {
                 motorButtonClicked = true
                 backButton.isHidden = false
-                tabController!.cameraButton.isHidden = false
-                manualButton.setBackgroundImage(UIImage(named: "one_ring_active_icn"), for: UIControlState())
+//                tabController!.cameraButton.isHidden = false
+                manualButton.setBackgroundImage(UIImage(named: "one_ring_inactive_icnwhite"), for: UIControlState())
                 motorButton.setBackgroundImage(UIImage(named: "motorButton_off"), for: UIControlState())
                 motorButton.isUserInteractionEnabled = true
                 manualButton.isUserInteractionEnabled = true
                 motorLabel.textColor = UIColor(0x979797)
                 motorLabel.text = "3-RING MODE"
-                manualLabel.textColor = UIColor(0xFF5E00)
+                manualLabel.textColor = UIColor(0x979797)
                 manualLabel.text = "1-RING MODE"
 
 
@@ -167,29 +169,16 @@ class CameraOverlayVC: UIViewController {
     }
 
     func isMotorMode(_ state:Bool) {
-        if state {
             if motorButtonClicked {
                 manualButton.setBackgroundImage(UIImage(named: "one_ring_inactive_icnwhite"), for: UIControlState())
-                motorButton.setBackgroundImage(UIImage(named: "motorButton_on"), for: UIControlState())
-            } else {
-                manualButton.setBackgroundImage(UIImage(named: "manualButton_off"), for: UIControlState())
-                motorButton.setBackgroundImage(UIImage(named: "motor_active"), for: UIControlState())
-            }
-
-            manualLabel.textColor = UIColor(0x979797)
-            motorLabel.textColor = UIColor(0xFF5E00)
-        } else {
-            if motorButtonClicked {
-                manualButton.setBackgroundImage(UIImage(named: "one_ring_active_icn"), for: UIControlState())
                 motorButton.setBackgroundImage(UIImage(named: "motorButton_off"), for: UIControlState())
             } else {
-                manualButton.setBackgroundImage(UIImage(named: "manualButton_on"), for: UIControlState())
+                manualButton.setBackgroundImage(UIImage(named: "manualButton_off"), for: UIControlState())
                 motorButton.setBackgroundImage(UIImage(named: "motor_inactive_white"), for: UIControlState())
             }
 
-            manualLabel.textColor = UIColor(0xFF5E00)
+            manualLabel.textColor = UIColor(0x979797)
             motorLabel.textColor = UIColor(0x979797)
-        }
     }
     
     func manualClicked() {
@@ -201,6 +190,7 @@ class CameraOverlayVC: UIViewController {
             Defaults[.SessionMotor] = false
             Defaults[.SessionUseMultiRing] = false
         }
+        onTapCameraButton()
     }
     
     func motorClicked() {
@@ -212,6 +202,7 @@ class CameraOverlayVC: UIViewController {
             Defaults[.SessionMotor] = true
             Defaults[.SessionUseMultiRing] = false
         }
+        onTapCameraButton()
     }
     
     fileprivate func setupCamera() {
