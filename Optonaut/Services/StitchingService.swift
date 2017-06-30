@@ -78,7 +78,7 @@ class StitchingService {
         let data = CGImageMetadataCreateMutable()
         
         // This writes XMP, we can later use it to add the second image in carboard cam format.
-        assert(CGImageMetadataRegisterNamespaceForPrefix(data, "http://ns.google.com/photos/1.0/panorama/" as CFString, "GPano" as CFString, nil))
+        CGImageMetadataRegisterNamespaceForPrefix(data, "http://ns.google.com/photos/1.0/panorama/" as CFString, "GPano" as CFString, nil)
         
         let fullPanoHeight = Int(image.width / 2)
         
