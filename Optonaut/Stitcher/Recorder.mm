@@ -146,7 +146,12 @@ std::string debugPath;
     return CVMatToGLK3(optonaut::iPhone5Intrinsics);
 }
 + (void)freeImageBuffer:(ImageBuffer)toFree {
-    free(toFree.data);
+    if(toFree.data != NULL) {
+        free(toFree.data);
+        toFree.data = NULL;
+    } else {
+        std::cout << "Warning, double free of image buffer." << std::endl;
+    }
 }
 
 // TODO - using static variables here is dangerous.
@@ -199,7 +204,7 @@ optonaut::StorageImageSink rightSink(Stores::right);
                                                self->intrinsics, leftSink, rightSink, optonaut::RecorderGraph::ModeTruncated, 2.0, debugPath, highAccuracy);
     } else {
         self->pipe = new optonaut::Recorder2(optonaut::Recorder::iosBase, optonaut::Recorder::iosZero,
-                                        self->intrinsics, optonaut::RecorderGraph::ModeCenter, 1.0, debugPath, highAccuracy);
+                                        self->intrinsics, optonaut::RecorderGraph::ModeCenter, 2.0, debugPath, highAccuracy);
     }
   
     

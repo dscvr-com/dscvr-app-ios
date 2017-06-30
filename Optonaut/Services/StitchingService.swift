@@ -149,9 +149,13 @@ class StitchingService {
             if !shallCancel {
                 autoreleasepool {
                     let buffer = stitcher.getLeftResult()
-                    let image = ImageBufferToCGImage(buffer)
-                    saveToPhotoAlbumWithMetadata(image, currentOptograph!)
-                    for (face, cubeFace) in stitcher.blurAndGetCubeFaces(buffer).enumerated() {
+                    autoreleasepool {
+                        let image = ImageBufferToCGImage(buffer)
+                        saveToPhotoAlbumWithMetadata(image, currentOptograph!)
+                    }
+                    let faces = stitcher.blurAndGetCubeFaces(buffer)!
+                    Recorder.freeImageBuffer(buffer)
+                    for (face, cubeFace) in faces.enumerated() {
                         var leftFace = ImageBuffer()
                         cubeFace.getValue(&leftFace)
                         
@@ -166,12 +170,12 @@ class StitchingService {
                 }
             }
 
-            // TODO: Save to photo gallery
             if !shallCancel {
                 autoreleasepool {
                     let buffer = stitcher.getRightResult()
-                    //let image = ImageBufferToCompressedUIImage(buffer)
-                    for (face, cubeFace) in stitcher.blurAndGetCubeFaces(buffer).enumerated() {
+                    let faces = stitcher.blurAndGetCubeFaces(buffer)!
+                    Recorder.freeImageBuffer(buffer)
+                    for (face, cubeFace) in faces.enumerated() {
                         var rightFace = ImageBuffer()
                         cubeFace.getValue(&rightFace)
                         

@@ -5,6 +5,12 @@ struct ImageBuffer {
     void* data;
     uint32_t width;
     uint32_t height;
+
+    ImageBuffer() {
+        data = NULL;
+        width = 0;
+        height = 0;
+    }
 };
 
 #endif
