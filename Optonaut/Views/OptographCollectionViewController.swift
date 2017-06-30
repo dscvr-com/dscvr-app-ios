@@ -202,6 +202,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             confirmAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             self.present(confirmAlert, animated: true, completion: nil)
         } else {
+            tabController!.leftViewController.cleanup()
             self.navigationController?.pushViewController(CameraViewController(), animated: false)
             do {
                 guard let cvc = self.navigationController?.viewControllers[1] as? CameraViewController else {
