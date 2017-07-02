@@ -427,6 +427,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         }
         
         let optograph = DataBase.sharedInstance.getOptograph(id: overlayView.optographID!)
+        tabController!.leftViewController.cleanup()
         let viewerViewController = ViewerViewController(orientation: orientation, optograph: optograph)
         navigationController?.pushViewController(viewerViewController, animated: false)
     }
