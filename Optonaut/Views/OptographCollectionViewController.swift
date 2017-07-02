@@ -270,6 +270,9 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
             rotationSignal
+                .filter { _ in
+                    PipelineService.stitchingStatus.value == .idle && RecorderParamService.isOldiPhone()
+                }
                 .skipRepeats()
                 .filter(values: [.landscapeLeft, .landscapeRight])
                 .take(first: 1)
@@ -277,7 +280,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
                 .observeValues { [weak self] orientation in self?.pushViewer(orientation) }
         }
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
@@ -425,7 +428,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         guard let index = collectionView!.indexPathsForVisibleItems.first?.row else {
             return
         }
-        
         let optograph = DataBase.sharedInstance.getOptograph(id: overlayView.optographID!)
         tabController!.leftViewController.cleanup()
         let viewerViewController = ViewerViewController(orientation: orientation, optograph: optograph)

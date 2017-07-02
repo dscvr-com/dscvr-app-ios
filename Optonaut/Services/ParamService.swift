@@ -19,13 +19,12 @@ class RecorderParamService {
         
         // Device type determines horizontal buffer
         // Horizontal buffer 0.9 needs twice as much images ans 0.8 (see recorder graph why)
-        switch UIDevice.current.deviceType {
-            case .iPhone5, .iPhone5S, .iPhone6:
-                info.stereoHBuffer = 0.8
-                info.graphHOverlap = 0.8
-            default:
-                info.stereoHBuffer = 1.6
-                info.graphHOverlap = 0.9
+        if isOldiPhone() {
+            info.stereoHBuffer = 0.8
+            info.graphHOverlap = 0.8
+        } else {
+            info.stereoHBuffer = 1.6
+            info.graphHOverlap = 0.9
         }
         
         // Using motor determines vetical offsets and sparseness
@@ -39,5 +38,9 @@ class RecorderParamService {
         
         
         return info
+    }
+
+    static func isOldiPhone() -> Bool {
+        return (UIDevice.current.deviceType == .iPhone5 || UIDevice.current.deviceType == .iPhone5C || UIDevice.current.deviceType == .iPhone5S || UIDevice.current.deviceType == .iPhone6 || UIDevice.current.deviceType == .iPhone6Plus)
     }
 }
