@@ -271,7 +271,15 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         if let rotationSignal = RotationService.sharedInstance.rotationSignal {
             rotationSignal
                 .filter { _ in
-                    PipelineService.stitchingStatus.value == .idle && RecorderParamService.isOldiPhone()
+                    // If it's not an old iPhone, we don't care.
+                    if !RecorderParamService.isOldiPhone() {
+                        return true
+                    }
+                    // Else, we won't allow showing the viewer.
+                    switch PipelineService.stitchingStatus.value {
+                        case .idle, .stitchingFinished(_): return true
+                        default: return false
+                    }
                 }
                 .skipRepeats()
                 .filter(values: [.landscapeLeft, .landscapeRight])

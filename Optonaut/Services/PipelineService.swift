@@ -73,9 +73,7 @@ class PipelineService {
             }
         
         stitchingSignal
-            .on(completed: {
-                print("remove")
-                
+            .on(completed: {                
                 var optograph = DataBase.sharedInstance.getOptograph(id: optographID)
                 optograph.isStitched = true
                 print("Saving: \(optographID)")
@@ -84,7 +82,6 @@ class PipelineService {
                 
                 StitchingService.removeUnstitchedRecordings()
                 let optographIDDict:[String: String] = ["id": optographID]
-                
                 NotificationCenter.default.post(name: Notification.Name(rawValue: stitchingFinishedNotificationKey), object: self, userInfo: optographIDDict)
             })
             .observeOnMain()
