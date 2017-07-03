@@ -436,6 +436,8 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         guard let index = collectionView!.indexPathsForVisibleItems.first?.row else {
             return
         }
+        self.imageCache.reset()
+        self.viewModel.refresh()
         let optograph = DataBase.sharedInstance.getOptograph(id: overlayView.optographID!)
         tabController!.leftViewController.cleanup()
         let viewerViewController = ViewerViewController(orientation: orientation, optograph: optograph)
