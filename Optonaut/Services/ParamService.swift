@@ -33,7 +33,7 @@ class RecorderParamService {
             info.stereoVBuffer = 0.00
         } else {
             info.halfGraph = false
-            info.stereoVBuffer = -0.03
+            info.stereoVBuffer = -0.05
         }
         
         

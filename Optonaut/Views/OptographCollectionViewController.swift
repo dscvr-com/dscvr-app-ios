@@ -436,8 +436,6 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
         guard let index = collectionView!.indexPathsForVisibleItems.first?.row else {
             return
         }
-        self.imageCache.reset()
-        self.viewModel.refresh()
         let optograph = DataBase.sharedInstance.getOptograph(id: overlayView.optographID!)
         tabController!.leftViewController.cleanup()
         let viewerViewController = ViewerViewController(orientation: orientation, optograph: optograph)
@@ -478,6 +476,7 @@ class OptographCollectionViewController: UICollectionViewController, UICollectio
             self.viewModel.refresh()
             self.optographIDs = self.viewModel.getOptographIds()
             if self.optographIDs.count > 1 {
+                self.overlayView.optographID = self.optographIDs[0]
                 self.collectionView!.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
             }
         }
