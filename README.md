@@ -1,18 +1,15 @@
-# optonaut-app-ios
-Repository for the iOS optonaut app
+# DSCVR iOS App
 
-## Dependencies
+Repository for the DSCVR (former Optonaut) iOS Application. 
+
 
 ### Carthage Dependencies
 
 See `Cartfile` to manage dependencies and run `carthage update --platform iOS` to install or update.
 
-### External Dependencies (Non-Carthage)
+### External Dependencies
 
-Download and copy the needed frameworks into `Carthage/Build/iOS` by hand. I know this sucks.
+Download and copy the needed frameworks into `Carthage/Build/iOS` by hand.
 
 * [OpenCV 3](http://opencv.org/downloads.html)
   * `opencv2.framework`
-* [Crashlytics](https://fabric.io/kits/ios/crashlytics) - Install via Fabric OSX tool
-  * `Crashlytics.framework`
-  * `Fabric.framework`
