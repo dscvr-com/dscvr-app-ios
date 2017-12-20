@@ -537,14 +537,6 @@
 			path = stitcher;
 			sourceTree = "<group>";
 		};
-		596DE8B41DDAD62E002BF57D /* MotorServices */ = {
-			isa = PBXGroup;
-			children = (
-				A50E9A411E85A3210017C090 /* New */,
-			);
-			name = MotorServices;
-			sourceTree = "<group>";
-		};
 		59FC45641D881CCB00B0B79D /* NYAlertViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -845,7 +837,7 @@
 		8FCCA02D1B3806040091F1B1 /* Optonaut */ = {
 			isa = PBXGroup;
 			children = (
-				596DE8B41DDAD62E002BF57D /* MotorServices */,
+				A5D996921FE9DEE10096221C /* MotorServices */,
 				8FCCA0511B3806680091F1B1 /* AppDelegate.swift */,
 				8F77380B1B380C87001F642B /* Optonaut-Bridging-Header.h */,
 				8F740CF81B80DC6200FED1D0 /* Database */,
@@ -928,17 +920,6 @@
 			path = Vendor;
 			sourceTree = "<group>";
 		};
-		A50E9A411E85A3210017C090 /* New */ = {
-			isa = PBXGroup;
-			children = (
-				A50E9A421E85A4280017C090 /* BLEDiscovery.swift */,
-				A50E9A431E85A4280017C090 /* BLEService.swift */,
-				A5A3E53E1EB0CAB500971847 /* Point.swift */,
-				A50E9A441E85A4280017C090 /* MotorControl.swift */,
-			);
-			name = New;
-			sourceTree = "<group>";
-		};
 		A5424BB01EA14A0700E27E1B /* minimal */ = {
 			isa = PBXGroup;
 			children = (
@@ -979,6 +960,17 @@
 				A56CA40F1BC070AE0078D7E8 /* barrell_displacement.vsh */,
 			);
 			name = Cardboard;
+			sourceTree = "<group>";
+		};
+		A5D996921FE9DEE10096221C /* MotorServices */ = {
+			isa = PBXGroup;
+			children = (
+				A50E9A421E85A4280017C090 /* BLEDiscovery.swift */,
+				A50E9A431E85A4280017C090 /* BLEService.swift */,
+				A5A3E53E1EB0CAB500971847 /* Point.swift */,
+				A50E9A441E85A4280017C090 /* MotorControl.swift */,
+			);
+			path = MotorServices;
 			sourceTree = "<group>";
 		};
 		A5DE71DF1BE28A7400316F82 /* Viewer */ = {
