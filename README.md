@@ -1,6 +1,6 @@
 # DSCVR iOS App
 
-Repository for the DSCVR (former Optonaut) iOS Application. 
+Repository for the [DSCVR (former Optonaut) iOS Application](https://itunes.apple.com/de/app/dscvr-360/id1144089119?mt=8). 
 
 The applications wraps the image processing component (`online-stitcher`, found [here]()), and adds the infrastucture necassary for recording and viewing on iOS.
 
